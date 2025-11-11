@@ -10,7 +10,7 @@ class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData.from(
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.kPrimaryColor,
+        seedColor: AppColors.lightPurpleColor,
         brightness: Brightness.light,
       ),
     ).copyWith(
@@ -21,16 +21,16 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.white,
         foregroundColor: Colors.white,
-        titleTextStyle: GoogleFonts.montserrat(
+        titleTextStyle: GoogleFonts.degular(
           textStyle: TextStyle(color: AppColors.blackColor, fontSize: 16.sp),
         ),
         elevation: 0,
         // centerTitle: true,
       ),
-      textTheme: GoogleFonts.montserratTextTheme(),
+      textTheme: GoogleFonts.degularTextTheme(),
       // Text Selection Theme for cursor color
       textSelectionTheme: TextSelectionThemeData(
-        cursorColor: AppColors.kPrimaryColor, // Cursor color
+        cursorColor: AppColors.lightPurpleColor, // Cursor color
       ),
 
       iconTheme: const IconThemeData(color: Colors.black54),
@@ -42,7 +42,7 @@ class AppTheme {
           Set<WidgetState> states,
         ) {
           if (states.contains(WidgetState.selected)) {
-            return AppColors.kPrimaryColor;
+            return AppColors.lightPurpleColor;
           }
           return null;
         }),
@@ -51,7 +51,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 14.h),
-          textStyle: GoogleFonts.montserrat(
+          textStyle: GoogleFonts.degular(
             textStyle: TextStyle(
               color: Colors.white,
               fontSize: 14.sp,
