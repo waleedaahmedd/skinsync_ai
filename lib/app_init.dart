@@ -12,8 +12,6 @@ class AppInit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.watch();
-    // ScreenUtil.init(context);
     final ThemeMode themeMode = context.watch<ThemeViewModel>().themeMode;
     return ScreenUtilInit(
         designSize: getDesignSize(context: context),
@@ -23,7 +21,7 @@ class AppInit extends StatelessWidget {
       builder: (_, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Beauty Points',
+          title: 'SkinSync AI',
           initialRoute: '/',
           onGenerateRoute: RouteGenerator.generateRoute,
           themeMode: themeMode,

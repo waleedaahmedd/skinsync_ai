@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'color_constant.dart';
 
@@ -21,13 +20,15 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.white,
         foregroundColor: Colors.white,
-        titleTextStyle: GoogleFonts.degular(
-          textStyle: TextStyle(color: AppColors.blackColor, fontSize: 16.sp),
+        titleTextStyle: TextStyle(
+          fontFamily: 'Degular',
+          color: AppColors.blackColor,
+          fontSize: 16.sp,
         ),
         elevation: 0,
         // centerTitle: true,
       ),
-      textTheme: GoogleFonts.degularTextTheme(),
+      textTheme: const TextTheme().apply(fontFamily: 'Degular'),
       // Text Selection Theme for cursor color
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: AppColors.lightPurpleColor, // Cursor color
@@ -51,12 +52,11 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.symmetric(vertical: 14.h),
-          textStyle: GoogleFonts.degular(
-            textStyle: TextStyle(
-              color: Colors.white,
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w400,
-            ),
+          textStyle: TextStyle(
+            fontFamily: 'Degular',
+            color: Colors.white,
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w400,
           ),
 
           foregroundColor: Colors.white,
@@ -93,29 +93,44 @@ class AppTheme {
   static ThemeData get darkTheme {
     return ThemeData(
       brightness: Brightness.dark,
+      fontFamily: 'Degular',
       primarySwatch: Colors.blue,
       primaryColor: Colors.blue[400],
       scaffoldBackgroundColor: const Color(0xFF121212),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF1E1E1E),
+      appBarTheme: AppBarTheme(
+        backgroundColor: const Color(0xFF1E1E1E),
         foregroundColor: Colors.white,
         elevation: 1,
         centerTitle: true,
+        titleTextStyle: const TextStyle(
+          fontFamily: 'Degular',
+          color: Colors.white,
+        ),
       ),
       textTheme: const TextTheme(
         headlineLarge: TextStyle(
+          fontFamily: 'Degular',
           color: Colors.white,
           fontSize: 32,
           fontWeight: FontWeight.bold,
         ),
-        bodyLarge: TextStyle(color: Colors.white, fontSize: 16),
-        bodyMedium: TextStyle(color: Colors.white70, fontSize: 14),
+        bodyLarge: TextStyle(
+          fontFamily: 'Degular',
+          color: Colors.white,
+          fontSize: 16,
+        ),
+        bodyMedium: TextStyle(
+          fontFamily: 'Degular',
+          color: Colors.white70,
+          fontSize: 14,
+        ),
       ),
       iconTheme: const IconThemeData(color: Colors.white70),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.blue[400],
           foregroundColor: Colors.white,
+          textStyle: const TextStyle(fontFamily: 'Degular'),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
