@@ -1,51 +1,50 @@
 import 'dart:async';
+import 'dart:convert';
+import '../models/requests/sign_in_request.dart';
+import '../models/responses/auth_response.dart';
+import '../repositories/auth_repository.dart';
+import '../utills/enums.dart';
+import '../utills/secure_storage_service.dart';
+import 'api_base_helper.dart';
 
-class AuthService {
-  // Simulate API delay
-  static const Duration _apiDelay = Duration(seconds: 2);
+class AuthService implements AuthRepository {
+  final ApiBaseHelper _apiClient;
+  final SecureStorage _secureStorage = SecureStorage();
 
-  /// Sends OTP to the provided phone number
-  /// In a real app, this would make an API call to your backend
-  Future<void> sendOtpPhone(String phoneNumber) async {
-    await Future.delayed(_apiDelay);
-    if (phoneNumber.isEmpty) {
-      throw Exception('Phone number cannot be empty');
+  AuthService({required ApiBaseHelper apiClient}) : _apiClient = apiClient;
+
+  @override
+  Future<AuthResponse> signInApi({required SignInRequest signInRequest}) async {
+    try {
+      final response = await _apiClient.httpRequest(
+        endPoint: EndPoints.signIn,
+        requestType: 'POST',
+        requestBody: signInRequest,
+        params: '',
+      );
+
+      // Check HTTP status code
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final parsed = json.decode(response.body);
+        AuthResponse authResponse = AuthResponse.fromJson(parsed);
+        if (authResponse.isSuccess == true) {
+          _secureStorage.saveSecureString(
+            key: '',
+            value: authResponse.data?.clientToken ?? '',
+          );
+        }
+        return authResponse;
+      } else {
+        // Handle HTTP error status codes
+        final parsed = json.decode(response.body);
+        return AuthResponse.fromJson(parsed);
+      }
+    } catch (e) {
+      // Return error response on exception
+      return AuthResponse(
+        isSuccess: false,
+        message: 'An error occurred. Please try again.',
+      );
     }
-  }
-
-  Future<void> sendOtpEmail(String email) async {
-    await Future.delayed(_apiDelay);
-    if (email.isEmpty) {
-      throw Exception('Phone number cannot be empty');
-    }
-  }
-
-  /// Verifies the OTP for the given phone number
-  /// In a real app, this would make an API call to your backend
-  Future<bool> verifyOtp(String phoneNumber, String otp) async {
-    await Future.delayed(_apiDelay);
-    
-    // Simulate potential errors
-    if (phoneNumber.isEmpty || otp.isEmpty) {
-      throw Exception('Phone number and OTP cannot be empty');
-    }
-    
-    // In a real app, you would:
-    // 1. Make an API call to your backend
-    // 2. Backend would verify the OTP against the stored value
-    // 3. Return verification result
-    
-    // For demo purposes, accept any 6-digit OTP
-    if (otp.length == 6 && RegExp(r'^\d{6}$').hasMatch(otp)) {
-      // OTP verified successfully
-      return true;
-    }
-    
-    return false;
-  }
-
-  /// Resends OTP to the provided phone number
-  Future<void> resendOtp(String phoneNumber) async {
-    await sendOtpPhone(phoneNumber);
   }
 }

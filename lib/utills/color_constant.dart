@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
-class AppColors {
+class CustomColors {
   static const Color lightBlueColor = Color(0xff88E3FB);
   static const Color lightPurpleColor = Color(0xffE7C6E8);
   static const Color blackColor = Color(0xff000000);
+  static const Color whiteColor = Color(0xffffffff);
+
 
   static const LinearGradient purpleBlueGradient = LinearGradient(
     begin: Alignment.topCenter,

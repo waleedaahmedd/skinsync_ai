@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -9,20 +8,19 @@ class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData.from(
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.lightPurpleColor,
+        seedColor: CustomColors.lightPurpleColor,
         brightness: Brightness.light,
       ),
     ).copyWith(
       brightness: Brightness.light,
 
-      // primaryColor: AppColors.kPrimaryColor,
       scaffoldBackgroundColor: Colors.white,
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.white,
         foregroundColor: Colors.white,
         titleTextStyle: TextStyle(
           fontFamily: 'Degular',
-          color: AppColors.blackColor,
+          color: CustomColors.blackColor,
           fontSize: 16.sp,
         ),
         elevation: 0,
@@ -31,7 +29,7 @@ class AppTheme {
       textTheme: const TextTheme().apply(fontFamily: 'Degular'),
       // Text Selection Theme for cursor color
       textSelectionTheme: TextSelectionThemeData(
-        cursorColor: AppColors.lightPurpleColor, // Cursor color
+        cursorColor: CustomColors.lightPurpleColor, // Cursor color
       ),
 
       iconTheme: const IconThemeData(color: Colors.black54),
@@ -43,7 +41,7 @@ class AppTheme {
           Set<WidgetState> states,
         ) {
           if (states.contains(WidgetState.selected)) {
-            return AppColors.lightPurpleColor;
+            return CustomColors.lightPurpleColor;
           }
           return null;
         }),
