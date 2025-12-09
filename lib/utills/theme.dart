@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skinsync_ai/utills/custom_fonts.dart';
 
 import 'color_constant.dart';
 
@@ -49,17 +50,12 @@ class AppTheme {
 
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 14.h),
-          textStyle: TextStyle(
-            fontFamily: 'Degular',
-            color: Colors.white,
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w400,
-          ),
-
+          padding: EdgeInsets.symmetric(vertical: 19.h),
+          textStyle: CustomFonts.white22w600,
+          backgroundColor: Colors.black,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.r),
+            borderRadius: BorderRadius.circular(50.r),
           ),
         ),
       ),

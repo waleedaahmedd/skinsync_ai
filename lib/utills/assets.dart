@@ -2,12 +2,21 @@
 
 class PngAssets {
   static const String _assets = 'assets/png/';
+  static const String  splashLogo = '${_assets}splash_logo.png';
   static const String beautyNear = '${_assets}beauty_near.png';
+  static const String face = '${_assets}face.png';
+   static const String faceMarks = '${_assets}face_marks.png';
+   static const String blur = '${_assets}blur.png';
+      static const String vector = '${_assets}vector.png';
+      static const String vector2 = '${_assets}vector2.png';
+
+
 }
 
 class SvgAssets {
   static const String _assets = 'assets/svg/';
-  
+  static const String  apple = '${_assets}apple.svg';
+  static const String  google = '${_assets}google.svg';
 }
 
 class LottieAssets {
