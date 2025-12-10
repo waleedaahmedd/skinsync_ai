@@ -1,11 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:skinsync_ai/screens/home_screen.dart';
+import 'package:skinsync_ai/screens/get_started_screen.dart';
 import 'package:skinsync_ai/screens/login_screen.dart';
 import 'package:skinsync_ai/screens/splash_screen.dart';
 
 const String splashScreen = '/';
 const String homeScreen = '/home_screen';
+const String getStartedScreen = '/get_started_screen';
 const String loginScreen = '/login_screen';
 
 class RouteGenerator {
@@ -23,10 +25,15 @@ class RouteGenerator {
           settings: RouteSettings(name: homeScreen),
           builder: (_) => HomeScreen(),
         );
-      case loginScreen:
+      case getStartedScreen:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: getStartedScreen),
+          builder: (_) => GetStartedScreen());
+          case loginScreen:
         return MaterialPageRoute(
           settings: RouteSettings(name: loginScreen),
-          builder: (_) => LoginScreen());
+          builder: (_) => LoginScreen(),
+        );  
       default:
         return _errorRoute();
     }

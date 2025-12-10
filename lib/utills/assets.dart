@@ -9,7 +9,8 @@ class PngAssets {
    static const String blur = '${_assets}blur.png';
       static const String vector = '${_assets}vector.png';
       static const String vector2 = '${_assets}vector2.png';
-
+ static const String  apple = '${_assets}apple.png';
+  static const String  google = '${_assets}google.png';
 
 }
 
@@ -17,6 +18,7 @@ class SvgAssets {
   static const String _assets = 'assets/svg/';
   static const String  apple = '${_assets}apple.svg';
   static const String  google = '${_assets}google.svg';
+  static const String email = "${_assets}email.svg";
 }
 
 class LottieAssets {

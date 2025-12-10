@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:iconsax/iconsax.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:skinsync_ai/route_generator.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
 
-void showCancelBookingSheet(BuildContext context) {
+void loginBottomSheet(BuildContext context) {
   showModalBottomSheet(
     backgroundColor: Colors.transparent,
     constraints: BoxConstraints(minWidth: double.infinity),
@@ -44,88 +45,102 @@ void showCancelBookingSheet(BuildContext context) {
              
             //   crossAxisAlignment: CrossAxisAlignment.start,
             //   children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                   
-                    children: [
-                    
-                      Text(
-                        "Get Started",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 30.sp,
-                          color: Colors.black,
-                        ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                 
+                  children: [
+                  
+                    Text(
+                      "Get Started",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 30.sp,
+                        color: Colors.black,
                       ),
-          
-                   SizedBox(height: 4.h,),
-
-                      Text(
-                        
-                        "Lorem ipsum dolor sit amet consectetur Ut consectetur mauris tellus ultricies.",
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xff494949)
-                        ),
-                      ),
-                      SizedBox(height: 18.h),
-                      SizedBox(
-                        width: double.infinity,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.r),
-                            color: Colors.black),
-                        child: Center(child: Text("Continue With Phone",style:CustomFonts.white18w600,)),
-                          ),
-                      ),
-                       SizedBox(height: 10.h),
-                        SizedBox(
-                        width: double.infinity,
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.r),
-                            color:CustomColors.greyColor
-                            ),
-                        child: Center(child: Text("Continue With Phone",style:CustomFonts.black18w600,)),
-                          ),
-                      ),
-                      SizedBox(height: 10.h,),
-                      Row(children: [
-                        Expanded(
+                    ),
+                          
+                 SizedBox(height: 4.h,),
+                
+                    Text(
                       
+                      "Lorem ipsum dolor sit amet consectetur Ut consectetur mauris tellus ultricies.",
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xff494949)
+                      ),
+                    ),
+                    SizedBox(height: 18.h),
+                    SizedBox(
+                      width: double.infinity,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.r),
+                          color: Colors.black),
+                      child: Center(child: Text("Continue With Phone",style:CustomFonts.white18w600,)),
+                        ),
+                    ),
+                     SizedBox(height: 10.h),
+                      SizedBox(
+                      width: double.infinity,
+                      child: InkWell(
+                        onTap: () => Navigator.pushNamed(context, loginScreen),
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 16.h),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.r),
                             color:CustomColors.greyColor
                             ),
-                        child: Center(child: Image.asset(SvgAssets.google,height: 32.h,width: 32,)),
+                        child: Center(child: Text("Continue With Email",style:CustomFonts.black18w600,)),
                           ),
                       ),
-                      SizedBox(width: 8,),
-                       Expanded(
-                        
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.r),
-                            color:CustomColors.greyColor
-                            ),
-                        child: Center(child: Image.asset(SvgAssets.apple,height: 32.h,width: 32,)),
-                          ),
-                      ),
-                      ],),
+                    ),
+                    SizedBox(height: 10.h,),
+                    Row(children: [
+                      Expanded(
                     
-                     
-          
-                      SizedBox(height: 30.h),
-                    ],
-                  ),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.r),
+                          color:CustomColors.greyColor
+                          ),
+                      child: Center(
+                        child: Image.asset(
+                          PngAssets.google,
+                          height: 32.h,
+                          width: 32.w,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                        ),
+                    ),
+                    SizedBox(width: 8,),
+                     Expanded(
+                      
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.r),
+                          color:CustomColors.greyColor
+                          ),
+                      child: Center(
+                        child:Image.asset(
+                          PngAssets.apple,
+                          height: 32.h,
+                          width: 32.w,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                        ),
+                    ),
+                    ],),
+                  
+                   
+                          
+                    SizedBox(height: 30.h),
+                  ],
                 ),
                 // Drag handle
                 // Center(

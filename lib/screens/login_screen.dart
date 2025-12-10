@@ -1,9 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/cancel_booking.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -11,119 +12,50 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        top: false,
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: CustomColors.BlueWithWhiteGradient,
+      appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: CustomColors.iconColor,
+            ),
+            child: Icon(
+              CupertinoIcons.arrow_left,
+              size: 20.w,
+              color: Colors.black,
+            ),
           ),
-          child: Stack(
-            children: [
-                Positioned(
-                top: 70.h,
-                right: 0.w,
-                left: 0.w,
-                child: Image.asset(
-                  PngAssets.vector2,
-                  height: 552.h,
-                  fit: BoxFit.fill,
-                  
-                ),
-              ),
-              Positioned(
-                top: 70.h,
-                right: 0.w,
-                left: 0.w,
-                child: Image.asset(
-                  PngAssets.vector,
-                  height: 376.h,
-                  fit: BoxFit.fill,
-                  color: Color(0xff88E3FB).withOpacity(0.7)
-                ),
-              ),
-              
-              Positioned(
-                top: 92.h,
-                right: 0,
-                left: 0,
-
-                child: Image.asset(
-                  PngAssets.face,
-                  height: 599.h,
-                  fit: BoxFit.fitWidth,
-                ),
-              ),
-
-              Positioned(
-                top: 180.h,
-                left: 25.w,
-                child: Image.asset(
-                  PngAssets.faceMarks,
-                  height: 339.h,
-                  fit: BoxFit.fitWidth,
-                ),
-              ),
-              Positioned(
-                top: 432.h,
-                child: Image.asset(PngAssets.blur, height: 564.h),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    SizedBox(height: 60.h),
-                    Text("Skinsync Ai", style: CustomFonts.grey20w500),
-                    Text('Your Journey', style: CustomFonts.black50w600),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: [
-                        Text('to ', style: CustomFonts.black50w600),
-                        ShaderMask(
-                          shaderCallback: (bounds) => LinearGradient(
-                            colors: [
-                              CustomColors.lightBlueColor, // Light blue
-                              CustomColors.lightPurpleColor, // Light pink
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ).createShader(bounds),
-                          child: Text(
-                            'Glowing Skin',
-                            style: CustomFonts.white50w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Text('Starts Here!', style: CustomFonts.black50w600),
-                    SizedBox(height: 37.2.h),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 19.h),
-                          textStyle: CustomFonts.white22w600,
-                          backgroundColor: Colors.black,
-
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50.r),
-                          ),
-                        ),
-                        onPressed: () {
-                          showCancelBookingSheet(context);
-                        },
-                        child: Text("Get Started"),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+        ),
+      ),
+      body: Padding(
+        padding: EdgeInsetsGeometry.only(left: 30.w,right: 30.w,bottom: MediaQuery.viewInsetsOf(context).bottom,),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 43.h),
+            SvgPicture.asset(SvgAssets.email, height: 79.h, width: 79.w),
+            SizedBox(height: 27.h),
+            Text("Continue with Email", style: CustomFonts.black30w600),
+            SizedBox(height: 4.h),
+            Text(
+              "Sign in or sign up with your email.",
+              style: CustomFonts.grey18w400,
+            ),
+            SizedBox(height: 22.h),
+            TextField(
+               style: TextStyle(color:CustomColors.blackColor),
+              decoration:InputDecoration(
+                
+                hintText: "Email Address",
+              )
+            ),
+            Spacer(),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(onPressed: (){}, child: Text("Next"))),
+              SizedBox(height: 20.h,),
+          ],
         ),
       ),
     );

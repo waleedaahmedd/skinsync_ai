@@ -61,12 +61,10 @@ class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 15.h),
-        filled: true,
-
         errorStyle: TextStyle(fontSize: 11.sp, overflow: TextOverflow.visible),
         errorMaxLines: 2,
-
-        hintStyle: TextStyle(fontSize: 14.sp, color: const Color(0xffB5B5B5)),
+        
+        hintStyle: CustomFonts.grey18w400,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14.r),
           borderSide: BorderSide(color: Color(0xffB5B5B5)),
