@@ -21,8 +21,9 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await Future.delayed(const Duration(milliseconds: 1000));
       setState(() {
-        _animate = true; // start circle animation
+        _animate = true; 
       });
 
       await Future.delayed(Duration(milliseconds: _duration - 800));
@@ -43,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 child: child,
               );
             },
-            transitionDuration: const Duration(milliseconds: 800),
+            transitionDuration: const Duration(milliseconds: 900),
           ),
         );
       }
@@ -64,17 +65,23 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ),
 
-          Center(
-            child: Image.asset(
-              PngAssets.splashLogo,
-              height: 169.h,
-              width: 169.w,
-            ),
-          ),
+         AnimatedOpacity(
+  opacity: _animate ? 0.0 : 1.0, 
+  duration: Duration(milliseconds: 400),
+  curve: Curves.easeInOut,
+  child: Center(
+    child: Image.asset(
+      PngAssets.splashLogo,
+      height: 169.h,
+      width: 169.w,
+    ),
+  ),
+),
+
 
           AnimatedPositioned(
             duration: Duration(milliseconds: _duration),
-            top: _animate ? screenHeight : -362.r,
+            top: _animate ? screenHeight : -screenHeight,
             left: _animate ? screenWidth : -362.r,
             child: CircleAvatar(
               radius: 362.r,
@@ -84,7 +91,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
           AnimatedPositioned(
             duration: Duration(milliseconds: _duration),
-            bottom: _animate ? screenHeight : -362.r,
+            bottom: _animate ? screenHeight : -screenHeight,
             right: _animate ? screenWidth : -362.r,
             child: CircleAvatar(
               radius: 362.r,
