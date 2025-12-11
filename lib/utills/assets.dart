@@ -11,6 +11,9 @@ class PngAssets {
       static const String vector2 = '${_assets}vector2.png';
  static const String  apple = '${_assets}apple.png';
   static const String  google = '${_assets}google.png';
+  static const String  signupVector = '${_assets}signup_vector.png';
+  static const String email = "${_assets}email.png";
+  
 
 }
 
@@ -18,7 +21,7 @@ class SvgAssets {
   static const String _assets = 'assets/svg/';
   static const String  apple = '${_assets}apple.svg';
   static const String  google = '${_assets}google.svg';
-  static const String email = "${_assets}email.svg";
+  static const String mail = "${_assets}mail.svg";
 }
 
 class LottieAssets {
@@ -31,4 +34,9 @@ class GifAssets {
   // static const String logAnimation = '${_assets}logo_animate.gif';
 }
 
-class DummyAssets {}
+class DummyAssets {
+ static const String _assets = 'assets/dummyassets/';
+  static const String  acen = '${_assets}acne.png';
+
+
+}

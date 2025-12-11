@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
-import 'package:skinsync_ai/route_generator.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
 
 void loginBottomSheet(BuildContext context) {
@@ -75,36 +72,25 @@ void loginBottomSheet(BuildContext context) {
                     SizedBox(height: 18.h),
                     SizedBox(
                       width: double.infinity,
-                      child: InkWell(
-                        onTap: (){
-                             context.read<AuthViewModel>().setloginWithPhone(true);
-                          Navigator.pushNamed(context, loginScreen);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.r),
-                            color: Colors.black),
-                        child: Center(child: Text("Continue With Phone",style:CustomFonts.white18w600,)),
-                          ),
-                      ),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.r),
+                          color: Colors.black),
+                      child: Center(child: Text("Continue With Phone",style:CustomFonts.white18w600,)),
+                        ),
                     ),
                      SizedBox(height: 10.h),
                       SizedBox(
                       width: double.infinity,
-                      child: InkWell(
-                        onTap: () { 
-                          context.read<AuthViewModel>().setloginWithEmail(true);
-                          Navigator.pushNamed(context, loginScreen);},
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.r),
-                            color:CustomColors.greyColor
-                            ),
-                        child: Center(child: Text("Continue With Email",style:CustomFonts.black18w600,)),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.r),
+                          color:CustomColors.greyColor
                           ),
-                      ),
+                      child: Center(child: Text("Continue With Phone",style:CustomFonts.black18w600,)),
+                        ),
                     ),
                     SizedBox(height: 10.h,),
                     Row(children: [
