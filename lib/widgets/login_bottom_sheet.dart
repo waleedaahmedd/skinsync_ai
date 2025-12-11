@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:skinsync_ai/route_generator.dart';
+import 'package:skinsync_ai/screens/login_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -78,7 +79,25 @@ void loginBottomSheet(BuildContext context) {
                       child: InkWell(
                         onTap: (){
                              context.read<AuthViewModel>().setloginWithPhone(true);
-                          Navigator.pushNamed(context, loginScreen);
+                          // Navigator.pushNamed(context, loginScreen);
+                          Navigator.of(context).pushReplacement(
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                const LoginScreen(), 
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              // Use ease-in curve
+              var curve = Curves.easeIn;
+              var curvedAnimation =
+                  CurvedAnimation(parent: animation, curve: curve);
+              return FadeTransition(
+                opacity: curvedAnimation,
+                child: child,
+              );
+            },
+            transitionDuration: const Duration(milliseconds: 500),
+          ),
+        );
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 16.h),

@@ -22,6 +22,14 @@ class SvgAssets {
   static const String  apple = '${_assets}apple.svg';
   static const String  google = '${_assets}google.svg';
   static const String mail = "${_assets}mail.svg";
+  // bottom nav icons
+  static const String appointments = "${_assets}appointments.svg";
+  static const String treatments = "${_assets}treatments.svg";
+  static const String home = "${_assets}home.svg";
+  static const String myProfile = "${_assets}my_profile.svg";
+  static const String progress = "${_assets}progress.svg";
+  // bottom nav icons
+  static const String notification = "${_assets}notification.svg";
 }
 
 class LottieAssets {

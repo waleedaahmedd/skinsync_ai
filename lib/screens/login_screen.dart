@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:skinsync_ai/route_generator.dart';
 import 'package:skinsync_ai/utills/assets.dart';
@@ -10,20 +9,128 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/phone_widget.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  late Animation<double> _widthAnim;
+  late Animation<double> _heightAnim;
+  late Animation<double> _topAnim;
+  late Animation<double> _leftAnim;
+  late Animation<double> _radiusAnim;
+
+  OverlayEntry? _entry;
+  final GlobalKey _buttonKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 700),
+    );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) => _startAnimation());
+  }
+
+  void _startAnimation() {
+    final overlay = Overlay.of(context);
+    final size = MediaQuery.of(context).size;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      final renderBox =
+          _buttonKey.currentContext?.findRenderObject() as RenderBox?;
+      if (renderBox == null) return;
+
+      final buttonPos = renderBox.localToGlobal(Offset.zero);
+      final buttonSize = renderBox.size;
+
+      // Clamp to avoid negative/zero values
+      final targetWidth = buttonSize.width > 0 ? buttonSize.width : 1;
+      final targetHeight = buttonSize.height > 0 ? buttonSize.height : 1;
+
+      _topAnim = Tween<double>(begin: 0, end: buttonPos.dy.clamp(0, size.height))
+          .animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+      );
+
+      _leftAnim =
+          Tween<double>(begin: 0, end: buttonPos.dx.clamp(0, size.width)).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+      );
+
+      _widthAnim = Tween<double>(begin: size.width, end: targetWidth.toDouble()).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+      );
+
+      _heightAnim = Tween<double>(begin: size.height, end: targetHeight.toDouble()).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+      );
+
+      _radiusAnim =
+          Tween<double>(begin: 10.r.toDouble(), end: 40.r.toDouble()).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+      );
+
+      _entry = OverlayEntry(
+        builder: (context) {
+          return AnimatedBuilder(
+            animation: _controller,
+            builder: (_, __) {
+              return Positioned(
+                top: _topAnim.value.toDouble(),
+                left: _leftAnim.value.toDouble(),
+                child: Container(
+                  width: _widthAnim.value.toDouble().clamp(1, size.width),
+                  height: _heightAnim.value.toDouble().clamp(1, size.height),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius:
+                        BorderRadius.circular(_radiusAnim.value.toDouble()),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      );
+
+      overlay.insert(_entry!);
+
+      _controller.forward().then((_) {
+        _entry?.remove();
+        _entry = null;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _entry?.remove();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final bool loginWithEmail = context.read<AuthViewModel>().loginWithEmail;
+    final loginWithEmail = context.read<AuthViewModel>().loginWithEmail;
+
     return Scaffold(
       appBar: AppBar(
         leading: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(8.0),
           child: InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
+            onTap: () => Navigator.pop(context),
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -39,26 +146,26 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
       body: Padding(
-        padding: EdgeInsetsGeometry.only(
-          left: 30.w,
-          right: 30.w,
-          
-        ),
+        padding: EdgeInsets.only(left: 30.w, right: 30.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 43.h),
             Container(
               padding: EdgeInsets.all(14.w),
-              height: 79.h, width: 79.w,
+              height: 79.h,
+              width: 79.w,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: CustomColors.lightBlueColor.withValues(alpha: 0.4),
               ),
-            child: Image.asset(PngAssets.email, height: 50.h, width: 50.w)),
+              child: Image.asset(PngAssets.email, height: 50.h, width: 50.w),
+            ),
             SizedBox(height: 27.h),
             Text(
-              loginWithEmail ? "Continue with Email" : "Continue with Phone",
+              loginWithEmail
+                  ? "Continue with Email"
+                  : "Continue with Phone",
               style: CustomFonts.black30w600,
             ),
             SizedBox(height: 4.h),
@@ -69,26 +176,29 @@ class LoginScreen extends StatelessWidget {
             SizedBox(height: 22.h),
             loginWithEmail
                 ? TextField(
-                    style: TextStyle(color: CustomColors.blackColor),
                     decoration: InputDecoration(hintText: "Email Address"),
                   )
                 : PhoneWidget(
-                    controller: context.read<AuthViewModel>().phoneController,
+                    controller:
+                        context.read<AuthViewModel>().phoneController,
                     filled: true,
                   ),
-            
-           
-           
           ],
         ),
       ),
-      bottomNavigationBar: Padding(padding: EdgeInsets.all(30.w),
-      child:    SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(onPressed: () {
-                Navigator.pushNamed(context, otpScreen);
-              }, child: Text("Next")),
-            ),),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.all(30.w),
+        child: SizedBox(
+          key: _buttonKey, // Required for animation target
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, otpScreen);
+            },
+            child: Text("Next"),
+          ),
+        ),
+      ),
     );
   }
 }

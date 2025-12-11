@@ -1,14 +1,17 @@
 
 import 'package:flutter/material.dart';
-import 'package:skinsync_ai/screens/home_screen.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/bottom_nav_screen.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/home_screen.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 import 'package:skinsync_ai/screens/login_screen.dart';
 import 'package:skinsync_ai/screens/otp_screen.dart';
 import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/screens/splash_screen.dart';
+import 'package:skinsync_ai/utills/colored_print.dart';
 
 const String splashScreen = '/';
 const String homeScreen = '/home_screen';
+const String bottomNavScreen = '/bottom_nav_screen';
 const String getStartedScreen = '/get_started_screen';
 const String loginScreen = '/login_screen';
 const String otpScreen = '/otp_screen';
@@ -17,9 +20,10 @@ const String signupOnboarding = '/signup_onboarding';
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final args = settings.arguments;
-
+      CP.yellow('Navigating to ${settings.name} with args: $args');
     switch (settings.name) {
       case splashScreen:
+      
         return MaterialPageRoute(
           settings: RouteSettings(name: splashScreen),
           builder: (_) => SplashScreen(),
@@ -47,6 +51,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: signupOnboarding),
           builder: (_) => SignupOnboarding(),
+        ); 
+          case bottomNavScreen:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: signupOnboarding),
+          builder: (_) => BottomNavScreen(),
         ); 
       default:
         return _errorRoute();
