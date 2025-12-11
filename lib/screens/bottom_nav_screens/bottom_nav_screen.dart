@@ -30,7 +30,7 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true, // Important: body extends behind nav bar
+      extendBody: true,
       body: Stack(
         children: [
           _screens[_currentIndex],
