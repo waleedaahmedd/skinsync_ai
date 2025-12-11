@@ -25,6 +25,46 @@ class HomeScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(15.r),
               gradient: CustomColors.purpleBlueGradient,)),
         SizedBox(height: 44.h,),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 30.w),
+            
+            height: 150.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15.r),
+              gradient: CustomColors.purpleBlueGradient,)),
+        SizedBox(height: 44.h,),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 30.w),
+            
+            height: 150.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15.r),
+              gradient: CustomColors.purpleBlueGradient,)),
+        SizedBox(height: 44.h,),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 30.w),
+            
+            height: 150.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15.r),
+              gradient: CustomColors.purpleBlueGradient,)),
+        SizedBox(height: 44.h,),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 30.w),
+            
+            height: 150.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15.r),
+              gradient: CustomColors.purpleBlueGradient,)),
+        SizedBox(height: 44.h,),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 30.w),
+            
+            height: 150.h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15.r),
+              gradient: CustomColors.purpleBlueGradient,)),
+        SizedBox(height: 44.h,),
         ])),
       ),
     );
