@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/question_title.dart';
 
 import 'package:skinsync_ai/widgets/radio_button_widget.dart';
 
 class SkinType extends StatelessWidget {
+  
   const SkinType({super.key});
 
   @override
@@ -29,7 +31,10 @@ class SkinType extends StatelessWidget {
         SizedBox(height: 20.h,),
         SizedBox(
           width: double.infinity,
-          child: ElevatedButton(onPressed: (){}, child: Text("Next"))),
+          child: ElevatedButton(onPressed: ()
+          {
+            
+          }, child: Text("Next"))),
           SizedBox(height: 20.h,),
       ],
     );

@@ -1,11 +1,16 @@
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:skinsync_ai/screens/bottom_nav_page.dart';
+import 'package:skinsync_ai/screens/get_notified_screen.dart';
 import 'package:skinsync_ai/screens/home_screen.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 import 'package:skinsync_ai/screens/login_screen.dart';
 import 'package:skinsync_ai/screens/otp_screen.dart';
+import 'package:skinsync_ai/screens/profile_screen.dart';
 import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/screens/splash_screen.dart';
+import 'package:skinsync_ai/view_models/bottom_nav_view_model.dart';
 
 const String splashScreen = '/';
 const String homeScreen = '/home_screen';
@@ -13,6 +18,9 @@ const String getStartedScreen = '/get_started_screen';
 const String loginScreen = '/login_screen';
 const String otpScreen = '/otp_screen';
 const String signupOnboarding = '/signup_onboarding';
+const String profileScreen  = "/profile_screen"; 
+const String getNotifiedScreen = '/get_notified_screen';
+const String bottomNavPage = '/bottom_nav_page';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -47,7 +55,28 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: signupOnboarding),
           builder: (_) => SignupOnboarding(),
+        );
+         case profileScreen:
+        return MaterialPageRoute(
+          settings: RouteSettings(name:profileScreen),
+          builder: (_) => ProfileScreen(),
         ); 
+         case getNotifiedScreen:
+        return MaterialPageRoute(
+          settings: RouteSettings(name:getNotifiedScreen),
+          builder: (_) => GetNotifiedScreen(),
+        ); 
+          case bottomNavPage:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: bottomNavPage),
+
+          builder: (_) => ChangeNotifierProvider(
+            create: (context) => BottomNavViewModel(),
+            builder: (context, _) {
+              return BottomNavPage();
+            },
+          ),
+        );  
       default:
         return _errorRoute();
     }

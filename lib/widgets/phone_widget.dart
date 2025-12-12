@@ -89,7 +89,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
                 countryListTheme: CountryListThemeData(
                   bottomSheetWidth: MediaQuery.sizeOf(context).width,
                   bottomSheetHeight: 560.h,
-                  textStyle: TextStyle(fontSize: 14.sp),
+                  textStyle: TextStyle(fontSize: 14.sp,color: Colors.black),
                   searchTextStyle: TextStyle(fontSize: 14.sp),
                   margin: EdgeInsets.zero,
                   padding: EdgeInsets.only(
@@ -127,7 +127,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
                 ),
                 Center(
                   child: Text(
-                    _selectedCountry.phoneCode,
+                   "+ ${_selectedCountry.phoneCode}",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: CustomColors.blackColor,

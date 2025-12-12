@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skinsync_ai/route_generator.dart';
 import 'package:skinsync_ai/screens/life_style_habbits.dart';
 import 'package:skinsync_ai/screens/main_skin_concerns_screen.dart';
 import 'package:skinsync_ai/screens/skin_allergies_screen.dart';
@@ -56,11 +57,15 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
   }
 
   void _skipOnboarding() {
+
     if (_currentPage < _totalPages - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
+
+    } else if(_currentPage == 4) {
+      Navigator.pushNamed(context, profileScreen);
     } else {
       Navigator.of(context).pop();
     }

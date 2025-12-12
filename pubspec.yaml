@@ -44,6 +44,7 @@ dependencies:
   flutter_svg: ^2.2.2
   pinput: ^5.0.2
   country_picker: ^2.0.27
+  flutter_glass_morphism: 1.0.2
 
 
 
