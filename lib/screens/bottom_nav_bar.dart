@@ -44,7 +44,7 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: GlassMorphismMaterial(
-        blurIntensity: 20.0,
+        blurIntensity: 30.0,
         opacity: 0.10,
         glassThickness: 1.0,
 
