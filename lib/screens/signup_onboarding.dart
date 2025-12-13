@@ -67,7 +67,7 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
     } else if(_currentPage == 4) {
       Navigator.pushNamed(context, profileScreen);
     } else {
-      Navigator.of(context).pop();
+      Navigator.of(context).pushReplacementNamed(bottomNavScreen);
     }
   }
 
