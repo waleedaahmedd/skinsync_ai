@@ -53,8 +53,8 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                children: [
                                  _buildNavItem(SvgAssets.home, 0, 'Home'),
-                                 _buildNavItem(SvgAssets.treatments, 1, 'Treatments'),
-                                 _buildNavItem(SvgAssets.appointments, 2, 'Appointments'),
+                                 _buildNavItem(SvgAssets.treatment, 1, 'Treatments'),
+                                 _buildNavItem(SvgAssets.appointment, 2, 'Appointments'),
                                  _buildNavItem(SvgAssets.progress, 3, 'Progress'),
                                  _buildNavItem(SvgAssets.myProfile, 4, 'Profile'),
                                ],

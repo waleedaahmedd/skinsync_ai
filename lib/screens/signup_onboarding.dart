@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:skinsync_ai/route_generator.dart';
 import 'package:skinsync_ai/screens/life_style_habbits.dart';
 import 'package:skinsync_ai/screens/main_skin_concerns_screen.dart';
@@ -11,6 +12,7 @@ import 'package:skinsync_ai/screens/skin_type.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 
 class SignupOnboarding extends StatefulWidget {
   const SignupOnboarding({super.key});
@@ -20,20 +22,28 @@ class SignupOnboarding extends StatefulWidget {
 }
 
 class _SignupOnboardingState extends State<SignupOnboarding> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
+  late final PageController _pageController;
 
   // Only SkinType pages
   final List<Widget> _pages = [
     SkinType(),
     MainSkinConcernsScreen(),
     LifeStyleHabbits(),
-
     SkinAllergiesScreen(),
     SkinGoalsScreen(),
   ];
 
-  int get _totalPages => _pages.length;
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final signupViewModel = context.read<SignUpOnboardingViewModel>();
+        signupViewModel.setPageController(_pageController);
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -41,42 +51,10 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
     super.dispose();
   }
 
-  void _onPageChanged(int index) {
-    setState(() {
-      _currentPage = index;
-    });
-  }
-
-  void _goToPreviousPage() {
-    if (_currentPage > 0) {
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
-
-  void _skipOnboarding() {
-
-    if (_currentPage < _totalPages - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-
-    } else if(_currentPage == 4) {
-      Navigator.pushNamed(context, profileScreen);
-    } else {
-      Navigator.of(context).pushReplacementNamed(bottomNavScreen);
-    }
-  }
-
-  double get _progressValue {
-    return (_currentPage + 1) / _totalPages;
-  }
-
   @override
   Widget build(BuildContext context) {
+    final signupViewModel = context.watch<SignUpOnboardingViewModel>();
+    
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -111,7 +89,7 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              '${_currentPage + 1}/$_totalPages',
+                              '${signupViewModel.currentPage + 1}/${SignUpOnboardingViewModel.totalPages}',
                               style: CustomFonts.black20w600,
                             ),
                             SizedBox(width: 12.w),
@@ -119,7 +97,7 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10.r),
                                 child: LinearProgressIndicator(
-                                  value: _progressValue,
+                                  value: signupViewModel.progressValue(),
                                   minHeight: 10.h,
                                   backgroundColor: Colors.white,
                                   valueColor: AlwaysStoppedAnimation<Color>(
@@ -128,18 +106,6 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
                                 ),
                               ),
                             ),
-                            // SizedBox(width: 12.w),
-                            // Container(
-                            //   decoration: BoxDecoration(
-                            //     shape: BoxShape.circle,
-                            //     color: Colors.grey,
-                            //   ),
-                            //   child: Icon(
-                            //     Icons.close,
-                            //     size: 24.h,
-                            //     color: Colors.grey.shade200,
-                            //   ),
-                            // ),
                           ],
                         ),
                         SizedBox(height: 16.h),
@@ -148,10 +114,10 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            _currentPage > 0
+                            signupViewModel.currentPage > 0
                                 ? GestureDetector(
                                     onTap: () {
-                                      _goToPreviousPage();
+                                      signupViewModel.goToPreviousPage();
                                     },
                                     child: Container(
                                       padding: EdgeInsets.symmetric(
@@ -172,7 +138,10 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
                                 : SizedBox(),
                             GestureDetector(
                               onTap: () {
-                                _skipOnboarding();
+                                signupViewModel.skipOnboarding(
+                                  context,
+                                
+                                );
                               },
                               child: Row(
                                 children: [
@@ -209,10 +178,10 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
                   Expanded(
                     child: PageView.builder(
                       controller: _pageController,
-                      onPageChanged: _onPageChanged,
-                      itemCount: _totalPages,
+                      onPageChanged: (index) => signupViewModel.onPageChanged(index),
+                      itemCount: SignUpOnboardingViewModel.totalPages,
                       itemBuilder: (context, index) {
-                        return _pages[index]; // only SkinType()
+                        return _pages[index];
                       },
                     ),
                   ),
@@ -222,22 +191,6 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
           ),
         ),
       ),
-      // bottomNavigationBar: Padding(
-      //   padding: EdgeInsets.all(20.w),
-      //   child: ElevatedButton(
-      //     onPressed: _skipOnboarding,
-      //     style: ElevatedButton.styleFrom(
-      //       minimumSize: Size(double.infinity, 56.h),
-      //       shape: RoundedRectangleBorder(
-      //         borderRadius: BorderRadius.circular(12.r),
-      //       ),
-      //     ),
-      //     child: Text(
-      //       _currentPage == _totalPages - 1 ? 'Finish' : 'Next',
-      //       style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
-      //     ),
-      //   ),
-      // ),
     );
   }
 }

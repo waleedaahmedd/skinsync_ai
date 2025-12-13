@@ -33,6 +33,13 @@ class SvgAssets {
   static const String profilefilled = '${_assets}profilefilled.svg';
   static const String progressfilled = '${_assets}progressfilled.svg';
   static const String mappin = '${_assets}mappin.svg';
+   static const String appointments = "${_assets}appointments.svg";
+  static const String treatments = "${_assets}treatments.svg";
+  
+  static const String myProfile = "${_assets}my_profile.svg";
+ 
+  // bottom nav icons
+  static const String notification = "${_assets}notification.svg";
 }
 
 class LottieAssets {

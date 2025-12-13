@@ -1,34 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:skinsync_ai/route_generator.dart';
 
 class SignUpOnboardingViewModel extends ChangeNotifier {
   int currentPage = 0;
+  static const int totalPages = 5;
+  PageController? _pageController;
 
-  void updatePage(int index) {
+  void setPageController(PageController controller) {
+    _pageController = controller;
+  }
+
+  void onPageChanged(int index) {
     currentPage = index;
     notifyListeners();
   }
 
-  void nextPage(int totalPages, PageController controller, BuildContext context) {
+  void goToPreviousPage() {
+    if (_pageController != null && currentPage > 0) {
+      _pageController!.previousPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  void skipOnboarding(BuildContext context) {
+    if (_pageController == null) return;
+    
     if (currentPage < totalPages - 1) {
-      controller.nextPage(
+      _pageController!.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
-    } else {
-      Navigator.pushNamed(context, '/profileScreen');
-    }
+    } else if (currentPage == 4) {
+      Navigator.pushNamed(context, profileScreen);
+    } 
   }
 
-  void previousPage(PageController controller) {
-    if (currentPage > 0) {
-      controller.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
-
-  double progressValue(int totalPages) {
+  double progressValue() {
     return (currentPage + 1) / totalPages;
   }
 }

@@ -176,6 +176,7 @@ class _LoginScreenState extends State<LoginScreen>
             SizedBox(height: 22.h),
             loginWithEmail
                 ? TextField(
+                  style:CustomFonts.black18w400 ,
                     decoration: InputDecoration(hintText: "Email Address"),
                   )
                 : PhoneWidget(

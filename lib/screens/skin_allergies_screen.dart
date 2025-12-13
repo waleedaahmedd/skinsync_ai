@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 import 'package:skinsync_ai/widgets/question_title.dart';
 import 'package:skinsync_ai/widgets/radio_button_widget.dart';
 
@@ -35,7 +37,7 @@ class SkinAllergiesScreen extends StatelessWidget {
                     children: [
                       Container(
                         height: 118.h,
-      
+
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15.r),
                           image: DecorationImage(
@@ -45,7 +47,9 @@ class SkinAllergiesScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 7.h),
-                      Center(child: Text("Acne", style: CustomFonts.black18w600)),
+                      Center(
+                        child: Text("Acne", style: CustomFonts.black18w600),
+                      ),
                     ],
                   ),
                 ),
@@ -63,7 +67,7 @@ class SkinAllergiesScreen extends StatelessWidget {
                     children: [
                       Container(
                         height: 118.h,
-      
+
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15.r),
                           image: DecorationImage(
@@ -73,7 +77,9 @@ class SkinAllergiesScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 7.h),
-                      Center(child: Text("Acne", style: CustomFonts.black18w600)),
+                      Center(
+                        child: Text("Acne", style: CustomFonts.black18w600),
+                      ),
                     ],
                   ),
                 ),
@@ -95,7 +101,7 @@ class SkinAllergiesScreen extends StatelessWidget {
                     children: [
                       Container(
                         height: 118.h,
-      
+
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15.r),
                           image: DecorationImage(
@@ -105,7 +111,9 @@ class SkinAllergiesScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 7.h),
-                      Center(child: Text("Acne", style: CustomFonts.black18w600)),
+                      Center(
+                        child: Text("Acne", style: CustomFonts.black18w600),
+                      ),
                     ],
                   ),
                 ),
@@ -123,7 +131,7 @@ class SkinAllergiesScreen extends StatelessWidget {
                     children: [
                       Container(
                         height: 118.h,
-      
+
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15.r),
                           image: DecorationImage(
@@ -133,7 +141,9 @@ class SkinAllergiesScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 7.h),
-                      Center(child: Text("Acne", style: CustomFonts.black18w600)),
+                      Center(
+                        child: Text("Acne", style: CustomFonts.black18w600),
+                      ),
                     ],
                   ),
                 ),
@@ -152,23 +162,30 @@ class SkinAllergiesScreen extends StatelessWidget {
             children: [
               RadioButtonWidget(),
               SizedBox(width: 13.w),
-              Text("Yes ( Please Specify)",style: CustomFonts.black18w600,)
-      
+              Text("Yes ( Please Specify)", style: CustomFonts.black18w600),
             ],
           ),
           SizedBox(height: 18.h),
-           Row(
+          Row(
             children: [
               RadioButtonWidget(),
               SizedBox(width: 13.w),
-              Text("No",style: CustomFonts.black18w600,)
-      
+              Text("No", style: CustomFonts.black18w600),
             ],
           ),
           SizedBox(height: 20.h),
-          SizedBox(width: double.infinity,
-          child: ElevatedButton(onPressed: (){}, child: Text("Next")),),
-           SizedBox(height: 20.h),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                context.read<SignUpOnboardingViewModel>().skipOnboarding(
+                  context,
+                );
+              },
+              child: Text("Next"),
+            ),
+          ),
+          SizedBox(height: 20.h),
         ],
       ),
     );

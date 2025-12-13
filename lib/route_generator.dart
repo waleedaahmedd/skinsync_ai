@@ -11,9 +11,11 @@ import 'package:skinsync_ai/screens/profile_screen.dart';
 import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/screens/splash_screen.dart';
 import 'package:skinsync_ai/view_models/bottom_nav_view_model.dart';
+import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 
 const String splashScreen = '/';
 const String homeScreen = '/home_screen';
+const String bottomNavScreen = '/bottom_nav_screen';
 const String getStartedScreen = '/get_started_screen';
 const String loginScreen = '/login_screen';
 const String otpScreen = '/otp_screen';
@@ -25,9 +27,10 @@ const String bottomNavPage = '/bottom_nav_page';
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final args = settings.arguments;
-
+    //  CP.yellow('Navigating to ${settings.name} with args: $args');
     switch (settings.name) {
       case splashScreen:
+      
         return MaterialPageRoute(
           settings: RouteSettings(name: splashScreen),
           builder: (_) => SplashScreen(),
@@ -54,7 +57,12 @@ class RouteGenerator {
           case signupOnboarding:
         return MaterialPageRoute(
           settings: RouteSettings(name: signupOnboarding),
-          builder: (_) => SignupOnboarding(),
+          builder: (_) => ChangeNotifierProvider(
+            create: (context) => SignUpOnboardingViewModel(),
+            builder: (context, _) {
+              return SignupOnboarding();
+            },
+          ),
         );
          case profileScreen:
         return MaterialPageRoute(
