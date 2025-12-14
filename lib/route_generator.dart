@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
 import 'package:skinsync_ai/screens/get_notified_screen.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/face_scanning_complete_screen.dart';
 import 'package:skinsync_ai/screens/home_screen.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/scan_your_face_screen.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 import 'package:skinsync_ai/screens/login_screen.dart';
 import 'package:skinsync_ai/screens/otp_screen.dart';
@@ -12,6 +14,8 @@ import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/screens/splash_screen.dart';
 import 'package:skinsync_ai/view_models/bottom_nav_view_model.dart';
 import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
+
+import 'screens/bottom_nav_screens/face_detection_screen.dart';
 
 const String splashScreen = '/';
 const String homeScreen = '/home_screen';
@@ -23,6 +27,9 @@ const String signupOnboarding = '/signup_onboarding';
 const String profileScreen  = "/profile_screen"; 
 const String getNotifiedScreen = '/get_notified_screen';
 const String bottomNavPage = '/bottom_nav_page';
+const String scanYourFace = '/scan_youir_face';
+const String faceDetection = '/face_detection';
+const String faceScanningCompleteScreen = '/face_scanning_complete_screen';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -84,7 +91,22 @@ class RouteGenerator {
               return BottomNavPage();
             },
           ),
-        );  
+        ); 
+        case scanYourFace:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: scanYourFace),
+          builder: (_) => ScanYourFaceScreen(),
+        ); 
+          case faceDetection:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: faceDetection),
+          builder: (_) => FaceDetectionScreen(),
+        ); 
+          case faceScanningCompleteScreen:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: faceScanningCompleteScreen),
+          builder: (_) => FaceScanningCompleteScreen(),
+        ); 
       default:
         return _errorRoute();
     }

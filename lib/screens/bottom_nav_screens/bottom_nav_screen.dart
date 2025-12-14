@@ -9,6 +9,8 @@ import 'package:skinsync_ai/screens/bottom_nav_screens/progress_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 
+import '../../widgets/scan_face_button.dart';
+
 class BottomNavScreen extends StatefulWidget {
   const BottomNavScreen({super.key});
 
@@ -36,31 +38,39 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
           _screens[_currentIndex],
            Positioned(
             bottom: 0,
-             child: ClipRRect(
-               borderRadius: BorderRadius.circular(20),
-               child: BackdropFilter(
-                           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                           child: Container(
-                            height: 98.h,
-                             padding: EdgeInsets.symmetric(vertical: 21.h, horizontal: 30.w),
-                              width: MediaQuery.of(context).size.width,
-                             decoration: BoxDecoration(
-                               color: Colors.transparent,
-                               borderRadius: BorderRadius.circular(20),
-                               border: Border.all(color: Colors.white.withOpacity(0.3)),
-                             ),
-                             child: Row(
-                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                               children: [
-                                 _buildNavItem(SvgAssets.home, 0, 'Home'),
-                                 _buildNavItem(SvgAssets.treatment, 1, 'Treatments'),
-                                 _buildNavItem(SvgAssets.appointment, 2, 'Appointments'),
-                                 _buildNavItem(SvgAssets.progress, 3, 'Progress'),
-                                 _buildNavItem(SvgAssets.myProfile, 4, 'Profile'),
-                               ],
-                             ),
-                           ),
-               ),
+             child: Column(
+               children: [
+                ScanFaceButton(
+                   
+                 ),
+                 SizedBox(height: 10.h,),
+                 ClipRRect(
+                   borderRadius: BorderRadius.circular(20),
+                   child: BackdropFilter(
+                               filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                               child: Container(
+                                height: 98.h,
+                                 padding: EdgeInsets.symmetric(vertical: 21.h, horizontal: 30.w),
+                                  width: MediaQuery.of(context).size.width,
+                                 decoration: BoxDecoration(
+                                   color: Colors.transparent,
+                                   borderRadius: BorderRadius.circular(20),
+                                   border: Border.all(color: Colors.white.withOpacity(0.3)),
+                                 ),
+                                 child: Row(
+                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                   children: [
+                                     _buildNavItem(SvgAssets.home, 0, 'Home'),
+                                     _buildNavItem(SvgAssets.treatments, 1, 'Treatments'),
+                                     _buildNavItem(SvgAssets.appointments, 2, 'Appointments'),
+                                     _buildNavItem(SvgAssets.progress, 3, 'Progress'),
+                                     _buildNavItem(SvgAssets.myProfile, 4, 'Profile'),
+                                   ],
+                                 ),
+                               ),
+                   ),
+                 ),
+               ],
              ),
            ),
         ],
