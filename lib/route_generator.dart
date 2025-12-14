@@ -19,7 +19,7 @@ import 'screens/bottom_nav_screens/face_detection_screen.dart';
 
 const String splashScreen = '/';
 const String homeScreen = '/home_screen';
-const String bottomNavScreen = '/bottom_nav_screen';
+// const String bottomNavScreen = '/bottom_nav_screen';
 const String getStartedScreen = '/get_started_screen';
 const String loginScreen = '/login_screen';
 const String otpScreen = '/otp_screen';

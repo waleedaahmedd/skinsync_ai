@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
 import 'package:skinsync_ai/screens/bottom_nav_bar.dart';
@@ -6,6 +7,7 @@ import 'package:skinsync_ai/screens/home_screen.dart';
 import 'package:skinsync_ai/screens/skin_type.dart';
 
 import '../view_models/bottom_nav_view_model.dart';
+import '../widgets/scan_face_button.dart';
 
 
 class BottomNavPage extends StatelessWidget {
@@ -33,7 +35,18 @@ class BottomNavPage extends StatelessWidget {
     return Consumer<BottomNavViewModel>(
       builder: (context, provider, child) {
         return Scaffold(
-          body: _children[provider.currentPage],
+          body: Stack(
+            alignment: Alignment.center,
+            children: [
+              _children[provider.currentPage],
+              Positioned(
+bottom:110.h,
+                child: ScanFaceButton(
+                     
+                   ),
+              ),
+            ],
+          ),
           extendBody: true,
           // floatingActionButton: Visibility(
           //   visible: MediaQuery.viewInsetsOf(context).bottom == 0,
@@ -56,8 +69,6 @@ class BottomNavPage extends StatelessWidget {
           //     ),
           //   ),
           // ),
-          // floatingActionButtonLocation:
-          //     FloatingActionButtonLocation.centerDocked,
           bottomNavigationBar: BottomNavBar(),
         );
       },
