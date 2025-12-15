@@ -11,6 +11,7 @@ import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 import 'package:skinsync_ai/view_models/theme_view_model.dart';
 import 'app_init.dart';
+import 'view_models/face_scan_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,7 @@ Future<void> main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => ThemeViewModel()),
+                ChangeNotifierProvider(create: (context) => FaceScanProvider()),
 
         ChangeNotifierProvider(
           create: (context) => AuthViewModel(authRepository: authService),

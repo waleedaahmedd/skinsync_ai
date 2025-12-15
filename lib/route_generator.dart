@@ -4,7 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
 import 'package:skinsync_ai/screens/get_notified_screen.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/face_scanning_complete_screen.dart';
 import 'package:skinsync_ai/screens/home_screen.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/scan_your_face_screen.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 import 'package:skinsync_ai/screens/login_screen.dart';
 import 'package:skinsync_ai/screens/otp_screen.dart';
@@ -17,9 +19,10 @@ import 'package:skinsync_ai/screens/splash_screen.dart';
 import 'package:skinsync_ai/view_models/bottom_nav_view_model.dart';
 import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 
+import 'screens/bottom_nav_screens/face_detection_screen.dart';
+
 const String splashScreen = '/';
 const String homeScreen = '/home_screen';
-const String bottomNavScreen = '/bottom_nav_screen';
 const String getStartedScreen = '/get_started_screen';
 const String loginScreen = '/login_screen';
 const String otpScreen = '/otp_screen';
@@ -27,6 +30,9 @@ const String signupOnboarding = '/signup_onboarding';
 const String profileScreen  = "/profile_screen"; 
 const String getNotifiedScreen = '/get_notified_screen';
 const String bottomNavPage = '/bottom_nav_page';
+const String scanYourFace = '/scan_youir_face';
+const String faceDetection = '/face_detection';
+const String faceScanningCompleteScreen = '/face_scanning_complete_screen';
 const String myProfileScreen = "/my_profile_screen";
 const String settingScreen = "/setting_screen";
 const String personalDetailScreen = "/personal_detail_screen";
@@ -92,26 +98,6 @@ class RouteGenerator {
               return BottomNavPage();
             },
           ),
-        );
-        case myProfileScreen:
-           return MaterialPageRoute(
-          settings: RouteSettings(name:myProfileScreen),
-          builder: (_) => MyProfileScreen(),
-        ); 
-          case settingScreen:
-           return MaterialPageRoute(
-          settings: RouteSettings(name:settingScreen),
-          builder: (_) => SettingScreen(),
-        ); 
-        case personalDetailScreen :
-        return MaterialPageRoute(
-          settings: RouteSettings(name:personalDetailScreen),
-          builder: (_) => PersonalDetail(),
-        );
-         case savedTreatmentScreen :
-        return MaterialPageRoute(
-          settings: RouteSettings(name:savedTreatmentScreen),
-          builder: (_) => SavedTreatmentScreen(),
         );  
       default:
         return _errorRoute();

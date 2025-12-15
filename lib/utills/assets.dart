@@ -48,6 +48,7 @@ class SvgAssets {
  
   // bottom nav icons
   static const String notification = "${_assets}notification.svg";
+  static const String faceId = "${_assets}face_id.svg";
 }
 
 class LottieAssets {
