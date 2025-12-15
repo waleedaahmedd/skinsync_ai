@@ -56,101 +56,69 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
     final signupViewModel = context.watch<SignUpOnboardingViewModel>();
     
     return Scaffold(
-      body: SafeArea(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 30.w),
-          decoration: BoxDecoration(
-            gradient: CustomColors.blueWhitePurpleGradient,
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                top: -40,
-                left: 0,
-                right: 0,
-                child: Opacity(
-                  opacity: 0.5,
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 201.h,
-                    child: Image.asset(PngAssets.signupVector),
-                  ),
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 30.w),
+        decoration: BoxDecoration(
+          gradient: CustomColors.blueWhitePurpleGradient,
+        ),
+        child: Stack(
+          children: [
+            Positioned(
+              top: -40,
+              left: 0,
+              right: 0,
+              child: Opacity(
+                opacity: 0.5,
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 201.h,
+                  child: Image.asset(PngAssets.signupVector),
                 ),
               ),
-              Column(
-                children: [
-                  SizedBox(height: 28.h),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 00.w),
-                    child: Column(
-                      children: [
-                        // Progress Bar
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              '${signupViewModel.currentPage + 1}/${SignUpOnboardingViewModel.totalPages}',
-                              style: CustomFonts.black20w600,
-                            ),
-                            SizedBox(width: 12.w),
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10.r),
-                                child: LinearProgressIndicator(
-                                  value: signupViewModel.progressValue(),
-                                  minHeight: 10.h,
-                                  backgroundColor: Colors.white,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    CustomColors.lightBlueColor,
-                                  ),
+            ),
+            Column(
+              children: [
+                SizedBox(height: 28.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 00.w),
+                  child: Column(
+                    children: [
+                      // Progress Bar
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '${signupViewModel.currentPage + 1}/${SignUpOnboardingViewModel.totalPages}',
+                            style: CustomFonts.black20w600,
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10.r),
+                              child: LinearProgressIndicator(
+                                value: signupViewModel.progressValue(),
+                                minHeight: 10.h,
+                                backgroundColor: Colors.white,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  CustomColors.lightBlueColor,
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                        SizedBox(height: 16.h),
-
-                        // Navigation Buttons Row
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            signupViewModel.currentPage > 0
-                                ? GestureDetector(
-                                    onTap: () {
-                                      signupViewModel.goToPreviousPage();
-                                    },
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 8.w,
-                                        vertical: 10.h,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: CustomColors.purpleColor,
-                                      ),
-                                      child: Icon(
-                                        CupertinoIcons.arrow_left,
-                                        size: 18.sp,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  )
-                                : SizedBox(),
-                            GestureDetector(
-                              onTap: () {
-                                signupViewModel.skipOnboarding(
-                                  context,
-                                
-                                );
-                              },
-                              child: Row(
-                                children: [
-                                  Text(
-                                    'Skip This',
-                                    style: CustomFonts.black16w400,
-                                  ),
-                                  SizedBox(width: 8.w),
-                                  Container(
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16.h),
+      
+                      // Navigation Buttons Row
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          signupViewModel.currentPage > 0
+                              ? GestureDetector(
+                                  onTap: () {
+                                    signupViewModel.goToPreviousPage();
+                                  },
+                                  child: Container(
                                     padding: EdgeInsets.symmetric(
                                       horizontal: 8.w,
                                       vertical: 10.h,
@@ -160,35 +128,65 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
                                       color: CustomColors.purpleColor,
                                     ),
                                     child: Icon(
-                                      CupertinoIcons.arrow_right,
+                                      CupertinoIcons.arrow_left,
                                       size: 18.sp,
                                       color: Colors.white,
                                     ),
                                   ),
-                                ],
-                              ),
+                                )
+                              : SizedBox(),
+                          GestureDetector(
+                            onTap: () {
+                              signupViewModel.skipOnboarding(
+                                context,
+                              
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Skip This',
+                                  style: CustomFonts.black16w400,
+                                ),
+                                SizedBox(width: 8.w),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 8.w,
+                                    vertical: 10.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: CustomColors.purpleColor,
+                                  ),
+                                  child: Icon(
+                                    CupertinoIcons.arrow_right,
+                                    size: 18.sp,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-
-                  // PageView
-                  Expanded(
-                    child: PageView.builder(
-                      controller: _pageController,
-                      onPageChanged: (index) => signupViewModel.onPageChanged(index),
-                      itemCount: SignUpOnboardingViewModel.totalPages,
-                      itemBuilder: (context, index) {
-                        return _pages[index];
-                      },
-                    ),
+                ),
+      
+                // PageView
+                Expanded(
+                  child: PageView.builder(
+                    controller: _pageController,
+                    onPageChanged: (index) => signupViewModel.onPageChanged(index),
+                    itemCount: SignUpOnboardingViewModel.totalPages,
+                    itemBuilder: (context, index) {
+                      return _pages[index];
+                    },
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

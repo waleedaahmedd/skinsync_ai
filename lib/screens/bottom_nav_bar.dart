@@ -43,59 +43,57 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: GlassMorphismMaterial(
-        blurIntensity: 30.0,
-        opacity: 0.10,
-        glassThickness: 1.0,
-
-        //tintColor: Colors.white.withOpacity(0.15),
-        enableBackgroundDistortion: true,
-        enableGlassBorder: true,
-
-        child: Consumer<BottomNavViewModel>(
-          builder: (context, provider, child) {
-            final int currentPage = provider.currentPage;
-            return Container(
-              height: 98.h,
-              child: Row(
-                children: [
-                  _buildNavBarItem(
-                    context: context,
-                    item: _items[0],
-                    index: 0,
-                    isSelected: currentPage == 0,
-                  ),
-                  _buildNavBarItem(
-                    context: context,
-                    item: _items[1],
-                    index: 1,
-                    isSelected: currentPage == 1,
-                  ),
-
-                  _buildNavBarItem(
-                    context: context,
-                    item: _items[2],
-                    index: 2,
-                    isSelected: currentPage == 2,
-                  ),
-                  _buildNavBarItem(
-                    context: context,
-                    item: _items[3],
-                    index: 3,
-                    isSelected: currentPage == 3,
-                  ),
-                  _buildNavBarItem(
-                    context: context,
-                    item: _items[4],
-                    index: 4,
-                    isSelected: currentPage == 4,
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
+    return GlassMorphismMaterial(
+      blurIntensity: 30.0,
+      opacity: 0.10,
+      glassThickness: 1.0,
+    
+      //tintColor: Colors.white.withOpacity(0.15),
+      enableBackgroundDistortion: true,
+      enableGlassBorder: true,
+    
+      child: Consumer<BottomNavViewModel>(
+        builder: (context, provider, child) {
+          final int currentPage = provider.currentPage;
+          return Container(
+            height: 98.h,
+            child: Row(
+              children: [
+                _buildNavBarItem(
+                  context: context,
+                  item: _items[0],
+                  index: 0,
+                  isSelected: currentPage == 0,
+                ),
+                _buildNavBarItem(
+                  context: context,
+                  item: _items[1],
+                  index: 1,
+                  isSelected: currentPage == 1,
+                ),
+    
+                _buildNavBarItem(
+                  context: context,
+                  item: _items[2],
+                  index: 2,
+                  isSelected: currentPage == 2,
+                ),
+                _buildNavBarItem(
+                  context: context,
+                  item: _items[3],
+                  index: 3,
+                  isSelected: currentPage == 3,
+                ),
+                _buildNavBarItem(
+                  context: context,
+                  item: _items[4],
+                  index: 4,
+                  isSelected: currentPage == 4,
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
