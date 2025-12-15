@@ -45,6 +45,9 @@ class SvgAssets {
   static const String authentication = "${_assets}authentication.svg";
   static const String biometric = "${_assets}biometric.svg";
   static const String card = "${_assets}card.svg";
+  static const String face = "${_assets}face.svg";
+  static const String eye = "${_assets}eye.svg";
+  static const String glasses = "${_assets}glasses.svg";
  
   // bottom nav icons
   static const String notification = "${_assets}notification.svg";
