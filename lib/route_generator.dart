@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
@@ -27,7 +26,7 @@ const String getStartedScreen = '/get_started_screen';
 const String loginScreen = '/login_screen';
 const String otpScreen = '/otp_screen';
 const String signupOnboarding = '/signup_onboarding';
-const String profileScreen  = "/profile_screen"; 
+const String profileScreen = "/profile_screen";
 const String getNotifiedScreen = '/get_notified_screen';
 const String bottomNavPage = '/bottom_nav_page';
 const String scanYourFace = '/scan_youir_face';
@@ -44,7 +43,6 @@ class RouteGenerator {
     //  CP.yellow('Navigating to ${settings.name} with args: $args');
     switch (settings.name) {
       case splashScreen:
-      
         return MaterialPageRoute(
           settings: RouteSettings(name: splashScreen),
           builder: (_) => SplashScreen(),
@@ -57,18 +55,19 @@ class RouteGenerator {
       case getStartedScreen:
         return MaterialPageRoute(
           settings: RouteSettings(name: getStartedScreen),
-          builder: (_) => GetStartedScreen());
-          case loginScreen:
+          builder: (_) => GetStartedScreen(),
+        );
+      case loginScreen:
         return MaterialPageRoute(
           settings: RouteSettings(name: loginScreen),
           builder: (_) => LoginScreen(),
-        );  
-         case otpScreen:
+        );
+      case otpScreen:
         return MaterialPageRoute(
           settings: RouteSettings(name: otpScreen),
           builder: (_) => OtpScreen(),
-        ); 
-          case signupOnboarding:
+        );
+      case signupOnboarding:
         return MaterialPageRoute(
           settings: RouteSettings(name: signupOnboarding),
           builder: (_) => ChangeNotifierProvider(
@@ -78,17 +77,17 @@ class RouteGenerator {
             },
           ),
         );
-         case profileScreen:
+      case profileScreen:
         return MaterialPageRoute(
-          settings: RouteSettings(name:profileScreen),
+          settings: RouteSettings(name: profileScreen),
           builder: (_) => YourProfileScreen(),
-        ); 
-         case getNotifiedScreen:
+        );
+      case getNotifiedScreen:
         return MaterialPageRoute(
-          settings: RouteSettings(name:getNotifiedScreen),
+          settings: RouteSettings(name: getNotifiedScreen),
           builder: (_) => GetNotifiedScreen(),
-        ); 
-          case bottomNavPage:
+        );
+      case bottomNavPage:
         return MaterialPageRoute(
           settings: RouteSettings(name: bottomNavPage),
 
@@ -98,7 +97,22 @@ class RouteGenerator {
               return BottomNavPage();
             },
           ),
-        );  
+        );
+      case scanYourFace:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: scanYourFace),
+          builder: (_) => ScanYourFaceScreen(),
+        );
+      case faceDetection:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: faceDetection),
+          builder: (_) => FaceDetectionScreen(),
+        );
+      case faceScanningCompleteScreen:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: faceScanningCompleteScreen),
+          builder: (_) => FaceScanningCompleteScreen(),
+        );
       default:
         return _errorRoute();
     }
