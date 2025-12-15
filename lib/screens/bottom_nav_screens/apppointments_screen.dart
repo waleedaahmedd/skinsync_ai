@@ -152,6 +152,8 @@ body: SingleChildScrollView(
                             alignment: Alignment.centerRight,
                             child: ScheduledAppointmentTile()),
                         ),
+                            SizedBox(height: 200.h,),
+
   
   ],),
 ),
