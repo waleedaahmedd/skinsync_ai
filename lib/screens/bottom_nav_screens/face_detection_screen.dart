@@ -161,9 +161,18 @@ Future<void> _process(CameraImage image) async {
           body: Stack(
             children: [
               if (_cameraController != null)
-                SizedBox(
-                  height: 1.sh,
-                  child: CameraPreview(_cameraController!)),
+                if (_cameraController != null)
+  SizedBox.expand(
+    child: FittedBox(
+      fit: BoxFit.cover,
+      child: SizedBox(
+        width: _cameraController!.value.previewSize!.height,
+        height: _cameraController!.value.previewSize!.width,
+        child: CameraPreview(_cameraController!),
+      ),
+    ),
+  ),
+
     
               Center(
                 child: CustomPaint(
