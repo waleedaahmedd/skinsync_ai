@@ -1,13 +1,17 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
 import 'package:skinsync_ai/screens/get_notified_screen.dart';
 import 'package:skinsync_ai/screens/home_screen.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 import 'package:skinsync_ai/screens/login_screen.dart';
 import 'package:skinsync_ai/screens/otp_screen.dart';
-import 'package:skinsync_ai/screens/profile_screen.dart';
+import 'package:skinsync_ai/screens/personal_detail_screen.dart';
+import 'package:skinsync_ai/screens/saved_treatment_screen.dart';
+import 'package:skinsync_ai/screens/setting_screen.dart';
+import 'package:skinsync_ai/screens/your_profile_screen.dart';
 import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/screens/splash_screen.dart';
 import 'package:skinsync_ai/view_models/bottom_nav_view_model.dart';
@@ -23,6 +27,10 @@ const String signupOnboarding = '/signup_onboarding';
 const String profileScreen  = "/profile_screen"; 
 const String getNotifiedScreen = '/get_notified_screen';
 const String bottomNavPage = '/bottom_nav_page';
+const String myProfileScreen = "/my_profile_screen";
+const String settingScreen = "/setting_screen";
+const String personalDetailScreen = "/personal_detail_screen";
+const String savedTreatmentScreen = "/saved_treatment_screen";
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -67,7 +75,7 @@ class RouteGenerator {
          case profileScreen:
         return MaterialPageRoute(
           settings: RouteSettings(name:profileScreen),
-          builder: (_) => ProfileScreen(),
+          builder: (_) => YourProfileScreen(),
         ); 
          case getNotifiedScreen:
         return MaterialPageRoute(
@@ -84,6 +92,26 @@ class RouteGenerator {
               return BottomNavPage();
             },
           ),
+        );
+        case myProfileScreen:
+           return MaterialPageRoute(
+          settings: RouteSettings(name:myProfileScreen),
+          builder: (_) => MyProfileScreen(),
+        ); 
+          case settingScreen:
+           return MaterialPageRoute(
+          settings: RouteSettings(name:settingScreen),
+          builder: (_) => SettingScreen(),
+        ); 
+        case personalDetailScreen :
+        return MaterialPageRoute(
+          settings: RouteSettings(name:personalDetailScreen),
+          builder: (_) => PersonalDetail(),
+        );
+         case savedTreatmentScreen :
+        return MaterialPageRoute(
+          settings: RouteSettings(name:savedTreatmentScreen),
+          builder: (_) => SavedTreatmentScreen(),
         );  
       default:
         return _errorRoute();

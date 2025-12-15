@@ -28,6 +28,14 @@ class CustomColors {
       Color(0xffE7C6E8),
     ],
   );
+   static LinearGradient whitePurpleGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Color(0xffFFF0FF),
+      Color(0xffE7C6E8),
+    ],
+  );
   static const LinearGradient purpleWhiteBlueGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,

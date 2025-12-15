@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_bar.dart';
+
 import 'package:skinsync_ai/screens/home_screen.dart';
 import 'package:skinsync_ai/screens/skin_type.dart';
 
@@ -16,7 +18,7 @@ class BottomNavPage extends StatelessWidget {
      HomeScreen(),
       HomeScreen(),
        HomeScreen(),
-        HomeScreen(),
+       MyProfileScreen(),
     // HomeScreen(),
     // ChangeNotifierProvider(
     //   lazy: true,

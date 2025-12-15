@@ -7,8 +7,8 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+class YourProfileScreen extends StatelessWidget {
+  const YourProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

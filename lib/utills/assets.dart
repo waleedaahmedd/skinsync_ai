@@ -35,8 +35,16 @@ class SvgAssets {
   static const String mappin = '${_assets}mappin.svg';
    static const String appointments = "${_assets}appointments.svg";
   static const String treatments = "${_assets}treatments.svg";
-  
+  static const String profileIcon = "${_assets}profile_icon.svg";
+  static const String logOut = "${_assets}logout.svg";
+  static const String loyalty = "${_assets}loyalty.svg";
+  static const String medical = "${_assets}medical.svg";
+  static const String receipts = "${_assets}receipts.svg";
+  static const String saveTreatment= "${_assets}save_treatment.svg";
   static const String myProfile = "${_assets}my_profile.svg";
+  static const String authentication = "${_assets}authentication.svg";
+  static const String biometric = "${_assets}biometric.svg";
+  static const String card = "${_assets}card.svg";
  
   // bottom nav icons
   static const String notification = "${_assets}notification.svg";
@@ -57,4 +65,5 @@ class DummyAssets {
   static const String acen = '${_assets}acne.png';
   static const String profile = "${_assets}profile.png";
   static const String treatmentimage = "${_assets}treatmentimage.png";
+   static const String doctorImage = "${_assets}doctor_image.png";
 }
