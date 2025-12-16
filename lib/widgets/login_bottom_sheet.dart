@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:skinsync_ai/route_generator.dart';
 import 'package:skinsync_ai/screens/login_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
+import 'package:skinsync_ai/utills/biometric_helper.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
 
 void loginBottomSheet(BuildContext context) {
+  
   showModalBottomSheet(
     backgroundColor: Colors.transparent,
     constraints: BoxConstraints(minWidth: double.infinity),
@@ -108,8 +109,8 @@ void loginBottomSheet(BuildContext context) {
                           ),
                       ),
                     ),
-                     SizedBox(height: 10.h),
-                      SizedBox(
+                    SizedBox(height: 10.h),
+                    SizedBox(
                       width: double.infinity,
                       child: InkWell(
                         onTap: () { 
@@ -165,10 +166,46 @@ void loginBottomSheet(BuildContext context) {
                         ),
                     ),
                     ],),
+                    SizedBox(height: 20.h),
+
+
+            FutureBuilder<bool>(
+  future: BiometricHelper().isBiometricAvailable(),
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const SizedBox();
+    } else if (snapshot.hasData && snapshot.data == true) {
+      // Biometric available, now get icon
+      return FutureBuilder<IconData>(
+        future: BiometricHelper().getBiometricIcon(),
+        builder: (context, iconSnapshot) {
+          if (!iconSnapshot.hasData) return const SizedBox();
+          final icon = iconSnapshot.data!;
+          return Center(
+            child: InkWell(
+              onTap: () async {
+                bool authenticated = await BiometricHelper()
+                    .authenticate(reason: 'Login with Biometrics');
+                if (authenticated && context.mounted) {
+                  Navigator.pushNamed(context, bottomNavPage);
+                } 
+              },
+              child: Icon(icon, size: 60.h),
+            ),
+          );
+        },
+      );
+    } else {
+      return const SizedBox.shrink(); // No biometrics available
+    }
+  },
+),
+
+
                   
                    
                           
-                    SizedBox(height: 30.h),
+                    SizedBox(height: 10.h),
                   ],
                 ),
                 // Drag handle

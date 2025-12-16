@@ -47,6 +47,7 @@ dependencies:
   google_mlkit_face_detection: ^0.13.1
   camera: ^0.11.3
   flutter_glass_morphism: 1.0.2
+  local_auth: ^3.0.0
 
 
 

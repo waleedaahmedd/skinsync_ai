@@ -7,6 +7,8 @@
 -->
 	<key>NSCameraUsageDescription</key>
 	<string>This app uses the camera to detect your face.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>This app authenticate using face id?</string>
     <!--
   permissions
 -->
