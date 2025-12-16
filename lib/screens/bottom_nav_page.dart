@@ -13,16 +13,15 @@ import 'package:skinsync_ai/screens/home_screen.dart';
 import '../view_models/bottom_nav_view_model.dart';
 import '../widgets/scan_face_button.dart';
 
-
 class BottomNavPage extends StatelessWidget {
   const BottomNavPage({super.key});
 
   static final List<Widget> _children = [
     HomeScreen(),
-     TreatmentsScreen(),
-      ApppointmentsScreen(),
-      ProgressScreen(),
-       MyProfileScreen(),
+    TreatmentsScreen(),
+    ApppointmentsScreen(),
+    ProgressScreen(),
+    MyProfileScreen(),
     // HomeScreen(),
     // ChangeNotifierProvider(
     //   lazy: true,
@@ -47,12 +46,7 @@ class BottomNavPage extends StatelessWidget {
             alignment: Alignment.center,
             children: [
               _children[provider.currentPage],
-              Positioned(
-bottom:110.h,
-                child: ScanFaceButton(
-                     
-                   ),
-              ),
+              Positioned(bottom: 110.h+MediaQuery.paddingOf(context).bottom, child: ScanFaceButton()),
             ],
           ),
           extendBody: true,
@@ -77,7 +71,10 @@ bottom:110.h,
           //     ),
           //   ),
           // ),
-          bottomNavigationBar: BottomNavBar(),
+          bottomNavigationBar: Padding(
+            padding:  EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
+            child: BottomNavBar(),
+          ),
         );
       },
     );

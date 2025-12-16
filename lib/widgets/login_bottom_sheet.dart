@@ -27,7 +27,7 @@ void loginBottomSheet(BuildContext context) {
           top: 10.h,
           left: 10.w,
           right: 10.w,
-          bottom: MediaQuery.viewInsetsOf(context).bottom,
+          bottom: 10.h + MediaQuery.viewInsetsOf(context).bottom,
         ),
         child: Container(
         

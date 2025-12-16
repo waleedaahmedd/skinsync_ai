@@ -57,7 +57,7 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
     
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 30.w),
+        padding: EdgeInsets.only(right: 30.w,left:30.w,bottom: MediaQuery.paddingOf(context).bottom,top: MediaQuery.paddingOf(context).top),
         decoration: BoxDecoration(
           gradient: CustomColors.blueWhitePurpleGradient,
         ),

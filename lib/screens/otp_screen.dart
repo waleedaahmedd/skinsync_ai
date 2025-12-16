@@ -38,7 +38,7 @@ class OtpScreen extends StatelessWidget {
       ),
 
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        padding: EdgeInsets.only(left: 30.w,right: 30.w, bottom: MediaQuery.paddingOf(context).bottom),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

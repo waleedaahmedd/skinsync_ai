@@ -187,16 +187,18 @@ class _LoginScreenState extends State<LoginScreen>
           ],
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.all(30.w),
-        child: SizedBox(
-          key: _buttonKey, // Required for animation target
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, otpScreen);
-            },
-            child: Text("Next"),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(30.w),
+          child: SizedBox(
+            key: _buttonKey, // Required for animation target
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, otpScreen);
+              },
+              child: Text("Next"),
+            ),
           ),
         ),
       ),
