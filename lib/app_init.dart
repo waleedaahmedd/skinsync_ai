@@ -12,7 +12,7 @@ class AppInit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeMode themeMode = context.watch<ThemeViewModel>().themeMode;
+    final ThemeMode themeMode = ThemeMode.light;
     return ScreenUtilInit(
         designSize: getDesignSize(context: context),
         ensureScreenSize: true,

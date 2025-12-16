@@ -13,6 +13,8 @@
 
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>keychain-access-groups</key>
+    <array/>
 	<key>CFBundleDisplayName</key>
 	<string>Skinsync Ai</string>
 	<key>CFBundleExecutable</key>

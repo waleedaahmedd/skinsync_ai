@@ -18,15 +18,14 @@ Future<void> main() async {
   await ScreenUtil.ensureScreenSize();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await SharedPref.init();
-  await SecureStorage().init();
+ // await SecureStorage().init();
   final apiBaseHelper = ApiBaseHelper();
   final authService = AuthService(apiClient: apiBaseHelper);
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => ThemeViewModel()),
-                ChangeNotifierProvider(create: (context) => FaceScanProvider()),
-
+       // ChangeNotifierProvider(create: (context) => ThemeViewModel()),
+        ChangeNotifierProvider(create: (context) => FaceScanProvider()),
         ChangeNotifierProvider(
           create: (context) => AuthViewModel(authRepository: authService),
         ),
