@@ -19,7 +19,6 @@ class PngAssets {
   static const String laserTreatment = '${_assets}laser_treatment.png';
 }
 
-
 class SvgAssets {
   static const String _assets = 'assets/svg/';
   static const String apple = '${_assets}apple.svg';
@@ -36,14 +35,14 @@ class SvgAssets {
   static const String profilefilled = '${_assets}profilefilled.svg';
   static const String progressfilled = '${_assets}progressfilled.svg';
   static const String mappin = '${_assets}mappin.svg';
-   static const String appointments = "${_assets}appointments.svg";
+  static const String appointments = "${_assets}appointments.svg";
   static const String treatments = "${_assets}treatments.svg";
   static const String profileIcon = "${_assets}profile_icon.svg";
   static const String logOut = "${_assets}logout.svg";
   static const String loyalty = "${_assets}loyalty.svg";
   static const String medical = "${_assets}medical.svg";
   static const String receipts = "${_assets}receipts.svg";
-  static const String saveTreatment= "${_assets}save_treatment.svg";
+  static const String saveTreatment = "${_assets}save_treatment.svg";
   static const String myProfile = "${_assets}my_profile.svg";
   static const String authentication = "${_assets}authentication.svg";
   static const String biometric = "${_assets}biometric.svg";
@@ -53,7 +52,6 @@ class SvgAssets {
   static const String glasses = "${_assets}glasses.svg";
   static const String tick = "${_assets}trick.svg";
 
- 
   // bottom nav icons
   static const String notification = "${_assets}notification.svg";
   static const String faceId = "${_assets}face_id.svg";
@@ -74,5 +72,5 @@ class DummyAssets {
   static const String acen = '${_assets}acne.png';
   static const String profile = "${_assets}profile.png";
   static const String treatmentimage = "${_assets}treatmentimage.png";
-   static const String doctorImage = "${_assets}doctor_image.png";
+  static const String doctorImage = "${_assets}doctor_image.png";
 }

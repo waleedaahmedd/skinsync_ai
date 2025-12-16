@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skinsync_ai/route_generator.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -20,7 +21,7 @@ class FaceScanScreen extends StatelessWidget {
           ),
           child: Stack(
             children: [
-                Positioned(
+              Positioned(
                 top: 70.h,
                 right: 0.w,
                 left: 0.w,
@@ -28,7 +29,6 @@ class FaceScanScreen extends StatelessWidget {
                   PngAssets.vector2,
                   height: 552.h,
                   fit: BoxFit.fill,
-                  
                 ),
               ),
               Positioned(
@@ -39,10 +39,10 @@ class FaceScanScreen extends StatelessWidget {
                   PngAssets.vector,
                   height: 376.h,
                   fit: BoxFit.fill,
-                  color: Color(0xff88E3FB).withOpacity(0.7)
+                  color: Color(0xff88E3FB).withOpacity(0.7),
                 ),
               ),
-              
+
               Positioned(
                 top: 92.h,
                 right: 0,
@@ -75,33 +75,49 @@ class FaceScanScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     SizedBox(height: 60.h),
-                  
+
                     Text('Face Scan', style: CustomFonts.black30w600),
-                    SizedBox(height: 2.h,),
-                    Text("We’ll scan your face and create a cool model just for you to enhance your experience!",
-                    style: CustomFonts.grey16w400,),
-                    
+                    SizedBox(height: 2.h),
+                    Text(
+                      "We’ll scan your face and create a cool model just for you to enhance your experience!",
+                      style: CustomFonts.grey16w400,
+                    ),
+
                     SizedBox(height: 37.5.h),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        
                         onPressed: () {
-                          loginBottomSheet(context);
+                          Navigator.of(context).pushNamed(scanYourFace);
                         },
                         child: Text("Scan Your Face"),
                       ),
                     ),
-                    SizedBox(height: 20.h,),
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(horizontal: 121.w,vertical: 19.h),
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 1.w,color: Colors.black),
-                        borderRadius: BorderRadius.circular(50.r)
+                    SizedBox(height: 20.h),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          bottomNavPage,
+                          (route) => false,
+                        );
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 121.w,
+                          vertical: 19.h,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 1.w, color: Colors.black),
+                          borderRadius: BorderRadius.circular(50.r),
+                        ),
+                        child: Text(
+                          " Explore Clinics",
+                          style: CustomFonts.black22w600,
+                        ),
                       ),
-                      child: Text(" Explore Clinics",style: CustomFonts.black22w600,),
-                    )
+                    ),
                   ],
                 ),
               ),
