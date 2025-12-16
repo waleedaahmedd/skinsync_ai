@@ -15,6 +15,7 @@ class PngAssets {
   static const String email = "${_assets}email.png";
   static const String notification = '${_assets}notification.png';
   static const String getNotified = '${_assets}getnotified.png';
+  static const String image = '${_assets}image.png';
   static const String laserTreatment = '${_assets}laser_treatment.png';
 }
 

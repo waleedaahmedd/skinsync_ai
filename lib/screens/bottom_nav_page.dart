@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:provider/provider.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/apppointments_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_bar.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/progress_screen.dart';
@@ -19,7 +20,7 @@ class BottomNavPage extends StatelessWidget {
   static final List<Widget> _children = [
     HomeScreen(),
      TreatmentsScreen(),
-      HomeScreen(),
+      ApppointmentsScreen(),
       ProgressScreen(),
        MyProfileScreen(),
     // HomeScreen(),
