@@ -9,6 +9,7 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});
+  static const String routeName = '/SettingScreen';
 
   @override
   Widget build(BuildContext context) {

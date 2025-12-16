@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:skinsync_ai/route_generator.dart';
+import 'package:skinsync_ai/screens/bottom_nav_page.dart';
 import 'package:skinsync_ai/screens/login_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/biometric_helper.dart';
@@ -115,7 +116,7 @@ void loginBottomSheet(BuildContext context) {
                       child: InkWell(
                         onTap: () { 
                           context.read<AuthViewModel>().setloginWithEmail(true);
-                          Navigator.pushNamed(context, loginScreen);},
+                          Navigator.pushNamed(context, LoginScreen.routeName);},
                         child: Container(
                           padding: EdgeInsets.symmetric(vertical: 16.h),
                           decoration: BoxDecoration(
@@ -187,7 +188,7 @@ void loginBottomSheet(BuildContext context) {
                 bool authenticated = await BiometricHelper()
                     .authenticate(reason: 'Login with Biometrics');
                 if (authenticated && context.mounted) {
-                  Navigator.pushNamed(context, bottomNavPage);
+                  Navigator.pushNamed(context, BottomNavPage.routeName);
                 } 
               },
               child: Icon(icon, size: 60.h),

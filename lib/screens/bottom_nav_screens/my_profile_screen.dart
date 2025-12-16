@@ -3,12 +3,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:skinsync_ai/route_generator.dart';
+import 'package:skinsync_ai/screens/personal_detail_screen.dart';
+import 'package:skinsync_ai/screens/saved_treatment_screen.dart';
+import 'package:skinsync_ai/screens/setting_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
 class MyProfileScreen extends StatelessWidget {
   const MyProfileScreen({super.key});
+  static const String routeName = "/MyProfileScreen";
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,7 @@ class MyProfileScreen extends StatelessWidget {
                 Text("My Profile", style: CustomFonts.black26w600),
                 InkWell(
                   onTap: () {
-                    Navigator.pushNamed(context, settingScreen);
+                    Navigator.pushNamed(context, SettingScreen.routeName);
                   },
                   child: Container(
                     height: 44.h,
@@ -97,7 +101,7 @@ class MyProfileScreen extends StatelessWidget {
               children: [
                 profileOppition(
                   callBack: () {
-                    Navigator.pushNamed(context, personalDetailScreen);
+                    Navigator.pushNamed(context, PersonalDetailScreen.routeName);
                   },
                   icon: SvgAssets.profileIcon,
                   title: "Personal Details",
@@ -105,7 +109,7 @@ class MyProfileScreen extends StatelessWidget {
                 SizedBox(height: 36.h),
                 profileOppition(
                   callBack: () {
-                    Navigator.pushNamed(context, savedTreatmentScreen);
+                    Navigator.pushNamed(context, SavedTreatmentScreen.routeName);
                   },
                   icon: SvgAssets.saveTreatment,
                   title: "Saved Treatments & Clinics",

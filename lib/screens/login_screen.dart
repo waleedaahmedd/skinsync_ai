@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:skinsync_ai/route_generator.dart';
+import 'package:skinsync_ai/screens/otp_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -11,6 +12,8 @@ import 'package:skinsync_ai/widgets/phone_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+    static const String routeName = '/LoginScreen';
+
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -195,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen>
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, otpScreen);
+                Navigator.pushNamed(context, OtpScreen.routeName);
               },
               child: Text("Next"),
             ),

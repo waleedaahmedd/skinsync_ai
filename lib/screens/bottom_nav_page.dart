@@ -15,6 +15,8 @@ import '../widgets/scan_face_button.dart';
 
 class BottomNavPage extends StatelessWidget {
   const BottomNavPage({super.key});
+          static const String routeName = '/BottomNavPage';
+
 
   static final List<Widget> _children = [
     HomeScreen(),
