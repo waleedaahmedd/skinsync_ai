@@ -7,6 +7,7 @@ import '../../view_models/face_scan_provider.dart';
 
 class FaceScanningCompleteScreen extends StatelessWidget {
   const FaceScanningCompleteScreen({super.key});
+    static const String routeName = '/FaceScanningCompleteScreen';
 
   @override
   Widget build(BuildContext context) {

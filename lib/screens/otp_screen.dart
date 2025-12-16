@@ -5,12 +5,14 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:pinput/pinput.dart';
 import 'package:skinsync_ai/route_generator.dart';
+import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
 class OtpScreen extends StatelessWidget {
   const OtpScreen({super.key});
+    static const String routeName = '/OtpScreen';
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +113,7 @@ class OtpScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(onPressed: () {
-                Navigator.pushNamed(context, signupOnboarding);
+                Navigator.pushNamed(context, SignupOnboarding.routeName);
               }, child: Text("Next"))),
               SizedBox(height: 20.h),
           ],

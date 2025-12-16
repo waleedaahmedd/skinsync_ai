@@ -16,6 +16,7 @@ import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 
 class SignupOnboarding extends StatefulWidget {
   const SignupOnboarding({super.key});
+   static const String routeName = '/SignupOnboarding';
 
   @override
   State<SignupOnboarding> createState() => _SignupOnboardingState();

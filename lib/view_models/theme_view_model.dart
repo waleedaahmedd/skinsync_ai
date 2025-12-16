@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-
 import '../../services/storage_service.dart';
 
 class ThemeViewModel extends ChangeNotifier {
   ThemeMode _themeMode = ThemeMode.light;
 
   ThemeMode get themeMode => _themeMode;
-  final StorageService _storageService = StorageService();
+  final StorageService _storageService = StorageService.instance;
+  
   ThemeViewModel() {
     _loadTheme();
   }
 
-  void _loadTheme() async {
-    _themeMode = _storageService.getThemeMode();
-    notifyListeners();
+  void _loadTheme() {
+    if (_storageService.isInitialized) {
+      _themeMode = _storageService.getThemeMode();
+      notifyListeners();
+    }
   }
 
   void setThemeMode(ThemeMode themeMode) async {

@@ -6,8 +6,9 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 
-class PersonalDetail extends StatelessWidget {
-  const PersonalDetail({super.key});
+class PersonalDetailScreen extends StatelessWidget {
+  const PersonalDetailScreen({super.key});
+  static const String routeName = '/PersonalDetailScreen';
 
   @override
   Widget build(BuildContext context) {

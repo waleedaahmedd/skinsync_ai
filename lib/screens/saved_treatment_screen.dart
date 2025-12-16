@@ -9,6 +9,7 @@ import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 
 class SavedTreatmentScreen extends StatelessWidget {
   const SavedTreatmentScreen({super.key});
+  static const String routeName = '/SavedTreatmentScreen';
 
   @override
   Widget build(BuildContext context) {

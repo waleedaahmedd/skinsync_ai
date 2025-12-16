@@ -8,8 +8,8 @@ import 'package:skinsync_ai/services/auth_service.dart';
 import 'package:skinsync_ai/utills/secure_storage_service.dart';
 import 'package:skinsync_ai/utills/shared_pref.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
-import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 import 'package:skinsync_ai/view_models/theme_view_model.dart';
+import 'package:skinsync_ai/services/storage_service.dart';
 import 'app_init.dart';
 import 'view_models/face_scan_provider.dart';
 
@@ -19,6 +19,7 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await SharedPref.init();
   await SecureStorage().init();
+  await StorageService.instance.init();
   final apiBaseHelper = ApiBaseHelper();
   final authService = AuthService(apiClient: apiBaseHelper);
   runApp(

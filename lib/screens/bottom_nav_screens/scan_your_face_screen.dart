@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:skinsync_ai/route_generator.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/face_detection_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -9,6 +10,7 @@ import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 
 class ScanYourFaceScreen extends StatelessWidget {
   const ScanYourFaceScreen({super.key});
+    static const String routeName = '/ScanYourFaceScreen';
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +60,7 @@ class ScanYourFaceScreen extends StatelessWidget {
                  SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(onPressed:(){
-                    Navigator.of(context).pushNamed(faceDetection);
+                    Navigator.of(context).pushNamed(FaceDetectionScreen.routeName);
                   }, child: Text("Scan Now")),
                 ),
                 SizedBox(height: 24.h,),

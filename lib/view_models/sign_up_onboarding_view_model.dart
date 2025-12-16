@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skinsync_ai/route_generator.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
 
 class SignUpOnboardingViewModel extends ChangeNotifier {
   int currentPage = 0;
@@ -33,7 +34,7 @@ class SignUpOnboardingViewModel extends ChangeNotifier {
         curve: Curves.easeInOut,
       );
     } else if (currentPage == 4) {
-      Navigator.pushNamed(context, profileScreen);
+      Navigator.pushNamed(context, MyProfileScreen.routeName);
     } 
   }
 
