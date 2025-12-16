@@ -47,7 +47,9 @@ class GetNotifiedScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(onPressed: (){
-                Navigator.pushReplacementNamed(context, bottomNavPage);
+                Navigator.pushReplacementNamed(context, faceScanScreen
+                
+                );
               }, child:Text("Turn On Notifications"))),
              SizedBox(height: 19.h),
              Center(child: Text("Not Right Now",style: CustomFonts.grey22w500,))

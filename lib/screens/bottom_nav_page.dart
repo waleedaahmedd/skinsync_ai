@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_bar.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/progress_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
 
 import 'package:skinsync_ai/screens/home_screen.dart';
@@ -19,7 +20,7 @@ class BottomNavPage extends StatelessWidget {
     HomeScreen(),
      TreatmentsScreen(),
       HomeScreen(),
-       HomeScreen(),
+      ProgressScreen(),
        MyProfileScreen(),
     // HomeScreen(),
     // ChangeNotifierProvider(

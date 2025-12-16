@@ -51,64 +51,66 @@ class SavedTreatmentScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-  ],
+              ],
             ),
           ),
-                SizedBox(height: 25.h),
+          SizedBox(height: 25.h),
 
-                /// HORIZONTAL LIST (FIXED HEIGHT ✅)
-                SizedBox(
-                  height: 221.h,
+          /// HORIZONTAL LIST (FIXED HEIGHT ✅)
+          SizedBox(
+            height: 221.h,
 
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 4,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(left: index== 0 ? 30.w:0, right: 12.w),
-                        child: Column(
-                          children: [
-                            Container(
-                              width: 181.w,
-
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20.r),
-                                gradient: CustomColors.whitePurpleGradient,
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20.r),
-                                child: Image.asset(
-                                  DummyAssets.doctorImage,
-                                height: 164.h,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 5.h),
-                            SizedBox(
-                              width: 181.w,
-                              child: Text(
-                                "AI Model Treatment Name",
-                                style: CustomFonts.black18w600,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 4,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(
+                    left: index == 0 ? 30.w : 0,
+                    right: 12.w,
                   ),
-                ),
-                SizedBox(height: 31.h,),
-              
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 181.w,
 
-            
-          Divider(color: CustomColors.greyColor,),
-          SizedBox(height: 31.h,),
-          Padding(padding: EdgeInsets.symmetric(horizontal: 30.w),
-          child: Column(
-            children: [
-              Row(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.r),
+                          gradient: CustomColors.whitePurpleGradient,
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20.r),
+                          child: Image.asset(
+                            DummyAssets.doctorImage,
+                            height: 164.h,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 5.h),
+                      SizedBox(
+                        width: 181.w,
+                        child: Text(
+                          "AI Model Treatment Name",
+                          style: CustomFonts.black18w600,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          SizedBox(height: 31.h),
+
+          Divider(color: CustomColors.greyColor),
+          SizedBox(height: 31.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 30.w),
+            child: Column(
+              children: [
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
@@ -129,52 +131,72 @@ class SavedTreatmentScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-            ],
-          ),),
-          SizedBox(height: 13.h,),
-           SizedBox(
-                  height: 221.h,
-
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: 4,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(left: index== 0 ? 30.w:0, right: 12.w),
-                        child: SizedBox(
-      width: 310.w,
-      child: Column(
-        children: [
-          Container(
-            height: 160.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.r),
+              ],
             ),
-            child: Image.asset(DummyAssets.treatmentimage, height: 160.h),
           ),
-          SizedBox(height: 8.h),
-          Row(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Botox Treatment", style: CustomFonts.black18w600),
-                Text("October 20, 3:00 PM",style: CustomFonts.grey14w400,)
-                ],
-              ),
-              Spacer(),
-              SvgPicture.asset(SvgAssets.mappin, height: 12.h, width: 12.w),
-              SizedBox(width: 4.w),
-              Text("Glow Skin Clinic", style: CustomFonts.grey14w400),
-            ],
-          ),
-        ],
-      ),
-    ),  
-                      );
-                    },
+          SizedBox(height: 13.h),
+          SizedBox(
+            height: 221.h,
+
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: 4,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(
+                    left: index == 0 ? 30.w : 0,
+                    right: 12.w,
                   ),
-                ),
+                  child: SizedBox(
+                    width: 310.w,
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 160.h,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                          child: Image.asset(
+                            DummyAssets.treatmentimage,
+                            height: 160.h,
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Botox Treatment",
+                                  style: CustomFonts.black18w600,
+                                ),
+                                Text(
+                                  "October 20, 3:00 PM",
+                                  style: CustomFonts.grey14w400,
+                                ),
+                              ],
+                            ),
+                            Spacer(),
+                            SvgPicture.asset(
+                              SvgAssets.mappin,
+                              height: 12.h,
+                              width: 12.w,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              "Glow Skin Clinic",
+                              style: CustomFonts.grey14w400,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

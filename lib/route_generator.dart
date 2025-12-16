@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
+import 'package:skinsync_ai/screens/face_scan_screen.dart';
 import 'package:skinsync_ai/screens/get_notified_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/face_scanning_complete_screen.dart';
 import 'package:skinsync_ai/screens/home_screen.dart';
@@ -36,6 +37,7 @@ const String myProfileScreen = "/my_profile_screen";
 const String settingScreen = "/setting_screen";
 const String personalDetailScreen = "/personal_detail_screen";
 const String savedTreatmentScreen = "/saved_treatment_screen";
+const String faceScanScreen = '/face_scan_screen';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -112,6 +114,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: faceScanningCompleteScreen),
           builder: (_) => FaceScanningCompleteScreen(),
+        );
+        case faceScanScreen:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: faceScanScreen),
+          builder: (_) => FaceScanScreen(),
         );
       default:
         return _errorRoute();
