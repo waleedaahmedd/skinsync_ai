@@ -57,7 +57,7 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
     
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.only(right: 30.w,left:30.w,bottom: MediaQuery.paddingOf(context).bottom,top: MediaQuery.paddingOf(context).top),
+        padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom,top: MediaQuery.paddingOf(context).top),
         decoration: BoxDecoration(
           gradient: CustomColors.blueWhitePurpleGradient,
         ),
@@ -77,10 +77,11 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
               ),
             ),
             Column(
+              
               children: [
                 SizedBox(height: 28.h),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 00.w),
+                  padding: EdgeInsets.symmetric(horizontal: 30.w),
                   child: Column(
                     children: [
                       // Progress Bar

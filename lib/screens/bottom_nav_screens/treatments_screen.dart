@@ -63,11 +63,13 @@ class _TreatmentsScreenState extends State<TreatmentsScreen> {
       ),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Divider(color: CustomColors.greyColor),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30.w),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 15.h),
                   TextField(
@@ -147,7 +149,8 @@ class _TreatmentsScreenState extends State<TreatmentsScreen> {
               ),
             ),
             SizedBox(height: 32.h),
-            Center(
+            Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 30.0.w),
               child: Text(
                 "Recommended Treatments",
                 style: CustomFonts.black24w600,
