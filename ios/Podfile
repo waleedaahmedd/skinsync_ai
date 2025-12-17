@@ -1,5 +1,6 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, '15.5'
+$iOSVersion = '15.5'
+platform :ios, $iOSVersion
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -30,23 +31,29 @@ flutter_ios_podfile_setup
 # Workaround for MLKit + M1/M2 simulator
 # Exclude arm64 for simulator builds
 post_install do |installer|
-   installer.pods_project.build_configurations.each do |config|
-      config.build_settings["EXCLUDED_ARCHS[sdk=*]"] = "armv7"
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = $iOSVersion
-    end
+  installer.pods_project.build_configurations.each do |config|
+    config.build_settings["EXCLUDED_ARCHS[sdk=*]"] = "armv7"
+    config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = $iOSVersion
+    # Fix for Flutter.h header not found with ML Kit plugins
+    config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+  end
+  
   installer.pods_project.targets.each do |target|
-      flutter_additional_ios_build_settings(target)
-
-      target.build_configurations.each do |config|
-          if Gem::Version.new($iOSVersion) > Gem::Version.new(config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'])
-            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = $iOSVersion
-          end
+    flutter_additional_ios_build_settings(target)
+    
+    target.build_configurations.each do |config|
+      if Gem::Version.new($iOSVersion) > Gem::Version.new(config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'])
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = $iOSVersion
       end
+      # Fix for framework embedding issues with flutter_secure_storage
+      config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+      config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'YES'
+    end
   end
 end
 
 target 'Runner' do
-  use_frameworks!
+  use_frameworks! :linkage => :static
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do

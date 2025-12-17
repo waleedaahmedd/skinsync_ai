@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -33,69 +34,127 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
   }
 
   Future<void> _initCamera() async {
-    final cameras = await availableCameras();
-    final front = cameras.firstWhere(
-      (c) => c.lensDirection == CameraLensDirection.front,
-    );
+    try {
+      final cameras = await availableCameras();
+      if (cameras.isEmpty) {
+        if (mounted) {
+          _showError('No cameras available');
+        }
+        return;
+      }
 
-    _cameraController = CameraController(
-      front,
-      ResolutionPreset.high,
-      enableAudio: false,
-    );
+      final front = cameras.firstWhere(
+        (c) => c.lensDirection == CameraLensDirection.front,
+        orElse: () => cameras.first,
+      );
 
-    await _cameraController!.initialize();
+      _cameraController = CameraController(
+        front,
+        ResolutionPreset.high,
+        enableAudio: false,
+        imageFormatGroup: Platform.isIOS 
+            ? ImageFormatGroup.bgra8888 
+            : ImageFormatGroup.yuv420,
+      );
 
-    _cameraController!.startImageStream((image) {
-      if (_isDetecting) return;
-      _isDetecting = true;
+      await _cameraController!.initialize();
 
-      _process(image).whenComplete(() {
-        _isDetecting = false;
+      if (!mounted) return;
+
+      _cameraController!.startImageStream((image) {
+        if (_isDetecting || !mounted) return;
+        _isDetecting = true;
+
+        _process(image).whenComplete(() {
+          if (mounted) {
+            _isDetecting = false;
+          }
+        });
       });
-    });
 
-    setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      if (mounted) {
+        _showError('Failed to initialize camera: $e');
+      }
+    }
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
+    });
   }
   InputImageRotation _rotationFromCamera(CameraDescription camera) {
-  switch (camera.sensorOrientation) {
-    case 0:
-      return InputImageRotation.rotation0deg;
-    case 90:
-      return InputImageRotation.rotation90deg;
-    case 180:
-      return InputImageRotation.rotation180deg;
-    case 270:
-      return InputImageRotation.rotation270deg;
-    default:
-      return InputImageRotation.rotation0deg;
+    // iOS front camera typically has 270 degree rotation
+    // Android front camera typically has 90 degree rotation
+    if (Platform.isIOS) {
+      switch (camera.sensorOrientation) {
+        case 0:
+          return InputImageRotation.rotation0deg;
+        case 90:
+          return InputImageRotation.rotation90deg;
+        case 180:
+          return InputImageRotation.rotation180deg;
+        case 270:
+          return InputImageRotation.rotation270deg;
+        default:
+          return InputImageRotation.rotation270deg; // Default for iOS front camera
+      }
+    } else {
+      switch (camera.sensorOrientation) {
+        case 0:
+          return InputImageRotation.rotation0deg;
+        case 90:
+          return InputImageRotation.rotation90deg;
+        case 180:
+          return InputImageRotation.rotation180deg;
+        case 270:
+          return InputImageRotation.rotation270deg;
+        default:
+          return InputImageRotation.rotation90deg; // Default for Android front camera
+      }
+    }
   }
-}
-
-
 
   InputImage _inputImageFromCameraImage(
-  CameraImage image,
-  CameraDescription camera,
-) {
-  final WriteBuffer allBytes = WriteBuffer();
-  for (final plane in image.planes) {
-    allBytes.putUint8List(plane.bytes);
+    CameraImage image,
+    CameraDescription camera,
+  ) {
+    final WriteBuffer allBytes = WriteBuffer();
+    for (final plane in image.planes) {
+      allBytes.putUint8List(plane.bytes);
+    }
+    final bytes = allBytes.done().buffer.asUint8List();
+
+    final rotation = _rotationFromCamera(camera);
+
+    // iOS uses bgra8888, Android uses nv21
+    final format = Platform.isIOS 
+        ? InputImageFormat.bgra8888 
+        : InputImageFormat.nv21;
+
+    return InputImage.fromBytes(
+      bytes: bytes,
+      metadata: InputImageMetadata(
+        size: Size(image.width.toDouble(), image.height.toDouble()),
+        rotation: rotation,
+        format: format,
+        bytesPerRow: image.planes.first.bytesPerRow,
+      ),
+    );
   }
-  final bytes = allBytes.done().buffer.asUint8List();
-
-  final rotation = _rotationFromCamera(camera);
-
-  return InputImage.fromBytes(
-    bytes: bytes,
-    metadata: InputImageMetadata(
-      size: Size(image.width.toDouble(), image.height.toDouble()),
-      rotation: rotation,
-      format: InputImageFormat.nv21, // ✅ Android
-      bytesPerRow: image.planes.first.bytesPerRow,
-    ),
-  );
-}
 
 
 Future<void> _process(CameraImage image) async {
@@ -146,6 +205,13 @@ Future<void> _process(CameraImage image) async {
       context,
       faceScanningCompleteScreen
     );
+  }
+
+  @override
+  void dispose() {
+    _cameraController?.dispose();
+    _faceDetector.close();
+    super.dispose();
   }
 
   @override
