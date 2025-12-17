@@ -7,6 +7,8 @@ class FaceScanProvider extends ChangeNotifier {
   bool isFaceDetected = false;
   bool isFaceCentered = false;
   bool isCapturing = false;
+  bool flash = false;
+  bool isBefore = false;
 
   Timer? _holdTimer;
   XFile? capturedImage;
@@ -16,6 +18,14 @@ class FaceScanProvider extends ChangeNotifier {
       progress = 0.3;
       notifyListeners();
     }
+  }
+  void toggleFlash() {
+    flash = !flash;
+    notifyListeners();
+  }
+  void toggleIsBefore() {
+    isBefore = !isBefore;
+    notifyListeners();
   }
 
   void faceCentered() {

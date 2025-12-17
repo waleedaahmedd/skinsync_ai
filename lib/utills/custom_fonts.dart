@@ -83,8 +83,15 @@ class CustomFonts {
   );
   static TextStyle black14w600 = TextStyle(
     height: 0,
-    fontSize: 22.sp,
+    fontSize: 14.sp,
     fontWeight: FontWeight.w600,
+    color:CustomColors.blackColor ,
+    fontFamily: 'Degular',
+  );
+  static TextStyle black14w500 = TextStyle(
+    height: 0,
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w500,
     color:CustomColors.blackColor ,
     fontFamily: 'Degular',
   );
@@ -186,6 +193,13 @@ class CustomFonts {
     color:CustomColors.blackColor ,
     fontFamily: 'Degular',
   );
+  static TextStyle black20w600Underlined = TextStyle(
+    height: 0,
+    fontSize: 20.sp,
+    fontWeight: FontWeight.w600,
+    color:CustomColors.blackColor ,
+    fontFamily: 'Degular',
+  );
    static TextStyle black26w600 = TextStyle(
     height: 0,
     fontSize: 26.sp,
@@ -221,6 +235,13 @@ class CustomFonts {
     color:CustomColors.blackColor ,
     fontFamily: 'Degular',
   );
+  static TextStyle black16w500 = TextStyle(
+    height: 0,
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w500,
+    color:CustomColors.blackColor ,
+    fontFamily: 'Degular',
+  );
   static TextStyle black17w500 = TextStyle(
     height: 0,
     fontSize: 17.sp,
@@ -233,6 +254,13 @@ class CustomFonts {
     fontSize: 28.sp,
     fontWeight: FontWeight.w600,
     color: CustomColors.blackColor,
+    fontFamily: 'Degular',
+  );
+  static TextStyle pinkunderlined20w600 = TextStyle(
+    height: 0,
+    fontSize: 20.sp,
+    fontWeight: FontWeight.w600,  decoration: TextDecoration.underline,
+    color: CustomColors.purpleColor,
     fontFamily: 'Degular',
   );
 

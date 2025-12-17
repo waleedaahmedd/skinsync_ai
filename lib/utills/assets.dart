@@ -55,6 +55,10 @@ class SvgAssets {
   // bottom nav icons
   static const String notification = "${_assets}notification.svg";
   static const String faceId = "${_assets}face_id.svg";
+  static const String beforeAfter = "${_assets}before_after.svg";
+  static const String dail = "${_assets}dail.svg";
+  static const String syringe = "${_assets}syringe.svg";
+  static const String hand = "${_assets}hand.svg";
 }
 
 class LottieAssets {

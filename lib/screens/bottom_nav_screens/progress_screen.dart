@@ -6,6 +6,8 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
+import '../../widgets/grey_container.dart';
+
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
 
@@ -39,19 +41,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 30.0.w),
-            child: Container(
-              decoration: BoxDecoration(
-                color: CustomColors.greyColor,
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              height: 44.h,
-              width: 44.w,
-
-              child: Icon(
-                Icons.notifications_none_outlined,
-                color: Colors.black,
-              ),
-            ),
+            child: GreyContainer(icon:   Icons.notifications_none_outlined,),
           ),
         ],
       ),
