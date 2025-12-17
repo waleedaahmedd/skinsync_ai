@@ -11,6 +11,7 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 import '../../route_generator.dart';
 import '../../view_models/face_scan_provider.dart';
 import '../../widgets/face_scan_radial_widget.dart';
+import '../ar_face_model_Preview_screen.dart';
 
 class FaceDetectionScreen extends StatefulWidget {
   const FaceDetectionScreen({super.key});
@@ -137,6 +138,7 @@ Future<void> _process(CameraImage image) async {
     final provider = context.read<FaceScanProvider>();
     if (_cameraController == null || provider.isCapturing) return;
     await Future.delayed( Duration(milliseconds: 500));
+    _cameraController!.setFlashMode(provider.flash ? FlashMode.off : FlashMode.torch); 
     final image = await _cameraController!.takePicture();
     await _cameraController!.stopImageStream();
     
@@ -146,7 +148,7 @@ Future<void> _process(CameraImage image) async {
     if (!mounted) return;
     Navigator.pushReplacementNamed(
       context,
-      FaceScanScreen.routeName
+      ArFaceModelPreviewScreen.routeName
     );
   }
 
@@ -174,6 +176,27 @@ Future<void> _process(CameraImage image) async {
       ),
     ),
   ),
+  Align(
+    alignment: Alignment.topRight,
+    child: Padding(
+      padding: EdgeInsets.only(top: 40.h, right: 20.w),
+      child: GestureDetector(
+        onTap: () {
+          provider.toggleFlash();
+          if (_cameraController != null) {
+            _cameraController!.setFlashMode(
+              provider.flash ? FlashMode.torch : FlashMode.off,
+            );
+          }
+        },
+        child: Icon(
+          provider.flash ? Icons.flash_on : Icons.flash_off,
+          color: Colors.white,
+          size: 30.sp,
+        ),
+      ),
+    ),
+  ),
 
     
               Center(
@@ -188,7 +211,10 @@ Future<void> _process(CameraImage image) async {
                 left: 20.w,
                 child: SafeArea(
                   child: GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      // _captureAndNavigate();
+                    },
                     child: Container(
                       padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 18.w),
                       decoration: BoxDecoration(
@@ -232,4 +258,10 @@ Future<void> _process(CameraImage image) async {
       },
     );
   }
+
+  @override
+  void dispose() {
+    _cameraController?.dispose();
+    _faceDetector.close();
+    super.dispose();  }
 }

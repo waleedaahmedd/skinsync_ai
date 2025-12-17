@@ -6,6 +6,7 @@ import 'package:skinsync_ai/widgets/scheduled_appointment_tile.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
 import '../../utills/date_time_utills.dart';
+import '../../widgets/grey_container.dart';
 
 class ApppointmentsScreen extends StatelessWidget {
   const ApppointmentsScreen({super.key});
@@ -37,19 +38,7 @@ class ApppointmentsScreen extends StatelessWidget {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 30.0.w),
-            child: Container(
-              decoration: BoxDecoration(
-                color: CustomColors.greyColor,
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              height: 44.h,
-              width: 44.w,
-
-              child: Icon(
-                Icons.notifications_none_outlined,
-                color: Colors.black,
-              ),
-            ),
+            child: GreyContainer(icon:   Icons.notifications_none_outlined,),
           ),
         ],
       ),

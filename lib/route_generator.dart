@@ -15,7 +15,10 @@ import 'package:skinsync_ai/screens/splash_screen.dart';
 import 'package:skinsync_ai/view_models/bottom_nav_view_model.dart';
 import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 
+import 'screens/ar_face_model_Preview_screen.dart';
 import 'screens/bottom_nav_screens/face_detection_screen.dart';
+import 'screens/bottom_nav_screens/my_profile_screen.dart';
+import 'utills/colored_print.dart';
 
 // const String getStartedScreen = '/get_started_screen';
 // const String loginScreen = '/login_screen';
@@ -36,7 +39,7 @@ import 'screens/bottom_nav_screens/face_detection_screen.dart';
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final args = settings.arguments;
-    //  CP.yellow('Navigating to ${settings.name} with args: $args');
+     CP.yellow('Navigating to ${settings.name} with args: $args');
     switch (settings.name) {
       case SplashScreen.routeName:
         return MaterialPageRoute(
@@ -114,12 +117,23 @@ class RouteGenerator {
           settings: RouteSettings(name: FaceScanScreen.routeName),
           builder: (_) => FaceScanScreen(),
         );
+        case MyProfileScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: MyProfileScreen.routeName),
+          builder: (_) => MyProfileScreen(),
+        );
+        case ArFaceModelPreviewScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: ArFaceModelPreviewScreen.routeName),
+          builder: (_) => ArFaceModelPreviewScreen(),
+        );
       default:
         return _errorRoute();
     }
   }
 
   static Route<dynamic> _errorRoute() {
+      CP.red('Error: Route not found');
     return MaterialPageRoute(
       builder: (_) {
         return Scaffold(
