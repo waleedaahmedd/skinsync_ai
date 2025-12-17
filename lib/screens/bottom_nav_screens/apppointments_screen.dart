@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/widgets/appointment_date_widget.dart';
 import 'package:skinsync_ai/widgets/scheduled_appointment_tile.dart';
-
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
 import '../../utills/date_time_utills.dart';

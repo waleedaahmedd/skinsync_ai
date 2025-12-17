@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:skinsync_ai/route_generator.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/scan_your_face_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
@@ -15,7 +16,7 @@ class ScanFaceButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-       Navigator.of(context).pushNamed(scanYourFace);
+       Navigator.of(context).pushNamed(ScanYourFaceScreen.routeName);
       },
       child: Container(
         padding:  EdgeInsets.symmetric(horizontal: 22.w, vertical: 14.h),

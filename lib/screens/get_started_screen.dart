@@ -7,6 +7,7 @@ import 'package:skinsync_ai/widgets/login_bottom_sheet.dart';
 
 class GetStartedScreen extends StatelessWidget {
   const GetStartedScreen({super.key});
+  static const String routeName = '/GetStartedScreen';
 
   @override
   Widget build(BuildContext context) {

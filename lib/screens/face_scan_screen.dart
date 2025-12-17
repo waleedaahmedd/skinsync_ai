@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/route_generator.dart';
+import 'package:skinsync_ai/screens/bottom_nav_page.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/scan_your_face_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -8,6 +10,7 @@ import 'package:skinsync_ai/widgets/login_bottom_sheet.dart';
 
 class FaceScanScreen extends StatelessWidget {
   const FaceScanScreen({super.key});
+    static const String routeName = '/FaceScanScreen';
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +91,7 @@ class FaceScanScreen extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pushNamed(scanYourFace);
+                          Navigator.of(context).pushNamed(ScanYourFaceScreen.routeName);
                         },
                         child: Text("Scan Your Face"),
                       ),
@@ -98,7 +101,7 @@ class FaceScanScreen extends StatelessWidget {
                       onTap: () {
                         Navigator.pushNamedAndRemoveUntil(
                           context,
-                          bottomNavPage,
+                          BottomNavPage.routeName,
                           (route) => false,
                         );
                       },

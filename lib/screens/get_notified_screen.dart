@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/route_generator.dart';
+import 'package:skinsync_ai/screens/face_scan_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
 class GetNotifiedScreen extends StatelessWidget {
   const GetNotifiedScreen({super.key});
+    static const String routeName = '/GetNotifiedScreen';
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,7 @@ class GetNotifiedScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(onPressed: (){
-                Navigator.pushReplacementNamed(context, faceScanScreen
+                Navigator.pushReplacementNamed(context, FaceScanScreen.routeName
                 
                 );
               }, child:Text("Turn On Notifications"))),

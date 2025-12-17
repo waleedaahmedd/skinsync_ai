@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
 import 'package:skinsync_ai/screens/face_scan_screen.dart';
 import 'package:skinsync_ai/screens/get_notified_screen.dart';
@@ -10,9 +9,6 @@ import 'package:skinsync_ai/screens/bottom_nav_screens/scan_your_face_screen.dar
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 import 'package:skinsync_ai/screens/login_screen.dart';
 import 'package:skinsync_ai/screens/otp_screen.dart';
-import 'package:skinsync_ai/screens/personal_detail_screen.dart';
-import 'package:skinsync_ai/screens/saved_treatment_screen.dart';
-import 'package:skinsync_ai/screens/setting_screen.dart';
 import 'package:skinsync_ai/screens/your_profile_screen.dart';
 import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/screens/splash_screen.dart';
@@ -21,57 +17,55 @@ import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 
 import 'screens/bottom_nav_screens/face_detection_screen.dart';
 
-const String splashScreen = '/';
-const String homeScreen = '/home_screen';
-const String getStartedScreen = '/get_started_screen';
-const String loginScreen = '/login_screen';
-const String otpScreen = '/otp_screen';
-const String signupOnboarding = '/signup_onboarding';
-const String profileScreen = "/profile_screen";
-const String getNotifiedScreen = '/get_notified_screen';
-const String bottomNavPage = '/bottom_nav_page';
-const String scanYourFace = '/scan_youir_face';
-const String faceDetection = '/face_detection';
-const String faceScanningCompleteScreen = '/face_scanning_complete_screen';
-const String myProfileScreen = "/my_profile_screen";
-const String settingScreen = "/setting_screen";
-const String personalDetailScreen = "/personal_detail_screen";
-const String savedTreatmentScreen = "/saved_treatment_screen";
-const String faceScanScreen = '/face_scan_screen';
+// const String getStartedScreen = '/get_started_screen';
+// const String loginScreen = '/login_screen';
+// const String otpScreen = '/otp_screen';
+// const String signupOnboarding = '/signup_onboarding';
+// const String profileScreen = "/profile_screen";
+// const String getNotifiedScreen = '/get_notified_screen';
+// const String bottomNavPage = '/bottom_nav_page';
+// const String scanYourFace = '/scan_youir_face';
+// const String faceDetection = '/face_detection';
+// const String faceScanningCompleteScreen = '/face_scanning_complete_screen';
+// const String myProfileScreen = "/my_profile_screen";
+// const String settingScreen = "/setting_screen";
+// const String personalDetailScreen = "/personal_detail_screen";
+// const String savedTreatmentScreen = "/saved_treatment_screen";
+// const String faceScanScreen = '/face_scan_screen';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final args = settings.arguments;
     //  CP.yellow('Navigating to ${settings.name} with args: $args');
     switch (settings.name) {
-      case splashScreen:
+      case SplashScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: splashScreen),
+          settings: RouteSettings(name: SplashScreen.routeName),
           builder: (_) => SplashScreen(),
         );
-      case homeScreen:
+      case HomeScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: homeScreen),
+          settings: RouteSettings(name: HomeScreen.routeName),
           builder: (_) => HomeScreen(),
         );
-      case getStartedScreen:
+      case GetStartedScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: getStartedScreen),
+          settings: RouteSettings(name: GetStartedScreen.routeName),
           builder: (_) => GetStartedScreen(),
         );
-      case loginScreen:
+      case LoginScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: loginScreen),
+          settings: RouteSettings(name: LoginScreen.routeName),
           builder: (_) => LoginScreen(),
         );
-      case otpScreen:
+      case OtpScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: otpScreen),
+          settings: RouteSettings(name: OtpScreen.routeName),
           builder: (_) => OtpScreen(),
         );
-      case signupOnboarding:
+      case SignupOnboarding.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: signupOnboarding),
+          settings: RouteSettings(name: SignupOnboarding.routeName),
           builder: (_) => ChangeNotifierProvider(
             create: (context) => SignUpOnboardingViewModel(),
             builder: (context, _) {
@@ -79,19 +73,19 @@ class RouteGenerator {
             },
           ),
         );
-      case profileScreen:
+      case YourProfileScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: profileScreen),
+          settings: RouteSettings(name: YourProfileScreen.routeName),
           builder: (_) => YourProfileScreen(),
         );
-      case getNotifiedScreen:
+      case GetNotifiedScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: getNotifiedScreen),
+          settings: RouteSettings(name: GetNotifiedScreen.routeName),
           builder: (_) => GetNotifiedScreen(),
         );
-      case bottomNavPage:
+      case BottomNavPage.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: bottomNavPage),
+          settings: RouteSettings(name: BottomNavPage.routeName,),
 
           builder: (_) => ChangeNotifierProvider(
             create: (context) => BottomNavViewModel(),
@@ -100,24 +94,24 @@ class RouteGenerator {
             },
           ),
         );
-      case scanYourFace:
+      case ScanYourFaceScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: scanYourFace),
+          settings: RouteSettings(name: ScanYourFaceScreen.routeName),
           builder: (_) => ScanYourFaceScreen(),
         );
-      case faceDetection:
+      case FaceDetectionScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: faceDetection),
+          settings: RouteSettings(name: FaceDetectionScreen.routeName ),
           builder: (_) => FaceDetectionScreen(),
         );
-      case faceScanningCompleteScreen:
+      case FaceScanningCompleteScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: faceScanningCompleteScreen),
+          settings: RouteSettings(name: FaceScanningCompleteScreen.routeName),
           builder: (_) => FaceScanningCompleteScreen(),
         );
-        case faceScanScreen:
+        case FaceScanScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: faceScanScreen),
+          settings: RouteSettings(name: FaceScanScreen.routeName),
           builder: (_) => FaceScanScreen(),
         );
       default:

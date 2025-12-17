@@ -16,6 +16,7 @@ import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 
 class SignupOnboarding extends StatefulWidget {
   const SignupOnboarding({super.key});
+   static const String routeName = '/SignupOnboarding';
 
   @override
   State<SignupOnboarding> createState() => _SignupOnboardingState();
@@ -57,7 +58,7 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
     
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 30.w),
+        padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom,top: MediaQuery.paddingOf(context).top),
         decoration: BoxDecoration(
           gradient: CustomColors.blueWhitePurpleGradient,
         ),
@@ -77,10 +78,11 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
               ),
             ),
             Column(
+              
               children: [
                 SizedBox(height: 28.h),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 00.w),
+                  padding: EdgeInsets.symmetric(horizontal: 30.w),
                   child: Column(
                     children: [
                       // Progress Bar
