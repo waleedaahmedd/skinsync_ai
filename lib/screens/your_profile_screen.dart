@@ -8,6 +8,8 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
+import 'get_notified_screen.dart';
+
 class YourProfileScreen extends StatelessWidget {
   const YourProfileScreen({super.key});
     static const String routeName = '/YourProfileScreen';
@@ -95,7 +97,7 @@ class YourProfileScreen extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(onPressed: () {
-                    Navigator.pushReplacementNamed(context,GetStartedScreen.routeName);
+                    Navigator.pushReplacementNamed(context,GetNotifiedScreen.routeName);
                   }, child: Text("Next")),
                 ),
               ],

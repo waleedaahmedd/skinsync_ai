@@ -3,6 +3,8 @@ import 'package:skinsync_ai/route_generator.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
 
+import '../screens/your_profile_screen.dart';
+
 class SignUpOnboardingViewModel extends ChangeNotifier {
   int currentPage = 0;
   static const int totalPages = 5;
@@ -35,7 +37,7 @@ class SignUpOnboardingViewModel extends ChangeNotifier {
         curve: Curves.easeInOut,
       );
     } else if (currentPage == 4) {
-      Navigator.pushNamed(context, BottomNavPage.routeName);
+      Navigator.pushNamed(context,YourProfileScreen.routeName );
     } 
   }
 

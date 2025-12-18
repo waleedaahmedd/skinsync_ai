@@ -55,8 +55,8 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
         front,
         ResolutionPreset.high,
         enableAudio: false,
-        imageFormatGroup: Platform.isIOS 
-            ? ImageFormatGroup.bgra8888 
+        imageFormatGroup: Platform.isIOS
+            ? ImageFormatGroup.bgra8888
             : ImageFormatGroup.yuv420,
       );
 
@@ -144,8 +144,8 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
     final rotation = _rotationFromCamera(camera);
 
     // iOS uses bgra8888, Android uses nv21
-    final format = Platform.isIOS 
-        ? InputImageFormat.bgra8888 
+    final format = Platform.isIOS
+        ? InputImageFormat.bgra8888
         : InputImageFormat.nv21;
 
     return InputImage.fromBytes(
@@ -197,10 +197,10 @@ Future<void> _process(CameraImage image) async {
     final provider = context.read<FaceScanProvider>();
     if (_cameraController == null || provider.isCapturing) return;
     await Future.delayed( Duration(milliseconds: 500));
-    _cameraController!.setFlashMode(provider.flash ? FlashMode.off : FlashMode.torch); 
+    _cameraController!.setFlashMode(provider.flash ? FlashMode.off : FlashMode.torch);
     final image = await _cameraController!.takePicture();
     await _cameraController!.stopImageStream();
-    
+
 
     provider.markCaptured(image);
 
@@ -225,7 +225,7 @@ Future<void> _process(CameraImage image) async {
         if (provider.progress == 1.0) {
           _captureAndNavigate();
         }
-    
+
         return Scaffold(
           backgroundColor: Colors.black,
           body: Stack(
@@ -264,14 +264,14 @@ Future<void> _process(CameraImage image) async {
     ),
   ),
 
-    
+
               Center(
                 child: CustomPaint(
                   painter: FaceScanPainter(progress: provider.progress),
                   child: const SizedBox(width: 300, height: 300),
                 ),
               ),
-    
+
               Positioned(
                 top: 10.h,
                 left: 20.w,
@@ -324,10 +324,5 @@ Future<void> _process(CameraImage image) async {
       },
     );
   }
-
-  @override
-  void dispose() {
-    _cameraController?.dispose();
-    _faceDetector.close();
-    super.dispose();  }
 }
+

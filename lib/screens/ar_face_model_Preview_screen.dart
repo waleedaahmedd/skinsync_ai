@@ -21,7 +21,9 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
         leadingWidth: 80.w,
         leading: Padding(
         padding:  EdgeInsets.only(left:  30.w),
-        child: GreyContainer(icon: Icons.arrow_back,shape: BoxShape.circle,),
+        child: InkWell(
+            onTap: () => Navigator.pop(context),
+            child: GreyContainer(icon: Icons.arrow_back,shape: BoxShape.circle,)),
       ),title: Text("AR Face Model Preview",style: CustomFonts.black26w600,),actions: [
         Padding(
           padding: EdgeInsets.only(right:  13.w),
@@ -96,8 +98,9 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
                 },
                 child: CircleAvatar(
                   backgroundColor: CustomColors.greyColor ,
-                  child: SvgPicture.asset(
-                    SvgAssets.beforeAfter,
+                  child: Image.asset(
+                    PngAssets.beforeAfter,
+                    width: 18.w,
                   ),
                 ),
               );
@@ -131,7 +134,7 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
     return Row(
       children: [
         SvgPicture.asset(
-                  SvgAssets.beforeAfter,
+                  SvgAssets.dail,
                 ),
          SizedBox(width: 5.w),
          Column(
@@ -175,8 +178,9 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          SvgPicture.asset(
-            SvgAssets.syringe,
+          Image.asset(
+            PngAssets.syringe,
+            width: 21.w,
           ),
            SizedBox(width: 8.w),
           Text(
@@ -195,8 +199,9 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          SvgPicture.asset(
-            SvgAssets.hand,
+          Image.asset(
+            PngAssets.hand,
+            width: 21.w,
           ),
            SizedBox(width: 8.w),
           Text(

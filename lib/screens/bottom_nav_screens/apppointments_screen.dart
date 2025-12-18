@@ -37,7 +37,7 @@ class ApppointmentsScreen extends StatelessWidget {
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 30.0.w),
+            padding: EdgeInsets.only(right: 20.0.w),
             child: GreyContainer(icon:   Icons.notifications_none_outlined,),
           ),
         ],

@@ -50,7 +50,6 @@ class GetNotifiedScreen extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(onPressed: (){
                 Navigator.pushReplacementNamed(context, FaceScanScreen.routeName
-                
                 );
               }, child:Text("Turn On Notifications"))),
              SizedBox(height: 19.h),

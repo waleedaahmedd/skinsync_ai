@@ -17,6 +17,12 @@ class PngAssets {
   static const String getNotified = '${_assets}getnotified.png';
   static const String image = '${_assets}image.png';
   static const String laserTreatment = '${_assets}laser_treatment.png';
+  static const String beforeAfter = "${_assets}before_after.png";
+  static const String syringe = "${_assets}syringe.png";
+  static const String hand = "${_assets}hand.png";
+
+
+
 }
 
 class SvgAssets {
@@ -55,10 +61,7 @@ class SvgAssets {
   // bottom nav icons
   static const String notification = "${_assets}notification.svg";
   static const String faceId = "${_assets}face_id.svg";
-  static const String beforeAfter = "${_assets}before_after.svg";
   static const String dail = "${_assets}dail.svg";
-  static const String syringe = "${_assets}syringe.svg";
-  static const String hand = "${_assets}hand.svg";
 }
 
 class LottieAssets {

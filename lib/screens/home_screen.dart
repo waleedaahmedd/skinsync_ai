@@ -19,6 +19,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         toolbarHeight: 84.h,
         automaticallyImplyLeading: false,
+        centerTitle: false,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -32,7 +33,7 @@ class HomeScreen extends StatelessWidget {
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.only(right: 30.0.w),
+            padding: EdgeInsets.only(right: 20.0.w),
             child: GreyContainer(icon:   Icons.notifications_none_outlined,),
           ),
         ],
