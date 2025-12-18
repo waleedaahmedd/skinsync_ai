@@ -9,6 +9,7 @@ import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/face_scan_provider.dart';
 import 'package:skinsync_ai/widgets/grey_container.dart';
+import 'package:skinsync_ai/widgets/service_type_button.dart';
 
 class ArFaceModelPreviewScreen extends StatelessWidget {
   const ArFaceModelPreviewScreen({super.key});
@@ -16,21 +17,29 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       appBar: AppBar(
         leadingWidth: 80.w,
         centerTitle: false,
         leading: Padding(
-        padding:  EdgeInsets.only(left:  10.w),
-        child: InkWell(
+          padding: EdgeInsets.only(left: 10.w),
+          child: InkWell(
             onTap: () => Navigator.pop(context),
-            child: GreyContainer(icon: Icons.arrow_back,shape: BoxShape.circle,)),
-      ),title: Text("AR Face Model Preview",style: CustomFonts.black26w600,),actions: [
-        Padding(
-          padding: EdgeInsets.only(right:  13.w),
-          child: Text("Reset",style: CustomFonts.pinkunderlined20w600,),
-        )
-      ],),
+            child: GreyContainer(
+              icon: Icons.arrow_back,
+              shape: BoxShape.circle,
+              onTap: () => Navigator.pop(context),
+            ),
+          ),
+        ),
+        title: Text("AR Face Model Preview", style: CustomFonts.black26w600),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 13.w),
+            child: Text("Reset", style: CustomFonts.pinkunderlined20w600),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -38,27 +47,20 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _facePreview(),
-               SizedBox(height: 18.h),
+              SizedBox(height: 18.h),
               _accuracyRate(),
-               SizedBox(height: 36.h),
-              _treatmentSection(
-                area: 'Under-Eyes',
-                syringes: '01 Syringe',
-              ),
-               SizedBox(height: 50.h),
-              _treatmentSection(
-                area: 'Under-Nose',
-                syringes: '01 Syringe',
-              ),
-               SizedBox(height: 50.h),
+              SizedBox(height: 36.h),
+              _treatmentSection(area: 'Under-Eyes', syringes: '01 Syringe'),
+              SizedBox(height: 50.h),
+              _treatmentSection(area: 'Under-Nose', syringes: '01 Syringe'),
+              SizedBox(height: 50.h),
               _addMoreService(),
-               SizedBox(height: 50.h),
+              SizedBox(height: 50.h),
               _bottomButtons(),
             ],
           ),
         ),
       ),
-
     );
   }
 
@@ -68,17 +70,17 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(20.r),
           child: Consumer<FaceScanProvider>(
-            builder: (context,provider,_) {
+            builder: (context, provider, _) {
               return Image.file(
                 File(provider.capturedImage!.path),
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 326.h,
               );
-            }
+            },
           ),
         ),
-         Positioned(
+        Positioned(
           top: 13.h,
           left: 23.w,
           child: Consumer<FaceScanProvider>(
@@ -87,10 +89,10 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
                 provider.isBefore ? 'Before' : 'After',
                 style: CustomFonts.black20w600,
               );
-            }
+            },
           ),
         ),
-         Positioned(
+        Positioned(
           top: 13.h,
           right: 23.w,
           child: Consumer<FaceScanProvider>(
@@ -100,17 +102,14 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
                   provider.toggleIsBefore();
                 },
                 child: CircleAvatar(
-                  backgroundColor: CustomColors.greyColor ,
-                  child: Image.asset(
-                    PngAssets.beforeAfter,
-                    width: 18.w,
-                  ),
+                  backgroundColor: CustomColors.greyColor,
+                  child: Image.asset(PngAssets.beforeAfter, width: 18.w),
                 ),
               );
-            }
+            },
           ),
         ),
-         
+
         Positioned(
           bottom: 16.h,
           left: 16.w,
@@ -121,7 +120,7 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
               color: CustomColors.blackColor,
               borderRadius: BorderRadius.circular(20),
             ),
-            child:  Text(
+            child: Text(
               'See How 2 Syringes Will Look On Your Under Eyes',
               textAlign: TextAlign.center,
               style: CustomFonts.white14w600,
@@ -132,21 +131,15 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
     );
   }
 
-
   Widget _accuracyRate() {
     return Row(
       children: [
-        SvgPicture.asset(
-                  SvgAssets.dail,
-                ),
-         SizedBox(width: 5.w),
-         Column(
+        SvgPicture.asset(SvgAssets.dail),
+        SizedBox(width: 5.w),
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Accuracy Rate',
-              style: CustomFonts.black20w600,
-            ),
+            Text('Accuracy Rate', style: CustomFonts.black20w600),
             Text(
               'This score is based on your Face analysis',
               style: CustomFonts.black16w400,
@@ -159,70 +152,47 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
 
   // ================= Treatment Section =================
 
-  Widget _treatmentSection({
-    required String area,
-    required String syringes,
-  }) {
+  Widget _treatmentSection({required String area, required String syringes}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text(
-          'Treatment Selection',
-          style: CustomFonts.black18w600,
-        ),
-         SizedBox(height: 8.h),
+        Text('Treatment Selection', style: CustomFonts.black18w600),
+        SizedBox(height: 8.h),
         Row(
           children: [
-            Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color:  Colors.black ,
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Row(
-        children: [
-          Image.asset(
-            PngAssets.syringe,
-            width: 21.w,
-          ),
-           SizedBox(width: 8.w),
-          Text(
-            "Dermal Fillers",
-            style: CustomFonts.white17w500
-          ),
-        ],
-      ),
-    ),
-             SizedBox(width: 10.w),
-            Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color:  Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Row(
-        children: [
-          Image.asset(
-            PngAssets.hand,
-            width: 21.w,
-          ),
-           SizedBox(width: 8.w),
-          Text(
-            "Botox",
-            style: CustomFonts.black17w500,
-          ),
-        ],
-      ),
-    )
-            
+            ServiceTypeButton(
+              icon: Image.asset(PngAssets.syringe, width: 21.w),
+              text: "Dermal Fillers",
+              selected: true,
+            ),
+            //         Container(
+            //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            //   decoration: BoxDecoration(
+            //     color: ,
+            //     borderRadius: BorderRadius.circular(12.r),
+            //   ),
+            //   child: Row(
+            //     children: [
+
+            //        SizedBox(width: 8.w),
+            //       Text(
+            //         "Dermal Fillers",
+            //         style: CustomFonts.white17w500
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            SizedBox(width: 10.w),
+            ServiceTypeButton(
+              icon: Image.asset(PngAssets.hand, width: 21.w),
+              text: "Botox",
+              selected: false,
+            ),
           ],
         ),
-         SizedBox(height: 16.h),
-         Text(
-          'Area Selection',
-          style: CustomFonts.black18w600,
-        ),
-         SizedBox(height: 8.h),
+        SizedBox(height: 16.h),
+        Text('Area Selection', style: CustomFonts.black18w600),
+        SizedBox(height: 8.h),
         DropdownButtonFormField(
           value: area,
           items: [area]
@@ -235,28 +205,22 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
               .toList(),
           onChanged: (_) {},
           decoration: InputDecoration(
-
             border: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: CustomColors.blackColor,
-              ),
+              borderSide: BorderSide(color: CustomColors.blackColor),
               borderRadius: BorderRadius.circular(12.r),
             ),
           ),
         ),
-         SizedBox(height: 16.h  ),
+        SizedBox(height: 16.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-             Text(
-              'Adjustable Parameters:',
-                 style: CustomFonts.black18w600,
-            ),
+            Text('Adjustable Parameters:', style: CustomFonts.black18w600),
             Text(syringes, style: CustomFonts.black14w500),
           ],
         ),
         Slider(
-          activeColor:CustomColors.lightBlueColor,
+          activeColor: CustomColors.lightBlueColor,
           value: 1,
           min: 0,
           max: 2,
@@ -265,8 +229,6 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
       ],
     );
   }
-
-  
 
   // ================= Add More =================
 
@@ -280,12 +242,12 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
             color: CustomColors.blackColor,
             shape: BoxShape.rectangle,
             borderRadius: BorderRadius.circular(8.r),
-
           ),
-          child: const Icon(Icons.add, color: Colors.white)),
-        label:  Text(
+          child: const Icon(Icons.add, color: Colors.white),
+        ),
+        label: Text(
           'Add More Service',
-          style:CustomFonts.black20w600Underlined,
+          style: CustomFonts.black20w600Underlined,
         ),
       ),
     );
@@ -303,9 +265,9 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30.r),
               ),
-              padding:  EdgeInsets.symmetric(vertical: 19.h),
+              padding: EdgeInsets.symmetric(vertical: 19.h),
             ),
-            child:  Text('Save',style:  CustomFonts.black22w600),
+            child: Text('Save', style: CustomFonts.black22w600),
           ),
         ),
         const SizedBox(width: 16),
@@ -317,9 +279,9 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30.r),
               ),
-              padding:  EdgeInsets.symmetric(vertical: 19.h),
+              padding: EdgeInsets.symmetric(vertical: 19.h),
             ),
-            child:  Text('Explore Clinics',style:  CustomFonts.white22w600),
+            child: Text('Explore Clinics', style: CustomFonts.white22w600),
           ),
         ),
       ],

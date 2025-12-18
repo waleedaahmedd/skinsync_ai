@@ -13,10 +13,11 @@ import '../../route_generator.dart';
 import '../../view_models/face_scan_provider.dart';
 import '../../widgets/face_scan_radial_widget.dart';
 import '../ar_face_model_Preview_screen.dart';
+import '../service_selection_screen.dart';
 
 class FaceDetectionScreen extends StatefulWidget {
   const FaceDetectionScreen({super.key});
-    static const String routeName = '/FaceDetectionScreen';
+  static const String routeName = '/FaceDetectionScreen';
 
   @override
   State<FaceDetectionScreen> createState() => _FaceDetectionScreenState();
@@ -88,10 +89,7 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
   void _showError(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
+      SnackBar(content: Text(message), backgroundColor: Colors.red),
     );
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
@@ -99,6 +97,7 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
       }
     });
   }
+
   InputImageRotation _rotationFromCamera(CameraDescription camera) {
     // iOS front camera typically has 270 degree rotation
     // Android front camera typically has 90 degree rotation
@@ -113,7 +112,8 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
         case 270:
           return InputImageRotation.rotation270deg;
         default:
-          return InputImageRotation.rotation270deg; // Default for iOS front camera
+          return InputImageRotation
+              .rotation270deg; // Default for iOS front camera
       }
     } else {
       switch (camera.sensorOrientation) {
@@ -126,7 +126,8 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
         case 270:
           return InputImageRotation.rotation270deg;
         default:
-          return InputImageRotation.rotation90deg; // Default for Android front camera
+          return InputImageRotation
+              .rotation90deg; // Default for Android front camera
       }
     }
   }
@@ -159,55 +160,54 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
     );
   }
 
+  Future<void> _process(CameraImage image) async {
+    final provider = context.read<FaceScanProvider>();
 
-Future<void> _process(CameraImage image) async {
-  final provider = context.read<FaceScanProvider>();
+    final inputImage = _inputImageFromCameraImage(
+      image,
+      _cameraController!.description,
+    );
 
-  final inputImage = _inputImageFromCameraImage(
-    image,
-    _cameraController!.description,
-  );
+    final faces = await _faceDetector.processImage(inputImage);
 
-  final faces = await _faceDetector.processImage(inputImage);
+    if (faces.isEmpty) {
+      provider.reset();
+      return;
+    }
 
-  if (faces.isEmpty) {
-    provider.reset();
-    return;
+    provider.faceDetected();
+
+    final face = faces.first;
+    final previewSize = _cameraController!.value.previewSize!;
+
+    final faceCenter = face.boundingBox.center;
+    final previewCenter = Offset(previewSize.width / 2, previewSize.height / 2);
+
+    final distance = (faceCenter - previewCenter).distance;
+    final allowedRadius = previewSize.width * 0.3;
+
+    if (distance <= allowedRadius) {
+      provider.faceCentered();
+    }
   }
-
-  provider.faceDetected();
-
-  final face = faces.first;
-  final previewSize = _cameraController!.value.previewSize!;
-
-  final faceCenter = face.boundingBox.center;
-  final previewCenter =
-      Offset(previewSize.width / 2, previewSize.height / 2);
-
-  final distance = (faceCenter - previewCenter).distance;
-  final allowedRadius = previewSize.width * 0.3;
-
-  if (distance <= allowedRadius) {
-    provider.faceCentered();
-  }
-}
-
 
   Future<void> _captureAndNavigate() async {
     final provider = context.read<FaceScanProvider>();
     if (_cameraController == null || provider.isCapturing) return;
-    await Future.delayed( Duration(milliseconds: 500));
-    _cameraController!.setFlashMode(provider.flash ? FlashMode.off : FlashMode.torch);
+    await Future.delayed(Duration(milliseconds: 500));
+    _cameraController!.setFlashMode(
+      provider.flash ? FlashMode.off : FlashMode.torch,
+    );
     final image = await _cameraController!.takePicture();
     await _cameraController!.stopImageStream();
-
 
     provider.markCaptured(image);
 
     if (!mounted) return;
     Navigator.pushReplacementNamed(
       context,
-      ArFaceModelPreviewScreen.routeName
+      // ArFaceModelPreviewScreen.routeName
+      ServiceSelectionScreen.routeName,
     );
   }
 
@@ -232,38 +232,37 @@ Future<void> _process(CameraImage image) async {
             children: [
               if (_cameraController != null)
                 if (_cameraController != null)
-  SizedBox.expand(
-    child: FittedBox(
-      fit: BoxFit.cover,
-      child: SizedBox(
-        width: _cameraController!.value.previewSize!.height,
-        height: _cameraController!.value.previewSize!.width,
-        child: CameraPreview(_cameraController!),
-      ),
-    ),
-  ),
-  Align(
-    alignment: Alignment.topRight,
-    child: Padding(
-      padding: EdgeInsets.only(top: 40.h, right: 20.w),
-      child: GestureDetector(
-        onTap: () {
-          provider.toggleFlash();
-          if (_cameraController != null) {
-            _cameraController!.setFlashMode(
-              provider.flash ? FlashMode.torch : FlashMode.off,
-            );
-          }
-        },
-        child: Icon(
-          provider.flash ? Icons.flash_on : Icons.flash_off,
-          color: Colors.white,
-          size: 30.sp,
-        ),
-      ),
-    ),
-  ),
-
+                  SizedBox.expand(
+                    child: FittedBox(
+                      fit: BoxFit.cover,
+                      child: SizedBox(
+                        width: _cameraController!.value.previewSize!.height,
+                        height: _cameraController!.value.previewSize!.width,
+                        child: CameraPreview(_cameraController!),
+                      ),
+                    ),
+                  ),
+              Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 40.h, right: 20.w),
+                  child: GestureDetector(
+                    onTap: () {
+                      provider.toggleFlash();
+                      if (_cameraController != null) {
+                        _cameraController!.setFlashMode(
+                          provider.flash ? FlashMode.torch : FlashMode.off,
+                        );
+                      }
+                    },
+                    child: Icon(
+                      provider.flash ? Icons.flash_on : Icons.flash_off,
+                      color: Colors.white,
+                      size: 30.sp,
+                    ),
+                  ),
+                ),
+              ),
 
               Center(
                 child: CustomPaint(
@@ -278,11 +277,14 @@ Future<void> _process(CameraImage image) async {
                 child: SafeArea(
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pop();
-                      // _captureAndNavigate();
+                      // Navigator.of(context).pop();
+                      _captureAndNavigate();
                     },
                     child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 18.w),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 6.h,
+                        horizontal: 18.w,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.black,
                         borderRadius: BorderRadius.circular(20.r),
@@ -301,9 +303,12 @@ Future<void> _process(CameraImage image) async {
                 left: 0,
                 right: 0,
                 child: Padding(
-                  padding:  EdgeInsets.symmetric(horizontal: 20.w),
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 34.h, horizontal: 52.w),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 34.h,
+                      horizontal: 52.w,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20.r),
@@ -325,4 +330,3 @@ Future<void> _process(CameraImage image) async {
     );
   }
 }
-

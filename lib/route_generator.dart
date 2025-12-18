@@ -18,6 +18,7 @@ import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 import 'screens/ar_face_model_Preview_screen.dart';
 import 'screens/bottom_nav_screens/face_detection_screen.dart';
 import 'screens/bottom_nav_screens/my_profile_screen.dart';
+import 'screens/service_selection_screen.dart';
 import 'utills/colored_print.dart';
 
 // const String getStartedScreen = '/get_started_screen';
@@ -126,6 +127,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: ArFaceModelPreviewScreen.routeName),
           builder: (_) => ArFaceModelPreviewScreen(),
+        );
+        case ServiceSelectionScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: ServiceSelectionScreen.routeName),
+          builder: (_) => ServiceSelectionScreen(),
         );
       default:
         return _errorRoute();
