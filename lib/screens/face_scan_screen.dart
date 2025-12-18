@@ -65,7 +65,7 @@ class FaceScanScreen extends StatelessWidget {
                 right: 0.w,
                 child: Image.asset(
                   PngAssets.faceMarks,
-                  height: 370.h,
+                  height: 300.w,
                   fit: BoxFit.fitHeight,
                 ),
               ),

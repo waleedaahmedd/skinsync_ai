@@ -51,7 +51,7 @@ class GetStartedScreen extends StatelessWidget {
 
                 child: Image.asset(
                   PngAssets.face,
-                  height: 599.h,
+                 // height: 200.w,
                   fit: BoxFit.fitWidth,
                   alignment: Alignment.topCenter,
                 ),
@@ -63,7 +63,7 @@ class GetStartedScreen extends StatelessWidget {
                 right: 0.w,
                 child: Image.asset(
                   PngAssets.faceMarks,
-                  height: 370.h,
+                  height: 300.w,
                   fit: BoxFit.fitHeight,
                 ),
               ),

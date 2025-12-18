@@ -23,8 +23,8 @@ void loginBottomSheet(BuildContext context) {
       borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
     ),
     builder: (context) {
-      return Container(
-       color: Colors.transparent,
+      return SafeArea(child: Container(
+        color: Colors.transparent,
         padding: EdgeInsets.only(
           top: 10.h,
           left: 10.w,
@@ -32,111 +32,111 @@ void loginBottomSheet(BuildContext context) {
           bottom: 10.h + MediaQuery.viewInsetsOf(context).bottom,
         ),
         child: Container(
-        
+
           decoration: BoxDecoration(
               color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(44.r),
-              topRight: Radius.circular(44.r),
-              bottomLeft: Radius.circular(55.r),
-              bottomRight: Radius.circular(55.r),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(44.r),
+                topRight: Radius.circular(44.r),
+                bottomLeft: Radius.circular(55.r),
+                bottomRight: Radius.circular(55.r),
               )
           ),
           padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 28.h),
           child: SingleChildScrollView(
-            
+
             child:
             //  Column(
-             
+
             //   crossAxisAlignment: CrossAxisAlignment.start,
             //   children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                 
-                  children: [
-                  
-                    Text(
-                      "Get Started",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 30.sp,
-                        color: Colors.black,
-                      ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+
+              children: [
+
+                Text(
+                  "Get Started",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 30.sp,
+                    color: Colors.black,
+                  ),
+                ),
+
+                SizedBox(height: 4.h,),
+
+                Text(
+
+                  "Lorem ipsum dolor sit amet consectetur Ut consectetur mauris tellus ultricies.",
+                  style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w400,
+                      color: Color(0xff494949)
+                  ),
+                ),
+                SizedBox(height: 18.h),
+                SizedBox(
+                  width: double.infinity,
+                  child: InkWell(
+                    onTap: (){
+                      context.read<AuthViewModel>().setloginWithPhone(true);
+                      // Navigator.pushNamed(context, loginScreen);
+                      Navigator.of(context).pushReplacement(
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation, secondaryAnimation) =>
+                          const LoginScreen(),
+                          transitionsBuilder:
+                              (context, animation, secondaryAnimation, child) {
+                            // Use ease-in curve
+                            var curve = Curves.easeIn;
+                            var curvedAnimation =
+                            CurvedAnimation(parent: animation, curve: curve);
+                            return FadeTransition(
+                              opacity: curvedAnimation,
+                              child: child,
+                            );
+                          },
+                          transitionDuration: const Duration(milliseconds: 500),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.r),
+                          color: Colors.black),
+                      child: Center(child: Text("Continue With Phone",style:CustomFonts.white18w600,)),
                     ),
-                          
-                 SizedBox(height: 4.h,),
-                
-                    Text(
-                      
-                      "Lorem ipsum dolor sit amet consectetur Ut consectetur mauris tellus ultricies.",
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0xff494949)
-                      ),
-                    ),
-                    SizedBox(height: 18.h),
-                    SizedBox(
-                      width: double.infinity,
-                      child: InkWell(
-                        onTap: (){
-                             context.read<AuthViewModel>().setloginWithPhone(true);
-                          // Navigator.pushNamed(context, loginScreen);
-                          Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                const LoginScreen(), 
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              // Use ease-in curve
-              var curve = Curves.easeIn;
-              var curvedAnimation =
-                  CurvedAnimation(parent: animation, curve: curve);
-              return FadeTransition(
-                opacity: curvedAnimation,
-                child: child,
-              );
-            },
-            transitionDuration: const Duration(milliseconds: 500),
-          ),
-        );
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.r),
-                            color: Colors.black),
-                        child: Center(child: Text("Continue With Phone",style:CustomFonts.white18w600,)),
-                          ),
-                      ),
-                    ),
-                    SizedBox(height: 10.h),
-                    SizedBox(
-                      width: double.infinity,
-                      child: InkWell(
-                        onTap: () { 
-                          context.read<AuthViewModel>().setloginWithEmail(true);
-                          Navigator.pushNamed(context, LoginScreen.routeName);},
-                        child: Container(
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.r),
-                            color:CustomColors.greyColor
-                            ),
-                        child: Center(child: Text("Continue With Email",style:CustomFonts.black18w600,)),
-                          ),
-                      ),
-                    ),
-                    SizedBox(height: 10.h,),
-                    Row(children: [
-                      Expanded(
-                    
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 16.h),
-                        decoration: BoxDecoration(
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                SizedBox(
+                  width: double.infinity,
+                  child: InkWell(
+                    onTap: () {
+                      context.read<AuthViewModel>().setloginWithEmail(true);
+                      Navigator.pushNamed(context, LoginScreen.routeName);},
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                      decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.r),
                           color:CustomColors.greyColor
-                          ),
+                      ),
+                      child: Center(child: Text("Continue With Email",style:CustomFonts.black18w600,)),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10.h,),
+                Row(children: [
+                  Expanded(
+
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.r),
+                          color:CustomColors.greyColor
+                      ),
                       child: Center(
                         child: Image.asset(
                           PngAssets.google,
@@ -145,17 +145,17 @@ void loginBottomSheet(BuildContext context) {
                           fit: BoxFit.contain,
                         ),
                       ),
-                        ),
                     ),
-                    SizedBox(width: 8,),
-                     Expanded(
-                      
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 16.h),
-                        decoration: BoxDecoration(
+                  ),
+                  SizedBox(width: 8,),
+                  Expanded(
+
+                    child: Container(
+                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                      decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.r),
                           color:CustomColors.greyColor
-                          ),
+                      ),
                       child: Center(
                         child:Image.asset(
                           PngAssets.apple,
@@ -164,67 +164,67 @@ void loginBottomSheet(BuildContext context) {
                           fit: BoxFit.contain,
                         ),
                       ),
-                        ),
                     ),
-                    ],),
-                    SizedBox(height: 20.h),
+                  ),
+                ],),
+                SizedBox(height: 20.h),
 
 
-            FutureBuilder<bool>(
-  future: BiometricHelper().isBiometricAvailable(),
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const SizedBox();
-    } else if (snapshot.hasData && snapshot.data == true) {
-      // Biometric available, now get icon
-      return FutureBuilder<IconData>(
-        future: BiometricHelper().getBiometricIcon(),
-        builder: (context, iconSnapshot) {
-          if (!iconSnapshot.hasData) return const SizedBox();
-          final icon = iconSnapshot.data!;
-          return Center(
-            child: InkWell(
-              onTap: () async {
-                bool authenticated = await BiometricHelper()
-                    .authenticate(reason: 'Login with Biometrics');
-                if (authenticated && context.mounted) {
-                  Navigator.pushNamed(context, BottomNavPage.routeName);
-                } 
-              },
-              child: Icon(icon, size: 60.h),
-            ),
-          );
-        },
-      );
-    } else {
-      return const SizedBox.shrink(); // No biometrics available
-    }
-  },
-),
-
-
-                  
-                   
-                          
-                    SizedBox(height: 10.h),
-                  ],
+                FutureBuilder<bool>(
+                  future: BiometricHelper().isBiometricAvailable(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox();
+                    } else if (snapshot.hasData && snapshot.data == true) {
+                      // Biometric available, now get icon
+                      return FutureBuilder<IconData>(
+                        future: BiometricHelper().getBiometricIcon(),
+                        builder: (context, iconSnapshot) {
+                          if (!iconSnapshot.hasData) return const SizedBox();
+                          final icon = iconSnapshot.data!;
+                          return Center(
+                            child: InkWell(
+                              onTap: () async {
+                                bool authenticated = await BiometricHelper()
+                                    .authenticate(reason: 'Login with Biometrics');
+                                if (authenticated && context.mounted) {
+                                  Navigator.pushNamed(context, BottomNavPage.routeName);
+                                }
+                              },
+                              child: Icon(icon, size: 60.h),
+                            ),
+                          );
+                        },
+                      );
+                    } else {
+                      return const SizedBox.shrink(); // No biometrics available
+                    }
+                  },
                 ),
-                // Drag handle
-                // Center(
-                //   child: Container(
-                //     height: 5.h,
-                //     width: 48.w,
-                //     margin: EdgeInsets.only(bottom: 30.h),
-                //     decoration: BoxDecoration(
-                //       color: Color(0xffCDCFD0),
-                //       borderRadius: BorderRadius.circular(100.r),
-                //     ),
-                //   ),
-                // ),
-          
-                // Review text
-          
-                // Submit button
+
+
+
+
+
+                SizedBox(height: 10.h),
+              ],
+            ),
+            // Drag handle
+            // Center(
+            //   child: Container(
+            //     height: 5.h,
+            //     width: 48.w,
+            //     margin: EdgeInsets.only(bottom: 30.h),
+            //     decoration: BoxDecoration(
+            //       color: Color(0xffCDCFD0),
+            //       borderRadius: BorderRadius.circular(100.r),
+            //     ),
+            //   ),
+            // ),
+
+            // Review text
+
+            // Submit button
             //  Row(
             //         children: [
             //           Expanded(
@@ -271,7 +271,7 @@ void loginBottomSheet(BuildContext context) {
             //                 ),
             //                 decoration: BoxDecoration(
             //                   borderRadius: BorderRadius.circular(10.r),
-          
+
             //                   color: Color(0xffD72547),
             //                 ),
             //                 child: Center(
@@ -290,13 +290,13 @@ void loginBottomSheet(BuildContext context) {
             //           ),
             //         ],
             //       ),
-                
-                // SizedBox(height: 20.h),
+
+            // SizedBox(height: 20.h),
             //   ],
             // ),
           ),
         ),
-      );
+      ));
     },
   );
 }

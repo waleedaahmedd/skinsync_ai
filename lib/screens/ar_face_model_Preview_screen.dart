@@ -19,8 +19,9 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
     return  Scaffold(
       appBar: AppBar(
         leadingWidth: 80.w,
+        centerTitle: false,
         leading: Padding(
-        padding:  EdgeInsets.only(left:  30.w),
+        padding:  EdgeInsets.only(left:  10.w),
         child: InkWell(
             onTap: () => Navigator.pop(context),
             child: GreyContainer(icon: Icons.arrow_back,shape: BoxShape.circle,)),
@@ -30,29 +31,31 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
           child: Text("Reset",style: CustomFonts.pinkunderlined20w600,),
         )
       ],),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _facePreview(),
-             SizedBox(height: 18.h),
-            _accuracyRate(),
-             SizedBox(height: 36.h),
-            _treatmentSection(
-              area: 'Under-Eyes',
-              syringes: '01 Syringe',
-            ),
-             SizedBox(height: 50.h),
-            _treatmentSection(
-              area: 'Under-Nose',
-              syringes: '01 Syringe',
-            ),
-             SizedBox(height: 50.h),
-            _addMoreService(),
-             SizedBox(height: 50.h),
-            _bottomButtons(),
-          ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _facePreview(),
+               SizedBox(height: 18.h),
+              _accuracyRate(),
+               SizedBox(height: 36.h),
+              _treatmentSection(
+                area: 'Under-Eyes',
+                syringes: '01 Syringe',
+              ),
+               SizedBox(height: 50.h),
+              _treatmentSection(
+                area: 'Under-Nose',
+                syringes: '01 Syringe',
+              ),
+               SizedBox(height: 50.h),
+              _addMoreService(),
+               SizedBox(height: 50.h),
+              _bottomButtons(),
+            ],
+          ),
         ),
       ),
 
