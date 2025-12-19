@@ -6,13 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:provider/provider.dart';
-import 'package:skinsync_ai/screens/face_scan_screen.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-
-import '../../route_generator.dart';
 import '../../view_models/face_scan_provider.dart';
 import '../../widgets/face_scan_radial_widget.dart';
-import '../ar_face_model_Preview_screen.dart';
 import '../service_selection_screen.dart';
 
 class FaceDetectionScreen extends StatefulWidget {
