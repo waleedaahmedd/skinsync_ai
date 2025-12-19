@@ -18,6 +18,7 @@ import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 import 'screens/ar_face_model_Preview_screen.dart';
 import 'screens/bottom_nav_screens/face_detection_screen.dart';
 import 'screens/bottom_nav_screens/my_profile_screen.dart';
+import 'screens/explore_clinics_screen.dart';
 import 'screens/service_selection_screen.dart';
 import 'utills/colored_print.dart';
 
@@ -40,7 +41,7 @@ import 'utills/colored_print.dart';
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final args = settings.arguments;
-     CP.yellow('Navigating to ${settings.name} with args: $args');
+    CP.yellow('Navigating to ${settings.name} with args: $args');
     switch (settings.name) {
       case SplashScreen.routeName:
         return MaterialPageRoute(
@@ -89,7 +90,7 @@ class RouteGenerator {
         );
       case BottomNavPage.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: BottomNavPage.routeName,),
+          settings: RouteSettings(name: BottomNavPage.routeName),
 
           builder: (_) => ChangeNotifierProvider(
             create: (context) => BottomNavViewModel(),
@@ -105,7 +106,7 @@ class RouteGenerator {
         );
       case FaceDetectionScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: FaceDetectionScreen.routeName ),
+          settings: RouteSettings(name: FaceDetectionScreen.routeName),
           builder: (_) => FaceDetectionScreen(),
         );
       case FaceScanningCompleteScreen.routeName:
@@ -113,25 +114,30 @@ class RouteGenerator {
           settings: RouteSettings(name: FaceScanningCompleteScreen.routeName),
           builder: (_) => FaceScanningCompleteScreen(),
         );
-        case FaceScanScreen.routeName:
+      case FaceScanScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: FaceScanScreen.routeName),
           builder: (_) => FaceScanScreen(),
         );
-        case MyProfileScreen.routeName:
+      case MyProfileScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: MyProfileScreen.routeName),
           builder: (_) => MyProfileScreen(),
         );
-        case ArFaceModelPreviewScreen.routeName:
+      case ArFaceModelPreviewScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: ArFaceModelPreviewScreen.routeName),
           builder: (_) => ArFaceModelPreviewScreen(),
         );
-        case ServiceSelectionScreen.routeName:
+      case ServiceSelectionScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: ServiceSelectionScreen.routeName),
           builder: (_) => ServiceSelectionScreen(),
+        );
+      case ExploreClinicsScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: ExploreClinicsScreen.routeName),
+          builder: (_) => ExploreClinicsScreen(),
         );
       default:
         return _errorRoute();
@@ -139,7 +145,7 @@ class RouteGenerator {
   }
 
   static Route<dynamic> _errorRoute() {
-      CP.red('Error: Route not found');
+    CP.red('Error: Route not found');
     return MaterialPageRoute(
       builder: (_) {
         return Scaffold(

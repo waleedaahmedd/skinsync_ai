@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -16,35 +17,21 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 84.h,
-        automaticallyImplyLeading: false,
-        centerTitle: false,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Hello, Burak!", style: CustomFonts.black30w600),
-            SizedBox(height: 4),
-            Text(
-              "Your journey to radiant skin starts now.",
-              style: CustomFonts.grey18w400,
-            ),
-          ],
+      appBar: AppBarWithActionIcon(
+        title: Text("Hello, Burak!", style: CustomFonts.black30w600),
+        subTitle: Text(
+          "Your journey to radiant skin starts now.",
+          style: CustomFonts.grey18w400,
         ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 20.0.w),
-            child: GreyContainer(icon:   Icons.notifications_none_outlined,onTap: () {
-              
-            },),
-          ),
-        ],
+        action: GreyContainer(
+          icon: Icons.notifications_none_outlined,
+          onTap: () {},
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Divider(color: CustomColors.greyColor),
             SizedBox(height: 22.h),
             Column(
               children: [
@@ -251,7 +238,7 @@ class HomeScreen extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding:  EdgeInsets.only(left: index == 0 ?30.w:17.w),
+                    padding: EdgeInsets.only(left: index == 0 ? 30.w : 17.w),
                     child: treatmentCard(),
                   );
                 },
@@ -260,10 +247,10 @@ class HomeScreen extends StatelessWidget {
             SizedBox(height: 18.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30.w),
-              child: 
-                  Text("promotions & discounts", style: CustomFonts.black22w600),
-                  
-            
+              child: Text(
+                "promotions & discounts",
+                style: CustomFonts.black22w600,
+              ),
             ),
             SizedBox(height: 18.h),
             SizedBox(
@@ -274,7 +261,7 @@ class HomeScreen extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding:  EdgeInsets.only(left: index == 0 ?30.w:17.w),
+                    padding: EdgeInsets.only(left: index == 0 ? 30.w : 17.w),
                     child: discountCard(),
                   );
                 },
@@ -313,85 +300,88 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-   discountCard(){
+
+  discountCard() {
     return Container(
-            decoration: BoxDecoration(
-              color: CustomColors.lightBlueColor,
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            height: 144.h,
-            width: 380.w,
-            child: Row(
+      decoration: BoxDecoration(
+        color: CustomColors.lightBlueColor,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      height: 144.h,
+      width: 380.w,
+      child: Row(
+        children: [
+          SizedBox(
+            width: 181.w,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: 181.w,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 25.h),
-                      Padding(
-                        padding: EdgeInsets.only(left: 27.w),
-                        child: Text(
-                          "Botox Treatment",
-                          style: CustomFonts.black18w600,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 27.w),
-                        child: Text(
-                          "Glow Skin Clinic",
-                          style: CustomFonts.black14w400,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Container(
-                        padding: EdgeInsets.only(right: 5.w, left: 27.w),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topRight: Radius.circular(8.r),
-                            bottomRight: Radius.circular(8.r),
-                          ),
-                        ),
-                        child: Text("20% Off", style: CustomFonts.black14w600),
-                      ),
-                      SizedBox(height: 5.h),
-                      Padding(
-                        padding: EdgeInsets.only(left: 27.w),
-                        child: Text(
-                          "Valid Till 30 March",
-                          style: CustomFonts.black14w400,
-                        ),
-                      ),
-                    ],
+                SizedBox(height: 25.h),
+                Padding(
+                  padding: EdgeInsets.only(left: 27.w),
+                  child: Text(
+                    "Botox Treatment",
+                    style: CustomFonts.black18w600,
                   ),
                 ),
-
-                Stack(
-                  children: [
-                    Container(
-                      width: 199.w,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(DummyAssets.treatmentimage),
-                          fit: BoxFit.fill,
-                        ),
-                      ),
+                Padding(
+                  padding: EdgeInsets.only(left: 27.w),
+                  child: Text(
+                    "Glow Skin Clinic",
+                    style: CustomFonts.black14w400,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Container(
+                  padding: EdgeInsets.only(right: 5.w, left: 27.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(8.r),
+                      bottomRight: Radius.circular(8.r),
                     ),
-                    Positioned(
-                      top: 16.h,
-                      right: 14.w,
-                    child: Container(
-                      padding: EdgeInsets.all(11),
-                      decoration: BoxDecoration(shape: BoxShape.circle
-                      
-                      ,color: Color(0xffFF2F82)),
-                     child: Text("20%\nOFF",style: CustomFonts.white20w700,),
-                    ))
-                  ],
+                  ),
+                  child: Text("20% Off", style: CustomFonts.black14w600),
+                ),
+                SizedBox(height: 5.h),
+                Padding(
+                  padding: EdgeInsets.only(left: 27.w),
+                  child: Text(
+                    "Valid Till 30 March",
+                    style: CustomFonts.black14w400,
+                  ),
                 ),
               ],
             ),
-          );
+          ),
+
+          Stack(
+            children: [
+              Container(
+                width: 199.w,
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(DummyAssets.treatmentimage),
+                    fit: BoxFit.fill,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 16.h,
+                right: 14.w,
+                child: Container(
+                  padding: EdgeInsets.all(11),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xffFF2F82),
+                  ),
+                  child: Text("20%\nOFF", style: CustomFonts.white20w700),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

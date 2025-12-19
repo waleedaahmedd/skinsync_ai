@@ -20,9 +20,6 @@ class PngAssets {
   static const String beforeAfter = "${_assets}before_after.png";
   static const String syringe = "${_assets}syringe.png";
   static const String hand = "${_assets}hand.png";
-
-
-
 }
 
 class SvgAssets {
@@ -57,6 +54,7 @@ class SvgAssets {
   static const String eye = "${_assets}eye.svg";
   static const String glasses = "${_assets}glasses.svg";
   static const String tick = "${_assets}trick.svg";
+  static const String flame = "${_assets}flame.svg";
 
   // bottom nav icons
   static const String notification = "${_assets}notification.svg";

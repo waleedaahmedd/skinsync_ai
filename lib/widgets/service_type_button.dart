@@ -22,16 +22,34 @@ class ServiceTypeButton extends StatelessWidget {
     this.frosted = false,
   });
 
+  Color get _backgroundColor {
+    if (selected) {
+      if (frosted) return CustomColors.blackColor.withOpacity(0.5);
+
+      return CustomColors.blackColor;
+    } else {
+      if (frosted) return Colors.white.withOpacity(0.5);
+      return Colors.white;
+    }
+  }
+
+  Color get _textColor {
+    if (selected) {
+      if (frosted) return Colors.white.withOpacity(0.5);
+
+      return Colors.white;
+    } else {
+      if (frosted) return CustomColors.blackColor.withOpacity(0.5);
+      return CustomColors.blackColor;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget child = Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: selected
-            ? CustomColors.blackColor.withOpacity(
-                0.5,
-              ) // semi-transparent when selected
-            : Colors.white.withOpacity(0.2), // transparent background
+        color: _backgroundColor,
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Row(
@@ -47,7 +65,6 @@ class ServiceTypeButton extends StatelessWidget {
       ),
     );
 
-    // Wrap with BackdropFilter if frosted glass effect is enabled
     if (frosted) {
       child = ClipRRect(
         borderRadius: BorderRadius.circular(12.r),

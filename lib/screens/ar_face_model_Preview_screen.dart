@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -56,7 +57,7 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
               SizedBox(height: 50.h),
               _addMoreService(),
               SizedBox(height: 50.h),
-              _bottomButtons(),
+              _bottomButtons(context),
             ],
           ),
         ),
@@ -164,6 +165,7 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
               icon: Image.asset(PngAssets.syringe, width: 21.w),
               text: "Dermal Fillers",
               selected: true,
+              frosted: false,
             ),
             //         Container(
             //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -255,7 +257,7 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
 
   // ================= Bottom Buttons =================
 
-  Widget _bottomButtons() {
+  Widget _bottomButtons(BuildContext context) {
     return Row(
       children: [
         Expanded(
@@ -273,7 +275,9 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
         const SizedBox(width: 16),
         Expanded(
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, ExploreClinicsScreen.routeName);
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.black,
               shape: RoundedRectangleBorder(

@@ -95,6 +95,13 @@ class CustomFonts {
     color: CustomColors.blackColor,
     fontFamily: 'Degular',
   );
+  static TextStyle black12w600 = TextStyle(
+    height: 0,
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w600,
+    color: CustomColors.blackColor,
+    fontFamily: 'Degular',
+  );
   static TextStyle black14w500 = TextStyle(
     height: 0,
     fontSize: 14.sp,
