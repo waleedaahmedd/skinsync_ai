@@ -130,6 +130,16 @@ class CustomFonts {
     color: CustomColors.textGreyColor,
     fontFamily: 'Degular',
   );
+  static TextStyle grey14w400LineThrough = TextStyle(
+    height: 0,
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w400,
+    color: CustomColors.textGreyColor,
+    fontFamily: 'Degular',
+    decoration: TextDecoration.lineThrough,
+    decorationColor: CustomColors.textGreyColor, // optional
+    decorationThickness: 1.0,
+  );
   static TextStyle grey16w400 = TextStyle(
     height: 0,
     fontSize: 16.sp,

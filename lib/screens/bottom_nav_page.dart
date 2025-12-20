@@ -9,18 +9,23 @@ import 'package:skinsync_ai/screens/bottom_nav_screens/progress_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
 
 import 'package:skinsync_ai/screens/home_screen.dart';
+import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 
 import '../view_models/bottom_nav_view_model.dart';
 import '../widgets/scan_face_button.dart';
 
 class BottomNavPage extends StatelessWidget {
   const BottomNavPage({super.key});
-          static const String routeName = '/BottomNavPage';
-
+  static const String routeName = '/BottomNavPage';
 
   static final List<Widget> _children = [
     HomeScreen(),
-    TreatmentsScreen(),
+    ChangeNotifierProvider(
+      create: (context) => TreatmentViewModel(),
+      builder: (context, _) {
+        return TreatmentsScreen();
+      },
+    ),
     ApppointmentsScreen(),
     ProgressScreen(),
     MyProfileScreen(),
@@ -48,7 +53,10 @@ class BottomNavPage extends StatelessWidget {
             alignment: Alignment.center,
             children: [
               _children[provider.currentPage],
-              Positioned(bottom: 110.h+MediaQuery.paddingOf(context).bottom, child: ScanFaceButton()),
+              Positioned(
+                bottom: 110.h + MediaQuery.paddingOf(context).bottom,
+                child: ScanFaceButton(),
+              ),
             ],
           ),
           extendBody: true,
@@ -74,7 +82,9 @@ class BottomNavPage extends StatelessWidget {
           //   ),
           // ),
           bottomNavigationBar: Padding(
-            padding:  EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.paddingOf(context).bottom,
+            ),
             child: BottomNavBar(),
           ),
         );

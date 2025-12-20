@@ -41,9 +41,12 @@ class _ProgressScreenState extends State<ProgressScreen> {
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 20.0.w),
-            child: GreyContainer(icon:   Icons.notifications_none_outlined, onTap: () {
-              // Handle notification tap
-            },),
+            child: GreyContainer(
+              icon: Icons.notifications_none_outlined,
+              onTap: () {
+                // Handle notification tap
+              },
+            ),
           ),
         ],
       ),
@@ -220,24 +223,24 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                 height: 18.h,
                                 width: 18.w,
                               ),
-                              SizedBox(width: 7.w,),
+                              SizedBox(width: 7.w),
                               Text("28%", style: CustomFonts.black17w500),
                             ],
                           ),
                         ],
                       ),
-                      SizedBox(height: 4.h,),
-                      Text("Glow Skin Clinic",style:CustomFonts.grey14w400,),
-                       SizedBox(height: 1.h,),
-                      Text("08 Sessions",style:CustomFonts.grey14w400,),
-                      SizedBox(height: 22.h,)
+                      SizedBox(height: 4.h),
+                      Text("Glow Skin Clinic", style: CustomFonts.grey14w400),
+                      SizedBox(height: 1.h),
+                      Text("08 Sessions", style: CustomFonts.grey14w400),
+                      SizedBox(height: 22.h),
                     ],
                   );
                 },
               ),
             ),
           ),
-          SizedBox(height: 70.h,)
+          SizedBox(height: 70.h),
         ],
       ),
     );

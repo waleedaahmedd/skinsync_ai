@@ -273,7 +273,7 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
                 child: SafeArea(
                   child: GestureDetector(
                     onTap: () {
-                      // Navigator.of(context).pop();
+                      Navigator.of(context).pop();
                       _captureAndNavigate();
                     },
                     child: Container(
