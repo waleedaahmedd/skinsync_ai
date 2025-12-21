@@ -4,6 +4,7 @@ import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:skinsync_ai/screens/clinics_detail_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -93,42 +94,47 @@ class TreatmentDetailScreen extends StatelessWidget {
             ),
             Divider(color: CustomColors.greyColor),
             SizedBox(height: 15.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.0.w),
-              child: Row(
-                children: [
-                  ClipOval(
-                    child: Image.asset(
-                      DummyAssets.acen,
-                      height: 57.w,
-                      width: 57.w,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  SizedBox(width: 13.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Glow Skin Clinic", style: CustomFonts.black18w600),
-                      Row(
-                        children: [
-                          SvgPicture.asset(
-                            SvgAssets.flame,
-                            height: 11.h,
-                            width: 8.83.w,
-                          ),
-                          SizedBox(width: 3.37.w),
-                          Text(
-                            "Top Rated aesthetic Clinic",
-                            style: CustomFonts.black12w400,
-                          ),
-                        ],
+            GestureDetector(
+              onTap: (){
+                Navigator.pushNamed(context, ClinicsDetailScreen.routeName);
+              },
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 30.0.w),
+                child: Row(
+                  children: [
+                    ClipOval(
+                      child: Image.asset(
+                        DummyAssets.acen,
+                        height: 57.w,
+                        width: 57.w,
+                        fit: BoxFit.cover,
                       ),
-                    ],
-                  ),
-                  Spacer(),
-                  Icon(Icons.more_vert, color: Colors.black, size: 18.sp),
-                ],
+                    ),
+                    SizedBox(width: 13.w),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Glow Skin Clinic", style: CustomFonts.black18w600),
+                        Row(
+                          children: [
+                            SvgPicture.asset(
+                              SvgAssets.flame,
+                              height: 11.h,
+                              width: 8.83.w,
+                            ),
+                            SizedBox(width: 3.37.w),
+                            Text(
+                              "Top Rated aesthetic Clinic",
+                              style: CustomFonts.black12w400,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Spacer(),
+                    Icon(Icons.more_vert, color: Colors.black, size: 18.sp),
+                  ],
+                ),
               ),
             ),
             SizedBox(height: 14.h),
@@ -251,6 +257,7 @@ class TreatmentDetailScreen extends StatelessWidget {
         ),
       ),
     );
+ 
   }
 
   Widget richTitleDescription({

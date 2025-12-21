@@ -67,6 +67,13 @@ class CustomFonts {
     color: CustomColors.whiteColor,
     fontFamily: 'Degular',
   );
+  static TextStyle white15w400 = TextStyle(
+    height: 0,
+    fontSize: 15.sp,
+    fontWeight: FontWeight.w400,
+    color: CustomColors.whiteColor,
+    fontFamily: 'Degular',
+  );
   static TextStyle white17w500 = TextStyle(
     height: 0,
     fontSize: 17.sp,
@@ -92,6 +99,20 @@ class CustomFonts {
     height: 0,
     fontSize: 14.sp,
     fontWeight: FontWeight.w600,
+    color: CustomColors.blackColor,
+    fontFamily: 'Degular',
+  );
+  static TextStyle black14w700 = TextStyle(
+    height: 0,
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w700,
+    color: CustomColors.blackColor,
+    fontFamily: 'Degular',
+  );
+  static TextStyle black15w400 = TextStyle(
+    height: 0,
+    fontSize: 15.sp,
+    fontWeight: FontWeight.w400,
     color: CustomColors.blackColor,
     fontFamily: 'Degular',
   );
@@ -136,6 +157,20 @@ class CustomFonts {
   static TextStyle grey14w400 = TextStyle(
     height: 0,
     fontSize: 14.sp,
+    fontWeight: FontWeight.w400,
+    color: CustomColors.textGreyColor,
+    fontFamily: 'Degular',
+  );
+  static TextStyle grey15w400 = TextStyle(
+    height: 0,
+    fontSize: 15.sp,
+    fontWeight: FontWeight.w400,
+    color: CustomColors.textGreyColor,
+    fontFamily: 'Degular',
+  );
+  static TextStyle grey13w400 = TextStyle(
+    height: 0,
+    fontSize: 13.sp,
     fontWeight: FontWeight.w400,
     color: CustomColors.textGreyColor,
     fontFamily: 'Degular',
@@ -211,6 +246,20 @@ class CustomFonts {
     fontSize: 12.sp,
     fontWeight: FontWeight.w400,
     color: CustomColors.blackColor,
+    fontFamily: 'Degular',
+  );
+  static TextStyle black13w400 = TextStyle(
+    height: 0,
+    fontSize: 13.sp,
+    fontWeight: FontWeight.w400,
+    color: CustomColors.blackColor,
+    fontFamily: 'Degular',
+  );
+   static TextStyle red13w500 = TextStyle(
+    height: 0,
+    fontSize: 13.sp,
+    fontWeight: FontWeight.w500,
+    color: Color(0xFFFE3A30),
     fontFamily: 'Degular',
   );
   static TextStyle black20w600 = TextStyle(

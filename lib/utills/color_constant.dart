@@ -41,7 +41,12 @@ class CustomColors {
     end: Alignment.bottomCenter,
     colors: [Color(0xffE7C6E8), Color(0xffFFFFFF), Color(0xff88E3FB)],
   );
-  static LinearGradient BlueWithWhiteGradient = LinearGradient(
+  static const LinearGradient whiteBlueGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [ Color(0xffFFFFFF), Color(0xffFFFFFF), Color(0xffFFFFFF), Color(0xff88E3FB)],
+  );
+  static LinearGradient blueWithWhiteGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [

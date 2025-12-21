@@ -20,7 +20,7 @@ class FaceScanScreen extends StatelessWidget {
         top: false,
         child: Container(
           decoration: BoxDecoration(
-            gradient: CustomColors.BlueWithWhiteGradient,
+            gradient: CustomColors.blueWithWhiteGradient,
           ),
           child: Stack(
             children: [
