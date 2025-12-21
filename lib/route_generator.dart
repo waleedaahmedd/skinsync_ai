@@ -9,6 +9,7 @@ import 'package:skinsync_ai/screens/bottom_nav_screens/scan_your_face_screen.dar
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 import 'package:skinsync_ai/screens/login_screen.dart';
 import 'package:skinsync_ai/screens/otp_screen.dart';
+import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
 import 'package:skinsync_ai/screens/your_profile_screen.dart';
 import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/screens/splash_screen.dart';
@@ -138,6 +139,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: ExploreClinicsScreen.routeName),
           builder: (_) => ExploreClinicsScreen(),
+        );
+        case TreatmentDetailScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: TreatmentDetailScreen.routeName),
+          builder: (_) => TreatmentDetailScreen(),
         );
       default:
         return _errorRoute();

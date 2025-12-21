@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
+import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
@@ -91,7 +92,9 @@ class _TreamentListScreenState extends State<TreamentListScreen> {
             spacing: 18.w, // Horizontal spacing
             runSpacing: 23.0.h, // Vertical spacing
             children: List.generate(8, (index) {
-              return TreamentCard();
+              return TreamentCard(
+                onTap:(){ Navigator.pushNamed(context,TreatmentDetailScreen.routeName);},
+              );
             }),
           ),
         ),

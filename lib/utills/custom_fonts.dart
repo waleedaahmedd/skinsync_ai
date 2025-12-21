@@ -109,6 +109,16 @@ class CustomFonts {
     color: CustomColors.blackColor,
     fontFamily: 'Degular',
   );
+  static TextStyle black14w500Underline= TextStyle(
+    height: 0,
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w500,
+    color: CustomColors.blackColor,
+    decoration: TextDecoration.underline,
+    decorationColor: CustomColors.blackColor, // optional
+    decorationThickness: 1.0,
+    fontFamily: 'Degular',
+  );
   static TextStyle black30w600 = TextStyle(
     height: 0,
     fontSize: 30.sp,
