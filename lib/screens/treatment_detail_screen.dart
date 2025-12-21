@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
@@ -16,6 +17,7 @@ class TreatmentDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,11 +185,19 @@ class TreatmentDetailScreen extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 10.h),
+            
+            SizedBox(height: 160.h),
           ],
         ),
       ),
-      bottomNavigationBar: SizedBox(
+      bottomNavigationBar: GlassMorphismContainer(
+        blurIntensity: 30.0,
+      opacity: 0.10,
+      glassThickness: 1.0,
+    
+     // tintColor: Colors.white.withOpacity(0.15),
+      enableBackgroundDistortion: true,
+      enableGlassBorder: true,
         height: 144.h,
         child: Column(
           children: [
@@ -220,11 +230,13 @@ class TreatmentDetailScreen extends StatelessWidget {
                     ),
                    SizedBox(width: 47.h,),
                     Container(
+                      
                       width: 187.w,
                       height: 60.h,
                       alignment: Alignment.center,
                       padding: EdgeInsets.symmetric(vertical: 19.h),
                       decoration: BoxDecoration(
+                        
                         borderRadius: BorderRadius.circular(50.r),
                         color: Colors.black,
                       ),
