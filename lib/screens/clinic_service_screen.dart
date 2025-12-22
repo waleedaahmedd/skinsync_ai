@@ -3,14 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart';
-import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/time_container.dart';
-import 'package:skinsync_ai/widgets/treatment_card.dart';
 import 'package:skinsync_ai/widgets/treatment_price_container.dart';
 
 class ClinicServiceScreen extends StatefulWidget {
@@ -282,19 +279,19 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 170.h,)
+              SizedBox(height: 170.h),
             ],
           ),
         ),
       ),
-            bottomNavigationBar: GlassMorphismContainer(
+      bottomNavigationBar: GlassMorphismContainer(
         blurIntensity: 30.0,
-      opacity: 0.10,
-      glassThickness: 1.0,
-    
-     // tintColor: Colors.white.withOpacity(0.15),
-      enableBackgroundDistortion: true,
-      enableGlassBorder: true,
+        opacity: 0.10,
+        glassThickness: 1.0,
+
+        // tintColor: Colors.white.withOpacity(0.15),
+        enableBackgroundDistortion: true,
+        enableGlassBorder: true,
         height: 144.h,
         child: Column(
           children: [
@@ -309,37 +306,33 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
               ),
             ),
             Padding(
-              padding:EdgeInsets.only( top: 10.h),
+              padding: EdgeInsets.only(top: 10.h),
               child: Center(
                 child: Row(
-                  
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Column(
                       children: [
                         Text("\$ 650", style: CustomFonts.black28w600),
-                
+
                         Text(
                           "View Pricing Policy",
                           style: CustomFonts.black14w500Underline,
                         ),
                       ],
                     ),
-                   SizedBox(width: 47.h,),
+                    SizedBox(width: 47.h),
                     Container(
-                      
                       width: 187.w,
                       height: 60.h,
                       alignment: Alignment.center,
                       padding: EdgeInsets.symmetric(vertical: 19.h),
                       decoration: BoxDecoration(
-                        
                         borderRadius: BorderRadius.circular(50.r),
                         color: Colors.black,
                       ),
-                      child:  Text("Book Now", style: CustomFonts.white22w600),
+                      child: Text("Book Now", style: CustomFonts.white22w600),
                     ),
-                  
                   ],
                 ),
               ),
@@ -347,7 +340,6 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
           ],
         ),
       ),
-    
     );
   }
 
