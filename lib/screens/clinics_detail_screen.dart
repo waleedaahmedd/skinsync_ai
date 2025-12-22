@@ -183,7 +183,7 @@ class ClinicsDetailScreen extends StatelessWidget {
                     Row(children: [
                       Icon(Iconsax.location,color: Colors.black,size: 20.sp,),
                       SizedBox(width: 14.w,),
-                      Text("Bedford-Stuyvesant, Brooklyn, NY 11221",style: CustomFonts.black20w600,)
+                      Flexible(child: Text("Bedford-Stuyvesant, Brooklyn, NY 11221", overflow: TextOverflow.ellipsis,style: CustomFonts.black20w600,))
 
                     ],),
                     
@@ -197,37 +197,40 @@ class ClinicsDetailScreen extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: GlassMorphismContainer(
-        borderRadius: BorderRadius.all(Radius.circular(0.r)),
-        blurIntensity: 30.0,
-        opacity: 0.10,
-        glassThickness: 1.0,
-
-        // tintColor: Colors.white.withOpacity(0.15),
-        enableBackgroundDistortion: true,
-        enableGlassBorder: true,
-        height: 144.h,
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 12.h),
-              color: CustomColors.lightPurpleColor,
-              child: Center(
-                child: Text(
-                  "Complete The Appointment Timing Slot To View Full Price",
-                  style: CustomFonts.black14w600,
+      bottomNavigationBar: Padding(
+        padding:  EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
+        child: GlassMorphismContainer(
+          borderRadius: BorderRadius.all(Radius.circular(0.r)),
+          blurIntensity: 30.0,
+          opacity: 0.10,
+          glassThickness: 1.0,
+        
+          // tintColor: Colors.white.withOpacity(0.15),
+          enableBackgroundDistortion: true,
+          enableGlassBorder: true,
+          height: 144.h,
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+                color: CustomColors.lightPurpleColor,
+                child: Center(
+                  child: Text(
+                    "Complete The Appointment Timing Slot To View Full Price",
+                    style: CustomFonts.black14w600,
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: 10.h,left: 30.w,right: 30.w),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(onPressed: (){
-                  Navigator.pushNamed(context,ClinicServiceScreen.routeName);
-                }, child: Text("Book An Appointment")))
-            ),
-          ],
+              Padding(
+                padding: EdgeInsets.only(top: 10.h,left: 30.w,right: 30.w),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(onPressed: (){
+                    Navigator.pushNamed(context,ClinicServiceScreen.routeName);
+                  }, child: Text("Book An Appointment")))
+              ),
+            ],
+          ),
         ),
       ),
     );

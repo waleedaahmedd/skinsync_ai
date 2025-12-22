@@ -27,8 +27,10 @@ class SignUpOnboardingViewModel extends ChangeNotifier {
       );
     }
   }
-
-  void skipOnboarding(BuildContext context) {
+  void onSkipThis(BuildContext context){
+    Navigator.pushReplacementNamed(context, YourProfileScreen.routeName);
+  }
+  void onNextButton(BuildContext context) {
     if (_pageController == null) return;
     
     if (currentPage < totalPages - 1) {

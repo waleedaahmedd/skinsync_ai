@@ -12,6 +12,7 @@ class CustomColors {
   static const Color iconColor = Color(0xffF2F2F2);
   static const Color textGreyColor = Color(0xff494949);
   static const Color textFeildBoaderColor = Color(0xff939393);
+  
 
   static const LinearGradient purpleBlueGradient = LinearGradient(
     begin: Alignment.topCenter,

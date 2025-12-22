@@ -13,183 +13,193 @@ class SkinAllergiesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 33.h),
-            Text(
-              'Have you been diagnosed with any skin conditions or allergies?',
-              style: CustomFonts.black28w600,
-            ),
-            SizedBox(height: 39.h),
-            Row(
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 30.w),
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.all(0),
+              shrinkWrap: true,
               children: [
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15.r),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 33.h),
+                    Text(
+                      'Have you been diagnosed with any skin conditions or allergies?',
+                      style: CustomFonts.black28w600,
                     ),
-                    margin: EdgeInsets.zero,
-                    child: Column(
+                    SizedBox(height: 39.h),
+                    Row(
                       children: [
-                        Container(
-                          height: 118.h,
-        
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15.r),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: AssetImage(DummyAssets.acen),
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(8.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15.r),
+                            ),
+                            margin: EdgeInsets.zero,
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 118.h,
+                
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15.r),
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: AssetImage(DummyAssets.acen),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 7.h),
+                                Center(
+                                  child: Text("Acne", style: CustomFonts.black18w600),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        SizedBox(height: 7.h),
-                        Center(
-                          child: Text("Acne", style: CustomFonts.black18w600),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(width: 10.w),
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15.r),
-                    ),
-                    margin: EdgeInsets.zero,
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 118.h,
-        
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15.r),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: AssetImage(DummyAssets.acen),
+                        SizedBox(width: 10.w),
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(8.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15.r),
+                            ),
+                            margin: EdgeInsets.zero,
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 118.h,
+                
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15.r),
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: AssetImage(DummyAssets.acen),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 7.h),
+                                Center(
+                                  child: Text("Acne", style: CustomFonts.black18w600),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        SizedBox(height: 7.h),
-                        Center(
-                          child: Text("Acne", style: CustomFonts.black18w600),
-                        ),
                       ],
                     ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 10.h),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15.r),
-                    ),
-                    margin: EdgeInsets.zero,
-                    child: Column(
+                    SizedBox(height: 10.h),
+                    Row(
                       children: [
-                        Container(
-                          height: 118.h,
-        
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15.r),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: AssetImage(DummyAssets.acen),
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(8.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15.r),
+                            ),
+                            margin: EdgeInsets.zero,
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 118.h,
+                
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15.r),
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: AssetImage(DummyAssets.acen),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 7.h),
+                                Center(
+                                  child: Text("Acne", style: CustomFonts.black18w600),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        SizedBox(height: 7.h),
-                        Center(
-                          child: Text("Acne", style: CustomFonts.black18w600),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(width: 10.w),
-                Expanded(
-                  child: Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15.r),
-                    ),
-                    margin: EdgeInsets.zero,
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 118.h,
-        
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15.r),
-                            image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: AssetImage(DummyAssets.acen),
+                        SizedBox(width: 10.w),
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.all(8.w),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15.r),
+                            ),
+                            margin: EdgeInsets.zero,
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 118.h,
+                
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15.r),
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: AssetImage(DummyAssets.acen),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 7.h),
+                                Center(
+                                  child: Text("Acne", style: CustomFonts.black18w600),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                        SizedBox(height: 7.h),
-                        Center(
-                          child: Text("Acne", style: CustomFonts.black18w600),
-                        ),
                       ],
                     ),
-                  ),
+                    SizedBox(height: 14.h),
+                    QuestionTitle(title: "None of the above "),
+                    SizedBox(height: 40.h),
+                    Text(
+                      "Are you currently using any medications or treatments for your skin? ",
+                      style: CustomFonts.black28w600,
+                    ),
+                    SizedBox(height: 13.h),
+                    Row(
+                      children: [
+                        RadioButtonWidget(),
+                        SizedBox(width: 13.w),
+                        Text("Yes ( Please Specify)", style: CustomFonts.black18w600),
+                      ],
+                    ),
+                    SizedBox(height: 18.h),
+                    Row(
+                      children: [
+                        RadioButtonWidget(),
+                        SizedBox(width: 13.w),
+                        Text("No", style: CustomFonts.black18w600),
+                      ],
+                    ),
+                    SizedBox(height: 20.h),
+                    
+                  ],
                 ),
               ],
             ),
-            SizedBox(height: 14.h),
-            QuestionTitle(title: "None of the above "),
-            SizedBox(height: 40.h),
-            Text(
-              "Are you currently using any medications or treatments for your skin? ",
-              style: CustomFonts.black28w600,
+          ),
+          SizedBox(height: 20.h),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                context.read<SignUpOnboardingViewModel>().onNextButton(context);
+              },
+              child: Text("Next"),
             ),
-            SizedBox(height: 13.h),
-            Row(
-              children: [
-                RadioButtonWidget(),
-                SizedBox(width: 13.w),
-                Text("Yes ( Please Specify)", style: CustomFonts.black18w600),
-              ],
-            ),
-            SizedBox(height: 18.h),
-            Row(
-              children: [
-                RadioButtonWidget(),
-                SizedBox(width: 13.w),
-                Text("No", style: CustomFonts.black18w600),
-              ],
-            ),
-            SizedBox(height: 20.h),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  context.read<SignUpOnboardingViewModel>().skipOnboarding(
-                    context,
-                  );
-                },
-                child: Text("Next"),
-              ),
-            ),
-            SizedBox(height: 20.h),
-          ],
-        ),
+          ),
+          SizedBox(height: 20.h),
+        ],
       ),
     );
   }

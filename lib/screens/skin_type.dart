@@ -37,7 +37,7 @@ class SkinType extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
-                context.read<SignUpOnboardingViewModel>().skipOnboarding(context);
+                context.read<SignUpOnboardingViewModel>().onNextButton(context);
               },
               child: Text("Next"),
             ),

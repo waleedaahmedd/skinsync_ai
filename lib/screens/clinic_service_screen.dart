@@ -287,66 +287,69 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
           ),
         ),
       ),
-            bottomNavigationBar: GlassMorphismContainer(
-        blurIntensity: 30.0,
-      opacity: 0.10,
-      glassThickness: 1.0,
-    
-     // tintColor: Colors.white.withOpacity(0.15),
-      enableBackgroundDistortion: true,
-      enableGlassBorder: true,
-        height: 144.h,
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 12.h),
-              color: CustomColors.lightPurpleColor,
-              child: Center(
-                child: Text(
-                  "Complete The Appointment Timing Slot To View Full Price",
-                  style: CustomFonts.black14w600,
+            bottomNavigationBar: Padding(
+              padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
+              child: GlassMorphismContainer(
+                      blurIntensity: 30.0,
+                    opacity: 0.10,
+                    glassThickness: 1.0,
+                  
+                   // tintColor: Colors.white.withOpacity(0.15),
+                    enableBackgroundDistortion: true,
+                    enableGlassBorder: true,
+                      height: 144.h,
+                      child: Column(
+                        children: [
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+                color: CustomColors.lightPurpleColor,
+                child: Center(
+                  child: Text(
+                    "Complete The Appointment Timing Slot To View Full Price",
+                    style: CustomFonts.black14w600,
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding:EdgeInsets.only( top: 10.h),
-              child: Center(
-                child: Row(
+              Padding(
+                padding:EdgeInsets.only( top: 10.h),
+                child: Center(
+                  child: Row(
+                    
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          Text("\$ 650", style: CustomFonts.black28w600),
                   
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
-                      children: [
-                        Text("\$ 650", style: CustomFonts.black28w600),
-                
-                        Text(
-                          "View Pricing Policy",
-                          style: CustomFonts.black14w500Underline,
-                        ),
-                      ],
-                    ),
-                   SizedBox(width: 47.h,),
-                    Container(
-                      
-                      width: 187.w,
-                      height: 60.h,
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(vertical: 19.h),
-                      decoration: BoxDecoration(
-                        
-                        borderRadius: BorderRadius.circular(50.r),
-                        color: Colors.black,
+                          Text(
+                            "View Pricing Policy",
+                            style: CustomFonts.black14w500Underline,
+                          ),
+                        ],
                       ),
-                      child:  Text("Book Now", style: CustomFonts.white22w600),
-                    ),
-                  
-                  ],
+                     SizedBox(width: 47.h,),
+                      Container(
+                        
+                        width: 187.w,
+                        height: 60.h,
+                        alignment: Alignment.center,
+                      
+                        decoration: BoxDecoration(
+                          
+                          borderRadius: BorderRadius.circular(50.r),
+                          color: Colors.black,
+                        ),
+                        child:  Center(child: Text("Book Now", style: CustomFonts.white22w600)),
+                      ),
+                    
+                    ],
+                  ),
                 ),
               ),
+                        ],
+                      ),
+                    ),
             ),
-          ],
-        ),
-      ),
     
     );
   }

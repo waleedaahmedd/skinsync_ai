@@ -139,10 +139,7 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
                               : SizedBox(),
                           GestureDetector(
                             onTap: () {
-                              signupViewModel.skipOnboarding(
-                                context,
-                              
-                              );
+                              signupViewModel.onSkipThis(context);
                             },
                             child: Row(
                               children: [

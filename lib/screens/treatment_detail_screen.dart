@@ -4,6 +4,7 @@ import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:skinsync_ai/screens/clinic_service_screen.dart';
 import 'package:skinsync_ai/screens/clinics_detail_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
@@ -95,7 +96,7 @@ class TreatmentDetailScreen extends StatelessWidget {
             Divider(color: CustomColors.greyColor),
             SizedBox(height: 15.h),
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 Navigator.pushNamed(context, ClinicsDetailScreen.routeName);
               },
               child: Padding(
@@ -114,7 +115,10 @@ class TreatmentDetailScreen extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Glow Skin Clinic", style: CustomFonts.black18w600),
+                        Text(
+                          "Glow Skin Clinic",
+                          style: CustomFonts.black18w600,
+                        ),
                         Row(
                           children: [
                             SvgPicture.asset(
@@ -191,78 +195,85 @@ class TreatmentDetailScreen extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             SizedBox(height: 160.h),
           ],
         ),
       ),
-      bottomNavigationBar: GlassMorphismContainer(
-        blurIntensity: 30.0,
-      opacity: 0.10,
-      glassThickness: 1.0,
-    
-     // tintColor: Colors.white.withOpacity(0.15),
-      enableBackgroundDistortion: true,
-      enableGlassBorder: true,
-        height: 144.h,
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 12.h),
-              color: CustomColors.lightPurpleColor,
-              child: Center(
-                child: Text(
-                  "Complete The Appointment Timing Slot To View Full Price",
-                  style: CustomFonts.black14w600,
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
+        child: GlassMorphismContainer(
+          blurIntensity: 30.0,
+          opacity: 0.10,
+          glassThickness: 1.0,
+
+          // tintColor: Colors.white.withOpacity(0.15),
+          enableBackgroundDistortion: true,
+          enableGlassBorder: true,
+          height: 144.h,
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+                color: CustomColors.lightPurpleColor,
+                child: Center(
+                  child: Text(
+                    "Complete The Appointment Timing Slot To View Full Price",
+                    style: CustomFonts.black14w600,
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding:EdgeInsets.only( top: 10.h),
-              child: Center(
-                child: Row(
-                  
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
-                      children: [
-                        Text("\$ 650", style: CustomFonts.black28w600),
-                
-                        Text(
-                          "View Pricing Policy",
-                          style: CustomFonts.black14w500Underline,
-                        ),
-                      ],
-                    ),
-                   SizedBox(width: 47.h,),
-                    GestureDetector(
-                      onTap: (){
-                        Navigator.pushNamed(context,ClinicsDetailScreen.routeName);
-                      },
-                      child: Container(
-                        
-                        width: 187.w,
-                        height: 60.h,
-                        alignment: Alignment.center,
-                        padding: EdgeInsets.symmetric(vertical: 19.h),
-                        decoration: BoxDecoration(
-                          
-                          borderRadius: BorderRadius.circular(50.r),
-                          color: Colors.black,
-                        ),
-                        child:  Text("Book Now", style: CustomFonts.white22w600),
+              Padding(
+                padding: EdgeInsets.only(top: 10.h),
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          Text("\$ 650", style: CustomFonts.black28w600),
+
+                          Text(
+                            "View Pricing Policy",
+                            style: CustomFonts.black14w500Underline,
+                          ),
+                        ],
                       ),
-                    ),
-                  
-                  ],
+                      SizedBox(width: 47.h),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            ClinicServiceScreen.routeName,
+                          );
+                        },
+                        child: Container(
+                          width: 187.w,
+                          height: 60.h,
+                          alignment: Alignment.center,
+
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50.r),
+                            color: Colors.black,
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Book Now",
+                              style: CustomFonts.white22w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+   
     );
- 
   }
 
   Widget richTitleDescription({

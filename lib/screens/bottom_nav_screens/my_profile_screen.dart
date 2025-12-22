@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:skinsync_ai/route_generator.dart';
+import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
 import 'package:skinsync_ai/screens/personal_detail_screen.dart';
 import 'package:skinsync_ai/screens/saved_treatment_screen.dart';
 import 'package:skinsync_ai/screens/setting_screen.dart';
@@ -122,7 +123,9 @@ class MyProfileScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 36.h),
                 profileOppition(
-                  callBack: () {},
+                  callBack: () {
+                    Navigator.pushNamed(context,AllergyAndMedicalHistory.routeName);
+                  },
                   icon: SvgAssets.medical,
                   title: "Medical History",
                 ),
