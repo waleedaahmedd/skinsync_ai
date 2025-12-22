@@ -24,27 +24,30 @@ class BiometricHelper {
 
   Future<IconData> getBiometricIcon() async {
     final types = await getAvailableBiometrics();
-    final type = types.firstWhere((type) => type == BiometricType.face, orElse: () => BiometricType.fingerprint);
+    final type = types.firstWhere(
+      (type) => type == BiometricType.face,
+      orElse: () => BiometricType.fingerprint,
+    );
 
-  switch (type) {
-    case  BiometricType.face:
-      return Icons.face;
-    case BiometricType.fingerprint:
-      return Icons.fingerprint;
-    default:
-      return Icons.lock;
+    switch (type) {
+      case BiometricType.face:
+        return Icons.face;
+      case BiometricType.fingerprint:
+        return Icons.fingerprint;
+      default:
+        return Icons.lock;
+    }
   }
-}
 
   /// Authenticate user
   Future<bool> authenticate({String reason = 'Authenticate'}) async {
     try {
       return await _auth.authenticate(
         localizedReason: reason,
-        
+
         biometricOnly: true,
       );
-    } catch (_) {
+    } catch (e) {
       return false;
     }
   }

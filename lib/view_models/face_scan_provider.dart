@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:image/image.dart' as img;
+
+import '../utills/image_utills.dart';
 
 class FaceScanProvider extends ChangeNotifier {
   double progress = 0.0;
@@ -19,10 +22,12 @@ class FaceScanProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   void toggleFlash() {
     flash = !flash;
     notifyListeners();
   }
+
   void toggleIsBefore() {
     isBefore = !isBefore;
     notifyListeners();
@@ -46,10 +51,10 @@ class FaceScanProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
-
-  void markCaptured(XFile image) {
+  Future<void> markCaptured(XFile image) async {
     capturedImage = image;
+    final flippedImage = await flipXFileHorizontally(image);
+    capturedImage = flippedImage;
     isCapturing = true;
     notifyListeners();
   }
@@ -60,4 +65,3 @@ class FaceScanProvider extends ChangeNotifier {
     super.dispose();
   }
 }
-

@@ -8,7 +8,7 @@ import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/fillter_container.dart';
-import 'package:skinsync_ai/widgets/treatment_card.dart';
+import '../widgets/custom_grid_view_tile.dart';
 
 class TreamentListScreen extends StatefulWidget {
   TreamentListScreen({super.key});
@@ -28,12 +28,12 @@ class _TreamentListScreenState extends State<TreamentListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30.0.w),
-          child: Row(
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
               GestureDetector(
                 onTap: () {
@@ -58,47 +58,50 @@ class _TreamentListScreenState extends State<TreamentListScreen> {
               Text("Injectables", style: CustomFonts.black24w600),
             ],
           ),
-        ),
-        SizedBox(height: 15.h),
-        SizedBox(
-          height: 50.h,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: fillter.length,
+          SizedBox(height: 15.h),
+          SizedBox(
+            height: 50.h,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: fillter.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.only(right: 10.w),
+                  child: FillterContainer(
+                    isSelected: selectedFilterIndex == index,
+                    title: fillter[index].title,
+                    svgImage: fillter[index].svg,
+                    onTap: () {
+                      setState(() {
+                        selectedFilterIndex = index;
+                      });
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+          SizedBox(height: 30),
+          GridView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 18.w,
+              mainAxisSpacing: 18.h,
+              childAspectRatio: 0.7,
+            ),
+            itemCount: 10,
             itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(
-                  left: index == 0 ? 30.w : 0,
-                  right: 10.w,
-                ),
-                child: FillterContainer(
-                  isSelected: selectedFilterIndex == index,
-                  title: fillter[index].title,
-                  svgImage: fillter[index].svg,
-                  onTap: () {
-                    setState(() {
-                      selectedFilterIndex = index;
-                    });
-                  },
-                ),
+              return CustomGridViewTile(
+                onTap: () {
+                  Navigator.pushNamed(context, TreatmentDetailScreen.routeName);
+                },
               );
             },
           ),
-        ),
-        SizedBox(height: 30),
-        Padding(
-          padding: EdgeInsets.only(left: 30.w, right: 30.w),
-          child: Wrap(
-            spacing: 18.w, // Horizontal spacing
-            runSpacing: 23.0.h, // Vertical spacing
-            children: List.generate(8, (index) {
-              return TreamentCard(
-                onTap:(){ Navigator.pushNamed(context,TreatmentDetailScreen.routeName);},
-              );
-            }),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

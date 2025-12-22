@@ -3,14 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:http/http.dart';
-import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/time_container.dart';
-import 'package:skinsync_ai/widgets/treatment_card.dart';
 import 'package:skinsync_ai/widgets/treatment_price_container.dart';
 
 class ClinicServiceScreen extends StatefulWidget {
@@ -282,7 +279,7 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 170.h,)
+              SizedBox(height: 170.h),
             ],
           ),
         ),
