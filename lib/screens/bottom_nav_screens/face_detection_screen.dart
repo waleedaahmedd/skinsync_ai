@@ -197,9 +197,10 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
     final image = await _cameraController!.takePicture();
     await _cameraController!.stopImageStream();
 
-    provider.markCaptured(image);
+    await provider.markCaptured(image);
 
     if (!mounted) return;
+    provider.reset();
     Navigator.pushReplacementNamed(
       context,
       // ArFaceModelPreviewScreen.routeName
@@ -234,7 +235,17 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
                       child: SizedBox(
                         width: _cameraController!.value.previewSize!.height,
                         height: _cameraController!.value.previewSize!.width,
-                        child: CameraPreview(_cameraController!),
+                        child: CameraPreview(
+                          _cameraController!,
+                          child: Center(
+                            child: CustomPaint(
+                              painter: FaceScanPainter(
+                                progress: provider.progress,
+                              ),
+                              child: const SizedBox(width: 300, height: 300),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -257,13 +268,6 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
                       size: 30.sp,
                     ),
                   ),
-                ),
-              ),
-
-              Center(
-                child: CustomPaint(
-                  painter: FaceScanPainter(progress: provider.progress),
-                  child: const SizedBox(width: 300, height: 300),
                 ),
               ),
 
