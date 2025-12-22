@@ -6,6 +6,7 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
+import 'package:skinsync_ai/widgets/heading_with_right_arrow.dart';
 
 class SavedTreatmentScreen extends StatelessWidget {
   const SavedTreatmentScreen({super.key});
@@ -59,9 +60,10 @@ class SavedTreatmentScreen extends StatelessWidget {
 
           /// HORIZONTAL LIST (FIXED HEIGHT ✅)
           SizedBox(
-            height: 221.h,
-
+            height: 217.h,
             child: ListView.builder(
+              
+            
               scrollDirection: Axis.horizontal,
               itemCount: 4,
               itemBuilder: (context, index) {
@@ -71,10 +73,11 @@ class SavedTreatmentScreen extends StatelessWidget {
                     right: 12.w,
                   ),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         width: 181.w,
-
+                        height: 174.h,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20.r),
                           gradient: CustomColors.whitePurpleGradient,
@@ -89,7 +92,8 @@ class SavedTreatmentScreen extends StatelessWidget {
                       ),
                       SizedBox(height: 5.h),
                       SizedBox(
-                        width: 181.w,
+                        width: 150.w,
+                        height: 37.h,
                         child: Text(
                           "AI Model Treatment Name",
                           style: CustomFonts.black18w600,
@@ -103,41 +107,17 @@ class SavedTreatmentScreen extends StatelessWidget {
               },
             ),
           ),
-          SizedBox(height: 31.h),
+          SizedBox(height: 30.h),
 
-          Divider(color: CustomColors.greyColor),
-          SizedBox(height: 31.h),
+          Divider(height: 0, color: CustomColors.greyColor),
+          SizedBox(height: 30.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 30.w),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Your AI Treatment Model",
-                      style: CustomFonts.black22w600,
-                    ),
-                    Container(
-                      padding: EdgeInsets.all(7.w),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: CustomColors.greyColor,
-                      ),
-                      child: Icon(
-                        CupertinoIcons.arrow_right,
-                        size: 16.sp,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+            child: HeadingWithRightArrow(title:"Your AI Treatment Model", onTap:(){}),
           ),
           SizedBox(height: 13.h),
           SizedBox(
-            height: 221.h,
+            height: 213.h,
 
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -151,6 +131,7 @@ class SavedTreatmentScreen extends StatelessWidget {
                   child: SizedBox(
                     width: 310.w,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
                           height: 160.h,
@@ -164,6 +145,7 @@ class SavedTreatmentScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 8.h),
                         Row(
+                         mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

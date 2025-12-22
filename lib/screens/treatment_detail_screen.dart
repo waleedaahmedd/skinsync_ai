@@ -235,18 +235,23 @@ class TreatmentDetailScreen extends StatelessWidget {
                       ],
                     ),
                    SizedBox(width: 47.h,),
-                    Container(
-                      
-                      width: 187.w,
-                      height: 60.h,
-                      alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(vertical: 19.h),
-                      decoration: BoxDecoration(
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.pushNamed(context,ClinicsDetailScreen.routeName);
+                      },
+                      child: Container(
                         
-                        borderRadius: BorderRadius.circular(50.r),
-                        color: Colors.black,
+                        width: 187.w,
+                        height: 60.h,
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.symmetric(vertical: 19.h),
+                        decoration: BoxDecoration(
+                          
+                          borderRadius: BorderRadius.circular(50.r),
+                          color: Colors.black,
+                        ),
+                        child:  Text("Book Now", style: CustomFonts.white22w600),
                       ),
-                      child:  Text("Book Now", style: CustomFonts.white22w600),
                     ),
                   
                   ],
