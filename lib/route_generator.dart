@@ -1,26 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/face_scanning_complete_screen.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/scan_your_face_screen.dart';
 import 'package:skinsync_ai/screens/clinic_service_screen.dart';
 import 'package:skinsync_ai/screens/clinics_detail_screen.dart';
 import 'package:skinsync_ai/screens/face_scan_screen.dart';
 import 'package:skinsync_ai/screens/get_notified_screen.dart';
-import 'package:skinsync_ai/screens/bottom_nav_screens/face_scanning_complete_screen.dart';
-import 'package:skinsync_ai/screens/home_screen.dart';
-import 'package:skinsync_ai/screens/bottom_nav_screens/scan_your_face_screen.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
+import 'package:skinsync_ai/screens/home_screen.dart';
 import 'package:skinsync_ai/screens/login_screen.dart';
 import 'package:skinsync_ai/screens/otp_screen.dart';
 import 'package:skinsync_ai/screens/personal_detail_screen.dart';
 import 'package:skinsync_ai/screens/saved_treatment_screen.dart';
 import 'package:skinsync_ai/screens/setting_screen.dart';
-import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
-import 'package:skinsync_ai/screens/your_profile_screen.dart';
 import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/screens/splash_screen.dart';
-import 'package:skinsync_ai/view_models/bottom_nav_view_model.dart';
-import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
+import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
+import 'package:skinsync_ai/screens/your_profile_screen.dart';
 
 import 'screens/ar_face_model_Preview_screen.dart';
 import 'screens/bottom_nav_screens/face_detection_screen.dart';
@@ -78,12 +75,7 @@ class RouteGenerator {
       case SignupOnboarding.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: SignupOnboarding.routeName),
-          builder: (_) => ChangeNotifierProvider(
-            create: (context) => SignUpOnboardingViewModel(),
-            builder: (context, _) {
-              return SignupOnboarding();
-            },
-          ),
+          builder: (_) => SignupOnboarding(),
         );
       case YourProfileScreen.routeName:
         return MaterialPageRoute(
@@ -98,13 +90,7 @@ class RouteGenerator {
       case BottomNavPage.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: BottomNavPage.routeName),
-
-          builder: (_) => ChangeNotifierProvider(
-            create: (context) => BottomNavViewModel(),
-            builder: (context, _) {
-              return BottomNavPage();
-            },
-          ),
+          builder: (_) => BottomNavPage(),
         );
       case ScanYourFaceScreen.routeName:
         return MaterialPageRoute(
@@ -146,37 +132,37 @@ class RouteGenerator {
           settings: RouteSettings(name: ExploreClinicsScreen.routeName),
           builder: (_) => ExploreClinicsScreen(),
         );
-        case TreatmentDetailScreen.routeName:
+      case TreatmentDetailScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: TreatmentDetailScreen.routeName),
           builder: (_) => TreatmentDetailScreen(),
         );
-        case ClinicsDetailScreen.routeName:
+      case ClinicsDetailScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: ClinicsDetailScreen.routeName),
           builder: (_) => ClinicsDetailScreen(),
         );
-         case ClinicServiceScreen.routeName:
+      case ClinicServiceScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: ClinicServiceScreen.routeName),
           builder: (_) => ClinicServiceScreen(),
         );
-        case SettingScreen.routeName:
+      case SettingScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name:SettingScreen.routeName),
+          settings: RouteSettings(name: SettingScreen.routeName),
           builder: (_) => SettingScreen(),
         );
-        case PersonalDetailScreen.routeName:
+      case PersonalDetailScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: PersonalDetailScreen.routeName),
           builder: (_) => PersonalDetailScreen(),
         );
-        case SavedTreatmentScreen.routeName:
+      case SavedTreatmentScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: SavedTreatmentScreen.routeName),
           builder: (_) => SavedTreatmentScreen(),
         );
-         case AllergyAndMedicalHistory.routeName:
+      case AllergyAndMedicalHistory.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: AllergyAndMedicalHistory.routeName),
           builder: (_) => AllergyAndMedicalHistory(),
