@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:skinsync_ai/screens/additional_info_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -325,18 +326,23 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                         ],
                       ),
                      SizedBox(width: 47.h,),
-                      Container(
-                        
-                        width: 187.w,
-                        height: 60.h,
-                        alignment: Alignment.center,
-                      
-                        decoration: BoxDecoration(
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.pushNamed(context,AdditionalInfoScreen.routeName);
+                        },
+                        child: Container(
                           
-                          borderRadius: BorderRadius.circular(50.r),
-                          color: Colors.black,
+                          width: 187.w,
+                          height: 60.h,
+                          alignment: Alignment.center,
+                        
+                          decoration: BoxDecoration(
+                            
+                            borderRadius: BorderRadius.circular(50.r),
+                            color: Colors.black,
+                          ),
+                          child:  Center(child: Text("Book Now", style: CustomFonts.white22w600)),
                         ),
-                        child:  Center(child: Text("Book Now", style: CustomFonts.white22w600)),
                       ),
                     
                     ],
