@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:image/image.dart' as img;
-
 import '../utills/image_utills.dart';
 
 class FaceScanProvider extends ChangeNotifier {
