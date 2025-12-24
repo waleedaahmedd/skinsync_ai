@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skinsync_ai/screens/additional_info_screen.dart';
 import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/face_scanning_complete_screen.dart';
@@ -166,6 +167,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: AllergyAndMedicalHistory.routeName),
           builder: (_) => AllergyAndMedicalHistory(),
+        );
+         case AdditionalInfoScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: AdditionalInfoScreen.routeName),
+          builder: (_) => AdditionalInfoScreen(),
         );
       default:
         return _errorRoute();
