@@ -8,8 +8,12 @@ final themeViewModel = NotifierProvider(() => ThemeViewModel());
 
 class ThemeViewModel extends BaseViewModel<ThemeMode> {
   final StorageService _storageService = StorageService.instance;
-  ThemeViewModel() : super(initialState: ThemeMode.light) {
+  ThemeViewModel() : super(initialState: ThemeMode.light);
+
+  @override
+  void init() {
     _loadTheme();
+    super.init();
   }
 
   void _loadTheme() async {

@@ -73,12 +73,7 @@ class BottomNavPage extends StatelessWidget {
           //     ),
           //   ),
           // ),
-          bottomNavigationBar: Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.paddingOf(context).bottom,
-            ),
-            child: BottomNavBar(),
-          ),
+          bottomNavigationBar: BottomNavBar(),
         );
       },
     );
