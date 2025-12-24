@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
 import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
@@ -70,10 +70,13 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(20.r),
-          child: Consumer<FaceScanProvider>(
-            builder: (context, provider, _) {
+          child: Consumer(
+            builder: (context, ref, _) {
+              final image = ref.watch(
+                faceScanProvider.select((state) => state.capturedImage),
+              );
               return Image.file(
-                File(provider.capturedImage!.path),
+                File(image!.path),
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 326.h,
@@ -84,10 +87,13 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
         Positioned(
           top: 13.h,
           left: 23.w,
-          child: Consumer<FaceScanProvider>(
-            builder: (context, provider, _) {
+          child: Consumer(
+            builder: (context, ref, _) {
+              final isBefore = ref.watch(
+                faceScanProvider.select((state) => state.isBefore),
+              );
               return Text(
-                provider.isBefore ? 'Before' : 'After',
+                isBefore ? 'Before' : 'After',
                 style: CustomFonts.black20w600,
               );
             },
@@ -96,11 +102,11 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
         Positioned(
           top: 13.h,
           right: 23.w,
-          child: Consumer<FaceScanProvider>(
-            builder: (context, provider, _) {
+          child: Consumer(
+            builder: (context, ref, _) {
               return GestureDetector(
                 onTap: () {
-                  provider.toggleIsBefore();
+                  ref.read(faceScanProvider.notifier).toggleIsBefore();
                 },
                 child: CircleAvatar(
                   backgroundColor: CustomColors.greyColor,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:provider/provider.dart';
 import 'package:skinsync_ai/screens/treament_list_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -60,9 +60,9 @@ class TreatmentsScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 15.h),
-            Consumer<TreatmentViewModel>(
-              builder: (context, treatmentViewModel, _) {
-                return treatmentViewModel.treamentMainScreen
+            Consumer(
+              builder: (context, ref, _) {
+                return ref.watch(treatmentViewModel)
                     ? TreatmentMainScreen()
                     : TreamentListScreen();
               },
@@ -93,201 +93,208 @@ List<Fillter> fillter = [
 class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          height: 50.h,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: fillter.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(
-                  left: index == 0 ? 30.w : 0,
-                  right: 10.w,
-                ),
-                child: FillterContainer(
-                  isSelected: selectedFilterIndex == index,
-                  title: fillter[index].title,
-                  svgImage: fillter[index].svg,
-                  onTap: () {
-                    setState(() {
-                      selectedFilterIndex = index;
-                    });
-                  },
-                ),
-              );
-            },
-          ),
-        ),
-        SizedBox(height: 32.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30.0.w),
-          child: Text("Recommended Treatments", style: CustomFonts.black24w600),
-        ),
-        SizedBox(
-          height: 352.h,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: fillter.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(
-                  left: index == 0 ? 30.w : 0,
-                  right: 20.w,
-                  top: 28.h,
-                  bottom: 25.h,
-                ),
-                child: RecommendedTreatmentContainer(
-                  treatmentImage: PngAssets.laserTreatment,
-                  treatmentName: "Laser Treatment",
-                ),
-              );
-            },
-          ),
-        ),
-        SizedBox(height: 25.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30.w),
-          child: HeadingWithRightArrow(
-            title: "Skincare & Facial Treatments",
-            onTap: () {
-              context.read<TreatmentViewModel>().settreamentMainScreen(
-                value: false,
-              );
-            },
-          ),
-        ),
-        SizedBox(height: 13.h),
-        SizedBox(
-          height: 221.h,
+    return Consumer(
+      builder: (_, ref, _) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 50.h,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: fillter.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      left: index == 0 ? 30.w : 0,
+                      right: 10.w,
+                    ),
+                    child: FillterContainer(
+                      isSelected: selectedFilterIndex == index,
+                      title: fillter[index].title,
+                      svgImage: fillter[index].svg,
+                      onTap: () {
+                        setState(() {
+                          selectedFilterIndex = index;
+                        });
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 32.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.0.w),
+              child: Text(
+                "Recommended Treatments",
+                style: CustomFonts.black24w600,
+              ),
+            ),
+            SizedBox(
+              height: 352.h,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: fillter.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      left: index == 0 ? 30.w : 0,
+                      right: 20.w,
+                      top: 28.h,
+                      bottom: 25.h,
+                    ),
+                    child: RecommendedTreatmentContainer(
+                      treatmentImage: PngAssets.laserTreatment,
+                      treatmentName: "Laser Treatment",
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 25.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.w),
+              child: HeadingWithRightArrow(
+                title: "Skincare & Facial Treatments",
+                onTap: () {
+                  ref
+                      .read(treatmentViewModel.notifier)
+                      .setTreatmentMainScreen(value: false);
+                },
+              ),
+            ),
+            SizedBox(height: 13.h),
+            SizedBox(
+              height: 221.h,
 
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: 4,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(
-                  left: index == 0 ? 30.w : 0,
-                  right: 12.w,
-                ),
-                child: TreatmentContainer(
-                  treatmentName: "Botox Treatment",
-                  clinicName: "Glow Skin Clinic",
-                  dateTime: "October 20, 3:00 PM",
-                  treatmentimage: DummyAssets.treatmentimage,
-                ),
-              );
-            },
-          ),
-        ),
-        SizedBox(height: 25.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30.w),
-          child: HeadingWithRightArrow(
-            title: "Injectables & Fillers ",
-            onTap: () {
-              context.read<TreatmentViewModel>().settreamentMainScreen(
-                value: false,
-              );
-            },
-          ),
-        ),
-        SizedBox(height: 13.h),
-        SizedBox(
-          height: 221.h,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      left: index == 0 ? 30.w : 0,
+                      right: 12.w,
+                    ),
+                    child: TreatmentContainer(
+                      treatmentName: "Botox Treatment",
+                      clinicName: "Glow Skin Clinic",
+                      dateTime: "October 20, 3:00 PM",
+                      treatmentimage: DummyAssets.treatmentimage,
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 25.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.w),
+              child: HeadingWithRightArrow(
+                title: "Injectables & Fillers ",
+                onTap: () {
+                  ref
+                      .read(treatmentViewModel.notifier)
+                      .setTreatmentMainScreen(value: false);
+                },
+              ),
+            ),
+            SizedBox(height: 13.h),
+            SizedBox(
+              height: 221.h,
 
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: 4,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(
-                  left: index == 0 ? 30.w : 0,
-                  right: 12.w,
-                ),
-                child: TreatmentContainer(
-                  treatmentName: "Botox Treatment",
-                  clinicName: "Glow Skin Clinic",
-                  dateTime: "October 20, 3:00 PM",
-                  treatmentimage: DummyAssets.treatmentimage,
-                ),
-              );
-            },
-          ),
-        ),
-        SizedBox(height: 25.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30.w),
-          child: HeadingWithRightArrow(
-            title: "Laser Treatments",
-            onTap: () {
-              context.read<TreatmentViewModel>().settreamentMainScreen(
-                value: false,
-              );
-            },
-          ),
-        ),
-        SizedBox(height: 13.h),
-        SizedBox(
-          height: 221.h,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      left: index == 0 ? 30.w : 0,
+                      right: 12.w,
+                    ),
+                    child: TreatmentContainer(
+                      treatmentName: "Botox Treatment",
+                      clinicName: "Glow Skin Clinic",
+                      dateTime: "October 20, 3:00 PM",
+                      treatmentimage: DummyAssets.treatmentimage,
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 25.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.w),
+              child: HeadingWithRightArrow(
+                title: "Laser Treatments",
+                onTap: () {
+                  ref
+                      .read(treatmentViewModel.notifier)
+                      .setTreatmentMainScreen(value: false);
+                },
+              ),
+            ),
+            SizedBox(height: 13.h),
+            SizedBox(
+              height: 221.h,
 
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: 4,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(
-                  left: index == 0 ? 30.w : 0,
-                  right: 12.w,
-                ),
-                child: TreatmentContainer(
-                  treatmentName: "Botox Treatment",
-                  clinicName: "Glow Skin Clinic",
-                  dateTime: "October 20, 3:00 PM",
-                  treatmentimage: DummyAssets.treatmentimage,
-                ),
-              );
-            },
-          ),
-        ),
-        SizedBox(height: 25.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30.w),
-          child: HeadingWithRightArrow(
-            title: "Sculpting & Contouring",
-            onTap: () {
-              context.read<TreatmentViewModel>().settreamentMainScreen(
-                value: false,
-              );
-            },
-          ),
-        ),
-        SizedBox(height: 13.h),
-        SizedBox(
-          height: 221.h,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      left: index == 0 ? 30.w : 0,
+                      right: 12.w,
+                    ),
+                    child: TreatmentContainer(
+                      treatmentName: "Botox Treatment",
+                      clinicName: "Glow Skin Clinic",
+                      dateTime: "October 20, 3:00 PM",
+                      treatmentimage: DummyAssets.treatmentimage,
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 25.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.w),
+              child: HeadingWithRightArrow(
+                title: "Sculpting & Contouring",
+                onTap: () {
+                  ref
+                      .read(treatmentViewModel.notifier)
+                      .setTreatmentMainScreen(value: false);
+                },
+              ),
+            ),
+            SizedBox(height: 13.h),
+            SizedBox(
+              height: 221.h,
 
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: 4,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: EdgeInsets.only(
-                  left: index == 0 ? 30.w : 0,
-                  right: 12.w,
-                ),
-                child: TreatmentContainer(
-                  treatmentName: "Botox Treatment",
-                  clinicName: "Glow Skin Clinic",
-                  dateTime: "October 20, 3:00 PM",
-                  treatmentimage: DummyAssets.treatmentimage,
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      left: index == 0 ? 30.w : 0,
+                      right: 12.w,
+                    ),
+                    child: TreatmentContainer(
+                      treatmentName: "Botox Treatment",
+                      clinicName: "Glow Skin Clinic",
+                      dateTime: "October 20, 3:00 PM",
+                      treatmentimage: DummyAssets.treatmentimage,
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

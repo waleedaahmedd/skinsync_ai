@@ -1,17 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
 import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/fillter_container.dart';
+
 import '../widgets/custom_grid_view_tile.dart';
 
 class TreamentListScreen extends StatefulWidget {
-  TreamentListScreen({super.key});
+  const TreamentListScreen({super.key});
 
   @override
   State<TreamentListScreen> createState() => _TreamentListScreenState();
@@ -35,24 +36,28 @@ class _TreamentListScreenState extends State<TreamentListScreen> {
         children: [
           Row(
             children: [
-              GestureDetector(
-                onTap: () {
-                  context.read<TreatmentViewModel>().settreamentMainScreen(
-                    value: true,
+              Consumer(
+                builder: (_, ref, _) {
+                  return GestureDetector(
+                    onTap: () {
+                      ref
+                          .read(treatmentViewModel.notifier)
+                          .setTreatmentMainScreen(value: true);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(14.w),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: CustomColors.greyColor,
+                      ),
+                      child: Icon(
+                        CupertinoIcons.arrow_left,
+                        size: 16.sp,
+                        color: Colors.black,
+                      ),
+                    ),
                   );
                 },
-                child: Container(
-                  padding: EdgeInsets.all(14.w),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: CustomColors.greyColor,
-                  ),
-                  child: Icon(
-                    CupertinoIcons.arrow_left,
-                    size: 16.sp,
-                    color: Colors.black,
-                  ),
-                ),
               ),
               SizedBox(width: 22.w),
               Text("Injectables", style: CustomFonts.black24w600),

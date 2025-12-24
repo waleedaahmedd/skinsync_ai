@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
-import 'package:skinsync_ai/route_generator.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 import 'package:skinsync_ai/widgets/question_title.dart';
@@ -12,7 +11,7 @@ class SkinType extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding : EdgeInsets.symmetric(horizontal: 30.w),
+      padding: EdgeInsets.symmetric(horizontal: 30.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -22,7 +21,7 @@ class SkinType extends StatelessWidget {
             style: CustomFonts.black28w600,
           ),
           SizedBox(height: 39.h),
-      
+
           // ⭐ FIX: Give ListView a height using Expanded
           Expanded(
             child: ListView.builder(
@@ -35,11 +34,17 @@ class SkinType extends StatelessWidget {
           SizedBox(height: 20.h),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                context.read<SignUpOnboardingViewModel>().onNextButton(context);
+            child: Consumer(
+              builder: (_, ref, _) {
+                return ElevatedButton(
+                  onPressed: () {
+                    ref
+                        .read(onBoardingViewModel.notifier)
+                        .onNextButton(context);
+                  },
+                  child: Text("Next"),
+                );
               },
-              child: Text("Next"),
             ),
           ),
           SizedBox(height: 20.h),

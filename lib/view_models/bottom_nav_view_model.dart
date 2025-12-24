@@ -1,10 +1,13 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class BottomNavViewModel extends ChangeNotifier {
-  int currentPage = 0;
+import 'base_view_model.dart';
+
+final bottomNavViewModel = NotifierProvider(() => BottomNavViewModel());
+
+class BottomNavViewModel extends BaseViewModel<int> {
+  BottomNavViewModel() : super(initialState: 0);
 
   void changePage(int newPage) {
-    currentPage = newPage;
-    notifyListeners();
+    state = newPage;
   }
 }

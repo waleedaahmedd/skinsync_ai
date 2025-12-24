@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
-import 'package:skinsync_ai/route_generator.dart';
 import 'package:skinsync_ai/screens/otp_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
@@ -12,8 +11,7 @@ import 'package:skinsync_ai/widgets/phone_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
-    static const String routeName = '/LoginScreen';
-
+  static const String routeName = '/LoginScreen';
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -62,28 +60,39 @@ class _LoginScreenState extends State<LoginScreen>
       final targetWidth = buttonSize.width > 0 ? buttonSize.width : 1;
       final targetHeight = buttonSize.height > 0 ? buttonSize.height : 1;
 
-      _topAnim = Tween<double>(begin: 0, end: buttonPos.dy.clamp(0, size.height))
-          .animate(
-        CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-      );
+      _topAnim =
+          Tween<double>(
+            begin: 0,
+            end: buttonPos.dy.clamp(0, size.height),
+          ).animate(
+            CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+          );
 
       _leftAnim =
-          Tween<double>(begin: 0, end: buttonPos.dx.clamp(0, size.width)).animate(
-        CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-      );
+          Tween<double>(
+            begin: 0,
+            end: buttonPos.dx.clamp(0, size.width),
+          ).animate(
+            CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+          );
 
-      _widthAnim = Tween<double>(begin: size.width, end: targetWidth.toDouble()).animate(
-        CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-      );
+      _widthAnim = Tween<double>(begin: size.width, end: targetWidth.toDouble())
+          .animate(
+            CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+          );
 
-      _heightAnim = Tween<double>(begin: size.height, end: targetHeight.toDouble()).animate(
-        CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-      );
+      _heightAnim =
+          Tween<double>(
+            begin: size.height,
+            end: targetHeight.toDouble(),
+          ).animate(
+            CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+          );
 
-      _radiusAnim =
-          Tween<double>(begin: 10.r.toDouble(), end: 40.r.toDouble()).animate(
-        CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-      );
+      _radiusAnim = Tween<double>(begin: 10.r.toDouble(), end: 40.r.toDouble())
+          .animate(
+            CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+          );
 
       _entry = OverlayEntry(
         builder: (context) {
@@ -98,8 +107,9 @@ class _LoginScreenState extends State<LoginScreen>
                   height: _heightAnim.value.toDouble().clamp(1, size.height),
                   decoration: BoxDecoration(
                     color: Colors.black,
-                    borderRadius:
-                        BorderRadius.circular(_radiusAnim.value.toDouble()),
+                    borderRadius: BorderRadius.circular(
+                      _radiusAnim.value.toDouble(),
+                    ),
                   ),
                 ),
               );
@@ -126,85 +136,94 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
-    final loginWithEmail = context.read<AuthViewModel>().loginWithEmail;
+    return Consumer(
+      builder: (_, ref, _) {
+        final loginWithEmail = ref.read(authViewModel).loginWithEmail;
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: InkWell(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: CustomColors.iconColor,
-              ),
-              child: Icon(
-                CupertinoIcons.arrow_left,
-                size: 20.w,
-                color: Colors.black,
-              ),
-            ),
-          ),
-        ),
-      ),
-      body: Padding(
-        padding: EdgeInsets.only(left: 30.w, right: 30.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 43.h),
-            Container(
-              padding: EdgeInsets.all(14.w),
-              height: 79.h,
-              width: 79.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: CustomColors.lightBlueColor.withValues(alpha: 0.4),
-              ),
-              child: Image.asset(PngAssets.email, height: 50.h, width: 50.w),
-            ),
-            SizedBox(height: 27.h),
-            Text(
-              loginWithEmail
-                  ? "Continue with Email"
-                  : "Continue with Phone",
-              style: CustomFonts.black30w600,
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              "Sign in or sign up with your email.",
-              style: CustomFonts.grey18w400,
-            ),
-            SizedBox(height: 22.h),
-            loginWithEmail
-                ? TextField(
-                  style:CustomFonts.black18w400 ,
-                    decoration: InputDecoration(hintText: "Email Address"),
-                  )
-                : PhoneWidget(
-                    controller:
-                        context.read<AuthViewModel>().phoneController,
-                    filled: true,
+        return Scaffold(
+          appBar: AppBar(
+            leading: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: InkWell(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: CustomColors.iconColor,
                   ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(30.w),
-          child: SizedBox(
-            key: _buttonKey, // Required for animation target
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, OtpScreen.routeName);
-              },
-              child: Text("Next"),
+                  child: Icon(
+                    CupertinoIcons.arrow_left,
+                    size: 20.w,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
-      ),
+          body: Padding(
+            padding: EdgeInsets.only(left: 30.w, right: 30.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 43.h),
+                Container(
+                  padding: EdgeInsets.all(14.w),
+                  height: 79.h,
+                  width: 79.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: CustomColors.lightBlueColor.withValues(alpha: 0.4),
+                  ),
+                  child: Image.asset(
+                    PngAssets.email,
+                    height: 50.h,
+                    width: 50.w,
+                  ),
+                ),
+                SizedBox(height: 27.h),
+                Text(
+                  loginWithEmail
+                      ? "Continue with Email"
+                      : "Continue with Phone",
+                  style: CustomFonts.black30w600,
+                ),
+                SizedBox(height: 4.h),
+                Text(
+                  "Sign in or sign up with your email.",
+                  style: CustomFonts.grey18w400,
+                ),
+                SizedBox(height: 22.h),
+                loginWithEmail
+                    ? TextField(
+                        style: CustomFonts.black18w400,
+                        decoration: InputDecoration(hintText: "Email Address"),
+                      )
+                    : PhoneWidget(
+                        controller: ref
+                            .read(authViewModel.notifier)
+                            .phoneController,
+                        filled: true,
+                      ),
+              ],
+            ),
+          ),
+          bottomNavigationBar: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.all(30.w),
+              child: SizedBox(
+                key: _buttonKey, // Required for animation target
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, OtpScreen.routeName);
+                  },
+                  child: Text("Next"),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

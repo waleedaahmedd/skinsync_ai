@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:skinsync_ai/route_generator.dart';
-import 'package:skinsync_ai/screens/bottom_nav_page.dart';
-import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../screens/your_profile_screen.dart';
+import 'base_view_model.dart';
 
-class SignUpOnboardingViewModel extends ChangeNotifier {
-  int currentPage = 0;
+final onBoardingViewModel = NotifierProvider.autoDispose(
+  () => SignUpOnboardingViewModel(),
+);
+
+class SignUpOnboardingViewModel extends BaseViewModel<int> {
+  SignUpOnboardingViewModel() : super(initialState: 0);
+
   static const int totalPages = 5;
   PageController? _pageController;
 
@@ -15,35 +19,36 @@ class SignUpOnboardingViewModel extends ChangeNotifier {
   }
 
   void onPageChanged(int index) {
-    currentPage = index;
-    notifyListeners();
+    state = index;
   }
 
   void goToPreviousPage() {
-    if (_pageController != null && currentPage > 0) {
+    if (_pageController != null && state > 0) {
       _pageController!.previousPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     }
   }
-  void onSkipThis(BuildContext context){
+
+  void onSkipThis(BuildContext context) {
     Navigator.pushReplacementNamed(context, YourProfileScreen.routeName);
   }
+
   void onNextButton(BuildContext context) {
     if (_pageController == null) return;
-    
-    if (currentPage < totalPages - 1) {
+
+    if (state < totalPages - 1) {
       _pageController!.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
-    } else if (currentPage == 4) {
-      Navigator.pushNamed(context,YourProfileScreen.routeName );
-    } 
+    } else if (state == 4) {
+      Navigator.pushNamed(context, YourProfileScreen.routeName);
+    }
   }
 
   double progressValue() {
-    return (currentPage + 1) / totalPages;
+    return (state + 1) / totalPages;
   }
 }

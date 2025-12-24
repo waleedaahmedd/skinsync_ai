@@ -1,25 +1,28 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
-import 'package:provider/provider.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+
+import '../../utills/custom_fonts.dart';
 import '../../view_models/face_scan_provider.dart';
 import '../../widgets/face_scan_radial_widget.dart';
 import '../service_selection_screen.dart';
 
-class FaceDetectionScreen extends StatefulWidget {
+class FaceDetectionScreen extends ConsumerStatefulWidget {
   const FaceDetectionScreen({super.key});
   static const String routeName = '/FaceDetectionScreen';
 
   @override
-  State<FaceDetectionScreen> createState() => _FaceDetectionScreenState();
+  ConsumerState<FaceDetectionScreen> createState() =>
+      _FaceDetectionScreenState();
 }
 
-class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
+class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   CameraController? _cameraController;
   late FaceDetector _faceDetector;
   bool _isDetecting = false;
@@ -30,10 +33,10 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
     _faceDetector = FaceDetector(
       options: FaceDetectorOptions(enableClassification: true),
     );
-    _initCamera();
+    _initCamera(ref);
   }
 
-  Future<void> _initCamera() async {
+  Future<void> _initCamera(WidgetRef ref) async {
     try {
       final cameras = await availableCameras();
       if (cameras.isEmpty) {
@@ -65,7 +68,7 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
         if (_isDetecting || !mounted) return;
         _isDetecting = true;
 
-        _process(image).whenComplete(() {
+        _process(ref, image).whenComplete(() {
           if (mounted) {
             _isDetecting = false;
           }
@@ -156,8 +159,8 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
     );
   }
 
-  Future<void> _process(CameraImage image) async {
-    final provider = context.read<FaceScanProvider>();
+  Future<void> _process(WidgetRef ref, CameraImage image) async {
+    final provider = ref.read(faceScanProvider.notifier);
 
     final inputImage = _inputImageFromCameraImage(
       image,
@@ -187,20 +190,20 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
     }
   }
 
-  Future<void> _captureAndNavigate() async {
-    final provider = context.read<FaceScanProvider>();
-    if (_cameraController == null || provider.isCapturing) return;
+  Future<void> _captureAndNavigate(WidgetRef ref) async {
+    final state = ref.read(faceScanProvider);
+    if (_cameraController == null || state.isCapturing) return;
     await Future.delayed(Duration(milliseconds: 500));
     _cameraController!.setFlashMode(
-      provider.flash ? FlashMode.off : FlashMode.torch,
+      state.flash ? FlashMode.off : FlashMode.torch,
     );
     final image = await _cameraController!.takePicture();
     await _cameraController!.stopImageStream();
 
-    await provider.markCaptured(image);
+    await ref.read(faceScanProvider.notifier).markCaptured(image);
 
     if (!mounted) return;
-    provider.reset();
+    ref.read(faceScanProvider.notifier).reset();
     Navigator.pushReplacementNamed(
       context,
       // ArFaceModelPreviewScreen.routeName
@@ -217,116 +220,132 @@ class _FaceDetectionScreenState extends State<FaceDetectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<FaceScanProvider>(
-      builder: (_, provider, __) {
-        if (provider.progress == 1.0) {
-          _captureAndNavigate();
-        }
+    ref.listen(faceScanProvider, (prev, next) {
+      if (next.progress == 1.0) {
+        _captureAndNavigate(ref);
+      }
+    });
 
-        return Scaffold(
-          backgroundColor: Colors.black,
-          body: Stack(
-            children: [
-              if (_cameraController != null)
-                if (_cameraController != null)
-                  SizedBox.expand(
-                    child: FittedBox(
-                      fit: BoxFit.cover,
-                      child: SizedBox(
-                        width: _cameraController!.value.previewSize!.height,
-                        height: _cameraController!.value.previewSize!.width,
-                        child: CameraPreview(
-                          _cameraController!,
-                          child: Center(
-                            child: CustomPaint(
-                              painter: FaceScanPainter(
-                                progress: provider.progress,
-                              ),
-                              child: const SizedBox(width: 300, height: 300),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-              Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 40.h, right: 20.w),
-                  child: GestureDetector(
-                    onTap: () {
-                      provider.toggleFlash();
-                      if (_cameraController != null) {
-                        _cameraController!.setFlashMode(
-                          provider.flash ? FlashMode.torch : FlashMode.off,
-                        );
-                      }
-                    },
-                    child: Icon(
-                      provider.flash ? Icons.flash_on : Icons.flash_off,
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          if (_cameraController != null) _buildCameraView(),
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: EdgeInsets.only(top: 40.h, right: 20.w),
+              child: GestureDetector(
+                onTap: () {
+                  ref.read(faceScanProvider.notifier).toggleFlash();
+                  if (_cameraController != null) {
+                    _cameraController!.setFlashMode(
+                      ref.read(faceScanProvider).flash
+                          ? FlashMode.torch
+                          : FlashMode.off,
+                    );
+                  }
+                },
+                child: Consumer(
+                  builder: (_, ref, child) {
+                    final flash = ref.watch(
+                      faceScanProvider.select((state) => state.flash),
+                    );
+                    return Icon(
+                      flash ? Icons.flash_on : Icons.flash_off,
                       color: Colors.white,
                       size: 30.sp,
-                    ),
-                  ),
+                    );
+                  },
                 ),
               ),
+            ),
+          ),
 
-              Positioned(
-                top: 10.h,
-                left: 20.w,
-                child: SafeArea(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      // _captureAndNavigate();
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 6.h,
-                        horizontal: 18.w,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(20.r),
-                      ),
-                      child: Text(
-                        "Cancel",
-                        textAlign: TextAlign.center,
-                        style: CustomFonts.white22w600,
-                      ),
-                    ),
+          Positioned(
+            top: 10.h,
+            left: 20.w,
+            child: SafeArea(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  // _captureAndNavigate();
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 6.h,
+                    horizontal: 18.w,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Text(
+                    "Cancel",
+                    textAlign: TextAlign.center,
+                    style: CustomFonts.white22w600,
                   ),
                 ),
               ),
-              Positioned(
-                bottom: 80,
-                left: 0,
-                right: 0,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 34.h,
-                      horizontal: 52.w,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Text(
-                      provider.progress == 1.0
-                          ? "Hold still..."
-                          : "Align your face",
+            ),
+          ),
+          Positioned(
+            bottom: 80,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 34.h, horizontal: 52.w),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Consumer(
+                  builder: (_, ref, _) {
+                    final progress = ref.watch(
+                      faceScanProvider.select((state) => state.progress),
+                    );
+                    return Text(
+                      progress == 1.0 ? "Hold still..." : "Align your face",
                       textAlign: TextAlign.center,
                       style: CustomFonts.black28w600,
-                    ),
-                  ),
+                    );
+                  },
                 ),
               ),
-            ],
+            ),
           ),
-        );
-      },
+        ],
+      ),
+    );
+  }
+
+  SizedBox _buildCameraView() {
+    return SizedBox.expand(
+      child: FittedBox(
+        fit: BoxFit.cover,
+        child: SizedBox(
+          width: _cameraController!.value.previewSize!.height,
+          height: _cameraController!.value.previewSize!.width,
+          child: CameraPreview(
+            _cameraController!,
+            child: Center(
+              child: Consumer(
+                builder: (_, ref, _) {
+                  final progress = ref.watch(
+                    faceScanProvider.select((state) => state.progress),
+                  );
+                  return CustomPaint(
+                    painter: FaceScanPainter(progress: progress),
+                    child: const SizedBox(width: 300, height: 300),
+                  );
+                },
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

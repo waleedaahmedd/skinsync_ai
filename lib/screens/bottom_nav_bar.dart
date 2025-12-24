@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
-import 'package:provider/provider.dart';
 import 'package:skinsync_ai/models/bottom_nav.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
@@ -18,7 +17,7 @@ class BottomNavBar extends StatelessWidget {
       selectedIcon: SvgAssets.homefilled,
       unselectedIcon: SvgAssets.home,
     ),
-     BottomNavItem(
+    BottomNavItem(
       label: 'Treatment',
       selectedIcon: SvgAssets.treatmentfilled,
       unselectedIcon: SvgAssets.treatment,
@@ -28,7 +27,7 @@ class BottomNavBar extends StatelessWidget {
       selectedIcon: SvgAssets.appointmentfilled,
       unselectedIcon: SvgAssets.appointment,
     ),
-   
+
     BottomNavItem(
       label: 'Progress',
       selectedIcon: SvgAssets.progressfilled,
@@ -47,45 +46,45 @@ class BottomNavBar extends StatelessWidget {
       blurIntensity: 30.0,
       opacity: 0.10,
       glassThickness: 1.0,
-    
+
       //tintColor: Colors.white.withOpacity(0.15),
       enableBackgroundDistortion: true,
       enableGlassBorder: true,
-    
-      child: Consumer<BottomNavViewModel>(
-        builder: (context, provider, child) {
-          final int currentPage = provider.currentPage;
-          return Container(
+
+      child: Consumer(
+        builder: (context, ref, child) {
+          final int currentPage = ref.watch(bottomNavViewModel);
+          return SizedBox(
             height: 98.h,
             child: Row(
               children: [
                 _buildNavBarItem(
-                  context: context,
+                  ref: ref,
                   item: _items[0],
                   index: 0,
                   isSelected: currentPage == 0,
                 ),
                 _buildNavBarItem(
-                  context: context,
+                  ref: ref,
                   item: _items[1],
                   index: 1,
                   isSelected: currentPage == 1,
                 ),
-    
+
                 _buildNavBarItem(
-                  context: context,
+                  ref: ref,
                   item: _items[2],
                   index: 2,
                   isSelected: currentPage == 2,
                 ),
                 _buildNavBarItem(
-                  context: context,
+                  ref: ref,
                   item: _items[3],
                   index: 3,
                   isSelected: currentPage == 3,
                 ),
                 _buildNavBarItem(
-                  context: context,
+                  ref: ref,
                   item: _items[4],
                   index: 4,
                   isSelected: currentPage == 4,
@@ -99,7 +98,7 @@ class BottomNavBar extends StatelessWidget {
   }
 
   Expanded _buildNavBarItem({
-    required BuildContext context,
+    required WidgetRef ref,
     required BottomNavItem item,
     required bool isSelected,
     required int index,
@@ -107,7 +106,7 @@ class BottomNavBar extends StatelessWidget {
     return Expanded(
       child: InkWell(
         onTap: () {
-          context.read<BottomNavViewModel>().changePage(index);
+          ref.read(bottomNavViewModel.notifier).changePage(index);
         },
         child: Center(
           child: Column(

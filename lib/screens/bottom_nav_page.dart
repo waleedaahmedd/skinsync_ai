@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'package:provider/provider.dart';
+import 'package:skinsync_ai/screens/bottom_nav_bar.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/apppointments_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
-import 'package:skinsync_ai/screens/bottom_nav_bar.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/progress_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
-
 import 'package:skinsync_ai/screens/home_screen.dart';
-import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 
 import '../view_models/bottom_nav_view_model.dart';
 import '../widgets/scan_face_button.dart';
@@ -20,12 +17,7 @@ class BottomNavPage extends StatelessWidget {
 
   static final List<Widget> _children = [
     HomeScreen(),
-    ChangeNotifierProvider(
-      create: (context) => TreatmentViewModel(),
-      builder: (context, _) {
-        return TreatmentsScreen();
-      },
-    ),
+    TreatmentsScreen(),
     ApppointmentsScreen(),
     ProgressScreen(),
     MyProfileScreen(),
@@ -46,13 +38,13 @@ class BottomNavPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<BottomNavViewModel>(
-      builder: (context, provider, child) {
+    return Consumer(
+      builder: (context, ref, child) {
         return Scaffold(
           body: Stack(
             alignment: Alignment.center,
             children: [
-              _children[provider.currentPage],
+              _children[ref.watch(bottomNavViewModel)],
               Positioned(
                 bottom: 110.h + MediaQuery.paddingOf(context).bottom,
                 child: ScanFaceButton(),

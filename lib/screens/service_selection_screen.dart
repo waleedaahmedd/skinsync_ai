@@ -2,8 +2,8 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 import 'package:skinsync_ai/screens/ar_face_model_Preview_screen.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/widgets/grey_container.dart';
@@ -55,11 +55,18 @@ class ServiceSelectionScreen extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Image.file(
-            File(context.read<FaceScanProvider>().capturedImage!.path),
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: 326.h,
+          Consumer(
+            builder: (_, ref, _) {
+              final image = ref.watch(
+                faceScanProvider.select((state) => state.capturedImage),
+              );
+              return Image.file(
+                File(image!.path),
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: 326.h,
+              );
+            },
           ),
           Positioned(
             top: 30.h,

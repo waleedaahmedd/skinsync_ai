@@ -1,65 +1,97 @@
 import 'dart:async';
-import 'package:camera/camera.dart';
-import 'package:flutter/material.dart';
-import '../utills/image_utills.dart';
 
-class FaceScanProvider extends ChangeNotifier {
-  double progress = 0.0;
-  bool isFaceDetected = false;
-  bool isFaceCentered = false;
-  bool isCapturing = false;
-  bool flash = false;
-  bool isBefore = false;
+import 'package:camera/camera.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../utills/image_utills.dart';
+import 'base_view_model.dart';
+
+final faceScanProvider = NotifierProvider.autoDispose(() => FaceScanProvider());
+
+class FaceScanProvider extends BaseViewModel<FaceScanState> {
+  FaceScanProvider() : super(initialState: FaceScanState());
 
   Timer? _holdTimer;
-  XFile? capturedImage;
 
   void faceDetected() {
-    if (progress < 0.3) {
-      progress = 0.3;
-      notifyListeners();
+    if (state.progress < 0.3) {
+      state = state.copyWith(progress: 0.3);
     }
   }
 
   void toggleFlash() {
-    flash = !flash;
-    notifyListeners();
+    state = state.copyWith(flash: !state.flash);
   }
 
   void toggleIsBefore() {
-    isBefore = !isBefore;
-    notifyListeners();
+    state = state.copyWith(isBefore: !state.isBefore);
   }
 
   void faceCentered() {
-    isFaceCentered = true;
-    progress = 1.0;
-    notifyListeners();
+    state = state.copyWith(progress: 1.0, isFaceCentered: true);
   }
 
   void reset() {
     _holdTimer?.cancel();
     _holdTimer = null;
-
-    isFaceDetected = false;
-    isFaceCentered = false;
-    isCapturing = false;
-    progress = 0.0;
-
-    notifyListeners();
+    state = state.copyWith(
+      progress: 0.0,
+      isFaceDetected: false,
+      isFaceCentered: false,
+      isCapturing: false,
+    );
   }
 
   Future<void> markCaptured(XFile image) async {
-    capturedImage = image;
-    final flippedImage = await flipXFileHorizontally(image);
-    capturedImage = flippedImage;
-    isCapturing = true;
-    notifyListeners();
+    return await runSafely(() async {
+      final flippedImage = await flipXFileHorizontally(image);
+      state = state.copyWith(capturedImage: flippedImage, isCapturing: true);
+    });
   }
 
   @override
   void dispose() {
     _holdTimer?.cancel();
     super.dispose();
+  }
+}
+
+class FaceScanState {
+  final double progress;
+  final bool isFaceDetected;
+  final bool isFaceCentered;
+  final bool isCapturing;
+  final bool flash;
+  final bool isBefore;
+  final XFile? capturedImage;
+
+  const FaceScanState({
+    this.progress = 0.0,
+    this.isFaceDetected = false,
+    this.isFaceCentered = false,
+    this.flash = false,
+    this.isCapturing = false,
+    this.isBefore = false,
+    this.capturedImage,
+  });
+
+  FaceScanState copyWith({
+    double? progress,
+    bool? isFaceDetected,
+    bool? isFaceCentered,
+    bool? isCapturing,
+    bool? flash,
+    bool? isBefore,
+    XFile? capturedImage,
+  }) {
+    return FaceScanState(
+      progress: progress ?? this.progress,
+      isFaceDetected: isFaceDetected ?? this.isFaceDetected,
+      isFaceCentered: isFaceCentered ?? this.isFaceCentered,
+      isCapturing: isCapturing ?? this.isCapturing,
+      flash: flash ?? this.flash,
+      isBefore: isBefore ?? this.isBefore,
+      capturedImage: capturedImage ?? this.capturedImage,
+    );
   }
 }

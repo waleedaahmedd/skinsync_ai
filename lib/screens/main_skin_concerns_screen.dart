@@ -1,8 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import 'package:provider/provider.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 import 'package:skinsync_ai/widgets/question_title.dart';
@@ -23,7 +21,7 @@ class MainSkinConcernsScreen extends StatelessWidget {
             style: CustomFonts.black28w600,
           ),
           SizedBox(height: 39.h),
-      
+
           // ⭐ FIX: Give ListView a height using Expanded
           Expanded(
             child: ListView.builder(
@@ -36,11 +34,17 @@ class MainSkinConcernsScreen extends StatelessWidget {
           SizedBox(height: 20.h),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                context.read<SignUpOnboardingViewModel>().onNextButton(context);
+            child: Consumer(
+              builder: (_, ref, _) {
+                return ElevatedButton(
+                  onPressed: () {
+                    ref
+                        .read(onBoardingViewModel.notifier)
+                        .onNextButton(context);
+                  },
+                  child: Text("Next"),
+                );
               },
-              child: Text("Next"),
             ),
           ),
           SizedBox(height: 20.h),
