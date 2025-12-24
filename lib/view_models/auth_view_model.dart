@@ -1,58 +1,60 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/requests/sign_in_request.dart';
 import '../models/responses/auth_response.dart';
 import '../repositories/auth_repository.dart';
+import '../services/api_base_helper.dart';
+import '../services/auth_service.dart';
+import 'base_view_model.dart';
 
-class AuthViewModel extends ChangeNotifier {
+final authViewModel = NotifierProvider(() {
+  final apiBaseHelper = ApiBaseHelper();
+  final authService = AuthService(apiClient: apiBaseHelper);
+  return AuthViewModel(authRepository: authService);
+});
+
+class AuthViewModel extends BaseViewModel<AuthState> {
   AuthViewModel({required AuthRepository authRepository})
-    : _authRepository = authRepository;
-  bool _isLoading = false;
-  bool _loginWithEmail = false;
-   bool _loginWithPhone = false;
+    : _authRepository = authRepository,
+      super(initialState: AuthState());
 
   final AuthRepository _authRepository;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  AuthResponse _authResponse = AuthResponse();
-
   TextEditingController get emailController => _emailController;
-   TextEditingController get phoneController => _phoneController;
+  TextEditingController get phoneController => _phoneController;
 
   TextEditingController get passwordController => _passwordController;
 
-  AuthResponse get authResponse => _authResponse;
-  bool get loginWithEmail => _loginWithEmail;
-  bool get loginWithPhone => _loginWithEmail;
-
   void setAuthResponse(AuthResponse response) {
-    _authResponse = response;
-    notifyListeners();
+    state = state.copyWith(authResponse: response);
   }
 
-
-  bool get isLoading => _isLoading;
   void setloginWithEmail(bool value) {
-    _loginWithEmail = value;
-    _loginWithPhone = !value;
-    notifyListeners();
-  }
-  void setloginWithPhone(bool value) {
-    _loginWithPhone = value;
-    _loginWithEmail = !value;
-    notifyListeners();
-  }
-  void setLoading(bool value) {
-    _isLoading = value;
-    notifyListeners();
+    // _loginWithEmail = value;
+    // _loginWithPhone = !value;
+    // notifyListeners();
+    state = state.copyWith(loginWithEmail: value, loginWithPhone: !value);
   }
 
-  Future<bool> callSignInApi() async {
-    setLoading(true);
-    try {
+  void setloginWithPhone(bool value) {
+    // _loginWithPhone = value;
+    // _loginWithEmail = !value;
+    // notifyListeners();
+    state = state.copyWith(loginWithPhone: value, loginWithEmail: !value);
+  }
+
+  void setLoading(bool value) {
+    state = state.copyWith(loading: value);
+  }
+
+  Future<bool?> callSignInApi() async {
+    return await runSafely(() async {
+      setLoading(true);
       final SignInRequest signInRequest = SignInRequest(
         password: _passwordController.text,
         email: _emailController.text,
@@ -68,23 +70,54 @@ class AuthViewModel extends ChangeNotifier {
       setLoading(false);
 
       return response.isSuccess == true;
-    } catch (e) {
-      // Set error response
-      setAuthResponse(
-        AuthResponse(
-          isSuccess: false,
-          message: 'An unexpected error occurred. Please try again.',
-        ),
-      );
-      setLoading(false);
-      return false;
-    }
+    });
+  }
+
+  @override
+  void onError(String message) {
+    super.onError(message);
+    setAuthResponse(
+      AuthResponse(
+        isSuccess: false,
+        message: 'An unexpected error occurred. Please try again.',
+      ),
+    );
+    setLoading(false);
   }
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _phoneController.dispose();
     super.dispose();
+  }
+}
+
+class AuthState {
+  final bool loading;
+  final bool loginWithEmail;
+  final bool loginWithPhone;
+  final AuthResponse? authResponse;
+
+  AuthState({
+    this.loading = false,
+    this.authResponse,
+    this.loginWithEmail = false,
+    this.loginWithPhone = false,
+  });
+
+  AuthState copyWith({
+    bool? loading,
+    bool? loginWithEmail,
+    bool? loginWithPhone,
+    AuthResponse? authResponse,
+  }) {
+    return AuthState(
+      loading: loading ?? this.loading,
+      loginWithEmail: loginWithEmail ?? this.loginWithEmail,
+      loginWithPhone: loginWithPhone ?? this.loginWithPhone,
+      authResponse: authResponse ?? this.authResponse,
+    );
   }
 }

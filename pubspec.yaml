@@ -37,9 +37,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   shared_preferences: ^2.5.4
   flutter_easyloading: ^3.0.5
-  provider: ^6.1.5+1
   flutter_secure_storage: ^10.0.0
-  http: ^1.6.0
   iconsax: ^0.0.8
   flutter_svg: ^2.2.3
   pinput: ^6.0.1
@@ -49,7 +47,9 @@ dependencies:
   flutter_glass_morphism: 1.0.2
   local_auth: ^3.0.0
   image: ^4.7.2
-  dropdown_button2: ^2.3.6
+  dropdown_button2: ^2.3.9
+  http: ^1.6.0
+  flutter_riverpod: ^3.0.3
 
 
 

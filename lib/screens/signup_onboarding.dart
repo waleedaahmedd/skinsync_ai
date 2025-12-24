@@ -1,28 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
-import 'package:skinsync_ai/route_generator.dart';
 import 'package:skinsync_ai/screens/life_style_habbits.dart';
 import 'package:skinsync_ai/screens/main_skin_concerns_screen.dart';
 import 'package:skinsync_ai/screens/skin_allergies_screen.dart';
 import 'package:skinsync_ai/screens/skin_goals_screen.dart';
-
 import 'package:skinsync_ai/screens/skin_type.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 
-class SignupOnboarding extends StatefulWidget {
+class SignupOnboarding extends ConsumerStatefulWidget {
   const SignupOnboarding({super.key});
-   static const String routeName = '/SignupOnboarding';
+  static const String routeName = '/SignupOnboarding';
 
   @override
-  State<SignupOnboarding> createState() => _SignupOnboardingState();
+  ConsumerState<SignupOnboarding> createState() => _SignupOnboardingState();
 }
 
-class _SignupOnboardingState extends State<SignupOnboarding> {
+class _SignupOnboardingState extends ConsumerState<SignupOnboarding> {
   late final PageController _pageController;
 
   // Only SkinType pages
@@ -40,7 +38,7 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
     _pageController = PageController();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
-        final signupViewModel = context.read<SignUpOnboardingViewModel>();
+        final signupViewModel = ref.read(onBoardingViewModel.notifier);
         signupViewModel.setPageController(_pageController);
       }
     });
@@ -54,11 +52,14 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
 
   @override
   Widget build(BuildContext context) {
-    final signupViewModel = context.watch<SignUpOnboardingViewModel>();
-    
+    final state = ref.watch(onBoardingViewModel);
+    final notifier = ref.read(onBoardingViewModel.notifier);
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom,top: MediaQuery.paddingOf(context).top),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.paddingOf(context).bottom,
+          top: MediaQuery.paddingOf(context).top,
+        ),
         decoration: BoxDecoration(
           gradient: CustomColors.blueWhitePurpleGradient,
         ),
@@ -78,7 +79,6 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
               ),
             ),
             Column(
-              
               children: [
                 SizedBox(height: 28.h),
                 Padding(
@@ -90,7 +90,7 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            '${signupViewModel.currentPage + 1}/${SignUpOnboardingViewModel.totalPages}',
+                            '${state + 1}/${SignUpOnboardingViewModel.totalPages}',
                             style: CustomFonts.black20w600,
                           ),
                           SizedBox(width: 12.w),
@@ -98,7 +98,7 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10.r),
                               child: LinearProgressIndicator(
-                                value: signupViewModel.progressValue(),
+                                value: notifier.progressValue(),
                                 minHeight: 10.h,
                                 backgroundColor: Colors.white,
                                 valueColor: AlwaysStoppedAnimation<Color>(
@@ -110,15 +110,15 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
                         ],
                       ),
                       SizedBox(height: 16.h),
-      
+
                       // Navigation Buttons Row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          signupViewModel.currentPage > 0
+                          state > 0
                               ? GestureDetector(
                                   onTap: () {
-                                    signupViewModel.goToPreviousPage();
+                                    notifier.goToPreviousPage();
                                   },
                                   child: Container(
                                     padding: EdgeInsets.symmetric(
@@ -139,7 +139,7 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
                               : SizedBox(),
                           GestureDetector(
                             onTap: () {
-                              signupViewModel.onSkipThis(context);
+                              notifier.onSkipThis(context);
                             },
                             child: Row(
                               children: [
@@ -171,12 +171,12 @@ class _SignupOnboardingState extends State<SignupOnboarding> {
                     ],
                   ),
                 ),
-      
+
                 // PageView
                 Expanded(
                   child: PageView.builder(
                     controller: _pageController,
-                    onPageChanged: (index) => signupViewModel.onPageChanged(index),
+                    onPageChanged: (index) => notifier.onPageChanged(index),
                     itemCount: SignUpOnboardingViewModel.totalPages,
                     itemBuilder: (context, index) {
                       return _pages[index];

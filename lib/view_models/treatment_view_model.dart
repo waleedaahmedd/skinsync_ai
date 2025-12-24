@@ -1,10 +1,15 @@
-import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TreatmentViewModel extends ChangeNotifier {
-  bool _treamentMainScreen = true;
-  bool get treamentMainScreen => _treamentMainScreen;
-  void settreamentMainScreen({required bool value}) {
-    _treamentMainScreen = value;
-    notifyListeners();
+import 'base_view_model.dart';
+
+final treatmentViewModel = NotifierProvider.autoDispose(
+  () => TreatmentViewModel(),
+);
+
+class TreatmentViewModel extends BaseViewModel<bool> {
+  TreatmentViewModel() : super(initialState: true);
+
+  void setTreatmentMainScreen({required bool value}) {
+    state = value;
   }
 }
