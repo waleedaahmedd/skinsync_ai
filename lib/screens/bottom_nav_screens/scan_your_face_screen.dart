@@ -21,6 +21,8 @@ class ScanYourFaceScreen extends StatelessWidget {
               style: CustomFonts.black26w600,
             )
         
+
+        
       ),
       body: Column(
         children: [
