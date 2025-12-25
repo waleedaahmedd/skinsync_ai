@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+
+import '../exceptions/app_exception.dart';
 import '../models/requests/sign_in_request.dart';
 import '../models/responses/auth_response.dart';
 import '../repositories/auth_repository.dart';
@@ -14,37 +16,31 @@ class AuthService implements AuthRepository {
   AuthService({required ApiBaseHelper apiClient}) : _apiClient = apiClient;
 
   @override
-  Future<AuthResponse> signInApi({required SignInRequest signInRequest}) async {
-    try {
-      final response = await _apiClient.httpRequest(
-        endPoint: EndPoints.signIn,
-        requestType: 'POST',
-        requestBody: signInRequest,
-        params: '',
-      );
+  Future<AuthResponse> signInApi({
+    required BaseSignInRequest signInRequest,
+  }) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.signIn,
+      requestType: 'POST',
+      requestBody: signInRequest,
+      params: '',
+    );
 
-      // Check HTTP status code
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final parsed = json.decode(response.body);
-        AuthResponse authResponse = AuthResponse.fromJson(parsed);
-        if (authResponse.isSuccess == true) {
-          _secureStorage.saveSecureString(
-            key: '',
-            value: authResponse.data?.clientToken ?? '',
-          );
-        }
-        return authResponse;
-      } else {
-        // Handle HTTP error status codes
-        final parsed = json.decode(response.body);
-        return AuthResponse.fromJson(parsed);
+    // Check HTTP status code
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      AuthResponse authResponse = AuthResponse.fromJson(parsed);
+      if (authResponse.isSuccess == true) {
+        _secureStorage.saveSecureString(
+          key: '',
+          value: authResponse.data?.clientToken ?? '',
+        );
       }
-    } catch (e) {
-      // Return error response on exception
-      return AuthResponse(
-        isSuccess: false,
-        message: 'An error occurred. Please try again.',
-      );
+      return authResponse;
+    } else {
+      // Handle HTTP error status codes
+      final parsed = json.decode(response.body);
+      throw AppException(AuthResponse.fromJson(parsed).message as String);
     }
   }
 }

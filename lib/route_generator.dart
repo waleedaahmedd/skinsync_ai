@@ -19,6 +19,7 @@ import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/screens/splash_screen.dart';
 import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
 import 'package:skinsync_ai/screens/your_profile_screen.dart';
+import 'package:skinsync_ai/utills/enums.dart';
 
 import 'screens/ar_face_model_Preview_screen.dart';
 import 'screens/bottom_nav_screens/face_detection_screen.dart';
@@ -66,7 +67,7 @@ class RouteGenerator {
       case LoginScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: LoginScreen.routeName),
-          builder: (_) => LoginScreen(),
+          builder: (_) => LoginScreen(loginWith: args as LoginProviders),
         );
       case OtpScreen.routeName:
         return MaterialPageRoute(
@@ -168,7 +169,7 @@ class RouteGenerator {
           settings: RouteSettings(name: AllergyAndMedicalHistory.routeName),
           builder: (_) => AllergyAndMedicalHistory(),
         );
-         case AdditionalInfoScreen.routeName:
+      case AdditionalInfoScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: AdditionalInfoScreen.routeName),
           builder: (_) => AdditionalInfoScreen(),

@@ -1,8 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import '../models/base_state_model.dart';
 import '../models/requests/sign_in_request.dart';
 import '../models/responses/auth_response.dart';
 import '../repositories/auth_repository.dart';
@@ -34,41 +32,13 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     state = state.copyWith(authResponse: response);
   }
 
-  void setloginWithEmail(bool value) {
-    // _loginWithEmail = value;
-    // _loginWithPhone = !value;
-    // notifyListeners();
-    state = state.copyWith(loginWithEmail: value, loginWithPhone: !value);
-  }
-
-  void setloginWithPhone(bool value) {
-    // _loginWithPhone = value;
-    // _loginWithEmail = !value;
-    // notifyListeners();
-    state = state.copyWith(loginWithPhone: value, loginWithEmail: !value);
-  }
-
-  void setLoading(bool value) {
-    state = state.copyWith(loading: value);
-  }
-
-  Future<bool?> callSignInApi() async {
+  Future<bool?> callSignInApi(BaseSignInRequest request) async {
     return await runSafely(() async {
-      setLoading(true);
-      final SignInRequest signInRequest = SignInRequest(
-        password: _passwordController.text,
-        email: _emailController.text,
-        deviceToken: 'wqwqw',
-        deviceType: Platform.isAndroid ? 'android' : 'ios',
-      );
-
+      state = state.copyWith(loading: true);
       final AuthResponse response = await _authRepository.signInApi(
-        signInRequest: signInRequest,
+        signInRequest: request,
       );
-
-      setAuthResponse(response);
-      setLoading(false);
-
+      state = state.copyWith(loading: false);
       return response.isSuccess == true;
     });
   }
@@ -76,13 +46,11 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   @override
   void onError(String message) {
     super.onError(message);
-    setAuthResponse(
-      AuthResponse(
-        isSuccess: false,
-        message: 'An unexpected error occurred. Please try again.',
-      ),
+    state = state.copyWith(
+      loading: false,
+      errorMessage: message,
+      authResponse: AuthResponse(isSuccess: false, message: message),
     );
-    setLoading(false);
   }
 
   @override
@@ -94,29 +62,26 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   }
 }
 
-class AuthState {
-  final bool loading;
-  final bool loginWithEmail;
-  final bool loginWithPhone;
+@immutable
+class AuthState extends BaseStateModel {
   final AuthResponse? authResponse;
 
-  AuthState({
-    this.loading = false,
+  const AuthState({
+    super.loading = false,
+    super.errorMessage,
     this.authResponse,
-    this.loginWithEmail = false,
-    this.loginWithPhone = false,
   });
 
   AuthState copyWith({
     bool? loading,
+    String? errorMessage,
     bool? loginWithEmail,
     bool? loginWithPhone,
     AuthResponse? authResponse,
   }) {
     return AuthState(
       loading: loading ?? this.loading,
-      loginWithEmail: loginWithEmail ?? this.loginWithEmail,
-      loginWithPhone: loginWithPhone ?? this.loginWithPhone,
+      errorMessage: errorMessage ?? this.errorMessage,
       authResponse: authResponse ?? this.authResponse,
     );
   }

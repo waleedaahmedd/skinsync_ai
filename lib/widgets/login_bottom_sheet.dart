@@ -7,6 +7,7 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/biometric_helper.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/utills/enums.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
 void loginBottomSheet(BuildContext context) {
@@ -71,15 +72,14 @@ void loginBottomSheet(BuildContext context) {
                         width: double.infinity,
                         child: InkWell(
                           onTap: () {
-                            ref
-                                .read(authViewModel.notifier)
-                                .setloginWithPhone(true);
                             // Navigator.pushNamed(context, loginScreen);
                             Navigator.of(context).pushReplacement(
                               PageRouteBuilder(
                                 pageBuilder:
                                     (context, animation, secondaryAnimation) =>
-                                        const LoginScreen(),
+                                        const LoginScreen(
+                                          loginWith: LoginProviders.phone,
+                                        ),
                                 transitionsBuilder:
                                     (
                                       context,
@@ -124,10 +124,11 @@ void loginBottomSheet(BuildContext context) {
                         width: double.infinity,
                         child: InkWell(
                           onTap: () {
-                            ref
-                                .read(authViewModel.notifier)
-                                .setloginWithEmail(true);
-                            Navigator.pushNamed(context, LoginScreen.routeName);
+                            Navigator.pushNamed(
+                              context,
+                              LoginScreen.routeName,
+                              arguments: LoginProviders.phone,
+                            );
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(vertical: 16.h),

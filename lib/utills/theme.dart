@@ -14,6 +14,7 @@ class AppTheme {
       ),
     ).copyWith(
       brightness: Brightness.light,
+      
 
       scaffoldBackgroundColor: Colors.white,
       appBarTheme: AppBarTheme(
@@ -32,6 +33,9 @@ class AppTheme {
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: CustomColors.lightPurpleColor, // Cursor color
       ),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: CustomColors.whiteColor,
+    ),
 
       iconTheme: const IconThemeData(color: Colors.black54),
       checkboxTheme: CheckboxThemeData(

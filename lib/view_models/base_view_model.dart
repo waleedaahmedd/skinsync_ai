@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../exceptions/app_exception.dart';
@@ -30,7 +29,7 @@ abstract class BaseViewModel<S> extends Notifier<S> {
 
   Future<T?> runSafely<T>(AsyncValueGetter<T> action) async {
     try {
-      return action.call();
+      return await action.call();
     } on AppException catch (e, s) {
       log(e.toString(), stackTrace: s);
       onError(e.message);
@@ -44,6 +43,6 @@ abstract class BaseViewModel<S> extends Notifier<S> {
 
   @mustCallSuper
   void onError(String message) {
-    EasyLoading.showError(message);
+    // EasyLoading.showError(message);
   }
 }

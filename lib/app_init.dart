@@ -48,6 +48,7 @@ class AppInit extends StatelessWidget {
               themeMode: themeMode,
               theme: AppTheme.lightTheme,
               darkTheme: AppTheme.darkTheme,
+              builder: EasyLoading.init(),
             );
           },
         );
