@@ -49,10 +49,18 @@ class FaceScanProvider extends BaseViewModel<FaceScanState> {
   }
 
   Future<void> setAiimage(XFile image) async {
-    return await runSafely(() async {
-      // final flippedImage = await flipXFileHorizontally(image);
-      state = state.copyWith(aiImage: image, isCapturing: true);
-    });
+    // Directly update state to ensure it always updates, even on subsequent calls
+    // Create a new state object with the new aiImage
+    state = FaceScanState(
+      progress: state.progress,
+      isFaceDetected: state.isFaceDetected,
+      isFaceCentered: state.isFaceCentered,
+      isCapturing: false,
+      flash: state.flash,
+      isBefore: state.isBefore,
+      capturedImage: state.capturedImage,
+      aiImage: image, // Always set the new image
+    );
   }
 
   @override
@@ -92,6 +100,7 @@ class FaceScanState {
     bool? isBefore,
     XFile? capturedImage,
     XFile? aiImage,
+    bool clearAiImage = false,
   }) {
     return FaceScanState(
       progress: progress ?? this.progress,
@@ -101,7 +110,8 @@ class FaceScanState {
       flash: flash ?? this.flash,
       isBefore: isBefore ?? this.isBefore,
       capturedImage: capturedImage ?? this.capturedImage,
-      aiImage: aiImage ?? this.aiImage,
+      // If aiImage is explicitly provided (not null), use it; otherwise keep current or clear if flag is set
+      aiImage: clearAiImage ? null : (aiImage != null ? aiImage : this.aiImage),
     );
   }
 }

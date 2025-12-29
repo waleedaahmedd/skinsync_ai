@@ -258,71 +258,32 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     // Capture the image
     final image = await _cameraController!.takePicture();
     
+    // Flip the image if using front camera (to match the mirrored preview)
+    XFile finalImage = image;
+    if (_cameraController!.description.lensDirection == CameraLensDirection.front) {
+      finalImage = await flipXFileHorizontally(image);
+    }
+    
     // Store captured image and set processing state
     setState(() {
-      _capturedImage = image;
+      _capturedImage = finalImage;
     });
     
     // Mark as capturing in provider
-    ref.read(faceScanProvider.notifier).markCaptured(image);
+    ref.read(faceScanProvider.notifier).markCaptured(finalImage);
     
-    // Show loading indicator
-    EasyLoading.show(status: 'Processing...');
+    if (!mounted) return;
     
-    try {
-      final jsonRes = await uploadCapturedImage(
-        image: image,
-        apiUrl: 'http://18.116.65.70/api/predict/',
-      );
-
-      if (jsonRes == null) {
-        throw Exception('Failed to upload image');
-      }
-
-      final ximage = await base64ToXFile(jsonRes["image_base64"]);
-
-      await ref.read(faceScanProvider.notifier).setAiimage(ximage);
-
-      if (!mounted) return;
-      
-      EasyLoading.dismiss();
-      ref.read(faceScanProvider.notifier).reset();
-      setState(() {
-        _capturedImage = null;
-      });
-      
-      Navigator.pushReplacementNamed(
-        context,
-        // ArFaceModelPreviewScreen.routeName
-        ServiceSelectionScreen.routeName,
-      );
-    } catch (e) {
-      EasyLoading.dismiss();
-      
-      // Reset everything on error
-      ref.read(faceScanProvider.notifier).reset();
-      setState(() {
-        _capturedImage = null;
-      });
-      
-      // Restart camera stream
-      if (_cameraController != null && _cameraController!.value.isInitialized) {
-        _cameraController!.startImageStream((image) {
-          if (_isDetecting || !mounted) return;
-          _isDetecting = true;
-
-          _process(ref, image).whenComplete(() {
-            if (mounted) {
-              _isDetecting = false;
-            }
-          });
-        });
-      }
-      
-      // Display error message
-      final errorMessage = e.toString().replaceFirst('Exception: ', '');
-      EasyLoading.showError(errorMessage);
-    }
+    ref.read(faceScanProvider.notifier).reset();
+    setState(() {
+      _capturedImage = null;
+    });
+    
+    Navigator.pushReplacementNamed(
+      context,
+      // ArFaceModelPreviewScreen.routeName
+      ServiceSelectionScreen.routeName,
+    );
   }
 
   @override

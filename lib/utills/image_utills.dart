@@ -3,29 +3,33 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:cross_file/cross_file.dart';
+import 'package:image/image.dart' as img;
 
 import 'package:camera/camera.dart';
 
-// Future<XFile> flipXFileHorizontally(XFile xFile) async {
-//   // Read image bytes
-//   final bytes = await xFile.readAsBytes();
+Future<XFile> flipXFileHorizontally(XFile xFile) async {
+  // Read image bytes
+  final bytes = await xFile.readAsBytes();
 
-//   // Decode image
-//   final img.Image? original = img.decodeImage(bytes);
-//   if (original == null) {
-//     throw Exception('Unable to decode image');
-//   }
+  // Decode image
+  final img.Image? original = img.decodeImage(bytes);
+  if (original == null) {
+    throw Exception('Unable to decode image');
+  }
 
-//   // Flip horizontally
-//   final img.Image flipped = img.flipHorizontal(original);
+  // Flip horizontally
+  final img.Image flipped = img.flipHorizontal(original);
 
-//   // Write back to same path (or create a new path if you prefer)
-//   final File file = File(xFile.path);
-//   await file.writeAsBytes(img.encodeJpg(flipped), flush: true);
+  // Create a new file with a unique name
+  final tempDir = await getTemporaryDirectory();
+  final timestamp = DateTime.now().millisecondsSinceEpoch;
+  final newFilePath = '${tempDir.path}/flipped_$timestamp.jpg';
+  final File newFile = File(newFilePath);
+  await newFile.writeAsBytes(img.encodeJpg(flipped));
 
-//   // Return as XFile
-//   return XFile(file.path);
-// }
+  // Return as XFile
+  return XFile(newFile.path);
+}
 
 Future<XFile> base64ToXFile(
   String base64Image, {
