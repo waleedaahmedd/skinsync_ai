@@ -1,12 +1,16 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:http/http.dart' as http;
+import 'package:skinsync_ai/utills/image_utills.dart';
 
 import '../../utills/custom_fonts.dart';
 import '../../view_models/face_scan_provider.dart';
@@ -26,6 +30,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   CameraController? _cameraController;
   late FaceDetector _faceDetector;
   bool _isDetecting = false;
+  XFile? _capturedImage;
 
   @override
   void initState() {
@@ -190,31 +195,141 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     }
   }
 
+  Future<Map<String, dynamic>?> uploadCapturedImage({
+    required XFile image,
+    required String apiUrl,
+    String? token, // optional auth token
+  }) async {
+    try {
+      final uri = Uri.parse(apiUrl);
+      final request = http.MultipartRequest('POST', uri);
+
+      // Optional headers
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+
+      // Attach image
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image',
+          image.path,
+          filename: image.name,
+        ),
+      );
+
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+      final responseData = jsonDecode(responseBody);
+
+      // Check if server returned an error response
+      if (responseData['success'] == false) {
+        final errorMessage = responseData['message'] ?? 'Upload failed';
+        throw Exception(errorMessage);
+      }
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('✅ Image uploaded successfully');
+        return responseData;
+      } else {
+        print('❌ Upload failed: ${response.statusCode}');
+        final errorMessage = responseData['message'] ?? 'Upload failed';
+        throw Exception(errorMessage);
+      }
+    } catch (e) {
+      print('❌ Error uploading image: $e');
+      rethrow;
+    }
+  }
+
   Future<void> _captureAndNavigate(WidgetRef ref) async {
     final state = ref.read(faceScanProvider);
     if (_cameraController == null || state.isCapturing) return;
-    await Future.delayed(Duration(milliseconds: 500));
-    _cameraController!.setFlashMode(
-      state.flash ? FlashMode.off : FlashMode.torch,
-    );
-    final image = await _cameraController!.takePicture();
+    
+    // Stop the image stream first
     await _cameraController!.stopImageStream();
+    
+    // Turn off flash
+    await _cameraController!.setFlashMode(FlashMode.off);
+    if (state.flash) {
+      ref.read(faceScanProvider.notifier).toggleFlash();
+    }
+    
+    // Capture the image
+    final image = await _cameraController!.takePicture();
+    
+    // Store captured image and set processing state
+    setState(() {
+      _capturedImage = image;
+    });
+    
+    // Mark as capturing in provider
+    ref.read(faceScanProvider.notifier).markCaptured(image);
+    
+    // Show loading indicator
+    EasyLoading.show(status: 'Processing...');
+    
+    try {
+      final jsonRes = await uploadCapturedImage(
+        image: image,
+        apiUrl: 'http://18.116.65.70/api/predict/',
+      );
 
-    await ref.read(faceScanProvider.notifier).markCaptured(image);
+      if (jsonRes == null) {
+        throw Exception('Failed to upload image');
+      }
 
-    if (!mounted) return;
-    ref.read(faceScanProvider.notifier).reset();
-    Navigator.pushReplacementNamed(
-      context,
-      // ArFaceModelPreviewScreen.routeName
-      ServiceSelectionScreen.routeName,
-    );
+      final ximage = await base64ToXFile(jsonRes["image_base64"]);
+
+      await ref.read(faceScanProvider.notifier).setAiimage(ximage);
+
+      if (!mounted) return;
+      
+      EasyLoading.dismiss();
+      ref.read(faceScanProvider.notifier).reset();
+      setState(() {
+        _capturedImage = null;
+      });
+      
+      Navigator.pushReplacementNamed(
+        context,
+        // ArFaceModelPreviewScreen.routeName
+        ServiceSelectionScreen.routeName,
+      );
+    } catch (e) {
+      EasyLoading.dismiss();
+      
+      // Reset everything on error
+      ref.read(faceScanProvider.notifier).reset();
+      setState(() {
+        _capturedImage = null;
+      });
+      
+      // Restart camera stream
+      if (_cameraController != null && _cameraController!.value.isInitialized) {
+        _cameraController!.startImageStream((image) {
+          if (_isDetecting || !mounted) return;
+          _isDetecting = true;
+
+          _process(ref, image).whenComplete(() {
+            if (mounted) {
+              _isDetecting = false;
+            }
+          });
+        });
+      }
+      
+      // Display error message
+      final errorMessage = e.toString().replaceFirst('Exception: ', '');
+      EasyLoading.showError(errorMessage);
+    }
   }
 
   @override
   void dispose() {
     _cameraController?.dispose();
     _faceDetector.close();
+    EasyLoading.dismiss();
     super.dispose();
   }
 
@@ -231,35 +346,44 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       body: Stack(
         children: [
           if (_cameraController != null) _buildCameraView(),
-          Align(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding: EdgeInsets.only(top: 40.h, right: 20.w),
-              child: GestureDetector(
-                onTap: () {
-                  ref.read(faceScanProvider.notifier).toggleFlash();
-                  if (_cameraController != null) {
-                    _cameraController!.setFlashMode(
-                      ref.read(faceScanProvider).flash
-                          ? FlashMode.torch
-                          : FlashMode.off,
-                    );
-                  }
-                },
-                child: Consumer(
-                  builder: (_, ref, child) {
-                    final flash = ref.watch(
-                      faceScanProvider.select((state) => state.flash),
-                    );
-                    return Icon(
-                      flash ? Icons.flash_on : Icons.flash_off,
-                      color: Colors.white,
-                      size: 30.sp,
-                    );
-                  },
+          Consumer(
+            builder: (_, ref, _) {
+              final isCapturing = ref.watch(
+                faceScanProvider.select((state) => state.isCapturing),
+              );
+              if (isCapturing) return const SizedBox.shrink();
+              
+              return Align(
+                alignment: Alignment.topRight,
+                child: Padding(
+                  padding: EdgeInsets.only(top: 40.h, right: 20.w),
+                  child: GestureDetector(
+                    onTap: () {
+                      ref.read(faceScanProvider.notifier).toggleFlash();
+                      if (_cameraController != null) {
+                        _cameraController!.setFlashMode(
+                          ref.read(faceScanProvider).flash
+                              ? FlashMode.torch
+                              : FlashMode.off,
+                        );
+                      }
+                    },
+                    child: Consumer(
+                      builder: (_, ref, child) {
+                        final flash = ref.watch(
+                          faceScanProvider.select((state) => state.flash),
+                        );
+                        return Icon(
+                          flash ? Icons.flash_on : Icons.flash_off,
+                          color: Colors.white,
+                          size: 30.sp,
+                        );
+                      },
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
           ),
 
           Positioned(
@@ -303,11 +427,21 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                 ),
                 child: Consumer(
                   builder: (_, ref, _) {
-                    final progress = ref.watch(
-                      faceScanProvider.select((state) => state.progress),
-                    );
+                    final state = ref.watch(faceScanProvider);
+                    final progress = state.progress;
+                    final isCapturing = state.isCapturing;
+                    
+                    String message;
+                    if (isCapturing) {
+                      message = "Please wait";
+                    } else if (progress == 1.0) {
+                      message = "Hold still...";
+                    } else {
+                      message = "Align your face";
+                    }
+                    
                     return Text(
-                      progress == 1.0 ? "Hold still..." : "Align your face",
+                      message,
                       textAlign: TextAlign.center,
                       style: CustomFonts.black28w600,
                     );
@@ -321,7 +455,17 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     );
   }
 
-  SizedBox _buildCameraView() {
+  Widget _buildCameraView() {
+    // If we have a captured image, show it instead of camera preview
+    if (_capturedImage != null) {
+      return SizedBox.expand(
+        child: Image.file(
+          File(_capturedImage!.path),
+          fit: BoxFit.cover,
+        ),
+      );
+    }
+    
     return SizedBox.expand(
       child: FittedBox(
         fit: BoxFit.cover,

@@ -73,11 +73,11 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
           child: Consumer(
             builder: (context, ref, _) {
               final image = ref.watch(
-                faceScanProvider.select((state) => state.capturedImage),
+                faceScanProvider.select((state) => state.isBefore ? state.capturedImage : state.aiImage),
               );
               return Image.file(
                 File(image!.path),
-                fit: BoxFit.cover,
+                fit: BoxFit.fitHeight,
                 width: double.infinity,
                 height: 326.h,
               );

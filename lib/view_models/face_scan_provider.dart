@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../utills/image_utills.dart';
 import 'base_view_model.dart';
 
 final faceScanProvider = NotifierProvider.autoDispose(() => FaceScanProvider());
@@ -44,8 +43,15 @@ class FaceScanProvider extends BaseViewModel<FaceScanState> {
 
   Future<void> markCaptured(XFile image) async {
     return await runSafely(() async {
-      final flippedImage = await flipXFileHorizontally(image);
-      state = state.copyWith(capturedImage: flippedImage, isCapturing: true);
+      // final flippedImage = await flipXFileHorizontally(image);
+      state = state.copyWith(capturedImage: image, isCapturing: true);
+    });
+  }
+
+  Future<void> setAiimage(XFile image) async {
+    return await runSafely(() async {
+      // final flippedImage = await flipXFileHorizontally(image);
+      state = state.copyWith(aiImage: image, isCapturing: true);
     });
   }
 
@@ -64,6 +70,7 @@ class FaceScanState {
   final bool flash;
   final bool isBefore;
   final XFile? capturedImage;
+  final XFile? aiImage;
 
   const FaceScanState({
     this.progress = 0.0,
@@ -73,6 +80,7 @@ class FaceScanState {
     this.isCapturing = false,
     this.isBefore = false,
     this.capturedImage,
+    this.aiImage,
   });
 
   FaceScanState copyWith({
@@ -83,6 +91,7 @@ class FaceScanState {
     bool? flash,
     bool? isBefore,
     XFile? capturedImage,
+    XFile? aiImage,
   }) {
     return FaceScanState(
       progress: progress ?? this.progress,
@@ -92,6 +101,7 @@ class FaceScanState {
       flash: flash ?? this.flash,
       isBefore: isBefore ?? this.isBefore,
       capturedImage: capturedImage ?? this.capturedImage,
+      aiImage: aiImage ?? this.aiImage,
     );
   }
 }
