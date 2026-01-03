@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../utills/image_utills.dart';
 import 'base_view_model.dart';
 
 final faceScanProvider = NotifierProvider.autoDispose(() => FaceScanProvider());
@@ -44,9 +43,24 @@ class FaceScanProvider extends BaseViewModel<FaceScanState> {
 
   Future<void> markCaptured(XFile image) async {
     return await runSafely(() async {
-      final flippedImage = await flipXFileHorizontally(image);
-      state = state.copyWith(capturedImage: flippedImage, isCapturing: true);
+      // final flippedImage = await flipXFileHorizontally(image);
+      state = state.copyWith(capturedImage: image, isCapturing: true);
     });
+  }
+
+  Future<void> setAiimage(XFile image) async {
+    // Directly update state to ensure it always updates, even on subsequent calls
+    // Create a new state object with the new aiImage
+    state = FaceScanState(
+      progress: state.progress,
+      isFaceDetected: state.isFaceDetected,
+      isFaceCentered: state.isFaceCentered,
+      isCapturing: false,
+      flash: state.flash,
+      isBefore: state.isBefore,
+      capturedImage: state.capturedImage,
+      aiImage: image, // Always set the new image
+    );
   }
 
   @override
@@ -64,6 +78,7 @@ class FaceScanState {
   final bool flash;
   final bool isBefore;
   final XFile? capturedImage;
+  final XFile? aiImage;
 
   const FaceScanState({
     this.progress = 0.0,
@@ -73,6 +88,7 @@ class FaceScanState {
     this.isCapturing = false,
     this.isBefore = false,
     this.capturedImage,
+    this.aiImage,
   });
 
   FaceScanState copyWith({
@@ -83,6 +99,8 @@ class FaceScanState {
     bool? flash,
     bool? isBefore,
     XFile? capturedImage,
+    XFile? aiImage,
+    bool clearAiImage = false,
   }) {
     return FaceScanState(
       progress: progress ?? this.progress,
@@ -92,6 +110,8 @@ class FaceScanState {
       flash: flash ?? this.flash,
       isBefore: isBefore ?? this.isBefore,
       capturedImage: capturedImage ?? this.capturedImage,
+      // If aiImage is explicitly provided (not null), use it; otherwise keep current or clear if flag is set
+      aiImage: clearAiImage ? null : (aiImage != null ? aiImage : this.aiImage),
     );
   }
 }

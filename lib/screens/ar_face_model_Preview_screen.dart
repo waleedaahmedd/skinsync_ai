@@ -1,23 +1,133 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:http/http.dart' as http;
 import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/utills/image_utills.dart';
 import 'package:skinsync_ai/view_models/face_scan_provider.dart';
 import 'package:skinsync_ai/widgets/grey_container.dart';
 import 'package:skinsync_ai/widgets/service_type_button.dart';
 
-class ArFaceModelPreviewScreen extends StatelessWidget {
+class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
   const ArFaceModelPreviewScreen({super.key});
   static const String routeName = '/ArFaceModelPreviewScreen';
 
   @override
+  ConsumerState<ArFaceModelPreviewScreen> createState() => _ArFaceModelPreviewScreenState();
+}
+
+class _ArFaceModelPreviewScreenState extends ConsumerState<ArFaceModelPreviewScreen> {
+  bool _isLoading = false;
+  String? _errorMessage;
+  bool _hasInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Call API when screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _callPredictAPI();
+    });
+  }
+
+  Future<Map<String, dynamic>?> _uploadCapturedImage({
+    required XFile image,
+    required String apiUrl,
+  }) async {
+    try {
+      final uri = Uri.parse(apiUrl);
+      final request = http.MultipartRequest('POST', uri);
+
+      // Attach image
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image',
+          image.path,
+          filename: image.name,
+        ),
+      );
+
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+      final responseData = jsonDecode(responseBody);
+
+      // Check if server returned an error response
+      if (responseData['success'] == false) {
+        final errorMessage = responseData['message'] ?? 'Upload failed';
+        throw Exception(errorMessage);
+      }
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return responseData;
+      } else {
+        final errorMessage = responseData['message'] ?? 'Upload failed';
+        throw Exception(errorMessage);
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> _callPredictAPI() async {
+    final state = ref.read(faceScanProvider);
+    if (state.capturedImage == null) return;
+
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final jsonRes = await _uploadCapturedImage(
+        image: state.capturedImage!,
+        apiUrl: 'http://18.116.65.70/api/predict/',
+      );
+
+      if (jsonRes == null) {
+        throw Exception('Failed to upload image');
+      }
+
+      // Generate unique filename to ensure each API call creates a new file
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final ximage = await base64ToXFile(
+        jsonRes["image_base64"],
+        fileName: 'ai_image_$timestamp.jpg',
+      );
+      await ref.read(faceScanProvider.notifier).setAiimage(ximage);
+
+      setState(() {
+        _isLoading = false;
+        _errorMessage = null;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = e.toString().replaceFirst('Exception: ', '');
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Ensure default shows "before" tab (only once)
+    if (!_hasInitialized) {
+      _hasInitialized = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final state = ref.read(faceScanProvider);
+        if (!state.isBefore) {
+          ref.read(faceScanProvider.notifier).toggleIsBefore();
+        }
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 80.w,
@@ -72,14 +182,84 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(20.r),
           child: Consumer(
             builder: (context, ref, _) {
-              final image = ref.watch(
-                faceScanProvider.select((state) => state.capturedImage),
+              final isBefore = ref.watch(
+                faceScanProvider.select((state) => state.isBefore),
               );
-              return Image.file(
-                File(image!.path),
-                fit: BoxFit.cover,
+              final image = ref.watch(
+                faceScanProvider.select((state) => state.isBefore ? state.capturedImage : state.aiImage),
+              );
+
+              // Show loading indicator
+              if (_isLoading) {
+                return Container(
+                  width: double.infinity,
+                  height: 326.h,
+                  color: CustomColors.greyColor.withOpacity(0.3),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: CustomColors.lightBlueColor,
+                    ),
+                  ),
+                );
+              }
+
+              // Show error message if API failed and on After tab
+              if (!isBefore && _errorMessage != null) {
+                return Container(
+                  width: double.infinity,
+                  height: 326.h,
+                  padding: EdgeInsets.all(16.w),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          color: Colors.red,
+                          size: 48.sp,
+                        ),
+                        SizedBox(height: 16.h),
+                        Text(
+                          'Error',
+                          style: CustomFonts.black20w600.copyWith(color: Colors.red),
+                        ),
+                        SizedBox(height: 8.h),
+                        Text(
+                          _errorMessage!,
+                          textAlign: TextAlign.center,
+                          style: CustomFonts.black16w400.copyWith(color: Colors.red.shade700),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              // Show image if available
+              if (image != null) {
+                return Image.file(
+                  File(image.path),
+                  fit: BoxFit.fitHeight,
+                  width: double.infinity,
+                  height: 326.h,
+                );
+              }
+
+              // Fallback
+              return Container(
                 width: double.infinity,
                 height: 326.h,
+                color: CustomColors.greyColor.withOpacity(0.3),
+                child: Center(
+                  child: Text(
+                    'No image available',
+                    style: CustomFonts.black16w400,
+                  ),
+                ),
               );
             },
           ),
@@ -104,8 +284,12 @@ class ArFaceModelPreviewScreen extends StatelessWidget {
           right: 23.w,
           child: Consumer(
             builder: (context, ref, _) {
+              final isBefore = ref.watch(
+                faceScanProvider.select((state) => state.isBefore),
+              );
               return GestureDetector(
                 onTap: () {
+                  // Toggle the state
                   ref.read(faceScanProvider.notifier).toggleIsBefore();
                 },
                 child: CircleAvatar(
