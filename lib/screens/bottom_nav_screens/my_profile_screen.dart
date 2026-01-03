@@ -7,6 +7,7 @@ import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
 import 'package:skinsync_ai/screens/personal_detail_screen.dart';
 import 'package:skinsync_ai/screens/saved_treatment_screen.dart';
 import 'package:skinsync_ai/screens/setting_screen.dart';
+import 'package:skinsync_ai/screens/treatment_receipts_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -102,7 +103,10 @@ class MyProfileScreen extends StatelessWidget {
               children: [
                 profileOppition(
                   callBack: () {
-                    Navigator.pushNamed(context, PersonalDetailScreen.routeName);
+                    Navigator.pushNamed(
+                      context,
+                      PersonalDetailScreen.routeName,
+                    );
                   },
                   icon: SvgAssets.profileIcon,
                   title: "Personal Details",
@@ -110,7 +114,10 @@ class MyProfileScreen extends StatelessWidget {
                 SizedBox(height: 36.h),
                 profileOppition(
                   callBack: () {
-                    Navigator.pushNamed(context, SavedTreatmentScreen.routeName);
+                    Navigator.pushNamed(
+                      context,
+                      SavedTreatmentScreen.routeName,
+                    );
                   },
                   icon: SvgAssets.saveTreatment,
                   title: "Saved Treatments & Clinics",
@@ -124,14 +131,22 @@ class MyProfileScreen extends StatelessWidget {
                 SizedBox(height: 36.h),
                 profileOppition(
                   callBack: () {
-                    Navigator.pushNamed(context,AllergyAndMedicalHistory.routeName);
+                    Navigator.pushNamed(
+                      context,
+                      AllergyAndMedicalHistory.routeName,
+                    );
                   },
                   icon: SvgAssets.medical,
                   title: "Medical History",
                 ),
                 SizedBox(height: 36.h),
                 profileOppition(
-                  callBack: () {},
+                  callBack: () {
+                    Navigator.pushNamed(
+                      context,
+                      TreatmentReceiptsScreen.routeName,
+                    );
+                  },
                   icon: SvgAssets.receipts,
                   title: "treatment receipts",
                 ),
