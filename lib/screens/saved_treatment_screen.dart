@@ -15,9 +15,11 @@ class SavedTreatmentScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
-        showTitle: true,
-        title: "Saved Treatments & Clinics",
+      appBar: CustomAppBar(
+        title: Text(
+          "Saved Treatments & Clinics",
+          style: CustomFonts.black26w600,
+        ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -62,8 +64,6 @@ class SavedTreatmentScreen extends StatelessWidget {
           SizedBox(
             height: 217.h,
             child: ListView.builder(
-              
-            
               scrollDirection: Axis.horizontal,
               itemCount: 4,
               itemBuilder: (context, index) {
@@ -113,7 +113,10 @@ class SavedTreatmentScreen extends StatelessWidget {
           SizedBox(height: 30.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 30.w),
-            child: HeadingWithRightArrow(title:"Your AI Treatment Model", onTap:(){}),
+            child: HeadingWithRightArrow(
+              title: "Your AI Treatment Model",
+              onTap: () {},
+            ),
           ),
           SizedBox(height: 13.h),
           SizedBox(
@@ -145,7 +148,7 @@ class SavedTreatmentScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 8.h),
                         Row(
-                         mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

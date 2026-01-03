@@ -5,14 +5,9 @@ import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final bool showTitle;
-  final String? title;
+  final Widget? title;
 
-  const CustomAppBar({
-    super.key,
-    required this.showTitle,
-    this.title,
-  });
+  const CustomAppBar({super.key, this.title});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -37,12 +32,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
       ),
-      title: showTitle
-          ? Text(
-              title ?? '',
-              style: CustomFonts.black26w600,
-            )
-          : const SizedBox.shrink(),
+      title: title ?? SizedBox(),
     );
   }
 }

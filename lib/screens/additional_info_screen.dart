@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skinsync_ai/screens/payment_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -63,7 +64,7 @@ class AdditionalInfoScreen extends StatelessWidget {
                         SizedBox(height: 37.h),
                       ],
                     ),
-                    SizedBox(height: 35.h,),
+                    SizedBox(height: 35.h),
                     Text(
                       "Previous Aesthetic treatments? Please Specify (Botox, Fillers, Laser, Microneedling)",
                       style: CustomFonts.black28w600,
@@ -128,8 +129,8 @@ class AdditionalInfoScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 35.h,),
-                      Text(
+                    SizedBox(height: 35.h),
+                    Text(
                       "Do You Have Any Allergies to Lidocaine Or Other Anesthetics?",
                       style: CustomFonts.black28w600,
                     ),
@@ -193,8 +194,19 @@ class AdditionalInfoScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 35.h + MediaQuery.paddingOf(context).bottom,),
-
+                    SizedBox(height: 20.h),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, PaymentScreen.routeName);
+                        },
+                        child: Text("Next"),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 35.h + MediaQuery.paddingOf(context).bottom,
+                    ),
                   ],
                 ),
               ),
