@@ -13,16 +13,14 @@ class PersonalDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title: Text("Personal Details", style: CustomFonts.black26w600),
-      ),
+      appBar: CustomAppBar(showTitle: true, title: "Personal Details"),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 30.w),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 28.h),
+              SizedBox(height: 28.h,),
               Stack(
                 alignment: Alignment.center,
                 clipBehavior: Clip.none,
@@ -35,7 +33,7 @@ class PersonalDetailScreen extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                   ),
-
+          
                   Positioned(
                     bottom: -5,
                     right: -5,
@@ -55,66 +53,71 @@ class PersonalDetailScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 7.h),
-              Text("Your Profile", style: CustomFonts.black30w600),
-              Text(
-                "Introduce yourself to others in your events.",
-                style: CustomFonts.grey18w400,
-              ),
-              SizedBox(height: 22.h),
+              SizedBox(height: 7.h,),
+              Text("Your Profile",style: CustomFonts.black30w600,),
+              Text("Introduce yourself to others in your events.",style: CustomFonts.grey18w400,),
+              SizedBox(height: 22.h,),
               TextField(
                 style: CustomFonts.black18w400,
                 decoration: InputDecoration(hintText: "Lizzy Johnson"),
+          
               ),
-              SizedBox(height: 20.h),
-              TextField(
+              SizedBox(height: 20.h,),
+               TextField(
                 style: CustomFonts.black18w400,
                 decoration: InputDecoration(hintText: "+ 012 345 6798"),
+          
               ),
-              SizedBox(height: 20.h),
-              TextField(
+              SizedBox(height: 20.h,),
+               TextField(
                 style: CustomFonts.black18w400,
                 decoration: InputDecoration(hintText: "lizzyjhonson@gmail.com"),
+          
               ),
-              SizedBox(height: 20.h),
-              TextField(
+              SizedBox(height: 20.h,),
+               TextField(
                 style: CustomFonts.black18w400,
                 decoration: InputDecoration(hintText: "New York"),
+          
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: 20.h,),
               Row(
                 children: [
-                  Expanded(
-                    child: TextField(
-                      style: CustomFonts.black18w400,
-                      decoration: InputDecoration(hintText: "Skin Type +2"),
-                    ),
-                  ),
-                  SizedBox(width: 12.39.h),
-                  Expanded(
-                    child: TextField(
-                      style: CustomFonts.black18w400,
-                      decoration: InputDecoration(hintText: "Skin Goal +4"),
-                    ),
-                  ),
+                   Expanded(
+                     child: TextField(
+                                   style: CustomFonts.black18w400,
+                                   decoration: InputDecoration(hintText: "Skin Type +2"),
+                                 
+                                 ),
+                   ),
+              SizedBox(width: 12.39.h,),
+               Expanded(
+                 child: TextField(
+                  style: CustomFonts.black18w400,
+                  decoration: InputDecoration(hintText: "Skin Goal +4"),
+                             
+                             ),
+               ),
+              
                 ],
               ),
-              SizedBox(height: 20.h),
-              TextField(
+              SizedBox(height: 20.h,),
+               TextField(
                 style: CustomFonts.black18w400,
                 decoration: InputDecoration(hintText: "Primary Concerns  +3"),
+          
               ),
-              SizedBox(height: 20.h),
-              TextField(
+              SizedBox(height: 20.h,),
+               TextField(
                 maxLines: 4,
                 style: CustomFonts.black18w400,
                 decoration: InputDecoration(hintText: "Bio"),
+          
               ),
-              SizedBox(height: 35.h),
-              SizedBox(
+              SizedBox(height: 35.h,),
+              SizedBox( 
                 width: double.infinity,
-                child: ElevatedButton(onPressed: () {}, child: Text("Save")),
-              ),
+                child: ElevatedButton(onPressed:(){}, child: Text("Save")))
             ],
           ),
         ),

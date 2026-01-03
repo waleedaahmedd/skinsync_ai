@@ -26,7 +26,7 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(showTitle: false),
       body: Container(
         decoration: BoxDecoration(gradient: CustomColors.whiteBlueGradient),
         child: SingleChildScrollView(

@@ -50,12 +50,7 @@ class _AllergyAndMedicalHistoryState extends State<AllergyAndMedicalHistory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(
-        title:   Text(
-             "Allergy & Medical History",
-              style: CustomFonts.black26w600,
-            )
-      ),
+      appBar: CustomAppBar(showTitle: true, title: "Allergy & Medical History"),
       body: Container(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 30.w),

@@ -11,17 +11,13 @@ import 'package:skinsync_ai/screens/get_notified_screen.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 import 'package:skinsync_ai/screens/home_screen.dart';
 import 'package:skinsync_ai/screens/login_screen.dart';
-import 'package:skinsync_ai/screens/notes_screen.dart';
-import 'package:skinsync_ai/screens/notification_screen.dart';
 import 'package:skinsync_ai/screens/otp_screen.dart';
-import 'package:skinsync_ai/screens/payment_screen.dart';
 import 'package:skinsync_ai/screens/personal_detail_screen.dart';
 import 'package:skinsync_ai/screens/saved_treatment_screen.dart';
 import 'package:skinsync_ai/screens/setting_screen.dart';
 import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/screens/splash_screen.dart';
 import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
-import 'package:skinsync_ai/screens/treatment_receipts_screen.dart';
 import 'package:skinsync_ai/screens/your_profile_screen.dart';
 import 'package:skinsync_ai/utills/enums.dart';
 
@@ -177,26 +173,6 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: AdditionalInfoScreen.routeName),
           builder: (_) => AdditionalInfoScreen(),
-        );
-        case PaymentScreen.routeName:
-        return MaterialPageRoute(
-          settings: RouteSettings(name: PaymentScreen.routeName),
-          builder: (_) => PaymentScreen(),
-        );
-         case NotesScreen.routeName:
-        return MaterialPageRoute(
-          settings: RouteSettings(name: NotesScreen.routeName),
-          builder: (_) => NotesScreen(),
-        );
-         case NotificationScreen.routeName:
-        return MaterialPageRoute(
-          settings: RouteSettings(name: NotificationScreen.routeName),
-          builder: (_) => NotificationScreen(),
-        );
-         case TreatmentReceiptsScreen.routeName:
-        return MaterialPageRoute(
-          settings: RouteSettings(name: TreatmentReceiptsScreen.routeName),
-          builder: (_) => TreatmentReceiptsScreen(),
         );
       default:
         return _errorRoute();

@@ -16,13 +16,9 @@ class ScanYourFaceScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: Text(
-             "Scan Your Face",
-              style: CustomFonts.black26w600,
-            )
-        
+        title: "Scan Your Face",
+        showTitle: true,
 
-        
       ),
       body: Column(
         children: [

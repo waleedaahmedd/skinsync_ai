@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/screens/notification_screen.dart';
 import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
@@ -26,9 +25,7 @@ class HomeScreen extends StatelessWidget {
         ),
         action: GreyContainer(
           icon: Icons.notifications_none_outlined,
-          onTap: () {
-            Navigator.pushNamed(context, NotificationScreen.routeName);
-          },
+          onTap: () {},
         ),
       ),
       body: SingleChildScrollView(

@@ -55,8 +55,7 @@ class SvgAssets {
   static const String glasses = "${_assets}glasses.svg";
   static const String tick = "${_assets}trick.svg";
   static const String flame = "${_assets}flame.svg";
-  static const String edit = "${_assets}edit.svg";
- 
+   static const String edit = "${_assets}edit.svg";
 
   // bottom nav icons
   static const String notification = "${_assets}notification.svg";
@@ -81,5 +80,4 @@ class DummyAssets {
   static const String treatmentimage = "${_assets}treatmentimage.png";
   static const String doctorImage = "${_assets}doctor_image.png";
   static const String map = "${_assets}map.png";
-  static const String master_card = "${_assets}master_card.png";
 }
