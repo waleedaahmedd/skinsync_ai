@@ -87,23 +87,23 @@ class _TreamentListScreenState extends State<TreamentListScreen> {
             ),
           ),
           SizedBox(height: 30),
-          GridView.builder(
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 18.w,
-              mainAxisSpacing: 18.h,
-              childAspectRatio: 0.7,
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 18.w,
+                mainAxisSpacing: 18.h,
+                childAspectRatio: 0.7,
+              ),
+              itemCount: 10,
+              itemBuilder: (context, index) {
+                return CustomGridViewTile(
+                  onTap: () {
+                    Navigator.pushNamed(context, TreatmentDetailScreen.routeName);
+                  },
+                );
+              },
             ),
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              return CustomGridViewTile(
-                onTap: () {
-                  Navigator.pushNamed(context, TreatmentDetailScreen.routeName);
-                },
-              );
-            },
           ),
         ],
       ),
