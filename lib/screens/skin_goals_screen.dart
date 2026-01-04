@@ -27,7 +27,7 @@ class SkinGoalsScreen extends StatelessWidget {
             child: ListView.builder(
               itemCount: 10,
               itemBuilder: (context, index) {
-                return QuestionTitle(
+                return QuestionTitle(isSelected: false,
                   title: "Firmer skin (reduce fine lines or wrinkles)  ",
                 );
               },

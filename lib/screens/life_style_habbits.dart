@@ -28,6 +28,7 @@ class LifeStyleHabbits extends StatelessWidget {
               itemCount: 10,
               itemBuilder: (context, index) {
                 return QuestionTitle(
+                  isSelected: false,
                   title: "Do you eat a balanced diet with plenty of water? ",
                 );
               },

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -9,10 +10,12 @@ import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/view_models/auth_view_model.dart';
+import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 
 class OtpScreen extends StatelessWidget {
   const OtpScreen({super.key});
-    static const String routeName = '/OtpScreen';
+  static const String routeName = '/OtpScreen';
 
   @override
   Widget build(BuildContext context) {
@@ -40,19 +43,25 @@ class OtpScreen extends StatelessWidget {
       ),
 
       body: Padding(
-        padding: EdgeInsets.only(left: 30.w,right: 30.w, bottom: MediaQuery.paddingOf(context).bottom),
+        padding: EdgeInsets.only(
+          left: 30.w,
+          right: 30.w,
+          bottom: MediaQuery.paddingOf(context).bottom,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 43.h),
             Container(
               padding: EdgeInsets.all(14.w),
-              height: 79.h, width: 79.w,
+              height: 79.h,
+              width: 79.w,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: CustomColors.lightBlueColor
+                color: CustomColors.lightBlueColor,
               ),
-              child: Image.asset(PngAssets.email, height: 50.h, width: 50.w)),
+              child: Image.asset(PngAssets.email, height: 50.h, width: 50.w),
+            ),
             SizedBox(height: 27.h),
             Text("Enter Your Code", style: CustomFonts.black30w600),
             SizedBox(height: 4.h),
@@ -69,53 +78,75 @@ class OtpScreen extends StatelessWidget {
                 separatorBuilder: (index) => SizedBox(width: 4.w),
                 length: 6,
                 defaultPinTheme: PinTheme(
-                  
                   width: 82.w,
                   height: 55.h,
                   decoration: BoxDecoration(
-                   
                     border: Border.all(
                       color: CustomColors.textFeildBoaderColor,
                     ),
                     borderRadius: BorderRadius.circular(10.r),
                   ),
-                   textStyle: TextStyle(fontSize: 16.sp,color: CustomColors.blackColor),
+                  textStyle: TextStyle(
+                    fontSize: 16.sp,
+                    color: CustomColors.blackColor,
+                  ),
                 ),
                 focusedPinTheme: PinTheme(
                   width: 82.5.w,
                   height: 55.h,
                   decoration: BoxDecoration(
-                    
                     border: Border.all(
                       color: CustomColors.textFeildBoaderColor,
                     ),
                     borderRadius: BorderRadius.circular(10.r),
                   ),
-                  textStyle: TextStyle(fontSize: 16.sp,color: CustomColors.blackColor),
+                  textStyle: TextStyle(
+                    fontSize: 16.sp,
+                    color: CustomColors.blackColor,
+                  ),
                 ),
                 submittedPinTheme: PinTheme(
                   width: 82.5.w,
                   height: 55.h,
                   decoration: BoxDecoration(
-                   
                     border: Border.all(
                       color: CustomColors.textFeildBoaderColor,
                     ),
                     borderRadius: BorderRadius.circular(10.r),
                   ),
-                  textStyle: TextStyle(fontSize: 16.sp,color: CustomColors.blackColor),
+                  textStyle: TextStyle(
+                    fontSize: 16.sp,
+                    color: CustomColors.blackColor,
+                  ),
                 ),
                 onChanged: (pin) {},
                 onCompleted: (pin) {},
               ),
             ),
             Spacer(),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(onPressed: () {
-                Navigator.pushNamed(context, SignupOnboarding.routeName);
-              }, child: Text("Next"))),
-              SizedBox(height: 20.h),
+            Consumer(
+              builder: (context, ref, child) => SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () async{
+                  // await  ref
+                  //       .read(onBoardingViewModel.notifier)
+                  //       .callOnBoardingQuestionApi()
+                  //       .then((value) {
+                  //         Navigator.pushNamed(
+                  //           context,
+                  //           SignupOnboarding.routeName,
+                  //         );
+                  //       });
+                        Navigator.pushNamed(
+                            context,
+                            SignupOnboarding.routeName,);
+                  },
+                  child: Text("Next"),
+                ),
+              ),
+            ),
+            SizedBox(height: 20.h),
           ],
         ),
       ),
