@@ -57,11 +57,13 @@ class ServiceSelectionScreen extends StatelessWidget {
         children: [
           Consumer(
             builder: (_, ref, _) {
-              final image = ref.watch(
-                faceScanProvider.select((state) => state.capturedImage),
-              );
+              // Use watch instead of read to keep the provider alive
+              final image = ref.watch(faceScanProvider).capturedImage;
+              if (image == null) {
+                return const SizedBox.shrink();
+              }
               return Image.file(
-                File(image!.path),
+                File(image.path),
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 326.h,
