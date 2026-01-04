@@ -10,7 +10,7 @@ import 'base_view_model.dart';
 
 // Provider
 final onBoardingViewModel =
-    NotifierProvider.autoDispose<SignUpOnboardingViewModel, SignUpOnboardingState>(() {
+    NotifierProvider(() {
   final apiBaseHelper = ApiBaseHelper();
   final onBoardingService = OnBoardingService(apiClient: apiBaseHelper);
   return SignUpOnboardingViewModel(onBoardingService: onBoardingService);

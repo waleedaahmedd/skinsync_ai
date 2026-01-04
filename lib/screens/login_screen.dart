@@ -32,6 +32,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
   late Animation<double> _radiusAnim;
 
   OverlayEntry? _entry;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final GlobalKey _buttonKey = GlobalKey();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -169,44 +170,59 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       ),
       body: Padding(
         padding: EdgeInsets.only(left: 30.w, right: 30.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 43.h),
-            Container(
-              padding: EdgeInsets.all(14.w),
-              height: 79.h,
-              width: 79.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: CustomColors.lightBlueColor.withValues(alpha: 0.4),
+        child: Form(
+          key:_formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 43.h),
+              Container(
+                padding: EdgeInsets.all(14.w),
+                height: 79.h,
+                width: 79.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: CustomColors.lightBlueColor.withValues(alpha: 0.4),
+                ),
+                child: Image.asset(PngAssets.email, height: 50.h, width: 50.w),
               ),
-              child: Image.asset(PngAssets.email, height: 50.h, width: 50.w),
-            ),
-            SizedBox(height: 27.h),
-            Text(
-              loginWithEmail ? "Continue with Email" : "Continue with Phone",
-              style: CustomFonts.black30w600,
-            ),
-            SizedBox(height: 4.h),
-            Text(
-              "Sign in or sign up with your email.",
-              style: CustomFonts.grey18w400,
-            ),
-            SizedBox(height: 22.h),
-            loginWithEmail
-                ? TextField(
-                  controller: _emailController,
-                    style: CustomFonts.black18w400,
-                    decoration: InputDecoration(hintText: "Email Address"),
-                  )
-                : PhoneWidget(
-                    controller: ref
-                        .read(authViewModel.notifier)
-                        .phoneController,
-                    filled: true,
-                  ),
-          ],
+              SizedBox(height: 27.h),
+              Text(
+                loginWithEmail ? "Continue with Email" : "Continue with Phone",
+                style: CustomFonts.black30w600,
+              ),
+              SizedBox(height: 4.h),
+              Text(
+                "Sign in or sign up with your email.",
+                style: CustomFonts.grey18w400,
+              ),
+              SizedBox(height: 22.h),
+              loginWithEmail
+                  ? TextFormField(
+                      controller: ref.read(authViewModel.notifier).emailController,
+                      style: CustomFonts.black18w400,
+                      decoration: InputDecoration(hintText: "Email Address"),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email';
+                        }
+                        final emailRegExp = RegExp(
+                            r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                        if (!emailRegExp.hasMatch(value)) {
+                          return 'Enter a valid email';
+                        }
+                        return null;
+                      },
+                    )
+                  : PhoneWidget(
+                      controller: ref
+                          .read(authViewModel.notifier)
+                          .phoneController,
+                      filled: true,
+                      
+                    ),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: SafeArea(
@@ -217,13 +233,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () async {
+                if (_formKey.currentState?.validate() ?? false){
                 final req = loginWithEmail
                     ? SignInWithEmailRequest(
-                        email: _emailController.value.text,
-                        password: "password",
+                        email: ref.read(authViewModel.notifier).emailController.text,
                         provider: LoginProviders.email,
-                        deviceInfo: "deviceInfo",
-                        ipAddress: "ipAddress",
+                        deviceInfo: "devicefo",
+                        ipAddress: "ipAddr"
                       )
                     : SignInWithPhoneRequest(
                         phone: _phoneController.value.text,
@@ -234,9 +250,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 final success = await ref
                     .read(authViewModel.notifier)
                     .callSignInApi(req);
-                // if (success == true) {
+                if (success == true) {
                   Navigator.of(context).pushNamed(OtpScreen.routeName);
-                // }
+                }
+              }
               },
               child: ref.watch(authViewModel).loading
                   ? CircularProgressIndicator()

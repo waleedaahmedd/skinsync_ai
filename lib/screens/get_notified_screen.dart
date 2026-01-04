@@ -49,7 +49,8 @@ class GetNotifiedScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(onPressed: (){
-                Navigator.pushReplacementNamed(context, FaceScanScreen.routeName
+                Navigator.pushNamedAndRemoveUntil(context, FaceScanScreen.routeName,
+                (Route<dynamic> route) => false,
                 );
               }, child:Text("Turn On Notifications"))),
              SizedBox(height: 19.h),

@@ -39,6 +39,7 @@ class SecureStorage {
     await _storage!.delete(key: value);
     _cachedToken = null;
   }
+  
 
   Future<void> clearAllSecureStrings() async {
     await _storage!.deleteAll();

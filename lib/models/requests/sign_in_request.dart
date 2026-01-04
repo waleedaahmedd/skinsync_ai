@@ -38,11 +38,9 @@ class SignInWithPhoneRequest extends BaseSignInRequest {
 
 class SignInWithEmailRequest extends BaseSignInRequest {
   final String email;
-  final String password;
 
   const SignInWithEmailRequest({
     required this.email,
-    required this.password,
     required super.provider,
     required super.deviceInfo,
     required super.ipAddress,
@@ -52,9 +50,7 @@ class SignInWithEmailRequest extends BaseSignInRequest {
   Map<String, dynamic> toJson() {
     return {
       'email': email,
-      'password': password,
       'provider': provider.name,
-
       'device_info': deviceInfo,
       'ip_address': ipAddress,
     };

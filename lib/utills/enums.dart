@@ -21,7 +21,9 @@ enum LoginProviders {
 enum EndPoints {
   signIn('login'),
   onBoardingQues("onboarding/masters"),
-  saveAnswer("v1/onboarding/answer");
+  saveAnswer("v1/onboarding/answer"),
+  verifyOtp("verify-otp"),
+  onBoardingProfile("v1/onboarding/profile");
 
   final String path;
 

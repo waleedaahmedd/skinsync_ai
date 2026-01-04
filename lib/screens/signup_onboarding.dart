@@ -36,8 +36,8 @@ class _SignupOnboardingState extends ConsumerState<SignupOnboarding> {
     super.initState();
     _pageController = PageController();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final signupViewModel = ref.read(onBoardingViewModel.notifier);
-      final response = await signupViewModel.callOnBoardingQuestionApi();
+       final signupViewModel = ref.read(onBoardingViewModel.notifier);
+       final response = await signupViewModel.callOnBoardingQuestionApi();
       if (mounted) {
         signupViewModel.setPageController(_pageController);
         final questions =

@@ -68,13 +68,17 @@ class SkinType extends StatelessWidget {
                          if(questionID != null && optionID != null)
                          {
                           onBoardingVM.callSaveAnswerApi(saveAnswer: saveAnswer).then((value){
+                            
                                onBoardingVM
                             .onNextButton(context);
                           });
                          }
                       
                       },
-                      child: Text("Next"),
+                      child:ref.watch(onBoardingViewModel).isSaveAnswerLoding
+                  ? CircularProgressIndicator()
+                  : Text("Next"),
+                     
                     );
                   },
                 ),

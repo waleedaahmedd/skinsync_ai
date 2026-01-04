@@ -44,7 +44,15 @@ class _PhoneWidgetState extends State<PhoneWidget> {
       spacing: 10.h,
       children: [
         TextFormField(
-
+         validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your phone number';
+            }
+            if (value.length < 9) {
+              return 'Phone number must be at least 9 digits';
+            }
+            return null; // Valid input
+          },
           controller: widget.controller,
           // focusNode: _focusNode,
           onChanged: widget.onChanged,

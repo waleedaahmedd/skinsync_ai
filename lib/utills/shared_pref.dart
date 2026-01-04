@@ -47,6 +47,15 @@ class SharedPref {
     _checkInitialization();
     _prefs!.clear();
   }
+   bool? readBool(String key) {
+    _checkInitialization();
+    return _prefs!.getBool(key);
+  }
+
+  void saveBool(String key, bool value) {
+    _checkInitialization();
+    _prefs!.setBool(key, value);
+  }
 
   void _checkInitialization() {
     if (_prefs == null) {

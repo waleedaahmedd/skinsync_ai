@@ -72,6 +72,7 @@ void loginBottomSheet(BuildContext context) {
                         width: double.infinity,
                         child: InkWell(
                           onTap: () {
+                            ref.read(authViewModel.notifier).clearData();
                             // Navigator.pushNamed(context, loginScreen);
                             Navigator.of(context).pushReplacement(
                               PageRouteBuilder(
@@ -124,10 +125,11 @@ void loginBottomSheet(BuildContext context) {
                         width: double.infinity,
                         child: InkWell(
                           onTap: () {
+                            ref.read(authViewModel.notifier).clearData();
                             Navigator.pushNamed(
                               context,
                               LoginScreen.routeName,
-                              arguments: LoginProviders.email,
+                              arguments: LoginProviders.email,  
                             );
                           },
                           child: Container(

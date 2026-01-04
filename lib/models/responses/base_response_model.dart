@@ -5,7 +5,7 @@ class BaseResponseModel {
   BaseResponseModel({this.isSuccess, this.message});
 
   BaseResponseModel.fromJson(Map<String, dynamic> json) {
-    isSuccess = json['isSuccess'];
+    isSuccess = json['is_success'];
     message = json['message'];
   }
 
