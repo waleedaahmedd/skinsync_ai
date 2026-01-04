@@ -6,7 +6,6 @@ class Treatments {
   Treatments({required this.title, required this.svg});
 }
 
-
 final List<Treatments> treatments = [
   Treatments(title: "DERMAL FILLERS", svg: SvgAssets.treatment),
   Treatments(title: "BOTOX", svg: SvgAssets.treatment),

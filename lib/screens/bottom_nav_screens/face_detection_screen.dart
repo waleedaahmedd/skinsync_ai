@@ -245,40 +245,41 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   Future<void> _captureAndNavigate(WidgetRef ref) async {
     final state = ref.read(faceScanProvider);
     if (_cameraController == null || state.isCapturing) return;
-    
+
     // Stop the image stream first
     await _cameraController!.stopImageStream();
-    
+
     // Turn off flash
     await _cameraController!.setFlashMode(FlashMode.off);
     if (state.flash) {
       ref.read(faceScanProvider.notifier).toggleFlash();
     }
-    
+
     // Capture the image
     final image = await _cameraController!.takePicture();
-    
+
     // Flip the image if using front camera (to match the mirrored preview)
     XFile finalImage = image;
-    if (_cameraController!.description.lensDirection == CameraLensDirection.front) {
+    if (_cameraController!.description.lensDirection ==
+        CameraLensDirection.front) {
       finalImage = await flipXFileHorizontally(image);
     }
-    
+
     // Store captured image and set processing state
     setState(() {
       _capturedImage = finalImage;
     });
-    
+
     // Mark as capturing in provider
     ref.read(faceScanProvider.notifier).markCaptured(finalImage);
-    
+
     if (!mounted) return;
-    
+
     ref.read(faceScanProvider.notifier).reset();
     setState(() {
       _capturedImage = null;
     });
-    
+
     Navigator.pushReplacementNamed(
       context,
       // ArFaceModelPreviewScreen.routeName
@@ -313,7 +314,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                 faceScanProvider.select((state) => state.isCapturing),
               );
               if (isCapturing) return const SizedBox.shrink();
-              
+
               return Align(
                 alignment: Alignment.topRight,
                 child: Padding(
@@ -391,7 +392,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                     final state = ref.watch(faceScanProvider);
                     final progress = state.progress;
                     final isCapturing = state.isCapturing;
-                    
+
                     String message;
                     if (isCapturing) {
                       message = "Please wait";
@@ -400,7 +401,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                     } else {
                       message = "Align your face";
                     }
-                    
+
                     return Text(
                       message,
                       textAlign: TextAlign.center,
@@ -420,13 +421,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     // If we have a captured image, show it instead of camera preview
     if (_capturedImage != null) {
       return SizedBox.expand(
-        child: Image.file(
-          File(_capturedImage!.path),
-          fit: BoxFit.cover,
-        ),
+        child: Image.file(File(_capturedImage!.path), fit: BoxFit.cover),
       );
     }
-    
+
     return SizedBox.expand(
       child: FittedBox(
         fit: BoxFit.cover,

@@ -10,13 +10,11 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 
 import '../models/dummy_list_model.dart';
+import '../models/responses/treatment_response_model.dart';
 
 class TreatmentContainer extends StatelessWidget {
-  final Treatments treatments;
-  const TreatmentContainer({
-    super.key,
-    required this.treatments,
-  });
+  final TreatmentsModel treatments;
+  const TreatmentContainer({super.key, required this.treatments});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +26,12 @@ class TreatmentContainer extends StatelessWidget {
             Navigator.pushNamed(context, SelectSectionsScreen.routeName);
           },
           child: Container(
-            padding: EdgeInsets.only(left: 12.w, right: 12.w, top: 12.h, bottom: 12.h),
+            padding: EdgeInsets.only(
+              left: 12.w,
+              right: 12.w,
+              top: 12.h,
+              bottom: 12.h,
+            ),
             margin: EdgeInsets.only(bottom: 16.h),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -80,7 +83,7 @@ class TreatmentContainer extends StatelessWidget {
                       ),
                       child: Center(
                         child: SvgPicture.asset(
-                          treatments.svg!,
+                          SvgAssets.treatment,
                           height: 42.h,
                           width: 42.w,
                           colorFilter: ColorFilter.mode(
@@ -97,7 +100,7 @@ class TreatmentContainer extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            treatments.title,
+                            treatments.name!,
                             style: CustomFonts.black24w600,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -114,7 +117,10 @@ class TreatmentContainer extends StatelessWidget {
                   child: GestureDetector(
                     onTap: () {
                       // Only this button opens detail page
-                      Navigator.pushNamed(context, TreatmentDetailScreen.routeName);
+                      Navigator.pushNamed(
+                        context,
+                        TreatmentDetailScreen.routeName,
+                      );
                     },
                     behavior: HitTestBehavior.opaque,
                     child: Container(

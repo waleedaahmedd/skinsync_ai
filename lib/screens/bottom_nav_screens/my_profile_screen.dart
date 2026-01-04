@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/route_generator.dart';
 import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
 import 'package:skinsync_ai/screens/personal_detail_screen.dart';
 import 'package:skinsync_ai/screens/saved_treatment_screen.dart';
@@ -102,7 +101,10 @@ class MyProfileScreen extends StatelessWidget {
               children: [
                 profileOppition(
                   callBack: () {
-                    Navigator.pushNamed(context, PersonalDetailScreen.routeName);
+                    Navigator.pushNamed(
+                      context,
+                      PersonalDetailScreen.routeName,
+                    );
                   },
                   icon: SvgAssets.profileIcon,
                   title: "Personal Details",
@@ -110,7 +112,10 @@ class MyProfileScreen extends StatelessWidget {
                 SizedBox(height: 36.h),
                 profileOppition(
                   callBack: () {
-                    Navigator.pushNamed(context, SavedTreatmentScreen.routeName);
+                    Navigator.pushNamed(
+                      context,
+                      SavedTreatmentScreen.routeName,
+                    );
                   },
                   icon: SvgAssets.saveTreatment,
                   title: "Saved Treatments & Clinics",
@@ -124,7 +129,10 @@ class MyProfileScreen extends StatelessWidget {
                 SizedBox(height: 36.h),
                 profileOppition(
                   callBack: () {
-                    Navigator.pushNamed(context,AllergyAndMedicalHistory.routeName);
+                    Navigator.pushNamed(
+                      context,
+                      AllergyAndMedicalHistory.routeName,
+                    );
                   },
                   icon: SvgAssets.medical,
                   title: "Medical History",

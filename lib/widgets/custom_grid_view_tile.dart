@@ -10,7 +10,11 @@ import '../utills/color_constant.dart';
 
 class CustomGridViewTile extends StatelessWidget {
   final Treatments subSections;
-  const CustomGridViewTile({super.key, required this.onTap, required this.subSections});
+  const CustomGridViewTile({
+    super.key,
+    required this.onTap,
+    required this.subSections,
+  });
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) {
@@ -21,8 +25,7 @@ class CustomGridViewTile extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(10.r
-          ),
+          borderRadius: BorderRadius.circular(10.r),
           border: Border.all(
             color: CustomColors.lightPurpleColor.withValues(alpha: 0.3),
             width: 1.5,
@@ -105,7 +108,8 @@ class CustomGridViewTile extends StatelessWidget {
             ),
             Spacer(),
             Center(
-                child: Text(subSections.title, style: CustomFonts.black20w600)),
+              child: Text(subSections.title, style: CustomFonts.black20w600),
+            ),
             Spacer(),
           ],
         ),

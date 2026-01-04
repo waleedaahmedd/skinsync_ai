@@ -59,15 +59,15 @@ class TreatmentsScreen extends StatelessWidget {
               ],
             ),
           ),
-         // SizedBox(height: 15.h),
+          // SizedBox(height: 15.h),
           Expanded(
             child: Consumer(
               builder: (context, ref, _) {
                 return
-                  // ref.watch(treatmentViewModel)
-                  //   ?
+                // ref.watch(treatmentViewModel)
+                //   ?
                 TreatmentMainScreen()
-                    // : SelectSectionScreen()
+                // : SelectSectionScreen()
                 ;
               },
             ),
@@ -101,38 +101,35 @@ class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-          //  SizedBox(
+            //  SizedBox(
             //  height: 0.h,
-              // child: ListView.builder(
-              //   scrollDirection: Axis.horizontal,
-              //   itemCount: fillter.length,
-              //   itemBuilder: (context, index) {
-              //     return Padding(
-              //       padding: EdgeInsets.only(
-              //         left: index == 0 ? 30.w : 0,
-              //         right: 10.w,
-              //       ),
-              //       child: FillterContainer(
-              //         isSelected: selectedFilterIndex == index,
-              //         title: fillter[index].title,
-              //         svgImage: fillter[index].svg,
-              //         onTap: () {
-              //           setState(() {
-              //             selectedFilterIndex = index;
-              //           });
-              //         },
-              //       ),
-              //     );
-              //   },
-              // ),
-           // ),
+            // child: ListView.builder(
+            //   scrollDirection: Axis.horizontal,
+            //   itemCount: fillter.length,
+            //   itemBuilder: (context, index) {
+            //     return Padding(
+            //       padding: EdgeInsets.only(
+            //         left: index == 0 ? 30.w : 0,
+            //         right: 10.w,
+            //       ),
+            //       child: FillterContainer(
+            //         isSelected: selectedFilterIndex == index,
+            //         title: fillter[index].title,
+            //         svgImage: fillter[index].svg,
+            //         onTap: () {
+            //           setState(() {
+            //             selectedFilterIndex = index;
+            //           });
+            //         },
+            //       ),
+            //     );
+            //   },
+            // ),
+            // ),
             SizedBox(height: 32.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30.0.w),
-              child: Text(
-                "Select Treatment",
-                style: CustomFonts.black24w600,
-              ),
+              child: Text("Select Treatment", style: CustomFonts.black24w600),
             ),
             // SizedBox(
             //   height: 352.h,
@@ -274,32 +271,49 @@ class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
             // ),
             SizedBox(height: 25.h),
             Expanded(
-              child: AnimationLimiter(
-                child: ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  itemCount: treatments.length,
-                  itemBuilder: (context, index) {
-                    return AnimationConfiguration.staggeredList(
-                      position: index,
-                      duration: const Duration(milliseconds: 800),
-                      child: SlideAnimation(
-                        horizontalOffset: 100.0,
-                        child: SlideAnimation(
-                          horizontalOffset: 300.0,
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              left: 12.w,
-                              right: 12.w,
-                            ),
-                            child: TreatmentContainer(
-                              treatments: treatments[index],
-                            ),
+              child: Consumer(
+                builder: (context, ref, _) {
+                  final state = ref.watch(treatmentViewModel);
+                  final isLoading = state.loading;
+                  final treatments = state.treatmentResponse?.data ?? [];
+
+                  // Fetch treatments if not already loaded and not currently loading
+                  if (!isLoading && state.treatmentResponse == null) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      ref.read(treatmentViewModel.notifier).getTreatments();
+                    });
+                  }
+
+                  return isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : AnimationLimiter(
+                          child: ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            itemCount: treatments.length,
+                            itemBuilder: (context, index) {
+                              return AnimationConfiguration.staggeredList(
+                                position: index,
+                                duration: const Duration(milliseconds: 800),
+                                child: SlideAnimation(
+                                  horizontalOffset: 100.0,
+                                  child: SlideAnimation(
+                                    horizontalOffset: 300.0,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        left: 12.w,
+                                        right: 12.w,
+                                      ),
+                                      child: TreatmentContainer(
+                                        treatments: treatments[index],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                        );
+                },
               ),
             ),
           ],
@@ -308,5 +322,3 @@ class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
     );
   }
 }
-
-

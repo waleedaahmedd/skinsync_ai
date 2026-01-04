@@ -19,7 +19,8 @@ enum LoginProviders {
 }
 
 enum EndPoints {
-  signIn('login');
+  signIn('login'),
+  getTreatments('treatments/masters');
 
   final String path;
 
@@ -28,7 +29,7 @@ enum EndPoints {
 
 enum BaseUrls {
   // api('https://api.brunos.kitchen/bruno/api/v1/');
-  api("https://8pqdlfrg-8084.asse.devtunnels.ms/api/");
+  api("http://3.128.27.193/api/");
 
   final String url;
 
