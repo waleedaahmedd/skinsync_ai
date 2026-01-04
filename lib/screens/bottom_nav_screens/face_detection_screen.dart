@@ -32,7 +32,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   late FaceDetector _faceDetector;
   bool _isDetecting = false;
   XFile? _capturedImage;
-  
+
   // Local state for face detection logic
   double _progress = 0.0;
   bool _isCapturing = false;
@@ -109,10 +109,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     });
   }
 
-
-
-
-
   Future<void> _process(WidgetRef ref, CameraImage image) async {
     final inputImage = inputImageFromCameraImage(
       image,
@@ -141,7 +137,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       _resetProgress();
     }
   }
-  
+
   void _resetProgress() {
     if (mounted) {
       setState(() {
@@ -151,31 +147,35 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     _progressTimer?.cancel();
     _progressTimer = null;
   }
-  
+
   void _startProgress() {
     if (_progressTimer != null && _progressTimer!.isActive) {
-      return; 
+      return;
     }
-    
+
     _progressTimer?.cancel();
     _progress = 0.0;
-    
+
     final startTime = DateTime.now();
     _progressTimer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
       if (!mounted) {
         timer.cancel();
         return;
       }
-      
+
       final elapsed = DateTime.now().difference(startTime);
-      final newProgress = (elapsed.inMilliseconds / _progressDuration.inMilliseconds).clamp(0.0, 1.0);
-      
+      final newProgress =
+          (elapsed.inMilliseconds / _progressDuration.inMilliseconds).clamp(
+            0.0,
+            1.0,
+          );
+
       if (mounted) {
         setState(() {
           _progress = newProgress;
         });
       }
-      
+
       if (newProgress >= 1.0) {
         timer.cancel();
         if (mounted) {
@@ -185,34 +185,31 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     });
   }
 
-
   Future<void> _captureAndNavigate(WidgetRef ref) async {
     if (_cameraController == null || _isCapturing) return;
-    
+
     setState(() {
       _isCapturing = true;
     });
-    
+
     // Stop the image stream first
     await _cameraController!.stopImageStream();
-    
+
     // Capture the image
     final image = await _cameraController!.takePicture();
-    
+
     // Flip the image if using front camera (to match the mirrored preview)
     XFile finalImage = image;
-    if (_cameraController!.description.lensDirection == CameraLensDirection.front) {
+    if (_cameraController!.description.lensDirection ==
+        CameraLensDirection.front) {
       finalImage = await flipXFileHorizontally(image);
     }
-    
+
     // Store captured image in provider
-   await ref.read(faceScanProvider.notifier).setCapturedImage(finalImage);
-    
+    await ref.read(faceScanProvider.notifier).setCapturedImage(finalImage);
+
     if (!mounted) return;
-    Navigator.pushReplacementNamed(
-      context,
-      ServiceSelectionScreen.routeName,
-    );
+    Navigator.pushReplacementNamed(context, ServiceSelectionScreen.routeName);
   }
 
   @override
@@ -227,19 +224,20 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   Widget build(BuildContext context) {
     // Keep the provider alive by watching it
     ref.watch(faceScanProvider);
-    
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
           if (_cameraController != null) _buildCameraView(),
+
           // Consumer(
           //   builder: (_, ref, _) {
           //     final isCapturing = ref.watch(
           //       faceScanProvider.select((state) => state.isCapturing),
           //     );
           //     if (isCapturing) return const SizedBox.shrink();
-              
+
           //     return Align(
           //       alignment: Alignment.topRight,
           //       child: Padding(
@@ -272,7 +270,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
           //     );
           //   },
           // ),
-
           Positioned(
             top: 10.h,
             left: 20.w,
@@ -319,12 +316,16 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                       message = "Hold Still";
                     } else if (_progress > 0 && _progress < 1.0) {
                       // Show countdown when face is centered
-                      final remainingSeconds = (_progressDuration.inSeconds - (_progress * _progressDuration.inSeconds)).ceil().clamp(1, _progressDuration.inSeconds);
+                      final remainingSeconds =
+                          (_progressDuration.inSeconds -
+                                  (_progress * _progressDuration.inSeconds))
+                              .ceil()
+                              .clamp(1, _progressDuration.inSeconds);
                       message = "$remainingSeconds";
                     } else {
                       message = "Align your face";
                     }
-                    
+
                     return Text(
                       message,
                       textAlign: TextAlign.center,
@@ -344,28 +345,25 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     // If we have a captured image, show it instead of camera preview
     if (_capturedImage != null) {
       return SizedBox.expand(
-        child: Image.file(
-          File(_capturedImage!.path),
-          fit: BoxFit.cover,
-        ),
+        child: Image.file(File(_capturedImage!.path), fit: BoxFit.cover),
       );
     }
-    
+
     return SizedBox.expand(
       child: FittedBox(
         fit: BoxFit.cover,
         child: SizedBox(
           width: _cameraController!.value.previewSize!.height,
           height: _cameraController!.value.previewSize!.width,
-            child: CameraPreview(
-              _cameraController!,
-              child: Center(
-                child: CustomPaint(
-                  painter: FaceScanPainter(progress: _progress),
-                  child: const SizedBox(width: 300, height: 300),
-                ),
+          child: CameraPreview(
+            _cameraController!,
+            child: Center(
+              child: CustomPaint(
+                painter: FaceScanPainter(progress: _progress),
+                child: SizedBox(width: 1.2.sw, height: 1.2.sw),
               ),
             ),
+          ),
         ),
       ),
     );
