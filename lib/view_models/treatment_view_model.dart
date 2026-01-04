@@ -9,7 +9,7 @@ final treatmentViewModel = NotifierProvider.autoDispose(
 class TreatmentViewModel extends BaseViewModel<bool> {
   TreatmentViewModel() : super(initialState: true);
 
-  void setTreatmentMainScreen({required bool value}) {
-    state = value;
-  }
+  // void setTreatmentMainScreen({required bool value}) {
+  //   state = value;
+  // }
 }

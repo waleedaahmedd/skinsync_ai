@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/screens/treament_list_screen.dart';
+import 'package:skinsync_ai/screens/select_sections_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
@@ -12,6 +13,7 @@ import 'package:skinsync_ai/widgets/heading_with_right_arrow.dart';
 import 'package:skinsync_ai/widgets/recommended_treatment_container.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 
+import '../../models/dummy_list_model.dart';
 import '../../widgets/grey_container.dart';
 
 class TreatmentsScreen extends StatelessWidget {
@@ -61,9 +63,12 @@ class TreatmentsScreen extends StatelessWidget {
           Expanded(
             child: Consumer(
               builder: (context, ref, _) {
-                return ref.watch(treatmentViewModel)
-                    ? TreatmentMainScreen()
-                    : TreamentListScreen();
+                return
+                  // ref.watch(treatmentViewModel)
+                  //   ?
+                TreatmentMainScreen()
+                    // : SelectSectionScreen()
+                ;
               },
             ),
           ),
@@ -80,7 +85,7 @@ class TreatmentMainScreen extends StatefulWidget {
   State<TreatmentMainScreen> createState() => _TreatmentMainScreenState();
 }
 
-int selectedFilterIndex = 0;
+// int selectedFilterIndex = 0;
 // List<Fillter> fillter = [
 //   Fillter(title: "All Treatment"),
 //   Fillter(title: "Injectables & Fillers ", svg: SvgAssets.treatment),
@@ -269,23 +274,32 @@ class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
             // ),
             SizedBox(height: 25.h),
             Expanded(
-              child: ListView.builder(
-                scrollDirection: Axis.vertical,
-                itemCount: 4,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      left: 12.w,
-                      right: 12.w,
-                    ),
-                    child: TreatmentContainer(
-                      treatmentName: "Botox Treatment",
-                      clinicName: "Glow Skin Clinic",
-                      dateTime: "October 20, 3:00 PM",
-                      treatmentimage: DummyAssets.treatmentimage,
-                    ),
-                  );
-                },
+              child: AnimationLimiter(
+                child: ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  itemCount: treatments.length,
+                  itemBuilder: (context, index) {
+                    return AnimationConfiguration.staggeredList(
+                      position: index,
+                      duration: const Duration(milliseconds: 800),
+                      child: SlideAnimation(
+                        horizontalOffset: 100.0,
+                        child: SlideAnimation(
+                          horizontalOffset: 300.0,
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: 12.w,
+                              right: 12.w,
+                            ),
+                            child: TreatmentContainer(
+                              treatments: treatments[index],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ],
@@ -295,8 +309,4 @@ class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
   }
 }
 
-class Fillter {
-  final String? svg;
-  final String title;
-  Fillter({required this.title, this.svg});
-}
+
