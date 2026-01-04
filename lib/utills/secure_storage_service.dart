@@ -35,8 +35,8 @@ class SecureStorage {
   }
 
   /// Remove token from storage + cache
-  Future<void> deleteSecureString({required String value}) async {
-    await _storage!.delete(key: value);
+  Future<void> deleteSecureString({required String key}) async {
+    await _storage!.delete(key: key);
     _cachedToken = null;
   }
   

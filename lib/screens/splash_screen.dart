@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skinsync_ai/screens/face_scan_screen.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
-
+import 'package:skinsync_ai/utills/secure_storage_service.dart';
+import 'package:skinsync_ai/utills/shared_pref.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,30 +26,42 @@ class _SplashScreenState extends State<SplashScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await Future.delayed(const Duration(milliseconds: 1000));
       setState(() {
-        _animate = true; 
+        _animate = true;
       });
 
       await Future.delayed(Duration(milliseconds: _duration - 800));
 
       if (mounted) {
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                const GetStartedScreen(), 
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              // Use ease-in curve
-              var curve = Curves.easeIn;
-              var curvedAnimation =
-                  CurvedAnimation(parent: animation, curve: curve);
-              return FadeTransition(
-                opacity: curvedAnimation,
-                child: child,
-              );
-            },
-            transitionDuration: const Duration(milliseconds: 900),
-          ),
-        );
+     
+         bool? isLoggedIn = SharedPref().readBool('isLogin') ?? false;
+        if (isLoggedIn) {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            FaceScanScreen.routeName,
+            (Route<dynamic> route) => false,
+          );
+        } else {
+          Navigator.of(context).pushReplacement(
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  const GetStartedScreen(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    // Use ease-in curve
+                    var curve = Curves.easeIn;
+                    var curvedAnimation = CurvedAnimation(
+                      parent: animation,
+                      curve: curve,
+                    );
+                    return FadeTransition(
+                      opacity: curvedAnimation,
+                      child: child,
+                    );
+                  },
+              transitionDuration: const Duration(milliseconds: 900),
+            ),
+          );
+        }
       }
     });
   }
@@ -66,19 +80,18 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ),
 
-         AnimatedOpacity(
-  opacity: _animate ? 0.0 : 1.0, 
-  duration: Duration(milliseconds: 400),
-  curve: Curves.easeInOut,
-  child: Center(
-    child: Image.asset(
-      PngAssets.splashLogo,
-      height: 169.h,
-      width: 169.w,
-    ),
-  ),
-),
-
+          AnimatedOpacity(
+            opacity: _animate ? 0.0 : 1.0,
+            duration: Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+            child: Center(
+              child: Image.asset(
+                PngAssets.splashLogo,
+                height: 169.h,
+                width: 169.w,
+              ),
+            ),
+          ),
 
           AnimatedPositioned(
             duration: Duration(milliseconds: _duration),

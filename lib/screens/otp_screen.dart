@@ -9,6 +9,7 @@ import 'package:http/http.dart';
 import 'package:pinput/pinput.dart';
 import 'package:skinsync_ai/route_generator.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/scan_your_face_screen.dart';
+import 'package:skinsync_ai/screens/face_scan_screen.dart';
 import 'package:skinsync_ai/screens/login_screen.dart';
 import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/utills/assets.dart';
@@ -177,16 +178,16 @@ class OtpScreen extends StatelessWidget {
                           if (value == true) {
 
                            isLoggedIn ? 
-                            Navigator.pushNamedAndRemoveUntil(
+                            
+                          Navigator.pushNamedAndRemoveUntil(
                               context,
-                              SignupOnboarding.routeName,
-                              (Route<dynamic> route) => route.settings.name == LoginScreen.routeName,
-                            ):Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              ScanYourFaceScreen.routeName,
+                              FaceScanScreen.routeName,
                                (Route<dynamic> route) => false
 
-                            );
+                            ):Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              SignupOnboarding.routeName,
+                              (Route<dynamic> route) => route.settings.name == LoginScreen.routeName,);
                           }
                         });
                   }

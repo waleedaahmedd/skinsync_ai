@@ -4,12 +4,17 @@ import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:skinsync_ai/route_generator.dart';
 import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
+import 'package:skinsync_ai/screens/get_started_screen.dart';
 import 'package:skinsync_ai/screens/personal_detail_screen.dart';
 import 'package:skinsync_ai/screens/saved_treatment_screen.dart';
 import 'package:skinsync_ai/screens/setting_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/utills/secure_storage_service.dart';
+import 'package:skinsync_ai/utills/shared_pref.dart';
+import 'package:skinsync_ai/view_models/auth_view_model.dart';
+import 'package:skinsync_ai/widgets/logout_dialog_box.dart';
 
 class MyProfileScreen extends StatelessWidget {
   const MyProfileScreen({super.key});
@@ -102,7 +107,10 @@ class MyProfileScreen extends StatelessWidget {
               children: [
                 profileOppition(
                   callBack: () {
-                    Navigator.pushNamed(context, PersonalDetailScreen.routeName);
+                    Navigator.pushNamed(
+                      context,
+                      PersonalDetailScreen.routeName,
+                    );
                   },
                   icon: SvgAssets.profileIcon,
                   title: "Personal Details",
@@ -110,7 +118,10 @@ class MyProfileScreen extends StatelessWidget {
                 SizedBox(height: 36.h),
                 profileOppition(
                   callBack: () {
-                    Navigator.pushNamed(context, SavedTreatmentScreen.routeName);
+                    Navigator.pushNamed(
+                      context,
+                      SavedTreatmentScreen.routeName,
+                    );
                   },
                   icon: SvgAssets.saveTreatment,
                   title: "Saved Treatments & Clinics",
@@ -124,7 +135,10 @@ class MyProfileScreen extends StatelessWidget {
                 SizedBox(height: 36.h),
                 profileOppition(
                   callBack: () {
-                    Navigator.pushNamed(context,AllergyAndMedicalHistory.routeName);
+                    Navigator.pushNamed(
+                      context,
+                      AllergyAndMedicalHistory.routeName,
+                    );
                   },
                   icon: SvgAssets.medical,
                   title: "Medical History",
@@ -137,7 +151,24 @@ class MyProfileScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 36.h),
                 profileOppition(
-                  callBack: () {},
+                  callBack: () {
+                    showLogoutDialog(
+                      screenContext: context,
+                      desc: "Logout successful",
+                      onSuccess: () async  {
+                        SecureStorage secureStorage = SecureStorage();
+                        await secureStorage.deleteSecureString(
+                          key: 'auth_token',
+                        );
+                       SharedPref().saveBool('isLogin', false);
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          GetStartedScreen.routeName,
+                          (route) => false,
+                        );
+                      },
+                    );
+                  },
                   icon: SvgAssets.logOut,
                   title: "Log Out",
                 ),

@@ -15,10 +15,11 @@ class ScanYourFaceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+     
       appBar: CustomAppBar(
         title: "Scan Your Face",
         showTitle: true,
-
+      
       ),
       body: Column(
         children: [
