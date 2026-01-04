@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:skinsync_ai/models/responses/on_boarding_question_response.dart';
+
 import '../exceptions/app_exception.dart';
 import '../models/requests/sign_in_request.dart';
 import '../models/responses/auth_response.dart';
@@ -43,4 +45,7 @@ class AuthService implements AuthRepository {
       throw AppException(AuthResponse.fromJson(parsed).message as String);
     }
   }
+
+
+
 }

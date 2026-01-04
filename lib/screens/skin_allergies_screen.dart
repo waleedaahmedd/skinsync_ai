@@ -170,7 +170,7 @@ class SkinAllergiesScreen extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 14.h),
-                    QuestionTitle(title: "None of the above "),
+                    QuestionTitle(title: "None of the above ", isSelected: false),
                     SizedBox(height: 40.h),
                     Text(
                       "Are you currently using any medications or treatments for your skin? ",
@@ -179,7 +179,7 @@ class SkinAllergiesScreen extends StatelessWidget {
                     SizedBox(height: 13.h),
                     Row(
                       children: [
-                        RadioButtonWidget(),
+                        RadioButtonWidget(isSelected: false),
                         SizedBox(width: 13.w),
                         Text(
                           "Yes ( Please Specify)",
@@ -190,7 +190,7 @@ class SkinAllergiesScreen extends StatelessWidget {
                     SizedBox(height: 18.h),
                     Row(
                       children: [
-                        RadioButtonWidget(),
+                        RadioButtonWidget(isSelected: false),
                         SizedBox(width: 13.w),
                         Text("No", style: CustomFonts.black18w600),
                       ],

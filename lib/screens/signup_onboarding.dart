@@ -10,6 +10,7 @@ import 'package:skinsync_ai/screens/skin_type.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 
 class SignupOnboarding extends ConsumerStatefulWidget {
@@ -23,23 +24,28 @@ class SignupOnboarding extends ConsumerStatefulWidget {
 class _SignupOnboardingState extends ConsumerState<SignupOnboarding> {
   late final PageController _pageController;
 
-  // Only SkinType pages
-  final List<Widget> _pages = [
-    SkinType(),
-    MainSkinConcernsScreen(),
-    LifeStyleHabbits(),
-    SkinAllergiesScreen(),
-    SkinGoalsScreen(),
+  List<Widget> _pages = [
+    // SkinType(),
+    // MainSkinConcernsScreen(),
+    // LifeStyleHabbits(),
+    // SkinAllergiesScreen(),
+    // SkinGoalsScreen(),
   ];
 
-  @override
   void initState() {
     super.initState();
     _pageController = PageController();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final signupViewModel = ref.read(onBoardingViewModel.notifier);
+      final response = await signupViewModel.callOnBoardingQuestionApi();
       if (mounted) {
-        final signupViewModel = ref.read(onBoardingViewModel.notifier);
         signupViewModel.setPageController(_pageController);
+        final questions =
+            ref.read(onBoardingViewModel).onBoardingQues?.data?.questions ?? [];
+
+        _pages = List.generate(questions.length, (index) => SkinType());
+
+        setState(() {});
       }
     });
   }
@@ -90,7 +96,7 @@ class _SignupOnboardingState extends ConsumerState<SignupOnboarding> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            '${state + 1}/${SignUpOnboardingViewModel.totalPages}',
+                            '${state.currentPage + 1}/${state.totalPages}',
                             style: CustomFonts.black20w600,
                           ),
                           SizedBox(width: 12.w),
@@ -115,7 +121,7 @@ class _SignupOnboardingState extends ConsumerState<SignupOnboarding> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          state > 0
+                          state.currentPage > 0
                               ? GestureDetector(
                                   onTap: () {
                                     notifier.goToPreviousPage();
@@ -171,17 +177,22 @@ class _SignupOnboardingState extends ConsumerState<SignupOnboarding> {
                     ],
                   ),
                 ),
-
-                // PageView
                 Expanded(
-                  child: PageView.builder(
-                    controller: _pageController,
-                    onPageChanged: (index) => notifier.onPageChanged(index),
-                    itemCount: SignUpOnboardingViewModel.totalPages,
-                    itemBuilder: (context, index) {
-                      return _pages[index];
-                    },
-                  ),
+                  child: _pages.isEmpty
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: CustomColors.purpleColor,
+                          ),
+                        )
+                      : PageView.builder(
+                          controller: _pageController,
+                          onPageChanged: (index) =>
+                              notifier.onPageChanged(index),
+                          itemCount: _pages.length,
+                          itemBuilder: (context, index) {
+                            return _pages[index];
+                          },
+                        ),
                 ),
               ],
             ),

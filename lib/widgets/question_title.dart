@@ -5,8 +5,9 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/radio_button_widget.dart';
 
 class QuestionTitle extends StatelessWidget {
+  bool isSelected;
   final String title;
-  const QuestionTitle({super.key,required this.title});
+   QuestionTitle({super.key, required this.isSelected, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +21,7 @@ class QuestionTitle extends StatelessWidget {
                   padding: EdgeInsets.all(16.w),
                   child: Row(
                     children: [
-                      RadioButtonWidget(),
+                      RadioButtonWidget(isSelected: isSelected),
                       SizedBox(width: 12.w),
                       Flexible(
                         child: Text(

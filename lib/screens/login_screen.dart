@@ -196,6 +196,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             SizedBox(height: 22.h),
             loginWithEmail
                 ? TextField(
+                  controller: _emailController,
                     style: CustomFonts.black18w400,
                     decoration: InputDecoration(hintText: "Email Address"),
                   )
@@ -216,26 +217,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () async {
-                // final req = loginWithEmail
-                //     ? SignInWithEmailRequest(
-                //         email: _emailController.value.text,
-                //         password: "password",
-                //         provider: LoginProviders.email,
-                //         deviceInfo: "deviceInfo",
-                //         ipAddress: "ipAddress",
-                //       )
-                //     : SignInWithPhoneRequest(
-                //         phone: _phoneController.value.text,
-                //         provider: LoginProviders.phone,
-                //         deviceInfo: "deviceInfo",
-                //         ipAddress: "ipAddress",
-                //       );
-                // final success = await ref
-                //     .read(authViewModel.notifier)
-                //     .callSignInApi(req);
+                final req = loginWithEmail
+                    ? SignInWithEmailRequest(
+                        email: _emailController.value.text,
+                        password: "password",
+                        provider: LoginProviders.email,
+                        deviceInfo: "deviceInfo",
+                        ipAddress: "ipAddress",
+                      )
+                    : SignInWithPhoneRequest(
+                        phone: _phoneController.value.text,
+                        provider: LoginProviders.phone,
+                        deviceInfo: "deviceInfo",
+                        ipAddress: "ipAddress",
+                      );
+                final success = await ref
+                    .read(authViewModel.notifier)
+                    .callSignInApi(req);
                 // if (success == true) {
                   Navigator.of(context).pushNamed(OtpScreen.routeName);
-               // }
+                // }
               },
               child: ref.watch(authViewModel).loading
                   ? CircularProgressIndicator()
