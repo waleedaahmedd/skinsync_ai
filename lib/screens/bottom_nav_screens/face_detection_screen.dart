@@ -131,7 +131,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     final previewCenter = Offset(previewSize.width / 2, previewSize.height / 2);
 
     final distance = (faceCenter - previewCenter).distance;
-    final allowedRadius = previewSize.width * 0.3;
+    final allowedRadius = previewSize.width * 0.4;
 
     if (distance <= allowedRadius) {
       _startProgress();
