@@ -1,18 +1,15 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
-import 'package:http/http.dart' as http;
 import 'package:skinsync_ai/utills/image_utills.dart';
 
 import '../../utills/custom_fonts.dart';
+import '../../utills/ml_kit_utills.dart';
 import '../../view_models/face_scan_provider.dart';
 import '../../widgets/face_scan_radial_widget.dart';
 import '../service_selection_screen.dart';
@@ -31,6 +28,12 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   late FaceDetector _faceDetector;
   bool _isDetecting = false;
   XFile? _capturedImage;
+
+  // Local state for face detection logic
+  double _progress = 0.0;
+  bool _isCapturing = false;
+  Timer? _progressTimer;
+  static const Duration _progressDuration = Duration(seconds: 3);
 
   @override
   void initState() {
@@ -102,72 +105,14 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     });
   }
 
-  InputImageRotation _rotationFromCamera(CameraDescription camera) {
-    // iOS front camera typically has 270 degree rotation
-    // Android front camera typically has 90 degree rotation
-    if (Platform.isIOS) {
-      switch (camera.sensorOrientation) {
-        case 0:
-          return InputImageRotation.rotation0deg;
-        case 90:
-          return InputImageRotation.rotation90deg;
-        case 180:
-          return InputImageRotation.rotation180deg;
-        case 270:
-          return InputImageRotation.rotation270deg;
-        default:
-          return InputImageRotation
-              .rotation270deg; // Default for iOS front camera
-      }
-    } else {
-      switch (camera.sensorOrientation) {
-        case 0:
-          return InputImageRotation.rotation0deg;
-        case 90:
-          return InputImageRotation.rotation90deg;
-        case 180:
-          return InputImageRotation.rotation180deg;
-        case 270:
-          return InputImageRotation.rotation270deg;
-        default:
-          return InputImageRotation
-              .rotation90deg; // Default for Android front camera
-      }
-    }
-  }
-
-  InputImage _inputImageFromCameraImage(
-    CameraImage image,
-    CameraDescription camera,
-  ) {
-    final WriteBuffer allBytes = WriteBuffer();
-    for (final plane in image.planes) {
-      allBytes.putUint8List(plane.bytes);
-    }
-    final bytes = allBytes.done().buffer.asUint8List();
-
-    final rotation = _rotationFromCamera(camera);
-
-    // iOS uses bgra8888, Android uses nv21
-    final format = Platform.isIOS
-        ? InputImageFormat.bgra8888
-        : InputImageFormat.nv21;
-
-    return InputImage.fromBytes(
-      bytes: bytes,
-      metadata: InputImageMetadata(
-        size: Size(image.width.toDouble(), image.height.toDouble()),
-        rotation: rotation,
-        format: format,
-        bytesPerRow: image.planes.first.bytesPerRow,
-      ),
-    );
-  }
-
   Future<void> _process(WidgetRef ref, CameraImage image) async {
-    final provider = ref.read(faceScanProvider.notifier);
+    // Don't process if we're already capturing or if progress is too far along
+    // Once we're past 70% progress, don't reset to ensure capture happens
+    if (_isCapturing || _progress > 0.7) {
+      return;
+    }
 
-    final inputImage = _inputImageFromCameraImage(
+    final inputImage = inputImageFromCameraImage(
       image,
       _cameraController!.description,
     );
@@ -175,11 +120,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     final faces = await _faceDetector.processImage(inputImage);
 
     if (faces.isEmpty) {
-      provider.reset();
+      _resetProgress();
       return;
     }
-
-    provider.faceDetected();
 
     final face = faces.first;
     final previewSize = _cameraController!.value.previewSize!;
@@ -191,162 +134,144 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     final allowedRadius = previewSize.width * 0.3;
 
     if (distance <= allowedRadius) {
-      provider.faceCentered();
+      _startProgress();
+    } else {
+      _resetProgress();
     }
   }
 
-  Future<Map<String, dynamic>?> uploadCapturedImage({
-    required XFile image,
-    required String apiUrl,
-    String? token, // optional auth token
-  }) async {
-    try {
-      final uri = Uri.parse(apiUrl);
-      final request = http.MultipartRequest('POST', uri);
-
-      // Optional headers
-      if (token != null) {
-        request.headers['Authorization'] = 'Bearer $token';
-      }
-
-      // Attach image
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'image',
-          image.path,
-          filename: image.name,
-        ),
-      );
-
-      final response = await request.send();
-      final responseBody = await response.stream.bytesToString();
-      final responseData = jsonDecode(responseBody);
-
-      // Check if server returned an error response
-      if (responseData['success'] == false) {
-        final errorMessage = responseData['message'] ?? 'Upload failed';
-        throw Exception(errorMessage);
-      }
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        print('✅ Image uploaded successfully');
-        return responseData;
-      } else {
-        print('❌ Upload failed: ${response.statusCode}');
-        final errorMessage = responseData['message'] ?? 'Upload failed';
-        throw Exception(errorMessage);
-      }
-    } catch (e) {
-      print('❌ Error uploading image: $e');
-      rethrow;
+  void _resetProgress() {
+    if (mounted) {
+      setState(() {
+        _progress = 0.0;
+      });
     }
+    _progressTimer?.cancel();
+    _progressTimer = null;
+  }
+
+  void _startProgress() {
+    if (_progressTimer != null && _progressTimer!.isActive) {
+      return;
+    }
+
+    _progressTimer?.cancel();
+    _progress = 0.0;
+
+    final startTime = DateTime.now();
+    _progressTimer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      final elapsed = DateTime.now().difference(startTime);
+      final newProgress =
+          (elapsed.inMilliseconds / _progressDuration.inMilliseconds).clamp(
+            0.0,
+            1.0,
+          );
+
+      if (mounted) {
+        setState(() {
+          _progress = newProgress;
+        });
+      }
+
+      if (newProgress >= 1.0) {
+        timer.cancel();
+        if (mounted) {
+          _captureAndNavigate(ref);
+        }
+      }
+    });
   }
 
   Future<void> _captureAndNavigate(WidgetRef ref) async {
-    final state = ref.read(faceScanProvider);
-    if (_cameraController == null || state.isCapturing) return;
-    
+    if (_cameraController == null || _isCapturing) return;
+
+    setState(() {
+      _isCapturing = true;
+    });
+
     // Stop the image stream first
     await _cameraController!.stopImageStream();
-    
-    // Turn off flash
-    await _cameraController!.setFlashMode(FlashMode.off);
-    if (state.flash) {
-      ref.read(faceScanProvider.notifier).toggleFlash();
-    }
-    
+
     // Capture the image
     final image = await _cameraController!.takePicture();
-    
+
     // Flip the image if using front camera (to match the mirrored preview)
     XFile finalImage = image;
-    if (_cameraController!.description.lensDirection == CameraLensDirection.front) {
+    if (_cameraController!.description.lensDirection ==
+        CameraLensDirection.front) {
       finalImage = await flipXFileHorizontally(image);
     }
-    
-    // Store captured image and set processing state
-    setState(() {
-      _capturedImage = finalImage;
-    });
-    
-    // Mark as capturing in provider
-    ref.read(faceScanProvider.notifier).markCaptured(finalImage);
-    
+
+    // Store captured image in provider
+    await ref.read(faceScanProvider.notifier).setCapturedImage(finalImage);
+
     if (!mounted) return;
-    
-    ref.read(faceScanProvider.notifier).reset();
-    setState(() {
-      _capturedImage = null;
-    });
-    
-    Navigator.pushReplacementNamed(
-      context,
-      // ArFaceModelPreviewScreen.routeName
-      ServiceSelectionScreen.routeName,
-    );
+    Navigator.pushReplacementNamed(context, ServiceSelectionScreen.routeName);
   }
 
   @override
   void dispose() {
+    _progressTimer?.cancel();
     _cameraController?.dispose();
     _faceDetector.close();
-    EasyLoading.dismiss();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(faceScanProvider, (prev, next) {
-      if (next.progress == 1.0) {
-        _captureAndNavigate(ref);
-      }
-    });
+    // Keep the provider alive by watching it
+    ref.watch(faceScanProvider);
 
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
           if (_cameraController != null) _buildCameraView(),
-          Consumer(
-            builder: (_, ref, _) {
-              final isCapturing = ref.watch(
-                faceScanProvider.select((state) => state.isCapturing),
-              );
-              if (isCapturing) return const SizedBox.shrink();
-              
-              return Align(
-                alignment: Alignment.topRight,
-                child: Padding(
-                  padding: EdgeInsets.only(top: 40.h, right: 20.w),
-                  child: GestureDetector(
-                    onTap: () {
-                      ref.read(faceScanProvider.notifier).toggleFlash();
-                      if (_cameraController != null) {
-                        _cameraController!.setFlashMode(
-                          ref.read(faceScanProvider).flash
-                              ? FlashMode.torch
-                              : FlashMode.off,
-                        );
-                      }
-                    },
-                    child: Consumer(
-                      builder: (_, ref, child) {
-                        final flash = ref.watch(
-                          faceScanProvider.select((state) => state.flash),
-                        );
-                        return Icon(
-                          flash ? Icons.flash_on : Icons.flash_off,
-                          color: Colors.white,
-                          size: 30.sp,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
 
+          // Consumer(
+          //   builder: (_, ref, _) {
+          //     final isCapturing = ref.watch(
+          //       faceScanProvider.select((state) => state.isCapturing),
+          //     );
+          //     if (isCapturing) return const SizedBox.shrink();
+
+          //     return Align(
+          //       alignment: Alignment.topRight,
+          //       child: Padding(
+          //         padding: EdgeInsets.only(top: 40.h, right: 20.w),
+          //         child: GestureDetector(
+          //           onTap: () {
+          //             ref.read(faceScanProvider.notifier).toggleFlash();
+          //             if (_cameraController != null) {
+          //               _cameraController!.setFlashMode(
+          //                 ref.read(faceScanProvider).flash
+          //                     ? FlashMode.torch
+          //                     : FlashMode.off,
+          //               );
+          //             }
+          //           },
+          //           child: Consumer(
+          //             builder: (_, ref, child) {
+          //               final flash = ref.watch(
+          //                 faceScanProvider.select((state) => state.flash),
+          //               );
+          //               return Icon(
+          //                 flash ? Icons.flash_on : Icons.flash_off,
+          //                 color: Colors.white,
+          //                 size: 30.sp,
+          //               );
+          //             },
+          //           ),
+          //         ),
+          //       ),
+          //     );
+          //   },
+          // ),
           Positioned(
             top: 10.h,
             left: 20.w,
@@ -374,6 +299,27 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
               ),
             ),
           ),
+          // Countdown in the center of the screen
+          if (_progress > 0 && _progress < 1.0)
+            Center(
+              child: Builder(
+                builder: (context) {
+                  final remainingSeconds =
+                      (_progressDuration.inSeconds -
+                              (_progress * _progressDuration.inSeconds))
+                          .ceil()
+                          .clamp(1, _progressDuration.inSeconds);
+                  return Text(
+                    "$remainingSeconds",
+                    textAlign: TextAlign.center,
+                    style: CustomFonts.white50w600.copyWith(
+                      fontSize: 80.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                },
+              ),
+            ),
           Positioned(
             bottom: 80,
             left: 0,
@@ -386,21 +332,15 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20.r),
                 ),
-                child: Consumer(
-                  builder: (_, ref, _) {
-                    final state = ref.watch(faceScanProvider);
-                    final progress = state.progress;
-                    final isCapturing = state.isCapturing;
-                    
+                child: Builder(
+                  builder: (context) {
                     String message;
-                    if (isCapturing) {
-                      message = "Please wait";
-                    } else if (progress == 1.0) {
-                      message = "Hold still...";
+                    if (_isCapturing) {
+                      message = "Hold Still";
                     } else {
                       message = "Align your face";
                     }
-                    
+
                     return Text(
                       message,
                       textAlign: TextAlign.center,
@@ -420,13 +360,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     // If we have a captured image, show it instead of camera preview
     if (_capturedImage != null) {
       return SizedBox.expand(
-        child: Image.file(
-          File(_capturedImage!.path),
-          fit: BoxFit.cover,
-        ),
+        child: Image.file(File(_capturedImage!.path), fit: BoxFit.cover),
       );
     }
-    
+
     return SizedBox.expand(
       child: FittedBox(
         fit: BoxFit.cover,
@@ -436,16 +373,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
           child: CameraPreview(
             _cameraController!,
             child: Center(
-              child: Consumer(
-                builder: (_, ref, _) {
-                  final progress = ref.watch(
-                    faceScanProvider.select((state) => state.progress),
-                  );
-                  return CustomPaint(
-                    painter: FaceScanPainter(progress: progress),
-                    child: const SizedBox(width: 300, height: 300),
-                  );
-                },
+              child: CustomPaint(
+                painter: FaceScanPainter(progress: _progress),
+                child: SizedBox(width: 1.2.sw, height: 1.2.sw),
               ),
             ),
           ),
