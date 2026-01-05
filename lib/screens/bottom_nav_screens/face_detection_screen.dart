@@ -12,6 +12,7 @@ import '../../utills/custom_fonts.dart';
 import '../../utills/ml_kit_utills.dart';
 import '../../view_models/face_scan_provider.dart';
 import '../../widgets/face_scan_radial_widget.dart';
+import '../ar_face_model_Preview_screen.dart';
 import '../service_selection_screen.dart';
 
 class FaceDetectionScreen extends ConsumerStatefulWidget {
@@ -211,7 +212,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     await ref.read(faceScanProvider.notifier).setCapturedImage(finalImage);
 
     if (!mounted) return;
-    Navigator.pushReplacementNamed(context, ServiceSelectionScreen.routeName);
+    Navigator.pushReplacementNamed(context, ArFaceModelPreviewScreen.routeName);
   }
 
   @override
@@ -313,7 +314,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                     "$remainingSeconds",
                     textAlign: TextAlign.center,
                     style: CustomFonts.white50w600.copyWith(
-                      fontSize: 80.sp,
+                      fontSize: 100.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   );
