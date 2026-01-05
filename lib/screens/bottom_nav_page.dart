@@ -9,9 +9,10 @@ import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
 import 'package:skinsync_ai/screens/home_screen.dart';
 
 import '../view_models/bottom_nav_view_model.dart';
+import '../view_models/treatment_view_model.dart';
 import '../widgets/scan_face_button.dart';
 
-class BottomNavPage extends StatelessWidget {
+class BottomNavPage extends ConsumerStatefulWidget {
   const BottomNavPage({super.key});
   static const String routeName = '/BottomNavPage';
 
@@ -37,6 +38,20 @@ class BottomNavPage extends StatelessWidget {
   ];
 
   @override
+  ConsumerState<BottomNavPage> createState() => _BottomNavPageState();
+}
+
+class _BottomNavPageState extends ConsumerState<BottomNavPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(bottomNavViewModel.notifier).changePage(0);
+      ref.read(treatmentViewModel.notifier).init();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
@@ -44,7 +59,7 @@ class BottomNavPage extends StatelessWidget {
           body: Stack(
             alignment: Alignment.center,
             children: [
-              _children[ref.watch(bottomNavViewModel)],
+              BottomNavPage._children[ref.watch(bottomNavViewModel)],
               Positioned(
                 bottom: 110.h + MediaQuery.paddingOf(context).bottom,
                 child: ScanFaceButton(),

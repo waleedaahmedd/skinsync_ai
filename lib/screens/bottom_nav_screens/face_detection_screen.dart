@@ -200,8 +200,11 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     // Capture the image
     final image = await _cameraController!.takePicture();
 
+
     // Flip the image if using front camera (to match the mirrored preview)
     XFile finalImage = image;
+    if (_cameraController!.description.lensDirection ==
+        CameraLensDirection.front) {
     if (_cameraController!.description.lensDirection ==
         CameraLensDirection.front) {
       finalImage = await flipXFileHorizontally(image);
@@ -341,6 +344,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                       message = "Align your face";
                     }
 
+
                     return Text(
                       message,
                       textAlign: TextAlign.center,
@@ -361,8 +365,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     if (_capturedImage != null) {
       return SizedBox.expand(
         child: Image.file(File(_capturedImage!.path), fit: BoxFit.cover),
+        child: Image.file(File(_capturedImage!.path), fit: BoxFit.cover),
       );
     }
+
 
     return SizedBox.expand(
       child: FittedBox(

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/route_generator.dart';
 import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 import 'package:skinsync_ai/screens/personal_detail_screen.dart';

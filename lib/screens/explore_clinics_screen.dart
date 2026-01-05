@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:skinsync_ai/models/dummy_list_model.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/widgets/custom_grid_view_tile.dart';
@@ -72,7 +73,7 @@ class ExploreClinicsScreen extends StatelessWidget {
                   mainAxisSpacing: 18.h,
                   childAspectRatio: 0.7,
                 ),
-                itemCount: 10,
+                itemCount: subSections.length,
                 itemBuilder: (context, index) {
                   return CustomGridViewTile(
                     onTap: () {
@@ -80,7 +81,7 @@ class ExploreClinicsScreen extends StatelessWidget {
                         context,
                         ClinicsDetailScreen.routeName,
                       );
-                    },
+                    }, subSections: subSections[index],
                   );
                 },
               ),
