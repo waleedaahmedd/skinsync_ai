@@ -1,15 +1,11 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
-import 'package:http/http.dart' as http;
 import 'package:skinsync_ai/utills/image_utills.dart';
 
 import '../../utills/custom_fonts.dart';
@@ -110,6 +106,12 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   }
 
   Future<void> _process(WidgetRef ref, CameraImage image) async {
+    // Don't process if we're already capturing or if progress is too far along
+    // Once we're past 70% progress, don't reset to ensure capture happens
+    if (_isCapturing || _progress > 0.7) {
+      return;
+    }
+
     final inputImage = inputImageFromCameraImage(
       image,
       _cameraController!.description,
@@ -297,6 +299,27 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
               ),
             ),
           ),
+          // Countdown in the center of the screen
+          if (_progress > 0 && _progress < 1.0)
+            Center(
+              child: Builder(
+                builder: (context) {
+                  final remainingSeconds =
+                      (_progressDuration.inSeconds -
+                              (_progress * _progressDuration.inSeconds))
+                          .ceil()
+                          .clamp(1, _progressDuration.inSeconds);
+                  return Text(
+                    "$remainingSeconds",
+                    textAlign: TextAlign.center,
+                    style: CustomFonts.white50w600.copyWith(
+                      fontSize: 80.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                },
+              ),
+            ),
           Positioned(
             bottom: 80,
             left: 0,
@@ -314,14 +337,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                     String message;
                     if (_isCapturing) {
                       message = "Hold Still";
-                    } else if (_progress > 0 && _progress < 1.0) {
-                      // Show countdown when face is centered
-                      final remainingSeconds =
-                          (_progressDuration.inSeconds -
-                                  (_progress * _progressDuration.inSeconds))
-                              .ceil()
-                              .clamp(1, _progressDuration.inSeconds);
-                      message = "$remainingSeconds";
                     } else {
                       message = "Align your face";
                     }
