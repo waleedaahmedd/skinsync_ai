@@ -126,11 +126,11 @@ class RouteGenerator {
           settings: RouteSettings(name: ArFaceModelPreviewScreen.routeName),
           builder: (_) => ArFaceModelPreviewScreen(),
         );
-      case ServiceSelectionScreen.routeName:
-        return MaterialPageRoute(
-          settings: RouteSettings(name: ServiceSelectionScreen.routeName),
-          builder: (_) => ServiceSelectionScreen(),
-        );
+      // case ServiceSelectionScreen.routeName:
+      //   return MaterialPageRoute(
+      //     settings: RouteSettings(name: ServiceSelectionScreen.routeName),
+      //     builder: (_) => ServiceSelectionScreen(),
+      //   );
       case ExploreClinicsScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: ExploreClinicsScreen.routeName),
