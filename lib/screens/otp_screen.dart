@@ -183,17 +183,17 @@ class OtpScreen extends StatelessWidget {
                                       ?.isFirstLogin ??
                                   false;
                               isLoggedIn
-                                  ? Navigator.pushNamedAndRemoveUntil(
-                                      context,
-                                      FaceScanScreen.routeName,
-                                      (Route<dynamic> route) => false,
-                                    )
-                                  : Navigator.pushNamedAndRemoveUntil(
+                                  ? 
+                                   Navigator.pushNamedAndRemoveUntil(
                                       context,
                                       SignupOnboarding.routeName,
                                       (Route<dynamic> route) =>
                                           route.settings.name ==
                                           LoginScreen.routeName,
+                                    ):Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      FaceScanScreen.routeName,
+                                      (Route<dynamic> route) => false,
                                     );
                             }
                           });

@@ -81,7 +81,7 @@ class ExploreClinicsScreen extends StatelessWidget {
                         context,
                         ClinicsDetailScreen.routeName,
                       );
-                    }, subSections: subSections[index],
+                    }, title: subSections[index].title,
                   );
                 },
               ),

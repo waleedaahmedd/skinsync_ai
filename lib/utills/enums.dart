@@ -19,8 +19,8 @@ enum LoginProviders {
 }
 
 enum EndPoints {
-  
   getTreatments('treatments/masters'),
+  treatments("treatments"),
   signIn('login'),
   onBoardingQues("onboarding/masters"),
   saveAnswer("v1/onboarding/answer"),

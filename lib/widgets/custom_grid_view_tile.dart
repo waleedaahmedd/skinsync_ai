@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:skinsync_ai/models/dummy_list_model.dart';
+import 'package:skinsync_ai/models/responses/select_section_response.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/frosted_container.dart';
@@ -9,11 +10,11 @@ import 'package:skinsync_ai/widgets/frosted_container.dart';
 import '../utills/color_constant.dart';
 
 class CustomGridViewTile extends StatelessWidget {
-  final Treatments subSections;
+  final String? title;
   const CustomGridViewTile({
     super.key,
     required this.onTap,
-    required this.subSections,
+    required this.title,
   });
   final VoidCallback onTap;
   @override
@@ -108,7 +109,7 @@ class CustomGridViewTile extends StatelessWidget {
             ),
             Spacer(),
             Center(
-              child: Text(subSections.title, style: CustomFonts.black20w600),
+              child: Text(title?? '', style: CustomFonts.black20w600),
             ),
             Spacer(),
           ],

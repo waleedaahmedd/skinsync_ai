@@ -89,32 +89,47 @@ class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
             // ),
             SizedBox(height: 30),
             Expanded(
-              child: AnimationLimiter(
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 18.w,
-                    mainAxisSpacing: 18.h,
-                    childAspectRatio: 0.8,
-                  ),
-                  itemCount: sections.length,
-                  itemBuilder: (context, index) {
-                    return AnimationConfiguration.staggeredGrid(
-                      position: index,
-                      duration: const Duration(milliseconds: 600),
-                      columnCount: sections.length,
-                      child: ScaleAnimation(
-                        child: FadeInAnimation(
-                          child: CustomGridViewTile(
-                            onTap: () {
-                              Navigator.pushNamed(context, SelectSubSectionsScreen.routeName);
-                            }, subSections: sections[index],
-                          ),
-                        ),
+              child: Consumer(
+                builder: (context, ref, _) {
+                  final loading = ref.watch(treatmentViewModel).loading;
+                  if(loading){
+                    return Center(child: CircularProgressIndicator(color: CustomColors.purpleColor,));
+                  }
+                  return AnimationLimiter(
+                    child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 18.w,
+                        mainAxisSpacing: 18.h,
+                        childAspectRatio: 0.8,
                       ),
-                    );
-                  },
-                ),
+                      itemCount: ref.read(treatmentViewModel).selectSelectionResponse?.data?.length ?? 0,
+                      itemBuilder: (context, index) {
+                       
+                        final section = ref.read(treatmentViewModel).selectSelectionResponse?.data;
+                        return AnimationConfiguration.staggeredGrid(
+                          position: index,
+                          duration: const Duration(milliseconds: 600),
+                          columnCount: section?.length ?? 0,
+                          child: ScaleAnimation(
+                            child: FadeInAnimation(
+                              child: CustomGridViewTile(
+                                onTap: () {
+                                  if(section[index].isSidearea == true){
+                                     final treatmentID = ref.read(treatmentViewModel.notifier).treatmentId;
+                                     final selectSectionID = section[index].id;
+                                    ref.read(treatmentViewModel.notifier).getSubSectionApi(sectionId: treatmentID ?? 0 , subSectionId: selectSectionID ?? 0);
+                                  }
+                                  Navigator.pushNamed(context, SelectSubSectionsScreen.routeName);
+                                }, title: section![index].name,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                }
               ),
             ),
           ],

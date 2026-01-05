@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/face_detection_screen.dart';
 import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
 import 'package:skinsync_ai/screens/select_sections_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
@@ -22,8 +23,15 @@ class TreatmentContainer extends StatelessWidget {
       builder: (context, ref, _) {
         return GestureDetector(
           onTap: () {
-            // Navigate to SelectSectionScreen using route
-            Navigator.pushNamed(context, SelectSectionsScreen.routeName);
+            if (treatments.isArea == true) {
+              ref
+                  .read(treatmentViewModel.notifier)
+                  .getSelectSectionApi(sectionId: treatments.id ?? 0);
+               ref.read(treatmentViewModel.notifier).treatmentId = treatments.id; 
+              Navigator.pushNamed(context, SelectSectionsScreen.routeName);
+            } else {
+              Navigator.pushNamed(context, FaceDetectionScreen.routeName);
+            }
           },
           child: Container(
             padding: EdgeInsets.only(

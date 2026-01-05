@@ -25,8 +25,6 @@ class SelectSubSectionsScreen extends StatefulWidget {
 }
 
 class _SelectSectionsScreenState extends State<SelectSubSectionsScreen> {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,32 +88,51 @@ class _SelectSectionsScreenState extends State<SelectSubSectionsScreen> {
             // ),
             SizedBox(height: 30),
             Expanded(
-              child: AnimationLimiter(
-                child: GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 18.w,
-                    mainAxisSpacing: 18.h,
-                    childAspectRatio: 0.8,
-                  ),
-                  itemCount: subSections.length,
-                  itemBuilder: (context, index) {
-                    return AnimationConfiguration.staggeredGrid(
-                      position: index,
-                      duration: const Duration(milliseconds: 600),
-                      columnCount: subSections.length,
-                      child: ScaleAnimation(
-                        child: FadeInAnimation(
-                          child: CustomGridViewTile(
-                            onTap: () {
-                              Navigator.pushNamed(context, FaceDetectionScreen.routeName);
-                            }, subSections: subSections[index],
-                          ),
-                        ),
+              child: Consumer(
+                builder: (context, ref, _) {
+                  final loading = ref.watch(treatmentViewModel).loading;
+                 
+                  if (loading) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: CustomColors.purpleColor,
                       ),
                     );
-                  },
-                ),
+                  }
+                  return AnimationLimiter(
+                    child: GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 18.w,
+                        mainAxisSpacing: 18.h,
+                        childAspectRatio: 0.8,
+                      ),
+                      itemCount:ref.read(treatmentViewModel).subSelectionResponse?.data?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        final subSection = ref.read(treatmentViewModel).subSelectionResponse?.data;
+
+                        return AnimationConfiguration.staggeredGrid(
+                          position: index,
+                          duration: const Duration(milliseconds: 600),
+                          columnCount: subSection?.length ?? 0,
+                          child: ScaleAnimation(
+                            child: FadeInAnimation(
+                              child: CustomGridViewTile(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    FaceDetectionScreen.routeName,
+                                  );
+                                },
+                                title: subSection?[index].name ?? "",
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
             ),
           ],
