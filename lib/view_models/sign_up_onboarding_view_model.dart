@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skinsync_ai/models/base_state_model.dart';
 import 'package:skinsync_ai/models/requests/save_answer_request.dart';
@@ -82,6 +83,12 @@ void setQuesAndOptID({required int questionID, required int optionID}) {
       state = state.copyWith(isSaveAnswerLoding: false);
       return response.isSuccess == true;
     });
+  }
+  @override
+ void onError(String message) {
+    state =state.copyWith(loading: false, isSaveAnswerLoding: false);
+    super.onError(message);
+    EasyLoading.showError(message);
   }
 }
 

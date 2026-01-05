@@ -42,6 +42,12 @@ class ApiBaseHelper {
             headers: getHeaders(),
             body: requestBody != '' ? jsonEncode(requestBody) : null,
           );
+          case 'PATCH':
+          final responseJson = await http.patch(
+            Uri.parse(BaseUrls.api.url + endPoint.path + params),
+            headers: getHeaders(),
+            body: requestBody != '' ? jsonEncode(requestBody) : null,
+          );
           return responseJson;
         case 'DEL':
           final responseJson = await http.delete(

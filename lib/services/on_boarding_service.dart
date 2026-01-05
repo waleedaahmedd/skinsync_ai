@@ -10,9 +10,10 @@ import 'package:skinsync_ai/utills/enums.dart';
 import 'package:skinsync_ai/utills/secure_storage_service.dart';
 
 class OnBoardingService implements OnBoardingRepository {
- final ApiBaseHelper _apiClient;
+  final ApiBaseHelper _apiClient;
   final SecureStorage _secureStorage = SecureStorage();
-OnBoardingService({required ApiBaseHelper apiClient}) : _apiClient = apiClient;
+  OnBoardingService({required ApiBaseHelper apiClient})
+    : _apiClient = apiClient;
   @override
   Future<OnBoardingQuestionResponse> questionApi() async {
     final response = await _apiClient.httpRequest(
@@ -31,32 +32,30 @@ OnBoardingService({required ApiBaseHelper apiClient}) : _apiClient = apiClient;
       // Handle HTTP error status codes
       final parsed = json.decode(response.body);
       throw AppException(
-          OnBoardingQuestionResponse.fromJson(parsed).message as String);
+        OnBoardingQuestionResponse.fromJson(parsed).message as String,
+      );
     }
   }
- @override
-Future<BaseResponseModel> saveAnswerApi({
-  required SaveAnswerRequest saveAnswerRequest,
-}) async {
- 
-  final response = await _apiClient.httpRequest(
-    endPoint: EndPoints.saveAnswer, // replace with your actual endpoint
-    requestType: 'POST',
-    params: '',
-    requestBody: saveAnswerRequest,
-  );
 
- 
-  if (response.statusCode >= 200 && response.statusCode < 300) {
-    final parsed = json.decode(response.body);
-    return BaseResponseModel.fromJson(parsed);
-  } else {
-    final parsed = json.decode(response.body);
-    throw AppException(
-      BaseResponseModel.fromJson(parsed).message ?? 'Something went wrong',
+  @override
+  Future<BaseResponseModel> saveAnswerApi({
+    required SaveAnswerRequest saveAnswerRequest,
+  }) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.saveAnswer,
+      requestType:'PATCH',
+      params: '',
+      requestBody: saveAnswerRequest,
     );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      return BaseResponseModel.fromJson(parsed);
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(
+        BaseResponseModel.fromJson(parsed).message ?? 'Something went wrong',
+      );
+    }
   }
 }
-
-  
- }

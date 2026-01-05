@@ -28,6 +28,7 @@ class AuthData {
   String? refreshToken;
   int? accessExpiresAt;
   int? refreshExpiresAt;
+  bool? isFirstLogin;
   User? user;
 
   AuthData(
@@ -35,6 +36,7 @@ class AuthData {
       this.refreshToken,
       this.accessExpiresAt,
       this.refreshExpiresAt,
+      this.isFirstLogin,
       this.user});
 
   AuthData.fromJson(Map<String, dynamic> json) {
@@ -42,6 +44,7 @@ class AuthData {
     refreshToken = json['refresh_token'];
     accessExpiresAt = json['access_expires_at'];
     refreshExpiresAt = json['refresh_expires_at'];
+    isFirstLogin = json['is_first_login'];
     user = json['user'] != null ? new User.fromJson(json['user']) : null;
   }
 
@@ -51,6 +54,7 @@ class AuthData {
     data['refresh_token'] = this.refreshToken;
     data['access_expires_at'] = this.accessExpiresAt;
     data['refresh_expires_at'] = this.refreshExpiresAt;
+    
     if (this.user != null) {
       data['user'] = this.user!.toJson();
     }
