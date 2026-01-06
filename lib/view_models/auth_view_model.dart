@@ -43,6 +43,8 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     });
   }
 
+  
+
   @override
   void onError(String message) {
     super.onError(message);

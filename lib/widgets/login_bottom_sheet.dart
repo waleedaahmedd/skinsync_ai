@@ -127,7 +127,7 @@ void loginBottomSheet(BuildContext context) {
                             Navigator.pushNamed(
                               context,
                               LoginScreen.routeName,
-                              arguments: LoginProviders.phone,
+                              arguments: LoginProviders.email,
                             );
                           },
                           child: Container(

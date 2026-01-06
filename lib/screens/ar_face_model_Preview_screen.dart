@@ -101,7 +101,7 @@ class _ArFaceModelPreviewScreenState extends ConsumerState<ArFaceModelPreviewScr
         jsonRes["image_base64"],
         fileName: 'ai_image_$timestamp.jpg',
       );
-      await ref.read(faceScanProvider.notifier).setAiimage(ximage);
+      await ref.read(faceScanProvider.notifier).setAiImage(ximage);
 
       setState(() {
         _isLoading = false;

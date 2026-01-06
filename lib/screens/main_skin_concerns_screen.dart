@@ -27,7 +27,7 @@ class MainSkinConcernsScreen extends StatelessWidget {
             child: ListView.builder(
               itemCount: 10,
               itemBuilder: (context, index) {
-                return QuestionTitle(title: "Dark spots or pigmentation ");
+                return QuestionTitle(isSelected: false,title: "Dark spots or pigmentation ");
               },
             ),
           ),

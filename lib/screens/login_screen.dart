@@ -196,6 +196,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             SizedBox(height: 22.h),
             loginWithEmail
                 ? TextField(
+                  controller: _emailController,
                     style: CustomFonts.black18w400,
                     decoration: InputDecoration(hintText: "Email Address"),
                   )
@@ -233,9 +234,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                 final success = await ref
                     .read(authViewModel.notifier)
                     .callSignInApi(req);
-                if (success == true) {
+                // if (success == true) {
                   Navigator.of(context).pushNamed(OtpScreen.routeName);
-                }
+                // }
               },
               child: ref.watch(authViewModel).loading
                   ? CircularProgressIndicator()
