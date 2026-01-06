@@ -56,7 +56,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       }
 
       final front = cameras.firstWhere(
-        (c) => c.lensDirection == CameraLensDirection.front,
+            (c) => c.lensDirection == CameraLensDirection.front,
         orElse: () => cameras.first,
       );
 
@@ -113,9 +113,18 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       return;
     }
 
+    // final imageWidth = image.width.toDouble();
+    // final imageHeight = image.height.toDouble();
+    // final cropSize =
+    //     (imageWidth < imageHeight ? imageWidth : imageHeight) * 0.45;
+    // final cropX = (imageWidth - cropSize) / 2;
+    // final cropY = (imageHeight - cropSize) / 2;
+    // final cropRect = Rect.fromLTWH(cropX, cropY, cropSize, cropSize);
+
     final inputImage = inputImageFromCameraImage(
       image,
       _cameraController!.description,
+      // cropRect: cropRect,
     );
 
     final faces = await _faceDetector.processImage(inputImage);
@@ -129,10 +138,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     final previewSize = _cameraController!.value.previewSize!;
 
     final faceCenter = face.boundingBox.center;
-    final previewCenter = Offset(previewSize.width / 2, previewSize.height / 2);
+    final previewCenter = Offset(image.width / 2, image.height / 2);
 
     final distance = (faceCenter - previewCenter).distance;
-    final allowedRadius = previewSize.width * 0.4;
+    final allowedRadius = previewSize.width * 0.3;
 
     if (distance <= allowedRadius) {
       _startProgress();
@@ -168,10 +177,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
       final elapsed = DateTime.now().difference(startTime);
       final newProgress =
-          (elapsed.inMilliseconds / _progressDuration.inMilliseconds).clamp(
-            0.0,
-            1.0,
-          );
+      (elapsed.inMilliseconds / _progressDuration.inMilliseconds).clamp(
+        0.0,
+        1.0,
+      );
 
       if (mounted) {
         setState(() {
@@ -306,15 +315,15 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
               child: Builder(
                 builder: (context) {
                   final remainingSeconds =
-                      (_progressDuration.inSeconds -
-                              (_progress * _progressDuration.inSeconds))
-                          .ceil()
-                          .clamp(1, _progressDuration.inSeconds);
+                  (_progressDuration.inSeconds -
+                      (_progress * _progressDuration.inSeconds))
+                      .ceil()
+                      .clamp(1, _progressDuration.inSeconds);
                   return Text(
                     "$remainingSeconds",
                     textAlign: TextAlign.center,
                     style: CustomFonts.white50w600.copyWith(
-                      fontSize: 100.sp,
+                      fontSize: 80.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   );
@@ -371,17 +380,64 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
         child: SizedBox(
           width: _cameraController!.value.previewSize!.height,
           height: _cameraController!.value.previewSize!.width,
-          child: CameraPreview(
-            _cameraController!,
-            child: Center(
-              child: CustomPaint(
-                painter: FaceScanPainter(progress: _progress),
-                child: SizedBox(width: 1.2.sw, height: 1.2.sw),
+          child: Stack(
+            children: [
+              CameraPreview(_cameraController!),
+              // Dark overlay with transparent center
+              CustomPaint(
+                painter: TintOverlayPainter(centerRadius: 0.6.sw),
+                child: const SizedBox.expand(),
               ),
-            ),
+              // Progress ring
+              Center(
+                child: CustomPaint(
+                  painter: FaceScanPainter(progress: _progress),
+                  child: SizedBox(width: 1.4.sw, height: 1.4.sw),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
+  }
+}
+
+// Custom painter for the tinted overlay with transparent center
+class TintOverlayPainter extends CustomPainter {
+  final double centerRadius;
+
+  TintOverlayPainter({required this.centerRadius});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final center = Offset(size.width / 2, size.height / 2);
+
+    // Create a path for the entire screen
+    final path = Path()..addRect(rect);
+
+    // Cut out a circle from the center
+    final circlePath = Path()
+      ..addOval(Rect.fromCircle(center: center, radius: centerRadius));
+
+    // Subtract the circle from the full screen path
+    final overlayPath = Path.combine(
+      PathOperation.difference,
+      path,
+      circlePath,
+    );
+
+    // Draw the dark overlay
+    final paint = Paint()
+      ..color = Colors.black.withOpacity(0.6)
+      ..style = PaintingStyle.fill;
+
+    canvas.drawPath(overlayPath, paint);
+  }
+
+  @override
+  bool shouldRepaint(TintOverlayPainter oldDelegate) {
+    return oldDelegate.centerRadius != centerRadius;
   }
 }
