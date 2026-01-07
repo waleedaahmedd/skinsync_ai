@@ -280,11 +280,19 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     final image = await _cameraController!.takePicture();
 
     // Flip the image if using front camera (to match the mirrored preview)
-    XFile finalImage = image;
+    XFile processedImage = image;
     if (_cameraController!.description.lensDirection ==
         CameraLensDirection.front) {
-      finalImage = await flipXFileHorizontally(image);
+      processedImage = await flipXFileHorizontally(image);
     }
+
+    // Crop image to circle size (50% radius, centered at 50% width, 29% height)
+    final finalImage = await cropImageToCircle(
+      processedImage,
+      centerXPercent: 0.5, // Center horizontally
+      centerYPercent: 0.29, // Position at top (29% from top)
+      radiusPercent: 0.5, // 50% of image width
+    );
 
     // Store captured image in provider
     await ref.read(faceScanProvider.notifier).setCapturedImage(finalImage);
@@ -399,7 +407,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: 34.h, horizontal: 52.w),
+                padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 52.w),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20.r),
@@ -581,7 +589,7 @@ class TintOverlayPainter extends CustomPainter {
 
     // Draw the dark overlay
     final paint = Paint()
-      ..color = Colors.black.withOpacity(0.7) // Increased opacity for better visibility
+      ..color = Colors.black// Increased opacity for better visibility
       ..style = PaintingStyle.fill;
 
     canvas.drawPath(overlayPath, paint);
