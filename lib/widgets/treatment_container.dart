@@ -12,6 +12,7 @@ import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 
 import '../models/dummy_list_model.dart';
 import '../models/responses/treatment_response_model.dart';
+import '../view_models/checkout_view_model.dart';
 
 class TreatmentContainer extends StatelessWidget {
   final TreatmentsModel treatments;
@@ -27,10 +28,16 @@ class TreatmentContainer extends StatelessWidget {
               ref
                   .read(treatmentViewModel.notifier)
                   .getSelectSectionApi(sectionId: treatments.id ?? 0);
-               ref.read(treatmentViewModel.notifier).treatmentId = treatments.id; 
+              ref.read(treatmentViewModel.notifier).treatmentId = treatments.id;
               Navigator.pushNamed(context, SelectSectionsScreen.routeName);
             } else {
-              Navigator.pushNamed(context, FaceDetectionScreen.routeName);
+              ref
+                  .read(checkoutViewModel.notifier)
+                  .updateState(treatmentId: treatments.id);
+              Navigator.pushNamed(
+                context,
+                ref.read(checkoutViewModel.notifier).navigateTo(),
+              );
             }
           },
           child: Container(

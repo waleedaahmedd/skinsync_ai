@@ -12,6 +12,7 @@ import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/fillter_container.dart';
 
 import '../models/dummy_list_model.dart';
+import '../view_models/checkout_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_grid_view_tile.dart';
 import 'face_scan_screen.dart';
@@ -91,7 +92,7 @@ class _SelectSectionsScreenState extends State<SelectSubSectionsScreen> {
               child: Consumer(
                 builder: (context, ref, _) {
                   final loading = ref.watch(treatmentViewModel).loading;
-                 
+
                   if (loading) {
                     return Center(
                       child: CircularProgressIndicator(
@@ -107,9 +108,18 @@ class _SelectSectionsScreenState extends State<SelectSubSectionsScreen> {
                         mainAxisSpacing: 18.h,
                         childAspectRatio: 0.8,
                       ),
-                      itemCount:ref.read(treatmentViewModel).subSelectionResponse?.data?.length ?? 0,
+                      itemCount:
+                          ref
+                              .read(treatmentViewModel)
+                              .subSelectionResponse
+                              ?.data
+                              ?.length ??
+                          0,
                       itemBuilder: (context, index) {
-                        final subSection = ref.read(treatmentViewModel).subSelectionResponse?.data;
+                        final subSection = ref
+                            .read(treatmentViewModel)
+                            .subSelectionResponse
+                            ?.data;
 
                         return AnimationConfiguration.staggeredGrid(
                           position: index,
@@ -121,7 +131,9 @@ class _SelectSectionsScreenState extends State<SelectSubSectionsScreen> {
                                 onTap: () {
                                   Navigator.pushNamed(
                                     context,
-                                    FaceDetectionScreen.routeName,
+                                    ref
+                                        .read(checkoutViewModel.notifier)
+                                        .navigateTo(),
                                   );
                                 },
                                 title: subSection?[index].name ?? "",

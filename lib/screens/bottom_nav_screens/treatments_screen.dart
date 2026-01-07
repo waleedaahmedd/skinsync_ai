@@ -14,65 +14,72 @@ import 'package:skinsync_ai/widgets/recommended_treatment_container.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 
 import '../../models/dummy_list_model.dart';
+import '../../view_models/checkout_view_model.dart';
 import '../../widgets/grey_container.dart';
 
-class TreatmentsScreen extends StatelessWidget {
+class TreatmentsScreen extends ConsumerWidget {
   const TreatmentsScreen({super.key});
+  static const routeName = "TreatmentsScreen";
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBarWithActionIcon(
-        title: Row(
+  Widget build(BuildContext context, ref) {
+    return PopScope(
+      onPopInvokedWithResult: (result, _) {
+        ref.read(checkoutViewModel.notifier).clearState();
+      },
+      child: Scaffold(
+        appBar: AppBarWithActionIcon(
+          title: Row(
+            children: [
+              Icon(Iconsax.location, size: 20.sp, color: Colors.black),
+              SizedBox(width: 6.w),
+              Text("Hello, Burak!", style: CustomFonts.black30w600),
+            ],
+          ),
+          subTitle: Text(
+            "195 Karlie Brooks, Anderson",
+            style: CustomFonts.grey18w400,
+          ),
+          action: GreyContainer(
+            icon: Icons.notifications_none_outlined,
+            onTap: () {},
+          ),
+        ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Iconsax.location, size: 20.sp, color: Colors.black),
-            SizedBox(width: 6.w),
-            Text("Hello, Burak!", style: CustomFonts.black30w600),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 15.h),
+                  TextField(
+                    style: CustomFonts.black18w400,
+
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.search),
+                      hintText: "Search treatment",
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // SizedBox(height: 15.h),
+            Expanded(
+              child: Consumer(
+                builder: (context, ref, _) {
+                  return
+                  // ref.watch(treatmentViewModel)
+                  //   ?
+                  TreatmentMainScreen()
+                  // : SelectSectionScreen()
+                  ;
+                },
+              ),
+            ),
           ],
         ),
-        subTitle: Text(
-          "195 Karlie Brooks, Anderson",
-          style: CustomFonts.grey18w400,
-        ),
-        action: GreyContainer(
-          icon: Icons.notifications_none_outlined,
-          onTap: () {},
-        ),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 30.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 15.h),
-                TextField(
-                  style: CustomFonts.black18w400,
-
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    hintText: "Search treatment",
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // SizedBox(height: 15.h),
-          Expanded(
-            child: Consumer(
-              builder: (context, ref, _) {
-                return
-                // ref.watch(treatmentViewModel)
-                //   ?
-                TreatmentMainScreen()
-                // : SelectSectionScreen()
-                ;
-              },
-            ),
-          ),
-        ],
       ),
     );
   }

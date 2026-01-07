@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
@@ -9,12 +10,14 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
-class ClinicsDetailScreen extends StatelessWidget {
+import '../view_models/checkout_view_model.dart';
+
+class ClinicsDetailScreen extends ConsumerWidget {
   const ClinicsDetailScreen({super.key});
   static const String routeName = '/ClinicsDetailScreen';
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       extendBody: true,
       body: SingleChildScrollView(
@@ -178,16 +181,28 @@ class ClinicsDetailScreen extends StatelessWidget {
                     SizedBox(height: 25.h),
                     Divider(
                       height: 0.h,
-                      color: CustomColors.blackColor.withValues(alpha: 0.1)),
+                      color: CustomColors.blackColor.withValues(alpha: 0.1),
+                    ),
                     SizedBox(height: 18.h),
-                    Row(children: [
-                      Icon(Iconsax.location,color: Colors.black,size: 20.sp,),
-                      SizedBox(width: 14.w,),
-                      Flexible(child: Text("Bedford-Stuyvesant, Brooklyn, NY 11221", overflow: TextOverflow.ellipsis,style: CustomFonts.black20w600,))
+                    Row(
+                      children: [
+                        Icon(
+                          Iconsax.location,
+                          color: Colors.black,
+                          size: 20.sp,
+                        ),
+                        SizedBox(width: 14.w),
+                        Flexible(
+                          child: Text(
+                            "Bedford-Stuyvesant, Brooklyn, NY 11221",
+                            overflow: TextOverflow.ellipsis,
+                            style: CustomFonts.black20w600,
+                          ),
+                        ),
+                      ],
+                    ),
 
-                    ],),
-                    
-                    Image.asset(DummyAssets.map,height: 203.h,width: 380.w,)
+                    Image.asset(DummyAssets.map, height: 203.h, width: 380.w),
                   ],
                 ),
               ),
@@ -198,13 +213,13 @@ class ClinicsDetailScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding:  EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
+        padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
         child: GlassMorphismContainer(
           borderRadius: BorderRadius.all(Radius.circular(0.r)),
           blurIntensity: 30.0,
           opacity: 0.10,
           glassThickness: 1.0,
-        
+
           // tintColor: Colors.white.withOpacity(0.15),
           enableBackgroundDistortion: true,
           enableGlassBorder: true,
@@ -222,12 +237,23 @@ class ClinicsDetailScreen extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 10.h,left: 30.w,right: 30.w),
+                padding: EdgeInsets.only(top: 10.h, left: 30.w, right: 30.w),
                 child: SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(onPressed: (){
-                    Navigator.pushNamed(context,ClinicServiceScreen.routeName);
-                  }, child: Text("Book An Appointment")))
+                  child: ElevatedButton(
+                    onPressed: () {
+                      ref
+                          .read(checkoutViewModel.notifier)
+                          .updateState(clinicId: "xx");
+
+                      Navigator.pushNamed(
+                        context,
+                        ClinicServiceScreen.routeName,
+                      );
+                    },
+                    child: Text("Book An Appointment"),
+                  ),
+                ),
               ),
             ],
           ),

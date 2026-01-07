@@ -12,6 +12,7 @@ import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/fillter_container.dart';
 
 import '../models/dummy_list_model.dart';
+import '../view_models/checkout_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_grid_view_tile.dart';
 
@@ -24,8 +25,6 @@ class SelectSectionsScreen extends StatefulWidget {
 }
 
 class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,8 +91,12 @@ class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
               child: Consumer(
                 builder: (context, ref, _) {
                   final loading = ref.watch(treatmentViewModel).loading;
-                  if(loading){
-                    return Center(child: CircularProgressIndicator(color: CustomColors.purpleColor,));
+                  if (loading) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: CustomColors.purpleColor,
+                      ),
+                    );
                   }
                   return AnimationLimiter(
                     child: GridView.builder(
@@ -103,10 +106,18 @@ class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
                         mainAxisSpacing: 18.h,
                         childAspectRatio: 0.8,
                       ),
-                      itemCount: ref.read(treatmentViewModel).selectSelectionResponse?.data?.length ?? 0,
+                      itemCount:
+                          ref
+                              .read(treatmentViewModel)
+                              .selectSelectionResponse
+                              ?.data
+                              ?.length ??
+                          0,
                       itemBuilder: (context, index) {
-                       
-                        final section = ref.read(treatmentViewModel).selectSelectionResponse?.data;
+                        final section = ref
+                            .read(treatmentViewModel)
+                            .selectSelectionResponse
+                            ?.data;
                         return AnimationConfiguration.staggeredGrid(
                           position: index,
                           duration: const Duration(milliseconds: 600),
@@ -115,13 +126,26 @@ class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
                             child: FadeInAnimation(
                               child: CustomGridViewTile(
                                 onTap: () {
-                                  if(section[index].isSidearea == true){
-                                     final treatmentID = ref.read(treatmentViewModel.notifier).treatmentId;
-                                     final selectSectionID = section[index].id;
-                                    ref.read(treatmentViewModel.notifier).getSubSectionApi(sectionId: treatmentID ?? 0 , subSectionId: selectSectionID ?? 0);
+                                  if (section[index].isSidearea == true) {
+                                    final treatmentID = ref
+                                        .read(treatmentViewModel.notifier)
+                                        .treatmentId;
+                                    final selectSectionID = section[index].id;
+                                    ref
+                                        .read(treatmentViewModel.notifier)
+                                        .getSubSectionApi(
+                                          sectionId: treatmentID ?? 0,
+                                          subSectionId: selectSectionID ?? 0,
+                                        );
                                   }
-                                  Navigator.pushNamed(context, SelectSubSectionsScreen.routeName);
-                                }, title: section![index].name,
+                                  // ref.read(checkoutViewModel.notifier).updateState(treatmentAreaId: treatmentID);
+
+                                  Navigator.pushNamed(
+                                    context,
+                                    SelectSubSectionsScreen.routeName,
+                                  );
+                                },
+                                title: section![index].name,
                               ),
                             ),
                           ),
@@ -129,7 +153,7 @@ class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
                       },
                     ),
                   );
-                }
+                },
               ),
             ),
           ],

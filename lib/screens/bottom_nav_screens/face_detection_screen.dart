@@ -10,6 +10,7 @@ import 'package:skinsync_ai/utills/image_utills.dart';
 
 import '../../utills/custom_fonts.dart';
 import '../../utills/ml_kit_utills.dart';
+import '../../view_models/checkout_view_model.dart';
 import '../../view_models/face_scan_provider.dart';
 import '../../widgets/face_scan_radial_widget.dart';
 import '../ar_face_model_Preview_screen.dart';
@@ -60,7 +61,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       }
 
       final front = cameras.firstWhere(
-            (c) => c.lensDirection == CameraLensDirection.front,
+        (c) => c.lensDirection == CameraLensDirection.front,
         orElse: () => cameras.first,
       );
 
@@ -141,14 +142,19 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     final faceHeight = faceBox.height;
 
     // Get the input image size (accounts for rotation)
-    final inputImageSize = inputImage.metadata?.size ?? Size(image.width.toDouble(), image.height.toDouble());
+    final inputImageSize =
+        inputImage.metadata?.size ??
+        Size(image.width.toDouble(), image.height.toDouble());
 
     // IMPORTANT: The camera preview uses AspectRatio which may letterbox the image
     // Face detection coordinates are relative to the full InputImage, not the visible preview
     // The center calculation should use the actual image center
 
     // Calculate the center of the INPUT IMAGE (where face detection happens)
-    final imageCenter = Offset(inputImageSize.width / 2, inputImageSize.height / 2);
+    final imageCenter = Offset(
+      inputImageSize.width / 2,
+      inputImageSize.height / 2,
+    );
 
     // Calculate distance from center (circular check)
     final dx = faceCenter.dx - imageCenter.dx;
@@ -165,9 +171,12 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     // Also use rectangular check as fallback (more lenient)
     final horizontalDistance = (faceCenter.dx - imageCenter.dx).abs();
     final verticalDistance = (faceCenter.dy - imageCenter.dy).abs();
-    final allowedHorizontalOffset = inputImageSize.width * 0.25; // Reduced from 30% to 25%
-    final allowedVerticalOffset = inputImageSize.height * 0.25; // Reduced from 30% to 25%
-    final isWithinRect = horizontalDistance <= allowedHorizontalOffset &&
+    final allowedHorizontalOffset =
+        inputImageSize.width * 0.25; // Reduced from 30% to 25%
+    final allowedVerticalOffset =
+        inputImageSize.height * 0.25; // Reduced from 30% to 25%
+    final isWithinRect =
+        horizontalDistance <= allowedHorizontalOffset &&
         verticalDistance <= allowedVerticalOffset;
 
     // Check if face center is within the circle OR rectangle (whichever is more lenient)
@@ -176,8 +185,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
     // Check if face is fully visible (not cut off at edges)
     // Face should be at least 3% away from all edges to ensure full face is visible
-    final edgeMargin = smallerDimension * 0.03; // Increased from 1% to 3% for stricter check
-    final isFullyVisible = faceBox.left >= edgeMargin &&
+    final edgeMargin =
+        smallerDimension * 0.03; // Increased from 1% to 3% for stricter check
+    final isFullyVisible =
+        faceBox.left >= edgeMargin &&
         faceBox.top >= edgeMargin &&
         faceBox.right <= (inputImageSize.width - edgeMargin) &&
         faceBox.bottom <= (inputImageSize.height - edgeMargin);
@@ -186,16 +197,19 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     // Face should be between 8% and 50% of the smaller dimension
     final minFaceSize = smallerDimension * 0.08; // Increased from 5% to 8%
     final maxFaceSize = smallerDimension * 0.50; // Reduced from 65% to 50%
-    final isReasonableSize = (faceWidth >= minFaceSize && faceWidth <= maxFaceSize) &&
+    final isReasonableSize =
+        (faceWidth >= minFaceSize && faceWidth <= maxFaceSize) &&
         (faceHeight >= minFaceSize && faceHeight <= maxFaceSize);
 
     // Check face aspect ratio - ensure it's a normal face (not too stretched)
     final faceAspectRatio = faceWidth / faceHeight;
-    final isNormalAspectRatio = faceAspectRatio >= 0.6 && faceAspectRatio <= 1.4; // Stricter range
+    final isNormalAspectRatio =
+        faceAspectRatio >= 0.6 && faceAspectRatio <= 1.4; // Stricter range
 
     // Face is valid ONLY if: centered AND fully visible AND reasonable size AND normal aspect ratio
     // ALL conditions must be met - this ensures full face is detected
-    final isValidFace = isCentered &&
+    final isValidFace =
+        isCentered &&
         isFullyVisible && // Must be fully visible (not cut off)
         isReasonableSize && // Must have reasonable size
         isNormalAspectRatio; // Must have normal proportions
@@ -245,10 +259,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
       final elapsed = DateTime.now().difference(startTime);
       final newProgress =
-      (elapsed.inMilliseconds / _progressDuration.inMilliseconds).clamp(
-        0.0,
-        1.0,
-      );
+          (elapsed.inMilliseconds / _progressDuration.inMilliseconds).clamp(
+            0.0,
+            1.0,
+          );
 
       if (mounted) {
         setState(() {
@@ -296,9 +310,14 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
     // Store captured image in provider
     await ref.read(faceScanProvider.notifier).setCapturedImage(finalImage);
+    ref.read(checkoutViewModel.notifier).updateState(capturedImage: finalImage);
 
     if (!mounted) return;
-    Navigator.pushReplacementNamed(context, ArFaceModelPreviewScreen.routeName);
+
+    Navigator.pushReplacementNamed(
+      context,
+      ref.read(checkoutViewModel.notifier).navigateTo(),
+    );
   }
 
   @override
@@ -314,124 +333,139 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     // Keep the provider alive by watching it
     ref.watch(faceScanProvider);
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          if (_cameraController != null) _buildCameraView(),
+    return PopScope(
+      onPopInvokedWithResult: (result, _) {
+        ref.read(checkoutViewModel.notifier).clearState();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Stack(
+          children: [
+            if (_cameraController != null) _buildCameraView(),
 
-          // Consumer(
-          //   builder: (_, ref, _) {
-          //     final isCapturing = ref.watch(
-          //       faceScanProvider.select((state) => state.isCapturing),
-          //     );
-          //     if (isCapturing) return const SizedBox.shrink();
+            // Consumer(
+            //   builder: (_, ref, _) {
+            //     final isCapturing = ref.watch(
+            //       faceScanProvider.select((state) => state.isCapturing),
+            //     );
+            //     if (isCapturing) return const SizedBox.shrink();
 
-          //     return Align(
-          //       alignment: Alignment.topRight,
-          //       child: Padding(
-          //         padding: EdgeInsets.only(top: 40.h, right: 20.w),
-          //         child: GestureDetector(
-          //           onTap: () {
-          //             ref.read(faceScanProvider.notifier).toggleFlash();
-          //             if (_cameraController != null) {
-          //               _cameraController!.setFlashMode(
-          //                 ref.read(faceScanProvider).flash
-          //                     ? FlashMode.torch
-          //                     : FlashMode.off,
-          //               );
-          //             }
-          //           },
-          //           child: Consumer(
-          //             builder: (_, ref, child) {
-          //               final flash = ref.watch(
-          //                 faceScanProvider.select((state) => state.flash),
-          //               );
-          //               return Icon(
-          //                 flash ? Icons.flash_on : Icons.flash_off,
-          //                 color: Colors.white,
-          //                 size: 30.sp,
-          //               );
-          //             },
-          //           ),
-          //         ),
-          //       ),
-          //     );
-          //   },
-          // ),
-          Positioned(
-            top: 10.h,
-            left: 20.w,
-            child: SafeArea(
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pop();
-                  // _captureAndNavigate();
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 6.h,
-                    horizontal: 18.w,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: Text(
-                    "Cancel",
-                    textAlign: TextAlign.center,
-                    style: CustomFonts.white22w600,
+            //     return Align(
+            //       alignment: Alignment.topRight,
+            //       child: Padding(
+            //         padding: EdgeInsets.only(top: 40.h, right: 20.w),
+            //         child: GestureDetector(
+            //           onTap: () {
+            //             ref.read(faceScanProvider.notifier).toggleFlash();
+            //             if (_cameraController != null) {
+            //               _cameraController!.setFlashMode(
+            //                 ref.read(faceScanProvider).flash
+            //                     ? FlashMode.torch
+            //                     : FlashMode.off,
+            //               );
+            //             }
+            //           },
+            //           child: Consumer(
+            //             builder: (_, ref, child) {
+            //               final flash = ref.watch(
+            //                 faceScanProvider.select((state) => state.flash),
+            //               );
+            //               return Icon(
+            //                 flash ? Icons.flash_on : Icons.flash_off,
+            //                 color: Colors.white,
+            //                 size: 30.sp,
+            //               );
+            //             },
+            //           ),
+            //         ),
+            //       ),
+            //     );
+            //   },
+            // ),
+            Positioned(
+              top: 10.h,
+              left: 20.w,
+              child: SafeArea(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    // _captureAndNavigate();
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 6.h,
+                      horizontal: 18.w,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: Text(
+                      "Cancel",
+                      textAlign: TextAlign.center,
+                      style: CustomFonts.white22w600,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          // Beautiful countdown in the center of the screen
-          if (_progress > 0 && _progress < 1.0)
-            Center(
-              child: Builder(
-                builder: (context) {
-                  final remainingSeconds =
-                  (_progressDuration.inSeconds -
-                      (_progress * _progressDuration.inSeconds))
-                      .ceil()
-                      .clamp(1, _progressDuration.inSeconds);
-                  return _buildCountdownWidget(remainingSeconds);
-                },
-              ),
-            ),
-          Positioned(
-            bottom: 80,
-            left: 0,
-            right: 0,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 52.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
+            // Countdown in the center of the screen
+            if (_progress > 0 && _progress < 1.0)
+              Center(
                 child: Builder(
                   builder: (context) {
-                    String message;
-                    if (_isCapturing) {
-                      message = "Hold Still";
-                    } else {
-                      message = "Align your face";
-                    }
-
+                    final remainingSeconds =
+                        (_progressDuration.inSeconds -
+                                (_progress * _progressDuration.inSeconds))
+                            .ceil()
+                            .clamp(1, _progressDuration.inSeconds);
                     return Text(
-                      message,
+                      "$remainingSeconds",
                       textAlign: TextAlign.center,
-                      style: CustomFonts.black28w600,
+                      style: CustomFonts.white50w600.copyWith(
+                        fontSize: 100.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     );
                   },
                 ),
               ),
+            Positioned(
+              bottom: 80,
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 34.h,
+                    horizontal: 52.w,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Builder(
+                    builder: (context) {
+                      String message;
+                      if (_isCapturing) {
+                        message = "Hold Still";
+                      } else {
+                        message = "Align your face";
+                      }
+
+                      return Text(
+                        message,
+                        textAlign: TextAlign.center,
+                        style: CustomFonts.black28w600,
+                      );
+                    },
+                  ),
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -451,10 +485,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Color(0xff88E3FB),
-                Color(0xffE7C6E8),
-              ],
+              colors: [Color(0xff88E3FB), Color(0xffE7C6E8)],
             ),
             boxShadow: [
               BoxShadow(
@@ -505,7 +536,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     // Get camera preview size
     final previewSize = _cameraController!.value.previewSize!;
     final aspectRatio = previewSize.height / previewSize.width;
-    
+
     // Calculate safe top padding
     final topPadding = MediaQuery.of(context).padding.top;
     // Use percentage of canvas width instead of screen width to ensure it fits
@@ -526,7 +557,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
               final canvasHeight = constraints.maxHeight;
               final circleRadius = canvasWidth * circleRadiusPercent;
               final circleCenterY = canvasHeight * circleCenterYPercent;
-              
+
               return Stack(
                 children: [
                   CameraPreview(_cameraController!),
@@ -540,13 +571,18 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                   ),
                   // Progress ring - matches the circle cutout size, positioned at top
                   Positioned(
-                    top: circleCenterY - circleRadius, // Align top of ring with top of circle
+                    top:
+                        circleCenterY -
+                        circleRadius, // Align top of ring with top of circle
                     left: 0,
                     right: 0,
                     child: Center(
                       child: CustomPaint(
                         painter: FaceScanPainter(progress: _progress),
-                        child: SizedBox(width: circleRadius * 2, height: circleRadius * 2),
+                        child: SizedBox(
+                          width: circleRadius * 2,
+                          height: circleRadius * 2,
+                        ),
                       ),
                     ),
                   ),
@@ -589,7 +625,8 @@ class TintOverlayPainter extends CustomPainter {
 
     // Draw the dark overlay
     final paint = Paint()
-      ..color = Colors.black// Increased opacity for better visibility
+      ..color = Colors
+          .black // Increased opacity for better visibility
       ..style = PaintingStyle.fill;
 
     canvas.drawPath(overlayPath, paint);

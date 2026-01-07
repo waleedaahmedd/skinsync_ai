@@ -26,6 +26,7 @@ import 'package:skinsync_ai/utills/enums.dart';
 import 'screens/ar_face_model_Preview_screen.dart';
 import 'screens/bottom_nav_screens/face_detection_screen.dart';
 import 'screens/bottom_nav_screens/my_profile_screen.dart';
+import 'screens/bottom_nav_screens/treatments_screen.dart';
 import 'screens/explore_clinics_screen.dart';
 import 'screens/service_selection_screen.dart';
 import 'utills/colored_print.dart';
@@ -185,6 +186,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: AdditionalInfoScreen.routeName),
           builder: (_) => AdditionalInfoScreen(),
+        );
+      case TreatmentsScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: TreatmentsScreen.routeName),
+          builder: (_) => TreatmentsScreen(),
         );
       default:
         return _errorRoute();
