@@ -36,12 +36,16 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   Timer? _progressTimer;
   static const Duration _progressDuration = Duration(seconds: 3);
 
+  // Store ref for use in callbacks
+  WidgetRef? _storedRef;
+
   @override
   void initState() {
     super.initState();
     _faceDetector = FaceDetector(
       options: FaceDetectorOptions(enableClassification: true),
     );
+    _storedRef = ref;
     _initCamera(ref);
   }
 
@@ -107,45 +111,109 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   }
 
   Future<void> _process(WidgetRef ref, CameraImage image) async {
-    // Don't process if we're already capturing or if progress is too far along
-    // Once we're past 70% progress, don't reset to ensure capture happens
-    if (_isCapturing || _progress > 0.7) {
+    // Don't process if we're already capturing
+    if (_isCapturing) {
       return;
     }
 
-    // final imageWidth = image.width.toDouble();
-    // final imageHeight = image.height.toDouble();
-    // final cropSize =
-    //     (imageWidth < imageHeight ? imageWidth : imageHeight) * 0.45;
-    // final cropX = (imageWidth - cropSize) / 2;
-    // final cropY = (imageHeight - cropSize) / 2;
-    // final cropRect = Rect.fromLTWH(cropX, cropY, cropSize, cropSize);
-
+    // Use full image for detection (cropping might have issues)
+    // We'll check if face is centered and within the circular guide area
     final inputImage = inputImageFromCameraImage(
       image,
       _cameraController!.description,
-      // cropRect: cropRect,
     );
 
+    // Detect faces in the full image
     final faces = await _faceDetector.processImage(inputImage);
 
+    // If no face detected, always reset progress and stop countdown
     if (faces.isEmpty) {
       _resetProgress();
       return;
     }
 
     final face = faces.first;
-    final previewSize = _cameraController!.value.previewSize!;
 
-    final faceCenter = face.boundingBox.center;
-    final previewCenter = Offset(image.width / 2, image.height / 2);
+    // Get face bounding box - coordinates are in the InputImage coordinate system
+    final faceBox = face.boundingBox;
+    final faceCenter = faceBox.center;
+    final faceWidth = faceBox.width;
+    final faceHeight = faceBox.height;
 
-    final distance = (faceCenter - previewCenter).distance;
-    final allowedRadius = previewSize.width * 0.3;
+    // Get the input image size (accounts for rotation)
+    final inputImageSize = inputImage.metadata?.size ?? Size(image.width.toDouble(), image.height.toDouble());
 
-    if (distance <= allowedRadius) {
-      _startProgress();
+    // IMPORTANT: The camera preview uses AspectRatio which may letterbox the image
+    // Face detection coordinates are relative to the full InputImage, not the visible preview
+    // The center calculation should use the actual image center
+
+    // Calculate the center of the INPUT IMAGE (where face detection happens)
+    final imageCenter = Offset(inputImageSize.width / 2, inputImageSize.height / 2);
+
+    // Calculate distance from center (circular check)
+    final dx = faceCenter.dx - imageCenter.dx;
+    final dy = faceCenter.dy - imageCenter.dy;
+    final distanceFromCenter = (dx * dx + dy * dy);
+
+    // Use a circular radius - 30% of smaller dimension (stricter for better centering)
+    final smallerDimension = inputImageSize.width < inputImageSize.height
+        ? inputImageSize.width
+        : inputImageSize.height;
+    final circleRadius = smallerDimension * 0.30; // Reduced from 35% to 30%
+    final allowedRadiusSquared = circleRadius * circleRadius;
+
+    // Also use rectangular check as fallback (more lenient)
+    final horizontalDistance = (faceCenter.dx - imageCenter.dx).abs();
+    final verticalDistance = (faceCenter.dy - imageCenter.dy).abs();
+    final allowedHorizontalOffset = inputImageSize.width * 0.25; // Reduced from 30% to 25%
+    final allowedVerticalOffset = inputImageSize.height * 0.25; // Reduced from 30% to 25%
+    final isWithinRect = horizontalDistance <= allowedHorizontalOffset &&
+        verticalDistance <= allowedVerticalOffset;
+
+    // Check if face center is within the circle OR rectangle (whichever is more lenient)
+    final isWithinCircle = distanceFromCenter <= allowedRadiusSquared;
+    final isCentered = isWithinCircle || isWithinRect;
+
+    // Check if face is fully visible (not cut off at edges)
+    // Face should be at least 3% away from all edges to ensure full face is visible
+    final edgeMargin = smallerDimension * 0.03; // Increased from 1% to 3% for stricter check
+    final isFullyVisible = faceBox.left >= edgeMargin &&
+        faceBox.top >= edgeMargin &&
+        faceBox.right <= (inputImageSize.width - edgeMargin) &&
+        faceBox.bottom <= (inputImageSize.height - edgeMargin);
+
+    // Check if face size is reasonable (not too small or too large)
+    // Face should be between 8% and 50% of the smaller dimension
+    final minFaceSize = smallerDimension * 0.08; // Increased from 5% to 8%
+    final maxFaceSize = smallerDimension * 0.50; // Reduced from 65% to 50%
+    final isReasonableSize = (faceWidth >= minFaceSize && faceWidth <= maxFaceSize) &&
+        (faceHeight >= minFaceSize && faceHeight <= maxFaceSize);
+
+    // Check face aspect ratio - ensure it's a normal face (not too stretched)
+    final faceAspectRatio = faceWidth / faceHeight;
+    final isNormalAspectRatio = faceAspectRatio >= 0.6 && faceAspectRatio <= 1.4; // Stricter range
+
+    // Face is valid ONLY if: centered AND fully visible AND reasonable size AND normal aspect ratio
+    // ALL conditions must be met - this ensures full face is detected
+    final isValidFace = isCentered &&
+        isFullyVisible && // Must be fully visible (not cut off)
+        isReasonableSize && // Must have reasonable size
+        isNormalAspectRatio; // Must have normal proportions
+
+    // Debug: Print face detection info
+    // print('Face detected - Center: $faceCenter, Image Center: $imageCenter');
+    // print('Distance from center: ${distanceFromCenter}, Allowed: $allowedRadiusSquared');
+    // print('Face size: $faceWidth x $faceHeight, Min: $minFaceSize');
+    // print('Is within circle: $isWithinCircle, Is reasonable size: $isReasonableSize');
+
+    // Start or continue progress if face is valid
+    if (isValidFace) {
+      if (!_isCapturing && _progressTimer == null) {
+        _startProgress();
+      }
+      // If timer is already running, let it continue
     } else {
+      // Face is not valid - always reset progress and stop countdown
       _resetProgress();
     }
   }
@@ -190,8 +258,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
       if (newProgress >= 1.0) {
         timer.cancel();
-        if (mounted) {
-          _captureAndNavigate(ref);
+        // Capture the image when countdown completes
+        if (mounted && _storedRef != null) {
+          _captureAndNavigate(_storedRef!);
         }
       }
     });
@@ -309,7 +378,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
               ),
             ),
           ),
-          // Countdown in the center of the screen
+          // Beautiful countdown in the center of the screen
           if (_progress > 0 && _progress < 1.0)
             Center(
               child: Builder(
@@ -319,14 +388,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                       (_progress * _progressDuration.inSeconds))
                       .ceil()
                       .clamp(1, _progressDuration.inSeconds);
-                  return Text(
-                    "$remainingSeconds",
-                    textAlign: TextAlign.center,
-                    style: CustomFonts.white50w600.copyWith(
-                      fontSize: 80.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  );
+                  return _buildCountdownWidget(remainingSeconds);
                 },
               ),
             ),
@@ -366,6 +428,64 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     );
   }
 
+  Widget _buildCountdownWidget(int count) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.8, end: 1.0),
+      duration: Duration(milliseconds: 300),
+      curve: Curves.elasticOut,
+      builder: (context, scale, child) {
+        return AnimatedContainer(
+          duration: Duration(milliseconds: 200),
+          width: 140.w,
+          height: 140.w,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xff88E3FB),
+                Color(0xffE7C6E8),
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Color(0xff88E3FB).withOpacity(0.6),
+                blurRadius: 40,
+                spreadRadius: 8,
+              ),
+              BoxShadow(
+                color: Color(0xffE7C6E8).withOpacity(0.6),
+                blurRadius: 40,
+                spreadRadius: 8,
+              ),
+            ],
+          ),
+          child: Transform.scale(
+            scale: scale,
+            child: Center(
+              child: Text(
+                "$count",
+                style: CustomFonts.white50w600.copyWith(
+                  fontSize: 100.sp,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 2,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(0.4),
+                      blurRadius: 15,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildCameraView() {
     // If we have a captured image, show it instead of camera preview
     if (_capturedImage != null) {
@@ -374,28 +494,57 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       );
     }
 
+    // Get camera preview size
+    final previewSize = _cameraController!.value.previewSize!;
+    final aspectRatio = previewSize.height / previewSize.width;
+    
+    // Calculate safe top padding
+    final topPadding = MediaQuery.of(context).padding.top;
+    // Use percentage of canvas width instead of screen width to ensure it fits
+    // The circle radius will be calculated as a percentage of the actual canvas width
+    final circleRadiusPercent = 0.50; // 50% of canvas width
+    // Position circle center at the top - use radius as percentage of canvas width
+    // Since radius is 50% of width, position center at top + small padding
+    final circleCenterYPercent = 0.29; // 10% from top of canvas (near the top)
+
     return SizedBox.expand(
-      child: FittedBox(
-        fit: BoxFit.cover,
-        child: SizedBox(
-          width: _cameraController!.value.previewSize!.height,
-          height: _cameraController!.value.previewSize!.width,
-          child: Stack(
-            children: [
-              CameraPreview(_cameraController!),
-              // Dark overlay with transparent center
-              CustomPaint(
-                painter: TintOverlayPainter(centerRadius: 0.6.sw),
-                child: const SizedBox.expand(),
-              ),
-              // Progress ring
-              Center(
-                child: CustomPaint(
-                  painter: FaceScanPainter(progress: _progress),
-                  child: SizedBox(width: 1.4.sw, height: 1.4.sw),
-                ),
-              ),
-            ],
+      child: Center(
+        child: AspectRatio(
+          aspectRatio: aspectRatio,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // Calculate actual circle radius based on canvas width
+              final canvasWidth = constraints.maxWidth;
+              final canvasHeight = constraints.maxHeight;
+              final circleRadius = canvasWidth * circleRadiusPercent;
+              final circleCenterY = canvasHeight * circleCenterYPercent;
+              
+              return Stack(
+                children: [
+                  CameraPreview(_cameraController!),
+                  // Dark overlay with transparent circle cutout at top
+                  CustomPaint(
+                    painter: TintOverlayPainter(
+                      centerRadius: circleRadius,
+                      centerY: circleCenterY,
+                    ),
+                    child: const SizedBox.expand(),
+                  ),
+                  // Progress ring - matches the circle cutout size, positioned at top
+                  Positioned(
+                    top: circleCenterY - circleRadius, // Align top of ring with top of circle
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: CustomPaint(
+                        painter: FaceScanPainter(progress: _progress),
+                        child: SizedBox(width: circleRadius * 2, height: circleRadius * 2),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
@@ -406,13 +555,15 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 // Custom painter for the tinted overlay with transparent center
 class TintOverlayPainter extends CustomPainter {
   final double centerRadius;
+  final double? centerY; // Optional Y position, defaults to center if null
 
-  TintOverlayPainter({required this.centerRadius});
+  TintOverlayPainter({required this.centerRadius, this.centerY});
 
   @override
   void paint(Canvas canvas, Size size) {
     final rect = Offset.zero & size;
-    final center = Offset(size.width / 2, size.height / 2);
+    // Use provided centerY or default to center of screen
+    final center = Offset(size.width / 2, centerY ?? size.height / 2);
 
     // Create a path for the entire screen
     final path = Path()..addRect(rect);
@@ -430,14 +581,23 @@ class TintOverlayPainter extends CustomPainter {
 
     // Draw the dark overlay
     final paint = Paint()
-      ..color = Colors.black.withOpacity(0.6)
+      ..color = Colors.black.withOpacity(0.7) // Increased opacity for better visibility
       ..style = PaintingStyle.fill;
 
     canvas.drawPath(overlayPath, paint);
+
+    // Draw a border around the circle cutout for better visibility
+    final borderPaint = Paint()
+      ..color = Colors.white.withOpacity(0.5)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+
+    canvas.drawCircle(center, centerRadius, borderPaint);
   }
 
   @override
   bool shouldRepaint(TintOverlayPainter oldDelegate) {
-    return oldDelegate.centerRadius != centerRadius;
+    return oldDelegate.centerRadius != centerRadius ||
+        oldDelegate.centerY != centerY;
   }
 }
