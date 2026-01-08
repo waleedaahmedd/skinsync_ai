@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:skinsync_ai/models/dummy_list_model.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
+import 'package:skinsync_ai/widgets/custom_clinic_grid_view_title.dart';
 import 'package:skinsync_ai/widgets/custom_grid_view_tile.dart';
 import 'package:skinsync_ai/widgets/frosted_container.dart';
 
@@ -79,16 +80,15 @@ class ExploreClinicsScreen extends ConsumerWidget {
                     mainAxisSpacing: 18.h,
                     childAspectRatio: 0.7,
                   ),
-                  itemCount: subSections.length,
+                  itemCount: 6,
                   itemBuilder: (context, index) {
-                    return CustomGridViewTile(
+                    return CustomClinicGridViewTile(
                       onTap: () {
                         Navigator.pushNamed(
                           context,
                           ClinicsDetailScreen.routeName,
                         );
                       },
-                      title: subSections[index].title,
                     );
                   },
                 ),
