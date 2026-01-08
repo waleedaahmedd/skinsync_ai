@@ -23,63 +23,58 @@ class TreatmentsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    return PopScope(
-      onPopInvokedWithResult: (result, _) {
-        ref.read(checkoutViewModel.notifier).clearState();
-      },
-      child: Scaffold(
-        appBar: AppBarWithActionIcon(
-          title: Row(
-            children: [
-              Icon(Iconsax.location, size: 20.sp, color: Colors.black),
-              SizedBox(width: 6.w),
-              Text("Hello, Burak!", style: CustomFonts.black30w600),
-            ],
-          ),
-          subTitle: Text(
-            "195 Karlie Brooks, Anderson",
-            style: CustomFonts.grey18w400,
-          ),
-          action: GreyContainer(
-            icon: Icons.notifications_none_outlined,
-            onTap: () {},
-          ),
-        ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      appBar: AppBarWithActionIcon(
+        title: Row(
           children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 15.h),
-                  TextField(
-                    style: CustomFonts.black18w400,
-
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      hintText: "Search treatment",
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // SizedBox(height: 15.h),
-            Expanded(
-              child: Consumer(
-                builder: (context, ref, _) {
-                  return
-                  // ref.watch(treatmentViewModel)
-                  //   ?
-                  TreatmentMainScreen()
-                  // : SelectSectionScreen()
-                  ;
-                },
-              ),
-            ),
+            Icon(Iconsax.location, size: 20.sp, color: Colors.black),
+            SizedBox(width: 6.w),
+            Text("Hello, Burak!", style: CustomFonts.black30w600),
           ],
         ),
+        subTitle: Text(
+          "195 Karlie Brooks, Anderson",
+          style: CustomFonts.grey18w400,
+        ),
+        action: GreyContainer(
+          icon: Icons.notifications_none_outlined,
+          onTap: () {},
+        ),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 30.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 15.h),
+                TextField(
+                  style: CustomFonts.black18w400,
+
+                  decoration: InputDecoration(
+                    prefixIcon: Icon(Icons.search),
+                    hintText: "Search treatment",
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // SizedBox(height: 15.h),
+          Expanded(
+            child: Consumer(
+              builder: (context, ref, _) {
+                return
+                // ref.watch(treatmentViewModel)
+                //   ?
+                TreatmentMainScreen()
+                // : SelectSectionScreen()
+                ;
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
