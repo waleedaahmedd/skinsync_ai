@@ -19,6 +19,7 @@ class ScanFaceButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () {
+        ref.read(checkoutViewModel.notifier).clearState();
         Navigator.of(context).pushNamed(ScanYourFaceScreen.routeName);
       },
       child: Container(

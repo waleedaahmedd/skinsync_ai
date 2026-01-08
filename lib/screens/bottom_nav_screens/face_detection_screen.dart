@@ -333,139 +333,131 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     // Keep the provider alive by watching it
     ref.watch(faceScanProvider);
 
-    return PopScope(
-      onPopInvokedWithResult: (result, _) {
-        ref.read(checkoutViewModel.notifier).clearState();
-      },
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: Stack(
-          children: [
-            if (_cameraController != null) _buildCameraView(),
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          if (_cameraController != null) _buildCameraView(),
 
-            // Consumer(
-            //   builder: (_, ref, _) {
-            //     final isCapturing = ref.watch(
-            //       faceScanProvider.select((state) => state.isCapturing),
-            //     );
-            //     if (isCapturing) return const SizedBox.shrink();
+          // Consumer(
+          //   builder: (_, ref, _) {
+          //     final isCapturing = ref.watch(
+          //       faceScanProvider.select((state) => state.isCapturing),
+          //     );
+          //     if (isCapturing) return const SizedBox.shrink();
 
-            //     return Align(
-            //       alignment: Alignment.topRight,
-            //       child: Padding(
-            //         padding: EdgeInsets.only(top: 40.h, right: 20.w),
-            //         child: GestureDetector(
-            //           onTap: () {
-            //             ref.read(faceScanProvider.notifier).toggleFlash();
-            //             if (_cameraController != null) {
-            //               _cameraController!.setFlashMode(
-            //                 ref.read(faceScanProvider).flash
-            //                     ? FlashMode.torch
-            //                     : FlashMode.off,
-            //               );
-            //             }
-            //           },
-            //           child: Consumer(
-            //             builder: (_, ref, child) {
-            //               final flash = ref.watch(
-            //                 faceScanProvider.select((state) => state.flash),
-            //               );
-            //               return Icon(
-            //                 flash ? Icons.flash_on : Icons.flash_off,
-            //                 color: Colors.white,
-            //                 size: 30.sp,
-            //               );
-            //             },
-            //           ),
-            //         ),
-            //       ),
-            //     );
-            //   },
-            // ),
-            Positioned(
-              top: 10.h,
-              left: 20.w,
-              child: SafeArea(
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    // _captureAndNavigate();
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 6.h,
-                      horizontal: 18.w,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Text(
-                      "Cancel",
-                      textAlign: TextAlign.center,
-                      style: CustomFonts.white22w600,
-                    ),
+          //     return Align(
+          //       alignment: Alignment.topRight,
+          //       child: Padding(
+          //         padding: EdgeInsets.only(top: 40.h, right: 20.w),
+          //         child: GestureDetector(
+          //           onTap: () {
+          //             ref.read(faceScanProvider.notifier).toggleFlash();
+          //             if (_cameraController != null) {
+          //               _cameraController!.setFlashMode(
+          //                 ref.read(faceScanProvider).flash
+          //                     ? FlashMode.torch
+          //                     : FlashMode.off,
+          //               );
+          //             }
+          //           },
+          //           child: Consumer(
+          //             builder: (_, ref, child) {
+          //               final flash = ref.watch(
+          //                 faceScanProvider.select((state) => state.flash),
+          //               );
+          //               return Icon(
+          //                 flash ? Icons.flash_on : Icons.flash_off,
+          //                 color: Colors.white,
+          //                 size: 30.sp,
+          //               );
+          //             },
+          //           ),
+          //         ),
+          //       ),
+          //     );
+          //   },
+          // ),
+          Positioned(
+            top: 10.h,
+            left: 20.w,
+            child: SafeArea(
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                  // _captureAndNavigate();
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 6.h,
+                    horizontal: 18.w,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Text(
+                    "Cancel",
+                    textAlign: TextAlign.center,
+                    style: CustomFonts.white22w600,
                   ),
                 ),
               ),
             ),
-            // Countdown in the center of the screen
-            if (_progress > 0 && _progress < 1.0)
-              Center(
+          ),
+          // Countdown in the center of the screen
+          if (_progress > 0 && _progress < 1.0)
+            Center(
+              child: Builder(
+                builder: (context) {
+                  final remainingSeconds =
+                      (_progressDuration.inSeconds -
+                              (_progress * _progressDuration.inSeconds))
+                          .ceil()
+                          .clamp(1, _progressDuration.inSeconds);
+                  return Text(
+                    "$remainingSeconds",
+                    textAlign: TextAlign.center,
+                    style: CustomFonts.white50w600.copyWith(
+                      fontSize: 100.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                },
+              ),
+            ),
+          Positioned(
+            bottom: 80,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 34.h, horizontal: 52.w),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
                 child: Builder(
                   builder: (context) {
-                    final remainingSeconds =
-                        (_progressDuration.inSeconds -
-                                (_progress * _progressDuration.inSeconds))
-                            .ceil()
-                            .clamp(1, _progressDuration.inSeconds);
+                    String message;
+                    if (_isCapturing) {
+                      message = "Hold Still";
+                    } else {
+                      message = "Align your face";
+                    }
+
                     return Text(
-                      "$remainingSeconds",
+                      message,
                       textAlign: TextAlign.center,
-                      style: CustomFonts.white50w600.copyWith(
-                        fontSize: 100.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: CustomFonts.black28w600,
                     );
                   },
                 ),
               ),
-            Positioned(
-              bottom: 80,
-              left: 0,
-              right: 0,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 34.h,
-                    horizontal: 52.w,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: Builder(
-                    builder: (context) {
-                      String message;
-                      if (_isCapturing) {
-                        message = "Hold Still";
-                      } else {
-                        message = "Align your face";
-                      }
-
-                      return Text(
-                        message,
-                        textAlign: TextAlign.center,
-                        style: CustomFonts.black28w600,
-                      );
-                    },
-                  ),
-                ),
-              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

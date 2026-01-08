@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
@@ -9,6 +10,8 @@ import 'package:skinsync_ai/screens/bottom_nav_screens/home_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/progress_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
+
+import '../../view_models/checkout_view_model.dart';
 
 class BottomNavScreen extends StatefulWidget {
   const BottomNavScreen({super.key});
@@ -35,35 +38,38 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
       body: Stack(
         children: [
           _screens[_currentIndex],
-           Positioned(
+          Positioned(
             bottom: 0,
-             child: ClipRRect(
-               borderRadius: BorderRadius.circular(20),
-               child: BackdropFilter(
-                           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                           child: Container(
-                            height: 98.h,
-                             padding: EdgeInsets.symmetric(vertical: 21.h, horizontal: 30.w),
-                              width: MediaQuery.of(context).size.width,
-                             decoration: BoxDecoration(
-                               color: Colors.transparent,
-                               borderRadius: BorderRadius.circular(20),
-                               border: Border.all(color: Colors.white.withOpacity(0.3)),
-                             ),
-                             child: Row(
-                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                               children: [
-                                 _buildNavItem(SvgAssets.home, 0, 'Home'),
-                                 _buildNavItem(SvgAssets.treatment, 1, 'Treatments'),
-                                 _buildNavItem(SvgAssets.appointment, 2, 'Appointments'),
-                                 _buildNavItem(SvgAssets.progress, 3, 'Progress'),
-                                 _buildNavItem(SvgAssets.myProfile, 4, 'Profile'),
-                               ],
-                             ),
-                           ),
-               ),
-             ),
-           ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                child: Container(
+                  height: 98.h,
+                  padding: EdgeInsets.symmetric(
+                    vertical: 21.h,
+                    horizontal: 30.w,
+                  ),
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.white.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildNavItem(SvgAssets.home, 0, 'Home'),
+                      _buildNavItem(SvgAssets.treatment, 1, 'Treatments'),
+                      _buildNavItem(SvgAssets.appointment, 2, 'Appointments'),
+                      _buildNavItem(SvgAssets.progress, 3, 'Progress'),
+                      _buildNavItem(SvgAssets.myProfile, 4, 'Profile'),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -71,31 +77,38 @@ class _BottomNavScreenState extends State<BottomNavScreen> {
 
   Widget _buildNavItem(String asset, int index, String label) {
     bool isSelected = _currentIndex == index;
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _currentIndex = index;
-        });
-      },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            asset,
-            color: isSelected ? Colors.black : Colors.grey.shade600,
-            height: 24,
-            width: 24,
+    return Consumer(
+      builder: (context, ref, _) {
+        return GestureDetector(
+          onTap: () {
+            if (index == 1) {
+              ref.read(checkoutViewModel.notifier).clearState();
+            }
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SvgPicture.asset(
+                asset,
+                color: isSelected ? Colors.black : Colors.grey.shade600,
+                height: 24,
+                width: 24,
+              ),
+              SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isSelected ? Colors.black : Colors.grey.shade600,
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12,
-              color: isSelected ? Colors.black : Colors.grey.shade600,
-            ),
-          )
-        ],
-      ),
+        );
+      },
     );
   }
 }

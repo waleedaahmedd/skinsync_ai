@@ -21,40 +21,36 @@ class ExploreClinicsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
-    return PopScope(
-      onPopInvokedWithResult: (result, _) {
-        ref.read(checkoutViewModel.notifier).clearState();
-      },
-      child: Scaffold(
-        appBar: AppBarWithActionIcon(
-          title: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.location_on_outlined, color: CustomColors.blackColor),
-              Text("New York", style: CustomFonts.black30w600),
-            ],
-          ),
-          subTitle: Text(
-            "195 Karlie Brooks, Anderson",
-            style: CustomFonts.grey18w400,
-          ),
-          action: GreyContainer(
-            icon: Icons.notifications_none_outlined,
-            onTap: () {},
-          ),
+    return Scaffold(
+      appBar: AppBarWithActionIcon(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.location_on_outlined, color: CustomColors.blackColor),
+            Text("New York", style: CustomFonts.black30w600),
+          ],
         ),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30.w),
-          child: Column(
-            children: [
-              TextField(
-                style: CustomFonts.black18w400,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.search),
-                  hintText: "Search  doctor, injector, treatment & clinic",
-                ),
+        subTitle: Text(
+          "195 Karlie Brooks, Anderson",
+          style: CustomFonts.grey18w400,
+        ),
+        action: GreyContainer(
+          icon: Icons.notifications_none_outlined,
+          onTap: () {},
+        ),
+      ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 30.w),
+        child: Column(
+          children: [
+            TextField(
+              style: CustomFonts.black18w400,
+              decoration: InputDecoration(
+                prefixIcon: Icon(Icons.search),
+                hintText: "Search  doctor, injector, treatment & clinic",
               ),
-              SizedBox(height: 15.h),
+            ),
+            SizedBox(height: 15.h),
 
               Row(
                 children: [
