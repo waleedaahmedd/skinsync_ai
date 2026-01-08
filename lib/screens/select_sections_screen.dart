@@ -127,6 +127,11 @@ class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
                               child: CustomGridViewTile(
                                 onTap: () {
                                   if (section[index].isSidearea == true) {
+                                    ref
+                                        .read(checkoutViewModel.notifier)
+                                        .updateState(
+                                          treatmentAreaId: section[index].id,
+                                        );
                                     final treatmentID = ref
                                         .read(treatmentViewModel.notifier)
                                         .treatmentId;
@@ -137,13 +142,23 @@ class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
                                           sectionId: treatmentID ?? 0,
                                           subSectionId: selectSectionID ?? 0,
                                         );
+                                    Navigator.pushNamed(
+                                      context,
+                                      SelectSubSectionsScreen.routeName,
+                                    );
+                                  } else {
+                                    ref
+                                        .read(checkoutViewModel.notifier)
+                                        .updateState(
+                                          treatmentAreaId: section[index].id,
+                                        );
+                                    Navigator.pushNamed(
+                                      context,
+                                      ref
+                                          .read(checkoutViewModel.notifier)
+                                          .navigateTo(),
+                                    );
                                   }
-                                  // ref.read(checkoutViewModel.notifier).updateState(treatmentAreaId: treatmentID);
-
-                                  Navigator.pushNamed(
-                                    context,
-                                    SelectSubSectionsScreen.routeName,
-                                  );
                                 },
                                 title: section![index].name,
                               ),

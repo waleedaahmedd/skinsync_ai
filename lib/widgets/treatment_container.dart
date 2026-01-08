@@ -25,6 +25,9 @@ class TreatmentContainer extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             if (treatments.isArea == true) {
+               ref
+                  .read(checkoutViewModel.notifier)
+                  .updateState(treatmentId: treatments.id);
               ref
                   .read(treatmentViewModel.notifier)
                   .getSelectSectionApi(sectionId: treatments.id ?? 0);

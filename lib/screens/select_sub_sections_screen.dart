@@ -129,6 +129,8 @@ class _SelectSectionsScreenState extends State<SelectSubSectionsScreen> {
                             child: FadeInAnimation(
                               child: CustomGridViewTile(
                                 onTap: () {
+                                  
+                                  ref.read(checkoutViewModel.notifier).updateState(treatmentAreaId: subSection?[index].id);
                                   Navigator.pushNamed(
                                     context,
                                     ref
