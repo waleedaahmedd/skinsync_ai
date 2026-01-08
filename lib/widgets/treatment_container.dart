@@ -24,6 +24,9 @@ class TreatmentContainer extends StatelessWidget {
       builder: (context, ref, _) {
         return GestureDetector(
           onTap: () {
+            ref
+                .read(checkoutViewModel.notifier)
+                .updateState(treatmentId: treatments.id);
             if (treatments.isArea == true) {
               ref
                   .read(treatmentViewModel.notifier)
@@ -31,9 +34,6 @@ class TreatmentContainer extends StatelessWidget {
               ref.read(treatmentViewModel.notifier).treatmentId = treatments.id;
               Navigator.pushNamed(context, SelectSectionsScreen.routeName);
             } else {
-              ref
-                  .read(checkoutViewModel.notifier)
-                  .updateState(treatmentId: treatments.id);
               Navigator.pushNamed(
                 context,
                 ref.read(checkoutViewModel.notifier).navigateTo(),

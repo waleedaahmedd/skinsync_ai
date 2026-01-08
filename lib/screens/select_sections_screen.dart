@@ -126,6 +126,11 @@ class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
                             child: FadeInAnimation(
                               child: CustomGridViewTile(
                                 onTap: () {
+                                  ref
+                                      .read(checkoutViewModel.notifier)
+                                      .updateState(
+                                        treatmentAreaId: section[index].id,
+                                      );
                                   if (section[index].isSidearea == true) {
                                     final treatmentID = ref
                                         .read(treatmentViewModel.notifier)
@@ -137,13 +142,18 @@ class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
                                           sectionId: treatmentID ?? 0,
                                           subSectionId: selectSectionID ?? 0,
                                         );
+                                    Navigator.pushNamed(
+                                      context,
+                                      SelectSubSectionsScreen.routeName,
+                                    );
+                                  } else {
+                                    Navigator.pushNamed(
+                                      context,
+                                      ref
+                                          .read(checkoutViewModel.notifier)
+                                          .navigateTo(),
+                                    );
                                   }
-                                  // ref.read(checkoutViewModel.notifier).updateState(treatmentAreaId: treatmentID);
-
-                                  Navigator.pushNamed(
-                                    context,
-                                    SelectSubSectionsScreen.routeName,
-                                  );
                                 },
                                 title: section![index].name,
                               ),

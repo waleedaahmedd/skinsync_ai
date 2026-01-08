@@ -10,6 +10,7 @@ import 'package:skinsync_ai/utills/image_utills.dart';
 
 import '../../utills/custom_fonts.dart';
 import '../../utills/ml_kit_utills.dart';
+import '../../view_models/checkout_view_model.dart';
 import '../../view_models/face_scan_provider.dart';
 import '../../widgets/face_scan_radial_widget.dart';
 import '../ar_face_model_Preview_screen.dart';
@@ -35,7 +36,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   bool _isCapturing = false;
   Timer? _progressTimer;
   static const Duration _progressDuration = Duration(seconds: 3);
-  
+
   // Face detection guidance state
   String _guidanceMessage = "Position your face in the circle";
   bool _hasFaceDetected = false;
@@ -209,7 +210,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
         isFullyVisible && // Must be fully visible (not cut off)
         isReasonableSize && // Must have reasonable size
         isNormalAspectRatio; // Must have normal proportions
-    
+
     // Determine guidance message based on face detection status
     String guidanceMessage = "Position your face in the circle";
     if (faceWidth < minFaceSize || faceHeight < minFaceSize) {
@@ -225,7 +226,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     } else {
       guidanceMessage = "Position your face in the circle";
     }
-    
+
     // Update guidance message in state
     if (mounted) {
       setState(() {
@@ -337,7 +338,11 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     await ref.read(faceScanProvider.notifier).setCapturedImage(finalImage);
 
     if (!mounted) return;
-    Navigator.pushReplacementNamed(context, ArFaceModelPreviewScreen.routeName);
+
+    Navigator.pushReplacementNamed(
+      context,
+      ref.read(checkoutViewModel.notifier).navigateTo(),
+    );
   }
 
   @override

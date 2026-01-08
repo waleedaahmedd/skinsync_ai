@@ -20,8 +20,8 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
 
   void updateState({
     int? treatmentId,
-    String? treatmentAreaId,
-    String? treatmentSubAreaId,
+    int? treatmentAreaId,
+    int? treatmentSubAreaId,
     String? clinicId,
     String? drId,
     String? appointmentDate,
@@ -70,8 +70,8 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
 
 class CheckoutState {
   final int? treatmentId;
-  final String? treatmentAreaId;
-  final String? treatmentSubAreaId;
+  final int? treatmentAreaId;
+  final int? treatmentSubAreaId;
   final String? clinicId;
   final String? drId;
   final String? appointmentDate;
@@ -91,8 +91,8 @@ class CheckoutState {
 
   CheckoutState copyWith({
     int? treatmentId,
-    String? treatmentAreaId,
-    String? treatmentSubAreaId,
+    int? treatmentAreaId,
+    int? treatmentSubAreaId,
     String? clinicId,
     String? drId,
     String? appointmentDate,
