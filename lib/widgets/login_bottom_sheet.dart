@@ -68,59 +68,59 @@ void loginBottomSheet(BuildContext context) {
                         ),
                       ),
                       SizedBox(height: 18.h),
-                      SizedBox(
-                        width: double.infinity,
-                        child: InkWell(
-                          onTap: () {
-                            ref.read(authViewModel.notifier).clearData();
-                            // Navigator.pushNamed(context, loginScreen);
-                            Navigator.of(context).pushReplacement(
-                              PageRouteBuilder(
-                                pageBuilder:
-                                    (context, animation, secondaryAnimation) =>
-                                        const LoginScreen(
-                                          loginWith: LoginProviders.phone,
-                                        ),
-                                transitionsBuilder:
-                                    (
-                                      context,
-                                      animation,
-                                      secondaryAnimation,
-                                      child,
-                                    ) {
-                                      // Use ease-in curve
-                                      var curve = Curves.easeIn;
-                                      var curvedAnimation = CurvedAnimation(
-                                        parent: animation,
-                                        curve: curve,
-                                      );
-                                      return FadeTransition(
-                                        opacity: curvedAnimation,
-                                        child: child,
-                                      );
-                                    },
-                                transitionDuration: const Duration(
-                                  milliseconds: 500,
-                                ),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 16.h),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.r),
-                              color: Colors.black,
-                            ),
-                            child: Center(
-                              child: Text(
-                                "Continue With Phone",
-                                style: CustomFonts.white18w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10.h),
+                      // SizedBox(
+                      //   width: double.infinity,
+                      //   child: InkWell(
+                      //     onTap: () {
+                      //       ref.read(authViewModel.notifier).clearData();
+                      //       // Navigator.pushNamed(context, loginScreen);
+                      //       Navigator.of(context).pushReplacement(
+                      //         PageRouteBuilder(
+                      //           pageBuilder:
+                      //               (context, animation, secondaryAnimation) =>
+                      //                   const LoginScreen(
+                      //                     loginWith: LoginProviders.phone,
+                      //                   ),
+                      //           transitionsBuilder:
+                      //               (
+                      //                 context,
+                      //                 animation,
+                      //                 secondaryAnimation,
+                      //                 child,
+                      //               ) {
+                      //                 // Use ease-in curve
+                      //                 var curve = Curves.easeIn;
+                      //                 var curvedAnimation = CurvedAnimation(
+                      //                   parent: animation,
+                      //                   curve: curve,
+                      //                 );
+                      //                 return FadeTransition(
+                      //                   opacity: curvedAnimation,
+                      //                   child: child,
+                      //                 );
+                      //               },
+                      //           transitionDuration: const Duration(
+                      //             milliseconds: 500,
+                      //           ),
+                      //         ),
+                      //       );
+                      //     },
+                      //     child: Container(
+                      //       padding: EdgeInsets.symmetric(vertical: 16.h),
+                      //       decoration: BoxDecoration(
+                      //         borderRadius: BorderRadius.circular(10.r),
+                      //         color: Colors.black,
+                      //       ),
+                      //       child: Center(
+                      //         child: Text(
+                      //           "Continue With Phone",
+                      //           style: CustomFonts.white18w600,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      // SizedBox(height: 10.h),
                       SizedBox(
                         width: double.infinity,
                         child: InkWell(
