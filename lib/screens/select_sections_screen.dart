@@ -126,12 +126,12 @@ class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
                             child: FadeInAnimation(
                               child: CustomGridViewTile(
                                 onTap: () {
+                                  ref
+                                      .read(checkoutViewModel.notifier)
+                                      .updateState(
+                                        treatmentAreaId: section[index].id,
+                                      );
                                   if (section[index].isSidearea == true) {
-                                    ref
-                                        .read(checkoutViewModel.notifier)
-                                        .updateState(
-                                          treatmentAreaId: section[index].id,
-                                        );
                                     final treatmentID = ref
                                         .read(treatmentViewModel.notifier)
                                         .treatmentId;
@@ -147,11 +147,6 @@ class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
                                       SelectSubSectionsScreen.routeName,
                                     );
                                   } else {
-                                    ref
-                                        .read(checkoutViewModel.notifier)
-                                        .updateState(
-                                          treatmentAreaId: section[index].id,
-                                        );
                                     Navigator.pushNamed(
                                       context,
                                       ref
