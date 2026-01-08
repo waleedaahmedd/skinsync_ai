@@ -271,11 +271,11 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       }
 
       if (newProgress >= 1.0) {
-        // timer.cancel();
-        // // Capture the image when countdown completes
-        // if (mounted && _storedRef != null) {
+        timer.cancel();
+        // Capture the image when countdown completes
+        if (mounted && _storedRef != null) {
           _captureAndNavigate(_storedRef!);
-//}
+        }
       }
     });
   }
