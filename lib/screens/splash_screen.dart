@@ -30,44 +30,38 @@ class _SplashScreenState extends State<SplashScreen> {
       });
 
       await Future.delayed(Duration(milliseconds: _duration - 800));
-       Navigator.pushNamedAndRemoveUntil(
+
+      if (mounted) {
+        bool? isLoggedIn = SharedPref().readBool('isLogin') ?? false;
+        if (isLoggedIn) {
+          Navigator.pushNamedAndRemoveUntil(
             context,
             FaceScanScreen.routeName,
             (Route<dynamic> route) => false,
           );
-
-      // if (mounted) {
-     
-      //    bool? isLoggedIn = SharedPref().readBool('isLogin') ?? false;
-      //   if (isLoggedIn) {
-      //     Navigator.pushNamedAndRemoveUntil(
-      //       context,
-      //       FaceScanScreen.routeName,
-      //       (Route<dynamic> route) => false,
-      //     );
-      //   } else {
-      //     Navigator.of(context).pushReplacement(
-      //       PageRouteBuilder(
-      //         pageBuilder: (context, animation, secondaryAnimation) =>
-      //             const GetStartedScreen(),
-      //         transitionsBuilder:
-      //             (context, animation, secondaryAnimation, child) {
-      //               // Use ease-in curve
-      //               var curve = Curves.easeIn;
-      //               var curvedAnimation = CurvedAnimation(
-      //                 parent: animation,
-      //                 curve: curve,
-      //               );
-      //               return FadeTransition(
-      //                 opacity: curvedAnimation,
-      //                 child: child,
-      //               );
-      //             },
-      //         transitionDuration: const Duration(milliseconds: 900),
-      //       ),
-      //     );
-      //   }
-      // }
+        } else {
+          Navigator.of(context).pushReplacement(
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  const GetStartedScreen(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    // Use ease-in curve
+                    var curve = Curves.easeIn;
+                    var curvedAnimation = CurvedAnimation(
+                      parent: animation,
+                      curve: curve,
+                    );
+                    return FadeTransition(
+                      opacity: curvedAnimation,
+                      child: child,
+                    );
+                  },
+              transitionDuration: const Duration(milliseconds: 900),
+            ),
+          );
+        }
+      }
     });
   }
 
