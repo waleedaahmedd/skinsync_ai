@@ -52,6 +52,7 @@ dependencies:
   flutter_riverpod: ^3.0.3
   flutter_staggered_animations: ^1.1.1
   image_picker: ^1.2.1
+  percent_indicator: ^4.2.5
 
 
 
