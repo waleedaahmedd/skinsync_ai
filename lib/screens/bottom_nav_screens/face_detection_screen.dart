@@ -9,6 +9,7 @@ import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:skinsync_ai/utills/image_utills.dart';
 
 import '../../utills/custom_fonts.dart';
+import '../../utills/face_detector_painter.dart';
 import '../../utills/ml_kit_utills.dart';
 import '../../view_models/checkout_view_model.dart';
 import '../../view_models/face_scan_provider.dart';
@@ -40,6 +41,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   // Face detection guidance state
   String _guidanceMessage = "Position your face in the circle";
   bool _hasFaceDetected = false;
+  
+  // Face bounding box painter
+  CustomPaint? _faceBoundingBoxPaint;
+  List<Face> _detectedFaces = [];
 
   // Store ref for use in callbacks
   WidgetRef? _storedRef;
@@ -131,6 +136,33 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     // Detect faces in the full image
     final faces = await _faceDetector.processImage(inputImage);
 
+    // Update face bounding box painter
+    // Use the actual camera preview size for accurate coordinate mapping
+    final previewSize = _cameraController!.value.previewSize;
+    if (inputImage.metadata?.size != null && 
+        inputImage.metadata?.rotation != null && 
+        previewSize != null) {
+      if (mounted) {
+        setState(() {
+          _detectedFaces = faces;
+          if (faces.isNotEmpty) {
+            _faceBoundingBoxPaint = CustomPaint(
+              painter: FaceDetectorPainter(
+                faces: faces,
+                imageSize: inputImage.metadata!.size,
+                rotation: inputImage.metadata!.rotation,
+                cameraLensDirection: _cameraController!.description.lensDirection,
+                previewSize: Size(previewSize.width.toDouble(), previewSize.height.toDouble()),
+              ),
+              child: const SizedBox.expand(),
+            );
+          } else {
+            _faceBoundingBoxPaint = null;
+          }
+        });
+      }
+    }
+
     // If no face detected, always reset progress and stop countdown
     if (faces.isEmpty) {
       _resetProgress();
@@ -158,6 +190,43 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     // Face detection coordinates are relative to the full InputImage, not the visible preview
     // The center calculation should use the actual image center
 
+    // Calculate the square area (lens square) in image coordinates
+    // Square is 50% of circle diameter, centered at circle center
+    // Circle center: 50% width, 29% height from top
+    // Circle radius: 42% of canvas width
+    // Square size: 50% of circle diameter = 42% of canvas width
+    // For simplicity, use image dimensions directly (42% of image width)
+    final squareCenterX = inputImageSize.width / 2.0; // 50% width
+    final squareCenterY = inputImageSize.height * 0.29; // 29% from top
+    final squareSize = inputImageSize.width * 0.42; // 42% of image width
+    final squareHalfSize = squareSize / 2.0;
+    
+    // Square bounds in image coordinates
+    final squareLeft = squareCenterX - squareHalfSize;
+    final squareRight = squareCenterX + squareHalfSize;
+    final squareTop = squareCenterY - squareHalfSize;
+    final squareBottom = squareCenterY + squareHalfSize;
+
+    // Check if face bounding box aligns with the square (lens area)
+    // Use very lenient tolerance for alignment - face should be mostly within square
+    final tolerance = squareSize * 0.40; // 40% tolerance for alignment (very lenient)
+    
+    // Check if face center is within the square area (with tolerance)
+    final faceCenterInSquare = faceCenter.dx >= (squareLeft - tolerance) &&
+        faceCenter.dx <= (squareRight + tolerance) &&
+        faceCenter.dy >= (squareTop - tolerance) &&
+        faceCenter.dy <= (squareBottom + tolerance);
+    
+    // Check if face bounding box overlaps with square (simpler check)
+    // Face is considered aligned if center is in square AND bounding box intersects with square
+    final faceBoxIntersectsSquare = faceBox.right >= (squareLeft - tolerance) &&
+        faceBox.left <= (squareRight + tolerance) &&
+        faceBox.bottom >= (squareTop - tolerance) &&
+        faceBox.top <= (squareBottom + tolerance);
+    
+    // Face is aligned if center is in square OR bounding box intersects (more lenient)
+    final isFaceInSquare = faceCenterInSquare || faceBoxIntersectsSquare;
+
     // Calculate the center of the INPUT IMAGE (where face detection happens)
     final imageCenter = Offset(inputImageSize.width / 2, inputImageSize.height / 2);
 
@@ -184,6 +253,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     // Check if face center is within the circle OR rectangle (whichever is more lenient)
     final isWithinCircle = distanceFromCenter <= allowedRadiusSquared;
     final isCentered = isWithinCircle || isWithinRect;
+    
+    // Face is aligned with lens square if face overlaps with square and center is in square
+    final isAlignedWithSquare = isFaceInSquare;
 
     // Check if face is fully visible (not cut off at edges)
     // Face should be at least 3% away from all edges to ensure full face is visible
@@ -204,27 +276,27 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     final faceAspectRatio = faceWidth / faceHeight;
     final isNormalAspectRatio = faceAspectRatio >= 0.6 && faceAspectRatio <= 1.4; // Stricter range
 
-    // Face is valid ONLY if: centered AND fully visible AND reasonable size AND normal aspect ratio
-    // ALL conditions must be met - this ensures full face is detected
-    final isValidFace = isCentered &&
+    // Face is valid ONLY if: aligned with square AND fully visible AND reasonable size AND normal aspect ratio
+    // ALL conditions must be met - this ensures full face is detected and aligned with lens square
+    final isValidFace = isAlignedWithSquare && // Face must be aligned with lens square
         isFullyVisible && // Must be fully visible (not cut off)
         isReasonableSize && // Must have reasonable size
         isNormalAspectRatio; // Must have normal proportions
 
     // Determine guidance message based on face detection status
-    String guidanceMessage = "Position your face in the circle";
+    String guidanceMessage = "Position your face in the square";
     if (faceWidth < minFaceSize || faceHeight < minFaceSize) {
       guidanceMessage = "Move closer to the camera";
     } else if (faceWidth > maxFaceSize || faceHeight > maxFaceSize) {
       guidanceMessage = "Move further from the camera";
-    } else if (!isCentered) {
-      guidanceMessage = "Center your face in the circle";
+    } else if (!isAlignedWithSquare) {
+      guidanceMessage = "Align your face with the square";
     } else if (!isFullyVisible) {
       guidanceMessage = "Make sure your full face is visible";
     } else if (isValidFace) {
       guidanceMessage = "Hold still...";
     } else {
-      guidanceMessage = "Position your face in the circle";
+      guidanceMessage = "Position your face in the square";
     }
 
     // Update guidance message in state
@@ -574,6 +646,11 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
               return Stack(
                 children: [
                   CameraPreview(_cameraController!),
+                  // Face bounding box overlay - must be before dark overlay to be visible
+                  if (_faceBoundingBoxPaint != null)
+                    Positioned.fill(
+                      child: _faceBoundingBoxPaint!,
+                    ),
                   // Dark overlay with transparent circle cutout at top
                   CustomPaint(
                     painter: TintOverlayPainter(
@@ -581,18 +658,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                       centerY: circleCenterY,
                     ),
                     child: const SizedBox.expand(),
-                  ),
-                  // Progress ring - matches the circle cutout size, positioned at top
-                  Positioned(
-                    top: circleCenterY - circleRadius, // Align top of ring with top of circle
-                    left: 0,
-                    right: 0,
-                    child: Center(
-                      child: CustomPaint(
-                        painter: FaceScanPainter(progress: _progress),
-                        child: SizedBox(width: circleRadius * 2, height: circleRadius * 2),
-                      ),
-                    ),
                   ),
                   // Guidance text below the circle
                   Positioned(
@@ -668,6 +733,71 @@ class TintOverlayPainter extends CustomPainter {
       ..strokeWidth = 2.0;
 
     canvas.drawCircle(center, centerRadius, borderPaint);
+    
+    // Draw camera lens-style corner indicators only (no full border)
+    // Square size is 50% of circle diameter - smaller and centered
+    final squareSize = centerRadius * 2 * 0.50;
+    final squareRect = Rect.fromCenter(
+      center: center,
+      width: squareSize,
+      height: squareSize,
+    );
+    
+    // Corner indicator style - like camera viewfinder
+    final cornerLength = squareSize * 0.20; // Longer corners for better visibility
+    final cornerPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.0
+      ..strokeCap = StrokeCap.round;
+    
+    // Top-left corner (L-shaped)
+    canvas.drawLine(
+      Offset(squareRect.left, squareRect.top + cornerLength),
+      Offset(squareRect.left, squareRect.top),
+      cornerPaint,
+    );
+    canvas.drawLine(
+      Offset(squareRect.left, squareRect.top),
+      Offset(squareRect.left + cornerLength, squareRect.top),
+      cornerPaint,
+    );
+    
+    // Top-right corner (L-shaped)
+    canvas.drawLine(
+      Offset(squareRect.right - cornerLength, squareRect.top),
+      Offset(squareRect.right, squareRect.top),
+      cornerPaint,
+    );
+    canvas.drawLine(
+      Offset(squareRect.right, squareRect.top),
+      Offset(squareRect.right, squareRect.top + cornerLength),
+      cornerPaint,
+    );
+    
+    // Bottom-left corner (L-shaped)
+    canvas.drawLine(
+      Offset(squareRect.left, squareRect.bottom - cornerLength),
+      Offset(squareRect.left, squareRect.bottom),
+      cornerPaint,
+    );
+    canvas.drawLine(
+      Offset(squareRect.left, squareRect.bottom),
+      Offset(squareRect.left + cornerLength, squareRect.bottom),
+      cornerPaint,
+    );
+    
+    // Bottom-right corner (L-shaped)
+    canvas.drawLine(
+      Offset(squareRect.right - cornerLength, squareRect.bottom),
+      Offset(squareRect.right, squareRect.bottom),
+      cornerPaint,
+    );
+    canvas.drawLine(
+      Offset(squareRect.right, squareRect.bottom),
+      Offset(squareRect.right, squareRect.bottom - cornerLength),
+      cornerPaint,
+    );
   }
 
   @override
