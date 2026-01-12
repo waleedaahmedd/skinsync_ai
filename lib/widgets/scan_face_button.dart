@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:skinsync_ai/route_generator.dart';
-import 'package:skinsync_ai/screens/bottom_nav_screens/scan_your_face_screen.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/face_detection_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/checkout_view_model.dart';
@@ -20,7 +20,7 @@ class ScanFaceButton extends ConsumerWidget {
     return GestureDetector(
       onTap: () {
         ref.read(checkoutViewModel.notifier).clearState();
-        Navigator.of(context).pushNamed(ScanYourFaceScreen.routeName);
+        Navigator.of(context).pushNamed(FaceDetectionScreen.routeName);
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 14.h),

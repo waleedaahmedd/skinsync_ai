@@ -5,15 +5,19 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:skinsync_ai/utills/image_utills.dart';
 
+import '../../utills/assets.dart';
+import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
 import '../../utills/face_detector_painter.dart';
 import '../../utills/ml_kit_utills.dart';
 import '../../view_models/checkout_view_model.dart';
 import '../../view_models/face_scan_provider.dart';
 import '../../widgets/face_scan_radial_widget.dart';
+import '../../widgets/custom_app_bar.dart';
 import '../ar_face_model_Preview_screen.dart';
 import '../service_selection_screen.dart';
 
@@ -41,6 +45,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   // Face detection guidance state
   String _guidanceMessage = "Position your face in the circle";
   bool _hasFaceDetected = false;
+  bool _isValidFace = false; // Track if face is valid for green color
   
   // Face bounding box painter
   CustomPaint? _faceBoundingBoxPaint;
@@ -303,6 +308,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     if (mounted) {
       setState(() {
         _hasFaceDetected = true;
+        _isValidFace = isValidFace;
         _guidanceMessage = guidanceMessage;
       });
     }
@@ -327,6 +333,11 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     } else {
       // Face is not valid - always reset progress and stop countdown
       _resetProgress();
+      if (mounted) {
+        setState(() {
+          _isValidFace = false;
+        });
+      }
     }
   }
 
@@ -334,6 +345,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     if (mounted) {
       setState(() {
         _progress = 0.0;
+        _isValidFace = false;
       });
     }
     _progressTimer?.cancel();
@@ -432,6 +444,33 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        leading: Padding(
+          padding: EdgeInsets.only(left: 20.w),
+          child: SafeArea(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Container(
+                padding: EdgeInsets.all(8.w),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.6),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: Colors.white,
+                  size: 24.sp,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
       body: Stack(
         children: [
           if (_cameraController != null) _buildCameraView(),
@@ -475,78 +514,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
           //     );
           //   },
           // ),
-          Positioned(
-            top: 10.h,
-            left: 20.w,
-            child: SafeArea(
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pop();
-                  // _captureAndNavigate();
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 6.h,
-                    horizontal: 18.w,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: Text(
-                    "Cancel",
-                    textAlign: TextAlign.center,
-                    style: CustomFonts.white22w600,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          // Beautiful countdown in the center of the screen
-          if (_progress > 0 && _progress < 1.0)
-            Center(
-              child: Builder(
-                builder: (context) {
-                  final remainingSeconds =
-                  (_progressDuration.inSeconds -
-                      (_progress * _progressDuration.inSeconds))
-                      .ceil()
-                      .clamp(1, _progressDuration.inSeconds);
-                  return _buildCountdownWidget(remainingSeconds);
-                },
-              ),
-            ),
-          Positioned(
-            bottom: 80,
-            left: 0,
-            right: 0,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 52.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Builder(
-                  builder: (context) {
-                    String message;
-                    if (_isCapturing) {
-                      message = "Hold Still";
-                    } else {
-                      message = "Align your face";
-                    }
-
-                    return Text(
-                      message,
-                      textAlign: TextAlign.center,
-                      style: CustomFonts.black28w600,
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -659,26 +626,155 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                     ),
                     child: const SizedBox.expand(),
                   ),
-                  // Guidance text below the circle
+                  // Countdown positioned above the circle
+                  if (_progress > 0 && _progress < 1.0)
+                    Positioned(
+                      top: (circleCenterY - circleRadius - 60.h).clamp(0.0, canvasHeight),
+                      left: 0,
+                      right: 0,
+                      child: Builder(
+                        builder: (context) {
+                          final remainingSeconds =
+                          (_progressDuration.inSeconds -
+                              (_progress * _progressDuration.inSeconds))
+                              .ceil()
+                              .clamp(1, _progressDuration.inSeconds);
+                          return Center(
+                            child: _buildCountdownWidget(remainingSeconds),
+                          );
+                        },
+                      ),
+                    ),
+                  // Guidance text above the circle (only show when countdown is not showing)
+                  if (_progress == 0 || _progress >= 1.0)
+                    Positioned(
+                      top: (circleCenterY - circleRadius - 50.h).clamp(0.0, canvasHeight),
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Text(
+                          _guidanceMessage,
+                          textAlign: TextAlign.center,
+                          style: CustomFonts.white22w600.copyWith(
+                            fontSize: 18.sp,
+                            color: _isValidFace ? Colors.green : Colors.red,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black.withOpacity(0.7),
+                                blurRadius: 8,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  // Instructions/Descriptions at the bottom
                   Positioned(
-                    top: circleCenterY + circleRadius + 20.h,
+                    bottom: 0,
                     left: 0,
                     right: 0,
-                    child: Center(
-                      child: Text(
-                        _guidanceMessage,
-                        textAlign: TextAlign.center,
-                        style: CustomFonts.white22w600.copyWith(
-                          fontSize: 18.sp,
-                          color: Colors.white,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black.withOpacity(0.7),
-                              blurRadius: 8,
-                              offset: Offset(0, 2),
-                            ),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 5.h),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black.withOpacity(0.0),
+                            Colors.black.withOpacity(0.7),
+                            Colors.black.withOpacity(0.9),
                           ],
                         ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Top description - Center your face in circle
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                            decoration: BoxDecoration(
+                              color: CustomColors.purpleColor.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: Border.all(
+                                color: CustomColors.purpleColor.withOpacity(0.5),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.only(top: 2.h),
+                                  child: Icon(
+                                    Icons.info_outline,
+                                    color: CustomColors.purpleColor,
+                                    size: 20.sp,
+                                  ),
+                                ),
+                                SizedBox(width: 12.w),
+                                Expanded(
+                                  child: Text(
+                                    "Center your face in the circle to get perfect results",
+                                    style: CustomFonts.white22w600.copyWith(
+                                      fontSize: 14.sp,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.4,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 24.h),
+                          Text(
+                            "Face Scan",
+                            style: CustomFonts.white22w600.copyWith(
+                              fontSize: 24.sp,
+                              color: Colors.white,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            "We'll scan your face and create a cool model just for you to enhance your experience!",
+                            style: CustomFonts.white22w600.copyWith(
+                              fontSize: 14.sp,
+                              color: Colors.white.withOpacity(0.9),
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          SizedBox(height: 20.h),
+                          _buildInstructionRow(
+                            icon: SvgAssets.eye,
+                            text: "Face forward and make sure your eyes are clearly visible.",
+                            iconHeight: 24.h,
+                            iconWidth: 26.w,
+                          ),
+                          SizedBox(height: 16.h),
+                          _buildInstructionRow(
+                            icon: SvgAssets.profileIcon,
+                            text: "Align your face within the circular frame.",
+                            iconHeight: 24.h,
+                            iconWidth: 24.w,
+                            iconColor: CustomColors.purpleColor,
+                          ),
+                          SizedBox(height: 16.h),
+                          _buildInstructionRow(
+                            icon: SvgAssets.glasses,
+                            text: "Remove anything that covers your face eg: Eye glasses, Cap etc",
+                            iconHeight: 8.h,
+                            iconWidth: 22.w,
+                          ),
+                          SizedBox(height: 16.h),
+                          _buildInstructionRow(
+                            icon: SvgAssets.face,
+                            text: "Move Your Face Inside The Border",
+                            iconHeight: 24.h,
+                            iconWidth: 22.w,
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -688,6 +784,39 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildInstructionRow({
+    required String icon,
+    required String text,
+    required double iconHeight,
+    required double iconWidth,
+    Color? iconColor,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SvgPicture.asset(
+          icon,
+          height: iconHeight,
+          width: iconWidth,
+          colorFilter: iconColor != null
+              ? ColorFilter.mode(iconColor, BlendMode.srcIn)
+              : null,
+        ),
+        SizedBox(width: 17.w),
+        Flexible(
+          child: Text(
+            text,
+            style: CustomFonts.white22w600.copyWith(
+              fontSize: 14.sp,
+              color: Colors.white.withOpacity(0.9),
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

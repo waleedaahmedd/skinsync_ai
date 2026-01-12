@@ -32,7 +32,7 @@ class TreatmentContainer extends StatelessWidget {
                   .read(treatmentViewModel.notifier)
                   .getSelectSectionApi(sectionId: treatments.id ?? 0);
               ref.read(treatmentViewModel.notifier).treatmentId = treatments.id;
-              Navigator.pushNamed(context, SelectSectionsScreen.routeName);
+              SelectSectionsScreen.show(context);
             } else {
               Navigator.pushNamed(
                 context,

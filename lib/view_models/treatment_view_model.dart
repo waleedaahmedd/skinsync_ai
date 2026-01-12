@@ -31,11 +31,12 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   int? subSectionId;
 
   Future<bool?> getTreatments() async {
+    // Set loading state before async call so UI can show loader immediately
+    state = state.copyWith(treatmentsLoading: true);
     return await runSafely(() async {
-      state = state.copyWith(loading: true);
       final TreatmentResponse response = await _treatmentRepository
           .getTreatmentsApi();
-      state = state.copyWith(loading: false, treatmentResponse: response);
+      state = state.copyWith(treatmentsLoading: false, treatmentResponse: response);
       return response.isSuccess == true;
     });
   }
@@ -59,7 +60,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   }
   @override
   void onError(String message) {
-    state = state.copyWith(loading: false);
+    state = state.copyWith(loading: false, treatmentsLoading: false);
     super.onError(message);
     EasyLoading.showError(message);
   }
@@ -70,13 +71,15 @@ class TreatmentsState extends BaseStateModel {
   final TreatmentResponse? treatmentResponse;
   final SubSelectionResponse? subSelectionResponse;
   final SelectSelectionResponse? selectSelectionResponse;
+  final bool treatmentsLoading; // Separate loading for treatment listing
 
   const TreatmentsState({
     super.loading = false,
     super.errorMessage,
     this.treatmentResponse,
     this.selectSelectionResponse,
-    this.subSelectionResponse
+    this.subSelectionResponse,
+    this.treatmentsLoading = false,
   });
   @override
   TreatmentsState copyWith({
@@ -84,15 +87,16 @@ class TreatmentsState extends BaseStateModel {
     String? errorMessage,
     TreatmentResponse? treatmentResponse,
     SubSelectionResponse? subSelectionResponse,
-    SelectSelectionResponse? selectSelectionResponse
-
+    SelectSelectionResponse? selectSelectionResponse,
+    bool? treatmentsLoading,
   }) {
     return TreatmentsState(
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
       treatmentResponse: treatmentResponse ?? this.treatmentResponse,
       selectSelectionResponse: selectSelectionResponse ?? this.selectSelectionResponse,
-      subSelectionResponse: subSelectionResponse ?? this.subSelectionResponse
+      subSelectionResponse: subSelectionResponse ?? this.subSelectionResponse,
+      treatmentsLoading: treatmentsLoading ?? this.treatmentsLoading,
     );
   }
 }

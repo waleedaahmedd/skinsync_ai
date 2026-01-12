@@ -3,7 +3,6 @@ import 'package:skinsync_ai/screens/additional_info_screen.dart';
 import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/face_scanning_complete_screen.dart';
-import 'package:skinsync_ai/screens/bottom_nav_screens/scan_your_face_screen.dart';
 import 'package:skinsync_ai/screens/clinic_service_screen.dart';
 import 'package:skinsync_ai/screens/clinics_detail_screen.dart';
 import 'package:skinsync_ai/screens/face_scan_screen.dart';
@@ -97,11 +96,6 @@ class RouteGenerator {
           settings: RouteSettings(name: BottomNavPage.routeName),
           builder: (_) => BottomNavPage(),
         );
-      case ScanYourFaceScreen.routeName:
-        return MaterialPageRoute(
-          settings: RouteSettings(name: ScanYourFaceScreen.routeName),
-          builder: (_) => ScanYourFaceScreen(),
-        );
       case FaceDetectionScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: FaceDetectionScreen.routeName),
@@ -142,16 +136,18 @@ class RouteGenerator {
           settings: RouteSettings(name: TreatmentDetailScreen.routeName),
           builder: (_) => TreatmentDetailScreen(),
         );
-      case SelectSectionsScreen.routeName:
-        return MaterialPageRoute(
-          settings: RouteSettings(name: SelectSectionsScreen.routeName),
-          builder: (_) => SelectSectionsScreen(),
-        );
-      case SelectSubSectionsScreen.routeName:
-        return MaterialPageRoute(
-          settings: RouteSettings(name: SelectSubSectionsScreen.routeName),
-          builder: (_) => SelectSubSectionsScreen(),
-        );
+      // SelectSectionsScreen is now a bottom sheet, not a route
+      // case SelectSectionsScreen.routeName:
+      //   return MaterialPageRoute(
+      //     settings: RouteSettings(name: SelectSectionsScreen.routeName),
+      //     builder: (_) => SelectSectionsScreen(),
+      //   );
+      // SelectSubSectionsScreen is now a bottom sheet, not a route
+      // case SelectSubSectionsScreen.routeName:
+      //   return MaterialPageRoute(
+      //     settings: RouteSettings(name: SelectSubSectionsScreen.routeName),
+      //     builder: (_) => SelectSubSectionsScreen(),
+      //   );
       case ClinicsDetailScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: ClinicsDetailScreen.routeName),

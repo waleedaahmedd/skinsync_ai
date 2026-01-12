@@ -108,8 +108,19 @@ class CustomGridViewTile extends StatelessWidget {
               ],
             ),
             Spacer(),
-            Center(
-              child: Text(title?? '', style: CustomFonts.black20w600),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.w),
+              child: Center(
+                child: Text(
+                  title ?? '',
+                  style: CustomFonts.black20w600.copyWith(
+                    fontSize: 14.sp, // Smaller font for bottom sheet
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
             ),
             Spacer(),
           ],

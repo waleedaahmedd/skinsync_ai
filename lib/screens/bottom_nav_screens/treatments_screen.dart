@@ -14,6 +14,7 @@ import 'package:skinsync_ai/widgets/recommended_treatment_container.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 
 import '../../models/dummy_list_model.dart';
+import '../../utills/color_constant.dart';
 import '../../view_models/checkout_view_model.dart';
 import '../../widgets/grey_container.dart';
 
@@ -276,7 +277,7 @@ class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
               child: Consumer(
                 builder: (context, ref, _) {
                   final state = ref.watch(treatmentViewModel);
-                  final isLoading = state.loading;
+                  final isLoading = state.treatmentsLoading; // Use separate loading for treatments
                   final treatments = state.treatmentResponse?.data ?? [];
 
                   // Fetch treatments if not already loaded and not currently loading
@@ -286,9 +287,17 @@ class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
                     });
                   }
 
-                  return isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : AnimationLimiter(
+                  // Show loading indicator
+                  if (isLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: CustomColors.purpleColor,
+                      ),
+                    );
+                  }
+
+                  return AnimationLimiter(
+                          key: const ValueKey('treatments_list'), // Stable key to prevent re-animation
                           child: ListView.builder(
                             scrollDirection: Axis.vertical,
                             itemCount: treatments.length,
@@ -298,8 +307,7 @@ class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
                                 duration: const Duration(milliseconds: 800),
                                 child: SlideAnimation(
                                   horizontalOffset: 100.0,
-                                  child: SlideAnimation(
-                                    horizontalOffset: 300.0,
+                                  child: FadeInAnimation(
                                     child: Padding(
                                       padding: EdgeInsets.only(
                                         left: 12.w,

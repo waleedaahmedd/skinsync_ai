@@ -23,135 +23,139 @@ class SelectSubSectionsScreen extends StatefulWidget {
 
   @override
   State<SelectSubSectionsScreen> createState() => _SelectSectionsScreenState();
+  
+  // Static method to show as bottom sheet
+  static Future<void> show(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      enableDrag: false, // Disable drag on the modal itself (we use DraggableScrollableSheet)
+      isDismissible: true,
+      useSafeArea: true,
+      useRootNavigator: false, // Use the current navigator, not root
+      builder: (context) => const SelectSubSectionsScreen(),
+      routeSettings: const RouteSettings(name: '/SelectSubSectionBottomSheet'),
+    );
+  }
 }
 
 class _SelectSectionsScreenState extends State<SelectSubSectionsScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomAppBar(showTitle: true, title: "Select Sub Section"),
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Row(
-            //   children: [
-            //     Consumer(
-            //       builder: (_, ref, _) {
-            //         return GestureDetector(
-            //           onTap: () {
-            //             // ref
-            //             //     .read(treatmentViewModel.notifier)
-            //             //     .setTreatmentMainScreen(value: true);
-            //           },
-            //           child: Container(
-            //             padding: EdgeInsets.all(14.w),
-            //             decoration: BoxDecoration(
-            //               shape: BoxShape.circle,
-            //               color: CustomColors.greyColor,
-            //             ),
-            //             child: Icon(
-            //               CupertinoIcons.arrow_left,
-            //               size: 16.sp,
-            //               color: Colors.black,
-            //             ),
-            //           ),
-            //         );
-            //       },
-            //     ),
-            //     SizedBox(width: 22.w),
-            //     Text("Injectables", style: CustomFonts.black24w600),
-            //   ],
-            // ),
-            // SizedBox(height: 15.h),
-            // SizedBox(
-            //   height: 50.h,
-            //   child: ListView.builder(
-            //     scrollDirection: Axis.horizontal,
-            //     itemCount: fillter.length,
-            //     itemBuilder: (context, index) {
-            //       return Padding(
-            //         padding: EdgeInsets.only(right: 10.w),
-            //         child: FillterContainer(
-            //           isSelected: selectedFilterIndex == index,
-            //           title: fillter[index].title,
-            //           svgImage: fillter[index].svg,
-            //           onTap: () {
-            //             setState(() {
-            //               selectedFilterIndex = index;
-            //             });
-            //           },
-            //         ),
-            //       );
-            //     },
-            //   ),
-            // ),
-            SizedBox(height: 30),
-            Expanded(
-              child: Consumer(
-                builder: (context, ref, _) {
-                  final loading = ref.watch(treatmentViewModel).loading;
+    return DraggableScrollableSheet(
+      initialChildSize: 0.5, // Fixed at half screen height
+      minChildSize: 0.5,
+      maxChildSize: 0.5,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.r),
+              topRight: Radius.circular(20.r),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Handle bar
+              Container(
+                margin: EdgeInsets.only(top: 12.h, bottom: 8.h),
+                width: 40.w,
+                height: 4.h,
+                decoration: BoxDecoration(
+                  color: CustomColors.greyColor,
+                  borderRadius: BorderRadius.circular(2.r),
+                ),
+              ),
+              // Title
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Select Sub Section",
+                      style: CustomFonts.black24w600,
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.close, size: 24.sp),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20.h),
+              // Grid content
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  child: Consumer(
+                    builder: (context, ref, _) {
+                      final loading = ref.watch(treatmentViewModel).loading;
 
-                  if (loading) {
-                    return Center(
-                      child: CircularProgressIndicator(
-                        color: CustomColors.purpleColor,
-                      ),
-                    );
-                  }
-                  return AnimationLimiter(
-                    child: GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 18.w,
-                        mainAxisSpacing: 18.h,
-                        childAspectRatio: 0.8,
-                      ),
-                      itemCount:
-                          ref
-                              .read(treatmentViewModel)
-                              .subSelectionResponse
-                              ?.data
-                              ?.length ??
-                          0,
-                      itemBuilder: (context, index) {
-                        final subSection = ref
-                            .read(treatmentViewModel)
-                            .subSelectionResponse
-                            ?.data;
-
-                        return AnimationConfiguration.staggeredGrid(
-                          position: index,
-                          duration: const Duration(milliseconds: 600),
-                          columnCount: subSection?.length ?? 0,
-                          child: ScaleAnimation(
-                            child: FadeInAnimation(
-                              child: CustomGridViewTile(
-                                onTap: () {
-                                  
-                                  ref.read(checkoutViewModel.notifier).updateState(treatmentAreaId: subSection?[index].id);
-                                  Navigator.pushNamed(
-                                    context,
-                                    ref
-                                        .read(checkoutViewModel.notifier)
-                                        .navigateTo(),
-                                  );
-                                },
-                                title: subSection?[index].name ?? "",
-                              ),
-                            ),
+                      if (loading) {
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: CustomColors.purpleColor,
                           ),
                         );
-                      },
-                    ),
-                  );
-                },
+                      }
+                      return AnimationLimiter(
+                        child: GridView.builder(
+                          controller: scrollController,
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3, // Changed from 2 to 3 for bottom sheet
+                            crossAxisSpacing: 12.w,
+                            mainAxisSpacing: 12.h,
+                            childAspectRatio: 0.75, // Adjusted for smaller tiles
+                          ),
+                          itemCount:
+                              ref
+                                  .read(treatmentViewModel)
+                                  .subSelectionResponse
+                                  ?.data
+                                  ?.length ??
+                              0,
+                          itemBuilder: (context, index) {
+                            final subSection = ref
+                                .read(treatmentViewModel)
+                                .subSelectionResponse
+                                ?.data;
+
+                            return AnimationConfiguration.staggeredGrid(
+                              position: index,
+                              duration: const Duration(milliseconds: 600),
+                              columnCount: 3, // Updated to match crossAxisCount
+                              child: ScaleAnimation(
+                                child: FadeInAnimation(
+                                  child: CustomGridViewTile(
+                                    onTap: () {
+                                      ref.read(checkoutViewModel.notifier).updateState(treatmentAreaId: subSection?[index].id);
+                                      Navigator.pop(context); // Close bottom sheet first
+                                      Navigator.pushNamed(
+                                        context,
+                                        ref
+                                            .read(checkoutViewModel.notifier)
+                                            .navigateTo(),
+                                      );
+                                    },
+                                    title: subSection?[index].name ?? "",
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
