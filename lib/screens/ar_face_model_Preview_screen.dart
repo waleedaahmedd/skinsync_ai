@@ -16,15 +16,19 @@ import 'package:skinsync_ai/view_models/face_scan_provider.dart';
 import 'package:skinsync_ai/widgets/grey_container.dart';
 import 'package:skinsync_ai/widgets/service_type_button.dart';
 
+import '../view_models/checkout_view_model.dart';
+
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
   const ArFaceModelPreviewScreen({super.key});
   static const String routeName = '/ArFaceModelPreviewScreen';
 
   @override
-  ConsumerState<ArFaceModelPreviewScreen> createState() => _ArFaceModelPreviewScreenState();
+  ConsumerState<ArFaceModelPreviewScreen> createState() =>
+      _ArFaceModelPreviewScreenState();
 }
 
-class _ArFaceModelPreviewScreenState extends ConsumerState<ArFaceModelPreviewScreen> {
+class _ArFaceModelPreviewScreenState
+    extends ConsumerState<ArFaceModelPreviewScreen> {
   bool _isLoading = false;
   String? _errorMessage;
   bool _hasInitialized = false;
@@ -128,47 +132,52 @@ class _ArFaceModelPreviewScreenState extends ConsumerState<ArFaceModelPreviewScr
       });
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        leadingWidth: 80.w,
-        centerTitle: false,
-        leading: Padding(
-          padding: EdgeInsets.only(left: 10.w),
-          child: InkWell(
-            onTap: () => Navigator.pop(context),
-            child: GreyContainer(
-              icon: Icons.arrow_back,
-              shape: BoxShape.circle,
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        ref.read(checkoutViewModel.notifier).clearState();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leadingWidth: 80.w,
+          centerTitle: false,
+          leading: Padding(
+            padding: EdgeInsets.only(left: 10.w),
+            child: InkWell(
               onTap: () => Navigator.pop(context),
+              child: GreyContainer(
+                icon: Icons.arrow_back,
+                shape: BoxShape.circle,
+                onTap: () => Navigator.pop(context),
+              ),
             ),
           ),
+          title: Text("AR Face Model Preview", style: CustomFonts.black26w600),
+          actions: [
+            Padding(
+              padding: EdgeInsets.only(right: 13.w),
+              child: Text("Reset", style: CustomFonts.pinkunderlined20w600),
+            ),
+          ],
         ),
-        title: Text("AR Face Model Preview", style: CustomFonts.black26w600),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 13.w),
-            child: Text("Reset", style: CustomFonts.pinkunderlined20w600),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _facePreview(),
-              SizedBox(height: 18.h),
-              _accuracyRate(),
-              SizedBox(height: 36.h),
-              _treatmentSection(area: 'Under-Eyes', syringes: '01 Syringe'),
-              SizedBox(height: 50.h),
-              _treatmentSection(area: 'Under-Nose', syringes: '01 Syringe'),
-              SizedBox(height: 50.h),
-              _addMoreService(),
-              SizedBox(height: 50.h),
-              _bottomButtons(context),
-            ],
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _facePreview(),
+                SizedBox(height: 18.h),
+                _accuracyRate(),
+                SizedBox(height: 36.h),
+                _treatmentSection(area: 'Under-Eyes', syringes: '01 Syringe'),
+                SizedBox(height: 50.h),
+                _treatmentSection(area: 'Under-Nose', syringes: '01 Syringe'),
+                SizedBox(height: 50.h),
+                _addMoreService(),
+                SizedBox(height: 50.h),
+                _bottomButtons(context),
+              ],
+            ),
           ),
         ),
       ),
@@ -186,7 +195,10 @@ class _ArFaceModelPreviewScreenState extends ConsumerState<ArFaceModelPreviewScr
                 faceScanProvider.select((state) => state.isBefore),
               );
               final image = ref.watch(
-                faceScanProvider.select((state) => state.isBefore ? state.capturedImage : state.aiImage),
+                faceScanProvider.select(
+                  (state) =>
+                      state.isBefore ? state.capturedImage : state.aiImage,
+                ),
               );
 
               // Show loading indicator
@@ -225,13 +237,17 @@ class _ArFaceModelPreviewScreenState extends ConsumerState<ArFaceModelPreviewScr
                         SizedBox(height: 16.h),
                         Text(
                           'Error',
-                          style: CustomFonts.black20w600.copyWith(color: Colors.red),
+                          style: CustomFonts.black20w600.copyWith(
+                            color: Colors.red,
+                          ),
                         ),
                         SizedBox(height: 8.h),
                         Text(
                           _errorMessage!,
                           textAlign: TextAlign.center,
-                          style: CustomFonts.black16w400.copyWith(color: Colors.red.shade700),
+                          style: CustomFonts.black16w400.copyWith(
+                            color: Colors.red.shade700,
+                          ),
                         ),
                       ],
                     ),
@@ -467,6 +483,10 @@ class _ArFaceModelPreviewScreenState extends ConsumerState<ArFaceModelPreviewScr
           child: ElevatedButton(
             onPressed: () {
               Navigator.pushNamed(context, ExploreClinicsScreen.routeName);
+              // Navigator.pushNamed(
+              //   context,
+              //   ref.read(checkoutViewModel.notifier).navigateTo(),
+              // );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.black,
