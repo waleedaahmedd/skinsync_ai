@@ -8,6 +8,8 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/view_models/bottom_nav_view_model.dart';
 
+import '../view_models/checkout_view_model.dart';
+
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({super.key});
 
@@ -106,6 +108,9 @@ class BottomNavBar extends StatelessWidget {
       child: InkWell(
         onTap: () {
           ref.read(bottomNavViewModel.notifier).changePage(index);
+          if (index == 1) {
+            ref.read(checkoutViewModel.notifier).clearState();
+          }
         },
         child: Center(
           child: Column(
