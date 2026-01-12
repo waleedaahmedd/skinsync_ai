@@ -20,7 +20,10 @@ class SecureStorage {
         accessibility: KeychainAccessibility.first_unlock_this_device,
       ),
     );
+     _cachedToken = await _storage!.read(key: 'auth_token');
   }
+
+  
 
   /// Get token from cache (fast, no decryption)
   String? get cachedAuthToken => _cachedToken;
