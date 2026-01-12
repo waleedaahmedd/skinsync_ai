@@ -418,14 +418,138 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       radiusPercent: 0.5, // 50% of image width
     );
 
-    // Store captured image in provider
-    await ref.read(faceScanProvider.notifier).setCapturedImage(finalImage);
-
+    // Store captured image in state to show in dialog
     if (!mounted) return;
+    
+    setState(() {
+      _capturedImage = finalImage;
+      _isCapturing = false;
+    });
 
-    Navigator.pushReplacementNamed(
-      context,
-      ref.read(checkoutViewModel.notifier).navigateTo(),
+    // Show dialog with captured image
+    _showImageVerificationDialog(ref, finalImage);
+  }
+
+  void _showImageVerificationDialog(WidgetRef ref, XFile capturedImage) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Padding(
+                padding: EdgeInsets.all(20.w),
+                child: Text(
+                  "Verify your image",
+                  style: CustomFonts.black24w600,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              // Captured image
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 20.w),
+                height: 300.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15.r),
+                  border: Border.all(
+                    color: CustomColors.lightPurpleColor.withValues(alpha: 0.3),
+                    width: 2,
+                  ),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(13.r),
+                  child: Image.file(
+                    File(capturedImage.path),
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  ),
+                ),
+              ),
+              SizedBox(height: 30.h),
+              // Buttons
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+                child: Row(
+                  children: [
+                    // Recapture button
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          setState(() {
+                            _capturedImage = null;
+                            _isCapturing = false;
+                            _progress = 0.0;
+                          });
+                          // Restart image stream
+                          _cameraController?.startImageStream((image) {
+                            if (_storedRef != null) {
+                              _process(_storedRef!, image);
+                            }
+                          });
+                        },
+                        style: OutlinedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          side: BorderSide(
+                            color: CustomColors.purpleColor,
+                            width: 2,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        child: Text(
+                          "Recapture",
+                          style: CustomFonts.black18w600.copyWith(
+                            color: CustomColors.purpleColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 16.w),
+                    // Submit button
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          // Store captured image in provider
+                          await ref.read(faceScanProvider.notifier).setCapturedImage(capturedImage);
+                          Navigator.pop(context);
+                          if (mounted) {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              ref.read(checkoutViewModel.notifier).navigateTo(),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          backgroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        child: Text(
+                          "Submit",
+                          style: CustomFonts.white18w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
