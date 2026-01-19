@@ -46,22 +46,26 @@ class ServiceTypeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget child = Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-      decoration: BoxDecoration(
-        color: _backgroundColor,
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) icon!,
-          if (icon != null) SizedBox(width: 8.w),
-          Text(
-            text,
-            style: selected ? CustomFonts.white17w500 : CustomFonts.black17w500,
-          ),
-        ],
+    Widget child = InkWell(
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+        decoration: BoxDecoration(
+          color: _backgroundColor,
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) icon!,
+            if (icon != null) SizedBox(width: 8.w),
+            Text(
+              text,
+              style: selected
+                  ? CustomFonts.white17w500
+                  : CustomFonts.black17w500,
+            ),
+          ],
+        ),
       ),
     );
 

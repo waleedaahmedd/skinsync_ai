@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
@@ -17,6 +18,7 @@ import 'package:skinsync_ai/widgets/grey_container.dart';
 import 'package:skinsync_ai/widgets/service_type_button.dart';
 
 import '../view_models/checkout_view_model.dart';
+import '../view_models/treatment_view_model.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
   const ArFaceModelPreviewScreen({super.key});
@@ -169,7 +171,64 @@ class _ArFaceModelPreviewScreenState
                 SizedBox(height: 18.h),
                 _accuracyRate(),
                 SizedBox(height: 36.h),
-                _treatmentSection(area: 'Under-Eyes', syringes: '01 Syringe'),
+                Text('Treatment Selection', style: CustomFonts.black18w600),
+                SizedBox(height: 8.h),
+                Consumer(
+                  builder: (context, ref, _) {
+                    final state = ref.watch(treatmentViewModel);
+                    final isLoading = state.treatmentsLoading; // Use separate loading for treatments
+                    final treatments = state.treatmentResponse?.data ?? [];
+
+                    // Fetch treatments if not already loaded and not currently loading
+                    if (!isLoading && state.treatmentResponse == null) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        ref.read(treatmentViewModel.notifier).getTreatments();
+                      });
+                    }
+
+                    // Show loading indicator
+                    if (isLoading) {
+                      return SizedBox(
+                        height: 200,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            color: CustomColors.purpleColor,
+                          ),
+                        ),
+                      );
+                    }
+
+                    return AnimationLimiter(
+                      key: const ValueKey('treatments_list'), // Stable key to prevent re-animation
+                      child: Wrap(
+                        direction: Axis.horizontal,
+                        spacing: 12.w,
+                        runSpacing: 12.h,
+                        children: List.generate(
+                          treatments.length,
+                          (index) {
+                            return AnimationConfiguration.staggeredList(
+                              position: index,
+                              duration: const Duration(milliseconds: 800),
+                              child: SlideAnimation(
+                                horizontalOffset: 100.0,
+                                child: FadeInAnimation(
+                                  child: ServiceTypeButton(
+                                    icon: Image.asset(PngAssets.syringe, width: 21.w),
+                                    text: treatments[index].name!,
+                                    selected: true,
+                                    frosted: false,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              // _treatmentSection(area: 'Under-Eyes', syringes: '01 Syringe'),
                 SizedBox(height: 50.h),
                 _treatmentSection(area: 'Under-Nose', syringes: '01 Syringe'),
                 SizedBox(height: 50.h),
