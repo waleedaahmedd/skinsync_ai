@@ -16,13 +16,11 @@ import '../../utills/face_detector_painter.dart';
 import '../../utills/ml_kit_utills.dart';
 import '../../view_models/checkout_view_model.dart';
 import '../../view_models/face_scan_provider.dart';
-import '../../widgets/face_scan_radial_widget.dart';
-import '../../widgets/custom_app_bar.dart';
 import '../ar_face_model_Preview_screen.dart';
-import '../service_selection_screen.dart';
 
 class FaceDetectionScreen extends ConsumerStatefulWidget {
   const FaceDetectionScreen({super.key});
+
   static const String routeName = '/FaceDetectionScreen';
 
   @override
@@ -36,20 +34,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   bool _isDetecting = false;
   XFile? _capturedImage;
 
-  // Local state for face detection logic
-  double _progress = 0.0;
   bool _isCapturing = false;
-  Timer? _progressTimer;
-  static const Duration _progressDuration = Duration(seconds: 3);
 
-  // Face detection guidance state
-  String _guidanceMessage = "Position your face in the circle";
-  bool _hasFaceDetected = false;
-  bool _isValidFace = false; // Track if face is valid for green color
-
-  // Face bounding box painter
   CustomPaint? _faceBoundingBoxPaint;
-  List<Face> _detectedFaces = [];
 
   // Store ref for use in callbacks
   WidgetRef? _storedRef;
@@ -81,7 +68,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
       _cameraController = CameraController(
         front,
-        ResolutionPreset.high,
+        ResolutionPreset.veryHigh, // HD quality
         enableAudio: false,
         imageFormatGroup: Platform.isIOS
             ? ImageFormatGroup.bgra8888
@@ -144,43 +131,34 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     // Update face bounding box painter
     // Use the actual camera preview size for accurate coordinate mapping
     final previewSize = _cameraController!.value.previewSize;
-    if (inputImage.metadata?.size != null &&
-        inputImage.metadata?.rotation != null &&
-        previewSize != null) {
-      if (mounted) {
-        setState(() {
-          _detectedFaces = faces;
-          if (faces.isNotEmpty) {
-            _faceBoundingBoxPaint = CustomPaint(
-              painter: FaceDetectorPainter(
-                faces: faces,
-                imageSize: inputImage.metadata!.size,
-                rotation: inputImage.metadata!.rotation,
-                cameraLensDirection:
-                    _cameraController!.description.lensDirection,
-                previewSize: Size(
-                  previewSize.width.toDouble(),
-                  previewSize.height.toDouble(),
-                ),
+    if (mounted) {
+      setState(() {
+        if (faces.isNotEmpty &&
+            inputImage.metadata?.size != null &&
+            inputImage.metadata?.rotation != null &&
+            previewSize != null) {
+          // Create bounding box paint when face is detected and metadata is available
+          _faceBoundingBoxPaint = CustomPaint(
+            painter: FaceDetectorPainter(
+              faces: faces,
+              imageSize: inputImage.metadata!.size,
+              rotation: inputImage.metadata!.rotation,
+              cameraLensDirection: _cameraController!.description.lensDirection,
+              previewSize: Size(
+                previewSize.width.toDouble(),
+                previewSize.height.toDouble(),
               ),
-              child: const SizedBox.expand(),
-            );
-          } else {
-            _faceBoundingBoxPaint = null;
-          }
-        });
-      }
+            ),
+            child: const SizedBox.expand(),
+          );
+        } else {
+          // Clear bounding box paint when no faces or metadata unavailable
+          _faceBoundingBoxPaint = null;
+        }
+      });
     }
 
-    // If no face detected, always reset progress and stop countdown
     if (faces.isEmpty) {
-      _resetProgress();
-      if (mounted) {
-        setState(() {
-          _hasFaceDetected = false;
-          _guidanceMessage = "No face detected. Move closer to the camera";
-        });
-      }
       return;
     }
 
@@ -208,7 +186,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     // Square size: 50% of circle diameter = 42% of canvas width
     // For simplicity, use image dimensions directly (42% of image width)
     final squareCenterX = inputImageSize.width / 2.0; // 50% width
-    final squareCenterY = inputImageSize.height * 0.29; // 29% from top
+    final squareCenterY = inputImageSize.height * 0.42; // 29% from top
     final squareSize = inputImageSize.width * 0.42; // 42% of image width
     final squareHalfSize = squareSize / 2.0;
 
@@ -308,106 +286,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
         isReasonableSize && // Must have reasonable size
         isNormalAspectRatio; // Must have normal proportions
 
-    // Determine guidance message based on face detection status
-    String guidanceMessage = "Position your face in the square";
-    if (faceWidth < minFaceSize || faceHeight < minFaceSize) {
-      guidanceMessage = "Move closer to the camera";
-    } else if (faceWidth > maxFaceSize || faceHeight > maxFaceSize) {
-      guidanceMessage = "Move further from the camera";
-    } else if (!isAlignedWithSquare) {
-      guidanceMessage = "Align your face with the square";
-    } else if (!isFullyVisible) {
-      guidanceMessage = "Make sure your full face is visible";
-    } else if (isValidFace) {
-      guidanceMessage = "Hold still...";
-    } else {
-      guidanceMessage = "Position your face in the square";
-    }
-
-    // Update guidance message in state
-    if (mounted) {
-      setState(() {
-        _hasFaceDetected = true;
-        _isValidFace = isValidFace;
-        _guidanceMessage = guidanceMessage;
-      });
-    }
-
-    // Debug: Print face detection info
-    // print('Face detected - Center: $faceCenter, Image Center: $imageCenter');
-    // print('Distance from center: ${distanceFromCenter}, Allowed: $allowedRadiusSquared');
-    // print('Face size: $faceWidth x $faceHeight, Min: $minFaceSize');
-    // print('Is within circle: $isWithinCircle, Is reasonable size: $isReasonableSize');
-
-    // Start or continue progress if face is valid
-    if (isValidFace) {
-      if (!_isCapturing && _progressTimer == null) {
-        _startProgress();
-      }
-      // If timer is already running, let it continue
-      if (mounted) {
-        setState(() {
-          _guidanceMessage = "Hold still...";
-        });
-      }
-    } else {
-      // Face is not valid - always reset progress and stop countdown
-      _resetProgress();
-      if (mounted) {
-        setState(() {
-          _isValidFace = false;
-        });
-      }
-    }
-  }
-
-  void _resetProgress() {
-    if (mounted) {
-      setState(() {
-        _progress = 0.0;
-        _isValidFace = false;
-      });
-    }
-    _progressTimer?.cancel();
-    _progressTimer = null;
-  }
-
-  void _startProgress() {
-    if (_progressTimer != null && _progressTimer!.isActive) {
-      return;
-    }
-
-    _progressTimer?.cancel();
-    _progress = 0.0;
-
-    final startTime = DateTime.now();
-    _progressTimer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-
-      final elapsed = DateTime.now().difference(startTime);
-      final newProgress =
-          (elapsed.inMilliseconds / _progressDuration.inMilliseconds).clamp(
-            0.0,
-            1.0,
-          );
-
-      if (mounted) {
-        setState(() {
-          _progress = newProgress;
-        });
-      }
-
-      if (newProgress >= 1.0) {
-        timer.cancel();
-        // Capture the image when countdown completes
-        if (mounted && _storedRef != null) {
-          _captureAndNavigate(_storedRef!);
-        }
-      }
-    });
   }
 
   Future<void> _captureAndNavigate(WidgetRef ref) async {
@@ -423,19 +301,14 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     // Capture the image
     final image = await _cameraController!.takePicture();
 
-    // Flip the image if using front camera (to match the mirrored preview)
-    XFile processedImage = image;
-    if (_cameraController!.description.lensDirection ==
-        CameraLensDirection.front) {
-      processedImage = await flipXFileHorizontally(image);
-    }
-
-    // Crop image to circle size (50% radius, centered at 50% width, 29% height)
+    // Process image: flip (if front camera) and crop in a single operation for better performance
     final finalImage = await cropImageToCircle(
-      processedImage,
+      image,
       centerXPercent: 0.5, // Center horizontally
-      centerYPercent: 0.29, // Position at top (29% from top)
+      centerYPercent: 0.42, // Position at top (28% from top)
       radiusPercent: 0.5, // 50% of image width
+      flipHorizontally: _cameraController!.description.lensDirection ==
+          CameraLensDirection.front, // Flip if front camera
     );
 
     // Store captured image in state to show in dialog
@@ -508,7 +381,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                           setState(() {
                             _capturedImage = null;
                             _isCapturing = false;
-                            _progress = 0.0;
                           });
                           // Restart image stream
                           _cameraController?.startImageStream((image) {
@@ -551,7 +423,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                           if (mounted) {
                             Navigator.pushReplacementNamed(
                               context,
-                              ref.read(checkoutViewModel.notifier).navigateTo(),
+                              ArFaceModelPreviewScreen.routeName,
                             );
                           }
                         },
@@ -577,7 +449,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
   @override
   void dispose() {
-    _progressTimer?.cancel();
     _cameraController?.dispose();
     _faceDetector.close();
     super.dispose();
@@ -590,129 +461,11 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        leading: Padding(
-          padding: EdgeInsets.only(left: 20.w),
-          child: SafeArea(
-            child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              child: Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.6),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.arrow_back, color: Colors.white, size: 24.sp),
-              ),
-            ),
-          ),
-        ),
-      ),
       body: Stack(
         children: [
           if (_cameraController != null) _buildCameraView(),
-
-          // Consumer(
-          //   builder: (_, ref, _) {
-          //     final isCapturing = ref.watch(
-          //       faceScanProvider.select((state) => state.isCapturing),
-          //     );
-          //     if (isCapturing) return const SizedBox.shrink();
-
-          //     return Align(
-          //       alignment: Alignment.topRight,
-          //       child: Padding(
-          //         padding: EdgeInsets.only(top: 40.h, right: 20.w),
-          //         child: GestureDetector(
-          //           onTap: () {
-          //             ref.read(faceScanProvider.notifier).toggleFlash();
-          //             if (_cameraController != null) {
-          //               _cameraController!.setFlashMode(
-          //                 ref.read(faceScanProvider).flash
-          //                     ? FlashMode.torch
-          //                     : FlashMode.off,
-          //               );
-          //             }
-          //           },
-          //           child: Consumer(
-          //             builder: (_, ref, child) {
-          //               final flash = ref.watch(
-          //                 faceScanProvider.select((state) => state.flash),
-          //               );
-          //               return Icon(
-          //                 flash ? Icons.flash_on : Icons.flash_off,
-          //                 color: Colors.white,
-          //                 size: 30.sp,
-          //               );
-          //             },
-          //           ),
-          //         ),
-          //       ),
-          //     );
-          //   },
-          // ),
         ],
       ),
-    );
-  }
-
-  Widget _buildCountdownWidget(int count) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.8, end: 1.0),
-      duration: Duration(milliseconds: 300),
-      curve: Curves.elasticOut,
-      builder: (context, scale, child) {
-        return AnimatedContainer(
-          duration: Duration(milliseconds: 200),
-          width: 140.w,
-          height: 140.w,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xff88E3FB), Color(0xffE7C6E8)],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Color(0xff88E3FB).withOpacity(0.6),
-                blurRadius: 40,
-                spreadRadius: 8,
-              ),
-              BoxShadow(
-                color: Color(0xffE7C6E8).withOpacity(0.6),
-                blurRadius: 40,
-                spreadRadius: 8,
-              ),
-            ],
-          ),
-          child: Transform.scale(
-            scale: scale,
-            child: Center(
-              child: Text(
-                "$count",
-                style: CustomFonts.white50w600.copyWith(
-                  fontSize: 100.sp,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                  shadows: [
-                    Shadow(
-                      color: Colors.black.withOpacity(0.4),
-                      blurRadius: 15,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 
@@ -724,218 +477,179 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       );
     }
 
-    // Get camera preview size
     final previewSize = _cameraController!.value.previewSize!;
     final aspectRatio = previewSize.height / previewSize.width;
-
-    // Calculate safe top padding
-    final topPadding = MediaQuery.of(context).padding.top;
-    // Use percentage of canvas width instead of screen width to ensure it fits
-    // The circle radius will be calculated as a percentage of the actual canvas width
-    final circleRadiusPercent = 0.42; // 42% of canvas width (reduced from 50%)
-    // Position circle center at the top - use radius as percentage of canvas width
-    // Since radius is 50% of width, position center at top + small padding
-    final circleCenterYPercent = 0.29; // 10% from top of canvas (near the top)
+    final circleRadiusPercent = 0.42;
+    final circleCenterYPercent = 0.42;
 
     return SizedBox.expand(
-      child: Center(
-        child: AspectRatio(
-          aspectRatio: aspectRatio,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              // Calculate actual circle radius based on canvas width
-              final canvasWidth = constraints.maxWidth;
-              final canvasHeight = constraints.maxHeight;
-              final circleRadius = canvasWidth * circleRadiusPercent;
-              final circleCenterY = canvasHeight * circleCenterYPercent;
+      child: Stack(
+        children: [
+          Align(
+            alignment: Alignment.topCenter,
+            child: AspectRatio(
+              aspectRatio: aspectRatio,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Calculate actual circle radius based on canvas width
+                  final canvasWidth = constraints.maxWidth;
+                  final canvasHeight = constraints.maxHeight;
+                  final circleRadius = canvasWidth * circleRadiusPercent;
+                  final circleCenterY = canvasHeight * circleCenterYPercent;
+                  return Stack(
+                    children: [
+                      CameraPreview(_cameraController!),
+                      // Face bounding box overlay - must be before dark overlay to be visible
+                      if (_faceBoundingBoxPaint != null)
+                        Positioned.fill(child: _faceBoundingBoxPaint!),
+                      // White square (camera lens corners) - keep visible
+                      CustomPaint(
+                        painter: TintOverlayPainter(
+                          centerRadius: circleRadius,
+                          centerY: circleCenterY,
+                        ),
+                        child: const SizedBox.expand(),
+                      ),
 
-              return Stack(
-                children: [
-                  CameraPreview(_cameraController!),
-                  // Face bounding box overlay - must be before dark overlay to be visible
-                  if (_faceBoundingBoxPaint != null)
-                    Positioned.fill(child: _faceBoundingBoxPaint!),
-                  // Dark overlay with transparent circle cutout at top
-                  CustomPaint(
-                    painter: TintOverlayPainter(
-                      centerRadius: circleRadius,
-                      centerY: circleCenterY,
-                    ),
-                    child: const SizedBox.expand(),
-                  ),
-                  // Countdown positioned above the circle
-                  if (_progress > 0 && _progress < 1.0)
-                    Positioned(
-                      top: (circleCenterY - circleRadius - 60.h).clamp(
-                        0.0,
-                        canvasHeight,
-                      ),
-                      left: 0,
-                      right: 0,
-                      child: Builder(
-                        builder: (context) {
-                          final remainingSeconds =
-                              (_progressDuration.inSeconds -
-                                      (_progress * _progressDuration.inSeconds))
-                                  .ceil()
-                                  .clamp(1, _progressDuration.inSeconds);
-                          return Center(
-                            child: _buildCountdownWidget(remainingSeconds),
-                          );
-                        },
-                      ),
-                    ),
-                  // Guidance text above the circle (only show when countdown is not showing)
-                  if (_progress == 0 || _progress >= 1.0)
-                    Positioned(
-                      top: (circleCenterY - circleRadius - 50.h).clamp(
-                        0.0,
-                        canvasHeight,
-                      ),
-                      left: 0,
-                      right: 0,
-                      child: Center(
-                        child: Text(
-                          _guidanceMessage,
-                          textAlign: TextAlign.center,
-                          style: CustomFonts.white22w600.copyWith(
-                            fontSize: 18.sp,
-                            color: _isValidFace ? Colors.green : Colors.red,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black.withOpacity(0.7),
-                                blurRadius: 8,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  // Instructions/Descriptions at the bottom
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 30.w,
-                        vertical: 5.h,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.black.withOpacity(0.0),
-                            Colors.black.withOpacity(0.7),
-                            Colors.black.withOpacity(0.9),
-                          ],
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Top description - Center your face in circle
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 14.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: CustomColors.purpleColor.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12.r),
-                              border: Border.all(
-                                color: CustomColors.purpleColor.withOpacity(
-                                  0.5,
-                                ),
-                                width: 1.5,
-                              ),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.only(top: 2.h),
-                                  child: Icon(
-                                    Icons.info_outline,
-                                    color: CustomColors.purpleColor,
-                                    size: 20.sp,
-                                  ),
-                                ),
-                                SizedBox(width: 12.w),
-                                Expanded(
-                                  child: Text(
-                                    "Center your face in the circle to get perfect results",
-                                    style: CustomFonts.white22w600.copyWith(
-                                      fontSize: 14.sp,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      height: 1.4,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 24.h),
-                          Text(
-                            "Face Scan",
-                            style: CustomFonts.white22w600.copyWith(
-                              fontSize: 24.sp,
-                              color: Colors.white,
-                            ),
-                          ),
-                          SizedBox(height: 4.h),
-                          Text(
-                            "We'll scan your face and create a cool model just for you to enhance your experience!",
-                            style: CustomFonts.white22w600.copyWith(
-                              fontSize: 14.sp,
-                              color: Colors.white.withOpacity(0.9),
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          SizedBox(height: 20.h),
-                          _buildInstructionRow(
-                            icon: SvgAssets.eye,
-                            text:
-                                "Face forward and make sure your eyes are clearly visible.",
-                            iconHeight: 24.h,
-                            iconWidth: 26.w,
-                          ),
-                          SizedBox(height: 16.h),
-                          _buildInstructionRow(
-                            icon: SvgAssets.profileIcon,
-                            text: "Align your face within the circular frame.",
-                            iconHeight: 24.h,
-                            iconWidth: 24.w,
-                            iconColor: CustomColors.purpleColor,
-                          ),
-                          SizedBox(height: 16.h),
-                          _buildInstructionRow(
-                            icon: SvgAssets.glasses,
-                            text:
-                                "Remove anything that covers your face eg: Eye glasses, Cap etc",
-                            iconHeight: 8.h,
-                            iconWidth: 22.w,
-                          ),
-                          SizedBox(height: 16.h),
-                          _buildInstructionRow(
-                            icon: SvgAssets.face,
-                            text: "Move Your Face Inside The Border",
-                            iconHeight: 24.h,
-                            iconWidth: 22.w,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
+                    ],
+                  );
+                },
+              ),
+            ),
           ),
-        ),
+          Positioned(
+            top: 40.h,
+            left: 15.w,
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: 30.w,
+                vertical: 5.h,
+              ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withOpacity(0.0),
+                    Colors.black.withOpacity(0.8),
+                    Colors.black.withOpacity(0.95),
+                    Colors.black
+                  ],
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 24.h),
+                  Text(
+                    "Face Scan",
+                    style: CustomFonts.white22w600.copyWith(
+                      fontSize: 24.sp,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    "We'll scan your face and create a cool model just for you to enhance your experience!",
+                    style: CustomFonts.white22w600.copyWith(
+                      fontSize: 14.sp,
+                      color: Colors.white.withOpacity(0.9),
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+                  _buildInstructionRow(
+                    icon: SvgAssets.eye,
+                    text:
+                    "Face forward and make sure your eyes are clearly visible.",
+                    iconHeight: 24.h,
+                    iconWidth: 26.w,
+                  ),
+                  SizedBox(height: 16.h),
+                  _buildInstructionRow(
+                    icon: SvgAssets.profileIcon,
+                    text: "Align your face within the circular frame.",
+                    iconHeight: 24.h,
+                    iconWidth: 24.w,
+                    iconColor: CustomColors.purpleColor,
+                  ),
+                  SizedBox(height: 16.h),
+                  _buildInstructionRow(
+                    icon: SvgAssets.glasses,
+                    text:
+                    "Remove anything that covers your face eg: Eye glasses, Cap etc",
+                    iconHeight: 8.h,
+                    iconWidth: 22.w,
+                  ),
+                  SizedBox(height: 16.h),
+                  _buildInstructionRow(
+                    icon: SvgAssets.face,
+                    text: "Move Your Face Inside The Border",
+                    iconHeight: 24.h,
+                    iconWidth: 22.w,
+                  ),
+                  SizedBox(height: 30.h),
+                  // Capture button
+                  SizedBox(
+                    width: double.infinity,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: CustomColors.purpleColor,
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: _isCapturing
+                              ? null
+                              : () {
+                            if (_storedRef != null) {
+                              _captureAndNavigate(_storedRef!);
+                            }
+                          },
+                          borderRadius: BorderRadius.circular(12.r),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              vertical: 18.h,
+                            ),
+                            alignment: Alignment.center,
+                            child: _isCapturing
+                                ? SizedBox(
+                              height: 20.h,
+                              width: 20.w,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor:
+                                AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              ),
+                            )
+                                : Text(
+                              "Capture",
+                              style: CustomFonts.white18w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -974,7 +688,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   }
 }
 
-// Custom painter for the tinted overlay with transparent center
 class TintOverlayPainter extends CustomPainter {
   final double centerRadius;
   final double? centerY; // Optional Y position, defaults to center if null
@@ -983,41 +696,7 @@ class TintOverlayPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    // Use provided centerY or default to center of screen
     final center = Offset(size.width / 2, centerY ?? size.height / 2);
-
-    // Create a path for the entire screen
-    final path = Path()..addRect(rect);
-
-    // Cut out a circle from the center
-    final circlePath = Path()
-      ..addOval(Rect.fromCircle(center: center, radius: centerRadius));
-
-    // Subtract the circle from the full screen path
-    final overlayPath = Path.combine(
-      PathOperation.difference,
-      path,
-      circlePath,
-    );
-
-    // Draw the dark overlay
-    final paint = Paint()
-      ..color = Colors
-          .black // Increased opacity for better visibility
-      ..style = PaintingStyle.fill;
-
-    canvas.drawPath(overlayPath, paint);
-
-    // Draw a border around the circle cutout for better visibility
-    final borderPaint = Paint()
-      ..color = Colors.white.withOpacity(0.5)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
-
-    canvas.drawCircle(center, centerRadius, borderPaint);
-
-    // Draw camera lens-style corner indicators only (no full border)
     // Square size is 50% of circle diameter - smaller and centered
     final squareSize = centerRadius * 2 * 0.50;
     final squareRect = Rect.fromCenter(

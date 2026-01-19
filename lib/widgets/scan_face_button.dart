@@ -8,6 +8,8 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/checkout_view_model.dart';
 
+import '../utills/color_constant.dart';
+
 class ScanFaceButton extends ConsumerWidget {
   // final VoidCallback onTap;
   const ScanFaceButton({
@@ -25,7 +27,8 @@ class ScanFaceButton extends ConsumerWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 14.h),
         decoration: BoxDecoration(
-          color: Colors.black,
+         // color: CustomColors.lightBlueColor,
+          gradient: CustomColors.purpleBlueGradient,
           borderRadius: BorderRadius.circular(40),
           boxShadow: [
             // Outer glow
@@ -45,11 +48,11 @@ class ScanFaceButton extends ConsumerWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SvgPicture.asset(SvgAssets.faceId),
+            SvgPicture.asset(SvgAssets.faceId,color: CustomColors.blackColor,),
             const SizedBox(width: 8),
             Text(
               "Scan Your Face",
-              style: CustomFonts.black18w600.copyWith(color: Colors.white),
+              style: CustomFonts.black18w600,
             ),
           ],
         ),

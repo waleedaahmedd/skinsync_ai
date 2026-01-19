@@ -35,14 +35,20 @@ Future<XFile> cropImageToCircle(XFile xFile, {
   required double centerXPercent,
   required double centerYPercent,
   required double radiusPercent,
+  bool flipHorizontally = false,
 }) async {
   // Read image bytes
   final bytes = await xFile.readAsBytes();
 
   // Decode image
-  final img.Image? original = img.decodeImage(bytes);
+  img.Image? original = img.decodeImage(bytes);
   if (original == null) {
     throw Exception('Unable to decode image');
+  }
+
+  // Flip horizontally if needed (combine operations to avoid double processing)
+  if (flipHorizontally) {
+    original = img.flipHorizontal(original);
   }
 
   final imageWidth = original.width;
@@ -73,7 +79,7 @@ Future<XFile> cropImageToCircle(XFile xFile, {
   final timestamp = DateTime.now().millisecondsSinceEpoch;
   final newFilePath = '${tempDir.path}/cropped_$timestamp.jpg';
   final File newFile = File(newFilePath);
-  await newFile.writeAsBytes(img.encodeJpg(cropped));
+  await newFile.writeAsBytes(img.encodeJpg(cropped, quality: 95));
 
   // Return as XFile
   return XFile(newFile.path);
