@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/face_detection_screen.dart';
 import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
-import 'package:skinsync_ai/screens/select_sections_screen.dart';
+import 'package:skinsync_ai/screens/treatment_area_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -32,7 +32,7 @@ class TreatmentContainer extends StatelessWidget {
                   .read(treatmentViewModel.notifier)
                   .getSelectSectionApi(sectionId: treatments.id ?? 0);
               ref.read(treatmentViewModel.notifier).treatmentId = treatments.id;
-              SelectSectionsScreen.show(context);
+              TreatmentAreaScreen.show(context);
             } else {
               Navigator.pushNamed(
                 context,

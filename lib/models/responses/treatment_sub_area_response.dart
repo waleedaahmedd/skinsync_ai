@@ -1,18 +1,18 @@
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
 
-class SelectSelectionResponse extends BaseResponseModel {
+class TreatmentSubAreaResponse extends BaseResponseModel {
  
-  List<SelectSection>? data;
+  List<Data>? data;
 
-  SelectSelectionResponse({super.isSuccess, super.message, this.data});
+  TreatmentSubAreaResponse({super.isSuccess, super.message, this.data});
 
-  SelectSelectionResponse.fromJson(Map<String, dynamic> json) {
+  TreatmentSubAreaResponse.fromJson(Map<String, dynamic> json) {
     isSuccess = json['is_success'];
     message = json['message'];
     if (json['data'] != null) {
-      data = <SelectSection>[];
+      data = <Data>[];
       json['data'].forEach((v) {
-        data!.add(new SelectSection.fromJson(v));
+        data!.add(new Data.fromJson(v));
       });
     }
   }
@@ -28,21 +28,32 @@ class SelectSelectionResponse extends BaseResponseModel {
   }
 }
 
-class SelectSection {
+class Data {
   int? id;
   String? name;
   String? icon;
   String? description;
-  bool? isSidearea;
+  int? minSyringe;
+  int? maxSyringe;
+  List<int>? syringeOptions;
 
-  SelectSection({this.id, this.name, this.icon, this.description, this.isSidearea});
+  Data(
+      {this.id,
+      this.name,
+      this.icon,
+      this.description,
+      this.minSyringe,
+      this.maxSyringe,
+      this.syringeOptions});
 
-  SelectSection.fromJson(Map<String, dynamic> json) {
+  Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     icon = json['icon'];
     description = json['description'];
-    isSidearea = json['is_sidearea'];
+    minSyringe = json['min_syringe'];
+    maxSyringe = json['max_syringe'];
+    syringeOptions = json['syringe_options'].cast<int>();
   }
 
   Map<String, dynamic> toJson() {
@@ -51,7 +62,9 @@ class SelectSection {
     data['name'] = this.name;
     data['icon'] = this.icon;
     data['description'] = this.description;
-    data['is_sidearea'] = this.isSidearea;
+    data['min_syringe'] = this.minSyringe;
+    data['max_syringe'] = this.maxSyringe;
+    data['syringe_options'] = this.syringeOptions;
     return data;
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:skinsync_ai/models/dummy_list_model.dart';
-import 'package:skinsync_ai/models/responses/select_section_response.dart';
+import 'package:skinsync_ai/models/responses/treatment_area_response.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/frosted_container.dart';

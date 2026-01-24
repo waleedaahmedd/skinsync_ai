@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/face_detection_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
-import 'package:skinsync_ai/screens/select_sub_sections_screen.dart';
 import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -15,13 +15,14 @@ import '../models/dummy_list_model.dart';
 import '../view_models/checkout_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_grid_view_tile.dart';
+import 'face_scan_screen.dart';
 
-class SelectSectionsScreen extends StatefulWidget {
-  static const String routeName = '/SelectSectionScreen';
-  const SelectSectionsScreen({super.key});
+class TreatmentSubAreaScreen extends StatefulWidget {
+  static const String routeName = '/TreatmentSubAreaScreen';
+  const TreatmentSubAreaScreen({super.key});
 
   @override
-  State<SelectSectionsScreen> createState() => _SelectSectionsScreenState();
+  State<TreatmentSubAreaScreen> createState() => _SelectSectionsScreenState();
   
   // Static method to show as bottom sheet
   static Future<void> show(BuildContext context) {
@@ -33,13 +34,13 @@ class SelectSectionsScreen extends StatefulWidget {
       isDismissible: true,
       useSafeArea: true,
       useRootNavigator: false, // Use the current navigator, not root
-      builder: (context) => const SelectSectionsScreen(),
-      routeSettings: const RouteSettings(name: '/SelectSectionBottomSheet'),
+      builder: (context) => const TreatmentSubAreaScreen(),
+      routeSettings: const RouteSettings(name: '/SelectSubSectionBottomSheet'),
     );
   }
 }
 
-class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
+class _SelectSectionsScreenState extends State<TreatmentSubAreaScreen> {
   @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
@@ -74,7 +75,7 @@ class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Select Section",
+                      "Select Sub Section",
                       style: CustomFonts.black24w600,
                     ),
                     IconButton(
@@ -91,7 +92,8 @@ class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
                   child: Consumer(
                     builder: (context, ref, _) {
-                      final loading = ref.watch(treatmentViewModel).loading;
+                      final loading = ref.watch(treatmentViewModel).treatmentSubAreaLoading;
+
                       if (loading) {
                         return Center(
                           child: CircularProgressIndicator(
@@ -111,15 +113,16 @@ class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
                           itemCount:
                               ref
                                   .read(treatmentViewModel)
-                                  .selectSelectionResponse
+                                  .treatmentsSubAreaResponse
                                   ?.data
                                   ?.length ??
                               0,
                           itemBuilder: (context, index) {
-                            final section = ref
+                            final subSection = ref
                                 .read(treatmentViewModel)
-                                .selectSelectionResponse
+                                .treatmentsSubAreaResponse
                                 ?.data;
+
                             return AnimationConfiguration.staggeredGrid(
                               position: index,
                               duration: const Duration(milliseconds: 600),
@@ -128,34 +131,16 @@ class _SelectSectionsScreenState extends State<SelectSectionsScreen> {
                                 child: FadeInAnimation(
                                   child: CustomGridViewTile(
                                     onTap: () {
-                                      ref
-                                          .read(checkoutViewModel.notifier)
-                                          .updateState(
-                                            treatmentAreaId: section[index].id,
-                                          );
+                                      ref.read(checkoutViewModel.notifier).updateState(treatmentSubAreaId: subSection?[index].id);
                                       Navigator.pop(context); // Close bottom sheet first
-                                      if (section[index].isSidearea == true) {
-                                        final treatmentID = ref
-                                            .read(treatmentViewModel.notifier)
-                                            .treatmentId;
-                                        final selectSectionID = section[index].id;
+                                      Navigator.pushNamed(
+                                        context,
                                         ref
-                                            .read(treatmentViewModel.notifier)
-                                            .getSubSectionApi(
-                                              sectionId: treatmentID ?? 0,
-                                              subSectionId: selectSectionID ?? 0,
-                                            );
-                                    SelectSubSectionsScreen.show(context);
-                                      } else {
-                                        Navigator.pushNamed(
-                                          context,
-                                          ref
-                                              .read(checkoutViewModel.notifier)
-                                              .navigateTo(),
-                                        );
-                                      }
+                                            .read(checkoutViewModel.notifier)
+                                            .navigateTo(),
+                                      );
                                     },
-                                    title: section![index].name,
+                                    title: subSection?[index].name ?? "",
                                   ),
                                 ),
                               ),

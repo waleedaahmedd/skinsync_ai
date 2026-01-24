@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:skinsync_ai/models/responses/select_section_response.dart';
-import 'package:skinsync_ai/models/responses/sub_section_response.dart';
+import 'package:skinsync_ai/models/responses/treatment_area_response.dart';
+import 'package:skinsync_ai/models/responses/treatment_sub_area_response.dart';
 import 'package:skinsync_ai/services/api_base_helper.dart';
 
 import '../models/base_state_model.dart';
@@ -36,67 +36,87 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     return await runSafely(() async {
       final TreatmentResponse response = await _treatmentRepository
           .getTreatmentsApi();
-      state = state.copyWith(treatmentsLoading: false, treatmentResponse: response);
+      state = state.copyWith(
+        treatmentsLoading: false,
+        treatmentResponse: response,
+      );
       return response.isSuccess == true;
     });
   }
+
   Future<bool?> getSelectSectionApi({required int sectionId}) async {
     return await runSafely(() async {
-      state = state.copyWith(loading: true);
-      final SelectSelectionResponse response = await _treatmentRepository
+      state = state.copyWith(treatmentAreaLoading: true);
+      final TreatmentAreaResponse response = await _treatmentRepository
           .getSelectSectionApi(sectionId: sectionId);
-      state = state.copyWith(loading: false, selectSelectionResponse: response);
+      state = state.copyWith(treatmentAreaLoading: false, selectSelectionResponse: response);
       return response.isSuccess == true;
     });
   }
-  Future<bool?> getSubSectionApi({required int sectionId, required int subSectionId}) async {
+
+  Future<bool?> getSubSectionApi({
+    required int sectionId,
+    required int subSectionId,
+  }) async {
     return await runSafely(() async {
-      state = state.copyWith(loading: true);
-      final SubSelectionResponse response = await _treatmentRepository
+      state = state.copyWith(treatmentSubAreaLoading: true);
+      final TreatmentSubAreaResponse response = await _treatmentRepository
           .getSubSectionApi(sectionId: sectionId, subSectionId: subSectionId);
-      state = state.copyWith(loading: false, subSelectionResponse: response);
+      state = state.copyWith(treatmentSubAreaLoading: false, subSelectionResponse: response);
       return response.isSuccess == true;
     });
   }
+
   @override
   void onError(String message) {
-    state = state.copyWith(loading: false, treatmentsLoading: false);
+    state = state.copyWith(treatmentAreaLoading: false, treatmentsLoading: false, treatmentSubAreaLoading: false);
     super.onError(message);
     EasyLoading.showError(message);
   }
 }
 
 @immutable
-class TreatmentsState extends BaseStateModel {
+class TreatmentsState  {
   final TreatmentResponse? treatmentResponse;
-  final SubSelectionResponse? subSelectionResponse;
-  final SelectSelectionResponse? selectSelectionResponse;
-  final bool treatmentsLoading; // Separate loading for treatment listing
+  final TreatmentSubAreaResponse? treatmentsSubAreaResponse;
+  final TreatmentAreaResponse? treatmentAreaResponse;
+  final bool treatmentsLoading;
+
+  final bool treatmentAreaLoading;
+  final bool treatmentSubAreaLoading;
 
   const TreatmentsState({
-    super.loading = false,
-    super.errorMessage,
+    //super.loading = false,
+    //super.errorMessage,
     this.treatmentResponse,
-    this.selectSelectionResponse,
-    this.subSelectionResponse,
+    this.treatmentAreaResponse,
+    this.treatmentsSubAreaResponse,
     this.treatmentsLoading = false,
+    this.treatmentAreaLoading = false,
+    this.treatmentSubAreaLoading = false,
   });
-  @override
+
   TreatmentsState copyWith({
-    bool? loading,
-    String? errorMessage,
+     //bool? loading,
+  //  String? errorMessage,
     TreatmentResponse? treatmentResponse,
-    SubSelectionResponse? subSelectionResponse,
-    SelectSelectionResponse? selectSelectionResponse,
+    TreatmentSubAreaResponse? subSelectionResponse,
+    TreatmentAreaResponse? selectSelectionResponse,
     bool? treatmentsLoading,
+    bool? treatmentAreaLoading,
+    bool? treatmentSubAreaLoading,
   }) {
     return TreatmentsState(
-      loading: loading ?? this.loading,
-      errorMessage: errorMessage ?? this.errorMessage,
+      // loading: loading ?? this.loading,
+     // errorMessage: errorMessage ?? this.errorMessage,
       treatmentResponse: treatmentResponse ?? this.treatmentResponse,
-      selectSelectionResponse: selectSelectionResponse ?? this.selectSelectionResponse,
-      subSelectionResponse: subSelectionResponse ?? this.subSelectionResponse,
+      treatmentAreaResponse:
+          selectSelectionResponse ?? treatmentAreaResponse,
+      treatmentsSubAreaResponse:
+          subSelectionResponse ?? treatmentsSubAreaResponse,
       treatmentsLoading: treatmentsLoading ?? this.treatmentsLoading,
+      treatmentAreaLoading: treatmentAreaLoading ?? this.treatmentAreaLoading,
+      treatmentSubAreaLoading: treatmentSubAreaLoading ?? this.treatmentSubAreaLoading,
     );
   }
 }
