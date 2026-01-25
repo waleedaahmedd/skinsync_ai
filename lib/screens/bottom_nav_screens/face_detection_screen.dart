@@ -36,7 +36,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
   bool _isCapturing = false;
 
-  CustomPaint? _faceBoundingBoxPaint;
+  // CustomPaint? _faceBoundingBoxPaint;
 
   // Store ref for use in callbacks
   WidgetRef? _storedRef;
@@ -130,33 +130,33 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
     // Update face bounding box painter
     // Use the actual camera preview size for accurate coordinate mapping
-    final previewSize = _cameraController!.value.previewSize;
-    if (mounted) {
-      setState(() {
-        if (faces.isNotEmpty &&
-            inputImage.metadata?.size != null &&
-            inputImage.metadata?.rotation != null &&
-            previewSize != null) {
-          // Create bounding box paint when face is detected and metadata is available
-          _faceBoundingBoxPaint = CustomPaint(
-            painter: FaceDetectorPainter(
-              faces: faces,
-              imageSize: inputImage.metadata!.size,
-              rotation: inputImage.metadata!.rotation,
-              cameraLensDirection: _cameraController!.description.lensDirection,
-              previewSize: Size(
-                previewSize.width.toDouble(),
-                previewSize.height.toDouble(),
-              ),
-            ),
-            child: const SizedBox.expand(),
-          );
-        } else {
-          // Clear bounding box paint when no faces or metadata unavailable
-          _faceBoundingBoxPaint = null;
-        }
-      });
-    }
+    // final previewSize = _cameraController!.value.previewSize;
+    // if (mounted) {
+    //   setState(() {
+    //     if (faces.isNotEmpty &&
+    //         inputImage.metadata?.size != null &&
+    //         inputImage.metadata?.rotation != null &&
+    //         previewSize != null) {
+    //       // Create bounding box paint when face is detected and metadata is available
+    //       _faceBoundingBoxPaint = CustomPaint(
+    //         painter: FaceDetectorPainter(
+    //           faces: faces,
+    //           imageSize: inputImage.metadata!.size,
+    //           rotation: inputImage.metadata!.rotation,
+    //           cameraLensDirection: _cameraController!.description.lensDirection,
+    //           previewSize: Size(
+    //             previewSize.width.toDouble(),
+    //             previewSize.height.toDouble(),
+    //           ),
+    //         ),
+    //         child: const SizedBox.expand(),
+    //       );
+    //     } else {
+    //       // Clear bounding box paint when no faces or metadata unavailable
+    //       _faceBoundingBoxPaint = null;
+    //     }
+    //   });
+    // }
 
     if (faces.isEmpty) {
       return;
@@ -500,8 +500,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                     children: [
                       CameraPreview(_cameraController!),
                       // Face bounding box overlay - must be before dark overlay to be visible
-                      if (_faceBoundingBoxPaint != null)
-                        Positioned.fill(child: _faceBoundingBoxPaint!),
+                      // if (_faceBoundingBoxPaint != null)
+                      //   Positioned.fill(child: _faceBoundingBoxPaint!),
                       // White square (camera lens corners) - keep visible
                       CustomPaint(
                         painter: TintOverlayPainter(

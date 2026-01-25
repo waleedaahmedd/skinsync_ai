@@ -33,8 +33,12 @@ class FaceScanProvider extends BaseViewModel<FaceScanState> {
     state = FaceScanState(
       isBefore: state.isBefore,
       capturedImage: state.capturedImage,
-      aiImage: image, // Always set the new image
+      aiImage: image,
     );
+  }
+
+  void clearAiImage() {
+    state = state.copyWith(clearAiImage: true);
   }
 
   @override

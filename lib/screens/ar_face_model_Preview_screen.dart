@@ -1,18 +1,14 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:http/http.dart' as http;
 import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/utills/image_utills.dart';
 import 'package:skinsync_ai/view_models/face_scan_provider.dart';
 import 'package:skinsync_ai/widgets/grey_container.dart';
 import 'package:skinsync_ai/widgets/service_type_button.dart';
@@ -32,99 +28,22 @@ class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
 
 class _ArFaceModelPreviewScreenState
     extends ConsumerState<ArFaceModelPreviewScreen> {
-  bool _isLoading = false;
-  String? _errorMessage;
   bool _hasInitialized = false;
+  final List<int> _sliderValues = [1, 2, 3, 4];
+  int _currentSliderIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    // Call API when screen loads
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _callPredictAPI();
-    // });
-  }
-
-  Future<Map<String, dynamic>?> _uploadCapturedImage({
-    required XFile image,
-    required String apiUrl,
-  }) async {
-    try {
-      final uri = Uri.parse(apiUrl);
-      final request = http.MultipartRequest('POST', uri);
-
-      // Attach image
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'image',
-          image.path,
-          filename: image.name,
-        ),
-      );
-
-      final response = await request.send();
-      final responseBody = await response.stream.bytesToString();
-      final responseData = jsonDecode(responseBody);
-
-      // Check if server returned an error response
-      if (responseData['success'] == false) {
-        final errorMessage = responseData['message'] ?? 'Upload failed';
-        throw Exception(errorMessage);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if(ref.watch(treatmentViewModel).treatmentId != null){
+        ref.read(treatmentViewModel.notifier).callPredictAPI();
       }
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return responseData;
-      } else {
-        final errorMessage = responseData['message'] ?? 'Upload failed';
-        throw Exception(errorMessage);
-      }
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> _callPredictAPI() async {
-    final state = ref.read(faceScanProvider);
-    if (state.capturedImage == null) return;
-
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
     });
-
-    try {
-      final jsonRes = await _uploadCapturedImage(
-        image: state.capturedImage!,
-        apiUrl: 'http://18.116.65.70/api/predict/',
-      );
-
-      if (jsonRes == null) {
-        throw Exception('Failed to upload image');
-      }
-
-      // Generate unique filename to ensure each API call creates a new file
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final ximage = await base64ToXFile(
-        jsonRes["image_base64"],
-        fileName: 'ai_image_$timestamp.jpg',
-      );
-      await ref.read(faceScanProvider.notifier).setAiImage(ximage);
-
-      setState(() {
-        _isLoading = false;
-        _errorMessage = null;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = e.toString().replaceFirst('Exception: ', '');
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Ensure default shows "before" tab (only once)
     if (!_hasInitialized) {
       _hasInitialized = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -135,11 +54,22 @@ class _ArFaceModelPreviewScreenState
       });
     }
 
-    return PopScope(
-      onPopInvokedWithResult: (didPop, result) {
-        ref.read(checkoutViewModel.notifier).clearState();
-      },
-      child: Scaffold(
+    return Consumer(
+      builder: (context, ref, _) {
+        final isLoading = ref.watch(
+          treatmentViewModel.select((state) => state.loading),
+        );
+
+        return PopScope(
+          canPop: !isLoading,
+          onPopInvokedWithResult: (didPop, result) {
+            if (!isLoading) {
+              ref.read(checkoutViewModel.notifier).clearState();
+            }
+          },
+          child: AbsorbPointer(
+            absorbing: isLoading,
+            child: Scaffold(
         appBar: AppBar(
           leadingWidth: 80.w,
           centerTitle: false,
@@ -163,235 +93,93 @@ class _ArFaceModelPreviewScreenState
           ],
         ),
         body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _facePreview(),
-                SizedBox(height: 18.h),
-                _accuracyRate(),
-                SizedBox(height: 36.h),
-                Text('Treatment Selection', style: CustomFonts.black18w600),
-                SizedBox(height: 8.h),
-                Consumer(
-                  builder: (context, ref, _) {
-                    final state = ref.watch(treatmentViewModel);
-                    final isLoading = state
-                        .treatmentsLoading; // Use separate loading for treatments
-                    final treatments = state.treatmentResponse?.data ?? [];
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _facePreview(),
+              SizedBox(height: 18.h),
+              _accuracyRate(),
 
-                    // Fetch treatments if not already loaded and not currently loading
-                    if (!isLoading && state.treatmentResponse == null) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        ref.read(treatmentViewModel.notifier).getTreatments();
-                      });
-                    }
-
-                    // Show loading indicator
-                    if (isLoading) {
-                      return SizedBox(
-                        height: 200,
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            color: CustomColors.purpleColor,
-                          ),
-                        ),
-                      );
-                    }
-
-                    return AnimationLimiter(
-                      key: const ValueKey('treatments_list'),
-                      // Stable key to prevent re-animation
-                      child: Wrap(
-                        direction: Axis.horizontal,
-                        spacing: 12.w,
-                        runSpacing: 12.h,
-                        children: List.generate(treatments.length, (index) {
-                          return AnimationConfiguration.staggeredList(
-                            position: index,
-                            duration: const Duration(milliseconds: 800),
-                            child: SlideAnimation(
-                              horizontalOffset: 100.0,
-                              child: FadeInAnimation(
-                                child: ServiceTypeButton(
-                                  icon: PngAssets.syringe,
-                                  text: treatments[index].name!,
-                                  selected:
-                                      ref
-                                          .watch(checkoutViewModel)
-                                          .treatmentId ==
-                                      treatments[index].id,
-                                  onPressed: () {
-                                    ref
-                                        .read(checkoutViewModel.notifier)
-                                        .updateState(
-                                          treatmentId: treatments[index].id,
-                                        );
-                                    ref
-                                            .read(treatmentViewModel.notifier)
-                                            .treatmentId =
-                                        treatments[index].id;
-                                    if (treatments[index].isArea == true) {
-                                      ref
-                                          .read(treatmentViewModel.notifier)
-                                          .getSelectSectionApi(
-                                            sectionId:
-                                                treatments[index].id ?? 0,
-                                          );
-                                    } else {
-                                      state.treatmentAreaResponse!.data =
-                                          null;
-                                      _callPredictAPI();
-                                    }
-                                  },
-                                ),
-                              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding:  EdgeInsets.symmetric(horizontal: 20.0.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 36.h),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('Adjustable Parameters:', style: CustomFonts.black18w600),
+                            Text(
+                              '${_sliderValues[_currentSliderIndex]} Syringe${_sliderValues[_currentSliderIndex] > 1 ? 's' : ''}',
+                              style: CustomFonts.black14w500,
                             ),
-                          );
-                        }),
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(height: 50.h),
-                Consumer(
-                  builder: (context, ref, _) {
-                    final state = ref.watch(treatmentViewModel);
-                    final isLoading = state.treatmentAreaLoading;
-                    final treatmentsArea =
-                        state.treatmentAreaResponse?.data ?? [];
-                    if (isLoading) {
-                      return SizedBox(
-                        height: 200,
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            color: CustomColors.purpleColor,
-                          ),
+                          ],
                         ),
-                      );
-                    }
-                    if (treatmentsArea.isNotEmpty) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Area Selection',
-                            style: CustomFonts.black18w600,
-                          ),
-                          SizedBox(height: 8.h),
-                          AnimationLimiter(
-                            key: const ValueKey('area_list'),
-                            // Stable key to prevent re-animation
-                            child: Wrap(
-                              direction: Axis.horizontal,
-                              spacing: 12.w,
-                              runSpacing: 12.h,
-                              children: List.generate(treatmentsArea.length, (
-                                index,
-                              ) {
-                                return AnimationConfiguration.staggeredList(
-                                  position: index,
-                                  duration: const Duration(milliseconds: 800),
-                                  child: SlideAnimation(
-                                    horizontalOffset: 100.0,
-                                    child: FadeInAnimation(
-                                      child: ServiceTypeButton(
-                                        icon: PngAssets.syringe,
-                                        text: treatmentsArea[index].name!,
-                                        selected:
-                                            ref
-                                                .watch(checkoutViewModel)
-                                                .treatmentAreaId ==
-                                            treatmentsArea[index].id,
-                                        onPressed: () {
-                                          ref
-                                              .read(checkoutViewModel.notifier)
-                                              .updateState(
-                                                treatmentAreaId:
-                                                    treatmentsArea[index].id,
-                                              );
-                                          ref
-                                                  .read(
-                                                    treatmentViewModel.notifier,
-                                                  )
-                                                  .selectSectionId =
-                                              treatmentsArea[index].id;
-                                          if (treatmentsArea[index]
-                                                  .isSidearea ==
-                                              true) {
-                                            ref
-                                                .read(
-                                                  treatmentViewModel.notifier,
-                                                )
-                                                .getSubSectionApi(
-                                                  sectionId:
-                                                      ref
-                                                          .watch(
-                                                            checkoutViewModel,
-                                                          )
-                                                          .treatmentId ??
-                                                      0,
-                                                  subSectionId:
-                                                      treatmentsArea[index]
-                                                          .id ??
-                                                      0,
-                                                );
-                                          } else {
-                                            state.treatmentsSubAreaResponse!.data =
-                                            null;
-                                            _callPredictAPI();
-                                          }
-                                        },
-                                      ),
-                                    ),
+                        Consumer(
+                          builder: (context, ref, _) {
+                            return Slider(
+                              activeColor: CustomColors.lightBlueColor,
+                              value: _currentSliderIndex.toDouble(),
+                              min: 0,
+                              max: _sliderValues.length - 1,
+                              divisions: _sliderValues.length - 1,
+                              label: '${_sliderValues[_currentSliderIndex]}',
+                              onChanged: (double value) {
+                                setState(() {
+                                  _currentSliderIndex = value.round();
+                                });
+                                final syringeLevel = _sliderValues[_currentSliderIndex];
+                                ref.read(treatmentViewModel.notifier).updateSyringeLevel(syringeLevel);
+                                ref.read(treatmentViewModel.notifier).callPredictAPI(syringeLevel: syringeLevel);
+                              },
+                            );
+                          },
+                        ),
+                        Text('Treatment Selection', style: CustomFonts.black18w600),
+                        SizedBox(height: 8.h),
+                        Consumer(
+                          builder: (context, ref, _) {
+                            // Use select to watch only specific parts of the state
+                            final isLoading = ref.watch(
+                              treatmentViewModel.select((state) => state.treatmentsLoading),
+                            );
+                            final treatments = ref.watch(
+                              treatmentViewModel.select((state) => state.treatmentResponse?.data ?? []),
+                            );
+                            final treatmentId = ref.watch(
+                              treatmentViewModel.select((state) => state.treatmentId),
+                            );
+                            final treatmentResponse = ref.watch(
+                              treatmentViewModel.select((state) => state.treatmentResponse),
+                            );
+
+                            if (!isLoading && treatmentResponse == null) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                ref.read(treatmentViewModel.notifier).getTreatments();
+                              });
+                            }
+
+                            if (isLoading) {
+                              return SizedBox(
+                                height: 200,
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    color: CustomColors.purpleColor,
                                   ),
-                                );
-                              }),
-                            ),
-                          ),
-                          SizedBox(height: 50.h),
-                        ],
-                      );
-                    }
-                    return SizedBox();
-                  },
-                ),
-                Consumer(
-                  builder: (context, ref, _) {
-                    final state = ref.watch(treatmentViewModel);
-                    final isLoading = state.treatmentSubAreaLoading;
-                    final treatmentsSubArea =
-                        state.treatmentsSubAreaResponse?.data ?? [];
-                    if (isLoading) {
-                      return SizedBox(
-                        height: 200,
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            color: CustomColors.purpleColor,
-                          ),
-                        ),
-                      );
-                    }
-                    if (treatmentsSubArea.isNotEmpty) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Sub Area Selection',
-                            style: CustomFonts.black18w600,
-                          ),
-                          SizedBox(height: 8.h),
-                          AnimationLimiter(
-                            key: const ValueKey('sub_area_list'),
-                            // Stable key to prevent re-animation
-                            child: Wrap(
-                              direction: Axis.horizontal,
-                              spacing: 12.w,
-                              runSpacing: 12.h,
-                              children: List.generate(
-                                treatmentsSubArea.length,
-                                (index) {
+                                ),
+                              );
+                            }
+
+                            return AnimationLimiter(
+                              key: const ValueKey('treatments_list'),
+                              child: Wrap(
+                                direction: Axis.horizontal,
+                                spacing: 12.w,
+                                runSpacing: 12.h,
+                                children: List.generate(treatments.length, (index) {
                                   return AnimationConfiguration.staggeredList(
                                     position: index,
                                     duration: const Duration(milliseconds: 800),
@@ -400,73 +188,181 @@ class _ArFaceModelPreviewScreenState
                                       child: FadeInAnimation(
                                         child: ServiceTypeButton(
                                           icon: PngAssets.syringe,
-                                          text: treatmentsSubArea[index].name!,
-                                          selected:
-                                              ref
-                                                  .watch(checkoutViewModel)
-                                                  .treatmentSubAreaId ==
-                                              treatmentsSubArea[index].id,
+                                          text: treatments[index].name!,
+                                          selected: treatmentId == treatments[index].id,
                                           onPressed: () {
                                             ref
-                                                .read(
-                                                  checkoutViewModel.notifier,
-                                                )
-                                                .updateState(
-                                                  treatmentSubAreaId:
-                                                      treatmentsSubArea[index]
-                                                          .id,
+                                                .read(treatmentViewModel.notifier)
+                                                .onTapTreatment(
+                                                  treatmentModel: treatments[index], isCallPredictAPI: true,
                                                 );
-                                            ref
-                                                    .read(
-                                                      treatmentViewModel
-                                                          .notifier,
-                                                    )
-                                                    .subSectionId =
-                                                treatmentsSubArea[index].id;
-                                            /* if (treatmentsSubArea[index]
-                                                  .syringeOptions ==
-                                              true) {
-                                            // ref
-                                            //     .read(
-                                            //       treatmentViewModel.notifier,
-                                            //     )
-                                            //     .getSelectSectionApi(
-                                            //       sectionId:
-                                            //           treatmentsArea[index]
-                                            //               .id ??
-                                            //           0,
-                                            //     );
-
-                                          } else {*/
-                                            _callPredictAPI();
-                                            // }
                                           },
                                         ),
                                       ),
                                     ),
                                   );
-                                },
+                                }),
                               ),
-                            ),
-                          ),
-                          SizedBox(height: 50.h),
-                        ],
-                      );
-                    }
-                    return SizedBox();
-                  },
-                ),
+                            );
+                          },
+                        ),
+                        SizedBox(height: 50.h),
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final isLoading = ref.watch(
+                              treatmentViewModel.select((state) => state.treatmentAreaLoading),
+                            );
+                            final treatmentsArea = ref.watch(
+                              treatmentViewModel.select((state) => state.treatmentAreaResponse?.data ?? []),
+                            );
+                            final selectSectionId = ref.watch(
+                              treatmentViewModel.select((state) => state.selectSectionId),
+                            );
 
-                // _treatmentSection(area: 'Under-Nose', syringes: '01 Syringe'),
-                // SizedBox(height: 50.h),
-                // _addMoreService(),
-                // SizedBox(height: 50.h),
-                _bottomButtons(context),
-              ],
-            ),
+                            if (isLoading) {
+                              return SizedBox(
+                                height: 200,
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    color: CustomColors.purpleColor,
+                                  ),
+                                ),
+                              );
+                            }
+                            if (treatmentsArea.isNotEmpty) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Area Selection',
+                                    style: CustomFonts.black18w600,
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  AnimationLimiter(
+                                    key: const ValueKey('area_list'),
+                                    child: Wrap(
+                                      direction: Axis.horizontal,
+                                      spacing: 12.w,
+                                      runSpacing: 12.h,
+                                      children: List.generate(treatmentsArea.length, (
+                                        index,
+                                      ) {
+                                        return AnimationConfiguration.staggeredList(
+                                          position: index,
+                                          duration: const Duration(milliseconds: 800),
+                                          child: SlideAnimation(
+                                            horizontalOffset: 100.0,
+                                            child: FadeInAnimation(
+                                              child: ServiceTypeButton(
+                                                icon: PngAssets.syringe,
+                                                text: treatmentsArea[index].name!,
+                                                selected: selectSectionId == treatmentsArea[index].id,
+                                                onPressed: () {
+                                                  ref
+                                                      .read(treatmentViewModel.notifier)
+                                                      .onTapTreatmentArea(
+                                                        treatmentArea: treatmentsArea[index], isCallPredictAPI: true,
+                                                      );
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }),
+                                    ),
+                                  ),
+                                  SizedBox(height: 50.h),
+                                ],
+                              );
+                            }
+                            return SizedBox();
+                          },
+                        ),
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final isLoading = ref.watch(
+                              treatmentViewModel.select((state) => state.treatmentSubAreaLoading),
+                            );
+                            final treatmentsSubArea = ref.watch(
+                              treatmentViewModel.select((state) => state.treatmentsSubAreaResponse?.data ?? []),
+                            );
+                            final subSectionId = ref.watch(
+                              treatmentViewModel.select((state) => state.subSectionId),
+                            );
+
+                            if (isLoading) {
+                              return SizedBox(
+                                height: 200,
+                                child: const Center(
+                                  child: CircularProgressIndicator(
+                                    color: CustomColors.purpleColor,
+                                  ),
+                                ),
+                              );
+                            }
+                            if (treatmentsSubArea.isNotEmpty) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Sub Area Selection',
+                                    style: CustomFonts.black18w600,
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  AnimationLimiter(
+                                    key: const ValueKey('sub_area_list'),
+                                    child: Wrap(
+                                      direction: Axis.horizontal,
+                                      spacing: 12.w,
+                                      runSpacing: 12.h,
+                                      children: List.generate(
+                                        treatmentsSubArea.length,
+                                        (index) {
+                                          return AnimationConfiguration.staggeredList(
+                                            position: index,
+                                            duration: const Duration(milliseconds: 800),
+                                            child: SlideAnimation(
+                                              horizontalOffset: 100.0,
+                                              child: FadeInAnimation(
+                                                child: ServiceTypeButton(
+                                                  icon: PngAssets.syringe,
+                                                  text: treatmentsSubArea[index].name!,
+                                                  selected: subSectionId == treatmentsSubArea[index].id,
+                                                  onPressed: () {
+                                                    ref
+                                                        .read(treatmentViewModel.notifier)
+                                                        .onTapTreatmentSubArea(
+                                                          treatmentSubArea: treatmentsSubArea[index], isCallPredictAPI: true,
+                                                        );
+                                                  },
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 50.h),
+                                ],
+                              );
+                            }
+                            return SizedBox();
+                          },
+                        ),
+                        _bottomButtons(context),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -477,38 +373,24 @@ class _ArFaceModelPreviewScreenState
           borderRadius: BorderRadius.circular(20.r),
           child: Consumer(
             builder: (context, ref, _) {
-              final isBefore = ref.watch(
-                faceScanProvider.select((state) => state.isBefore),
-              );
               final image = ref.watch(
                 faceScanProvider.select(
                   (state) =>
                       state.isBefore ? state.capturedImage : state.aiImage,
                 ),
               );
+              
+              final errorMessage = ref.watch(
+                treatmentViewModel.select((state) => state.errorMessage),
+              );
 
-              // Show loading indicator
-              if (_isLoading) {
-                return Container(
-                  width: double.infinity,
-                  height: 326.h,
-                  color: CustomColors.greyColor.withOpacity(0.3),
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: CustomColors.lightBlueColor,
-                    ),
-                  ),
-                );
-              }
-
-              // Show error message if API failed and on After tab
-              if (!isBefore && _errorMessage != null) {
+              if (errorMessage != null && image == null) {
                 return Container(
                   width: double.infinity,
                   height: 326.h,
                   padding: EdgeInsets.all(16.w),
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
+                    color: Colors.red.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Center(
@@ -528,11 +410,14 @@ class _ArFaceModelPreviewScreenState
                           ),
                         ),
                         SizedBox(height: 8.h),
-                        Text(
-                          _errorMessage!,
-                          textAlign: TextAlign.center,
-                          style: CustomFonts.black16w400.copyWith(
-                            color: Colors.red.shade700,
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: Text(
+                            errorMessage,
+                            textAlign: TextAlign.center,
+                            style: CustomFonts.black16w400.copyWith(
+                              color: Colors.red.shade700,
+                            ),
                           ),
                         ),
                       ],
@@ -541,7 +426,6 @@ class _ArFaceModelPreviewScreenState
                 );
               }
 
-              // Show image if available
               if (image != null) {
                 return Image.file(
                   File(image.path),
@@ -551,11 +435,10 @@ class _ArFaceModelPreviewScreenState
                 );
               }
 
-              // Fallback
               return Container(
                 width: double.infinity,
                 height: 326.h,
-                color: CustomColors.greyColor.withOpacity(0.3),
+                color: CustomColors.greyColor.withValues(alpha:0.3),
                 child: Center(
                   child: Text(
                     'No image available',
@@ -586,11 +469,8 @@ class _ArFaceModelPreviewScreenState
           right: 23.w,
           child: Consumer(
             builder: (context, ref, _) {
-              // Watch provider so this widget rebuilds when "before/after" toggles.
-              ref.watch(faceScanProvider.select((state) => state.isBefore));
               return GestureDetector(
                 onTap: () {
-                  // Toggle the state
                   ref.read(faceScanProvider.notifier).toggleIsBefore();
                 },
                 child: CircleAvatar(
@@ -642,147 +522,62 @@ class _ArFaceModelPreviewScreenState
     );
   }
 
-  // ================= Treatment Section =================
-
-  // Widget _treatmentSection({required String area, required String syringes}) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Text('Treatment Selection', style: CustomFonts.black18w600),
-  //       SizedBox(height: 8.h),
-  //       Row(
-  //         children: [
-  //           ServiceTypeButton(
-  //             icon: Image.asset(PngAssets.syringe, width: 21.w),
-  //             text: "Dermal Fillers",
-  //             selected: true,
-  //           ),
-  //           //         Container(
-  //           //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-  //           //   decoration: BoxDecoration(
-  //           //     color: ,
-  //           //     borderRadius: BorderRadius.circular(12.r),
-  //           //   ),
-  //           //   child: Row(
-  //           //     children: [
-  //
-  //           //        SizedBox(width: 8.w),
-  //           //       Text(
-  //           //         "Dermal Fillers",
-  //           //         style: CustomFonts.white17w500
-  //           //       ),
-  //           //     ],
-  //           //   ),
-  //           // ),
-  //           SizedBox(width: 10.w),
-  //           ServiceTypeButton(
-  //             icon: Image.asset(PngAssets.hand, width: 21.w),
-  //             text: "Botox",
-  //             selected: false,
-  //           ),
-  //         ],
-  //       ),
-  //       SizedBox(height: 16.h),
-  //       Text('Area Selection', style: CustomFonts.black18w600),
-  //       SizedBox(height: 8.h),
-  //       DropdownButtonFormField(
-  //         value: area,
-  //         items: [area]
-  //             .map(
-  //               (e) => DropdownMenuItem(
-  //                 value: e,
-  //                 child: Text(e, style: CustomFonts.black16w500),
-  //               ),
-  //             )
-  //             .toList(),
-  //         onChanged: (_) {},
-  //         decoration: InputDecoration(
-  //           border: OutlineInputBorder(
-  //             borderSide: BorderSide(color: CustomColors.blackColor),
-  //             borderRadius: BorderRadius.circular(12.r),
-  //           ),
-  //         ),
-  //       ),
-  //       SizedBox(height: 16.h),
-  //       Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: [
-  //           Text('Adjustable Parameters:', style: CustomFonts.black18w600),
-  //           Text(syringes, style: CustomFonts.black14w500),
-  //         ],
-  //       ),
-  //       Slider(
-  //         activeColor: CustomColors.lightBlueColor,
-  //         value: 1,
-  //         min: 0,
-  //         max: 2,
-  //         onChanged: (_) {},
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  // ================= Add More =================
-
-  Widget _addMoreService() {
-    return Center(
-      child: TextButton.icon(
-        onPressed: () {},
-        icon: Container(
-          padding: EdgeInsets.all(4.w),
-          decoration: BoxDecoration(
-            color: CustomColors.blackColor,
-            shape: BoxShape.rectangle,
-            borderRadius: BorderRadius.circular(8.r),
-          ),
-          child: const Icon(Icons.add, color: Colors.white),
-        ),
-        label: Text(
-          'Add More Service',
-          style: CustomFonts.black20w600Underlined,
-        ),
-      ),
-    );
-  }
-
-  // ================= Bottom Buttons =================
 
   Widget _bottomButtons(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: OutlinedButton(
-            onPressed: () {},
-            style: OutlinedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.r),
+    return Consumer(
+      builder: (context, ref, _) {
+        return Row(
+          children: [
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () {},
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.r),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 19.h),
+                ),
+                child: Text('Save', style: CustomFonts.black22w600),
               ),
-              padding: EdgeInsets.symmetric(vertical: 19.h),
             ),
-            child: Text('Save', style: CustomFonts.black22w600),
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, ExploreClinicsScreen.routeName);
-              // Navigator.pushNamed(
-              //   context,
-              //   ref.read(checkoutViewModel.notifier).navigateTo(),
-              // );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.r),
+            const SizedBox(width: 16),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: () {
+                  final treatmentId = ref.read(
+                    treatmentViewModel.select((state) => state.treatmentId),
+                  );
+                  final selectSectionId = ref.read(
+                    treatmentViewModel.select((state) => state.selectSectionId),
+                  );
+                  final subSectionId = ref.read(
+                    treatmentViewModel.select((state) => state.subSectionId),
+                  );
+
+                  ref
+                      .read(checkoutViewModel.notifier)
+                      .updateState(treatmentId: treatmentId);
+                  ref
+                      .read(checkoutViewModel.notifier)
+                      .updateState(treatmentAreaId: selectSectionId);
+                  ref
+                      .read(checkoutViewModel.notifier)
+                      .updateState(treatmentSubAreaId: subSectionId);
+                  Navigator.pushNamed(context, ExploreClinicsScreen.routeName);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.r),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 19.h),
+                ),
+                child: Text('Explore Clinics', style: CustomFonts.white22w600),
               ),
-              padding: EdgeInsets.symmetric(vertical: 19.h),
             ),
-            child: Text('Explore Clinics', style: CustomFonts.white22w600),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 }

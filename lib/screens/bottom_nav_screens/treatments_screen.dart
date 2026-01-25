@@ -297,11 +297,14 @@ class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
                   }
 
                   return AnimationLimiter(
-                          key: const ValueKey('treatments_list'), // Stable key to prevent re-animation
+                          key: const ValueKey('treatments_list'),
                           child: ListView.builder(
                             scrollDirection: Axis.vertical,
-                            itemCount: treatments.length,
+                            itemCount: treatments.length + 1,
                             itemBuilder: (context, index) {
+                              if (index == treatments.length) {
+                                return SizedBox(height: 60.h);
+                              }
                               return AnimationConfiguration.staggeredList(
                                 position: index,
                                 duration: const Duration(milliseconds: 800),

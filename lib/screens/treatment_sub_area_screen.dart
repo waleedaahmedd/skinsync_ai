@@ -132,6 +132,9 @@ class _SelectSectionsScreenState extends State<TreatmentSubAreaScreen> {
                                   child: CustomGridViewTile(
                                     onTap: () {
                                       ref.read(checkoutViewModel.notifier).updateState(treatmentSubAreaId: subSection?[index].id);
+                                      ref
+                                          .read(treatmentViewModel.notifier)
+                                          .onTapTreatmentSubArea( treatmentSubArea: subSection![index], isCallPredictAPI: false);
                                       Navigator.pop(context); // Close bottom sheet first
                                       Navigator.pushNamed(
                                         context,

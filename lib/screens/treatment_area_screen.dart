@@ -135,16 +135,9 @@ class _TreatmentAreaScreenState extends State<TreatmentAreaScreen> {
                                           );
                                       Navigator.pop(context); // Close bottom sheet first
                                       if (section[index].isSidearea == true) {
-                                        final treatmentID = ref
-                                            .read(treatmentViewModel.notifier)
-                                            .treatmentId;
-                                        final selectSectionID = section[index].id;
                                         ref
                                             .read(treatmentViewModel.notifier)
-                                            .getSubSectionApi(
-                                              sectionId: treatmentID ?? 0,
-                                              subSectionId: selectSectionID ?? 0,
-                                            );
+                                            .onTapTreatmentArea(treatmentArea: section[index], isCallPredictAPI: false);
                                     TreatmentSubAreaScreen.show(context);
                                       } else {
                                         Navigator.pushNamed(

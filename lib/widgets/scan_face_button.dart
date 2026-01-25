@@ -7,6 +7,8 @@ import 'package:skinsync_ai/screens/bottom_nav_screens/face_detection_screen.dar
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/checkout_view_model.dart';
+import 'package:skinsync_ai/view_models/face_scan_provider.dart';
+import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 
 import '../utills/color_constant.dart';
 
@@ -22,6 +24,8 @@ class ScanFaceButton extends ConsumerWidget {
     return GestureDetector(
       onTap: () {
         ref.read(checkoutViewModel.notifier).clearState();
+        ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+        ref.read(faceScanProvider.notifier).clearAiImage();
         Navigator.of(context).pushNamed(FaceDetectionScreen.routeName);
       },
       child: Container(

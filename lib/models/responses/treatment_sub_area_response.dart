@@ -2,7 +2,7 @@ import 'package:skinsync_ai/models/responses/base_response_model.dart';
 
 class TreatmentSubAreaResponse extends BaseResponseModel {
  
-  List<Data>? data;
+  List<TreatmentSubAreaModel>? data;
 
   TreatmentSubAreaResponse({super.isSuccess, super.message, this.data});
 
@@ -10,9 +10,9 @@ class TreatmentSubAreaResponse extends BaseResponseModel {
     isSuccess = json['is_success'];
     message = json['message'];
     if (json['data'] != null) {
-      data = <Data>[];
+      data = <TreatmentSubAreaModel>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(new TreatmentSubAreaModel.fromJson(v));
       });
     }
   }
@@ -28,7 +28,7 @@ class TreatmentSubAreaResponse extends BaseResponseModel {
   }
 }
 
-class Data {
+class TreatmentSubAreaModel {
   int? id;
   String? name;
   String? icon;
@@ -37,7 +37,7 @@ class Data {
   int? maxSyringe;
   List<int>? syringeOptions;
 
-  Data(
+  TreatmentSubAreaModel(
       {this.id,
       this.name,
       this.icon,
@@ -46,7 +46,7 @@ class Data {
       this.maxSyringe,
       this.syringeOptions});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  TreatmentSubAreaModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     icon = json['icon'];
