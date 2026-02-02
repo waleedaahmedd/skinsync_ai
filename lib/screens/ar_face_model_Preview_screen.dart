@@ -35,11 +35,11 @@ class _ArFaceModelPreviewScreenState
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if(ref.watch(treatmentViewModel).treatmentId != null){
-        ref.read(treatmentViewModel.notifier).callPredictAPI();
-      }
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   if(ref.watch(treatmentViewModel).treatmentId != null){
+    //     ref.read(treatmentViewModel.notifier).callPredictAPI();
+    //   }
+    // });
   }
 
   @override

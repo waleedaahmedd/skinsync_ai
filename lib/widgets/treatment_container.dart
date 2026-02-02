@@ -10,6 +10,7 @@ import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 
 import '../models/responses/treatment_response_model.dart';
 import '../view_models/checkout_view_model.dart';
+import '../view_models/face_scan_provider.dart';
 
 class TreatmentContainer extends StatelessWidget {
   final TreatmentsModel treatments;
@@ -21,6 +22,9 @@ class TreatmentContainer extends StatelessWidget {
       builder: (context, ref, _) {
         return GestureDetector(
           onTap: () {
+            ref.read(checkoutViewModel.notifier).clearState();
+            ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+            ref.read(faceScanProvider.notifier).clearAiImage();
             ref
                 .read(checkoutViewModel.notifier)
                 .updateState(treatmentId: treatments.id);
@@ -29,13 +33,14 @@ class TreatmentContainer extends StatelessWidget {
               ref
                   .read(treatmentViewModel.notifier)
                   .onTapTreatment(treatmentModel: treatments, isCallPredictAPI: false);
-              TreatmentAreaScreen.show(context);
-            } else {
+             // TreatmentAreaScreen.show(context);
+            }
+            //else {
               Navigator.pushNamed(
                 context,
                 ref.read(checkoutViewModel.notifier).navigateTo(),
               );
-            }
+            // }
           },
           child: Container(
             margin: EdgeInsets.only(bottom: 16.h),
