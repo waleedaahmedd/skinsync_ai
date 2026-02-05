@@ -207,6 +207,204 @@ class ClinicsDetailScreen extends ConsumerWidget {
                 ),
               ),
             ),
+            SizedBox(height: 26.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.0.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Glow Med Spa Services",
+                        style: CustomFonts.black22w600,
+                      ),
+                      SizedBox(height: 9.h),
+                      Text(
+                        "Beloved Services for Everyone",
+                        style: CustomFonts.black16w400,
+                      ),
+                    ],
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      padding: EdgeInsets.all(7.w),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: CustomColors.greyColor,
+                      ),
+                      child: Icon(
+                        CupertinoIcons.arrow_right,
+                        size: 16.sp,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ListView.builder(
+              padding: EdgeInsets.only(top: 20.h, bottom: 0),
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(), // ⭐ ADD THIS
+              itemCount: 3,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                  child: Column(
+                    children: [
+                      ListTile(
+                        visualDensity: const VisualDensity(vertical: 0),
+                        contentPadding: EdgeInsets.zero,
+                        leading: ClipRRect(
+                          // ⭐ Better image clipping
+                          borderRadius: BorderRadius.circular(15.r),
+                          child: Image.asset(
+                            DummyAssets.treatmentimage,
+                            height: 69.h,
+                            width: 69.w,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        title: Text(
+                          "Botox Injections",
+                          style: CustomFonts.black18w600,
+                        ),
+                        subtitle: Text(
+                          "Lorem ipsum dolor sit amet consectetur. Amet augue.",
+                          style: CustomFonts.black16w400,
+                        ),
+                        trailing: Container(
+                          padding: EdgeInsets.all(5.w),
+                          decoration: BoxDecoration(
+                            color: CustomColors.lightPurpleColor.withValues(
+                              alpha: 0.2,
+                            ),
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Icon(
+                            Icons.add,
+                            size: 16.sp,
+                            color: CustomColors.pinkColor,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 18.h),
+                      Divider(color: CustomColors.greyColor),
+                    ],
+                  ),
+                );
+              },
+            ),
+
+            Divider(color: CustomColors.greyColor),
+            SizedBox(height: 27.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.0.w),
+              child: Text("Proof Of Expertise", style: CustomFonts.black22w600),
+            ),
+            SizedBox(height: 18.h),
+            SizedBox(
+           
+              height: 210.h,
+              child: ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: 30.w),
+                scrollDirection: Axis.horizontal,
+                itemCount: 4,
+
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsetsGeometry.only(right: 20.w),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(10.r),
+                          child: Image.asset(
+                            DummyAssets.doctorImage,
+                            height: 174.h,
+                            width: 181.w,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        SizedBox(height: 6.h),
+                        Text("Treatment Name", style: CustomFonts.black18w600),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 27.h),
+            Divider(color: CustomColors.greyColor),
+            SizedBox(height: 25.h,),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.w),
+              child: Text(
+                "Our Clients Feedback",
+                style: CustomFonts.black28w600,
+              ),
+            ),
+            SizedBox(height: 25.h,),
+            SizedBox(
+             
+              height: 265.h,
+              child: ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: 30.w),
+                scrollDirection: Axis.horizontal,
+                itemCount: 4,
+
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsetsGeometry.only(right: 10.w),
+                    child: Container(
+                      width: 381.w,
+                      padding: EdgeInsets.all(21.w),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15.r),
+                        border: Border.all(color: CustomColors.greyColor),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "⭐⭐⭐⭐⭐ 2 Week ago",
+                            style: CustomFonts.black14w400,
+                          ),
+                          SizedBox(height: 18.h),
+                          Text(
+                            "“I got lip fillers here, and I’m obsessed! They look so natural and plump—exactly what I wanted. The injector was so skilled and made sure I was comfortable. I’ll definitely be back for more treatments!”",
+                            style: CustomFonts.black18w400,
+                            maxLines: 5,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 21.h),
+                          Row(
+                            children: [
+                              ClipOval(
+                                child: Image.asset(
+                                  DummyAssets.acen,
+                                  height: 43.w,
+                                  width: 43.w,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                              Text(
+                                "Sarah Jhonson",
+                                style: CustomFonts.black18w600,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
 
             SizedBox(height: 160.h),
           ],

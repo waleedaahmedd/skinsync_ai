@@ -177,7 +177,7 @@ class TreatmentDetailScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30.w),
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 24.h),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20.r),
                   color: CustomColors.lightPurpleColor.withValues(alpha: 0.4),
@@ -185,7 +185,7 @@ class TreatmentDetailScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Proof Of Expertise", style: CustomFonts.black18w600),
+                    Text("Proof Of Expertise", style: CustomFonts.black28w600),
                     SizedBox(height: 4.h),
                     Text(
                       "Achieve a youthful appearance with our aesthetic treatments to highlight your features. Whether adding volume, smoothing lines, or redefining contours, our solutions help you look and feel your best.",
@@ -195,8 +195,7 @@ class TreatmentDetailScreen extends StatelessWidget {
                 ),
               ),
             ),
-
-            SizedBox(height: 160.h),
+           SizedBox(height: 160.h),
           ],
         ),
       ),
