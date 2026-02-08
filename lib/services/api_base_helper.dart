@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:http/http.dart' as http;
 import 'package:skinsync_ai/exceptions/app_exception.dart';
 
@@ -42,7 +40,7 @@ class ApiBaseHelper {
             headers: getHeaders(),
             body: requestBody != '' ? jsonEncode(requestBody) : null,
           );
-          case 'PATCH':
+        case 'PATCH':
           final responseJson = await http.patch(
             Uri.parse(BaseUrls.api.url + endPoint.path + params),
             headers: getHeaders(),

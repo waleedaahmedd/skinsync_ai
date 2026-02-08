@@ -34,13 +34,13 @@ class AuthService implements AuthRepository {
     // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
-      BaseResponseModel authResponse = BaseResponseModel.fromJson(parsed);
-      // if (authResponse.isSuccess == true) {
-      //   _secureStorage.saveSecureString(
-      //     key: '',
-      //     value: authResponse.data?.clientToken ?? '',
-      //   );
-      // }
+      AuthResponse authResponse = AuthResponse.fromJson(parsed);
+      if (authResponse.isSuccess == true) {
+        // _secureStorage.saveSecureString(
+        //   key: SharedPreferencesKeys.accessTokenKey.name,
+        //   value: authResponse.data!.accessToken ?? '',
+        // );
+      }
       return authResponse;
     } else {
       // Handle HTTP error status codes
@@ -48,8 +48,9 @@ class AuthService implements AuthRepository {
       throw AppException(BaseResponseModel.fromJson(parsed).message as String);
     }
   }
+
   @override
-  Future <AuthResponse> verifyOTP({required OtpRequest otpRequest}) async{
+  Future<AuthResponse> verifyOTP({required OtpRequest otpRequest}) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.verifyOtp,
       requestType: 'POST',
@@ -72,8 +73,11 @@ class AuthService implements AuthRepository {
       throw AppException(AuthResponse.fromJson(parsed).message as String);
     }
   }
+
   @override
-  Future <BaseResponseModel> onboardingProfile({required OnBoardingProfileRequest onBoardingProfileRequest } ) async{
+  Future<BaseResponseModel> onboardingProfile({
+    required OnBoardingProfileRequest onBoardingProfileRequest,
+  }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.onBoardingProfile,
       requestType: 'POST',
@@ -83,7 +87,7 @@ class AuthService implements AuthRepository {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
       BaseResponseModel authResponse = BaseResponseModel.fromJson(parsed);
-     
+
       return authResponse;
     } else {
       // Handle HTTP error status codes
