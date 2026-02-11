@@ -95,9 +95,10 @@ class _ArFaceModelPreviewScreenState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 20.h,),
               _facePreview(),
-              SizedBox(height: 18.h),
-              _accuracyRate(),
+              // SizedBox(height: 18.h),
+              // _accuracyRate(),
 
               Expanded(
                 child: SingleChildScrollView(
@@ -544,45 +545,45 @@ class _ArFaceModelPreviewScreenState
           ),
         ),
 
-        Positioned(
-          bottom: 16.h,
-          left: 16.w,
-          right: 16.w,
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 8.w),
-            decoration: BoxDecoration(
-              color: CustomColors.blackColor,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              'See How 2 Syringes Will Look On Your Under Eyes',
-              textAlign: TextAlign.center,
-              style: CustomFonts.white14w600,
-            ),
-          ),
-        ),
+        // Positioned(
+        //   bottom: 16.h,
+        //   left: 16.w,
+        //   right: 16.w,
+        //   child: Container(
+        //     padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 8.w),
+        //     decoration: BoxDecoration(
+        //       color: CustomColors.blackColor,
+        //       borderRadius: BorderRadius.circular(20),
+        //     ),
+        //     child: Text(
+        //       'See How 2 Syringes Will Look On Your Under Eyes',
+        //       textAlign: TextAlign.center,
+        //       style: CustomFonts.white14w600,
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
 
-  Widget _accuracyRate() {
-    return Row(
-      children: [
-        SvgPicture.asset(SvgAssets.dail),
-        SizedBox(width: 5.w),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Accuracy Rate', style: CustomFonts.black20w600),
-            Text(
-              'This score is based on your Face analysis',
-              style: CustomFonts.black16w400,
-            ),
-          ],
-        ),
-      ],
-    );
-  }
+  // Widget _accuracyRate() {
+  //   return Row(
+  //     children: [
+  //       SvgPicture.asset(SvgAssets.dail),
+  //       SizedBox(width: 5.w),
+  //       Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Text('Accuracy Rate', style: CustomFonts.black20w600),
+  //           Text(
+  //             'This score is based on your Face analysis',
+  //             style: CustomFonts.black16w400,
+  //           ),
+  //         ],
+  //       ),
+  //     ],
+  //   );
+  // }
 
 
   Widget _bottomButtons(BuildContext context) {
