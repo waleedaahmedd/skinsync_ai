@@ -37,43 +37,44 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     state = state.copyWith(syringeLevel: syringeLevel);
   }
 
-  void onTapTreatment({required TreatmentsModel treatmentModel,
-  required bool isCallPredictAPI}) {
+  void onTapTreatment({
+    required TreatmentsModel treatmentModel,
+    required bool isCallPredictAPI,
+  }) {
     state = state.copyWith(treatmentId: treatmentModel.id);
+    if (state.treatmentAreaResponse != null) {
+      state.treatmentAreaResponse!.data = null;
+      state = state.copyWith(clearSelectSectionId: true);
+    }
+    if (state.treatmentsSubAreaResponse != null) {
+      state.treatmentsSubAreaResponse!.data = null;
+      state = state.copyWith(clearSubSectionId: true);
+    }
     if (treatmentModel.isArea == true) {
       getSelectSectionApi(sectionId: treatmentModel.id ?? 0);
     } else {
-      // Clear treatment area response if it exists
-      if (state.treatmentAreaResponse != null) {
-        state.treatmentAreaResponse!.data = null;
-        state = state.copyWith(selectSectionId: null);
-      }
-      if (state.treatmentsSubAreaResponse != null) {
-        state.treatmentsSubAreaResponse!.data = null;
-        state = state.copyWith(subSectionId: null);
-      }
-      if(isCallPredictAPI){
+      if (isCallPredictAPI) {
         callPredictAPI();
-      }    }
+      }
+    }
   }
 
-  void onTapTreatmentArea({required SelectSection treatmentArea , required bool isCallPredictAPI}) {
+  void onTapTreatmentArea({
+    required SelectSection treatmentArea,
+    required bool isCallPredictAPI,
+  }) {
     state = state.copyWith(selectSectionId: treatmentArea.id);
+    if (state.treatmentsSubAreaResponse != null) {
+      state.treatmentsSubAreaResponse!.data = null;
+      state = state.copyWith(clearSubSectionId: true);
+    }
     if (treatmentArea.isSidearea == true) {
-      if (state.treatmentId == null) {
-        // If treatmentId is null, we can't proceed with sub-section API
-        return;
-      }
       getSubSectionApi(
         sectionId: state.treatmentId!,
         subSectionId: treatmentArea.id ?? 0,
       );
     } else {
-      if (state.treatmentsSubAreaResponse != null) {
-        state.treatmentsSubAreaResponse!.data = null;
-        state = state.copyWith(subSectionId: null);
-      }
-      if(isCallPredictAPI){
+      if (isCallPredictAPI) {
         callPredictAPI();
       }
     }
@@ -81,12 +82,13 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
   void onTapTreatmentSubArea({
     required TreatmentSubAreaModel treatmentSubArea,
-    required bool isCallPredictAPI
+    required bool isCallPredictAPI,
   }) {
     state = state.copyWith(subSectionId: treatmentSubArea.id);
-    if(isCallPredictAPI){
+    if (isCallPredictAPI) {
       callPredictAPI();
-    }  }
+    }
+  }
 
   void clearAllSelectedTreatments() {
     state = TreatmentsState(
@@ -156,14 +158,16 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       final outputImage = jsonRes["output_image"];
       print('output_image value type: ${outputImage.runtimeType}');
       print('output_image is null: ${outputImage == null}');
-      
+
       if (outputImage == null) {
         print('output_image is null, checking response structure');
         print('Response keys: ${jsonRes.keys.toList()}');
         print('Full response: $jsonRes');
-        throw Exception('No image data received from server: output_image field is null');
+        throw Exception(
+          'No image data received from server: output_image field is null',
+        );
       }
-      
+
       // Handle both String and dynamic types
       String outputImageString;
       if (outputImage is String) {
@@ -171,13 +175,17 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       } else {
         outputImageString = outputImage.toString();
       }
-      
+
       if (outputImageString.isEmpty || outputImageString.trim().isEmpty) {
-        throw Exception('No image data received from server: output_image field is empty');
+        throw Exception(
+          'No image data received from server: output_image field is empty',
+        );
       }
-      
+
       print('output_image string length: ${outputImageString.length}');
-      print('output_image first 50 chars: ${outputImageString.substring(0, outputImageString.length > 50 ? 50 : outputImageString.length)}');
+      print(
+        'output_image first 50 chars: ${outputImageString.substring(0, outputImageString.length > 50 ? 50 : outputImageString.length)}',
+      );
 
       // Generate unique filename to ensure each API call creates a new file
       final timestamp = DateTime.now().millisecondsSinceEpoch;
@@ -191,14 +199,14 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         print('Error converting base64 to XFile: $e');
         throw Exception('Failed to process image data: $e');
       }
-      
+
       await ref.read(faceScanProvider.notifier).setAiImage(ximage);
-      
+
       // If isBefore was true, toggle it to false to show the "After" image immediately
       if (wasBefore) {
         ref.read(faceScanProvider.notifier).toggleIsBefore();
       }
-      
+
       // Clear error message and loading state on success - do this synchronously
       state = state.copyWith(loading: false, errorMessage: null);
       EasyLoading.dismiss();
@@ -219,41 +227,71 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     try {
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('http://18.116.65.70/api/jawline/'),
+        Uri.parse('http://18.116.65.70/api/'),
       );
 
-      // Add syringe_level field
+      // Match curl: form fields as string values (no literal "null" for missing IDs)
       request.fields.addAll({
-        'syringe_level': syringeLevel.toString(),
+        'treatment_id': (state.treatmentId ?? 0).toString(),
+        'treatment_section_id': (state.selectSectionId ?? 0).toString(),
+        'treatment_sub_section_id': (state.subSectionId ?? 0).toString(),
+        'syringes': syringeLevel.toString(),
       });
 
-      // Attach image with new field name
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'input_image',
-          image.path,
-        ),
-      );
+      // Attach image: use path if valid, otherwise read bytes (e.g. content URI / web)
+      final path = image.path;
+      if (path.isNotEmpty) {
+        try {
+          request.files.add(await http.MultipartFile.fromPath('image', path));
+        } catch (_) {
+          request.files.add(
+            http.MultipartFile.fromBytes(
+              'image',
+              await image.readAsBytes(),
+              filename: 'image.jpg',
+            ),
+          );
+        }
+      } else {
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'image',
+            await image.readAsBytes(),
+            filename: 'image.jpg',
+          ),
+        );
+      }
 
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode != 200) {
+        print('Upload failed: ${response.statusCode} ${response.reasonPhrase}');
+        print('Response body: $responseBody');
+      }
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(responseBody) as Map<String, dynamic>;
         // Log response structure for debugging
         print('API Response keys: ${responseData.keys.toList()}');
         print('API Response success: ${responseData["success"]}');
-        print('API Response has output_image: ${responseData.containsKey("output_image")}');
+        print(
+          'API Response has output_image: ${responseData.containsKey("output_image")}',
+        );
         if (responseData.containsKey("output_image")) {
           final outputImage = responseData["output_image"];
           print('output_image type: ${outputImage.runtimeType}');
-          print('output_image length: ${outputImage is String ? outputImage.length : "N/A"}');
+          print(
+            'output_image length: ${outputImage is String ? outputImage.length : "N/A"}',
+          );
         }
         return responseData;
       } else {
         try {
-          final responseData = jsonDecode(responseBody) as Map<String, dynamic>?;
-          final errorMessage = (responseData?['message'] as String?) ?? 
+          final responseData =
+              jsonDecode(responseBody) as Map<String, dynamic>?;
+          final errorMessage =
+              (responseData?['message'] as String?) ??
               (response.reasonPhrase ?? 'Upload failed');
           throw Exception(errorMessage);
         } catch (e) {
@@ -352,22 +390,23 @@ class TreatmentsState extends BaseStateModel {
     int? selectSectionId,
     int? subSectionId,
     int? syringeLevel,
+    bool clearSelectSectionId = false,
+    bool clearSubSectionId = false,
   }) {
     return TreatmentsState(
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
       treatmentResponse: treatmentResponse ?? this.treatmentResponse,
-      treatmentAreaResponse:  selectSelectionResponse?? treatmentAreaResponse,
+      treatmentAreaResponse: selectSelectionResponse ?? treatmentAreaResponse,
       treatmentsSubAreaResponse:
           subSelectionResponse ?? treatmentsSubAreaResponse,
       treatmentsLoading: treatmentsLoading ?? this.treatmentsLoading,
       treatmentAreaLoading: treatmentAreaLoading ?? this.treatmentAreaLoading,
       treatmentSubAreaLoading:
           treatmentSubAreaLoading ?? this.treatmentSubAreaLoading,
-
       treatmentId: treatmentId ?? this.treatmentId,
-      selectSectionId: selectSectionId ?? this.selectSectionId,
-      subSectionId: subSectionId ?? this.subSectionId,
+      selectSectionId: clearSelectSectionId ? null : (selectSectionId ?? this.selectSectionId),
+      subSectionId: clearSubSectionId ? null : (subSectionId ?? this.subSectionId),
       syringeLevel: syringeLevel ?? this.syringeLevel,
     );
   }

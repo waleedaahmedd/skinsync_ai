@@ -13,6 +13,7 @@ import 'package:skinsync_ai/view_models/face_scan_provider.dart';
 import 'package:skinsync_ai/widgets/grey_container.dart';
 import 'package:skinsync_ai/widgets/service_type_button.dart';
 
+import '../models/responses/treatment_sub_area_response.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 
@@ -29,8 +30,6 @@ class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
 class _ArFaceModelPreviewScreenState
     extends ConsumerState<ArFaceModelPreviewScreen> {
   bool _hasInitialized = false;
-  final List<int> _sliderValues = [1, 2, 3, 4];
-  int _currentSliderIndex = 0;
 
   @override
   void initState() {
@@ -108,33 +107,96 @@ class _ArFaceModelPreviewScreenState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 36.h),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Adjustable Parameters:', style: CustomFonts.black18w600),
-                            Text(
-                              '${_sliderValues[_currentSliderIndex]} Syringe${_sliderValues[_currentSliderIndex] > 1 ? 's' : ''}',
-                              style: CustomFonts.black14w500,
-                            ),
-                          ],
-                        ),
                         Consumer(
                           builder: (context, ref, _) {
-                            return Slider(
-                              activeColor: CustomColors.lightBlueColor,
-                              value: _currentSliderIndex.toDouble(),
-                              min: 0,
-                              max: _sliderValues.length - 1,
-                              divisions: _sliderValues.length - 1,
-                              label: '${_sliderValues[_currentSliderIndex]}',
-                              onChanged: (double value) {
-                                setState(() {
-                                  _currentSliderIndex = value.round();
-                                });
-                                final syringeLevel = _sliderValues[_currentSliderIndex];
-                                ref.read(treatmentViewModel.notifier).updateSyringeLevel(syringeLevel);
-                                ref.read(treatmentViewModel.notifier).callPredictAPI(syringeLevel: syringeLevel);
-                              },
+                            final subSectionId = ref.watch(
+                              treatmentViewModel.select((s) => s.subSectionId),
+                            );
+                            final subAreaList = ref.watch(
+                              treatmentViewModel.select(
+                                (s) => s.treatmentsSubAreaResponse?.data ?? [],
+                              ),
+                            );
+                            TreatmentSubAreaModel? selectedSubArea;
+                            for (final e in subAreaList) {
+                              if (e.id == subSectionId) {
+                                selectedSubArea = e;
+                                break;
+                              }
+                            }
+                            final syringeOptions = selectedSubArea?.syringeOptions;
+                            final hasOptions = syringeOptions != null &&
+                                syringeOptions.isNotEmpty;
+
+                            if (!hasOptions) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                ref
+                                    .read(treatmentViewModel.notifier)
+                                    .updateSyringeLevel(0);
+                              });
+                              return const SizedBox.shrink();
+                            }
+
+                            final syringeLevel = ref.watch(
+                              treatmentViewModel.select((s) => s.syringeLevel),
+                            );
+                            int index = syringeOptions.indexOf(
+                              syringeLevel ?? syringeOptions.first,
+                            );
+                            if (index < 0) index = 0;
+
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              final current =
+                                  ref.read(treatmentViewModel).syringeLevel;
+                              if (current == null ||
+                                  !syringeOptions.contains(current)) {
+                                ref
+                                    .read(treatmentViewModel.notifier)
+                                    .updateSyringeLevel(syringeOptions[0]);
+                              }
+                            });
+
+                            final currentValue = syringeOptions[index];
+                            final singleOption = syringeOptions.length == 1;
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'Adjustable Parameters:',
+                                      style: CustomFonts.black18w600,
+                                    ),
+                                    Text(
+                                      '$currentValue Syringe${currentValue > 1 ? 's' : ''}',
+                                      style: CustomFonts.black14w500,
+                                    ),
+                                  ],
+                                ),
+                                if (singleOption)
+                                  SizedBox(height: 8.h)
+                                else
+                                  Slider(
+                                    activeColor: CustomColors.lightBlueColor,
+                                    value: index.toDouble(),
+                                    min: 0,
+                                    max: (syringeOptions.length - 1).toDouble(),
+                                    divisions: syringeOptions.length - 1,
+                                    label: '$currentValue',
+                                    onChanged: (double value) {
+                                      final i = value.round();
+                                      final level = syringeOptions[i];
+                                      ref
+                                          .read(treatmentViewModel.notifier)
+                                          .updateSyringeLevel(level);
+                                      ref
+                                          .read(treatmentViewModel.notifier)
+                                          .callPredictAPI(syringeLevel: level);
+                                    },
+                                  ),
+                              ],
                             );
                           },
                         ),

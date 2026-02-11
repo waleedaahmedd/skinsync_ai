@@ -2,7 +2,7 @@ import 'package:skinsync_ai/models/responses/base_response_model.dart';
 
 class TreatmentSubAreaResponse extends BaseResponseModel {
  
-  List<TreatmentSubAreaModel>? data;
+    List<TreatmentSubAreaModel>? data;
 
   TreatmentSubAreaResponse({super.isSuccess, super.message, this.data});
 
