@@ -62,7 +62,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       }
 
       final front = cameras.firstWhere(
-        (c) => c.lensDirection == CameraLensDirection.front,
+            (c) => c.lensDirection == CameraLensDirection.front,
         orElse: () => cameras.first,
       );
 
@@ -483,7 +483,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     final circleCenterYPercent = 0.42;
 
     return SizedBox.expand(
-      child: Stack(
+          child: Stack(
         children: [
           Align(
             alignment: Alignment.topCenter,
@@ -497,19 +497,19 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                   final circleRadius = canvasWidth * circleRadiusPercent;
                   final circleCenterY = canvasHeight * circleCenterYPercent;
                   return Stack(
-                    children: [
-                      CameraPreview(_cameraController!),
+            children: [
+              CameraPreview(_cameraController!),
                       // Face bounding box overlay - must be before dark overlay to be visible
                       // if (_faceBoundingBoxPaint != null)
                       //   Positioned.fill(child: _faceBoundingBoxPaint!),
                       // White square (camera lens corners) - keep visible
-                      CustomPaint(
+              CustomPaint(
                         painter: TintOverlayPainter(
                           centerRadius: circleRadius,
                           centerY: circleCenterY,
                         ),
-                        child: const SizedBox.expand(),
-                      ),
+                child: const SizedBox.expand(),
+              ),
 
                     ],
                   );
@@ -633,7 +633,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                                 AlwaysStoppedAnimation<Color>(
                                   Colors.white,
                                 ),
-                              ),
+                ),
                             )
                                 : Text(
                               "Capture",
@@ -645,10 +645,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                     ),
                   ),
                   SizedBox(height: 20.h),
-                ],
-              ),
-            ),
+            ],
           ),
+        ),
+      ),
         ],
       ),
     );
