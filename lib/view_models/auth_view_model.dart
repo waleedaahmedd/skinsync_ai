@@ -7,7 +7,6 @@ import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
 import 'package:skinsync_ai/utills/shared_pref.dart';
-import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 import '../models/base_state_model.dart';
 import '../models/requests/sign_in_request.dart';
 import '../models/responses/auth_response.dart';
@@ -169,6 +168,7 @@ class AuthState extends BaseStateModel {
     this.profileImage,
   });
 
+  @override
   AuthState copyWith({
     bool? loading,
     String? errorMessage,

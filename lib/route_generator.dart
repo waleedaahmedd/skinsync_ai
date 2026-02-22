@@ -13,12 +13,10 @@ import 'package:skinsync_ai/screens/login_screen.dart';
 import 'package:skinsync_ai/screens/otp_screen.dart';
 import 'package:skinsync_ai/screens/personal_detail_screen.dart';
 import 'package:skinsync_ai/screens/saved_treatment_screen.dart';
-import 'package:skinsync_ai/screens/treatment_sub_area_screen.dart';
 import 'package:skinsync_ai/screens/setting_screen.dart';
 import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/screens/splash_screen.dart';
 import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
-import 'package:skinsync_ai/screens/treatment_area_screen.dart';
 import 'package:skinsync_ai/screens/your_profile_screen.dart';
 import 'package:skinsync_ai/utills/enums.dart';
 
@@ -27,7 +25,6 @@ import 'screens/bottom_nav_screens/face_detection_screen.dart';
 import 'screens/bottom_nav_screens/my_profile_screen.dart';
 import 'screens/bottom_nav_screens/treatments_screen.dart';
 import 'screens/explore_clinics_screen.dart';
-import 'screens/service_selection_screen.dart';
 import 'utills/colored_print.dart';
 
 // const String getStartedScreen = '/get_started_screen';

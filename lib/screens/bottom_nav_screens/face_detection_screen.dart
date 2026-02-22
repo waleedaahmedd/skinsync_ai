@@ -12,7 +12,6 @@ import 'package:skinsync_ai/utills/image_utills.dart';
 import '../../utills/assets.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
-import '../../utills/face_detector_painter.dart';
 import '../../utills/ml_kit_utills.dart';
 import '../../view_models/checkout_view_model.dart';
 import '../../view_models/face_scan_provider.dart';

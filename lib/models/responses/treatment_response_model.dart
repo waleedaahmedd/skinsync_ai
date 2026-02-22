@@ -11,15 +11,15 @@ class TreatmentResponse extends BaseResponseModel {
     if (json['data'] != null) {
       data = <TreatmentsModel>[];
       json['data'].forEach((v) {
-        data!.add(new TreatmentsModel.fromJson(v));
+        data!.add(TreatmentsModel.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['is_success'] = this.isSuccess;
-    data['message'] = this.message;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['is_success'] = isSuccess;
+    data['message'] = message;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
@@ -51,12 +51,12 @@ class TreatmentsModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['icon'] = this.icon;
-    data['description'] = this.description;
-    data['is_area'] = this.isArea;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['icon'] = icon;
+    data['description'] = description;
+    data['is_area'] = isArea;
     return data;
   }
 }

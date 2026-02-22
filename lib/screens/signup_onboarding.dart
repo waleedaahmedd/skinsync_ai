@@ -2,15 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/screens/life_style_habbits.dart';
-import 'package:skinsync_ai/screens/main_skin_concerns_screen.dart';
-import 'package:skinsync_ai/screens/skin_allergies_screen.dart';
-import 'package:skinsync_ai/screens/skin_goals_screen.dart';
 import 'package:skinsync_ai/screens/skin_type.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
 
 class SignupOnboarding extends ConsumerStatefulWidget {
@@ -32,6 +27,7 @@ class _SignupOnboardingState extends ConsumerState<SignupOnboarding> {
     // SkinGoalsScreen(),
   ];
 
+  @override
   void initState() {
     super.initState();
     _pageController = PageController();

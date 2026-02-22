@@ -3,19 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/screens/treatment_area_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
-import 'package:skinsync_ai/widgets/fillter_container.dart';
-import 'package:skinsync_ai/widgets/heading_with_right_arrow.dart';
-import 'package:skinsync_ai/widgets/recommended_treatment_container.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 
-import '../../models/dummy_list_model.dart';
 import '../../utills/color_constant.dart';
-import '../../view_models/checkout_view_model.dart';
 import '../../widgets/grey_container.dart';
 
 class TreatmentsScreen extends ConsumerWidget {

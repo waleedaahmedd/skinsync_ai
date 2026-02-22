@@ -41,10 +41,6 @@ class FaceScanProvider extends BaseViewModel<FaceScanState> {
     state = state.copyWith(clearAiImage: true);
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }
 
 class FaceScanState {
@@ -67,7 +63,7 @@ class FaceScanState {
     return FaceScanState(
       isBefore: isBefore ?? this.isBefore,
       capturedImage: capturedImage ?? this.capturedImage,
-      aiImage: clearAiImage ? null : (aiImage != null ? aiImage : this.aiImage),
+      aiImage: clearAiImage ? null : (aiImage ?? this.aiImage),
     );
   }
 }

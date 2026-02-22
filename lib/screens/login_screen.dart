@@ -10,7 +10,6 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/utills/enums.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/phone_widget.dart';
-import '../utills/auth_state_listner.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   static const String routeName = '/LoginScreen';

@@ -201,8 +201,9 @@ void loginBottomSheet(BuildContext context) {
                             return FutureBuilder<IconData>(
                               future: BiometricHelper().getBiometricIcon(),
                               builder: (context, iconSnapshot) {
-                                if (!iconSnapshot.hasData)
+                                if (!iconSnapshot.hasData) {
                                   return const SizedBox();
+                                }
                                 final icon = iconSnapshot.data!;
                                 return Center(
                                   child: InkWell(
