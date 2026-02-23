@@ -8,7 +8,6 @@ import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/face_scan_provider.dart';
 import 'package:skinsync_ai/widgets/grey_container.dart';
 import 'package:skinsync_ai/widgets/service_type_button.dart';
 
@@ -45,9 +44,9 @@ class _ArFaceModelPreviewScreenState
     if (!_hasInitialized) {
       _hasInitialized = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        final state = ref.read(faceScanProvider);
+        final state = ref.read(treatmentViewModel);
         if (!state.isBefore) {
-          ref.read(faceScanProvider.notifier).toggleIsBefore();
+          ref.read(treatmentViewModel.notifier).toggleIsBefore();
         }
       });
     }
@@ -86,7 +85,11 @@ class _ArFaceModelPreviewScreenState
           actions: [
             Padding(
               padding: EdgeInsets.only(right: 13.w),
-              child: Text("Reset", style: CustomFonts.pinkunderlined20w600),
+              child: InkWell(
+                onTap: (){
+                  ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+                },
+                  child: Text("Reset", style: CustomFonts.pinkunderlined20w600)),
             ),
           ],
         ),
@@ -161,40 +164,47 @@ class _ArFaceModelPreviewScreenState
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      'Adjustable Parameters:',
-                                      style: CustomFonts.black18w600,
-                                    ),
-                                    Text(
-                                      '$currentValue Syringe${currentValue > 1 ? 's' : ''}',
-                                      style: CustomFonts.black14w500,
-                                    ),
-                                  ],
-                                ),
+
                                 if (singleOption)
                                   SizedBox(height: 8.h)
                                 else
-                                  Slider(
-                                    activeColor: CustomColors.lightBlueColor,
-                                    value: index.toDouble(),
-                                    min: 0,
-                                    max: (syringeOptions.length - 1).toDouble(),
-                                    divisions: syringeOptions.length - 1,
-                                    label: '$currentValue',
-                                    onChanged: (double value) {
-                                      final i = value.round();
-                                      final level = syringeOptions[i];
-                                      ref
-                                          .read(treatmentViewModel.notifier)
-                                          .updateSyringeLevel(level);
-                                      ref
-                                          .read(treatmentViewModel.notifier)
-                                          .callPredictAPI(syringeLevel: level);
-                                    },
+                                  Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'Adjustable Parameters:',
+                                            style: CustomFonts.black18w600,
+                                          ),
+                                          SizedBox(height: 20.h),
+                                          Text(
+                                            '$currentValue Syringe${currentValue > 1 ? 's' : ''}',
+                                            style: CustomFonts.black14w500,
+                                          ),
+                                        ],
+                                      ),
+                                      Slider(
+                                        activeColor: CustomColors.lightBlueColor,
+                                        value: index.toDouble(),
+                                        min: 0,
+                                        max: (syringeOptions.length - 1).toDouble(),
+                                        divisions: syringeOptions.length - 1,
+                                        label: '$currentValue',
+                                        onChanged: (double value) {
+                                          final i = value.round();
+                                          final level = syringeOptions[i];
+                                          ref
+                                              .read(treatmentViewModel.notifier)
+                                              .updateSyringeLevel(level);
+                                          ref
+                                              .read(treatmentViewModel.notifier)
+                                              .callPredictAPI(syringeLevel: level);
+                                        },
+                                      ),
+                                      SizedBox(height: 20.h,)
+                                    ],
                                   ),
                               ],
                             );
@@ -348,8 +358,8 @@ class _ArFaceModelPreviewScreenState
                             final treatmentsSubArea = ref.watch(
                               treatmentViewModel.select((state) => state.treatmentsSubAreaResponse?.data ?? []),
                             );
-                            final subSectionId = ref.watch(
-                              treatmentViewModel.select((state) => state.subSectionId),
+                            final List<int> selectedSubSectionIds = ref.watch(
+                              treatmentViewModel.select((state) => state.subSectionIds),
                             );
 
                             if (isLoading) {
@@ -389,7 +399,7 @@ class _ArFaceModelPreviewScreenState
                                                 child: ServiceTypeButton(
                                                   icon: PngAssets.syringe,
                                                   text: treatmentsSubArea[index].name!,
-                                                  selected: subSectionId == treatmentsSubArea[index].id,
+                                                  selected: selectedSubSectionIds.contains(treatmentsSubArea[index].id),
                                                   onPressed: () {
                                                     ref
                                                         .read(treatmentViewModel.notifier)
@@ -429,139 +439,164 @@ class _ArFaceModelPreviewScreenState
   }
 
   Widget _facePreview() {
-    return Stack(
-      children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(20.r),
-          child: Consumer(
-            builder: (context, ref, _) {
-              final image = ref.watch(
-                faceScanProvider.select(
-                  (state) =>
-                      state.isBefore ? state.capturedImage : state.aiImage,
-                ),
-              );
-              
-              final errorMessage = ref.watch(
-                treatmentViewModel.select((state) => state.errorMessage),
-              );
+    const cardRadius = 20.0;
+    return Padding(
+      padding:  EdgeInsets.symmetric(horizontal: 20.w),
+      child: Card(
+        elevation: 10,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(cardRadius.r),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(cardRadius.r),
+              child: Consumer(
+                builder: (context, ref, _) {
+                  final image = ref.watch(
+                    treatmentViewModel.select(
+                      (state) =>
+                          state.isBefore ? state.capturedImage : state.aiImage,
+                    ),
+                  );
 
-              if (errorMessage != null && image == null) {
-                return Container(
-                  width: double.infinity,
-                  height: 326.h,
-                  padding: EdgeInsets.all(16.w),
-                  decoration: BoxDecoration(
-                    color: Colors.red.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.error_outline,
-                          color: Colors.red,
-                          size: 48.sp,
-                        ),
-                        SizedBox(height: 16.h),
-                        Text(
-                          'Error',
-                          style: CustomFonts.black20w600.copyWith(
-                            color: Colors.red,
-                          ),
-                        ),
-                        SizedBox(height: 8.h),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          child: Text(
-                            errorMessage,
-                            textAlign: TextAlign.center,
-                            style: CustomFonts.black16w400.copyWith(
-                              color: Colors.red.shade700,
+                  final errorMessage = ref.watch(
+                    treatmentViewModel.select((state) => state.errorMessage),
+                  );
+
+                  if (errorMessage != null && image == null) {
+                    return Container(
+                      width: double.infinity,
+                      height: 326.h,
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(cardRadius.r),
+                      ),
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.error_outline,
+                              color: Colors.red,
+                              size: 48.sp,
                             ),
-                          ),
+                            SizedBox(height: 16.h),
+                            Text(
+                              'Error',
+                              style: CustomFonts.black20w600.copyWith(
+                                color: Colors.red,
+                              ),
+                            ),
+                            SizedBox(height: 8.h),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16.w),
+                              child: Text(
+                                errorMessage,
+                                textAlign: TextAlign.center,
+                                style: CustomFonts.black16w400.copyWith(
+                                  color: Colors.red.shade700,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+
+                  if (image != null) {
+                    return Image.file(
+                      File(image.path),
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: 326.h,
+                    );
+                  }
+
+                  return Container(
+                    width: double.infinity,
+                    height: 326.h,
+                    color: CustomColors.greyColor.withValues(alpha:0.3),
+                    child: Center(
+                      child: Text(
+                        'No image available',
+                        style: CustomFonts.black16w400,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Positioned(
+              top: 10.h,
+              left: 10.w,
+              child: Consumer(
+                builder: (context, ref, _) {
+                  final isBefore = ref.watch(
+                    treatmentViewModel.select((state) => state.isBefore),
+                  );
+                  return Container(
+                    padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 2.h),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.8),
+                      borderRadius: BorderRadius.circular(20.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.06),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
-                  ),
-                );
-              }
-
-              if (image != null) {
-                return Image.file(
-                  File(image.path),
-                  fit: BoxFit.fitHeight,
-                  width: double.infinity,
-                  height: 326.h,
-                );
-              }
-
-              return Container(
-                width: double.infinity,
-                height: 326.h,
-                color: CustomColors.greyColor.withValues(alpha:0.3),
-                child: Center(
-                  child: Text(
-                    'No image available',
-                    style: CustomFonts.black16w400,
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        Positioned(
-          top: 13.h,
-          left: 23.w,
-          child: Consumer(
-            builder: (context, ref, _) {
-              final isBefore = ref.watch(
-                faceScanProvider.select((state) => state.isBefore),
-              );
-              return Text(
-                isBefore ? 'Before' : 'After',
-                style: CustomFonts.black20w600,
-              );
-            },
-          ),
-        ),
-        Positioned(
-          top: 13.h,
-          right: 23.w,
-          child: Consumer(
-            builder: (context, ref, _) {
-              return GestureDetector(
-                onTap: () {
-                  ref.read(faceScanProvider.notifier).toggleIsBefore();
+                    child: Text(
+                      isBefore ? 'Before' : 'After',
+                      style: CustomFonts.black20w600,
+                    ),
+                  );
                 },
-                child: CircleAvatar(
-                  backgroundColor: CustomColors.greyColor,
-                  child: Image.asset(PngAssets.beforeAfter, width: 18.w),
-                ),
-              );
-            },
-          ),
-        ),
+              ),
+            ),
+            Positioned(
+              top: 10.h,
+              right: 10.w,
+              child: Consumer(
+                builder: (context, ref, _) {
+                  return GestureDetector(
+                    onTap: () {
+                      ref.read(treatmentViewModel.notifier).toggleIsBefore();
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: CustomColors.greyColor,
+                      child: Image.asset(PngAssets.beforeAfter, width: 18.w),
+                    ),
+                  );
+                },
+              ),
+            ),
 
-        // Positioned(
-        //   bottom: 16.h,
-        //   left: 16.w,
-        //   right: 16.w,
-        //   child: Container(
-        //     padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 8.w),
-        //     decoration: BoxDecoration(
-        //       color: CustomColors.blackColor,
-        //       borderRadius: BorderRadius.circular(20),
-        //     ),
-        //     child: Text(
-        //       'See How 2 Syringes Will Look On Your Under Eyes',
-        //       textAlign: TextAlign.center,
-        //       style: CustomFonts.white14w600,
-        //     ),
-        //   ),
-        // ),
-      ],
+            // Positioned(
+            //   bottom: 16.h,
+            //   left: 16.w,
+            //   right: 16.w,
+            //   child: Container(
+            //     padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 8.w),
+            //     decoration: BoxDecoration(
+            //       color: CustomColors.blackColor,
+            //       borderRadius: BorderRadius.circular(20),
+            //     ),
+            //     child: Text(
+            //       'See How 2 Syringes Will Look On Your Under Eyes',
+            //       textAlign: TextAlign.center,
+            //       style: CustomFonts.white14w600,
+            //     ),
+            //   ),
+            // ),
+          ],
+        ),
+      ),
     );
   }
 

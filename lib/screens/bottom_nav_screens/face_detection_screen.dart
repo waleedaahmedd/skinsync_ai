@@ -14,7 +14,7 @@ import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
 import '../../utills/ml_kit_utills.dart';
 import '../../view_models/checkout_view_model.dart';
-import '../../view_models/face_scan_provider.dart';
+import '../../view_models/treatment_view_model.dart';
 import '../ar_face_model_Preview_screen.dart';
 
 class FaceDetectionScreen extends ConsumerStatefulWidget {
@@ -411,9 +411,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                     Expanded(
                       child: ElevatedButton(
                         onPressed: () async {
-                          // Store captured image in provider
+                          // Store captured image in view model
                           await ref
-                              .read(faceScanProvider.notifier)
+                              .read(treatmentViewModel.notifier)
                               .setCapturedImage(capturedImage);
                           ref
                               .read(checkoutViewModel.notifier)
@@ -455,8 +455,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Keep the provider alive by watching it
-    ref.watch(faceScanProvider);
+    // Keep the treatment state alive by watching it
+    ref.watch(treatmentViewModel.select((s) => s.capturedImage));
 
     return Scaffold(
       backgroundColor: Colors.black,

@@ -1,4 +1,5 @@
-  import 'dart:io';
+import 'dart:io';
+import 'dart:ui';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
@@ -38,35 +39,30 @@ InputImageRotation rotationFromCamera(CameraDescription camera) {
     }
   }
 
-    InputImage inputImageFromCameraImage(
+/// Crop rect that fits width: full width, height = min(height, width), centered vertically.
+Rect _fitWidthCropRect(CameraImage image) {
+  final w = image.width.toDouble();
+  final h = image.height.toDouble();
+  final cropHeight = h < w ? h : w;
+  final top = (h - cropHeight) / 2;
+  return Rect.fromLTWH(0, top, w, cropHeight);
+}
+
+InputImage inputImageFromCameraImage(
     CameraImage image,
     CameraDescription camera, {
     Rect? cropRect,
   }) {
+    final effectiveCrop = cropRect ?? _fitWidthCropRect(image);
     final WriteBuffer allBytes = WriteBuffer();
-    
-    if (cropRect != null) {
-      // Crop the image to the specified rectangle
-      _cropCameraImage(image, cropRect, allBytes);
-    } else {
-      // Use full image
-      for (final plane in image.planes) {
-        allBytes.putUint8List(plane.bytes);
-      }
-    }
-    
+    _cropCameraImage(image, effectiveCrop, allBytes);
     final bytes = allBytes.done().buffer.asUint8List();
 
     final rotation = rotationFromCamera(camera);
-
-    // iOS uses bgra8888, Android uses nv21
     final format = Platform.isIOS
         ? InputImageFormat.bgra8888
         : InputImageFormat.nv21;
-
-    final imageSize = cropRect != null
-        ? Size(cropRect.width, cropRect.height)
-        : Size(image.width.toDouble(), image.height.toDouble());
+    final imageSize = Size(effectiveCrop.width, effectiveCrop.height);
 
     return InputImage.fromBytes(
       bytes: bytes,
@@ -74,9 +70,7 @@ InputImageRotation rotationFromCamera(CameraDescription camera) {
         size: imageSize,
         rotation: rotation,
         format: format,
-        bytesPerRow: cropRect != null
-            ? (cropRect.width.toInt() * (Platform.isIOS ? 4 : 1))
-            : image.planes.first.bytesPerRow,
+        bytesPerRow: effectiveCrop.width.toInt() * (Platform.isIOS ? 4 : 1),
       ),
     );
   }

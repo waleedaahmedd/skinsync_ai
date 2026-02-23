@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../utills/custom_fonts.dart';
-import '../../view_models/face_scan_provider.dart';
+import '../../view_models/treatment_view_model.dart';
 
 class FaceScanningCompleteScreen extends StatelessWidget {
   const FaceScanningCompleteScreen({super.key});
@@ -23,7 +23,7 @@ class FaceScanningCompleteScreen extends StatelessWidget {
                 Consumer(
                   builder: (context, ref, _) {
                     final image = ref.watch(
-                      faceScanProvider.select((state) => state.capturedImage),
+                      treatmentViewModel.select((state) => state.capturedImage),
                     );
                     return Image.file(File(image!.path), height: 300.h);
                   },
@@ -37,7 +37,7 @@ class FaceScanningCompleteScreen extends StatelessWidget {
                 Consumer(
                   builder: (context, ref, _) {
                     final image = ref.watch(
-                      faceScanProvider.select((state) => state.capturedImage),
+                      treatmentViewModel.select((state) => state.capturedImage),
                     );
                     return Image.file(File(image!.path), height: 300.h);
                   },
