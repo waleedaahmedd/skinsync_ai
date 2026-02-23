@@ -10,9 +10,13 @@ import 'package:skinsync_ai/screens/get_notified_screen.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 import 'package:skinsync_ai/screens/home_screen.dart';
 import 'package:skinsync_ai/screens/login_screen.dart';
+import 'package:skinsync_ai/screens/notes_screen.dart';
 import 'package:skinsync_ai/screens/otp_screen.dart';
+import 'package:skinsync_ai/screens/payment_screen.dart';
 import 'package:skinsync_ai/screens/personal_detail_screen.dart';
+import 'package:skinsync_ai/screens/progress_detail_screen.dart';
 import 'package:skinsync_ai/screens/saved_treatment_screen.dart';
+import 'package:skinsync_ai/screens/select_product_screen.dart';
 import 'package:skinsync_ai/screens/setting_screen.dart';
 import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/screens/splash_screen.dart';
@@ -184,6 +188,26 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: TreatmentsScreen.routeName),
           builder: (_) => TreatmentsScreen(),
+        );
+         case SelectProductScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: SelectProductScreen.routeName),
+          builder: (_) => SelectProductScreen(),
+        );
+          case PaymentScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: PaymentScreen.routeName),
+          builder: (_) => PaymentScreen(),
+        );
+           case NotesScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: NotesScreen.routeName),
+          builder: (_) => NotesScreen(),
+        );
+         case ProgressDetailScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: ProgressDetailScreen.routeName),
+          builder: (_) => ProgressDetailScreen(),
         );
       default:
         return _errorRoute();

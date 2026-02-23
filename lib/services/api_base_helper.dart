@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'package:skinsync_ai/exceptions/app_exception.dart';
 
@@ -19,6 +20,7 @@ class ApiBaseHelper {
     String? imagePath,
   }) async {
     autToken = _secureStorage.cachedAuthToken;
+   
     try {
       switch (requestType) {
         case 'GET':

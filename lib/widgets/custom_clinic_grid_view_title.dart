@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/frosted_container.dart';
 
 class CustomClinicGridViewTile extends StatelessWidget {
-  const CustomClinicGridViewTile({super.key, required this.onTap});
+  Clinic? clinicData;
+   CustomClinicGridViewTile({super.key, required this.onTap,required this.clinicData});
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) {
@@ -21,9 +23,14 @@ class CustomClinicGridViewTile extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(10.r),
-                child: Image.asset(
-                  PngAssets.laserTreatment,
+                child: Image.network(
+                  clinicData?.logo ?? "",
+                  height: 174.h,
+                  width: 181.w,
                   fit: BoxFit.fitWidth,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(Icons.broken_image);
+                  },
                 ),
               ),
               Positioned(
@@ -73,8 +80,8 @@ class CustomClinicGridViewTile extends StatelessWidget {
               ),
             ],
           ),
-          Text("Facial Aesthetic Clinic", style: CustomFonts.black18w600),
-          Text("Dermal Fillers – Cheeks", style: CustomFonts.black14w400),
+          Text(clinicData?.clinicName ?? "", style: CustomFonts.black18w600),
+          Text(clinicData?.address ?? "", style: CustomFonts.black14w400),
           Text("11:00 AM - 12:00 PM", style: CustomFonts.black14w400),
         ],
       ),

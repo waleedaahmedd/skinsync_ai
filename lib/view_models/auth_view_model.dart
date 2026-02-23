@@ -107,6 +107,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       state = state.copyWith(loading: false, authResponse: response);
   if(response.isSuccess == true){
     otpController.clear();
+    print(response.data?.accessToken ?? "");
   }
       return response.isSuccess == true;
     });

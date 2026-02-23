@@ -13,6 +13,8 @@ class CustomColors {
   static const Color textGreyColor = Color(0xff494949);
   static const Color textFeildBoaderColor = Color(0xff939393);
   static const Color pinkColor = Color(0xFFD83F87);
+   static const Color blueColor = Color(0xFF2480F9);
+
   
 
   static const LinearGradient purpleBlueGradient = LinearGradient(

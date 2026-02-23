@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 import 'package:skinsync_ai/screens/additional_info_screen.dart';
+import 'package:skinsync_ai/screens/select_product_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -19,6 +21,23 @@ class ClinicServiceScreen extends StatefulWidget {
 }
 
 class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
+  DateTime? selectedDate;
+
+  Future<void> _pickDate() async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null) {
+      setState(() {
+        selectedDate = picked;
+      });
+    }
+  }
+
   int? selectedFilterIndex;
   int? selecteTime;
   @override
@@ -175,21 +194,30 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                               ),
                               SizedBox(height: 3.45.h),
                               Text(
-                                "19/02/2019",
+                                selectedDate == null
+                                    ? "Select Date"
+                                    : DateFormat(
+                                        'dd MMM yyyy',
+                                      ).format(selectedDate!),
                                 style: CustomFonts.black12w600,
                               ),
                             ],
                           ),
-                          Container(
-                            padding: EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.r),
-                              color: Colors.lightBlue.withValues(alpha: 0.5),
-                            ),
-                            child: SvgPicture.asset(
-                              SvgAssets.edit,
-                              height: 14.5,
-                              width: 14.5,
+                          GestureDetector(
+                            onTap: () {
+                              _pickDate();
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.r),
+                                color: Colors.lightBlue.withValues(alpha: 0.5),
+                              ),
+                              child: SvgPicture.asset(
+                                SvgAssets.edit,
+                                height: 14.5,
+                                width: 14.5,
+                              ),
                             ),
                           ),
                         ],
@@ -284,19 +312,19 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
           ),
         ),
       ),
-            bottomNavigationBar: Padding(
-              padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
-              child: GlassMorphismContainer(
-                      blurIntensity: 30.0,
-                    opacity: 0.10,
-                    glassThickness: 1.0,
-                  
-                   // tintColor: Colors.white.withOpacity(0.15),
-                    enableBackgroundDistortion: true,
-                    enableGlassBorder: true,
-                      height: 144.h,
-                      child: Column(
-                        children: [
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
+        child: GlassMorphismContainer(
+          blurIntensity: 30.0,
+          opacity: 0.10,
+          glassThickness: 1.0,
+
+          // tintColor: Colors.white.withOpacity(0.15),
+          enableBackgroundDistortion: true,
+          enableGlassBorder: true,
+          height: 144.h,
+          child: Column(
+            children: [
               Container(
                 padding: EdgeInsets.symmetric(vertical: 12.h),
                 color: CustomColors.lightPurpleColor,
@@ -308,51 +336,54 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                 ),
               ),
               Padding(
-                padding:EdgeInsets.only( top: 10.h),
+                padding: EdgeInsets.only(top: 10.h),
                 child: Center(
                   child: Row(
-                    
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Column(
                         children: [
                           Text("\$ 650", style: CustomFonts.black28w600),
-                  
+
                           Text(
                             "View Pricing Policy",
                             style: CustomFonts.black14w500Underline,
                           ),
                         ],
                       ),
-                     SizedBox(width: 47.h,),
+                      SizedBox(width: 47.h),
                       GestureDetector(
-                        onTap: (){
-                          Navigator.pushNamed(context,AdditionalInfoScreen.routeName);
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            SelectProductScreen.routeName,
+                          );
                         },
                         child: Container(
-                          
                           width: 187.w,
                           height: 60.h,
                           alignment: Alignment.center,
-                        
+
                           decoration: BoxDecoration(
-                            
                             borderRadius: BorderRadius.circular(50.r),
                             color: Colors.black,
                           ),
-                          child:  Center(child: Text("Book Now", style: CustomFonts.white22w600)),
+                          child: Center(
+                            child: Text(
+                              "Book Now",
+                              style: CustomFonts.white22w600,
+                            ),
+                          ),
                         ),
                       ),
-                    
                     ],
                   ),
                 ),
               ),
-                        ],
-                      ),
-                    ),
-            ),
-    
+            ],
+          ),
+        ),
+      ),
     );
   }
 

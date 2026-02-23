@@ -20,6 +20,7 @@ class PngAssets {
   static const String beforeAfter = "${_assets}before_after.png";
   static const String syringe = "${_assets}syringe.png";
   static const String hand = "${_assets}hand.png";
+   static const String masterLogo = '${_assets}master_logo.png';
 }
 
 class SvgAssets {
@@ -56,6 +57,8 @@ class SvgAssets {
   static const String tick = "${_assets}trick.svg";
   static const String flame = "${_assets}flame.svg";
    static const String edit = "${_assets}edit.svg";
+  
+   static const String visaLogo = '${_assets}visa_logo.svg';
 
   // bottom nav icons
   static const String notification = "${_assets}notification.svg";
@@ -80,4 +83,5 @@ class DummyAssets {
   static const String treatmentimage = "${_assets}treatmentimage.png";
   static const String doctorImage = "${_assets}doctor_image.png";
   static const String map = "${_assets}map.png";
+  static const String productImage = '${_assets}product_image.png';
 }

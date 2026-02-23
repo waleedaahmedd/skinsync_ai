@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/models/dummy_list_model.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
+import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
+
+import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/custom_clinic_grid_view_title.dart';
 
 import '../utills/custom_fonts.dart';
-import '../widgets/app_bar_with_action_icon.dart';
-import '../widgets/grey_container.dart';
+
 import 'clinics_detail_screen.dart';
 
 class ExploreClinicsScreen extends ConsumerWidget {
@@ -16,28 +17,16 @@ class ExploreClinicsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, ref) {
+    final isloading = ref.watch(clincDoctorProvider).clinicLoading;
+    final clinicResponse = ref.watch(clincDoctorProvider).clinicResponse;
     return Scaffold(
-      appBar: AppBarWithActionIcon(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.location_on_outlined, color: CustomColors.blackColor),
-            Text("New York", style: CustomFonts.black30w600),
-          ],
-        ),
-        subTitle: Text(
-          "195 Karlie Brooks, Anderson",
-          style: CustomFonts.grey18w400,
-        ),
-        action: GreyContainer(
-          icon: Icons.notifications_none_outlined,
-          onTap: () {},
-        ),
-      ),
+      appBar: CustomAppBar(showTitle: true, title: "Explore clinics"),
+
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 30.w),
         child: Column(
           children: [
+            SizedBox(height: 28.h),
             TextField(
               style: CustomFonts.black18w400,
               decoration: InputDecoration(
@@ -47,22 +36,13 @@ class ExploreClinicsScreen extends ConsumerWidget {
             ),
             SizedBox(height: 15.h),
 
-            Row(
-              children: [
-                InkWell(
-                  onTap: () => Navigator.pop(context),
-                  child: GreyContainer(
-                    icon: Icons.arrow_back,
-                    shape: BoxShape.circle,
-                    onTap: () => Navigator.pop(context),
-                  ),
-                ),
-                Spacer(),
-                Text("AR Face Model Preview", style: CustomFonts.black26w600),
-                Spacer(),
-              ],
-            ),
             SizedBox(height: 20.h),
+            isloading ? CircularProgressIndicator():
+            clinicResponse?.data != null ?
+
+
+            
+
             Expanded(
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -71,9 +51,11 @@ class ExploreClinicsScreen extends ConsumerWidget {
                   mainAxisSpacing: 18.h,
                   childAspectRatio: 0.7,
                 ),
-                itemCount: subSections.length,
+                itemCount: clinicResponse?.data?.length,
                 itemBuilder: (context, index) {
+
                   return CustomClinicGridViewTile(
+                    clinicData:clinicResponse?.data?[index]  ,
                     onTap: () {
                       Navigator.pushNamed(
                         context,
@@ -83,7 +65,7 @@ class ExploreClinicsScreen extends ConsumerWidget {
                   );
                 },
               ),
-            ),
+            ):Center(child: Text("No Clinic Found",style: CustomFonts.black18w600, ),)
           ],
         ),
       ),

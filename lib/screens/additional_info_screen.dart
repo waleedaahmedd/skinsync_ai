@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skinsync_ai/screens/payment_screen.dart';
+import 'package:skinsync_ai/screens/select_product_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -38,12 +40,12 @@ class AdditionalInfoScreen extends StatelessWidget {
                     SizedBox(height: 68.h),
                     Text(
                       "Please Provide The Additional Information Needed To Send To Your Injector.",
-                      style: CustomFonts.black30w600,
+                      style: CustomFonts.black28w600,
                     ),
                     SizedBox(height: 28.h),
                     Divider(color: CustomColors.greyColor, height: 0),
                     SizedBox(height: 24.h),
-                    Text("Do you smoke ?", style: CustomFonts.black28w600),
+                    Text("Do you smoke ?", style: CustomFonts.black26w600),
                     SizedBox(height: 18.h),
                     Row(
                       children: [
@@ -62,10 +64,10 @@ class AdditionalInfoScreen extends StatelessWidget {
                         SizedBox(height: 37.h),
                       ],
                     ),
-                    SizedBox(height: 35.h,),
+                    SizedBox(height: 35.h),
                     Text(
                       "Previous Aesthetic treatments? Please Specify (Botox, Fillers, Laser, Microneedling)",
-                      style: CustomFonts.black28w600,
+                      style: CustomFonts.black26w600,
                     ),
                     SizedBox(height: 18.h),
                     Row(
@@ -127,10 +129,10 @@ class AdditionalInfoScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 35.h,),
-                      Text(
+                    SizedBox(height: 35.h),
+                    Text(
                       "Do You Have Any Allergies to Lidocaine Or Other Anesthetics?",
-                      style: CustomFonts.black28w600,
+                      style: CustomFonts.black26w600,
                     ),
                     SizedBox(height: 18.h),
                     Row(
@@ -192,8 +194,37 @@ class AdditionalInfoScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 35.h + MediaQuery.paddingOf(context).bottom,),
-
+                    SizedBox(height: 25.h),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            PaymentScreen.routeName,
+                          );
+                        },
+                        child: Text("Submit Now"),
+                      ),
+                    ),
+                    SizedBox(height: 19.h),
+                    Center(
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            PaymentScreen.routeName,
+                          );
+                        },
+                        child: Text(
+                          "Not Now",
+                          style: CustomFonts.black22w600Underline,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 35.h + MediaQuery.paddingOf(context).bottom,
+                    ),
                   ],
                 ),
               ),

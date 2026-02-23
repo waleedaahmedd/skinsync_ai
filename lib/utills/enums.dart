@@ -21,11 +21,14 @@ enum LoginProviders {
 enum EndPoints {
   getTreatments('treatments/masters'),
   treatments("treatments"),
+
   signIn('login'),
   onBoardingQues("onboarding/masters"),
   saveAnswer("v1/onboarding/answer"),
   verifyOtp("verify-otp"),
-  onBoardingProfile("v1/onboarding/profile");
+  onBoardingProfile("v1/onboarding/profile"),
+  getClinic("clinics/by-side-area?");
+
 
   final String path;
 
