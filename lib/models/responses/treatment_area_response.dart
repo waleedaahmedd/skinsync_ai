@@ -12,15 +12,15 @@ class TreatmentAreaResponse extends BaseResponseModel {
     if (json['data'] != null) {
       data = <SelectSection>[];
       json['data'].forEach((v) {
-        data!.add(new SelectSection.fromJson(v));
+        data!.add(SelectSection.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['is_success'] = this.isSuccess;
-    data['message'] = this.message;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['is_success'] = isSuccess;
+    data['message'] = message;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
@@ -46,12 +46,12 @@ class SelectSection {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['icon'] = this.icon;
-    data['description'] = this.description;
-    data['is_sidearea'] = this.isSidearea;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['icon'] = icon;
+    data['description'] = description;
+    data['is_sidearea'] = isSidearea;
     return data;
   }
 }

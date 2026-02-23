@@ -119,10 +119,10 @@ class _CustomSizedSwitchState extends State<CustomSizedSwitch> {
       scale: 0.8,
       child: SwitchTheme(
         data: SwitchThemeData(
-          thumbColor: MaterialStateProperty.all(Colors.white),
-          trackColor: MaterialStateProperty.all(Colors.black),
+          thumbColor: WidgetStateProperty.all(Colors.white),
+          trackColor: WidgetStateProperty.all(Colors.black),
           trackOutlineColor:
-              MaterialStateProperty.all(Colors.transparent),
+              WidgetStateProperty.all(Colors.transparent),
           materialTapTargetSize:
               MaterialTapTargetSize.shrinkWrap,
         ),

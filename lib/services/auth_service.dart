@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
-import 'package:skinsync_ai/models/responses/on_boarding_question_response.dart';
 
 import '../exceptions/app_exception.dart';
 import '../models/requests/sign_in_request.dart';

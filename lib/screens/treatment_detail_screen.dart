@@ -9,8 +9,6 @@ import 'package:skinsync_ai/screens/clinics_detail_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
-import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 
 class TreatmentDetailScreen extends StatelessWidget {
   const TreatmentDetailScreen({super.key});

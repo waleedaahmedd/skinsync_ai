@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/face_detection_screen.dart';
 
 import '../screens/ar_face_model_Preview_screen.dart';
-import '../screens/bottom_nav_screens/face_scanning_complete_screen.dart';
 import '../screens/bottom_nav_screens/treatments_screen.dart';
 import '../screens/explore_clinics_screen.dart';
 import 'base_view_model.dart';

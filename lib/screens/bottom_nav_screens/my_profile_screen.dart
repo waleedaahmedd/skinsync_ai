@@ -12,7 +12,6 @@ import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/utills/secure_storage_service.dart';
 import 'package:skinsync_ai/utills/shared_pref.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/logout_dialog_box.dart';
 
 class MyProfileScreen extends StatelessWidget {
@@ -180,7 +179,7 @@ class MyProfileScreen extends StatelessWidget {
   }
 }
 
-profileOppition({
+InkWell profileOppition({
   required String icon,
   required String title,
   required VoidCallback callBack,

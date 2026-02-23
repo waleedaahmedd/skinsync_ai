@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
-import 'package:skinsync_ai/screens/treatment_area_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -10,7 +9,6 @@ import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 
 import '../models/responses/treatment_response_model.dart';
 import '../view_models/checkout_view_model.dart';
-import '../view_models/face_scan_provider.dart';
 
 class TreatmentContainer extends StatelessWidget {
   final TreatmentsModel treatments;
@@ -24,7 +22,7 @@ class TreatmentContainer extends StatelessWidget {
           onTap: () {
             ref.read(checkoutViewModel.notifier).clearState();
             ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
-            ref.read(faceScanProvider.notifier).clearAiImage();
+            ref.read(treatmentViewModel.notifier).clearAiImage();
             ref
                 .read(checkoutViewModel.notifier)
                 .updateState(treatmentId: treatments.id);

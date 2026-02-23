@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:skinsync_ai/utills/enums.dart';
 
 abstract class BaseSignInRequest {

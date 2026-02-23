@@ -9,13 +9,13 @@ class AuthResponse extends BaseResponseModel {
   AuthResponse.fromJson(Map<String, dynamic> json) {
     isSuccess = json['is_success'];
     message = json['message'];
-    data = json['data'] != null ? new AuthData.fromJson(json['data']) : null;
+    data = json['data'] != null ? AuthData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['is_success'] = this.isSuccess;
-    data['message'] = this.message;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['is_success'] = isSuccess;
+    data['message'] = message;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
@@ -45,18 +45,18 @@ class AuthData {
     accessExpiresAt = json['access_expires_at'];
     refreshExpiresAt = json['refresh_expires_at'];
     isFirstLogin = json['is_first_login'];
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
+    user = json['user'] != null ? User.fromJson(json['user']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['access_token'] = this.accessToken;
-    data['refresh_token'] = this.refreshToken;
-    data['access_expires_at'] = this.accessExpiresAt;
-    data['refresh_expires_at'] = this.refreshExpiresAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['access_token'] = accessToken;
+    data['refresh_token'] = refreshToken;
+    data['access_expires_at'] = accessExpiresAt;
+    data['refresh_expires_at'] = refreshExpiresAt;
     
-    if (this.user != null) {
-      data['user'] = this.user!.toJson();
+    if (user != null) {
+      data['user'] = user!.toJson();
     }
     return data;
   }
@@ -97,16 +97,16 @@ class User {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['primary_email'] = this.primaryEmail;
-    data['primary_phone'] = this.primaryPhone;
-    data['status'] = this.status;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['AuthProviders'] = this.authProviders;
-    data['AuthTokens'] = this.authTokens;
-    data['Roles'] = this.roles;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['primary_email'] = primaryEmail;
+    data['primary_phone'] = primaryPhone;
+    data['status'] = status;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['AuthProviders'] = authProviders;
+    data['AuthTokens'] = authTokens;
+    data['Roles'] = roles;
     return data;
   }
 }

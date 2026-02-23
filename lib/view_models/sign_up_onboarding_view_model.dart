@@ -112,6 +112,7 @@ class SignUpOnboardingState extends BaseStateModel {
     this.optionID,
   });
  int get totalPages => (onBoardingQues?.data?.questions?.length ?? 0);
+  @override
   SignUpOnboardingState copyWith({
     bool? loading,
     String? errorMessage,
