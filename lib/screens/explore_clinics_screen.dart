@@ -31,41 +31,47 @@ class ExploreClinicsScreen extends ConsumerWidget {
               style: CustomFonts.black18w400,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.search),
-                hintText: "Search  doctor, injector, treatment & clinic",
+                hintText: "Search doctor, injector, treatment & clinic",
               ),
             ),
             SizedBox(height: 15.h),
-
             SizedBox(height: 20.h),
-            isloading ? CircularProgressIndicator():
-            clinicResponse?.data != null ?
 
-
-            
-
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // 2 items horizontally
-                  crossAxisSpacing: 18.w,
-                  mainAxisSpacing: 18.h,
-                  childAspectRatio: 0.7,
+            if (isloading)
+              const Expanded(child: Center(child: CircularProgressIndicator()))
+            else if (clinicResponse?.data != null &&
+                clinicResponse!.data!.isNotEmpty)
+              Expanded(
+                child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 18.w,
+                    mainAxisSpacing: 18.h,
+                    childAspectRatio: 0.7,
+                  ),
+                  itemCount: clinicResponse.data!.length,
+                  itemBuilder: (context, index) {
+                    return CustomClinicGridViewTile(
+                      clinicData: clinicResponse.data![index],
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          ClinicsDetailScreen.routeName,
+                        );
+                      },
+                    );
+                  },
                 ),
-                itemCount: clinicResponse?.data?.length,
-                itemBuilder: (context, index) {
-
-                  return CustomClinicGridViewTile(
-                    clinicData:clinicResponse?.data?[index]  ,
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        ClinicsDetailScreen.routeName,
-                      );
-                    },
-                  );
-                },
+              )
+            else
+              Expanded(
+                child: Center(
+                  child: Text(
+                    "No Clinic Found",
+                    style: CustomFonts.black18w600,
+                  ),
+                ),
               ),
-            ):Center(child: Text("No Clinic Found",style: CustomFonts.black18w600, ),)
           ],
         ),
       ),

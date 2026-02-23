@@ -8,7 +8,11 @@ import 'package:skinsync_ai/widgets/frosted_container.dart';
 
 class CustomClinicGridViewTile extends StatelessWidget {
   Clinic? clinicData;
-   CustomClinicGridViewTile({super.key, required this.onTap,required this.clinicData});
+  CustomClinicGridViewTile({
+    super.key,
+    required this.onTap,
+    required this.clinicData,
+  });
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) {
@@ -19,66 +23,84 @@ class CustomClinicGridViewTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10.r),
-                child: Image.network(
-                  clinicData?.logo ?? "",
-                  height: 174.h,
-                  width: 181.w,
-                  fit: BoxFit.fitWidth,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Icon(Icons.broken_image);
-                  },
-                ),
-              ),
-              Positioned(
-                top: 6.h,
-                left: 5.w,
-                child: FrostedContainer(
-                  borderRadius: 8.r,
-                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SvgPicture.asset(SvgAssets.flame),
-                      SizedBox(width: 7.w),
-                      Text("Top Choice", style: CustomFonts.black12w600),
-                    ],
+          SizedBox(
+            height: 174.h,
+            width: double.infinity,
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10.r),
+                  child: Image.network(
+                    clinicData?.logo ?? "",
+                    height: 174.h,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 174.h,
+                        width: double.infinity,
+                        color: Colors.grey.shade200,
+                        child: Icon(Icons.broken_image, size: 40.sp),
+                      );
+                    },
                   ),
                 ),
-              ),
-              Positioned(
-                bottom: 6.h,
-                right: 5.w,
-                child: FrostedContainer(
-                  borderRadius: 8.r,
-                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.star, color: Color(0XFFF68712), size: 16.sp),
-                      SizedBox(width: 4.w),
-                      Text("4.9", style: CustomFonts.black12w600),
-                    ],
+                Positioned(
+                  top: 6.h,
+                  left: 5.w,
+                  child: FrostedContainer(
+                    borderRadius: 8.r,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 6.w,
+                      vertical: 4.h,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SvgPicture.asset(SvgAssets.flame),
+                        SizedBox(width: 7.w),
+                        Text("Top Choice", style: CustomFonts.black12w600),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Positioned(
-                top: 6.h,
-                right: 5.w,
-                child: FrostedContainer(
-                  borderRadius: 50.r,
-                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
-                  child: Icon(
-                    Icons.favorite_border,
-                    color: Colors.white,
-                    size: 19.sp,
+                Positioned(
+                  bottom: 6.h,
+                  right: 5.w,
+                  child: FrostedContainer(
+                    borderRadius: 8.r,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 6.w,
+                      vertical: 4.h,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.star, color: Color(0XFFF68712), size: 16.sp),
+                        SizedBox(width: 4.w),
+                        Text("4.9", style: CustomFonts.black12w600),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+                Positioned(
+                  top: 6.h,
+                  right: 5.w,
+                  child: FrostedContainer(
+                    borderRadius: 50.r,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 6.w,
+                      vertical: 4.h,
+                    ),
+                    child: Icon(
+                      Icons.favorite_border,
+                      color: Colors.white,
+                      size: 19.sp,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           Text(clinicData?.clinicName ?? "", style: CustomFonts.black18w600),
           Text(clinicData?.address ?? "", style: CustomFonts.black14w400),
