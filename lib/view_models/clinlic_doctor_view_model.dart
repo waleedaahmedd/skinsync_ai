@@ -32,7 +32,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinlicDoctorState> {
     state = state.copyWith(clinicLoading: true);
     return runSafely(() async {
       final response = await _clinicRepository.getClinic(
-        treamentId: treatmentId,
+        treatmentId: treatmentId,
         sideAreaID: sideAreaId,
       );
       state = state.copyWith(clinicLoading: false, clinicResponse: response);
@@ -49,7 +49,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinlicDoctorState> {
       final response = await _clinicRepository.getDoctors(
         clinicId: state.clinicId ?? 0,
 
-        treamentId: treatmentId,
+        treatmentId: treatmentId,
         sideAreaID: sideAreaId,
       );
       state = state.copyWith(doctorLoading: false, doctorResponse: response);
