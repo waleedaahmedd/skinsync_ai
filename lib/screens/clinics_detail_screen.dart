@@ -9,6 +9,8 @@ import 'package:skinsync_ai/screens/clinic_service_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
+import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 
 import '../view_models/checkout_view_model.dart';
 
@@ -307,7 +309,6 @@ class ClinicsDetailScreen extends ConsumerWidget {
             ),
             SizedBox(height: 18.h),
             SizedBox(
-           
               height: 210.h,
               child: ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 30.w),
@@ -339,7 +340,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
             ),
             SizedBox(height: 27.h),
             Divider(color: CustomColors.greyColor),
-            SizedBox(height: 25.h,),
+            SizedBox(height: 25.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30.w),
               child: Text(
@@ -347,9 +348,8 @@ class ClinicsDetailScreen extends ConsumerWidget {
                 style: CustomFonts.black28w600,
               ),
             ),
-            SizedBox(height: 25.h,),
+            SizedBox(height: 25.h),
             SizedBox(
-             
               height: 265.h,
               child: ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 30.w),
@@ -440,9 +440,23 @@ class ClinicsDetailScreen extends ConsumerWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
+                      // ref
+                      //     .read(checkoutViewModel.notifier)
+                      //     .updateState(clinicId: "xx");
+                      final treatmentId = ref.read(
+                        treatmentViewModel.select((state) => state.treatmentId),
+                      );
+                      final selectSectionId = ref.read(
+                        treatmentViewModel.select(
+                          (state) => state.selectSectionId,
+                        ),
+                      );
                       ref
-                          .read(checkoutViewModel.notifier)
-                          .updateState(clinicId: "xx");
+                          .read(clincDoctorProvider.notifier)
+                          .getDoctors(
+                            treatmentId: treatmentId ?? 0,
+                            sideAreaId: selectSectionId ?? 0,
+                          );
 
                       Navigator.pushNamed(
                         context,

@@ -4,6 +4,7 @@ import 'package:skinsync_ai/exceptions/app_exception.dart';
 
 import 'package:skinsync_ai/models/responses/auth_response.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
+import 'package:skinsync_ai/models/responses/get_doctor_response.dart';
 import 'package:skinsync_ai/models/responses/treatment_area_response.dart';
 import 'package:skinsync_ai/repositories/clinic_doctor_repository.dart';
 import 'package:skinsync_ai/services/api_base_helper.dart';
@@ -31,6 +32,25 @@ class ClinicDoctorService implements ClinicDoctorRepository {
       // Handle HTTP error status codes
       final parsed = json.decode(response.body);
       throw AppException(GetClinicResponse.fromJson(parsed).message as String);
+    }
+
+  }
+   @override
+  Future<GetDoctorResponse> getDoctors({required int clinicId, required int treamentId,required int sideAreaID}) async{
+  final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.getDoctor,
+      requestType: 'GET',
+      params: 'clinic_id=$clinicId&treatment_id=$treamentId&side_area_id=$sideAreaID',
+    );
+    // Check HTTP status code
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+    GetDoctorResponse   getDoctorResponse = GetDoctorResponse.fromJson(parsed);
+      return getDoctorResponse;
+    } else {
+      // Handle HTTP error status codes
+      final parsed = json.decode(response.body);
+      throw AppException(GetDoctorResponse.fromJson(parsed).message as String);
     }
 
   }

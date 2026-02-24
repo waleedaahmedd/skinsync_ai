@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/models/dummy_list_model.dart';
+import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
 
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
@@ -38,7 +39,9 @@ class ExploreClinicsScreen extends ConsumerWidget {
             SizedBox(height: 20.h),
 
             if (isloading)
-              const Expanded(child: Center(child: CircularProgressIndicator()))
+              const Expanded(child: Center(child: CircularProgressIndicator(
+                color: CustomColors.lightPurpleColor,
+              )))
             else if (clinicResponse?.data != null &&
                 clinicResponse!.data!.isNotEmpty)
               Expanded(
@@ -54,6 +57,9 @@ class ExploreClinicsScreen extends ConsumerWidget {
                     return CustomClinicGridViewTile(
                       clinicData: clinicResponse.data![index],
                       onTap: () {
+                        ref
+      .read(clincDoctorProvider.notifier)
+      .setClinicId(clinicResponse.data?[index].clinicId ?? 0);
                         Navigator.pushNamed(
                           context,
                           ClinicsDetailScreen.routeName,

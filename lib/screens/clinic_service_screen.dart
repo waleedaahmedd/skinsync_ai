@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +9,7 @@ import 'package:skinsync_ai/screens/select_product_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/time_container.dart';
 import 'package:skinsync_ai/widgets/treatment_price_container.dart';
@@ -60,57 +62,98 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                 ),
               ),
               SizedBox(height: 23.h),
-              SizedBox(
-                height: 150.h,
-                child: ListView.builder(
-                  itemCount: 4,
-                  scrollDirection: Axis.horizontal,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        left: index == 0 ? 30.w : 0,
-                        right: 15.w,
-                      ),
-                      child: Container(
-                        padding: EdgeInsets.only(
-                          top: 21.h,
-                          bottom: 12.h,
-                          left: 25.w,
-                          right: 25.w,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15.r),
-                          border: Border.all(
-                            color: CustomColors.lightPurpleColor,
-                            width: 2.w,
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            ClipOval(
-                              clipBehavior: Clip.antiAliasWithSaveLayer,
-                              child: Image.asset(
-                                DummyAssets.doctorImage,
-                                fit: BoxFit.cover,
-                                height: 57.67.w,
-                                width: 58.39.w,
-                              ),
-                            ),
-                            SizedBox(height: 6.23.h),
-                            Text(
-                              "Dr, Selkon Kane",
-                              style: CustomFonts.black18w600,
-                            ),
-                            SizedBox(height: 3.32.h),
-                            Text("Injector", style: CustomFonts.black14w400),
-                          ],
+
+              Consumer(
+                builder: (context, ref, _) {
+                  final isloading = ref
+                      .watch(clincDoctorProvider)
+                      .doctorLoading;
+                  final doctors = ref
+                      .watch(clincDoctorProvider)
+                      .doctorResponse
+                      ?.data;
+                  if (isloading) {
+                    return SizedBox(
+                      height: 150.h, // same height as doctor list
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: CustomColors.lightPurpleColor,
                         ),
                       ),
                     );
-                  },
-                ),
+                  } else if (doctors == null) {
+                    return SizedBox(
+                      height: 150.h,
+                      child: Center(
+                        child: Text(
+                          "No Doctor Found",
+                          style: CustomFonts.black18w600,
+                        ),
+                      ),
+                    );
+                  }
+                  return SizedBox(
+                    height: 150.h,
+                    child: ListView.builder(
+                      itemCount: doctors.length,
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            left: index == 0 ? 30.w : 0,
+                            right: 15.w,
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.only(
+                              top: 21.h,
+                              bottom: 12.h,
+                              left: 25.w,
+                              right: 25.w,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15.r),
+                              border: Border.all(
+                                color: CustomColors.lightPurpleColor,
+                                width: 2.w,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                ClipOval(
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  child: Image.network(
+                                    doctors[index].image ?? "",
+                                    fit: BoxFit.cover,
+                                    height: 57.67.w,
+                                    width: 58.39.w,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Icon(
+                                        Icons.broken_image,
+                                        size: 57.sp,
+                                      );
+                                    },
+                                  ),
+                                ),
+                                SizedBox(height: 6.23.h),
+                                Text(
+                                  doctors[index].name ?? "",
+                                  style: CustomFonts.black18w600,
+                                ),
+                                SizedBox(height: 3.32.h),
+                                Text(
+                                  doctors[index].specialization ?? "",
+                                  style: CustomFonts.black14w400,
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
               SizedBox(height: 21.h),
               Divider(height: 0, color: CustomColors.greyColor),

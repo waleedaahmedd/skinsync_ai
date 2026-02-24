@@ -27,8 +27,8 @@ enum EndPoints {
   saveAnswer("v1/onboarding/answer"),
   verifyOtp("verify-otp"),
   onBoardingProfile("v1/onboarding/profile"),
-  getClinic("clinics/by-side-area?");
-
+  getClinic("clinics/by-side-area?"),
+  getDoctor("doctors/by-side-area?");
 
   final String path;
 

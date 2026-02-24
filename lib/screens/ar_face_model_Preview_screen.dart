@@ -68,273 +68,270 @@ class _ArFaceModelPreviewScreenState
           child: AbsorbPointer(
             absorbing: isLoading,
             child: Scaffold(
-        appBar: AppBar(
-          leadingWidth: 80.w,
-          centerTitle: false,
-          leading: Padding(
-            padding: EdgeInsets.only(left: 10.w),
-            child: InkWell(
-              onTap: () => Navigator.pop(context),
-              child: GreyContainer(
-                icon: Icons.arrow_back,
-                shape: BoxShape.circle,
-                onTap: () => Navigator.pop(context),
+              appBar: AppBar(
+                leadingWidth: 80.w,
+                centerTitle: false,
+                leading: Padding(
+                  padding: EdgeInsets.only(left: 10.w),
+                  child: InkWell(
+                    onTap: () => Navigator.pop(context),
+                    child: GreyContainer(
+                      icon: Icons.arrow_back,
+                      shape: BoxShape.circle,
+                      onTap: () => Navigator.pop(context),
+                    ),
+                  ),
+                ),
+                title: Text(
+                  "AR Face Model Preview",
+                  style: CustomFonts.black26w600,
+                ),
+                actions: [
+                  Padding(
+                    padding: EdgeInsets.only(right: 13.w),
+                    child: InkWell(
+                      onTap: () {
+                        ref
+                            .read(treatmentViewModel.notifier)
+                            .clearAllSelectedTreatments();
+                      },
+                      child: Text(
+                        "Reset",
+                        style: CustomFonts.pinkunderlined20w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ),
-          title: Text("AR Face Model Preview", style: CustomFonts.black26w600),
-          actions: [
-            Padding(
-              padding: EdgeInsets.only(right: 13.w),
-              child: InkWell(
-                onTap: (){
-                  ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
-                },
-                  child: Text("Reset", style: CustomFonts.pinkunderlined20w600)),
-            ),
-          ],
-        ),
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 20.h,),
-              _facePreview(),
-              // SizedBox(height: 18.h),
-              // _accuracyRate(),
+              body: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 20.h),
+                    _facePreview(),
 
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding:  EdgeInsets.symmetric(horizontal: 20.0.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 36.h),
-                        Consumer(
-                          builder: (context, ref, _) {
-                            final subSectionId = ref.watch(
-                              treatmentViewModel.select((s) => s.subSectionId),
-                            );
-                            final subAreaList = ref.watch(
-                              treatmentViewModel.select(
-                                (s) => s.treatmentsSubAreaResponse?.data ?? [],
-                              ),
-                            );
-                            TreatmentSubAreaModel? selectedSubArea;
-                            for (final e in subAreaList) {
-                              if (e.id == subSectionId) {
-                                selectedSubArea = e;
-                                break;
-                              }
-                            }
-                            final syringeOptions = selectedSubArea?.syringeOptions;
-                            final hasOptions = syringeOptions != null &&
-                                syringeOptions.isNotEmpty;
-
-                            if (!hasOptions) {
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                ref
-                                    .read(treatmentViewModel.notifier)
-                                    .updateSyringeLevel(0);
-                              });
-                              return const SizedBox.shrink();
-                            }
-
-                            final syringeLevel = ref.watch(
-                              treatmentViewModel.select((s) => s.syringeLevel),
-                            );
-                            int index = syringeOptions.indexOf(
-                              syringeLevel ?? syringeOptions.first,
-                            );
-                            if (index < 0) index = 0;
-
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              final current =
-                                  ref.read(treatmentViewModel).syringeLevel;
-                              if (current == null ||
-                                  !syringeOptions.contains(current)) {
-                                ref
-                                    .read(treatmentViewModel.notifier)
-                                    .updateSyringeLevel(syringeOptions[0]);
-                              }
-                            });
-
-                            final currentValue = syringeOptions[index];
-                            final singleOption = syringeOptions.length == 1;
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-
-                                if (singleOption)
-                                  SizedBox(height: 8.h)
-                                else
-                                  Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'Adjustable Parameters:',
-                                            style: CustomFonts.black18w600,
-                                          ),
-                                          SizedBox(height: 20.h),
-                                          Text(
-                                            '$currentValue Syringe${currentValue > 1 ? 's' : ''}',
-                                            style: CustomFonts.black14w500,
-                                          ),
-                                        ],
-                                      ),
-                                      Slider(
-                                        activeColor: CustomColors.lightBlueColor,
-                                        value: index.toDouble(),
-                                        min: 0,
-                                        max: (syringeOptions.length - 1).toDouble(),
-                                        divisions: syringeOptions.length - 1,
-                                        label: '$currentValue',
-                                        onChanged: (double value) {
-                                          final i = value.round();
-                                          final level = syringeOptions[i];
-                                          ref
-                                              .read(treatmentViewModel.notifier)
-                                              .updateSyringeLevel(level);
-                                          ref
-                                              .read(treatmentViewModel.notifier)
-                                              .callPredictAPI(syringeLevel: level);
-                                        },
-                                      ),
-                                      SizedBox(height: 20.h,)
-                                    ],
-                                  ),
-                              ],
-                            );
-                          },
-                        ),
-                        Text('Treatment Selection', style: CustomFonts.black18w600),
-                        SizedBox(height: 8.h),
-                        Consumer(
-                          builder: (context, ref, _) {
-                            // Use select to watch only specific parts of the state
-                            final isLoading = ref.watch(
-                              treatmentViewModel.select((state) => state.treatmentsLoading),
-                            );
-                            final treatments = ref.watch(
-                              treatmentViewModel.select((state) => state.treatmentResponse?.data ?? []),
-                            );
-                            final treatmentId = ref.watch(
-                              treatmentViewModel.select((state) => state.treatmentId),
-                            );
-                            final treatmentResponse = ref.watch(
-                              treatmentViewModel.select((state) => state.treatmentResponse),
-                            );
-
-                            if (!isLoading && treatmentResponse == null) {
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                ref.read(treatmentViewModel.notifier).getTreatments();
-                              });
-                            }
-
-                            if (isLoading) {
-                              return SizedBox(
-                                height: 200,
-                                child: const Center(
-                                  child: CircularProgressIndicator(
-                                    color: CustomColors.purpleColor,
-                                  ),
-                                ),
-                              );
-                            }
-
-                            return AnimationLimiter(
-                              key: const ValueKey('treatments_list'),
-                              child: Wrap(
-                                direction: Axis.horizontal,
-                                spacing: 12.w,
-                                runSpacing: 12.h,
-                                children: List.generate(treatments.length, (index) {
-                                  return AnimationConfiguration.staggeredList(
-                                    position: index,
-                                    duration: const Duration(milliseconds: 800),
-                                    child: SlideAnimation(
-                                      horizontalOffset: 100.0,
-                                      child: FadeInAnimation(
-                                        child: ServiceTypeButton(
-                                          icon: PngAssets.syringe,
-                                          text: treatments[index].name!,
-                                          selected: treatmentId == treatments[index].id,
-                                          onPressed: () {
-                                            ref
-                                                .read(treatmentViewModel.notifier)
-                                                .onTapTreatment(
-                                                  treatmentModel: treatments[index], isCallPredictAPI: true,
-                                                );
-                                          },
-                                        ),
-                                      ),
+                    // SizedBox(height: 18.h),
+                    // _accuracyRate(),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.0.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 36.h),
+                              Consumer(
+                                builder: (context, ref, _) {
+                                  final subSectionId = ref.watch(
+                                    treatmentViewModel.select(
+                                      (s) => s.subSectionId,
                                     ),
                                   );
-                                }),
-                              ),
-                            );
-                          },
-                        ),
-                        SizedBox(height: 50.h),
-                        Consumer(
-                          builder: (context, ref, _) {
-                            final isLoading = ref.watch(
-                              treatmentViewModel.select((state) => state.treatmentAreaLoading),
-                            );
-                            final treatmentsArea = ref.watch(
-                              treatmentViewModel.select((state) => state.treatmentAreaResponse?.data ?? []),
-                            );
-                            final selectSectionId = ref.watch(
-                              treatmentViewModel.select((state) => state.selectSectionId),
-                            );
+                                  final subAreaList = ref.watch(
+                                    treatmentViewModel.select(
+                                      (s) =>
+                                          s.treatmentsSubAreaResponse?.data ??
+                                          [],
+                                    ),
+                                  );
+                                  TreatmentSubAreaModel? selectedSubArea;
+                                  for (final e in subAreaList) {
+                                    if (e.id == subSectionId) {
+                                      selectedSubArea = e;
+                                      break;
+                                    }
+                                  }
+                                  final syringeOptions =
+                                      selectedSubArea?.syringeOptions;
+                                  final hasOptions =
+                                      syringeOptions != null &&
+                                      syringeOptions.isNotEmpty;
 
-                            if (isLoading) {
-                              return SizedBox(
-                                height: 200,
-                                child: const Center(
-                                  child: CircularProgressIndicator(
-                                    color: CustomColors.purpleColor,
-                                  ),
-                                ),
-                              );
-                            }
-                            if (treatmentsArea.isNotEmpty) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Area Selection',
-                                    style: CustomFonts.black18w600,
-                                  ),
-                                  SizedBox(height: 8.h),
-                                  AnimationLimiter(
-                                    key: const ValueKey('area_list'),
+                                  if (!hasOptions) {
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                          ref
+                                              .read(treatmentViewModel.notifier)
+                                              .updateSyringeLevel(0);
+                                        });
+                                    return const SizedBox.shrink();
+                                  }
+
+                                  final syringeLevel = ref.watch(
+                                    treatmentViewModel.select(
+                                      (s) => s.syringeLevel,
+                                    ),
+                                  );
+                                  int index = syringeOptions.indexOf(
+                                    syringeLevel ?? syringeOptions.first,
+                                  );
+                                  if (index < 0) index = 0;
+
+                                  WidgetsBinding.instance.addPostFrameCallback((
+                                    _,
+                                  ) {
+                                    final current = ref
+                                        .read(treatmentViewModel)
+                                        .syringeLevel;
+                                    if (current == null ||
+                                        !syringeOptions.contains(current)) {
+                                      ref
+                                          .read(treatmentViewModel.notifier)
+                                          .updateSyringeLevel(
+                                            syringeOptions[0],
+                                          );
+                                    }
+                                  });
+
+                                  final currentValue = syringeOptions[index];
+                                  final singleOption =
+                                      syringeOptions.length == 1;
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      if (singleOption)
+                                        SizedBox(height: 8.h)
+                                      else
+                                        Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'Adjustable Parameters:',
+                                                  style:
+                                                      CustomFonts.black18w600,
+                                                ),
+                                                SizedBox(height: 20.h),
+                                                Text(
+                                                  '$currentValue Syringe${currentValue > 1 ? 's' : ''}',
+                                                  style:
+                                                      CustomFonts.black14w500,
+                                                ),
+                                              ],
+                                            ),
+                                            Slider(
+                                              activeColor:
+                                                  CustomColors.lightBlueColor,
+                                              value: index.toDouble(),
+                                              min: 0,
+                                              max: (syringeOptions.length - 1)
+                                                  .toDouble(),
+                                              divisions:
+                                                  syringeOptions.length - 1,
+                                              label: '$currentValue',
+                                              onChanged: (double value) {
+                                                final i = value.round();
+                                                final level = syringeOptions[i];
+                                                ref
+                                                    .read(
+                                                      treatmentViewModel
+                                                          .notifier,
+                                                    )
+                                                    .updateSyringeLevel(level);
+                                                ref
+                                                    .read(
+                                                      treatmentViewModel
+                                                          .notifier,
+                                                    )
+                                                    .callPredictAPI(
+                                                      syringeLevel: level,
+                                                    );
+                                              },
+                                            ),
+                                            SizedBox(height: 20.h),
+                                          ],
+                                        ),
+                                    ],
+                                  );
+                                },
+                              ),
+                              Text(
+                                'Treatment Selection',
+                                style: CustomFonts.black18w600,
+                              ),
+                              SizedBox(height: 8.h),
+                              Consumer(
+                                builder: (context, ref, _) {
+                                  // Use select to watch only specific parts of the state
+                                  final isLoading = ref.watch(
+                                    treatmentViewModel.select(
+                                      (state) => state.treatmentsLoading,
+                                    ),
+                                  );
+                                  final treatments = ref.watch(
+                                    treatmentViewModel.select(
+                                      (state) =>
+                                          state.treatmentResponse?.data ?? [],
+                                    ),
+                                  );
+                                  final treatmentId = ref.watch(
+                                    treatmentViewModel.select(
+                                      (state) => state.treatmentId,
+                                    ),
+                                  );
+                                  final treatmentResponse = ref.watch(
+                                    treatmentViewModel.select(
+                                      (state) => state.treatmentResponse,
+                                    ),
+                                  );
+
+                                  if (!isLoading && treatmentResponse == null) {
+                                    WidgetsBinding.instance
+                                        .addPostFrameCallback((_) {
+                                          ref
+                                              .read(treatmentViewModel.notifier)
+                                              .getTreatments();
+                                        });
+                                  }
+
+                                  if (isLoading) {
+                                    return SizedBox(
+                                      height: 200,
+                                      child: const Center(
+                                        child: CircularProgressIndicator(
+                                          color: CustomColors.purpleColor,
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  return AnimationLimiter(
+                                    key: const ValueKey('treatments_list'),
                                     child: Wrap(
                                       direction: Axis.horizontal,
                                       spacing: 12.w,
                                       runSpacing: 12.h,
-                                      children: List.generate(treatmentsArea.length, (
+                                      children: List.generate(treatments.length, (
                                         index,
                                       ) {
                                         return AnimationConfiguration.staggeredList(
                                           position: index,
-                                          duration: const Duration(milliseconds: 800),
+                                          duration: const Duration(
+                                            milliseconds: 800,
+                                          ),
                                           child: SlideAnimation(
                                             horizontalOffset: 100.0,
                                             child: FadeInAnimation(
                                               child: ServiceTypeButton(
                                                 icon: PngAssets.syringe,
-                                                text: treatmentsArea[index].name!,
-                                                selected: selectSectionId == treatmentsArea[index].id,
+                                                text: treatments[index].name!,
+                                                selected:
+                                                    treatmentId ==
+                                                    treatments[index].id,
                                                 onPressed: () {
                                                   ref
-                                                      .read(treatmentViewModel.notifier)
-                                                      .onTapTreatmentArea(
-                                                        treatmentArea: treatmentsArea[index], isCallPredictAPI: true,
+                                                      .read(
+                                                        treatmentViewModel
+                                                            .notifier,
+                                                      )
+                                                      .onTapTreatment(
+                                                        treatmentModel:
+                                                            treatments[index],
+                                                        isCallPredictAPI: true,
                                                       );
                                                 },
                                               ),
@@ -343,95 +340,211 @@ class _ArFaceModelPreviewScreenState
                                         );
                                       }),
                                     ),
-                                  ),
-                                  SizedBox(height: 50.h),
-                                ],
-                              );
-                            }
-                            return SizedBox();
-                          },
-                        ),
-                        Consumer(
-                          builder: (context, ref, _) {
-                            final isLoading = ref.watch(
-                              treatmentViewModel.select((state) => state.treatmentSubAreaLoading),
-                            );
-                            final treatmentsSubArea = ref.watch(
-                              treatmentViewModel.select((state) => state.treatmentsSubAreaResponse?.data ?? []),
-                            );
-                            final List<int> selectedSubSectionIds = ref.watch(
-                              treatmentViewModel.select((state) => state.subSectionIds),
-                            );
-
-                            if (isLoading) {
-                              return SizedBox(
-                                height: 200,
-                                child: const Center(
-                                  child: CircularProgressIndicator(
-                                    color: CustomColors.purpleColor,
-                                  ),
-                                ),
-                              );
-                            }
-                            if (treatmentsSubArea.isNotEmpty) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Sub Area Selection',
-                                    style: CustomFonts.black18w600,
-                                  ),
-                                  SizedBox(height: 8.h),
-                                  AnimationLimiter(
-                                    key: const ValueKey('sub_area_list'),
-                                    child: Wrap(
-                                      direction: Axis.horizontal,
-                                      spacing: 12.w,
-                                      runSpacing: 12.h,
-                                      children: List.generate(
-                                        treatmentsSubArea.length,
-                                        (index) {
-                                          return AnimationConfiguration.staggeredList(
-                                            position: index,
-                                            duration: const Duration(milliseconds: 800),
-                                            child: SlideAnimation(
-                                              horizontalOffset: 100.0,
-                                              child: FadeInAnimation(
-                                                child: ServiceTypeButton(
-                                                  icon: PngAssets.syringe,
-                                                  text: treatmentsSubArea[index].name!,
-                                                  selected: selectedSubSectionIds.contains(treatmentsSubArea[index].id),
-                                                  onPressed: () {
-                                                    ref
-                                                        .read(treatmentViewModel.notifier)
-                                                        .onTapTreatmentSubArea(
-                                                          treatmentSubArea: treatmentsSubArea[index], isCallPredictAPI: true,
-                                                        );
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
+                                  );
+                                },
+                              ),
+                              SizedBox(height: 50.h),
+                              Consumer(
+                                builder: (context, ref, _) {
+                                  final isLoading = ref.watch(
+                                    treatmentViewModel.select(
+                                      (state) => state.treatmentAreaLoading,
                                     ),
-                                  ),
-                                  SizedBox(height: 50.h),
-                                ],
-                              );
-                            }
-                            return SizedBox();
-                          },
+                                  );
+                                  final treatmentsArea = ref.watch(
+                                    treatmentViewModel.select(
+                                      (state) =>
+                                          state.treatmentAreaResponse?.data ??
+                                          [],
+                                    ),
+                                  );
+                                  final selectSectionId = ref.watch(
+                                    treatmentViewModel.select(
+                                      (state) => state.selectSectionId,
+                                    ),
+                                  );
+
+                                  if (isLoading) {
+                                    return SizedBox(
+                                      height: 200,
+                                      child: const Center(
+                                        child: CircularProgressIndicator(
+                                          color: CustomColors.purpleColor,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  if (treatmentsArea.isNotEmpty) {
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Area Selection',
+                                          style: CustomFonts.black18w600,
+                                        ),
+                                        SizedBox(height: 8.h),
+                                        AnimationLimiter(
+                                          key: const ValueKey('area_list'),
+                                          child: Wrap(
+                                            direction: Axis.horizontal,
+                                            spacing: 12.w,
+                                            runSpacing: 12.h,
+                                            children: List.generate(
+                                              treatmentsArea.length,
+                                              (index) {
+                                                return AnimationConfiguration.staggeredList(
+                                                  position: index,
+                                                  duration: const Duration(
+                                                    milliseconds: 800,
+                                                  ),
+                                                  child: SlideAnimation(
+                                                    horizontalOffset: 100.0,
+                                                    child: FadeInAnimation(
+                                                      child: ServiceTypeButton(
+                                                        icon: PngAssets.syringe,
+                                                        text:
+                                                            treatmentsArea[index]
+                                                                .name!,
+                                                        selected:
+                                                            selectSectionId ==
+                                                            treatmentsArea[index]
+                                                                .id,
+                                                        onPressed: () {
+                                                          ref
+                                                              .read(
+                                                                treatmentViewModel
+                                                                    .notifier,
+                                                              )
+                                                              .onTapTreatmentArea(
+                                                                treatmentArea:
+                                                                    treatmentsArea[index],
+                                                                isCallPredictAPI:
+                                                                    true,
+                                                              );
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: 50.h),
+                                      ],
+                                    );
+                                  }
+                                  return SizedBox();
+                                },
+                              ),
+                              Consumer(
+                                builder: (context, ref, _) {
+                                  final isLoading = ref.watch(
+                                    treatmentViewModel.select(
+                                      (state) => state.treatmentSubAreaLoading,
+                                    ),
+                                  );
+                                  final treatmentsSubArea = ref.watch(
+                                    treatmentViewModel.select(
+                                      (state) =>
+                                          state
+                                              .treatmentsSubAreaResponse
+                                              ?.data ??
+                                          [],
+                                    ),
+                                  );
+                                  final List<int> selectedSubSectionIds = ref
+                                      .watch(
+                                        treatmentViewModel.select(
+                                          (state) => state.subSectionIds,
+                                        ),
+                                      );
+
+                                  if (isLoading) {
+                                    return SizedBox(
+                                      height: 200,
+                                      child: const Center(
+                                        child: CircularProgressIndicator(
+                                          color: CustomColors.purpleColor,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  if (treatmentsSubArea.isNotEmpty) {
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Sub Area Selection',
+                                          style: CustomFonts.black18w600,
+                                        ),
+                                        SizedBox(height: 8.h),
+                                        AnimationLimiter(
+                                          key: const ValueKey('sub_area_list'),
+                                          child: Wrap(
+                                            direction: Axis.horizontal,
+                                            spacing: 12.w,
+                                            runSpacing: 12.h,
+                                            children: List.generate(treatmentsSubArea.length, (
+                                              index,
+                                            ) {
+                                              return AnimationConfiguration.staggeredList(
+                                                position: index,
+                                                duration: const Duration(
+                                                  milliseconds: 800,
+                                                ),
+                                                child: SlideAnimation(
+                                                  horizontalOffset: 100.0,
+                                                  child: FadeInAnimation(
+                                                    child: ServiceTypeButton(
+                                                      icon: PngAssets.syringe,
+                                                      text:
+                                                          treatmentsSubArea[index]
+                                                              .name!,
+                                                      selected:
+                                                          selectedSubSectionIds
+                                                              .contains(
+                                                                treatmentsSubArea[index]
+                                                                    .id,
+                                                              ),
+                                                      onPressed: () {
+                                                        ref
+                                                            .read(
+                                                              treatmentViewModel
+                                                                  .notifier,
+                                                            )
+                                                            .onTapTreatmentSubArea(
+                                                              treatmentSubArea:
+                                                                  treatmentsSubArea[index],
+                                                              isCallPredictAPI:
+                                                                  true,
+                                                            );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                          ),
+                                        ),
+                                        SizedBox(height: 50.h),
+                                      ],
+                                    );
+                                  }
+                                  return SizedBox();
+                                },
+                              ),
+                              _bottomButtons(context),
+                            ],
+                          ),
                         ),
-                        _bottomButtons(context),
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
             ),
           ),
         );
@@ -442,7 +555,7 @@ class _ArFaceModelPreviewScreenState
   Widget _facePreview() {
     const cardRadius = 20.0;
     return Padding(
-      padding:  EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: Card(
         elevation: 10,
         shape: RoundedRectangleBorder(
@@ -520,7 +633,7 @@ class _ArFaceModelPreviewScreenState
                   return Container(
                     width: double.infinity,
                     height: 326.h,
-                    color: CustomColors.greyColor.withValues(alpha:0.3),
+                    color: CustomColors.greyColor.withValues(alpha: 0.3),
                     child: Center(
                       child: Text(
                         'No image available',
@@ -540,7 +653,10 @@ class _ArFaceModelPreviewScreenState
                     treatmentViewModel.select((state) => state.isBefore),
                   );
                   return Container(
-                    padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 2.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 14.w,
+                      vertical: 2.h,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.8),
                       borderRadius: BorderRadius.circular(20.r),
@@ -620,7 +736,6 @@ class _ArFaceModelPreviewScreenState
   //   );
   // }
 
-
   Widget _bottomButtons(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
@@ -661,7 +776,12 @@ class _ArFaceModelPreviewScreenState
                   ref
                       .read(checkoutViewModel.notifier)
                       .updateState(treatmentSubAreaId: subSectionId);
-                      ref.read(clincDoctorProvider.notifier).getClinic(treatmentId: treatmentId ?? 0, sideAreaId:selectSectionId ?? 0 );
+                  ref
+                      .read(clincDoctorProvider.notifier)
+                      .getClinic(
+                        treatmentId: treatmentId ?? 0,
+                        sideAreaId: selectSectionId ?? 0,
+                      );
                   Navigator.pushNamed(context, ExploreClinicsScreen.routeName);
                 },
                 style: ElevatedButton.styleFrom(
