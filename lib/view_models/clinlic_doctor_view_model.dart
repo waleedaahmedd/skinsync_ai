@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skinsync_ai/models/base_state_model.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
@@ -14,17 +15,16 @@ final clincDoctorProvider = NotifierProvider(() {
   return ClinicDoctorViewModel(clinicRepository: clinicService);
 });
 
-
-
 class ClinicDoctorViewModel extends BaseViewModel<ClinlicDoctorState> {
   ClinicDoctorViewModel({required ClinicDoctorRepository clinicRepository})
     : _clinicRepository = clinicRepository,
       super(initialState: ClinlicDoctorState());
 
   final ClinicDoctorRepository _clinicRepository;
-   void setClinicId(int id) {
-  state = state.copyWith(clinicId: id);
-}
+  void setClinicId(int id) {
+    state = state.copyWith(clinicId: id);
+  }
+
   Future<bool?> getClinic({
     required int treatmentId,
     required int sideAreaId,
@@ -32,7 +32,6 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinlicDoctorState> {
     state = state.copyWith(clinicLoading: true);
     return runSafely(() async {
       final response = await _clinicRepository.getClinic(
-       
         treamentId: treatmentId,
         sideAreaID: sideAreaId,
       );
@@ -40,22 +39,29 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinlicDoctorState> {
       return response.isSuccess == true;
     });
   }
-   Future<bool?> getDoctors({
+
+  Future<bool?> getDoctors({
     required int treatmentId,
     required int sideAreaId,
   }) async {
-     
     state = state.copyWith(doctorLoading: true);
     return runSafely(() async {
       final response = await _clinicRepository.getDoctors(
         clinicId: state.clinicId ?? 0,
-       
+
         treamentId: treatmentId,
         sideAreaID: sideAreaId,
       );
       state = state.copyWith(doctorLoading: false, doctorResponse: response);
       return response.isSuccess == true;
     });
+  }
+
+  @override
+  void onError(String message) {
+    state = state.copyWith(clinicLoading: false, doctorLoading: false);
+    super.onError(message);
+    EasyLoading.showError(message);
   }
 }
 
