@@ -56,7 +56,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     required bool isCallPredictAPI,
   }) async {
     state = state.copyWith(
-      treatmentId: treatmentModel.id,
+      selectedTreatment: treatmentModel,
       clearSubSectionIds: true,
     );
     clearAiImage();
@@ -71,16 +71,19 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   }
 
   void onTapTreatmentArea({
-    required SelectSection treatmentArea,
+    required TreatmentAreaModel treatmentArea,
     required bool isCallPredictAPI,
   }) {
-    state = state.copyWith(selectSectionId: treatmentArea.id);
+    state = state.copyWith(selectedTreatmentArea: treatmentArea);
     //if (state.treatmentsSubAreaResponse != null) _clearSubSectionSelection();
     if (treatmentArea.isSidearea == true) {
-      getSubSectionApi(
-        sectionId: state.treatmentId!,
-        subSectionId: treatmentArea.id ?? 0,
-      );
+      final treatment = state.selectedTreatment;
+      if (treatment != null) {
+        getSubSectionApi(
+          sectionId: treatment.id ?? 0,
+          subSectionId: treatmentArea.id ?? 0,
+        );
+      }
     } else if (isCallPredictAPI) {
       _clearSubSectionSelection();
       callPredictAPI();
@@ -92,8 +95,16 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     required bool isCallPredictAPI,
   }) {
     final id = treatmentSubArea.id;
-    final ids = id != null ? [...state.subSectionIds, id] : state.subSectionIds;
-    state = state.copyWith(subSectionId: id, subSectionIds: ids);
+    final alreadySelected =
+        id != null && state.selectedSubAreasList.any((e) => e.id == id);
+    final updatedList = alreadySelected
+        ? state.selectedSubAreasList
+        : [...state.selectedSubAreasList, treatmentSubArea];
+
+    state = state.copyWith(
+      selectedTreatmentSubArea: treatmentSubArea,
+      selectedSubAreasList: updatedList,
+    );
     if (isCallPredictAPI) callPredictAPI();
   }
 
@@ -107,10 +118,10 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       treatmentsLoading: state.treatmentsLoading,
       treatmentAreaLoading: state.treatmentAreaLoading,
       treatmentSubAreaLoading: state.treatmentSubAreaLoading,
-      treatmentId: null,
-      selectSectionId: null,
-      subSectionId: null,
-      subSectionIds: const [],
+      selectedTreatment: null,
+      selectTreatmentArea: null,
+      selectedTreatmentSubArea: null,
+      selectedSubAreasList: const [],
       syringeLevel: null,
       isBefore: true,
       capturedImage: state.capturedImage,
@@ -209,9 +220,10 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       Uri.parse('http://18.116.65.70/api/'),
     );
     request.fields.addAll({
-      'treatment_id': (state.treatmentId ?? 0).toString(),
-      'treatment_section_id': (state.selectSectionId ?? 0).toString(),
-      'treatment_sub_section_id': (state.subSectionId ?? 0).toString(),
+      'treatment_id': (state.selectedTreatment?.id ?? 0).toString(),
+      'treatment_section_id': (state.selectTreatmentArea?.id ?? 0).toString(),
+      'treatment_sub_section_id':
+          (state.selectedTreatmentSubArea?.id ?? 0).toString(),
       'syringes': syringeLevel.toString(),
     });
     request.files.add(await _imageMultipartFile(image));
@@ -281,10 +293,10 @@ class TreatmentsState extends BaseStateModel {
   final bool treatmentAreaLoading;
   final bool treatmentSubAreaLoading;
 
-  final int? treatmentId;
-  final int? selectSectionId;
-  final int? subSectionId;
-  final List<int> subSectionIds;
+  final TreatmentsModel? selectedTreatment;
+  final TreatmentAreaModel? selectTreatmentArea;
+  final TreatmentSubAreaModel? selectedTreatmentSubArea;
+  final List<TreatmentSubAreaModel> selectedSubAreasList;
   final int? syringeLevel;
 
   final bool isBefore;
@@ -300,10 +312,10 @@ class TreatmentsState extends BaseStateModel {
     this.treatmentsLoading = false,
     this.treatmentAreaLoading = false,
     this.treatmentSubAreaLoading = false,
-    this.treatmentId,
-    this.selectSectionId,
-    this.subSectionId,
-    this.subSectionIds = const [],
+    this.selectedTreatment,
+    this.selectTreatmentArea,
+    this.selectedTreatmentSubArea,
+    this.selectedSubAreasList = const [],
     this.syringeLevel,
     this.isBefore = false,
     this.capturedImage,
@@ -320,10 +332,10 @@ class TreatmentsState extends BaseStateModel {
     bool? treatmentsLoading,
     bool? treatmentAreaLoading,
     bool? treatmentSubAreaLoading,
-    int? treatmentId,
-    int? selectSectionId,
-    int? subSectionId,
-    List<int>? subSectionIds,
+    TreatmentsModel? selectedTreatment,
+    TreatmentAreaModel? selectedTreatmentArea,
+    TreatmentSubAreaModel? selectedTreatmentSubArea,
+    List<TreatmentSubAreaModel>? selectedSubAreasList,
     int? syringeLevel,
     bool? isBefore,
     XFile? capturedImage,
@@ -344,16 +356,16 @@ class TreatmentsState extends BaseStateModel {
       treatmentAreaLoading: treatmentAreaLoading ?? this.treatmentAreaLoading,
       treatmentSubAreaLoading:
           treatmentSubAreaLoading ?? this.treatmentSubAreaLoading,
-      treatmentId: treatmentId ?? this.treatmentId,
-      selectSectionId: clearSelectSectionId
+      selectedTreatment: selectedTreatment ?? this.selectedTreatment,
+      selectTreatmentArea: clearSelectSectionId
           ? null
-          : (selectSectionId ?? this.selectSectionId),
-      subSectionId: clearSubSectionId
+          : (selectedTreatmentArea ?? this.selectTreatmentArea),
+      selectedTreatmentSubArea: clearSubSectionId
           ? null
-          : (subSectionId ?? this.subSectionId),
-      subSectionIds: clearSubSectionIds
+          : (selectedTreatmentSubArea ?? this.selectedTreatmentSubArea),
+      selectedSubAreasList: clearSubSectionIds
           ? const []
-          : (subSectionIds ?? this.subSectionIds),
+          : (selectedSubAreasList ?? this.selectedSubAreasList),
       syringeLevel: syringeLevel ?? this.syringeLevel,
       isBefore: isBefore ?? this.isBefore,
       capturedImage: capturedImage ?? this.capturedImage,

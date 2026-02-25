@@ -443,19 +443,21 @@ class ClinicsDetailScreen extends ConsumerWidget {
                       // ref
                       //     .read(checkoutViewModel.notifier)
                       //     .updateState(clinicId: "xx");
-                      final treatmentId = ref.read(
-                        treatmentViewModel.select((state) => state.treatmentId),
-                      );
-                      final selectSectionId = ref.read(
+                      final treatment = ref.read(
                         treatmentViewModel.select(
-                          (state) => state.selectSectionId,
+                          (state) => state.selectedTreatment,
+                        ),
+                      );
+                      final area = ref.read(
+                        treatmentViewModel.select(
+                          (state) => state.selectTreatmentArea,
                         ),
                       );
                       ref
                           .read(clincDoctorProvider.notifier)
                           .getDoctors(
-                            treatmentId: treatmentId ?? 0,
-                            sideAreaId: selectSectionId ?? 0,
+                            treatmentId: treatment?.id ?? 0,
+                            sideAreaId: area?.id ?? 0,
                           );
 
                       Navigator.pushNamed(

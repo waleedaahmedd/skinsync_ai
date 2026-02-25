@@ -124,7 +124,7 @@ class _ArFaceModelPreviewScreenState
                                 builder: (context, ref, _) {
                                   final subSectionId = ref.watch(
                                     treatmentViewModel.select(
-                                      (s) => s.subSectionId,
+                                      (s) => s.selectedTreatmentSubArea,
                                     ),
                                   );
                                   final subAreaList = ref.watch(
@@ -268,9 +268,9 @@ class _ArFaceModelPreviewScreenState
                                           state.treatmentResponse?.data ?? [],
                                     ),
                                   );
-                                  final treatmentId = ref.watch(
+                                  final selectedTreatment = ref.watch(
                                     treatmentViewModel.select(
-                                      (state) => state.treatmentId,
+                                      (state) => state.selectedTreatment,
                                     ),
                                   );
                                   final treatmentResponse = ref.watch(
@@ -320,7 +320,7 @@ class _ArFaceModelPreviewScreenState
                                                 icon: PngAssets.syringe,
                                                 text: treatments[index].name!,
                                                 selected:
-                                                    treatmentId ==
+                                                    selectedTreatment?.id ==
                                                     treatments[index].id,
                                                 onPressed: () {
                                                   ref
@@ -358,9 +358,9 @@ class _ArFaceModelPreviewScreenState
                                           [],
                                     ),
                                   );
-                                  final selectSectionId = ref.watch(
+                                  final selectedArea = ref.watch(
                                     treatmentViewModel.select(
-                                      (state) => state.selectSectionId,
+                                      (state) => state.selectTreatmentArea,
                                     ),
                                   );
 
@@ -407,7 +407,7 @@ class _ArFaceModelPreviewScreenState
                                                             treatmentsArea[index]
                                                                 .name!,
                                                         selected:
-                                                            selectSectionId ==
+                                                            selectedArea?.id ==
                                                             treatmentsArea[index]
                                                                 .id,
                                                         onPressed: () {
@@ -454,12 +454,12 @@ class _ArFaceModelPreviewScreenState
                                           [],
                                     ),
                                   );
-                                  final List<int> selectedSubSectionIds = ref
-                                      .watch(
-                                        treatmentViewModel.select(
-                                          (state) => state.subSectionIds,
-                                        ),
-                                      );
+                                  final List<TreatmentSubAreaModel>
+                                  selectedSubAreas = ref.watch(
+                                    treatmentViewModel.select(
+                                      (state) => state.selectedSubAreasList,
+                                    ),
+                                  );
 
                                   if (isLoading) {
                                     return SizedBox(
@@ -503,12 +503,12 @@ class _ArFaceModelPreviewScreenState
                                                       text:
                                                           treatmentsSubArea[index]
                                                               .name!,
-                                                      selected:
-                                                          selectedSubSectionIds
-                                                              .contains(
-                                                                treatmentsSubArea[index]
-                                                                    .id,
-                                                              ),
+                                                      selected: selectedSubAreas.any(
+                                                        (e) =>
+                                                            e.id ==
+                                                            treatmentsSubArea[index]
+                                                                .id,
+                                                      ),
                                                       onPressed: () {
                                                         ref
                                                             .read(
@@ -757,30 +757,40 @@ class _ArFaceModelPreviewScreenState
             Expanded(
               child: ElevatedButton(
                 onPressed: () {
-                  final treatmentId = ref.read(
-                    treatmentViewModel.select((state) => state.treatmentId),
+                  final treatment = ref.read(
+                    treatmentViewModel.select(
+                      (state) => state.selectedTreatment,
+                    ),
                   );
-                  final selectSectionId = ref.read(
-                    treatmentViewModel.select((state) => state.selectSectionId),
+                  final area = ref.read(
+                    treatmentViewModel.select(
+                      (state) => state.selectTreatmentArea,
+                    ),
                   );
-                  final subSectionId = ref.read(
-                    treatmentViewModel.select((state) => state.subSectionId),
+                  final subArea = ref.read(
+                    treatmentViewModel.select(
+                      (state) => state.selectedTreatmentSubArea,
+                    ),
                   );
+
+                  final treatmentId = treatment?.id;
+                  final areaId = area?.id;
+                  final subAreaId = subArea?.id;
 
                   ref
                       .read(checkoutViewModel.notifier)
                       .updateState(treatmentId: treatmentId);
                   ref
                       .read(checkoutViewModel.notifier)
-                      .updateState(treatmentAreaId: selectSectionId);
+                      .updateState(treatmentAreaId: areaId);
                   ref
                       .read(checkoutViewModel.notifier)
-                      .updateState(treatmentSubAreaId: subSectionId);
+                      .updateState(treatmentSubAreaId: subAreaId);
                   ref
                       .read(clincDoctorProvider.notifier)
                       .getClinic(
                         treatmentId: treatmentId ?? 0,
-                        sideAreaId: selectSectionId ?? 0,
+                        sideAreaId: areaId ?? 0,
                       );
                   Navigator.pushNamed(context, ExploreClinicsScreen.routeName);
                 },
