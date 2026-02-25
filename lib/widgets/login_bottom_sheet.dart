@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
@@ -8,6 +9,7 @@ import 'package:skinsync_ai/utills/biometric_helper.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/utills/enums.dart';
+import 'package:skinsync_ai/utills/secure_storage_service.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
 void loginBottomSheet(BuildContext context) {
@@ -213,10 +215,16 @@ void loginBottomSheet(BuildContext context) {
                                             reason: 'Login with Biometrics',
                                           );
                                       if (authenticated && context.mounted) {
-                                        Navigator.pushNamed(
+                                        final token = SecureStorage().cachedAuthToken;
+                                        if(token != null){
+                                            Navigator.pushNamed(
                                           context,
                                           BottomNavPage.routeName,
                                         );
+                                        }else{
+                                          EasyLoading.showError("Please Login First");
+                                        }
+                                        
                                       }
                                     },
                                     child: Icon(icon, size: 60.h),
