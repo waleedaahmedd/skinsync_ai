@@ -16,6 +16,7 @@ import '../view_models/checkout_view_model.dart';
 
 class ClinicsDetailScreen extends ConsumerWidget {
   const ClinicsDetailScreen({super.key});
+
   static const String routeName = '/ClinicsDetailScreen';
 
   @override
@@ -250,7 +251,8 @@ class ClinicsDetailScreen extends ConsumerWidget {
             ListView.builder(
               padding: EdgeInsets.only(top: 20.h, bottom: 0),
               shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(), // ⭐ ADD THIS
+              physics: const NeverScrollableScrollPhysics(),
+              // ⭐ ADD THIS
               itemCount: 3,
               itemBuilder: (context, index) {
                 return Padding(
@@ -448,16 +450,22 @@ class ClinicsDetailScreen extends ConsumerWidget {
                           (state) => state.selectedTreatment,
                         ),
                       );
-                      final area = ref.read(
+                      final subAreas = ref.read(
                         treatmentViewModel.select(
-                          (state) => state.selectTreatmentArea,
+                          (state) => state.selectedSubAreasList,
                         ),
                       );
+
+                      final subAreaIds = subAreas
+                          .map((e) => e.id)
+                          .whereType<int>()
+                          .toList();
+
                       ref
                           .read(clincDoctorProvider.notifier)
                           .getDoctors(
                             treatmentId: treatment?.id ?? 0,
-                            sideAreaId: area?.id ?? 0,
+                            sideAreaIds: subAreaIds,
                           );
 
                       Navigator.pushNamed(

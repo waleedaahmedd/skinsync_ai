@@ -778,7 +778,10 @@ class _ArFaceModelPreviewScreenState
 
                     final treatmentId = treatment?.id;
                     final areaId = area?.id;
-                    final subAreaId = subAreas?.id;
+                    final subAreaIds = subAreas
+                        .map((e) => e.id)
+                        .whereType<int>()
+                        .toList();
 
                     ref
                         .read(checkoutViewModel.notifier)
@@ -788,12 +791,12 @@ class _ArFaceModelPreviewScreenState
                         .updateState(treatmentAreaId: areaId);
                     ref
                         .read(checkoutViewModel.notifier)
-                        .updateState(treatmentSubAreaId: subAreaId);
+                        .updateState(treatmentSubAreaId: subAreaIds);
                     ref
                         .read(clincDoctorProvider.notifier)
                         .getClinic(
                           treatmentId: treatmentId ?? 0,
-                          sideAreaIds: areaId ?? 0,
+                          sideAreaIds: subAreaIds,
                         );
                     Navigator.pushNamed(context, ExploreClinicsScreen.routeName);
                   },

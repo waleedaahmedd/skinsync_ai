@@ -21,6 +21,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinlicDoctorState> {
       super(initialState: ClinlicDoctorState());
 
   final ClinicDoctorRepository _clinicRepository;
+
   void setClinicId(int id) {
     state = state.copyWith(clinicId: id);
   }
@@ -30,10 +31,11 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinlicDoctorState> {
     required List<int> sideAreaIds,
   }) async {
     state = state.copyWith(clinicLoading: true);
+    final String sideAreas = sideAreaIds.join(',');
     return runSafely(() async {
       final response = await _clinicRepository.getClinic(
         treatmentId: treatmentId,
-        sideAreaIdsList: sideAreaIds,
+        sideAreaIdsList: sideAreas,
       );
       state = state.copyWith(clinicLoading: false, clinicResponse: response);
       return response.isSuccess == true;
@@ -42,15 +44,16 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinlicDoctorState> {
 
   Future<bool?> getDoctors({
     required int treatmentId,
-    required int sideAreaId,
+    required List<int> sideAreaIds,
   }) async {
     state = state.copyWith(doctorLoading: true);
+    final String sideAreas = sideAreaIds.join(',');
     return runSafely(() async {
       final response = await _clinicRepository.getDoctors(
         clinicId: state.clinicId ?? 0,
 
         treatmentId: treatmentId,
-        sideAreaID: sideAreaId,
+        sideAreaIdsList: sideAreas,
       );
       state = state.copyWith(doctorLoading: false, doctorResponse: response);
       return response.isSuccess == true;

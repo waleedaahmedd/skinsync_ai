@@ -17,11 +17,11 @@ class ClinicDoctorService implements ClinicDoctorRepository {
   ClinicDoctorService({required ApiBaseHelper apiClient}) : _apiClient = apiClient;
 
   @override
-  Future<GetClinicResponse> getClinic({required int treatmentId,required List<int>sideAreaIdsList}) async{
+  Future<GetClinicResponse> getClinic({required int treatmentId,required String sideAreaIdsList}) async{
   final response = await _apiClient.httpRequest(
       endPoint: EndPoints.getClinic,
       requestType: 'GET',
-      params: 'treatment_id=$treatmentId&side_area_id=$sideAreaIdsList',
+      params: 'treatment_id=$treatmentId&side_area_ids=$sideAreaIdsList',
     );
     // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -36,11 +36,11 @@ class ClinicDoctorService implements ClinicDoctorRepository {
 
   }
    @override
-  Future<GetDoctorResponse> getDoctors({required int clinicId, required int treatmentId,required int sideAreaID}) async{
+  Future<GetDoctorResponse> getDoctors({required int clinicId, required int treatmentId,required String sideAreaIdsList}) async{
   final response = await _apiClient.httpRequest(
       endPoint: EndPoints.getDoctor,
       requestType: 'GET',
-      params: 'clinic_id=$clinicId&treatment_id=$treatmentId&side_area_id=$sideAreaID',
+      params: 'clinic_id=$clinicId&treatment_id=$treatmentId&side_area_ids=$sideAreaIdsList',
     );
     // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {
