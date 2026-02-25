@@ -131,7 +131,7 @@ void loginBottomSheet(BuildContext context) {
                             Navigator.pushNamed(
                               context,
                               LoginScreen.routeName,
-                              arguments: LoginProviders.email,  
+                              arguments: LoginProviders.email,
                             );
                           },
                           child: Container(
@@ -210,21 +210,28 @@ void loginBottomSheet(BuildContext context) {
                                 return Center(
                                   child: InkWell(
                                     onTap: () async {
-                                      bool authenticated =
-                                          await BiometricHelper().authenticate(
-                                            reason: 'Login with Biometrics',
-                                          );
-                                      if (authenticated && context.mounted) {
-                                        final token = SecureStorage().cachedAuthToken;
-                                        if(token != null){
+                                      if (context.mounted) {
+                                        final token =
+                                            SecureStorage().cachedAuthToken;
+                                        if (token != null) {
+                                          bool authenticated =
+                                              await BiometricHelper()
+                                                  .authenticate(
+                                                    reason:
+                                                        'Login with Biometrics',
+                                                  );
+                                          if (authenticated && context.mounted) {
                                             Navigator.pushNamed(
-                                          context,
-                                          BottomNavPage.routeName,
-                                        );
-                                        }else{
-                                          EasyLoading.showError("Please Login First");
+                                              context,
+                                              BottomNavPage.routeName,
+                                            );
+                                          } 
                                         }
-                                        
+                                        else {
+                                          EasyLoading.showError(
+                                            "Please Login First",
+                                          );
+                                        }
                                       }
                                     },
                                     child: Icon(icon, size: 60.h),

@@ -536,7 +536,7 @@ class _ArFaceModelPreviewScreenState
                                   return SizedBox();
                                 },
                               ),
-                              if(ref.watch(treatmentViewModel).subSectionId != null)
+                              if(ref.watch(treatmentViewModel).selectedTreatmentSubArea != null)
                               _bottomButtons(context),
                             ],
                           ),
@@ -740,72 +740,75 @@ class _ArFaceModelPreviewScreenState
   Widget _bottomButtons(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        return Row(
-          children: [
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.r),
+        return Padding(
+          padding:  EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom + 20.0.h),
+          child: Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () {},
+                  style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.r),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 19.h),
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 19.h),
+                  child: Text('Save', style: CustomFonts.black22w600),
                 ),
-                child: Text('Save', style: CustomFonts.black22w600),
               ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: ElevatedButton(
-                onPressed: () {
-                  final treatment = ref.read(
-                    treatmentViewModel.select(
-                      (state) => state.selectedTreatment,
-                    ),
-                  );
-                  final area = ref.read(
-                    treatmentViewModel.select(
-                      (state) => state.selectTreatmentArea,
-                    ),
-                  );
-                  final subArea = ref.read(
-                    treatmentViewModel.select(
-                      (state) => state.selectedTreatmentSubArea,
-                    ),
-                  );
+              const SizedBox(width: 16),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    final treatment = ref.read(
+                      treatmentViewModel.select(
+                        (state) => state.selectedTreatment,
+                      ),
+                    );
+                    final area = ref.read(
+                      treatmentViewModel.select(
+                        (state) => state.selectTreatmentArea,
+                      ),
+                    );
+                    final subAreas = ref.read(
+                      treatmentViewModel.select(
+                        (state) => state.selectedSubAreasList,
+                      ),
+                    );
 
-                  final treatmentId = treatment?.id;
-                  final areaId = area?.id;
-                  final subAreaId = subArea?.id;
+                    final treatmentId = treatment?.id;
+                    final areaId = area?.id;
+                    final subAreaId = subAreas?.id;
 
-                  ref
-                      .read(checkoutViewModel.notifier)
-                      .updateState(treatmentId: treatmentId);
-                  ref
-                      .read(checkoutViewModel.notifier)
-                      .updateState(treatmentAreaId: areaId);
-                  ref
-                      .read(checkoutViewModel.notifier)
-                      .updateState(treatmentSubAreaId: subAreaId);
-                  ref
-                      .read(clincDoctorProvider.notifier)
-                      .getClinic(
-                        treatmentId: treatmentId ?? 0,
-                        sideAreaId: areaId ?? 0,
-                      );
-                  Navigator.pushNamed(context, ExploreClinicsScreen.routeName);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.r),
+                    ref
+                        .read(checkoutViewModel.notifier)
+                        .updateState(treatmentId: treatmentId);
+                    ref
+                        .read(checkoutViewModel.notifier)
+                        .updateState(treatmentAreaId: areaId);
+                    ref
+                        .read(checkoutViewModel.notifier)
+                        .updateState(treatmentSubAreaId: subAreaId);
+                    ref
+                        .read(clincDoctorProvider.notifier)
+                        .getClinic(
+                          treatmentId: treatmentId ?? 0,
+                          sideAreaIds: areaId ?? 0,
+                        );
+                    Navigator.pushNamed(context, ExploreClinicsScreen.routeName);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.r),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 19.h),
                   ),
-                  padding: EdgeInsets.symmetric(vertical: 19.h),
+                  child: Text('Explore Clinics', style: CustomFonts.white22w600),
                 ),
-                child: Text('Explore Clinics', style: CustomFonts.white22w600),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

@@ -17,11 +17,11 @@ class ClinicDoctorService implements ClinicDoctorRepository {
   ClinicDoctorService({required ApiBaseHelper apiClient}) : _apiClient = apiClient;
 
   @override
-  Future<GetClinicResponse> getClinic({required int treatmentId,required int sideAreaID}) async{
+  Future<GetClinicResponse> getClinic({required int treatmentId,required List<int>sideAreaIdsList}) async{
   final response = await _apiClient.httpRequest(
       endPoint: EndPoints.getClinic,
       requestType: 'GET',
-      params: 'treatment_id=$treatmentId&side_area_id=$sideAreaID',
+      params: 'treatment_id=$treatmentId&side_area_id=$sideAreaIdsList',
     );
     // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {

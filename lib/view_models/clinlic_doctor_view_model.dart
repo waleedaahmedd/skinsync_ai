@@ -27,13 +27,13 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinlicDoctorState> {
 
   Future<bool?> getClinic({
     required int treatmentId,
-    required int sideAreaId,
+    required List<int> sideAreaIds,
   }) async {
     state = state.copyWith(clinicLoading: true);
     return runSafely(() async {
       final response = await _clinicRepository.getClinic(
         treatmentId: treatmentId,
-        sideAreaID: sideAreaId,
+        sideAreaIdsList: sideAreaIds,
       );
       state = state.copyWith(clinicLoading: false, clinicResponse: response);
       return response.isSuccess == true;
