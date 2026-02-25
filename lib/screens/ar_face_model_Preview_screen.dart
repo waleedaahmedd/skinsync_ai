@@ -536,6 +536,7 @@ class _ArFaceModelPreviewScreenState
                                   return SizedBox();
                                 },
                               ),
+                              if(ref.watch(treatmentViewModel).subSectionId != null)
                               _bottomButtons(context),
                             ],
                           ),

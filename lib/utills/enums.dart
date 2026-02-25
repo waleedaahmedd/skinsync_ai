@@ -37,7 +37,7 @@ enum EndPoints {
 
 enum BaseUrls {
   // api('https://api.brunos.kitchen/bruno/api/v1/');
-  api("http://3.128.27.193/api/");
+  api("https://api.skinsyncai.com/api/");
 
   final String url;
 
