@@ -7,7 +7,7 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 
 class GetNotifiedScreen extends StatelessWidget {
   const GetNotifiedScreen({super.key});
-    static const String routeName = '/GetNotifiedScreen';
+  static const String routeName = '/GetNotifiedScreen';
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +46,30 @@ class GetNotifiedScreen extends StatelessWidget {
             SizedBox(height: 79.h),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(onPressed: (){
-                Navigator.pushNamedAndRemoveUntil(context, FaceScanScreen.routeName,
-                (Route<dynamic> route) => false,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    FaceScanScreen.routeName,
+                    (Route<dynamic> route) => false,
+                  );
+                },
+                child: Text("Turn On Notifications"),
+              ),
+            ),
+            SizedBox(height: 19.h),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  FaceScanScreen.routeName,
+                  (Route<dynamic> route) => false,
                 );
-              }, child:Text("Turn On Notifications"))),
-             SizedBox(height: 19.h),
-             Center(child: Text("Not Right Now",style: CustomFonts.grey22w500,))
+              },
+              child: Center(
+                child: Text("Not Right Now", style: CustomFonts.grey22w500),
+              ),
+            ),
           ],
         ),
       ),

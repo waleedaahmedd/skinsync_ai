@@ -116,9 +116,11 @@ class FaceScanScreen extends StatelessWidget {
                           border: Border.all(width: 1.w, color: Colors.black),
                           borderRadius: BorderRadius.circular(50.r),
                         ),
-                        child: Text(
-                          " Explore Clinics",
-                          style: CustomFonts.black22w600,
+                        child: Center(
+                          child: Text(
+                            " Explore Clinics",
+                            style: CustomFonts.black22w600,
+                          ),
                         ),
                       ),
                     ),
