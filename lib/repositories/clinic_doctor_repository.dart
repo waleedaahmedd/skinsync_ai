@@ -8,6 +8,6 @@ import '../models/requests/sign_in_request.dart';
 import '../models/responses/auth_response.dart';
 
 abstract class ClinicDoctorRepository {
-  Future<GetClinicResponse> getClinic({required int treatmentId,required int sideAreaID});
-   Future<GetDoctorResponse> getDoctors({required int clinicId, required int treatmentId,required int sideAreaID});
+  Future<GetClinicResponse> getClinic({required int treatmentId,required String sideAreaIdsList});
+   Future<GetDoctorResponse> getDoctors({required int clinicId, required int treatmentId,required String sideAreaIdsList});
 }

@@ -16,6 +16,7 @@ import '../view_models/checkout_view_model.dart';
 
 class ClinicsDetailScreen extends ConsumerWidget {
   const ClinicsDetailScreen({super.key});
+
   static const String routeName = '/ClinicsDetailScreen';
 
   @override
@@ -250,7 +251,8 @@ class ClinicsDetailScreen extends ConsumerWidget {
             ListView.builder(
               padding: EdgeInsets.only(top: 20.h, bottom: 0),
               shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(), // ⭐ ADD THIS
+              physics: const NeverScrollableScrollPhysics(),
+              // ⭐ ADD THIS
               itemCount: 3,
               itemBuilder: (context, index) {
                 return Padding(
@@ -443,19 +445,27 @@ class ClinicsDetailScreen extends ConsumerWidget {
                       // ref
                       //     .read(checkoutViewModel.notifier)
                       //     .updateState(clinicId: "xx");
-                      final treatmentId = ref.read(
-                        treatmentViewModel.select((state) => state.treatmentId),
-                      );
-                      final selectSectionId = ref.read(
+                      final treatment = ref.read(
                         treatmentViewModel.select(
-                          (state) => state.selectSectionId,
+                          (state) => state.selectedTreatment,
                         ),
                       );
+                      final subAreas = ref.read(
+                        treatmentViewModel.select(
+                          (state) => state.selectedSubAreasList,
+                        ),
+                      );
+
+                      final subAreaIds = subAreas
+                          .map((e) => e.id)
+                          .whereType<int>()
+                          .toList();
+
                       ref
                           .read(clincDoctorProvider.notifier)
                           .getDoctors(
-                            treatmentId: treatmentId ?? 0,
-                            sideAreaId: selectSectionId ?? 0,
+                            treatmentId: treatment?.id ?? 0,
+                            sideAreaIds: subAreaIds,
                           );
 
                       Navigator.pushNamed(
