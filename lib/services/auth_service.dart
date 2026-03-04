@@ -94,4 +94,20 @@ class AuthService implements AuthRepository {
       throw AppException(BaseResponseModel.fromJson(parsed).message as String);
     }
   }
+    @override
+  Future<AuthResponse> getMe() async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.getMe,
+      requestType: 'GET',
+      params: '',
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      AuthResponse authResponse = AuthResponse.fromJson(parsed);
+      return authResponse;
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(BaseResponseModel.fromJson(parsed).message as String);
+    }
+  }
 }

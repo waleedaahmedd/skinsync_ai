@@ -9,4 +9,5 @@ abstract class AuthRepository {
   Future<BaseResponseModel> signInApi({required BaseSignInRequest signInRequest});
   Future<AuthResponse>  verifyOTP({required OtpRequest otpRequest});
   Future<BaseResponseModel> onboardingProfile({required OnBoardingProfileRequest onBoardingProfileRequest});
+   Future<AuthResponse> getMe();
 }

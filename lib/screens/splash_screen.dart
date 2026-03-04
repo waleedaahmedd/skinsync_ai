@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
+import 'package:skinsync_ai/screens/your_profile_screen.dart';
+import 'package:skinsync_ai/services/storage_service.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
+import 'package:skinsync_ai/utills/secure_storage_service.dart';
 import 'package:skinsync_ai/utills/shared_pref.dart';
+import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
   static const String routeName = '/';
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
   bool _animate = false;
   final int _duration = 1000; // animation duration
 
@@ -31,14 +36,28 @@ class _SplashScreenState extends State<SplashScreen> {
       await Future.delayed(Duration(milliseconds: _duration - 800));
 
       if (mounted) {
-       
+        final token = SecureStorage().cachedAuthToken;
         bool? isLoggedIn = SharedPref().readBool('isLogin') ?? false;
-        if (isLoggedIn) {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            BottomNavPage.routeName,
-            (Route<dynamic> route) => false,
-          );
+        if (isLoggedIn && token != null) {
+          ref.read(authViewModel.notifier).callGetMe().then((value) {
+            if (value == true) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                BottomNavPage.routeName,
+                (Route<dynamic> route) => false,
+              );
+            }
+          });
+        } else if(!isLoggedIn && token != null){
+           ref.read(authViewModel.notifier).callGetMe().then((value) {
+            if (value == true) {
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                YourProfileScreen.routeName,
+                (Route<dynamic> route) => false,
+              );
+            }
+          });
         } else {
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
+
 
 import 'package:http/http.dart' as http;
 import 'package:skinsync_ai/exceptions/app_exception.dart';
@@ -9,7 +11,7 @@ import '../utills/enums.dart';
 import '../utills/secure_storage_service.dart';
 
 class ApiBaseHelper {
-  String? autToken;
+  String? authToken;
   final SecureStorage _secureStorage = SecureStorage();
 
   Future<dynamic> httpRequest({
@@ -19,7 +21,7 @@ class ApiBaseHelper {
     required String params,
     String? imagePath,
   }) async {
-    autToken = _secureStorage.cachedAuthToken;
+    authToken = _secureStorage.cachedAuthToken;
    
     try {
       switch (requestType) {
@@ -84,10 +86,11 @@ class ApiBaseHelper {
   }
 
   Map<String, String> getHeaders() {
+    log("Auth token ${authToken}");
     Map<String, String> headers = {};
     headers.putIfAbsent('Content-Type', () => 'application/json');
     headers.putIfAbsent('Accept', () => 'application/json');
-    headers.putIfAbsent('Authorization', () => 'Bearer ${autToken ?? ''}');
+    headers.putIfAbsent('Authorization', () => 'Bearer ${authToken ?? ''}');
     return headers;
   }
 }

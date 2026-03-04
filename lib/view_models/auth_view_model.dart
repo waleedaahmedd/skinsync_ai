@@ -126,6 +126,19 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       }
       return response.isSuccess == true;
     });
+
+    
+  }
+
+   Future<bool?> callGetMe() async {
+    return await runSafely(() async {
+      final AuthResponse response = await _authRepository.getMe();
+      if (response.isSuccess!) {
+        state = state.copyWith(authResponse: response);
+      }
+
+      return response.isSuccess == true;
+    });
   }
 
 void clearData(){

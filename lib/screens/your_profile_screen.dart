@@ -38,6 +38,13 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
     super.dispose();
   }
 
+ 
+@override
+  void initState(){
+  super.initState();
+  _emailController.text =  ref.read(authViewModel).authResponse?.data?.user?.primaryEmail ?? '';
+}
+
   void _showImageSourceDialog() {
     showModalBottomSheet(
       context: context,
@@ -180,9 +187,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   SizedBox(height: 20.h),
                   TextFormField(
                     readOnly: true,
-                    controller: ref
-                        .read(authViewModel.notifier)
-                        .emailController,
+                    controller : _emailController,
                     style: CustomFonts.black18w400,
                     decoration: InputDecoration(hintText: "Email Address"),
                     keyboardType: TextInputType.emailAddress,
