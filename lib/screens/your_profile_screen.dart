@@ -241,11 +241,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                                 request: OnBoardingProfileRequest(
                                   name: _nameController.text,
                                   phoneNumber: _phoneController.text.trim(),
-                                  emailAddress: ref
-                                      .read(authViewModel.notifier)
-                                      .emailController
-                                      .text
-                                      .trim(),
+                                  emailAddress:_emailController.text.trim(),
                                   location: _locationController.text.trim(),
                                   bio: _bioController.text.trim(),
                                 ),
