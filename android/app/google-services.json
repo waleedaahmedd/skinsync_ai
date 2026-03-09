@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "55541632083",
+    "project_id": "skinsync-2aa8e",
+    "storage_bucket": "skinsync-2aa8e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:55541632083:android:b8b47063b920bb3490caa6",
+        "android_client_info": {
+          "package_name": "com.nextapp.skinsyncai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKG-wtOds3eQ1tLBR3j-uBfg5CPPlvw-w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:55541632083:android:03386cc54345a3d290caa6",
+        "android_client_info": {
+          "package_name": "com.skinsyncai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKG-wtOds3eQ1tLBR3j-uBfg5CPPlvw-w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

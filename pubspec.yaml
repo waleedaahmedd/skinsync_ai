@@ -59,6 +59,7 @@ dependencies:
   path_provider: any
   cross_file: any
   intl: ^0.20.2
+  firebase_core: ^4.5.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
