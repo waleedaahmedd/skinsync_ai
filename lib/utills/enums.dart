@@ -25,6 +25,7 @@ enum EndPoints {
   signIn('login'),
   onBoardingQues("onboarding/masters"),
   saveAnswer("v1/onboarding/answer"),
+
   verifyOtp("verify-otp"),
   onBoardingProfile("v1/onboarding/profile"),
   getClinic("clinics/by-side-area?"),
@@ -34,6 +35,11 @@ enum EndPoints {
   final String path;
 
   const EndPoints(this.path);
+}
+enum PaymentMode {
+  full,
+  half,
+  consultation,
 }
 
 enum BaseUrls {

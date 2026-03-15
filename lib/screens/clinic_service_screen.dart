@@ -81,7 +81,7 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                         ),
                       ),
                     );
-                  } else if (doctors == null) {
+                  } else if (doctors!.isEmpty) {
                     return SizedBox(
                       height: 150.h,
                       child: Center(
@@ -399,7 +399,7 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                         onTap: () {
                           Navigator.pushNamed(
                             context,
-                            SelectProductScreen.routeName,
+                            AdditionalInfoScreen.routeName,
                           );
                         },
                         child: Container(

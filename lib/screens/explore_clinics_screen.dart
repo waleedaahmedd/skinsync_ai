@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/models/dummy_list_model.dart';
+import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
 
@@ -39,9 +40,13 @@ class ExploreClinicsScreen extends ConsumerWidget {
             SizedBox(height: 20.h),
 
             if (isloading)
-              const Expanded(child: Center(child: CircularProgressIndicator(
-                color: CustomColors.lightPurpleColor,
-              )))
+              const Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: CustomColors.lightPurpleColor,
+                  ),
+                ),
+              )
             else if (clinicResponse?.data != null &&
                 clinicResponse!.data!.isNotEmpty)
               Expanded(
@@ -58,8 +63,10 @@ class ExploreClinicsScreen extends ConsumerWidget {
                       clinicData: clinicResponse.data![index],
                       onTap: () {
                         ref
-      .read(clincDoctorProvider.notifier)
-      .setClinicId(clinicResponse.data?[index].clinicId ?? 0);
+                            .read(clincDoctorProvider.notifier)
+                            .setClinicId(
+                              clinicResponse.data?[index].clinicId ?? 0,
+                            );
                         Navigator.pushNamed(
                           context,
                           ClinicsDetailScreen.routeName,
@@ -81,6 +88,27 @@ class ExploreClinicsScreen extends ConsumerWidget {
           ],
         ),
       ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: () {},
+
+      //   backgroundColor: Colors.black,
+      //   elevation: 6,
+
+      //   shape: RoundedRectangleBorder(
+      //     borderRadius: BorderRadius.circular(50.r),
+      //   ),
+
+      //   icon: Image.asset(
+      //     PngAssets.mapIcon,
+      //     height: 22.h,
+      //     width: 22.w,
+      //     color: Colors.white, // optional if icon is black
+      //   ),
+
+      //   label: Text("Map View", style: CustomFonts.white18w600),
+      // ),
+   
     );
   }
 }
