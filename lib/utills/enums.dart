@@ -30,7 +30,8 @@ enum EndPoints {
   onBoardingProfile("v1/onboarding/profile"),
   getClinic("clinics/by-side-area?"),
   getDoctor("doctors/by-side-area?"),
-  getMe("v1/me");
+  getMe("v1/me"),
+  refreshToken('v1/auth/refresh');
 
   final String path;
 

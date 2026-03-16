@@ -39,6 +39,22 @@ class AuthService implements AuthRepository {
         //   key: SharedPreferencesKeys.accessTokenKey.name,
         //   value: authResponse.data!.accessToken ?? '',
         // );
+        if (authResponse.data != null) {
+          await _secureStorage.saveToken(authResponse.data!.accessToken!);
+          await _secureStorage.saveRefreshToken(
+            authResponse.data!.refreshToken!,
+          );
+          await _secureStorage.saveAccessTokenExpiry(
+            DateTime.fromMillisecondsSinceEpoch(
+              authResponse.data!.accessExpiresAt! * 1000,
+            ),
+          );
+          await _secureStorage.saveRefreshTokenExpiry(
+            DateTime.fromMillisecondsSinceEpoch(
+              authResponse.data!.refreshExpiresAt! * 1000,
+            ),
+          );
+        }
       }
       return authResponse;
     } else {
@@ -60,10 +76,22 @@ class AuthService implements AuthRepository {
       final parsed = json.decode(response.body);
       AuthResponse authResponse = AuthResponse.fromJson(parsed);
       if (authResponse.isSuccess == true) {
-        _secureStorage.saveSecureString(
-          key: 'auth_token',
-          value: authResponse.data?.accessToken ?? '',
-        );
+        if (authResponse.data != null) {
+          await _secureStorage.saveToken(authResponse.data!.accessToken!);
+          await _secureStorage.saveRefreshToken(
+            authResponse.data!.refreshToken!,
+          );
+          await _secureStorage.saveAccessTokenExpiry(
+            DateTime.fromMillisecondsSinceEpoch(
+              authResponse.data!.accessExpiresAt! * 1000,
+            ),
+          );
+          await _secureStorage.saveRefreshTokenExpiry(
+            DateTime.fromMillisecondsSinceEpoch(
+              authResponse.data!.refreshExpiresAt! * 1000,
+            ),
+          );
+        }
       }
       return authResponse;
     } else {
@@ -94,7 +122,8 @@ class AuthService implements AuthRepository {
       throw AppException(BaseResponseModel.fromJson(parsed).message as String);
     }
   }
-    @override
+
+  @override
   Future<AuthResponse> getMe() async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.getMe,
