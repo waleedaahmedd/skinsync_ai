@@ -7,6 +7,7 @@ import 'package:skinsync_ai/models/responses/get_doctor_response.dart';
 import 'package:skinsync_ai/repositories/clinic_doctor_repository.dart';
 import 'package:skinsync_ai/services/api_base_helper.dart';
 import 'package:skinsync_ai/services/clinic_doctor_service.dart';
+import 'package:skinsync_ai/utills/enums.dart';
 import 'package:skinsync_ai/view_models/base_view_model.dart';
 
 final clincDoctorProvider = NotifierProvider(() {
@@ -60,6 +61,12 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinlicDoctorState> {
     });
   }
 
+  void toggleViewType() {
+    state = state.copyWith(
+      viewType: state.viewType == ViewType.grid ? ViewType.map : ViewType.grid,
+    );
+  }
+
   @override
   void onError(String message) {
     state = state.copyWith(clinicLoading: false, doctorLoading: false);
@@ -75,6 +82,7 @@ class ClinlicDoctorState extends BaseStateModel {
   final GetDoctorResponse? doctorResponse;
   final bool doctorLoading;
   final int? clinicId;
+  final ViewType viewType;
 
   const ClinlicDoctorState({
     super.loading = false,
@@ -84,6 +92,7 @@ class ClinlicDoctorState extends BaseStateModel {
     this.doctorResponse,
     this.doctorLoading = false,
     this.clinicId,
+    this.viewType = ViewType.grid,
   });
 
   @override
@@ -95,6 +104,7 @@ class ClinlicDoctorState extends BaseStateModel {
     GetDoctorResponse? doctorResponse,
     bool? doctorLoading,
     int? clinicId,
+    ViewType? viewType,
   }) {
     return ClinlicDoctorState(
       loading: loading ?? this.loading,
@@ -104,6 +114,7 @@ class ClinlicDoctorState extends BaseStateModel {
       doctorResponse: doctorResponse ?? this.doctorResponse,
       doctorLoading: doctorLoading ?? this.doctorLoading,
       clinicId: clinicId ?? this.clinicId,
+      viewType: viewType ?? this.viewType,
     );
   }
 }

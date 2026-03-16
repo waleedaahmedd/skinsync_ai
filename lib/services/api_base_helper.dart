@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-
 import 'package:http/http.dart' as http;
 import 'package:skinsync_ai/exceptions/app_exception.dart';
 
@@ -22,14 +21,16 @@ class ApiBaseHelper {
     String? imagePath,
   }) async {
     authToken = _secureStorage.cachedAuthToken;
-   
+
     try {
+      log('URL: ${BaseUrls.api.url + endPoint.path + params}');
       switch (requestType) {
         case 'GET':
           final responseJson = await http.get(
             Uri.parse(BaseUrls.api.url + endPoint.path + params),
             headers: getHeaders(),
           );
+          log('RESPONSE: ${responseJson.body}');
           return responseJson;
         case 'POST':
           final responseJson = await http.post(
