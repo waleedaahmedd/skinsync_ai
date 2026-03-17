@@ -307,7 +307,7 @@ class _ArFaceModelPreviewScreenState
                                   );
                                 },
                               ),
-                              SizedBox(height: 50.h),
+                              SizedBox(height: 30.h),
                               Consumer(
                                 builder: (context, ref, _) {
                                   final isLoading = ref.watch(
@@ -395,7 +395,7 @@ class _ArFaceModelPreviewScreenState
                                             ),
                                           ),
                                         ),
-                                        SizedBox(height: 50.h),
+                                        SizedBox(height: 30.h),
                                       ],
                                     );
                                   }
@@ -547,14 +547,96 @@ class _ArFaceModelPreviewScreenState
                                             }),
                                           ),
                                         ),
-                                        SizedBox(height: 50.h),
+                                        SizedBox(height: 20.h),
                                       ],
                                     );
                                   }
                                   return SizedBox();
                                 },
                               ),
-                              if(ref.watch(treatmentViewModel).selectedTreatmentSubArea != null)
+                              Consumer(
+                                builder: (context, ref, _) {
+                                  final treatment = ref.watch(
+                                    treatmentViewModel.select(
+                                      (s) => s.selectedTreatment,
+                                    ),
+                                  );
+                                  final selectedSubAreas = ref.watch(
+                                    treatmentViewModel.select(
+                                      (s) => s.selectedSubAreasList,
+                                    ),
+                                  );
+
+                                  if (selectedSubAreas.isEmpty) {
+                                    return const SizedBox.shrink();
+                                  }
+
+                                  return Container(
+                                    width: double.infinity,
+                                    padding: EdgeInsets.all(14.w),
+                                    margin: EdgeInsets.only(bottom: 16.h),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.85),
+                                      borderRadius: BorderRadius.circular(16.r),
+                                      border: Border.all(
+                                        color: Colors.black.withValues(alpha: 0.06),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Selected Treatment',
+                                          style: CustomFonts.black14w500,
+                                        ),
+                                        SizedBox(height: 4.h),
+                                        Text(
+                                          treatment?.name ?? '-',
+                                          style: CustomFonts.black18w600,
+                                        ),
+                                        SizedBox(height: 12.h),
+                                        Text(
+                                          'Selected Sub Areas',
+                                          style: CustomFonts.black14w500,
+                                        ),
+                                        SizedBox(height: 8.h),
+                                        Wrap(
+                                          spacing: 8.w,
+                                          runSpacing: 8.h,
+                                          children: selectedSubAreas.map((e) {
+                                            final name = e.name ?? '-';
+                                            return Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 12.w,
+                                                vertical: 8.h,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(999.r),
+                                                border: Border.all(
+                                                  color: Colors.black.withValues(
+                                                    alpha: 0.08,
+                                                  ),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                name,
+                                                style: CustomFonts.black14w500,
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                              if (ref
+                                  .watch(treatmentViewModel)
+                                  .selectedSubAreasList
+                                  .isNotEmpty)
                               _bottomButtons(context),
                             ],
                           ),
