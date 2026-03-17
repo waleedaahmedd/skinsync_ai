@@ -122,37 +122,32 @@ class _ArFaceModelPreviewScreenState
                               SizedBox(height: 36.h),
                               Consumer(
                                 builder: (context, ref, _) {
-                                  final subSectionId = ref.watch(
+                                  final selectedSubArea = ref.watch(
                                     treatmentViewModel.select(
                                       (s) => s.selectedTreatmentSubArea,
                                     ),
                                   );
-                                  final subAreaList = ref.watch(
-                                    treatmentViewModel.select(
-                                      (s) =>
-                                          s.treatmentsSubAreaResponse?.data ??
-                                          [],
-                                    ),
-                                  );
-                                  TreatmentSubAreaModel? selectedSubArea;
-                                  for (final e in subAreaList) {
-                                    if (e.id == subSectionId) {
-                                      selectedSubArea = e;
-                                      break;
-                                    }
-                                  }
                                   final syringeOptions =
                                       selectedSubArea?.syringeOptions;
                                   final hasOptions =
                                       syringeOptions != null &&
                                       syringeOptions.isNotEmpty;
+                                  final maxSyringe =
+                                      selectedSubArea?.maxSyringe ?? 0;
 
-                                  if (!hasOptions) {
+                                  if (!hasOptions || maxSyringe == 0) {
                                     WidgetsBinding.instance
                                         .addPostFrameCallback((_) {
-                                          ref
-                                              .read(treatmentViewModel.notifier)
-                                              .updateSyringeLevel(0);
+                                          final current = ref
+                                              .read(treatmentViewModel)
+                                              .syringeLevel;
+                                          if (current != 0) {
+                                            ref
+                                                .read(
+                                                  treatmentViewModel.notifier,
+                                                )
+                                                .updateSyringeLevel(0);
+                                          }
                                         });
                                     return const SizedBox.shrink();
                                   }
@@ -167,19 +162,24 @@ class _ArFaceModelPreviewScreenState
                                   );
                                   if (index < 0) index = 0;
 
-                                  WidgetsBinding.instance.addPostFrameCallback((
-                                    _,
-                                  ) {
-                                    final current = ref
-                                        .read(treatmentViewModel)
-                                        .syringeLevel;
+                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    final current =
+                                        ref.read(treatmentViewModel).syringeLevel;
+                                    final first = syringeOptions[0];
                                     if (current == null ||
                                         !syringeOptions.contains(current)) {
                                       ref
                                           .read(treatmentViewModel.notifier)
-                                          .updateSyringeLevel(
-                                            syringeOptions[0],
-                                          );
+                                          .updateSyringeLevel(first);
+                                    }
+                                    if (syringeOptions.length == 1 &&
+                                        current != first) {
+                                      ref
+                                          .read(treatmentViewModel.notifier)
+                                          .updateSyringeLevel(first);
+                                      ref
+                                          .read(treatmentViewModel.notifier)
+                                          .callPredictAPI(syringeLevel: first);
                                     }
                                   });
 
