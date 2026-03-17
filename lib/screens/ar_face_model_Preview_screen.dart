@@ -30,6 +30,143 @@ class _ArFaceModelPreviewScreenState
     extends ConsumerState<ArFaceModelPreviewScreen> {
   bool _hasInitialized = false;
 
+  void _showSyringeBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: false,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          top: false,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 20.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 44.w,
+                    height: 5.h,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(100.r),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 14.h),
+                Consumer(
+                  builder: (context, ref, _) {
+                    final selectedSubArea = ref.watch(
+                      treatmentViewModel.select(
+                        (s) => s.selectedTreatmentSubArea,
+                      ),
+                    );
+                    final syringeOptions = selectedSubArea?.syringeOptions;
+                    final hasOptions =
+                        syringeOptions != null && syringeOptions.isNotEmpty;
+                    final maxSyringe = selectedSubArea?.maxSyringe ?? 0;
+
+                    if (!hasOptions || maxSyringe == 0) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        final current =
+                            ref.read(treatmentViewModel).syringeLevel;
+                        if (current != 0) {
+                          ref
+                              .read(treatmentViewModel.notifier)
+                              .updateSyringeLevel(0);
+                        }
+                      });
+                      return const SizedBox.shrink();
+                    }
+
+                    final syringeLevel = ref.watch(
+                      treatmentViewModel.select((s) => s.syringeLevel),
+                    );
+                    int index = syringeOptions.indexOf(
+                      syringeLevel ?? syringeOptions.first,
+                    );
+                    if (index < 0) index = 0;
+
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      final current =
+                          ref.read(treatmentViewModel).syringeLevel;
+                      final first = syringeOptions[0];
+                      if (current == null || !syringeOptions.contains(current)) {
+                        ref
+                            .read(treatmentViewModel.notifier)
+                            .updateSyringeLevel(first);
+                      }
+                      if (syringeOptions.length == 1 && current != first) {
+                        ref
+                            .read(treatmentViewModel.notifier)
+                            .updateSyringeLevel(first);
+                        ref
+                            .read(treatmentViewModel.notifier)
+                            .callPredictAPI(syringeLevel: first);
+                      }
+                    });
+
+                    final currentValue = syringeOptions[index];
+                    final singleOption = syringeOptions.length == 1;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (singleOption)
+                          SizedBox(height: 8.h)
+                        else
+                          Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Adjustable Parameters:',
+                                    style: CustomFonts.black18w600,
+                                  ),
+                                  Text(
+                                    '$currentValue Syringe${currentValue > 1 ? 's' : ''}',
+                                    style: CustomFonts.black14w500,
+                                  ),
+                                ],
+                              ),
+                              Slider(
+                                activeColor: CustomColors.lightBlueColor,
+                                value: index.toDouble(),
+                                min: 0,
+                                max: (syringeOptions.length - 1).toDouble(),
+                                divisions: syringeOptions.length - 1,
+                                label: '$currentValue',
+                                onChanged: (double value) {
+                                  final i = value.round();
+                                  final level = syringeOptions[i];
+                                  ref
+                                      .read(treatmentViewModel.notifier)
+                                      .updateSyringeLevel(level);
+                                  ref
+                                      .read(treatmentViewModel.notifier)
+                                      .callPredictAPI(syringeLevel: level);
+                                },
+                              ),
+                              SizedBox(height: 8.h),
+                            ],
+                          ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -120,135 +257,6 @@ class _ArFaceModelPreviewScreenState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(height: 36.h),
-                              Consumer(
-                                builder: (context, ref, _) {
-                                  final selectedSubArea = ref.watch(
-                                    treatmentViewModel.select(
-                                      (s) => s.selectedTreatmentSubArea,
-                                    ),
-                                  );
-                                  final syringeOptions =
-                                      selectedSubArea?.syringeOptions;
-                                  final hasOptions =
-                                      syringeOptions != null &&
-                                      syringeOptions.isNotEmpty;
-                                  final maxSyringe =
-                                      selectedSubArea?.maxSyringe ?? 0;
-
-                                  if (!hasOptions || maxSyringe == 0) {
-                                    WidgetsBinding.instance
-                                        .addPostFrameCallback((_) {
-                                          final current = ref
-                                              .read(treatmentViewModel)
-                                              .syringeLevel;
-                                          if (current != 0) {
-                                            ref
-                                                .read(
-                                                  treatmentViewModel.notifier,
-                                                )
-                                                .updateSyringeLevel(0);
-                                          }
-                                        });
-                                    return const SizedBox.shrink();
-                                  }
-
-                                  final syringeLevel = ref.watch(
-                                    treatmentViewModel.select(
-                                      (s) => s.syringeLevel,
-                                    ),
-                                  );
-                                  int index = syringeOptions.indexOf(
-                                    syringeLevel ?? syringeOptions.first,
-                                  );
-                                  if (index < 0) index = 0;
-
-                                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                                    final current =
-                                        ref.read(treatmentViewModel).syringeLevel;
-                                    final first = syringeOptions[0];
-                                    if (current == null ||
-                                        !syringeOptions.contains(current)) {
-                                      ref
-                                          .read(treatmentViewModel.notifier)
-                                          .updateSyringeLevel(first);
-                                    }
-                                    if (syringeOptions.length == 1 &&
-                                        current != first) {
-                                      ref
-                                          .read(treatmentViewModel.notifier)
-                                          .updateSyringeLevel(first);
-                                      ref
-                                          .read(treatmentViewModel.notifier)
-                                          .callPredictAPI(syringeLevel: first);
-                                    }
-                                  });
-
-                                  final currentValue = syringeOptions[index];
-                                  final singleOption =
-                                      syringeOptions.length == 1;
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      if (singleOption)
-                                        SizedBox(height: 8.h)
-                                      else
-                                        Column(
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  'Adjustable Parameters:',
-                                                  style:
-                                                      CustomFonts.black18w600,
-                                                ),
-                                                SizedBox(height: 20.h),
-                                                Text(
-                                                  '$currentValue Syringe${currentValue > 1 ? 's' : ''}',
-                                                  style:
-                                                      CustomFonts.black14w500,
-                                                ),
-                                              ],
-                                            ),
-                                            Slider(
-                                              activeColor:
-                                                  CustomColors.lightBlueColor,
-                                              value: index.toDouble(),
-                                              min: 0,
-                                              max: (syringeOptions.length - 1)
-                                                  .toDouble(),
-                                              divisions:
-                                                  syringeOptions.length - 1,
-                                              label: '$currentValue',
-                                              onChanged: (double value) {
-                                                final i = value.round();
-                                                final level = syringeOptions[i];
-                                                ref
-                                                    .read(
-                                                      treatmentViewModel
-                                                          .notifier,
-                                                    )
-                                                    .updateSyringeLevel(level);
-                                                ref
-                                                    .read(
-                                                      treatmentViewModel
-                                                          .notifier,
-                                                    )
-                                                    .callPredictAPI(
-                                                      syringeLevel: level,
-                                                    );
-                                              },
-                                            ),
-                                            SizedBox(height: 20.h),
-                                          ],
-                                        ),
-                                    ],
-                                  );
-                                },
-                              ),
                               Text(
                                 'Treatment Selection',
                                 style: CustomFonts.black18w600,
@@ -521,6 +529,16 @@ class _ArFaceModelPreviewScreenState
                                                               isCallPredictAPI:
                                                                   true,
                                                             );
+
+                                                        final maxSyringe =
+                                                            treatmentsSubArea[index]
+                                                                    .maxSyringe ??
+                                                                0;
+                                                        if (maxSyringe != 0) {
+                                                          _showSyringeBottomSheet(
+                                                            context,
+                                                          );
+                                                        }
                                                       },
                                                     ),
                                                   ),
