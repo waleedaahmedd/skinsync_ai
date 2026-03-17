@@ -9,6 +9,8 @@ import 'utills/color_constant.dart';
 import 'utills/screen_size.dart';
 import 'utills/theme.dart';
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 class AppInit extends StatelessWidget {
   const AppInit({super.key});
   void configLoading() {
@@ -41,6 +43,7 @@ class AppInit extends StatelessWidget {
           builder: (context, ref, child) {
             final ThemeMode themeMode = ref.watch(themeViewModel);
             return MaterialApp(
+              navigatorKey: navigatorKey,
               debugShowCheckedModeBanner: false,
               title: 'SkinSync AI',
               initialRoute: '/',

@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:skinsync_ai/exceptions/app_exception.dart';
+import 'package:skinsync_ai/screens/get_started_screen.dart';
 
+import '../app_init.dart';
+import '../models/responses/refresh_token_response.dart';
 import '../utills/enums.dart';
 import '../utills/secure_storage_service.dart';
 
@@ -22,14 +25,17 @@ class ApiBaseHelper {
     String? imagePath,
   }) async {
     authToken = _secureStorage.cachedAuthToken;
-   
+
     try {
+      log('URL: ${BaseUrls.api.url + endPoint.path + params}');
+      await _refreshToken();
       switch (requestType) {
         case 'GET':
           final responseJson = await http.get(
             Uri.parse(BaseUrls.api.url + endPoint.path + params),
             headers: getHeaders(),
           );
+          log('RESPONSE: ${responseJson.body}');
           return responseJson;
         case 'POST':
           final responseJson = await http.post(
@@ -81,16 +87,75 @@ class ApiBaseHelper {
     } on TimeoutException {
       throw 'Request TimeOut';
     } catch (e) {
+      if (e.toString().contains('Unauthorized')) {
+        await _secureStorage.clearAllSecureStrings();
+        Navigator.pushNamedAndRemoveUntil(
+          navigatorKey.currentContext!,
+          GetStartedScreen.routeName,
+          (_) => false,
+        );
+      }
       throw e.toString();
     }
   }
 
   Map<String, String> getHeaders() {
-    log("Auth token ${authToken}");
+    log("Auth token $authToken");
     Map<String, String> headers = {};
     headers.putIfAbsent('Content-Type', () => 'application/json');
     headers.putIfAbsent('Accept', () => 'application/json');
     headers.putIfAbsent('Authorization', () => 'Bearer ${authToken ?? ''}');
     return headers;
+  }
+
+  Future<void> _refreshToken() async {
+    final token = _secureStorage.cachedAuthToken;
+    if (token == null) {
+      log('TOKEN IS NULL');
+      return;
+    }
+    final expiry = await _secureStorage.getAccessTokenExpiry();
+    final now = DateTime.now();
+    if (expiry?.isAfter(now) ?? false) {
+      log('TOKEN IS NOT EXPIRED');
+      return;
+    }
+    final refreshExpiry = await _secureStorage.getRefreshTokenExpiry();
+    if (refreshExpiry?.isBefore(now) ?? true) {
+      throw Exception('Unauthorized');
+    }
+    final refreshToken = await _secureStorage.getRefreshToken();
+    if (refreshToken == null) {
+      throw Exception('Unauthorized');
+    }
+    log('EXPIRY: $expiry');
+    log('REFRESH EXPIRY: $refreshExpiry');
+    final uri = Uri.parse('${BaseUrls.api.url}${EndPoints.refreshToken.path}');
+    log('URL: $uri');
+    final request = {'refresh_token': refreshToken};
+    log('REQUEST: $request');
+    final json = await http.post(
+      uri,
+      headers: {'Authorization': 'Bearer $authToken'},
+      body: jsonEncode(request),
+    );
+    log('RESPONSE: ${json.body}');
+    final response = RefreshTokenResponse.fromJson(jsonDecode(json.body));
+    if (!(response.isSuccess ?? false)) {
+      throw Exception('Unauthorized');
+    }
+    await _secureStorage.saveToken(response.data!.accessToken!);
+    await _secureStorage.saveRefreshToken(response.data!.refreshToken!);
+    await _secureStorage.saveAccessTokenExpiry(
+      DateTime.fromMillisecondsSinceEpoch(
+        response.data!.accessExpiresAt! * 1000,
+      ),
+    );
+    await _secureStorage.saveRefreshTokenExpiry(
+      DateTime.fromMillisecondsSinceEpoch(
+        response.data!.refreshExpiresAt! * 1000,
+      ),
+    );
+    log('TOKEN REFRESHED');
   }
 }

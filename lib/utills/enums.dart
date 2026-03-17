@@ -30,17 +30,15 @@ enum EndPoints {
   onBoardingProfile("v1/onboarding/profile"),
   getClinic("clinics/by-side-area?"),
   getDoctor("doctors/by-side-area?"),
-  getMe("v1/me"),;
+  getMe("v1/me"),
+  refreshToken('v1/auth/refresh');
 
   final String path;
 
   const EndPoints(this.path);
 }
-enum PaymentMode {
-  full,
-  half,
-  consultation,
-}
+
+enum PaymentMode { full, half, consultation }
 
 enum BaseUrls {
   api("https://api.skinsyncai.com/api/");
@@ -50,8 +48,4 @@ enum BaseUrls {
   const BaseUrls(this.url);
 }
 
-// class ApiEndpoints {
-//   static String url(EndPoints endpoint, {BaseUrls base = BaseUrls.api}) {
-//     return '${base.url}${endpoint.path}';
-//   }
-// }
+enum ViewType { grid, map }

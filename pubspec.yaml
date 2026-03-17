@@ -53,13 +53,12 @@ dependencies:
   flutter_staggered_animations: ^1.1.1
   image_picker: ^1.2.1
   percent_indicator: ^4.2.5
-
-
-
   path_provider: any
   cross_file: any
   intl: ^0.20.2
   firebase_core: ^4.5.0
+  google_maps_flutter: ^2.15.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
