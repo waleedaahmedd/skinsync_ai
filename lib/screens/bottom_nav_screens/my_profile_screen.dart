@@ -153,12 +153,10 @@ class MyProfileScreen extends StatelessWidget {
                     showLogoutDialog(
                       screenContext: context,
                       desc: "Logout successful",
-                      onSuccess: () async  {
+                      onSuccess: () async {
                         SecureStorage secureStorage = SecureStorage();
-                        await secureStorage.deleteSecureString(
-                          key: 'auth_token',
-                        );
-                       SharedPref().saveBool('isLogin', false);
+                        await secureStorage.clearAllSecureStrings();
+                        SharedPref().saveBool('isLogin', false);
                         Navigator.pushNamedAndRemoveUntil(
                           context,
                           GetStartedScreen.routeName,
