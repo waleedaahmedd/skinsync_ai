@@ -46,7 +46,7 @@ void showLogoutDialog({
                   style: TextStyle(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w600,
-                    color:CustomColors.blackColor,
+                    color: CustomColors.blackColor,
                   ),
                 ),
                 SizedBox(height: 18.h),
@@ -64,7 +64,7 @@ void showLogoutDialog({
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                    onSuccess();
+                      onSuccess();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xffD72547),
@@ -92,7 +92,7 @@ void showLogoutDialog({
                     padding: EdgeInsets.symmetric(vertical: 19.5.h),
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color:CustomColors.greyColor,
+                      color: CustomColors.greyColor,
                       borderRadius: BorderRadius.circular(10.r),
                       border: Border.all(width: 1.w, color: Colors.grey[200]!),
                     ),

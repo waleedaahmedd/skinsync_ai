@@ -15,6 +15,7 @@ import 'package:skinsync_ai/widgets/service_type_button.dart';
 import '../models/responses/treatment_sub_area_response.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_view_model.dart';
+import '../widgets/custom_app_bar.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
   const ArFaceModelPreviewScreen({super.key});
@@ -55,9 +56,13 @@ class _ArFaceModelPreviewScreenState
             padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 20.h),
             child: Consumer(
               builder: (context, ref, _) {
-                final current =
-                    ref.watch(treatmentViewModel.select((s) => s.syringeLevel));
-                final level = (current ?? minSyringe).clamp(minSyringe, maxSyringe);
+                final current = ref.watch(
+                  treatmentViewModel.select((s) => s.syringeLevel),
+                );
+                final level = (current ?? minSyringe).clamp(
+                  minSyringe,
+                  maxSyringe,
+                );
 
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   final latest = ref.read(treatmentViewModel).syringeLevel;
@@ -150,7 +155,6 @@ class _ArFaceModelPreviewScreenState
         final isLoading = ref.watch(
           treatmentViewModel.select((state) => state.loading),
         );
-
         return PopScope(
           canPop: !isLoading,
           onPopInvokedWithResult: (didPop, result) {
@@ -161,40 +165,44 @@ class _ArFaceModelPreviewScreenState
           child: AbsorbPointer(
             absorbing: isLoading,
             child: Scaffold(
-              appBar: AppBar(
-                leadingWidth: 80.w,
-                centerTitle: false,
-                leading: Padding(
-                  padding: EdgeInsets.only(left: 10.w),
-                  child: InkWell(
-                    onTap: () => Navigator.pop(context),
-                    child: GreyContainer(
-                      icon: Icons.arrow_back,
-                      shape: BoxShape.circle,
-                      onTap: () => Navigator.pop(context),
-                    ),
-                  ),
-                ),
-                title: Text(
-                  "AR Face Model Preview",
-                  style: CustomFonts.black26w600,
-                ),
-                actions: [
-                  Padding(
-                    padding: EdgeInsets.only(right: 13.w),
-                    child: InkWell(
-                      onTap: () {
-                        ref
-                            .read(treatmentViewModel.notifier)
-                            .clearAllSelectedTreatments();
-                      },
-                      child: Text(
-                        "Reset",
-                        style: CustomFonts.pinkunderlined20w600,
-                      ),
-                    ),
-                  ),
-                ],
+              // appBar: AppBar(
+              //   leadingWidth: 80.w,
+              //   centerTitle: false,
+              //   leading: Padding(
+              //     padding: EdgeInsets.only(left: 10.w),
+              //     child: InkWell(
+              //       onTap: () => Navigator.pop(context),
+              //       child: GreyContainer(
+              //         icon: Icons.arrow_back,
+              //         shape: BoxShape.circle,
+              //         onTap: () => Navigator.pop(context),
+              //       ),
+              //     ),
+              //   ),
+              //   title: Text(
+              //     "AR Face Model Preview",
+              //     style: CustomFonts.black26w600,
+              //   ),
+              //   actions: [
+              //     Padding(
+              //       padding: EdgeInsets.only(right: 13.w),
+              //       child: InkWell(
+              //         onTap: () {
+              //           ref
+              //               .read(treatmentViewModel.notifier)
+              //               .clearAllSelectedTreatments();
+              //         },
+              //         child: Text(
+              //           "Reset",
+              //           style: CustomFonts.pinkunderlined20w600,
+              //         ),
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              appBar: CustomAppBar(
+                showTitle: true,
+                title: "AR Face Model Preview",
               ),
               body: SafeArea(
                 child: Column(
@@ -202,7 +210,6 @@ class _ArFaceModelPreviewScreenState
                   children: [
                     SizedBox(height: 20.h),
                     _facePreview(),
-
                     // SizedBox(height: 18.h),
                     // _accuracyRate(),
                     Expanded(
@@ -213,6 +220,20 @@ class _ArFaceModelPreviewScreenState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(height: 36.h),
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: InkWell(
+                                  onTap: () {
+                                    ref
+                                        .read(treatmentViewModel.notifier)
+                                        .clearAllSelectedTreatments();
+                                  },
+                                  child: Text(
+                                    "Reset",
+                                    style: CustomFonts.pinkunderlined20w600,
+                                  ),
+                                ),
+                              ),
                               Text(
                                 'Treatment Selection',
                                 style: CustomFonts.black18w600,
@@ -467,23 +488,27 @@ class _ArFaceModelPreviewScreenState
                                                       text:
                                                           treatmentsSubArea[index]
                                                               .name!,
-                                                      selected: selectedSubAreas.any(
-                                                        (e) =>
-                                                            e.id ==
-                                                            treatmentsSubArea[index]
-                                                                .id,
-                                                      ),
+                                                      selected: selectedSubAreas
+                                                          .any(
+                                                            (e) =>
+                                                                e.id ==
+                                                                treatmentsSubArea[index]
+                                                                    .id,
+                                                          ),
                                                       onPressed: () {
                                                         final subArea =
                                                             treatmentsSubArea[index];
                                                         final options =
-                                                            subArea.syringeOptions ??
+                                                            subArea
+                                                                .syringeOptions ??
                                                             const <int>[];
                                                         final minSyringe =
-                                                            subArea.minSyringe ??
+                                                            subArea
+                                                                .minSyringe ??
                                                             0;
                                                         final maxSyringe =
-                                                            subArea.maxSyringe ??
+                                                            subArea
+                                                                .maxSyringe ??
                                                             0;
 
                                                         ref
@@ -502,7 +527,8 @@ class _ArFaceModelPreviewScreenState
                                                         if (minSyringe == 0 &&
                                                             maxSyringe == 0) {
                                                           initialLevel = 0;
-                                                        } else if (options.length ==
+                                                        } else if (options
+                                                                .length ==
                                                             1) {
                                                           initialLevel =
                                                               options.first;
@@ -576,10 +602,14 @@ class _ArFaceModelPreviewScreenState
                                     padding: EdgeInsets.all(14.w),
                                     margin: EdgeInsets.only(bottom: 16.h),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.85),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.85,
+                                      ),
                                       borderRadius: BorderRadius.circular(16.r),
                                       border: Border.all(
-                                        color: Colors.black.withValues(alpha: 0.06),
+                                        color: Colors.black.withValues(
+                                          alpha: 0.06,
+                                        ),
                                       ),
                                     ),
                                     child: Column(
@@ -614,11 +644,12 @@ class _ArFaceModelPreviewScreenState
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 borderRadius:
-                                                    BorderRadius.circular(999.r),
+                                                    BorderRadius.circular(
+                                                      999.r,
+                                                    ),
                                                 border: Border.all(
-                                                  color: Colors.black.withValues(
-                                                    alpha: 0.08,
-                                                  ),
+                                                  color: Colors.black
+                                                      .withValues(alpha: 0.08),
                                                 ),
                                               ),
                                               child: Text(
@@ -637,7 +668,7 @@ class _ArFaceModelPreviewScreenState
                                   .watch(treatmentViewModel)
                                   .selectedSubAreasList
                                   .isNotEmpty)
-                              _bottomButtons(context),
+                                _bottomButtons(context),
                             ],
                           ),
                         ),
@@ -841,7 +872,9 @@ class _ArFaceModelPreviewScreenState
     return Consumer(
       builder: (context, ref, _) {
         return Padding(
-          padding:  EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom + 20.0.h),
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.paddingOf(context).bottom + 20.0.h,
+          ),
           child: Row(
             children: [
               Expanded(
@@ -898,7 +931,10 @@ class _ArFaceModelPreviewScreenState
                           treatmentId: treatmentId ?? 0,
                           sideAreaIds: subAreaIds,
                         );
-                    Navigator.pushNamed(context, ExploreClinicsScreen.routeName);
+                    Navigator.pushNamed(
+                      context,
+                      ExploreClinicsScreen.routeName,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
@@ -907,7 +943,10 @@ class _ArFaceModelPreviewScreenState
                     ),
                     padding: EdgeInsets.symmetric(vertical: 19.h),
                   ),
-                  child: Text('Explore Clinics', style: CustomFonts.white22w600),
+                  child: Text(
+                    'Explore Clinics',
+                    style: CustomFonts.white22w600,
+                  ),
                 ),
               ),
             ],
