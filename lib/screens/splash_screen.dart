@@ -59,31 +59,31 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             }
           });
         } else {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            BottomNavPage.routeName,
-            (Route<dynamic> route) => false,
-          );
-          // Navigator.of(context).pushReplacement(
-          //   PageRouteBuilder(
-          //     pageBuilder: (context, animation, secondaryAnimation) =>
-          //         const GetStartedScreen(),
-          //     transitionsBuilder:
-          //         (context, animation, secondaryAnimation, child) {
-          //           // Use ease-in curve
-          //           var curve = Curves.easeIn;
-          //           var curvedAnimation = CurvedAnimation(
-          //             parent: animation,
-          //             curve: curve,
-          //           );
-          //           return FadeTransition(
-          //             opacity: curvedAnimation,
-          //             child: child,
-          //           );
-          //         },
-          //     transitionDuration: const Duration(milliseconds: 900),
-          //   ),
+          // Navigator.pushNamedAndRemoveUntil(
+          //   context,
+          //   BottomNavPage.routeName,
+          //   (Route<dynamic> route) => false,
           // );
+          Navigator.of(context).pushReplacement(
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  const GetStartedScreen(),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                    // Use ease-in curve
+                    var curve = Curves.easeIn;
+                    var curvedAnimation = CurvedAnimation(
+                      parent: animation,
+                      curve: curve,
+                    );
+                    return FadeTransition(
+                      opacity: curvedAnimation,
+                      child: child,
+                    );
+                  },
+              transitionDuration: const Duration(milliseconds: 900),
+            ),
+          );
         }
       }
     });

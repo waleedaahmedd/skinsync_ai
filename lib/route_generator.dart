@@ -133,9 +133,13 @@ class RouteGenerator {
           builder: (_) => ExploreClinicsScreen(),
         );
       case TreatmentDetailScreen.routeName:
+        final args = settings.arguments as Map<String, String>;
         return MaterialPageRoute(
           settings: RouteSettings(name: TreatmentDetailScreen.routeName),
-          builder: (_) => TreatmentDetailScreen(),
+          builder: (_) => TreatmentDetailScreen(
+            name: args['name'] ?? '',
+            description: args['description'] ?? '',
+          ),
         );
       // SelectSectionsScreen is now a bottom sheet, not a route
       // case SelectSectionsScreen.routeName:
@@ -189,22 +193,22 @@ class RouteGenerator {
           settings: RouteSettings(name: TreatmentsScreen.routeName),
           builder: (_) => TreatmentsScreen(),
         );
-         case SelectProductScreen.routeName:
+      case SelectProductScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: SelectProductScreen.routeName),
           builder: (_) => SelectProductScreen(),
         );
-          case PaymentScreen.routeName:
+      case PaymentScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: PaymentScreen.routeName),
           builder: (_) => PaymentScreen(),
         );
-           case NotesScreen.routeName:
+      case NotesScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: NotesScreen.routeName),
           builder: (_) => NotesScreen(),
         );
-         case ProgressDetailScreen.routeName:
+      case ProgressDetailScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: ProgressDetailScreen.routeName),
           builder: (_) => ProgressDetailScreen(),

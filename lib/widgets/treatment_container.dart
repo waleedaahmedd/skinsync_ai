@@ -30,14 +30,17 @@ class TreatmentContainer extends StatelessWidget {
               // Use onTapTreatment to properly set treatmentId and handle the logic
               ref
                   .read(treatmentViewModel.notifier)
-                  .onTapTreatment(treatmentModel: treatments, isCallPredictAPI: false);
-             // TreatmentAreaScreen.show(context);
+                  .onTapTreatment(
+                    treatmentModel: treatments,
+                    isCallPredictAPI: false,
+                  );
+              // TreatmentAreaScreen.show(context);
             }
             //else {
-              Navigator.pushNamed(
-                context,
-                ref.read(checkoutViewModel.notifier).navigateTo(),
-              );
+            Navigator.pushNamed(
+              context,
+              ref.read(checkoutViewModel.notifier).navigateTo(),
+            );
             // }
           },
           child: Container(
@@ -88,6 +91,10 @@ class TreatmentContainer extends StatelessWidget {
                             Navigator.pushNamed(
                               context,
                               TreatmentDetailScreen.routeName,
+                              arguments: {
+                                'name': treatments.name ?? '',
+                                'description': treatments.description ?? '',
+                              },
                             );
                           },
                           behavior: HitTestBehavior.opaque,
@@ -118,7 +125,8 @@ class TreatmentContainer extends StatelessWidget {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        if (treatments.description != null && treatments.description!.isNotEmpty) ...[
+                        if (treatments.description != null &&
+                            treatments.description!.isNotEmpty) ...[
                           SizedBox(height: 8.h),
                           Text(
                             treatments.description!,
