@@ -77,13 +77,20 @@ class TreatmentContainer extends StatelessWidget {
                         height: 180.h,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: treatments.imageUrl == null
-                                ? AssetImage(PngAssets.image) as ImageProvider
-                                : NetworkImage(treatments.imageUrl.toString()),
-                            fit: BoxFit.cover,
-                            onError: (exception, stackTrace) {},
-                          ),
+                          // image: DecorationImage(
+                          //   image: treatments.imageUrl == null
+                          //       ? AssetImage(PngAssets.image) as ImageProvider
+                          //       : NetworkImage(treatments.imageUrl.toString()),
+                          //   fit: BoxFit.cover,
+                          //   onError: (exception, stackTrace) {},
+                          // ),
+                        ),
+                        child: Image.network(
+                          treatments.imageUrl ?? '',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(Icons.broken_image);
+                          },
                         ),
                       ),
                       Positioned(
