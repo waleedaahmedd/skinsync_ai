@@ -10,15 +10,12 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
-class TreatmentDetailScreen extends StatelessWidget {
-  final String name;
-  final String description;
+import '../models/responses/treatment_response_model.dart';
 
-  const TreatmentDetailScreen({
-    super.key,
-    required this.name,
-    required this.description,
-  });
+class TreatmentDetailScreen extends StatelessWidget {
+  final TreatmentsModel treatments;
+
+  const TreatmentDetailScreen({super.key, required this.treatments});
 
   static const String routeName = '/TreatmentDetailScreen';
 
@@ -35,8 +32,11 @@ class TreatmentDetailScreen extends StatelessWidget {
               height: 293.h,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(DummyAssets.treatmentimage),
+                  image: treatments.imageUrl == null
+                      ? AssetImage(PngAssets.image) as ImageProvider
+                      : NetworkImage(treatments.imageUrl.toString()),
                   fit: BoxFit.cover,
+                  onError: (exception, stackTrace) {},
                 ),
               ),
               child: Padding(
@@ -82,7 +82,7 @@ class TreatmentDetailScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    name ?? "Derma Fillers - Cheeks",
+                    treatments.name ?? "Derma Fillers - Cheeks",
                     style: CustomFonts.black30w600,
                   ),
                   SizedBox(height: 6.h),

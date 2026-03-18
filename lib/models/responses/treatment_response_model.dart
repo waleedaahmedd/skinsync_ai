@@ -33,6 +33,7 @@ class TreatmentsModel {
   String? icon;
   String? description;
   bool? isArea;
+  String? imageUrl;
 
   TreatmentsModel({
     this.id,
@@ -40,6 +41,7 @@ class TreatmentsModel {
     this.icon,
     this.description,
     this.isArea,
+    this.imageUrl,
   });
 
   TreatmentsModel.fromJson(Map<String, dynamic> json) {
@@ -48,6 +50,7 @@ class TreatmentsModel {
     icon = json['icon'];
     description = json['description'];
     isArea = json['is_area'];
+    imageUrl = json['image_url '];
   }
 
   Map<String, dynamic> toJson() {
@@ -57,6 +60,7 @@ class TreatmentsModel {
     data['icon'] = icon;
     data['description'] = description;
     data['is_area'] = isArea;
+    data['image_url '] = imageUrl;
     return data;
   }
 }

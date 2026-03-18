@@ -78,8 +78,11 @@ class TreatmentContainer extends StatelessWidget {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: AssetImage(PngAssets.image),
+                            image: treatments.imageUrl == null
+                                ? AssetImage(PngAssets.image) as ImageProvider
+                                : NetworkImage(treatments.imageUrl.toString()),
                             fit: BoxFit.cover,
+                            onError: (exception, stackTrace) {},
                           ),
                         ),
                       ),
@@ -91,10 +94,7 @@ class TreatmentContainer extends StatelessWidget {
                             Navigator.pushNamed(
                               context,
                               TreatmentDetailScreen.routeName,
-                              arguments: {
-                                'name': treatments.name ?? '',
-                                'description': treatments.description ?? '',
-                              },
+                              arguments: treatments,
                             );
                           },
                           behavior: HitTestBehavior.opaque,
