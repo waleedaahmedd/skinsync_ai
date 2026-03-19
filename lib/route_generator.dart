@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
 import 'package:skinsync_ai/screens/additional_info_screen.dart';
 import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
@@ -158,9 +159,10 @@ class RouteGenerator {
       //     builder: (_) => SelectSubSectionsScreen(),
       //   );
       case ClinicsDetailScreen.routeName:
+       final clinic = settings.arguments as Clinic;
         return MaterialPageRoute(
           settings: RouteSettings(name: ClinicsDetailScreen.routeName),
-          builder: (_) => ClinicsDetailScreen(),
+          builder: (_) => ClinicsDetailScreen(clinic:clinic ,),
         );
       case ClinicServiceScreen.routeName:
         return MaterialPageRoute(

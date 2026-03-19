@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
 import 'package:skinsync_ai/screens/clinic_service_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
@@ -15,7 +16,8 @@ import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import '../view_models/checkout_view_model.dart';
 
 class ClinicsDetailScreen extends ConsumerWidget {
-  const ClinicsDetailScreen({super.key});
+  final Clinic clinic;
+  const ClinicsDetailScreen({super.key,required this.clinic});
 
   static const String routeName = '/ClinicsDetailScreen';
 
@@ -79,34 +81,39 @@ class ClinicsDetailScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Glow Skin Clinic", style: CustomFonts.black30w600),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 6.w,
-                          vertical: 4.w,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50.r),
-                          color: CustomColors.lightBlueColor.withValues(
-                            alpha: 0.2,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              SvgAssets.flame,
-                              height: 16.05.h,
-                              width: 12.58,
+                  Consumer(
+                    builder: (context,ref,_) {
+                    
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(clinic.clinicName ?? 'N/A', style: CustomFonts.black30w600),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 6.w,
+                              vertical: 4.w,
                             ),
-                            SizedBox(width: 7.5.w),
-                            Text("Top Choice", style: CustomFonts.black12w600),
-                          ],
-                        ),
-                      ),
-                    ],
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50.r),
+                              color: CustomColors.lightBlueColor.withValues(
+                                alpha: 0.2,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(
+                                  SvgAssets.flame,
+                                  height: 16.05.h,
+                                  width: 12.58,
+                                ),
+                                SizedBox(width: 7.5.w),
+                                Text("Top Choice", style: CustomFonts.black12w600),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    }
                   ),
                   SizedBox(height: 4.h),
                   Row(
