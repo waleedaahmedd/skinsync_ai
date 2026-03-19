@@ -71,7 +71,7 @@ class SecureStorage {
   Future<void> saveAccessTokenExpiry(DateTime expiryDate) async {
     await _storage?.write(
       key: _accessTokenExpiryKey,
-      value: expiryDate.toIso8601String(),
+      value: expiryDate.subtract(Duration(minutes: 1)).toIso8601String(),
     );
   }
 
@@ -86,7 +86,7 @@ class SecureStorage {
   Future<void> saveRefreshTokenExpiry(DateTime date) async {
     await _storage?.write(
       key: _refreshTokenExpiryKey,
-      value: date.toIso8601String(),
+      value: date.subtract(Duration(minutes: 1)).toIso8601String(),
     );
   }
 

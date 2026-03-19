@@ -10,14 +10,10 @@ import 'package:skinsync_ai/screens/clinic_service_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
-import 'package:skinsync_ai/view_models/treatment_view_model.dart';
-
-import '../view_models/checkout_view_model.dart';
 
 class ClinicsDetailScreen extends ConsumerWidget {
-  final Clinic clinic;
-  const ClinicsDetailScreen({super.key,required this.clinic});
+  final Clinic? clinic;
+  const ClinicsDetailScreen({super.key, this.clinic});
 
   static const String routeName = '/ClinicsDetailScreen';
 
@@ -82,12 +78,16 @@ class ClinicsDetailScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Consumer(
-                    builder: (context,ref,_) {
-                    
+                    builder: (context, ref, _) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(clinic.clinicName ?? 'N/A', style: CustomFonts.black30w600),
+                          Expanded(
+                            child: Text(
+                              clinic?.clinicName ?? 'N/A',
+                              style: CustomFonts.black30w600,
+                            ),
+                          ),
                           Container(
                             padding: EdgeInsets.symmetric(
                               horizontal: 6.w,
@@ -107,13 +107,16 @@ class ClinicsDetailScreen extends ConsumerWidget {
                                   width: 12.58,
                                 ),
                                 SizedBox(width: 7.5.w),
-                                Text("Top Choice", style: CustomFonts.black12w600),
+                                Text(
+                                  "Top Choice",
+                                  style: CustomFonts.black12w600,
+                                ),
                               ],
                             ),
                           ),
                         ],
                       );
-                    }
+                    },
                   ),
                   SizedBox(height: 4.h),
                   Row(
@@ -452,32 +455,11 @@ class ClinicsDetailScreen extends ConsumerWidget {
                       // ref
                       //     .read(checkoutViewModel.notifier)
                       //     .updateState(clinicId: "xx");
-                      final treatment = ref.read(
-                        treatmentViewModel.select(
-                          (state) => state.selectedTreatment,
-                        ),
-                      );
-                      final subAreas = ref.read(
-                        treatmentViewModel.select(
-                          (state) => state.selectedSubAreasList,
-                        ),
-                      );
-
-                      final subAreaIds = subAreas
-                          .map((e) => e.id)
-                          .whereType<int>()
-                          .toList();
-
-                      ref
-                          .read(clincDoctorProvider.notifier)
-                          .getDoctors(
-                            treatmentId: treatment?.id ?? 0,
-                            sideAreaIds: subAreaIds,
-                          );
 
                       Navigator.pushNamed(
                         context,
                         ClinicServiceScreen.routeName,
+                        arguments: clinic,
                       );
                     },
                     child: Text("Book An Appointment"),

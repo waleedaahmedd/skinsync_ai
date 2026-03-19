@@ -4,7 +4,6 @@ import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/screens/clinic_service_screen.dart';
 import 'package:skinsync_ai/screens/clinics_detail_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
@@ -246,10 +245,10 @@ class TreatmentDetailScreen extends StatelessWidget {
                       SizedBox(width: 47.h),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            ClinicServiceScreen.routeName,
-                          );
+                          // Navigator.pushNamed(
+                          //   context,
+                          //   ClinicServiceScreen.routeName,
+                          // );
                         },
                         child: Container(
                           width: 187.w,

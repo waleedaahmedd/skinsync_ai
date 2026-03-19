@@ -9,7 +9,6 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
-import 'package:skinsync_ai/widgets/grey_container.dart';
 import 'package:skinsync_ai/widgets/service_type_button.dart';
 
 import '../models/responses/treatment_sub_area_response.dart';
@@ -931,7 +930,12 @@ class _ArFaceModelPreviewScreenState
                           treatmentId: treatmentId ?? 0,
                           sideAreaIds: subAreaIds,
                         );
-                        ref.read(checkoutViewModel.notifier).setSelectedTreamtment(treatment: treatment!, selectedSubAreasList: subAreas);
+                    ref
+                        .read(checkoutViewModel.notifier)
+                        .setSelectedTreamtment(
+                          treatment: treatment!,
+                          selectedSubAreasList: subAreas,
+                        );
                     Navigator.pushNamed(
                       context,
                       ExploreClinicsScreen.routeName,
