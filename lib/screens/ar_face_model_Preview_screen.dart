@@ -898,6 +898,7 @@ class _ArFaceModelPreviewScreenState
                           treatmentId: treatmentId ?? 0,
                           sideAreaIds: subAreaIds,
                         );
+                        ref.read(checkoutViewModel.notifier).setSelectedTreamtment(treatment: treatment!, selectedSubAreasList: subAreas);
                     Navigator.pushNamed(context, ExploreClinicsScreen.routeName);
                   },
                   style: ElevatedButton.styleFrom(

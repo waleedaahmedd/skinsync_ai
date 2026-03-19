@@ -9,6 +9,8 @@ import 'package:skinsync_ai/screens/select_product_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/view_models/auth_view_model.dart';
+import 'package:skinsync_ai/view_models/checkout_view_model.dart';
 import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/time_container.dart';
@@ -164,7 +166,7 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Select Your Services",
+                      "Selected Services",
                       style: CustomFonts.black22w600,
                     ),
                     SizedBox(height: 17.h),
@@ -173,29 +175,19 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                       style: CustomFonts.grey13w400,
                     ),
                     SizedBox(height: 10.h),
-                    ListView.separated(
-                      physics: NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.all(0),
-                      separatorBuilder: (context, index) {
-                        return SizedBox(height: 15.h);
-                      },
-                      shrinkWrap: true,
-                      itemCount: 3,
-                      itemBuilder: (context, index) {
-                        return TreatmentPriceContainer(
-                          isSelected: selectedFilterIndex == index,
-
-                          image: DummyAssets.treatmentimage,
-                          treatmentName: " Treatment Name",
-                          price: 550,
-                          onTap: () {
-                            setState(() {
-                              selectedFilterIndex = index;
-                            });
-                          },
-                        );
-                      },
-                    ),
+                    Consumer(
+                          builder: (context,ref,_) {
+                            return TreatmentPriceContainer(
+                              isSelected: true,
+                              selectedTreatment: ref.watch(checkoutViewModel).selectedTreatment,
+                              selectedSubAreasList: ref.watch(checkoutViewModel).selectedSubAreasList!,
+                               
+                              image: DummyAssets.treatmentimage,
+                              
+                            );
+                          }
+                        ),
+                     
                   ],
                 ),
               ),

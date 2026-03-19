@@ -4,38 +4,22 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
+import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 
 import '../../utills/color_constant.dart';
 import '../../widgets/grey_container.dart';
 
-class TreatmentsScreen extends ConsumerWidget {
-  const TreatmentsScreen({super.key});
+class SuggestedTreatmentScreen extends ConsumerWidget {
+  const SuggestedTreatmentScreen({super.key});
   static const routeName = "TreatmentsScreen";
 
   @override
   Widget build(BuildContext context, ref) {
     return Scaffold(
-      appBar: AppBarWithActionIcon(
-        title: Row(
-          children: [
-            Icon(Iconsax.location, size: 20.sp, color: Colors.black),
-            SizedBox(width: 6.w),
-            Text("Hello, Burak!", style: CustomFonts.black30w600),
-          ],
-        ),
-        subTitle: Text(
-          "195 Karlie Brooks, Anderson",
-          style: CustomFonts.grey18w400,
-        ),
-        action: GreyContainer(
-          icon: Icons.notifications_none_outlined,
-          onTap: () {},
-        ),
-      ),
+      appBar:CustomAppBar(showTitle:true,title:   "Suggested Treatments"),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/appointment_card.dart';
-import 'package:skinsync_ai/widgets/discount_card.dart';
+
 import 'package:skinsync_ai/widgets/grey_container.dart';
 import 'package:skinsync_ai/widgets/heading_with_right_arrow.dart';
-import 'package:skinsync_ai/widgets/home_treament_card.dart';
 import 'package:skinsync_ai/widgets/points_earn_card.dart';
+import 'package:skinsync_ai/widgets/treatment_container.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
   static const String routeName = "HomeScreen";
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,WidgetRef ref) {
+       
     return Scaffold(
       appBar: AppBarWithActionIcon(
         title: Text("Hello, Burak!", style: CustomFonts.black30w600),
@@ -58,42 +61,58 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
             SizedBox(
-              height: 200.h,
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: 4,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.only(left: index == 0 ? 30.w : 17.w),
-                    child: HomeTreamentCard(),
+             
+              height: 300.h,
+            
+              child: Consumer(
+                builder: (context,ref,_) {
+                  final treatment = ref.watch(authViewModel).authResponse?.data?.treatment;
+                  return ListView.builder(
+                              
+                    shrinkWrap: true,
+                    itemCount: treatment?.length ?? 0 ,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                  
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          left: index == 0 ? 30.w : 17.w,
+                          right: index == treatment!.length - 1 ? 30.w : 0.w,
+                        ),
+                        child: TreatmentContainer(
+                          imageHeight: 150,
+                          width: 313.w,
+                          treatments: treatment[index],
+                        ),
+                      );
+                    },
                   );
-                },
+                }
               ),
             ),
-            SizedBox(height: 18.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w),
-              child: Text(
-                "promotions & discounts",
-                style: CustomFonts.black22w600,
-              ),
-            ),
-            SizedBox(height: 18.h),
-            SizedBox(
-              height: 144.h,
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: 4,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.only(left: index == 0 ? 30.w : 17.w),
-                    child: DiscountCard(),
-                  );
-                },
-              ),
-            ),
+            // SizedBox(height: 18.h),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 30.w),
+            //   child: Text(
+            //     "promotions & discounts",
+            //     style: CustomFonts.black22w600,
+            //   ),
+            // ),
+           // SizedBox(height: 18.h),
+            // SizedBox(
+            //   height: 144.h,
+            //   child: ListView.builder(
+            //     shrinkWrap: true,
+            //     itemCount: 4,
+            //     scrollDirection: Axis.horizontal,
+            //     itemBuilder: (context, index) {
+            //       return Padding(
+            //         padding: EdgeInsets.only(left: index == 0 ? 30.w : 17.w),
+            //         child: DiscountCard(),
+            //       );
+            //     },
+            //   ),
+            // ),
             SizedBox(height: 185.h),
           ],
         ),

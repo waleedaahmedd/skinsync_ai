@@ -11,8 +11,10 @@ import '../models/responses/treatment_response_model.dart';
 import '../view_models/checkout_view_model.dart';
 
 class TreatmentContainer extends StatelessWidget {
+  final double? imageHeight;
+  final double? width;
   final TreatmentsModel treatments;
-  const TreatmentContainer({super.key, required this.treatments});
+  const TreatmentContainer({super.key, required this.treatments,this.imageHeight,this.width});
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +43,7 @@ class TreatmentContainer extends StatelessWidget {
             // }
           },
           child: Container(
+            width: width ?? MediaQuery.sizeOf(context).width,
             margin: EdgeInsets.only(bottom: 16.h),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -71,7 +74,7 @@ class TreatmentContainer extends StatelessWidget {
                   Stack(
                     children: [
                       Container(
-                        height: 180.h,
+                        height:imageHeight ??  180.h,
                         width: double.infinity,
                         decoration: BoxDecoration(
                           image: DecorationImage(

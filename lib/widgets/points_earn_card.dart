@@ -27,7 +27,7 @@ class PointsEarnCard extends StatelessWidget {
             center: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("72%", style: CustomFonts.black28w600),
+                Text("0%", style: CustomFonts.black28w600),
                 Text("Points Earned!", style: CustomFonts.black10w600),
               ],
             ),
