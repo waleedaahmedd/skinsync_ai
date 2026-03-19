@@ -79,6 +79,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             }
           });
         } else {
+          // Navigator.pushNamedAndRemoveUntil(
+          //   context,
+          //   BottomNavPage.routeName,
+          //   (Route<dynamic> route) => false,
+          // );
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>

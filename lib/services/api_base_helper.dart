@@ -122,10 +122,12 @@ class ApiBaseHelper {
     }
     final refreshExpiry = await _secureStorage.getRefreshTokenExpiry();
     if (refreshExpiry?.isBefore(now) ?? true) {
+      log('REFRESH TOKEN IS EXPIRED');
       throw Exception('Unauthorized');
     }
     final refreshToken = await _secureStorage.getRefreshToken();
     if (refreshToken == null) {
+      log('REFRESH TOKEN IS NULL');
       throw Exception('Unauthorized');
     }
     log('EXPIRY: $expiry');
