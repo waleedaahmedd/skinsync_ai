@@ -107,7 +107,9 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       final AuthResponse response = await _authRepository.verifyOTP(
         otpRequest: request,
       );
-      state = state.copyWith(loading: false, authResponse: response);
+        final addressData = await LocationService().fetchAddress();
+      state = state.copyWith(loading: false, authResponse: response,
+        addressData: addressData,);
       if (response.isSuccess == true) {
         otpController.clear();
         print(response.data?.accessToken ?? "");
@@ -125,7 +127,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
           .onboardingProfile(onBoardingProfileRequest: request);
       state = state.copyWith(loading: false);
       if (response.isSuccess == true) {
-        SharedPref().saveBool('isLogin', true);
+        callGetMe();
       }
       return response.isSuccess == true;
     });

@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:skinsync_ai/screens/additional_info_screen.dart';
+import 'package:skinsync_ai/screens/payment_screen.dart';
 import 'package:skinsync_ai/screens/select_product_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
@@ -83,7 +84,7 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                         ),
                       ),
                     );
-                  } else if (doctors!.isEmpty) {
+                  } else if (doctors == null || doctors.isEmpty) {
                     return SizedBox(
                       height: 150.h,
                       child: Center(
@@ -391,7 +392,7 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                         onTap: () {
                           Navigator.pushNamed(
                             context,
-                            AdditionalInfoScreen.routeName,
+                            PaymentScreen.routeName,
                           );
                         },
                         child: Container(

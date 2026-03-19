@@ -90,6 +90,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               Text("Select Your Payment Mode", style: CustomFonts.black22w600),
               SizedBox(height: 20.h),
               paymentTile(
+                price: 550,
                 mode: PaymentMode.full,
                 title: "Full Payment",
                 description:
@@ -97,6 +98,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
               SizedBox(height: 15.h),
               paymentTile(
+                price: 275,
                 mode: PaymentMode.half,
                 title: "Half Payment",
                 description:
@@ -104,6 +106,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
               SizedBox(height: 15.h),
               paymentTile(
+                price: 200,
                 mode: PaymentMode.consultation,
                 title: "Consultation fee",
                 description:
@@ -229,6 +232,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     required PaymentMode mode,
     required String title,
     required String description,
+    required int price
   }) {
     final isSelected = selectedMode == mode;
 
@@ -264,12 +268,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
               ),
             ),
 
+
             /// Radio icon
-            Icon(
-              isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-              color: isSelected
-                  ? CustomColors.lightBlueColor
-                  : Colors.grey.shade400,
+            Column(
+              children: [
+                 Text("\$ $price",style: CustomFonts.red13w500,),
+                 SizedBox(height: 5.h,)
+,                Icon(
+                  isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+                  color: isSelected
+                      ? CustomColors.lightBlueColor
+                      : Colors.grey.shade400,
+                ),
+              ],
             ),
           ],
         ),

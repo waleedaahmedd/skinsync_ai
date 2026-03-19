@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skinsync_ai/screens/suggested_treatmentsScreen.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -52,7 +53,9 @@ class HomeScreen extends ConsumerWidget {
                       SizedBox(height: 25.h),
                       HeadingWithRightArrow(
                         title: "Suggested Treatments",
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, SuggestedTreatmentScreen.routeName);
+                        },
                       ),
                       SizedBox(height: 18.h),
                     ],

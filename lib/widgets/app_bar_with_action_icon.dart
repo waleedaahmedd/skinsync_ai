@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
 import '../utills/color_constant.dart';
 
@@ -29,11 +32,25 @@ class AppBarWithActionIcon extends StatelessWidget
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [title, SizedBox(height: 4), subTitle],
+                Expanded(
+                  child: Consumer(
+                    builder: (context, ref, _) {
+                      final state = ref.watch(authViewModel);
+                      final name = state.authResponse?.data?.userDetails?.name;
+                      final address = state.addressData?.address;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(name ?? 'N/A', style: CustomFonts.black30w600),
+                          SizedBox(height: 4),
+                          Text(address ?? 'N/A', style: CustomFonts.grey18w400,overflow: .ellipsis,maxLines: 1,),
+                        ],
+                      );
+                    },
+                  ),
                 ),
-                ?action,
+                 SizedBox(width: 40.w),
+                ? action,
               ],
             ),
             Spacer(),

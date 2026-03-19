@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
@@ -12,6 +13,7 @@ import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/utills/secure_storage_service.dart';
 import 'package:skinsync_ai/utills/shared_pref.dart';
+import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/logout_dialog_box.dart';
 
 class MyProfileScreen extends StatelessWidget {
@@ -66,32 +68,39 @@ class MyProfileScreen extends StatelessWidget {
                       width: 7.w,
                     ),
                   ),
-                  child: ClipOval(
-                    child: Center(
-                      child: Image.asset(
-                        DummyAssets.acen,
-                        fit: BoxFit.cover,
-                        height: 103.w,
-                        width: 103.w,
-                      ),
-                    ),
-                  ),
+                  child:  ClipOval(
+                        child: Center(
+                          child: Image.asset(
+                            DummyAssets.acen,
+                            fit: BoxFit.cover,
+                            height: 103.w,
+                            width: 103.w,
+                          ),
+                        ),
+                      )
+                    
                 ),
                 SizedBox(width: 25.w),
-                Column(
-                  children: [
-                    Text("Lizzy Johnson", style: CustomFonts.black28w600),
-                    Row(
+                Consumer(
+                  builder: (context,ref,_) {
+                    final name = ref.watch(authViewModel).authResponse?.data?.userDetails?.name;
+                    return Column(
+                      crossAxisAlignment: .start,
                       children: [
-                        Icon(Icons.star, size: 17.sp, color: Colors.black),
-                        SizedBox(width: 3.w),
-                        Text(
-                          "214 Points Earned!",
-                          style: CustomFonts.black16w400,
+                        Text(name ?? 'N/A', style: CustomFonts.black28w600),
+                        Row(
+                          children: [
+                            Icon(Icons.star, size: 17.sp, color: Colors.black),
+                            SizedBox(width: 3.w),
+                            Text(
+                              "214 Points Earned!",
+                              style: CustomFonts.black16w400,
+                            ),
+                          ],
                         ),
                       ],
-                    ),
-                  ],
+                    );
+                  }
                 ),
               ],
             ),
@@ -156,7 +165,6 @@ class MyProfileScreen extends StatelessWidget {
                       onSuccess: () async {
                         SecureStorage secureStorage = SecureStorage();
                         await secureStorage.clearAllSecureStrings();
-                        SharedPref().saveBool('isLogin', false);
                         Navigator.pushNamedAndRemoveUntil(
                           context,
                           GetStartedScreen.routeName,

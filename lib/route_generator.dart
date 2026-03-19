@@ -20,6 +20,7 @@ import 'package:skinsync_ai/screens/select_product_screen.dart';
 import 'package:skinsync_ai/screens/setting_screen.dart';
 import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/screens/splash_screen.dart';
+import 'package:skinsync_ai/screens/suggested_treatmentsScreen.dart';
 import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
 import 'package:skinsync_ai/screens/your_profile_screen.dart';
 import 'package:skinsync_ai/utills/enums.dart';
@@ -122,6 +123,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: ArFaceModelPreviewScreen.routeName),
           builder: (_) => ArFaceModelPreviewScreen(),
+        );
+        case SuggestedTreatmentScreen.routeName:
+         return MaterialPageRoute(
+          settings: RouteSettings(name: SuggestedTreatmentScreen.routeName),
+          builder: (_) => SuggestedTreatmentScreen(),
         );
       // case ServiceSelectionScreen.routeName:
       //   return MaterialPageRoute(
