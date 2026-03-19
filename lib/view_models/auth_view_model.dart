@@ -5,8 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
+import 'package:skinsync_ai/models/responses/address_data.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
+import 'package:skinsync_ai/services/location_service.dart';
 import 'package:skinsync_ai/utills/shared_pref.dart';
+
 import '../models/base_state_model.dart';
 import '../models/requests/sign_in_request.dart';
 import '../models/responses/auth_response.dart';
@@ -104,11 +107,13 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       final AuthResponse response = await _authRepository.verifyOTP(
         otpRequest: request,
       );
-      state = state.copyWith(loading: false, authResponse: response);
-  if(response.isSuccess == true){
-    otpController.clear();
-    print(response.data?.accessToken ?? "");
-  }
+        final addressData = await LocationService().fetchAddress();
+      state = state.copyWith(loading: false, authResponse: response,
+        addressData: addressData,);
+      if (response.isSuccess == true) {
+        otpController.clear();
+        print(response.data?.accessToken ?? "");
+      }
       return response.isSuccess == true;
     });
   }
@@ -122,31 +127,32 @@ class AuthViewModel extends BaseViewModel<AuthState> {
           .onboardingProfile(onBoardingProfileRequest: request);
       state = state.copyWith(loading: false);
       if (response.isSuccess == true) {
-        SharedPref().saveBool('isLogin', true);
+        callGetMe();
       }
       return response.isSuccess == true;
     });
-
-    
   }
 
-   Future<bool?> callGetMe() async {
+  Future<bool?> callGetMe() async {
     return await runSafely(() async {
       final AuthResponse response = await _authRepository.getMe();
       if (response.isSuccess!) {
-        state = state.copyWith(authResponse: response);
+        final addressData = await LocationService().fetchAddress();
+        state = state.copyWith(
+          authResponse: response,
+          addressData: addressData,
+        );
       }
 
       return response.isSuccess == true;
     });
   }
 
-void clearData(){
-  emailController.clear();
-  otpController.clear();
-  clearProfileImage();
-
-}
+  void clearData() {
+    emailController.clear();
+    otpController.clear();
+    clearProfileImage();
+  }
 
   @override
   void onError(String message) {
@@ -173,6 +179,7 @@ class AuthState extends BaseStateModel {
   final AuthResponse? authResponse;
   final String? otpError;
   final File? profileImage;
+  final AddressData? addressData;
 
   const AuthState({
     super.loading = false,
@@ -180,6 +187,7 @@ class AuthState extends BaseStateModel {
     this.authResponse,
     this.otpError,
     this.profileImage,
+    this.addressData,
   });
 
   @override
@@ -193,6 +201,7 @@ class AuthState extends BaseStateModel {
     bool clearOtpError = false,
     File? profileImage,
     bool clearProfileImage = false,
+    AddressData? addressData,
   }) {
     return AuthState(
       loading: loading ?? this.loading,
@@ -202,6 +211,7 @@ class AuthState extends BaseStateModel {
       profileImage: clearProfileImage
           ? null
           : (profileImage ?? this.profileImage),
+      addressData: addressData ?? this.addressData,
     );
   }
 }

@@ -48,14 +48,14 @@ class ProgressDetailScreen extends ConsumerWidget {
                 child: InkWell(
                   onTap: () => Navigator.pop(context),
                   child: Container(
-                    padding: EdgeInsets.all(11),
+                    padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.grey.withValues(alpha: 0.7),
                     ),
                     child: Icon(
                       CupertinoIcons.arrow_left,
-                      size: 22.sp,
+                      size: 20.sp,
                       color: Colors.white,
                     ),
                   ),

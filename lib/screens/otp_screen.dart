@@ -12,6 +12,8 @@ import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
+import '../widgets/custom_app_bar.dart';
+
 class OtpScreen extends StatelessWidget {
   const OtpScreen({super.key});
   static const String routeName = '/OtpScreen';
@@ -19,28 +21,7 @@ class OtpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: InkWell(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: CustomColors.iconColor,
-              ),
-              child: Icon(
-                CupertinoIcons.arrow_left,
-                size: 20.w,
-                color: Colors.black,
-              ),
-            ),
-          ),
-        ),
-      ),
-
+      appBar: CustomAppBar(showTitle: false),
       body: Padding(
         padding: EdgeInsets.only(
           left: 30.w,
@@ -174,14 +155,14 @@ class OtpScreen extends StatelessWidget {
                                       ?.isFirstLogin ??
                                   false;
                               isLoggedIn
-                                  ? 
-                                   Navigator.pushNamedAndRemoveUntil(
+                                  ? Navigator.pushNamedAndRemoveUntil(
                                       context,
                                       SignupOnboarding.routeName,
                                       (Route<dynamic> route) =>
                                           route.settings.name ==
                                           LoginScreen.routeName,
-                                    ):Navigator.pushNamedAndRemoveUntil(
+                                    )
+                                  : Navigator.pushNamedAndRemoveUntil(
                                       context,
                                       FaceScanScreen.routeName,
                                       (Route<dynamic> route) => false,

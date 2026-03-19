@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
 import 'package:skinsync_ai/screens/additional_info_screen.dart';
 import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
@@ -20,10 +21,12 @@ import 'package:skinsync_ai/screens/select_product_screen.dart';
 import 'package:skinsync_ai/screens/setting_screen.dart';
 import 'package:skinsync_ai/screens/signup_onboarding.dart';
 import 'package:skinsync_ai/screens/splash_screen.dart';
+import 'package:skinsync_ai/screens/suggested_treatmentsScreen.dart';
 import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
 import 'package:skinsync_ai/screens/your_profile_screen.dart';
 import 'package:skinsync_ai/utills/enums.dart';
 
+import 'models/responses/treatment_response_model.dart';
 import 'screens/ar_face_model_Preview_screen.dart';
 import 'screens/bottom_nav_screens/face_detection_screen.dart';
 import 'screens/bottom_nav_screens/my_profile_screen.dart';
@@ -122,6 +125,11 @@ class RouteGenerator {
           settings: RouteSettings(name: ArFaceModelPreviewScreen.routeName),
           builder: (_) => ArFaceModelPreviewScreen(),
         );
+      case SuggestedTreatmentScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: SuggestedTreatmentScreen.routeName),
+          builder: (_) => SuggestedTreatmentScreen(),
+        );
       // case ServiceSelectionScreen.routeName:
       //   return MaterialPageRoute(
       //     settings: RouteSettings(name: ServiceSelectionScreen.routeName),
@@ -133,9 +141,10 @@ class RouteGenerator {
           builder: (_) => ExploreClinicsScreen(),
         );
       case TreatmentDetailScreen.routeName:
+        final treatments = settings.arguments as TreatmentsModel;
         return MaterialPageRoute(
           settings: RouteSettings(name: TreatmentDetailScreen.routeName),
-          builder: (_) => TreatmentDetailScreen(),
+          builder: (_) => TreatmentDetailScreen(treatments: treatments),
         );
       // SelectSectionsScreen is now a bottom sheet, not a route
       // case SelectSectionsScreen.routeName:
@@ -150,14 +159,15 @@ class RouteGenerator {
       //     builder: (_) => SelectSubSectionsScreen(),
       //   );
       case ClinicsDetailScreen.routeName:
+        final clinic = settings.arguments as Clinic;
         return MaterialPageRoute(
           settings: RouteSettings(name: ClinicsDetailScreen.routeName),
-          builder: (_) => ClinicsDetailScreen(),
+          builder: (_) => ClinicsDetailScreen(clinic: args as Clinic?),
         );
       case ClinicServiceScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: ClinicServiceScreen.routeName),
-          builder: (_) => ClinicServiceScreen(),
+          builder: (_) => ClinicServiceScreen(clinic: args as Clinic?),
         );
       case SettingScreen.routeName:
         return MaterialPageRoute(
@@ -189,22 +199,27 @@ class RouteGenerator {
           settings: RouteSettings(name: TreatmentsScreen.routeName),
           builder: (_) => TreatmentsScreen(),
         );
-         case SelectProductScreen.routeName:
+      case SelectProductScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: SelectProductScreen.routeName),
           builder: (_) => SelectProductScreen(),
         );
-          case PaymentScreen.routeName:
+      case PaymentScreen.routeName:
+        final data = args as Map<String, dynamic>;
         return MaterialPageRoute(
           settings: RouteSettings(name: PaymentScreen.routeName),
-          builder: (_) => PaymentScreen(),
+          builder: (_) => PaymentScreen(
+            clinic: data['clinic'],
+            doctor: data['doctor'],
+            slot: data['slot'],
+          ),
         );
-           case NotesScreen.routeName:
+      case NotesScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: NotesScreen.routeName),
           builder: (_) => NotesScreen(),
         );
-         case ProgressDetailScreen.routeName:
+      case ProgressDetailScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: ProgressDetailScreen.routeName),
           builder: (_) => ProgressDetailScreen(),

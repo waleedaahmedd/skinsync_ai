@@ -18,7 +18,6 @@ class NotesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(showTitle: true, title: "Notes"),
-
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 30.0.w),
         child: Column(
@@ -86,7 +85,11 @@ class NotesScreen extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(context,BottomNavPage.routeName,(_) => false);
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    BottomNavPage.routeName,
+                    (_) => false,
+                  );
                 },
                 child: Text("Confirm Appointment"),
               ),

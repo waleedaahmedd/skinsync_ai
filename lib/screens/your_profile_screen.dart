@@ -257,7 +257,8 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                               });
                         }
                       },
-                      child: Text("Next"),
+                      child: ref.watch(authViewModel).loading
+                  ? CircularProgressIndicator(): Text("Next"),
                     ),
                   ),
                 ],

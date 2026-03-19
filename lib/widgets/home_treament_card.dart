@@ -5,6 +5,7 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
 class HomeTreamentCard extends StatelessWidget {
+
   const HomeTreamentCard({super.key});
 
   @override

@@ -52,11 +52,12 @@ class SecureStorage {
   }
 
   Future<void> saveToken(String token) async {
+    _cachedToken = token;
     await _storage?.write(key: _accessTokenKey, value: token);
   }
 
   Future<String?> getToken() async {
-    return await _storage?.read(key: _accessTokenKey);
+    return _cachedToken ?? await _storage?.read(key: _accessTokenKey);
   }
 
   Future<void> saveRefreshToken(String refreshToken) async {
@@ -70,7 +71,7 @@ class SecureStorage {
   Future<void> saveAccessTokenExpiry(DateTime expiryDate) async {
     await _storage?.write(
       key: _accessTokenExpiryKey,
-      value: expiryDate.toIso8601String(),
+      value: expiryDate.subtract(Duration(minutes: 1)).toIso8601String(),
     );
   }
 
@@ -85,7 +86,7 @@ class SecureStorage {
   Future<void> saveRefreshTokenExpiry(DateTime date) async {
     await _storage?.write(
       key: _refreshTokenExpiryKey,
-      value: date.toIso8601String(),
+      value: date.subtract(Duration(minutes: 1)).toIso8601String(),
     );
   }
 

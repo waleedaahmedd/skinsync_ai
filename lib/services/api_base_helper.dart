@@ -17,7 +17,7 @@ class ApiBaseHelper {
   String? authToken;
   final SecureStorage _secureStorage = SecureStorage();
 
-  Future<dynamic> httpRequest({
+  Future<http.Response> httpRequest({
     required EndPoints endPoint,
     required String requestType,
     var requestBody,
@@ -74,7 +74,7 @@ class ApiBaseHelper {
           );
           request.headers.addAll(getHeaders());
           final responseJson = await request.send();
-          return responseJson;
+          return http.Response.fromStream(responseJson);
         default:
           throw Exception('Unsupported request type: $requestType');
       }
@@ -97,6 +97,7 @@ class ApiBaseHelper {
       }
       throw e.toString();
     }
+    return http.Response('404', 404);
   }
 
   Map<String, String> getHeaders() {
@@ -122,10 +123,12 @@ class ApiBaseHelper {
     }
     final refreshExpiry = await _secureStorage.getRefreshTokenExpiry();
     if (refreshExpiry?.isBefore(now) ?? true) {
+      log('REFRESH TOKEN IS EXPIRED');
       throw Exception('Unauthorized');
     }
     final refreshToken = await _secureStorage.getRefreshToken();
     if (refreshToken == null) {
+      log('REFRESH TOKEN IS NULL');
       throw Exception('Unauthorized');
     }
     log('EXPIRY: $expiry');

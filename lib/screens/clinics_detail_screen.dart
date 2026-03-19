@@ -5,17 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
 import 'package:skinsync_ai/screens/clinic_service_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
-import 'package:skinsync_ai/view_models/treatment_view_model.dart';
-
-import '../view_models/checkout_view_model.dart';
 
 class ClinicsDetailScreen extends ConsumerWidget {
-  const ClinicsDetailScreen({super.key});
+  final Clinic? clinic;
+  const ClinicsDetailScreen({super.key, this.clinic});
 
   static const String routeName = '/ClinicsDetailScreen';
 
@@ -79,34 +77,46 @@ class ClinicsDetailScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Glow Skin Clinic", style: CustomFonts.black30w600),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 6.w,
-                          vertical: 4.w,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50.r),
-                          color: CustomColors.lightBlueColor.withValues(
-                            alpha: 0.2,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            SvgPicture.asset(
-                              SvgAssets.flame,
-                              height: 16.05.h,
-                              width: 12.58,
+                  Consumer(
+                    builder: (context, ref, _) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              clinic?.clinicName ?? 'N/A',
+                              style: CustomFonts.black30w600,
                             ),
-                            SizedBox(width: 7.5.w),
-                            Text("Top Choice", style: CustomFonts.black12w600),
-                          ],
-                        ),
-                      ),
-                    ],
+                          ),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 6.w,
+                              vertical: 4.w,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(50.r),
+                              color: CustomColors.lightBlueColor.withValues(
+                                alpha: 0.2,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(
+                                  SvgAssets.flame,
+                                  height: 16.05.h,
+                                  width: 12.58,
+                                ),
+                                SizedBox(width: 7.5.w),
+                                Text(
+                                  "Top Choice",
+                                  style: CustomFonts.black12w600,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                   SizedBox(height: 4.h),
                   Row(
@@ -280,20 +290,20 @@ class ClinicsDetailScreen extends ConsumerWidget {
                           "Lorem ipsum dolor sit amet consectetur. Amet augue.",
                           style: CustomFonts.black16w400,
                         ),
-                        trailing: Container(
-                          padding: EdgeInsets.all(5.w),
-                          decoration: BoxDecoration(
-                            color: CustomColors.lightPurpleColor.withValues(
-                              alpha: 0.2,
-                            ),
-                            borderRadius: BorderRadius.circular(8.r),
-                          ),
-                          child: Icon(
-                            Icons.add,
-                            size: 16.sp,
-                            color: CustomColors.pinkColor,
-                          ),
-                        ),
+                        // trailing: Container(
+                        //   padding: EdgeInsets.all(5.w),
+                        //   decoration: BoxDecoration(
+                        //     color: CustomColors.lightPurpleColor.withValues(
+                        //       alpha: 0.2,
+                        //     ),
+                        //     borderRadius: BorderRadius.circular(8.r),
+                        //   ),
+                        //   child: Icon(
+                        //     Icons.add,
+                        //     size: 16.sp,
+                        //     color: CustomColors.pinkColor,
+                        //   ),
+                        // ),
                       ),
                       SizedBox(height: 18.h),
                       Divider(color: CustomColors.greyColor),
@@ -303,112 +313,112 @@ class ClinicsDetailScreen extends ConsumerWidget {
               },
             ),
 
-            Divider(color: CustomColors.greyColor),
+            // Divider(color: CustomColors.greyColor),
             SizedBox(height: 27.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.0.w),
-              child: Text("Proof Of Expertise", style: CustomFonts.black22w600),
-            ),
-            SizedBox(height: 18.h),
-            SizedBox(
-              height: 210.h,
-              child: ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 30.w),
-                scrollDirection: Axis.horizontal,
-                itemCount: 4,
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 30.0.w),
+            //   child: Text("Proof Of Expertise", style: CustomFonts.black22w600),
+            // ),
+            // SizedBox(height: 18.h),
+            // SizedBox(
+            //   height: 210.h,
+            //   child: ListView.builder(
+            //     padding: EdgeInsets.symmetric(horizontal: 30.w),
+            //     scrollDirection: Axis.horizontal,
+            //     itemCount: 4,
 
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsetsGeometry.only(right: 20.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10.r),
-                          child: Image.asset(
-                            DummyAssets.doctorImage,
-                            height: 174.h,
-                            width: 181.w,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        SizedBox(height: 6.h),
-                        Text("Treatment Name", style: CustomFonts.black18w600),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 27.h),
-            Divider(color: CustomColors.greyColor),
-            SizedBox(height: 25.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w),
-              child: Text(
-                "Our Clients Feedback",
-                style: CustomFonts.black28w600,
-              ),
-            ),
-            SizedBox(height: 25.h),
-            SizedBox(
-              height: 265.h,
-              child: ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 30.w),
-                scrollDirection: Axis.horizontal,
-                itemCount: 4,
+            //     itemBuilder: (context, index) {
+            //       return Padding(
+            //         padding: EdgeInsetsGeometry.only(right: 20.w),
+            //         child: Column(
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           children: [
+            //             ClipRRect(
+            //               borderRadius: BorderRadius.circular(10.r),
+            //               child: Image.asset(
+            //                 DummyAssets.doctorImage,
+            //                 height: 174.h,
+            //                 width: 181.w,
+            //                 fit: BoxFit.cover,
+            //               ),
+            //             ),
+            //             SizedBox(height: 6.h),
+            //             Text("Treatment Name", style: CustomFonts.black18w600),
+            //           ],
+            //         ),
+            //       );
+            //     },
+            //   ),
+            // ),
+            // SizedBox(height: 27.h),
+            // Divider(color: CustomColors.greyColor),
+            // SizedBox(height: 25.h),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 30.w),
+            //   child: Text(
+            //     "Our Clients Feedback",
+            //     style: CustomFonts.black28w600,
+            //   ),
+            // ),
+            // SizedBox(height: 25.h),
+            // SizedBox(
+            //   height: 265.h,
+            //   child: ListView.builder(
+            //     padding: EdgeInsets.symmetric(horizontal: 30.w),
+            //     scrollDirection: Axis.horizontal,
+            //     itemCount: 4,
 
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsetsGeometry.only(right: 10.w),
-                    child: Container(
-                      width: 381.w,
-                      padding: EdgeInsets.all(21.w),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15.r),
-                        border: Border.all(color: CustomColors.greyColor),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "⭐⭐⭐⭐⭐ 2 Week ago",
-                            style: CustomFonts.black14w400,
-                          ),
-                          SizedBox(height: 18.h),
-                          Text(
-                            "“I got lip fillers here, and I’m obsessed! They look so natural and plump—exactly what I wanted. The injector was so skilled and made sure I was comfortable. I’ll definitely be back for more treatments!”",
-                            style: CustomFonts.black18w400,
-                            maxLines: 5,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          SizedBox(height: 21.h),
-                          Row(
-                            children: [
-                              ClipOval(
-                                child: Image.asset(
-                                  DummyAssets.acen,
-                                  height: 43.w,
-                                  width: 43.w,
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                              SizedBox(width: 8.w),
-                              Text(
-                                "Sarah Jhonson",
-                                style: CustomFonts.black18w600,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
+            //     itemBuilder: (context, index) {
+            //       return Padding(
+            //         padding: EdgeInsetsGeometry.only(right: 10.w),
+            //         child: Container(
+            //           width: 381.w,
+            //           padding: EdgeInsets.all(21.w),
+            //           decoration: BoxDecoration(
+            //             borderRadius: BorderRadius.circular(15.r),
+            //             border: Border.all(color: CustomColors.greyColor),
+            //           ),
+            //           child: Column(
+            //             crossAxisAlignment: CrossAxisAlignment.start,
+            //             children: [
+            //               Text(
+            //                 "⭐⭐⭐⭐⭐ 2 Week ago",
+            //                 style: CustomFonts.black14w400,
+            //               ),
+            //               SizedBox(height: 18.h),
+            //               Text(
+            //                 "“I got lip fillers here, and I’m obsessed! They look so natural and plump—exactly what I wanted. The injector was so skilled and made sure I was comfortable. I’ll definitely be back for more treatments!”",
+            //                 style: CustomFonts.black18w400,
+            //                 maxLines: 5,
+            //                 overflow: TextOverflow.ellipsis,
+            //               ),
+            //               SizedBox(height: 21.h),
+            //               Row(
+            //                 children: [
+            //                   ClipOval(
+            //                     child: Image.asset(
+            //                       DummyAssets.acen,
+            //                       height: 43.w,
+            //                       width: 43.w,
+            //                       fit: BoxFit.fill,
+            //                     ),
+            //                   ),
+            //                   SizedBox(width: 8.w),
+            //                   Text(
+            //                     "Sarah Jhonson",
+            //                     style: CustomFonts.black18w600,
+            //                   ),
+            //                 ],
+            //               ),
+            //             ],
+            //           ),
+            //         ),
+            //       );
+            //     },
+            //   ),
+            // ),
 
-            SizedBox(height: 160.h),
+            // SizedBox(height: 160.h),
           ],
         ),
       ),
@@ -437,7 +447,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 10.h, left: 30.w, right: 30.w),
+                padding: EdgeInsets.only(top: 20.h, left: 30.w, right: 30.w),
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -445,32 +455,11 @@ class ClinicsDetailScreen extends ConsumerWidget {
                       // ref
                       //     .read(checkoutViewModel.notifier)
                       //     .updateState(clinicId: "xx");
-                      final treatment = ref.read(
-                        treatmentViewModel.select(
-                          (state) => state.selectedTreatment,
-                        ),
-                      );
-                      final subAreas = ref.read(
-                        treatmentViewModel.select(
-                          (state) => state.selectedSubAreasList,
-                        ),
-                      );
-
-                      final subAreaIds = subAreas
-                          .map((e) => e.id)
-                          .whereType<int>()
-                          .toList();
-
-                      ref
-                          .read(clincDoctorProvider.notifier)
-                          .getDoctors(
-                            treatmentId: treatment?.id ?? 0,
-                            sideAreaIds: subAreaIds,
-                          );
 
                       Navigator.pushNamed(
                         context,
                         ClinicServiceScreen.routeName,
+                        arguments: clinic,
                       );
                     },
                     child: Text("Book An Appointment"),

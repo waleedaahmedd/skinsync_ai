@@ -31,14 +31,15 @@ enum EndPoints {
   getClinic("clinics/by-side-area?"),
   getDoctor("doctors/by-side-area?"),
   getMe("v1/me"),
-  refreshToken('v1/auth/refresh');
+  refreshToken('v1/auth/refresh'),
+  getAvailability('v1/appointments/availability'),
+  paymentOptions('v1/appointments/payment-options'),
+  treatmentPricing('v1/treatments/pricing');
 
   final String path;
 
   const EndPoints(this.path);
 }
-
-enum PaymentMode { full, half, consultation }
 
 enum BaseUrls {
   api("https://api.skinsyncai.com/api/");

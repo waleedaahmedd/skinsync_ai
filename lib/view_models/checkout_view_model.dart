@@ -1,5 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:skinsync_ai/models/responses/treatment_response_model.dart';
+import 'package:skinsync_ai/models/responses/treatment_sub_area_response.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/face_detection_screen.dart';
 
 import '../screens/ar_face_model_Preview_screen.dart';
@@ -71,9 +73,14 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       return "/error";
     }
   }
+  void setSelectedTreamtment({required TreatmentsModel treatment, required List<TreatmentSubAreaModel> selectedSubAreasList}){
+    state = state.copyWith(selectedTreatment: treatment,selectedSubAreasList: selectedSubAreasList );
+  }
 }
 
 class CheckoutState {
+   final List<TreatmentSubAreaModel>? selectedSubAreasList;
+   final TreatmentsModel? selectedTreatment;
   final int? treatmentId;
   final int? treatmentAreaId;
   final List<int>? treatmentSubAreaId;
@@ -92,6 +99,8 @@ class CheckoutState {
     this.appointmentDate,
     this.appointmentTime,
     this.capturedImage,
+    this.selectedSubAreasList,
+    this.selectedTreatment
   });
 
   CheckoutState copyWith({
@@ -103,6 +112,8 @@ class CheckoutState {
     String? appointmentDate,
     String? appointmentTime,
     XFile? capturedImage,
+   List<TreatmentSubAreaModel>? selectedSubAreasList,
+   TreatmentsModel? selectedTreatment,
   }) {
     return CheckoutState(
       treatmentId: treatmentId ?? this.treatmentId,
@@ -113,6 +124,9 @@ class CheckoutState {
       appointmentDate: appointmentDate ?? this.appointmentDate,
       appointmentTime: appointmentTime ?? this.appointmentTime,
       capturedImage: capturedImage ?? this.capturedImage,
+      selectedSubAreasList: selectedSubAreasList ?? this.selectedSubAreasList,
+      selectedTreatment: selectedTreatment ?? this.selectedTreatment
+
     );
   }
 }

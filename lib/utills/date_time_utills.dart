@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 List<Map<String, String>> getNextNDays(int n) {
   final now = DateTime.now();
   final List<Map<String, String>> dates = [];
@@ -32,5 +34,23 @@ String _getDayString(int weekday) {
       return "Sun";
     default:
       return "";
+  }
+}
+
+extension DateTimeUtils on DateTime {
+  String get formattedDate {
+    return DateFormat('dd MMM yyyy').format(this);
+  }
+
+  String get formattedTime {
+    return DateFormat('hh:mm a').format(this);
+  }
+
+  String get formattedDateTime {
+    return DateFormat('dd MMM yyyy hh:mm a').format(this);
+  }
+
+  String get formattedWeekdayDateTime {
+    return DateFormat('EEE MMM dd - hh:mm a').format(this);
   }
 }

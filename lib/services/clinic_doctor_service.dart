@@ -7,6 +7,10 @@ import 'package:skinsync_ai/repositories/clinic_doctor_repository.dart';
 import 'package:skinsync_ai/services/api_base_helper.dart';
 import 'package:skinsync_ai/utills/enums.dart';
 
+import '../models/responses/availability_response.dart';
+import '../models/responses/payment_options_response.dart';
+import '../models/responses/treatment_pricing_response.dart';
+
 class ClinicDoctorService implements ClinicDoctorRepository {
   final ApiBaseHelper _apiClient;
 
@@ -57,5 +61,62 @@ class ClinicDoctorService implements ClinicDoctorRepository {
       final parsed = json.decode(response.body);
       throw AppException(GetDoctorResponse.fromJson(parsed).message as String);
     }
+  }
+
+  @override
+  Future<List<Slot>> getAvailability({
+    required int doctorId,
+    required int clinicId,
+    required DateTime date,
+  }) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.getAvailability,
+      requestType: 'GET',
+      params:
+          '?doctor_id=$doctorId&clinic_id=$clinicId&date=${date.millisecondsSinceEpoch ~/ 1000}',
+    );
+    final data = AvailabilityResponse.fromJson(jsonDecode(response.body));
+    if (response.statusCode < 200 && response.statusCode >= 300) {
+      throw Exception(data.message ?? 'Something went wrong!');
+    }
+    return data.slots;
+  }
+
+  @override
+  Future<List<PaymentOption>> getPaymentOptions({
+    required int clinicId,
+    required int doctorId,
+    required int amount,
+  }) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.paymentOptions,
+      requestType: 'GET',
+      params:
+          '?clinic_id=$clinicId&doctor_id=$doctorId&treatment_amount=$amount',
+    );
+    final data = PaymentOptionsResponse.fromJson(jsonDecode(response.body));
+    if (response.statusCode < 200 && response.statusCode >= 300) {
+      throw Exception(data.message ?? 'Something went wrong!');
+    }
+    return data.data ?? [];
+  }
+
+  @override
+  Future<PricingData> getTreatmentPricing({
+    required int clinicId,
+    required int treatmentId,
+    required List<int> treatmentSubsectionIds,
+  }) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.treatmentPricing,
+      requestType: 'GET',
+      params:
+          '?clinic_id=$clinicId&treatment_id=$treatmentId&treatment_subsection_ids=${treatmentSubsectionIds.join(',')}',
+    );
+    final data = TreatmentPricingResponse.fromJson(jsonDecode(response.body));
+    if (response.statusCode < 200 && response.statusCode >= 300) {
+      throw Exception(data.message ?? 'Something went wrong!');
+    }
+    return data.data!;
   }
 }

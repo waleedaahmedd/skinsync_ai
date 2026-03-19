@@ -1,32 +1,91 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/screens/bottom_nav_page.dart';
+import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
+import 'package:skinsync_ai/models/responses/payment_options_response.dart';
 import 'package:skinsync_ai/screens/notes_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/utills/enums.dart';
+import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 
-class PaymentScreen extends StatefulWidget {
+import '../models/responses/availability_response.dart';
+import '../models/responses/get_doctor_response.dart';
+
+class PaymentScreen extends ConsumerStatefulWidget {
+  final Clinic clinic;
+  final Doctor doctor;
+  final Slot slot;
+
   static const routeName = "/payment_screen";
-  const PaymentScreen({super.key});
+  const PaymentScreen({
+    super.key,
+    required this.clinic,
+    required this.doctor,
+    required this.slot,
+  });
 
   @override
-  State<PaymentScreen> createState() => _PaymentScreenState();
+  ConsumerState<PaymentScreen> createState() => _PaymentScreenState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> {
-  PaymentMode selectedMode = PaymentMode.full;
+class _PaymentScreenState extends ConsumerState<PaymentScreen> {
+  PaymentOption? selectedMode;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref
+          .read(clincDoctorProvider.notifier)
+          .getPaymentOptions(
+            clinicId: widget.clinic!.clinicId!,
+            doctorId: widget.doctor!.id!,
+          );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(showTitle: false),
       body: Padding(
         padding: EdgeInsetsGeometry.symmetric(horizontal: 30.w),
-        child: SingleChildScrollView(
+        child: _buildBody(),
+      ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(
+          top: 20.h,
+          bottom: MediaQuery.paddingOf(context).bottom + 20.h,
+          left: 20.w,
+          right: 20.w,
+        ),
+        child: SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, NotesScreen.routeName);
+            },
+            child: Text("PayNow"),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBody() {
+    return Consumer(
+      builder: (_, ref, _) {
+        final state = ref.watch(
+          clincDoctorProvider.select((s) => (s.paymentOptions, s.loading)),
+        );
+        if (state.$2) {
+          return Center(
+            child: CircularProgressIndicator(color: CustomColors.pinkColor),
+          );
+        }
+        return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: .start,
             children: [
@@ -55,7 +114,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       crossAxisAlignment: .start,
                       children: [
                         Text(
-                          "Monday, Feb 03 - 11:00 AM",
+                          widget.slot.appointmentDateTime,
                           style: CustomFonts.black14w500,
                         ),
                         Text(
@@ -63,7 +122,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           style: CustomFonts.black14w600,
                         ),
                         Text(
-                          "Glow Skin Clinic",
+                          widget.clinic.clinicName ?? "Glow Skin Clinic",
                           style: CustomFonts.black14w400,
                         ),
                         Row(
@@ -89,76 +148,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
               SizedBox(height: 22.h),
               Text("Select Your Payment Mode", style: CustomFonts.black22w600),
               SizedBox(height: 20.h),
-              paymentTile(
-                mode: PaymentMode.full,
-                title: "Full Payment",
-                description:
-                    "Lorem ipsum dolor sit amet consectetur. Cursus iaculis est cras viverra vitae sit pellentesq",
-              ),
-              SizedBox(height: 15.h),
-              paymentTile(
-                mode: PaymentMode.half,
-                title: "Half Payment",
-                description:
-                    "Lorem ipsum dolor sit amet consectetur. Cursus iaculis est cras viverra vitae sit pellentesq",
-              ),
-              SizedBox(height: 15.h),
-              paymentTile(
-                mode: PaymentMode.consultation,
-                title: "Consultation fee",
-                description:
-                    "Lorem ipsum dolor sit amet consectetur. Cursus iaculis est cras viverra vitae sit pellentesq",
-              ),
-              // Text("Select Payment Method", style: CustomFonts.black16w500),
-              // SizedBox(height: 20.h),
-              // Row(
-              //   children: [
-              //    Image.asset(PngAssets.masterLogo,height: 50.h,width: 50.w,),
-              //     SizedBox(width: 10.w),
-              //     Column(
-              //       crossAxisAlignment: .start,
-              //       children: [
-              //         Text("Master Card", style: CustomFonts.black14w600),
-              //         SizedBox(height: 4.h),
-              //         Text("5689470025899658", style: CustomFonts.black12w500),
-              //       ],
-              //     ),
-              //   ],
-              // ),
-              // SizedBox(width: 10.w),
-              // Row(
-              //   children: [
-              //     Container(
-              //       padding: EdgeInsets.symmetric(
-              //         horizontal: 7.w,
-              //         vertical: 19.h,
-              //       ),
-              //       height: 50.h,
-              //       width: 50.w,
-              //       child: SvgPicture.asset(SvgAssets.visaLogo),
-              //     ),
-              //     SizedBox(width: 10.w),
-              //     Column(
-              //       crossAxisAlignment: .start,
-              //       children: [
-              //         Text("Visa Card", style: CustomFonts.black14w600),
-              //         SizedBox(height: 4.h),
-              //         Text("5689470025899658", style: CustomFonts.black12w500),
-              //       ],
-              //     ),
-              //   ],
-              // ),
-              // SizedBox(height: 16.h,),
-              // Container(
-              //   padding: EdgeInsets.symmetric(vertical:
-              //   11.h),
-              //   decoration: BoxDecoration(
-              //     borderRadius: BorderRadius.circular(10.r),
-              //     color: CustomColors.purpleColor
-
-              //   ),
-              //   child: Center(child: Text("Add New Card",style: CustomFonts.white18w600,),),
-              // ),
+              for (final paymentOption in state.$1)
+                paymentTile(
+                  price: paymentOption.amount ?? 0,
+                  paymentOption: paymentOption,
+                  title: paymentOption.title ?? 'N/A',
+                  description: paymentOption.description ?? 'N/A',
+                ),
               SizedBox(height: 22.h),
               Divider(height: 0, color: Colors.grey.shade300),
               SizedBox(height: 22.h),
@@ -203,39 +199,23 @@ class _PaymentScreenState extends State<PaymentScreen> {
               SizedBox(height: 24.h),
             ],
           ),
-        ),
-      ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.only(
-          top: 20.h,
-          bottom: MediaQuery.paddingOf(context).bottom + 20.h,
-          left: 20.w,
-          right: 20.w,
-        ),
-        child: SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, NotesScreen.routeName);
-            },
-            child: Text("PayNow"),
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 
   Widget paymentTile({
-    required PaymentMode mode,
     required String title,
     required String description,
+    required int price,
+    required PaymentOption paymentOption,
   }) {
-    final isSelected = selectedMode == mode;
+    final isSelected = selectedMode == paymentOption;
 
     return GestureDetector(
       onTap: () {
         setState(() {
-          selectedMode = mode;
+          selectedMode = paymentOption;
         });
       },
       child: Container(
@@ -265,11 +245,19 @@ class _PaymentScreenState extends State<PaymentScreen> {
             ),
 
             /// Radio icon
-            Icon(
-              isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-              color: isSelected
-                  ? CustomColors.lightBlueColor
-                  : Colors.grey.shade400,
+            Column(
+              children: [
+                Text("\$ $price", style: CustomFonts.red13w500),
+                SizedBox(height: 5.h),
+                Icon(
+                  isSelected
+                      ? Icons.radio_button_checked
+                      : Icons.radio_button_off,
+                  color: isSelected
+                      ? CustomColors.lightBlueColor
+                      : Colors.grey.shade400,
+                ),
+              ],
             ),
           ],
         ),

@@ -11,8 +11,10 @@ import '../models/responses/treatment_response_model.dart';
 import '../view_models/checkout_view_model.dart';
 
 class TreatmentContainer extends StatelessWidget {
+  final double? imageHeight;
+  final double? width;
   final TreatmentsModel treatments;
-  const TreatmentContainer({super.key, required this.treatments});
+  const TreatmentContainer({super.key, required this.treatments,this.imageHeight,this.width});
 
   @override
   Widget build(BuildContext context) {
@@ -30,17 +32,21 @@ class TreatmentContainer extends StatelessWidget {
               // Use onTapTreatment to properly set treatmentId and handle the logic
               ref
                   .read(treatmentViewModel.notifier)
-                  .onTapTreatment(treatmentModel: treatments, isCallPredictAPI: false);
-             // TreatmentAreaScreen.show(context);
+                  .onTapTreatment(
+                    treatmentModel: treatments,
+                    isCallPredictAPI: false,
+                  );
+              // TreatmentAreaScreen.show(context);
             }
             //else {
-              Navigator.pushNamed(
-                context,
-                ref.read(checkoutViewModel.notifier).navigateTo(),
-              );
+            Navigator.pushNamed(
+              context,
+              ref.read(checkoutViewModel.notifier).navigateTo(),
+            );
             // }
           },
           child: Container(
+            width: width ?? MediaQuery.sizeOf(context).width,
             margin: EdgeInsets.only(bottom: 16.h),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -71,13 +77,23 @@ class TreatmentContainer extends StatelessWidget {
                   Stack(
                     children: [
                       Container(
-                        height: 180.h,
+                        height:imageHeight ??  180.h,
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(PngAssets.image),
-                            fit: BoxFit.cover,
-                          ),
+                          // image: DecorationImage(
+                          //   image: treatments.imageUrl == null
+                          //       ? AssetImage(PngAssets.image) as ImageProvider
+                          //       : NetworkImage(treatments.imageUrl.toString()),
+                          //   fit: BoxFit.cover,
+                          //   onError: (exception, stackTrace) {},
+                          // ),
+                        ),
+                        child: Image.network(
+                          treatments.imageUrl ?? '',
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(Icons.broken_image);
+                          },
                         ),
                       ),
                       Positioned(
@@ -88,6 +104,7 @@ class TreatmentContainer extends StatelessWidget {
                             Navigator.pushNamed(
                               context,
                               TreatmentDetailScreen.routeName,
+                              arguments: treatments,
                             );
                           },
                           behavior: HitTestBehavior.opaque,
@@ -118,7 +135,8 @@ class TreatmentContainer extends StatelessWidget {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        if (treatments.description != null && treatments.description!.isNotEmpty) ...[
+                        if (treatments.description != null &&
+                            treatments.description!.isNotEmpty) ...[
                           SizedBox(height: 8.h),
                           Text(
                             treatments.description!,

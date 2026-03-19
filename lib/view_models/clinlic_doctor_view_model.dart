@@ -9,6 +9,10 @@ import 'package:skinsync_ai/services/api_base_helper.dart';
 import 'package:skinsync_ai/services/clinic_doctor_service.dart';
 import 'package:skinsync_ai/utills/enums.dart';
 import 'package:skinsync_ai/view_models/base_view_model.dart';
+import 'package:skinsync_ai/view_models/treatment_view_model.dart';
+
+import '../models/responses/availability_response.dart';
+import '../models/responses/payment_options_response.dart';
 
 final clincDoctorProvider = NotifierProvider(() {
   final apiBaseHelper = ApiBaseHelper();
@@ -16,10 +20,10 @@ final clincDoctorProvider = NotifierProvider(() {
   return ClinicDoctorViewModel(clinicRepository: clinicService);
 });
 
-class ClinicDoctorViewModel extends BaseViewModel<ClinlicDoctorState> {
+class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
   ClinicDoctorViewModel({required ClinicDoctorRepository clinicRepository})
     : _clinicRepository = clinicRepository,
-      super(initialState: ClinlicDoctorState());
+      super(initialState: ClinicDoctorState());
 
   final ClinicDoctorRepository _clinicRepository;
 
@@ -46,6 +50,8 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinlicDoctorState> {
   Future<bool?> getDoctors({
     required int treatmentId,
     required List<int> sideAreaIds,
+    required int? clinicId,
+    required DateTime date,
   }) async {
     state = state.copyWith(doctorLoading: true);
     final String sideAreas = sideAreaIds.join(',');
@@ -56,8 +62,72 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinlicDoctorState> {
         treatmentId: treatmentId,
         sideAreaIdsList: sideAreas,
       );
-      state = state.copyWith(doctorLoading: false, doctorResponse: response);
+      final doctor = response.data?.firstOrNull;
+      List<Slot> availability = [];
+      if (doctor != null && clinicId != null) {
+        availability = await _clinicRepository.getAvailability(
+          doctorId: doctor.id!,
+          clinicId: clinicId,
+          date: date,
+        );
+      }
+      state = state.copyWith(
+        doctorLoading: false,
+        doctorResponse: response,
+        selectedDoctor: response.data?.firstOrNull,
+        slots: availability,
+      );
       return response.isSuccess == true;
+    });
+  }
+
+  Future<void> fetchAvailability({
+    required DateTime date,
+    required int clinicId,
+  }) async {
+    return await runSafely(() async {
+      if (state.selectedDoctor == null) {
+        return;
+      }
+      state = state.copyWith(loading: true);
+      final availability = await _clinicRepository.getAvailability(
+        doctorId: state.selectedDoctor!.id!,
+        clinicId: state.clinicId!,
+        date: date,
+      );
+      state = state.copyWith(
+        doctorLoading: false,
+        loading: false,
+        slots: availability,
+      );
+    });
+  }
+
+  Future<void> getPaymentOptions({
+    required int clinicId,
+    required int doctorId,
+  }) async {
+    return await runSafely(() async {
+      final treatmentState = ref.read(treatmentViewModel);
+      if (treatmentState.selectedTreatment == null ||
+          treatmentState.selectedSubAreasList.isEmpty) {
+        return;
+      }
+      state = state.copyWith(loading: true);
+      final pricing = await _clinicRepository.getTreatmentPricing(
+        clinicId: clinicId,
+        treatmentId: treatmentState.selectedTreatment!.id!,
+        treatmentSubsectionIds: treatmentState.selectedSubAreasList
+            .map((area) => area.id!)
+            .toList(),
+      );
+      final amount = pricing.treatment!.price! * pricing.subSections!.length;
+      final paymentOptions = await _clinicRepository.getPaymentOptions(
+        clinicId: clinicId,
+        doctorId: doctorId,
+        amount: amount,
+      );
+      state = state.copyWith(loading: false, paymentOptions: paymentOptions);
     });
   }
 
@@ -69,22 +139,29 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinlicDoctorState> {
 
   @override
   void onError(String message) {
-    state = state.copyWith(clinicLoading: false, doctorLoading: false);
+    state = state.copyWith(
+      clinicLoading: false,
+      doctorLoading: false,
+      loading: false,
+    );
     super.onError(message);
     EasyLoading.showError(message);
   }
 }
 
 @immutable
-class ClinlicDoctorState extends BaseStateModel {
+class ClinicDoctorState extends BaseStateModel {
   final GetClinicResponse? clinicResponse;
   final bool clinicLoading;
   final GetDoctorResponse? doctorResponse;
   final bool doctorLoading;
   final int? clinicId;
   final ViewType viewType;
+  final Doctor? selectedDoctor;
+  final List<Slot> slots;
+  final List<PaymentOption> paymentOptions;
 
-  const ClinlicDoctorState({
+  const ClinicDoctorState({
     super.loading = false,
     super.errorMessage,
     this.clinicResponse,
@@ -93,10 +170,13 @@ class ClinlicDoctorState extends BaseStateModel {
     this.doctorLoading = false,
     this.clinicId,
     this.viewType = ViewType.grid,
+    this.selectedDoctor,
+    this.slots = const [],
+    this.paymentOptions = const [],
   });
 
   @override
-  ClinlicDoctorState copyWith({
+  ClinicDoctorState copyWith({
     bool? loading,
     String? errorMessage,
     GetClinicResponse? clinicResponse,
@@ -105,8 +185,11 @@ class ClinlicDoctorState extends BaseStateModel {
     bool? doctorLoading,
     int? clinicId,
     ViewType? viewType,
+    Doctor? selectedDoctor,
+    List<Slot>? slots,
+    List<PaymentOption>? paymentOptions,
   }) {
-    return ClinlicDoctorState(
+    return ClinicDoctorState(
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
       clinicLoading: clinicLoading ?? this.clinicLoading,
@@ -115,6 +198,9 @@ class ClinlicDoctorState extends BaseStateModel {
       doctorLoading: doctorLoading ?? this.doctorLoading,
       clinicId: clinicId ?? this.clinicId,
       viewType: viewType ?? this.viewType,
+      selectedDoctor: selectedDoctor ?? this.selectedDoctor,
+      slots: slots ?? this.slots,
+      paymentOptions: paymentOptions ?? this.paymentOptions,
     );
   }
 }

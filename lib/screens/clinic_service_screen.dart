@@ -1,39 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
-import 'package:skinsync_ai/screens/additional_info_screen.dart';
-import 'package:skinsync_ai/screens/select_product_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
+import 'package:skinsync_ai/models/responses/get_doctor_response.dart';
 import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/time_container.dart';
 import 'package:skinsync_ai/widgets/treatment_price_container.dart';
 
-class ClinicServiceScreen extends StatefulWidget {
-  const ClinicServiceScreen({super.key});
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../utills/date_time_utills.dart';
+import '../view_models/checkout_view_model.dart';
+import '../view_models/treatment_view_model.dart';
+import 'payment_screen.dart';
+
+class ClinicServiceScreen extends ConsumerStatefulWidget {
+  final Clinic? clinic;
+  const ClinicServiceScreen({super.key, this.clinic});
   static const String routeName = '/ClinicServiceScreen';
 
   @override
-  State<ClinicServiceScreen> createState() => _ClinicServiceScreenState();
+  ConsumerState<ClinicServiceScreen> createState() =>
+      _ClinicServiceScreenState();
 }
 
-class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
-  DateTime? selectedDate;
+class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
+  DateTime selectedDate = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final treatment = ref.read(
+        treatmentViewModel.select((state) => state.selectedTreatment),
+      );
+      final subAreas = ref.read(
+        treatmentViewModel.select((state) => state.selectedSubAreasList),
+      );
+
+      final subAreaIds = subAreas.map((e) => e.id).whereType<int>().toList();
+
+      ref
+          .read(clincDoctorProvider.notifier)
+          .getDoctors(
+            treatmentId: treatment?.id ?? 0,
+            sideAreaIds: subAreaIds,
+            date: selectedDate,
+            clinicId: widget.clinic?.clinicId,
+          );
+    });
+  }
 
   Future<void> _pickDate() async {
     DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
+      initialDate: selectedDate,
+      firstDate: DateTime.now(),
       lastDate: DateTime(2100),
     );
 
     if (picked != null) {
+      selecteTime = null;
+      if (widget.clinic?.clinicId != null) {
+        ref
+            .read(clincDoctorProvider.notifier)
+            .fetchAvailability(
+              date: picked,
+              clinicId: widget.clinic!.clinicId!,
+            );
+      }
       setState(() {
         selectedDate = picked;
       });
@@ -65,14 +105,9 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
 
               Consumer(
                 builder: (context, ref, _) {
-                  final isloading = ref
-                      .watch(clincDoctorProvider)
-                      .doctorLoading;
-                  final doctors = ref
-                      .watch(clincDoctorProvider)
-                      .doctorResponse
-                      ?.data;
-                  if (isloading) {
+                  final state = ref.watch(clincDoctorProvider);
+                  final doctors = state.doctorResponse?.data;
+                  if (state.doctorLoading) {
                     return SizedBox(
                       height: 150.h, // same height as doctor list
                       child: Center(
@@ -81,7 +116,7 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                         ),
                       ),
                     );
-                  } else if (doctors!.isEmpty) {
+                  } else if (doctors?.isEmpty ?? true) {
                     return SizedBox(
                       height: 150.h,
                       child: Center(
@@ -95,60 +130,16 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                   return SizedBox(
                     height: 150.h,
                     child: ListView.builder(
-                      itemCount: doctors.length,
+                      itemCount: doctors!.length,
                       scrollDirection: Axis.horizontal,
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.only(
-                            left: index == 0 ? 30.w : 0,
-                            right: 15.w,
-                          ),
-                          child: Container(
-                            padding: EdgeInsets.only(
-                              top: 21.h,
-                              bottom: 12.h,
-                              left: 25.w,
-                              right: 25.w,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15.r),
-                              border: Border.all(
-                                color: CustomColors.lightPurpleColor,
-                                width: 2.w,
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                ClipOval(
-                                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                                  child: Image.network(
-                                    doctors[index].image ?? "",
-                                    fit: BoxFit.cover,
-                                    height: 57.67.w,
-                                    width: 58.39.w,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Icon(
-                                        Icons.broken_image,
-                                        size: 57.sp,
-                                      );
-                                    },
-                                  ),
-                                ),
-                                SizedBox(height: 6.23.h),
-                                Text(
-                                  doctors[index].name ?? "",
-                                  style: CustomFonts.black18w600,
-                                ),
-                                SizedBox(height: 3.32.h),
-                                Text(
-                                  doctors[index].specialization ?? "",
-                                  style: CustomFonts.black14w400,
-                                ),
-                              ],
-                            ),
-                          ),
+                        final isSelected =
+                            doctors[index].id == state.selectedDoctor?.id;
+                        return _buildDoctorCard(
+                          doctors[index],
+                          index,
+                          isSelected,
                         );
                       },
                     ),
@@ -163,36 +154,25 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Select Your Services",
-                      style: CustomFonts.black22w600,
-                    ),
+                    Text("Selected Services", style: CustomFonts.black22w600),
                     SizedBox(height: 17.h),
                     Text(
                       "Lorem ipsum dolor sit amet consectetur. Cursus iaculis est cras viverra vitae sit pellentesq",
                       style: CustomFonts.grey13w400,
                     ),
                     SizedBox(height: 10.h),
-                    ListView.separated(
-                      physics: NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.all(0),
-                      separatorBuilder: (context, index) {
-                        return SizedBox(height: 15.h);
-                      },
-                      shrinkWrap: true,
-                      itemCount: 3,
-                      itemBuilder: (context, index) {
+                    Consumer(
+                      builder: (context, ref, _) {
                         return TreatmentPriceContainer(
-                          isSelected: selectedFilterIndex == index,
+                          isSelected: true,
+                          selectedTreatment: ref
+                              .watch(checkoutViewModel)
+                              .selectedTreatment,
+                          selectedSubAreasList: ref
+                              .watch(checkoutViewModel)
+                              .selectedSubAreasList!,
 
                           image: DummyAssets.treatmentimage,
-                          treatmentName: " Treatment Name",
-                          price: 550,
-                          onTap: () {
-                            setState(() {
-                              selectedFilterIndex = index;
-                            });
-                          },
                         );
                       },
                     ),
@@ -237,11 +217,7 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                               ),
                               SizedBox(height: 3.45.h),
                               Text(
-                                selectedDate == null
-                                    ? "Select Date"
-                                    : DateFormat(
-                                        'dd MMM yyyy',
-                                      ).format(selectedDate!),
+                                selectedDate.formattedDate,
                                 style: CustomFonts.black12w600,
                               ),
                             ],
@@ -269,51 +245,61 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                     SizedBox(height: 25.h),
                     Row(
                       children: [
+                        statusHint(status: "Booked", color: Colors.grey),
+                        SizedBox(width: 16.w),
                         statusHint(
-                          status: "Booked",
+                          status: "Available",
                           color: CustomColors.greyColor,
                         ),
-                        SizedBox(width: 16.w),
-                        statusHint(status: "Available", color: Colors.grey),
                         SizedBox(width: 16.w),
                         statusHint(status: "Selected", color: Colors.green),
                       ],
                     ),
                     SizedBox(height: 25.h),
-                    Wrap(
-                      spacing: 12.w, // Horizontal spacing
-                      runSpacing: 12.0.h, // Vertical spacing
-                      children: List.generate(6, (index) {
-                        return TimeContainer(
-                          onTap: () {
-                            setState(() {
-                              selecteTime = index;
-                            });
-                          },
-                          time: "10:30 AM - 10:30 AM",
-                          isAvailable: index % 2 == 0 ? true : false,
-                          isBooked: index % 2 == 0 ? false : true,
-                          isSelected: selecteTime == index,
+                    Consumer(
+                      builder: (_, ref, _) {
+                        final state = ref.watch(
+                          clincDoctorProvider.select(
+                            (s) => (s.slots, s.loading),
+                          ),
                         );
-                        //Container(
-                        //   height: 44.17.h,
-                        //   width: 175.72.w,
-                        //   //padding: EdgeInsets.symmetric(horizontal: 26.w,vertical: 13.h),
-                        //   decoration: BoxDecoration(
-                        //     border: Border.all(
-                        //       width: 0.63.w,
-                        //       color: CustomColors.blackColor,
-                        //     ),
-                        //     borderRadius: BorderRadius.circular(10.r),
-                        //   ),
-                        //   child: Center(
-                        //     child: Text(
-                        //       "10:30 AM-10:30 AM",
-                        //       style: CustomFonts.black15w400,
-                        //     ),
-                        //   ),
-                        // );
-                      }),
+                        if (state.$1.isEmpty) {
+                          return Center(
+                            child: Text(
+                              'No slots available!',
+                              style: CustomFonts.black14w600,
+                            ),
+                          );
+                        }
+                        if (state.$2) {
+                          return SizedBox(
+                            height: 60.h,
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: CustomColors.pinkColor,
+                              ),
+                            ),
+                          );
+                        }
+                        return Wrap(
+                          spacing: 12.w,
+                          runSpacing: 12.0.h,
+                          children: List.generate(state.$1.length, (index) {
+                            final slot = state.$1[index];
+                            return TimeContainer(
+                              onTap: () {
+                                setState(() {
+                                  selecteTime = index;
+                                });
+                              },
+                              time: slot.formattedTime,
+                              isAvailable: !slot.isBooked,
+                              isBooked: slot.isBooked,
+                              isSelected: selecteTime == index,
+                            );
+                          }),
+                        );
+                      },
                     ),
                     SizedBox(height: 25.h),
                     Divider(
@@ -397,9 +383,23 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
                       SizedBox(width: 47.h),
                       GestureDetector(
                         onTap: () {
+                          final state = ref.read(clincDoctorProvider);
+                          if (state.selectedDoctor == null) {
+                            EasyLoading.showError('Select a doctor first!');
+                            return;
+                          }
+                          if (selecteTime == null) {
+                            EasyLoading.showError('Select a slot first!');
+                            return;
+                          }
                           Navigator.pushNamed(
                             context,
-                            AdditionalInfoScreen.routeName,
+                            PaymentScreen.routeName,
+                            arguments: {
+                              'clinic': widget.clinic!,
+                              'doctor': state.selectedDoctor!,
+                              'slot': state.slots[selecteTime!],
+                            },
                           );
                         },
                         child: Container(
@@ -425,6 +425,50 @@ class _ClinicServiceScreenState extends State<ClinicServiceScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Padding _buildDoctorCard(Doctor doctor, int index, bool isSelected) {
+    return Padding(
+      padding: EdgeInsets.only(left: index == 0 ? 30.w : 0, right: 15.w),
+      child: Container(
+        padding: EdgeInsets.only(
+          top: 21.h,
+          bottom: 12.h,
+          left: 25.w,
+          right: 25.w,
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15.r),
+          border: Border.all(
+            color: isSelected
+                ? CustomColors.pinkColor
+                : CustomColors.lightPurpleColor,
+            width: 2.w,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            ClipOval(
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              child: Image.network(
+                doctor.image ?? "",
+                fit: BoxFit.cover,
+                height: 57.67.w,
+                width: 58.39.w,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(Icons.broken_image, size: 57.sp);
+                },
+              ),
+            ),
+            SizedBox(height: 6.23.h),
+            Text(doctor.name ?? "", style: CustomFonts.black18w600),
+            SizedBox(height: 3.32.h),
+            Text(doctor.specialization ?? "", style: CustomFonts.black14w400),
+          ],
         ),
       ),
     );

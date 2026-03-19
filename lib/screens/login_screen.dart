@@ -11,6 +11,8 @@ import 'package:skinsync_ai/utills/enums.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/phone_widget.dart';
 
+import '../widgets/custom_app_bar.dart';
+
 class LoginScreen extends ConsumerStatefulWidget {
   static const String routeName = '/LoginScreen';
   final LoginProviders loginWith;
@@ -148,29 +150,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final loginWithEmail = widget.loginWith == LoginProviders.email;
 
     return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: InkWell(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: CustomColors.iconColor,
-              ),
-              child: Icon(
-                CupertinoIcons.arrow_left,
-                size: 20.w,
-                color: Colors.black,
-              ),
-            ),
-          ),
-        ),
-      ),
+      appBar: CustomAppBar(showTitle: false),
       body: Padding(
         padding: EdgeInsets.only(left: 30.w, right: 30.w),
         child: Form(
-          key:_formKey,
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -198,7 +182,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
               SizedBox(height: 22.h),
               loginWithEmail
                   ? TextFormField(
-                      controller: ref.read(authViewModel.notifier).emailController,
+                      controller: ref
+                          .read(authViewModel.notifier)
+                          .emailController,
                       style: CustomFonts.black18w400,
                       decoration: InputDecoration(hintText: "Email Address"),
                       validator: (value) {
@@ -206,7 +192,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           return 'Please enter your email';
                         }
                         final emailRegExp = RegExp(
-                            r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                          r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                        );
                         if (!emailRegExp.hasMatch(value)) {
                           return 'Enter a valid email';
                         }
@@ -218,7 +205,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           .read(authViewModel.notifier)
                           .phoneController,
                       filled: true,
-                      
                     ),
             ],
           ),
@@ -232,27 +218,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () async {
-                if (_formKey.currentState?.validate() ?? false){
-                final req = loginWithEmail
-                    ? SignInWithEmailRequest(
-                        email: ref.read(authViewModel.notifier).emailController.text,
-                        provider: LoginProviders.email,
-                        deviceInfo: "devicefo",
-                        ipAddress: "ipAddr"
-                      )
-                    : SignInWithPhoneRequest(
-                        phone: _phoneController.value.text,
-                        provider: LoginProviders.phone,
-                        deviceInfo: "deviceInfo",
-                        ipAddress: "ipAddress",
-                      );
-                final success = await ref
-                    .read(authViewModel.notifier)
-                    .callSignInApi(req);
-                if (success == true) {
-                  Navigator.of(context).pushNamed(OtpScreen.routeName);
+                if (_formKey.currentState?.validate() ?? false) {
+                  final req = loginWithEmail
+                      ? SignInWithEmailRequest(
+                          email: ref
+                              .read(authViewModel.notifier)
+                              .emailController
+                              .text,
+                          provider: LoginProviders.email,
+                          deviceInfo: "devicefo",
+                          ipAddress: "ipAddr",
+                        )
+                      : SignInWithPhoneRequest(
+                          phone: _phoneController.value.text,
+                          provider: LoginProviders.phone,
+                          deviceInfo: "deviceInfo",
+                          ipAddress: "ipAddress",
+                        );
+                  final success = await ref
+                      .read(authViewModel.notifier)
+                      .callSignInApi(req);
+                  if (success == true) {
+                    Navigator.of(context).pushNamed(OtpScreen.routeName);
+                  }
                 }
-              }
               },
               child: ref.watch(authViewModel).loading
                   ? CircularProgressIndicator()

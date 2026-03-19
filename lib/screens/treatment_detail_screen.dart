@@ -4,14 +4,18 @@ import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/screens/clinic_service_screen.dart';
 import 'package:skinsync_ai/screens/clinics_detail_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
+import '../models/responses/treatment_response_model.dart';
+
 class TreatmentDetailScreen extends StatelessWidget {
-  const TreatmentDetailScreen({super.key});
+  final TreatmentsModel treatments;
+
+  const TreatmentDetailScreen({super.key, required this.treatments});
+
   static const String routeName = '/TreatmentDetailScreen';
 
   @override
@@ -27,8 +31,11 @@ class TreatmentDetailScreen extends StatelessWidget {
               height: 293.h,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(DummyAssets.treatmentimage),
+                  image: treatments.imageUrl == null
+                      ? AssetImage(PngAssets.image) as ImageProvider
+                      : NetworkImage(treatments.imageUrl.toString()),
                   fit: BoxFit.cover,
+                  onError: (exception, stackTrace) {},
                 ),
               ),
               child: Padding(
@@ -51,7 +58,6 @@ class TreatmentDetailScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-
                     Container(
                       padding: EdgeInsets.all(11),
                       decoration: BoxDecoration(
@@ -75,7 +81,7 @@ class TreatmentDetailScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Derma Fillers - Cheeks",
+                    treatments.name ?? "Derma Fillers - Cheeks",
                     style: CustomFonts.black30w600,
                   ),
                   SizedBox(height: 6.h),
@@ -193,7 +199,7 @@ class TreatmentDetailScreen extends StatelessWidget {
                 ),
               ),
             ),
-           SizedBox(height: 160.h),
+            SizedBox(height: 160.h),
           ],
         ),
       ),
@@ -239,10 +245,10 @@ class TreatmentDetailScreen extends StatelessWidget {
                       SizedBox(width: 47.h),
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            ClinicServiceScreen.routeName,
-                          );
+                          // Navigator.pushNamed(
+                          //   context,
+                          //   ClinicServiceScreen.routeName,
+                          // );
                         },
                         child: Container(
                           width: 187.w,
@@ -269,7 +275,6 @@ class TreatmentDetailScreen extends StatelessWidget {
           ),
         ),
       ),
-   
     );
   }
 

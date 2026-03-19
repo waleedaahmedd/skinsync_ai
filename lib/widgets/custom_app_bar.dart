@@ -8,11 +8,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showTitle;
   final String? title;
 
-  const CustomAppBar({
-    super.key,
-    required this.showTitle,
-    this.title,
-  });
+  const CustomAppBar({super.key, required this.showTitle, this.title});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -20,9 +16,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      leadingWidth: 40.w + 40.w,
       leading: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: InkWell(
+        child: GestureDetector(
           onTap: () => Navigator.pop(context),
           child: Container(
             decoration: BoxDecoration(
@@ -38,10 +35,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       title: showTitle
-          ? Text(
-              title ?? '',
-              style: CustomFonts.black26w600,
-            )
+          ? Text(title ?? '', style: CustomFonts.black26w600)
           : const SizedBox.shrink(),
     );
   }

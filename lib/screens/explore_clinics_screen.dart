@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
+import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/custom_clinic_grid_view_title.dart';
@@ -132,25 +135,42 @@ class ExploreClinicsScreen extends ConsumerWidget {
                 ref
                     .read(clincDoctorProvider.notifier)
                     .setClinicId(clinics[index].clinicId!);
-                Navigator.pushNamed(context, ClinicsDetailScreen.routeName);
+                Navigator.pushNamed(
+                  context,
+                  ClinicsDetailScreen.routeName,
+                  arguments: clinics[index],
+                );
               },
             );
           },
         ),
       ),
-      ViewType.map => GoogleMap(
-        initialCameraPosition: CameraPosition(
-          target: LatLng(24.9211313, 67.0708059),
-          zoom: 13,
-        ),
-        padding: MediaQuery.paddingOf(ref.context),
-        markers: clinics.map((clinic) {
-          return Marker(
-            markerId: MarkerId('${clinic.clinicId}'),
-            position: LatLng(24.9211313, 67.0708059),
+      ViewType.map => Consumer(
+        builder: (_, ref, _) {
+          final addressData = ref.watch(
+            authViewModel.select((s) => s.addressData),
           );
-        }).toSet(),
-        onMapCreated: (controller) {},
+          final position = CameraPosition(
+            target: addressData?.latLng ?? LatLng(24.9211313, 67.0708059),
+            zoom: 13,
+          );
+          log('ADDRESS: ${addressData?.address}');
+          return GoogleMap(
+            initialCameraPosition: position,
+            padding: MediaQuery.paddingOf(ref.context),
+            markers: clinics.map((clinic) {
+              return Marker(
+                markerId: MarkerId('${clinic.clinicId}'),
+                position: position.target,
+              );
+            }).toSet(),
+            onMapCreated: (controller) async {
+              await controller.animateCamera(
+                CameraUpdate.newCameraPosition(position),
+              );
+            },
+          );
+        },
       ),
     };
   }
