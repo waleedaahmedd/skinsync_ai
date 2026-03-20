@@ -45,6 +45,12 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
 
       final subAreaIds = subAreas.map((e) => e.id).whereType<int>().toList();
 
+      if (widget.clinic?.clinicId != null) {
+        ref
+            .read(clincDoctorProvider.notifier)
+            .setClinicId(widget.clinic!.clinicId!);
+      }
+
       ref
           .read(clincDoctorProvider.notifier)
           .getDoctors(
@@ -430,45 +436,59 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
     );
   }
 
-  Padding _buildDoctorCard(Doctor doctor, int index, bool isSelected) {
-    return Padding(
-      padding: EdgeInsets.only(left: index == 0 ? 30.w : 0, right: 15.w),
-      child: Container(
-        padding: EdgeInsets.only(
-          top: 21.h,
-          bottom: 12.h,
-          left: 25.w,
-          right: 25.w,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15.r),
-          border: Border.all(
-            color: isSelected
-                ? CustomColors.pinkColor
-                : CustomColors.lightPurpleColor,
-            width: 2.w,
+  Widget _buildDoctorCard(Doctor doctor, int index, bool isSelected) {
+    return GestureDetector(
+      onTap: () {
+        ref.read(clincDoctorProvider.notifier).setSelectedDoctor(doctor);
+        if (widget.clinic?.clinicId != null) {
+          ref.read(clincDoctorProvider.notifier).fetchAvailability(
+            date: selectedDate,
+            clinicId: widget.clinic!.clinicId!,
+          );
+        }
+        setState(() {
+          selecteTime = null;
+        });
+      },
+      child: Padding(
+        padding: EdgeInsets.only(left: index == 0 ? 30.w : 0, right: 15.w),
+        child: Container(
+          padding: EdgeInsets.only(
+            top: 21.h,
+            bottom: 12.h,
+            left: 25.w,
+            right: 25.w,
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ClipOval(
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              child: Image.network(
-                doctor.image ?? "",
-                fit: BoxFit.cover,
-                height: 57.67.w,
-                width: 58.39.w,
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(Icons.broken_image, size: 57.sp);
-                },
-              ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15.r),
+            border: Border.all(
+              color: isSelected
+                  ? CustomColors.pinkColor
+                  : CustomColors.lightPurpleColor,
+              width: 2.w,
             ),
-            SizedBox(height: 6.23.h),
-            Text(doctor.name ?? "", style: CustomFonts.black18w600),
-            SizedBox(height: 3.32.h),
-            Text(doctor.specialization ?? "", style: CustomFonts.black14w400),
-          ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ClipOval(
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                child: Image.network(
+                  doctor.image ?? "",
+                  fit: BoxFit.cover,
+                  height: 57.67.w,
+                  width: 58.39.w,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(Icons.broken_image, size: 57.sp);
+                  },
+                ),
+              ),
+              SizedBox(height: 6.23.h),
+              Text(doctor.name ?? "", style: CustomFonts.black18w600),
+              SizedBox(height: 3.32.h),
+              Text(doctor.specialization ?? "", style: CustomFonts.black14w400),
+            ],
+          ),
         ),
       ),
     );

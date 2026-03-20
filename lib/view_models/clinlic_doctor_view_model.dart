@@ -31,6 +31,10 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
     state = state.copyWith(clinicId: id);
   }
 
+  void setSelectedDoctor(Doctor doctor) {
+    state = state.copyWith(selectedDoctor: doctor);
+  }
+
   Future<bool?> getClinic({
     required int treatmentId,
     required List<int> sideAreaIds,
@@ -92,7 +96,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
       state = state.copyWith(loading: true);
       final availability = await _clinicRepository.getAvailability(
         doctorId: state.selectedDoctor!.id!,
-        clinicId: state.clinicId!,
+        clinicId: clinicId,
         date: date,
       );
       state = state.copyWith(
