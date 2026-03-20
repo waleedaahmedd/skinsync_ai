@@ -37,6 +37,7 @@ class TreatmentSubAreaModel {
   int? maxSyringe;
   List<int>? syringeOptions;
 
+
   TreatmentSubAreaModel(
       {this.id,
       this.name,
@@ -44,7 +45,8 @@ class TreatmentSubAreaModel {
       this.description,
       this.minSyringe,
       this.maxSyringe,
-      this.syringeOptions});
+      this.syringeOptions,
+      });
 
   TreatmentSubAreaModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];

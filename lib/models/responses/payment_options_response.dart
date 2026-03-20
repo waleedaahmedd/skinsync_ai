@@ -18,13 +18,15 @@ class PaymentOptionsResponse extends BaseResponseModel {
 }
 
 class PaymentOption {
+  final int? id;
   final String? title;
   final String? description;
   final int? amount;
 
-  PaymentOption({this.title, this.description, this.amount});
+  PaymentOption({this.title, this.description, this.amount, this.id});
 
   factory PaymentOption.fromJson(Map<String, dynamic> json) => PaymentOption(
+    id: json["id"],
     title: json["title"],
     description: json["description"],
     amount: json["amount"],
