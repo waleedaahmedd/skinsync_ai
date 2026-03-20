@@ -156,38 +156,38 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                   description: paymentOption.description ?? 'N/A',
                 ),
               SizedBox(height: 22.h),
+              // Divider(height: 0, color: Colors.grey.shade300),
+              // SizedBox(height: 22.h),
+              // Row(
+              //   mainAxisAlignment: .spaceBetween,
+              //   children: [
+              //     Text(
+              //       "Derma Fillers - Cheeks By Glow Skin Clinic",
+              //       style: CustomFonts.black16w600,
+              //     ),
+              //     Text("\$ 550", style: CustomFonts.black16w600),
+              //   ],
+              // ),
+              // SizedBox(height: 14.h),
               Divider(height: 0, color: Colors.grey.shade300),
-              SizedBox(height: 22.h),
-              Row(
-                mainAxisAlignment: .spaceBetween,
-                children: [
-                  Text(
-                    "Derma Fillers - Cheeks By Glow Skin Clinic",
-                    style: CustomFonts.black16w600,
-                  ),
-                  Text("\$ 550", style: CustomFonts.black16w600),
-                ],
-              ),
-              SizedBox(height: 14.h),
-              Divider(height: 0, color: Colors.grey.shade300),
-              SizedBox(height: 14.h),
-
-              Row(
-                children: [
-                  CustomSizedSwitch(),
-                  Text("Use loyalty points", style: CustomFonts.black18w600),
-                  Spacer(),
-                  Text(
-                    "- \$ 50",
-                    style: CustomFonts.red13w500.copyWith(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 14.h),
-              Divider(height: 0, color: Colors.grey.shade300),
+              // SizedBox(height: 14.h),
+              //
+              // Row(
+              //   children: [
+              //     CustomSizedSwitch(),
+              //     Text("Use loyalty points", style: CustomFonts.black18w600),
+              //     Spacer(),
+              //     Text(
+              //       "- \$ 50",
+              //       style: CustomFonts.red13w500.copyWith(
+              //         fontSize: 20.sp,
+              //         fontWeight: FontWeight.w600,
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              // SizedBox(height: 14.h),
+              // Divider(height: 0, color: Colors.grey.shade300),
               SizedBox(height: 14.h),
               Row(
                 mainAxisAlignment: .spaceBetween,
