@@ -32,12 +32,14 @@ class PricingData {
 }
 
 class SubSection {
+  final int? id;
   final String? name;
   final int? perSyringePrice;
 
-  SubSection({this.name, this.perSyringePrice});
+  SubSection({this.id, this.name, this.perSyringePrice});
 
   factory SubSection.fromJson(Map<String, dynamic> json) => SubSection(
+    id: json['id'] ?? 0,
     name: json["name"],
     perSyringePrice: json["per_syringe_price"],
   );

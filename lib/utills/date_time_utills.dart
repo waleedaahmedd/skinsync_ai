@@ -53,4 +53,8 @@ extension DateTimeUtils on DateTime {
   String get formattedWeekdayDateTime {
     return DateFormat('EEE MMM dd - hh:mm a').format(this);
   }
+
+  int get secondsSinceEpoch {
+    return millisecondsSinceEpoch ~/ 1000;
+  }
 }

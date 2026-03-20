@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
@@ -40,8 +41,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
       ref
           .read(clincDoctorProvider.notifier)
           .getPaymentOptions(
-            clinicId: widget.clinic!.clinicId!,
-            doctorId: widget.doctor!.id!,
+            clinicId: widget.clinic.clinicId!,
+            doctorId: widget.doctor.id!,
           );
     });
   }
@@ -65,9 +66,21 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
           width: double.infinity,
           child: ElevatedButton(
             onPressed: () {
-              Navigator.pushNamed(context, NotesScreen.routeName);
+              if (selectedMode == null) {
+                EasyLoading.showError('Select a payment option!');
+              }
+              Navigator.pushNamed(
+                context,
+                NotesScreen.routeName,
+                arguments: {
+                  'clinic': widget.clinic,
+                  'doctor': widget.doctor,
+                  'slot': widget.slot,
+                  'paymentOption': selectedMode!,
+                },
+              );
             },
-            child: Text("PayNow"),
+            child: Text("Pay Now"),
           ),
         ),
       ),
@@ -156,38 +169,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                   description: paymentOption.description ?? 'N/A',
                 ),
               SizedBox(height: 22.h),
-              // Divider(height: 0, color: Colors.grey.shade300),
-              // SizedBox(height: 22.h),
-              // Row(
-              //   mainAxisAlignment: .spaceBetween,
-              //   children: [
-              //     Text(
-              //       "Derma Fillers - Cheeks By Glow Skin Clinic",
-              //       style: CustomFonts.black16w600,
-              //     ),
-              //     Text("\$ 550", style: CustomFonts.black16w600),
-              //   ],
-              // ),
-              // SizedBox(height: 14.h),
               Divider(height: 0, color: Colors.grey.shade300),
-              // SizedBox(height: 14.h),
-              //
-              // Row(
-              //   children: [
-              //     CustomSizedSwitch(),
-              //     Text("Use loyalty points", style: CustomFonts.black18w600),
-              //     Spacer(),
-              //     Text(
-              //       "- \$ 50",
-              //       style: CustomFonts.red13w500.copyWith(
-              //         fontSize: 20.sp,
-              //         fontWeight: FontWeight.w600,
-              //       ),
-              //     ),
-              //   ],
-              // ),
-              // SizedBox(height: 14.h),
-              // Divider(height: 0, color: Colors.grey.shade300),
               SizedBox(height: 14.h),
               Row(
                 mainAxisAlignment: .spaceBetween,

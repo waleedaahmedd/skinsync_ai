@@ -7,6 +7,8 @@ import 'package:skinsync_ai/repositories/clinic_doctor_repository.dart';
 import 'package:skinsync_ai/services/api_base_helper.dart';
 import 'package:skinsync_ai/utills/enums.dart';
 
+import '../models/requests/appointment_request.dart';
+import '../models/responses/appointment_response.dart';
 import '../models/responses/availability_response.dart';
 import '../models/responses/payment_options_response.dart';
 import '../models/responses/treatment_pricing_response.dart';
@@ -116,6 +118,23 @@ class ClinicDoctorService implements ClinicDoctorRepository {
     final data = TreatmentPricingResponse.fromJson(jsonDecode(response.body));
     if (response.statusCode < 200 && response.statusCode >= 300) {
       throw Exception(data.message ?? 'Something went wrong!');
+    }
+    return data.data!;
+  }
+
+  @override
+  Future<AppointmentData> createAppointment({
+    required AppointmentRequest request,
+  }) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.appointments,
+      requestType: 'POST',
+      requestBody: request.toJson(),
+      params: '',
+    );
+    final data = AppointmentResponse.fromJson(jsonDecode(response.body));
+    if (!(data.isSuccess ?? false)) {
+      throw AppException(data.message ?? 'Something went wrong!');
     }
     return data.data!;
   }

@@ -1,8 +1,10 @@
+import 'package:skinsync_ai/models/responses/appointment_response.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
 import 'package:skinsync_ai/models/responses/get_doctor_response.dart';
 import 'package:skinsync_ai/models/responses/payment_options_response.dart';
 import 'package:skinsync_ai/models/responses/treatment_pricing_response.dart';
 
+import '../models/requests/appointment_request.dart';
 import '../models/responses/availability_response.dart';
 
 abstract class ClinicDoctorRepository {
@@ -33,5 +35,9 @@ abstract class ClinicDoctorRepository {
     required int clinicId,
     required int treatmentId,
     required List<int> treatmentSubsectionIds,
+  });
+
+  Future<AppointmentData> createAppointment({
+    required AppointmentRequest request,
   });
 }

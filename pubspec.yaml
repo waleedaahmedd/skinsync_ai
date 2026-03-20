@@ -59,6 +59,7 @@ dependencies:
   firebase_core: ^4.5.0
   google_maps_flutter: ^2.15.0
   location: ^8.0.1
+  firebase_storage: ^13.1.0
 
 dev_dependencies:
   flutter_test:

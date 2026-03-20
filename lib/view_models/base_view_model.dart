@@ -32,7 +32,7 @@ abstract class BaseViewModel<S> extends Notifier<S> {
     try {
       return await action.call();
     } on AppException catch (e, s) {
-      log(e.toString(), stackTrace: s);
+      log(e.message, stackTrace: s);
       onError(e.message);
       return null;
     } catch (e, s) {
