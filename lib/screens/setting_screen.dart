@@ -6,7 +6,10 @@ import 'package:iconsax/iconsax.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/utills/shared_pref.dart';
 
+import '../utills/biometric_helper.dart';
+import '../utills/enums.dart';
 import '../widgets/custom_app_bar.dart';
 
 class SettingScreen extends StatelessWidget {
@@ -74,6 +77,50 @@ class SettingScreen extends StatelessWidget {
                       "Biometric Authentication",
                       style: CustomFonts.black22w500,
                     ),
+                    Spacer(),
+                    // FutureBuilder(
+                    //   future: (_){}
+                    //   ,
+                    //   builder: (context, snapshot) {
+                    //     if (snapshot.hasData) {
+                    //       return CustomSizedSwitch(
+                    //         isOn: snapshot.data!,
+                    //         onChanged: (value) {
+                    //           SharedPref().writeBool(SharedPreferencesKeys.biometricAuthKey, value);
+                    //         },
+                    //       );
+                    //     } else {
+                    //       return CircularProgressIndicator();
+                    //     }
+                    //   },
+                    // ),
+                    FutureBuilder<bool>(
+                      future: BiometricHelper().isBiometricAvailable(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const SizedBox();
+                        } else if (snapshot.hasData && snapshot.data == true) {
+                          return CustomSizedSwitch(
+                            isOn:
+                                SharedPref().readBool(
+                                  SharedPreferencesKeys
+                                      .biometricAuthKey
+                                      .keyText,
+                                ) ??
+                                false,
+                            onChanged: (value) {
+                              SharedPref().saveBool(
+                                SharedPreferencesKeys.biometricAuthKey.keyText,
+                                value,
+                              );
+                            },
+                          );
+                        } else {
+                          return const SizedBox.shrink(); // No biometrics available
+                        }
+                      },
+                    ),
                   ],
                 ),
                 SizedBox(height: 37.h),
@@ -94,15 +141,15 @@ class SettingScreen extends StatelessWidget {
 }
 
 class CustomSizedSwitch extends StatefulWidget {
-  const CustomSizedSwitch({super.key});
+  CustomSizedSwitch({super.key, this.isOn = false, this.onChanged});
+  bool isOn;
+  void Function(bool)? onChanged;
 
   @override
   State<CustomSizedSwitch> createState() => _CustomSizedSwitchState();
 }
 
 class _CustomSizedSwitchState extends State<CustomSizedSwitch> {
-  bool isOn = false;
-
   @override
   Widget build(BuildContext context) {
     return Transform.scale(
@@ -115,11 +162,12 @@ class _CustomSizedSwitchState extends State<CustomSizedSwitch> {
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         child: Switch(
-          value: isOn,
+          value: widget.isOn,
           onChanged: (value) {
             setState(() {
-              isOn = value;
+              widget.isOn = value;
             });
+            widget.onChanged?.call(value);
           },
         ),
       ),

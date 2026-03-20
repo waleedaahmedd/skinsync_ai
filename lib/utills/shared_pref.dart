@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:skinsync_ai/utills/colored_print.dart';
 
 class SharedPref {
   static SharedPref? _instance;
@@ -47,14 +48,17 @@ class SharedPref {
     _checkInitialization();
     _prefs!.clear();
   }
-   bool? readBool(String key) {
+
+  bool? readBool(String key) {
     _checkInitialization();
     return _prefs!.getBool(key);
   }
 
   void saveBool(String key, bool value) {
     _checkInitialization();
+
     _prefs!.setBool(key, value);
+    CP.green('Saved bool value: $value for key: $key');
   }
 
   void _checkInitialization() {
@@ -65,4 +69,3 @@ class SharedPref {
     }
   }
 }
-
