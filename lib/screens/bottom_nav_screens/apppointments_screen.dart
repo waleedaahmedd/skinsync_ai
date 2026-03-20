@@ -6,6 +6,7 @@ import 'package:skinsync_ai/widgets/scheduled_appointment_tile.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
 import '../../utills/date_time_utills.dart';
+import '../../widgets/app_bar_with_action_icon.dart';
 import '../../widgets/grey_container.dart';
 
 class ApppointmentsScreen extends StatelessWidget {
@@ -14,41 +15,28 @@ class ApppointmentsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 84.h,
-        automaticallyImplyLeading: false,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-
+      appBar: AppBarWithActionIcon(
+        title: Row(
           children: [
-            Row(
-              children: [
-                Icon(Iconsax.location, size: 20.sp, color: Colors.black),
-                SizedBox(width: 6.w),
-                Text("Hello, Burak!", style: CustomFonts.black30w600),
-              ],
-            ),
-            SizedBox(height: 2.h),
-            Text("195 Karlie Brooks, Anderson", style: CustomFonts.grey18w400),
+            Icon(Iconsax.location, size: 20.sp, color: Colors.black),
+            SizedBox(width: 6.w),
+            Text("Hello, Burak!", style: CustomFonts.black30w600),
           ],
         ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 20.0.w),
-            child: GreyContainer(
-              icon: Icons.notifications_none_outlined,
-              onTap: () {
-                // Handle notification tap
-              },
-            ),
-          ),
-        ],
+        subTitle: Text(
+          "195 Karlie Brooks, Anderson",
+          style: CustomFonts.grey18w400,
+        ),
+        action: GreyContainer(
+          icon: Icons.notifications_none_outlined,
+          onTap: () {},
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Divider(color: CustomColors.greyColor),
+            SizedBox(height: 15.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30.w),
               child: TextField(
@@ -63,89 +51,88 @@ class ApppointmentsScreen extends StatelessWidget {
             SizedBox(height: 21.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30.0.w),
-
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Today’s schedule", style: CustomFonts.black30w600),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: CustomColors.greyColor,
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 7.w,
-                      vertical: 8.h,
-                    ),
-
-                    child: Icon(Icons.tune, color: Colors.black),
-                  ),
+                  Text("My Appointments", style: CustomFonts.black24w600),
+                  // Container(
+                  //   decoration: BoxDecoration(
+                  //     color: CustomColors.greyColor,
+                  //     borderRadius: BorderRadius.circular(8.r),
+                  //   ),
+                  //   padding: EdgeInsets.symmetric(
+                  //     horizontal: 7.w,
+                  //     vertical: 8.h,
+                  //   ),
+                  //
+                  //   child: Icon(Icons.tune, color: Colors.black),
+                  // ),
                 ],
               ),
             ),
-            SizedBox(height: 21.h),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: getNextNDays(7).map((dateItem) {
-                  return AppointmentDateWidget(
-                    date: dateItem["date"]!,
-                    day: dateItem["day"]!,
-                  );
-                }).toList(),
-              ),
-            ),
-
-            SizedBox(height: 22.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w),
-
-              child: Text("Today’s schedule", style: CustomFonts.black20w600),
-            ),
-            SizedBox(height: 28.h),
-
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: CustomColors.purpleColor,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
-
-                child: Text("11:00  AM", style: CustomFonts.white12w600),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w),
-
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: ScheduledAppointmentTile(),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: CustomColors.purpleColor,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
-
-                child: Text("11:00  AM", style: CustomFonts.white12w600),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w),
-
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: ScheduledAppointmentTile(),
-              ),
-            ),
             SizedBox(height: 200.h),
+            Center(child: Text('No appointments yet',  style: CustomFonts.grey16w400))
+            // SizedBox(height: 21.h),
+            // SingleChildScrollView(
+            //   scrollDirection: Axis.horizontal,
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //     children: getNextNDays(7).map((dateItem) {
+            //       return AppointmentDateWidget(
+            //         date: dateItem["date"]!,
+            //         day: dateItem["day"]!,
+            //       );
+            //     }).toList(),
+            //   ),
+            // ),
+            // SizedBox(height: 22.h),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 30.w),
+            //
+            //   child: Text("Today’s schedule", style: CustomFonts.black20w600),
+            // ),
+            // SizedBox(height: 28.h),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 30.w),
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       color: CustomColors.purpleColor,
+            //       borderRadius: BorderRadius.circular(8.r),
+            //     ),
+            //     padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
+            //
+            //     child: Text("11:00  AM", style: CustomFonts.white12w600),
+            //   ),
+            // ),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 30.w),
+            //
+            //   child: Align(
+            //     alignment: Alignment.centerRight,
+            //     child: ScheduledAppointmentTile(),
+            //   ),
+            // ),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 30.w),
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       color: CustomColors.purpleColor,
+            //       borderRadius: BorderRadius.circular(8.r),
+            //     ),
+            //     padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
+            //
+            //     child: Text("11:00  AM", style: CustomFonts.white12w600),
+            //   ),
+            // ),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 30.w),
+            //
+            //   child: Align(
+            //     alignment: Alignment.centerRight,
+            //     child: ScheduledAppointmentTile(),
+            //   ),
+            // ),
+            // SizedBox(height: 200.h),
           ],
         ),
       ),

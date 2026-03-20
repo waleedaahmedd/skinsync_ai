@@ -47,10 +47,9 @@ class TreatmentsScreen extends ConsumerWidget {
                 SizedBox(height: 15.h),
                 TextField(
                   style: CustomFonts.black18w400,
-
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.search),
-                    hintText: "Search treatment",
+                    hintText: "Search Appointments",
                   ),
                 ),
               ],
