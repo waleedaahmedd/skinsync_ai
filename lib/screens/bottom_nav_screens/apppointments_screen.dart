@@ -61,25 +61,6 @@ class _ApppointmentsScreenState extends ConsumerState<ApppointmentsScreen> {
         subTitle: Text(
           "195 Karlie Brooks, Anderson",
           style: CustomFonts.grey18w400,
-      appBar: AppBarWithActionIcon(
-        title: Row(
-          children: [
-            Icon(Iconsax.location, size: 20.sp, color: Colors.black),
-            SizedBox(width: 6.w),
-            Text("Hello, Burak!", style: CustomFonts.black30w600),
-          ],
-        ),
-        subTitle: Text(
-          "195 Karlie Brooks, Anderson",
-          style: CustomFonts.grey18w400,
-        ),
-        action: GreyContainer(
-          icon: Icons.notifications_none_outlined,
-          onTap: () {},
-        ),
-        action: GreyContainer(
-          icon: Icons.notifications_none_outlined,
-          onTap: () {},
         ),
       ),
       body: Column(
