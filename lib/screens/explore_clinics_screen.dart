@@ -135,8 +135,11 @@ class ExploreClinicsScreen extends ConsumerWidget {
                 ref
                     .read(clincDoctorProvider.notifier)
                     .setClinicId(clinics[index].clinicId!);
-                Navigator.pushNamed(context, ClinicsDetailScreen.routeName,
-                arguments: clinics[index]);
+                Navigator.pushNamed(
+                  context,
+                  ClinicsDetailScreen.routeName,
+                  arguments: clinics[index],
+                );
               },
             );
           },

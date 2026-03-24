@@ -9,7 +9,7 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
-import 'package:skinsync_ai/widgets/grey_container.dart';
+import 'package:skinsync_ai/widgets/bottom_sheets/syringe_level_sheet.dart';
 import 'package:skinsync_ai/widgets/service_type_button.dart';
 
 import '../models/responses/treatment_sub_area_response.dart';
@@ -37,9 +37,6 @@ class _ArFaceModelPreviewScreenState
   ) {
     final minSyringe = subArea.minSyringe ?? 0;
     final maxSyringe = subArea.maxSyringe ?? 0;
-
-    final minValue = minSyringe.toDouble();
-    final maxValue = maxSyringe.toDouble();
     final divisions = (maxSyringe - minSyringe);
     if (divisions <= 0) return;
 
@@ -50,80 +47,7 @@ class _ArFaceModelPreviewScreenState
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
       builder: (context) {
-        return SafeArea(
-          top: false,
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 20.h),
-            child: Consumer(
-              builder: (context, ref, _) {
-                final current = ref.watch(
-                  treatmentViewModel.select((s) => s.syringeLevel),
-                );
-                final level = (current ?? minSyringe).clamp(
-                  minSyringe,
-                  maxSyringe,
-                );
-
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  final latest = ref.read(treatmentViewModel).syringeLevel;
-                  if (latest == null || latest != level) {
-                    ref
-                        .read(treatmentViewModel.notifier)
-                        .updateSyringeLevel(level);
-                  }
-                });
-
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 44.w,
-                        height: 5.h,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(100.r),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 14.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Adjustable Parameters',
-                          style: CustomFonts.black18w600,
-                        ),
-                        Text(
-                          '$level Syringe${level > 1 ? 's' : ''}',
-                          style: CustomFonts.black14w500,
-                        ),
-                      ],
-                    ),
-                    Slider(
-                      activeColor: CustomColors.lightBlueColor,
-                      value: level.toDouble(),
-                      min: minValue,
-                      max: maxValue,
-                      divisions: divisions,
-                      label: '$level',
-                      onChanged: (v) {
-                        final next = v.round().clamp(minSyringe, maxSyringe);
-                        ref
-                            .read(treatmentViewModel.notifier)
-                            .updateSyringeLevel(next);
-                        ref
-                            .read(treatmentViewModel.notifier)
-                            .callPredictAPI(syringeLevel: next);
-                      },
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        );
+        return SyringeLevelSheet(subArea: subArea);
       },
     );
   }
@@ -439,8 +363,7 @@ class _ArFaceModelPreviewScreenState
                                           [],
                                     ),
                                   );
-                                  final List<TreatmentSubAreaModel>
-                                  selectedSubAreas = ref.watch(
+                                  final selectedSubAreas = ref.watch(
                                     treatmentViewModel.select(
                                       (state) => state.selectedSubAreasList,
                                     ),
@@ -537,14 +460,14 @@ class _ArFaceModelPreviewScreenState
                                                               minSyringe;
                                                         }
 
-                                                        ref
-                                                            .read(
-                                                              treatmentViewModel
-                                                                  .notifier,
-                                                            )
-                                                            .updateSyringeLevel(
-                                                              initialLevel,
-                                                            );
+                                                        // ref
+                                                        //     .read(
+                                                        //       treatmentViewModel
+                                                        //           .notifier,
+                                                        //     )
+                                                        //     .updateSyringeLevel(
+                                                        //       initialLevel,
+                                                        //     );
                                                         ref
                                                             .read(
                                                               treatmentViewModel
@@ -931,7 +854,12 @@ class _ArFaceModelPreviewScreenState
                           treatmentId: treatmentId ?? 0,
                           sideAreaIds: subAreaIds,
                         );
-                        ref.read(checkoutViewModel.notifier).setSelectedTreamtment(treatment: treatment!, selectedSubAreasList: subAreas);
+                    ref
+                        .read(checkoutViewModel.notifier)
+                        .setSelectedTreamtment(
+                          treatment: treatment!,
+                          selectedSubAreasList: subAreas,
+                        );
                     Navigator.pushNamed(
                       context,
                       ExploreClinicsScreen.routeName,

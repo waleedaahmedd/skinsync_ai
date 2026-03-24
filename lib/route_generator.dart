@@ -125,8 +125,8 @@ class RouteGenerator {
           settings: RouteSettings(name: ArFaceModelPreviewScreen.routeName),
           builder: (_) => ArFaceModelPreviewScreen(),
         );
-        case SuggestedTreatmentScreen.routeName:
-         return MaterialPageRoute(
+      case SuggestedTreatmentScreen.routeName:
+        return MaterialPageRoute(
           settings: RouteSettings(name: SuggestedTreatmentScreen.routeName),
           builder: (_) => SuggestedTreatmentScreen(),
         );
@@ -159,15 +159,15 @@ class RouteGenerator {
       //     builder: (_) => SelectSubSectionsScreen(),
       //   );
       case ClinicsDetailScreen.routeName:
-       final clinic = settings.arguments as Clinic;
+        final clinic = settings.arguments as Clinic;
         return MaterialPageRoute(
           settings: RouteSettings(name: ClinicsDetailScreen.routeName),
-          builder: (_) => ClinicsDetailScreen(clinic:clinic ,),
+          builder: (_) => ClinicsDetailScreen(clinic: args as Clinic?),
         );
       case ClinicServiceScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: ClinicServiceScreen.routeName),
-          builder: (_) => ClinicServiceScreen(),
+          builder: (_) => ClinicServiceScreen(clinic: args as Clinic?),
         );
       case SettingScreen.routeName:
         return MaterialPageRoute(
@@ -205,14 +205,27 @@ class RouteGenerator {
           builder: (_) => SelectProductScreen(),
         );
       case PaymentScreen.routeName:
+        final data = args as Map<String, dynamic>;
         return MaterialPageRoute(
           settings: RouteSettings(name: PaymentScreen.routeName),
-          builder: (_) => PaymentScreen(),
+          builder: (_) => PaymentScreen(
+            clinic: data['clinic'],
+            doctor: data['doctor'],
+            slot: data['slot'],
+          ),
         );
       case NotesScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: NotesScreen.routeName),
-          builder: (_) => NotesScreen(),
+          builder: (_) {
+            final data = args as Map<String, dynamic>;
+            return NotesScreen(
+              slot: data['slot'],
+              clinic: data['clinic'],
+              doctor: data['doctor'],
+              paymentOption: data['paymentOption'],
+            );
+          },
         );
       case ProgressDetailScreen.routeName:
         return MaterialPageRoute(
