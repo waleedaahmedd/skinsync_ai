@@ -31,7 +31,8 @@ enum EndPoints {
   getClinic("clinics/by-side-area?"),
   getDoctor("doctors/by-side-area?"),
   getMe("v1/me"),
-  refreshToken('v1/auth/refresh');
+  refreshToken('v1/auth/refresh'),
+  appointments('v1/appointments');
 
   final String path;
 

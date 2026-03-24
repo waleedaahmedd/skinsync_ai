@@ -59,6 +59,7 @@ dependencies:
   firebase_core: ^4.5.0
   google_maps_flutter: ^2.15.0
   location: ^8.0.1
+  infinite_scroll_pagination: ^5.1.1
 
 dev_dependencies:
   flutter_test:
