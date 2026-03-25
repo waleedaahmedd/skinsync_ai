@@ -217,7 +217,15 @@ class RouteGenerator {
       case NotesScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: NotesScreen.routeName),
-          builder: (_) => NotesScreen(),
+          builder: (_) {
+            final data = args as Map<String, dynamic>;
+            return NotesScreen(
+              slot: data['slot'],
+              clinic: data['clinic'],
+              doctor: data['doctor'],
+              paymentOption: data['paymentOption'],
+            );
+          },
         );
       case ProgressDetailScreen.routeName:
         return MaterialPageRoute(

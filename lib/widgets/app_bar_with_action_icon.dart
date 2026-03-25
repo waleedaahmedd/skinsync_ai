@@ -43,14 +43,14 @@ class AppBarWithActionIcon extends StatelessWidget
                         children: [
                           Text(name ?? 'N/A', style: CustomFonts.black30w600),
                           SizedBox(height: 4),
-                          Text(address ?? 'N/A', style: CustomFonts.grey18w400,overflow: .ellipsis,maxLines: 1,),
+                          Text(address ?? 'N/A', style: CustomFonts.grey18w400,overflow: TextOverflow.ellipsis,maxLines: 1,),
                         ],
                       );
                     },
                   ),
                 ),
                  SizedBox(width: 40.w),
-                ? action,
+                if (action != null) action!,
               ],
             ),
             Spacer(),

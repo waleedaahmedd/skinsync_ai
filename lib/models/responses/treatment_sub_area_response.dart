@@ -1,8 +1,7 @@
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
 
 class TreatmentSubAreaResponse extends BaseResponseModel {
- 
-    List<TreatmentSubAreaModel>? data;
+  List<TreatmentSubAreaModel>? data;
 
   TreatmentSubAreaResponse({super.isSuccess, super.message, this.data});
 
@@ -36,24 +35,30 @@ class TreatmentSubAreaModel {
   int? minSyringe;
   int? maxSyringe;
   List<int>? syringeOptions;
+  final int currentSyringe;
 
-  TreatmentSubAreaModel(
-      {this.id,
-      this.name,
-      this.icon,
-      this.description,
-      this.minSyringe,
-      this.maxSyringe,
-      this.syringeOptions});
+  TreatmentSubAreaModel({
+    this.id,
+    this.name,
+    this.icon,
+    this.description,
+    this.minSyringe,
+    this.maxSyringe,
+    this.syringeOptions,
+    required this.currentSyringe,
+  });
 
-  TreatmentSubAreaModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    icon = json['icon'];
-    description = json['description'];
-    minSyringe = json['min_syringe'];
-    maxSyringe = json['max_syringe'];
-    syringeOptions = json['syringe_options'].cast<int>();
+  factory TreatmentSubAreaModel.fromJson(Map<String, dynamic> json) {
+    return TreatmentSubAreaModel(
+      id: json['id'],
+      name: json['name'],
+      icon: json['icon'],
+      description: json['description'],
+      minSyringe: json['min_syringe'],
+      maxSyringe: json['max_syringe'],
+      syringeOptions: json['syringe_options'].cast<int>(),
+      currentSyringe: json['min_syringe'] ?? 0,
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -66,5 +71,27 @@ class TreatmentSubAreaModel {
     data['max_syringe'] = maxSyringe;
     data['syringe_options'] = syringeOptions;
     return data;
+  }
+
+  TreatmentSubAreaModel copyWith({
+    int? id,
+    String? name,
+    String? icon,
+    String? description,
+    int? minSyringe,
+    int? maxSyringe,
+    List<int>? syringeOptions,
+    int? currentSyringe,
+  }) {
+    return TreatmentSubAreaModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      icon: icon ?? this.icon,
+      description: description ?? this.description,
+      minSyringe: minSyringe ?? this.minSyringe,
+      maxSyringe: maxSyringe ?? this.maxSyringe,
+      syringeOptions: syringeOptions ?? this.syringeOptions,
+      currentSyringe: currentSyringe ?? this.currentSyringe,
+    );
   }
 }

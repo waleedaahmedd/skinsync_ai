@@ -1,13 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 
-class PersonalDetailScreen extends StatelessWidget {
+class PersonalDetailScreen extends ConsumerStatefulWidget {
   const PersonalDetailScreen({super.key});
   static const String routeName = '/PersonalDetailScreen';
+
+  @override
+  ConsumerState<PersonalDetailScreen> createState() =>
+      _PersonalDetailScreenState();
+}
+
+class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final user = ref.read(authViewModel).authResponse?.data?.userDetails;
+      if (user != null) {
+        _nameController.text = user.name ?? "";
+        _phoneController.text = user.phoneNumber ?? "";
+        _emailController.text = user.emailAddress ?? "";
+        _locationController.text = user.location ?? "";
+        _bioController.text = user.bio ?? "";
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    _locationController.dispose();
+    _bioController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +73,6 @@ class PersonalDetailScreen extends StatelessWidget {
                         fit: BoxFit.cover,
                       ),
                     ),
-
                     Positioned(
                       bottom: -5,
                       right: -5,
@@ -62,16 +100,19 @@ class PersonalDetailScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 22.h),
                 TextField(
+                  controller: _nameController,
                   style: CustomFonts.black18w400,
                   decoration: InputDecoration(hintText: "Lizzy Johnson"),
                 ),
                 SizedBox(height: 20.h),
                 TextField(
+                  controller: _phoneController,
                   style: CustomFonts.black18w400,
                   decoration: InputDecoration(hintText: "+ 012 345 6798"),
                 ),
                 SizedBox(height: 20.h),
                 TextField(
+                  controller: _emailController,
                   style: CustomFonts.black18w400,
                   decoration: InputDecoration(
                     hintText: "lizzyjhonson@gmail.com",
@@ -79,6 +120,7 @@ class PersonalDetailScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20.h),
                 TextField(
+                  controller: _locationController,
                   style: CustomFonts.black18w400,
                   decoration: InputDecoration(hintText: "New York"),
                 ),
@@ -107,6 +149,7 @@ class PersonalDetailScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 20.h),
                 TextField(
+                  controller: _bioController,
                   maxLines: 4,
                   style: CustomFonts.black18w400,
                   decoration: InputDecoration(hintText: "Bio"),

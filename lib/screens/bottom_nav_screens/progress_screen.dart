@@ -26,9 +26,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
       appBar: AppBarWithActionIcon(
         title: Row(
           children: [
-            Icon(Iconsax.location, size: 20.sp, color: Colors.black),
-            SizedBox(width: 6.w),
-            Text("Hello, Burak!", style: CustomFonts.black30w600),
+           // Icon(Iconsax.location, size: 20.sp, color: Colors.black),
+            //SizedBox(width: 6.w),
+           // Text("Hello, Burak!", style: CustomFonts.black30w600),
           ],
         ),
         subTitle: Text(
@@ -43,26 +43,26 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
       body: Column(
         children: [
-          Divider(color: CustomColors.greyColor),
           SizedBox(height: 15.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 30.0.w),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
                   style: CustomFonts.black18w400,
                   decoration: InputDecoration(
-                    prefixIcon: Icon(
-                      Icons.search,
-                      size: 18.sp,
-                      color: CustomColors.textGreyColor,
-                    ),
-                    hintText: "Search Here",
+                    prefixIcon: Icon(Icons.search),
+                    hintText: "Search Progress",
                   ),
                 ),
                 SizedBox(height: 15.h),
-                Row(
+                Text("Progress", style: CustomFonts.black24w600),
+                SizedBox(height: 200.h),
+                Center(child: Text('No treatment progress recorded',  style: CustomFonts.grey16w400))
+
+                /* Row(
                   children: [
                     ProgressFillterButton(
                       isSelected: selectedFilter == 'completed',
@@ -87,11 +87,11 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 22.h),
+                SizedBox(height: 22.h),*/
               ],
             ),
           ),
-          Expanded(
+         /* Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 30.0.w),
               child: ListView.builder(
@@ -101,7 +101,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 },
               ),
             ),
-          ),
+          ),*/
           SizedBox(height: 70.h),
         ],
       ),

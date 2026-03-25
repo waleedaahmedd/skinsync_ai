@@ -3,19 +3,52 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/screens/bottom_nav_page.dart';
+import 'package:skinsync_ai/models/responses/payment_options_response.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
+
+import '../models/responses/availability_response.dart';
+import '../models/responses/get_clinic_response.dart';
+import '../models/responses/get_doctor_response.dart';
+import 'bottom_nav_page.dart';
 
 final notesAgreementProvider = StateProvider<bool>((ref) => false);
 
-class NotesScreen extends StatelessWidget {
+class NotesScreen extends ConsumerWidget {
+  final Clinic clinic;
+  final Doctor doctor;
+  final Slot slot;
+  final PaymentOption paymentOption;
+
   static const routeName = "/notes_screen";
-  const NotesScreen({super.key});
+  const NotesScreen({
+    super.key,
+    required this.clinic,
+    required this.doctor,
+    required this.slot,
+    required this.paymentOption,
+  });
+
+  void _listener(
+    WidgetRef ref,
+    ClinicDoctorState? prev,
+    ClinicDoctorState next,
+  ) {
+    if (next.appointment != null) {
+      ref.read(clincDoctorProvider.notifier).clearState();
+      Navigator.pushNamedAndRemoveUntil(
+        ref.context,
+        BottomNavPage.routeName,
+        (_) => false,
+      );
+    }
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(clincDoctorProvider, (prev, next) => _listener(ref, prev, next));
     return Scaffold(
       appBar: CustomAppBar(showTitle: true, title: "Notes"),
       body: Padding(
@@ -83,15 +116,33 @@ class NotesScreen extends StatelessWidget {
             SizedBox(height: 20.h),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    BottomNavPage.routeName,
-                    (_) => false,
+              child: Consumer(
+                builder: (_, ref, _) {
+                  final loading = ref.watch(
+                    clincDoctorProvider.select((s) => s.loading),
+                  );
+                  final agreed = ref.watch(notesAgreementProvider);
+                  if (loading) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: CustomColors.pinkColor,
+                      ),
+                    );
+                  }
+                  return ElevatedButton(
+                    onPressed: agreed
+                        ? () => ref
+                              .read(clincDoctorProvider.notifier)
+                              .createAppointment(
+                                clinic: clinic,
+                                doctor: doctor,
+                                slot: slot,
+                                paymentOption: paymentOption,
+                              )
+                        : null,
+                    child: Text("Confirm Appointment"),
                   );
                 },
-                child: Text("Confirm Appointment"),
               ),
             ),
             SizedBox(height: 20.h),

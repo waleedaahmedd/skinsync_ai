@@ -29,8 +29,16 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
   final TreatmentRepository _repo;
 
-  void updateSyringeLevel(int syringeLevel) =>
-      state = state.copyWith(syringeLevel: syringeLevel);
+  void updateSyringeLevel({required TreatmentSubAreaModel subArea}) {
+    state = state.copyWith(
+      selectedSubAreasList: state.selectedSubAreasList.map((s) {
+        if (s.id == subArea.id) {
+          return subArea;
+        }
+        return s;
+      }).toList(),
+    );
+  }
 
   void toggleIsBefore() => state = state.copyWith(isBefore: !state.isBefore);
 
@@ -122,7 +130,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       selectTreatmentArea: null,
       selectedTreatmentSubArea: null,
       selectedSubAreasList: const [],
-      syringeLevel: null,
       isBefore: true,
       capturedImage: state.capturedImage,
       aiImage: null,
@@ -177,7 +184,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     try {
       final jsonRes = await _uploadCapturedImage(
         image: _imageForPredict!,
-        syringeLevel: syringeLevel ?? state.syringeLevel ?? 0,
+        syringeLevel: syringeLevel ?? 0,
       );
       if (jsonRes == null) throw Exception('Failed to upload image');
 
@@ -222,8 +229,8 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     request.fields.addAll({
       'treatment_id': (state.selectedTreatment?.id ?? 0).toString(),
       'treatment_section_id': (state.selectTreatmentArea?.id ?? 0).toString(),
-      'treatment_sub_section_id':
-          (state.selectedTreatmentSubArea?.id ?? 0).toString(),
+      'treatment_sub_section_id': (state.selectedTreatmentSubArea?.id ?? 0)
+          .toString(),
       'syringes': syringeLevel.toString(),
     });
     request.files.add(await _imageMultipartFile(image));
@@ -297,7 +304,6 @@ class TreatmentsState extends BaseStateModel {
   final TreatmentAreaModel? selectTreatmentArea;
   final TreatmentSubAreaModel? selectedTreatmentSubArea;
   final List<TreatmentSubAreaModel> selectedSubAreasList;
-  final int? syringeLevel;
 
   final bool isBefore;
   final XFile? capturedImage;
@@ -316,7 +322,6 @@ class TreatmentsState extends BaseStateModel {
     this.selectTreatmentArea,
     this.selectedTreatmentSubArea,
     this.selectedSubAreasList = const [],
-    this.syringeLevel,
     this.isBefore = false,
     this.capturedImage,
     this.aiImage,
@@ -336,7 +341,6 @@ class TreatmentsState extends BaseStateModel {
     TreatmentAreaModel? selectedTreatmentArea,
     TreatmentSubAreaModel? selectedTreatmentSubArea,
     List<TreatmentSubAreaModel>? selectedSubAreasList,
-    int? syringeLevel,
     bool? isBefore,
     XFile? capturedImage,
     XFile? aiImage,
@@ -366,7 +370,6 @@ class TreatmentsState extends BaseStateModel {
       selectedSubAreasList: clearSubSectionIds
           ? const []
           : (selectedSubAreasList ?? this.selectedSubAreasList),
-      syringeLevel: syringeLevel ?? this.syringeLevel,
       isBefore: isBefore ?? this.isBefore,
       capturedImage: capturedImage ?? this.capturedImage,
       aiImage: clearAiImage ? null : (aiImage ?? this.aiImage),

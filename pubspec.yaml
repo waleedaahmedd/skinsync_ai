@@ -42,7 +42,7 @@ dependencies:
   flutter_svg: ^2.2.3
   pinput: ^6.0.1
   country_picker: ^2.0.27
-  google_mlkit_face_detection: ^0.13.1
+  google_mlkit_face_detection: ^0.13.2
   camera: ^0.11.3
   flutter_glass_morphism: 1.0.2
   local_auth: ^3.0.0
@@ -59,6 +59,8 @@ dependencies:
   firebase_core: ^4.5.0
   google_maps_flutter: ^2.15.0
   location: ^8.0.1
+  infinite_scroll_pagination: ^5.1.1
+  firebase_storage: ^13.1.0
 
 dev_dependencies:
   flutter_test:
