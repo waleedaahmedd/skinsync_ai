@@ -69,13 +69,23 @@ class MyProfileScreen extends StatelessWidget {
                     ),
                   ),
                   child: ClipOval(
-                    child: Center(
-                      child: Image.asset(
-                        DummyAssets.acen,
-                        fit: BoxFit.cover,
-                        height: 103.w,
-                        width: 103.w,
-                      ),
+                    child: Consumer(
+                      builder: (context, ref, _) {
+                        // final name = ref
+                        //     .watch(authViewModel)
+                        //     .authResponse
+                        //     ?.data
+                        //     ?.userDetails
+                        //     ?.name;
+                        return Center(
+                          child: Image.asset(
+                            DummyAssets.acen,
+                            fit: BoxFit.cover,
+                            height: 103.w,
+                            width: 103.w,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),
