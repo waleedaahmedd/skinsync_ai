@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
-import 'package:skinsync_ai/screens/bottom_nav_screens/apppointments_screen.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/appointments_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/home_screen.dart';
 
 import 'package:skinsync_ai/screens/bottom_nav_screens/progress_screen.dart';

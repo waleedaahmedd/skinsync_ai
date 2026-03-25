@@ -126,40 +126,40 @@ class MyProfileScreen extends StatelessWidget {
                   icon: SvgAssets.profileIcon,
                   title: "Personal Details",
                 ),
-                SizedBox(height: 36.h),
-                profileOppition(
-                  callBack: () {
-                    Navigator.pushNamed(
-                      context,
-                      SavedTreatmentScreen.routeName,
-                    );
-                  },
-                  icon: SvgAssets.saveTreatment,
-                  title: "Saved Treatments & Clinics",
-                ),
-                SizedBox(height: 36.h),
-                profileOppition(
-                  callBack: () {},
-                  icon: SvgAssets.loyalty,
-                  title: "Loyalty & Rewards",
-                ),
-                SizedBox(height: 36.h),
-                profileOppition(
-                  callBack: () {
-                    Navigator.pushNamed(
-                      context,
-                      AllergyAndMedicalHistory.routeName,
-                    );
-                  },
-                  icon: SvgAssets.medical,
-                  title: "Medical History",
-                ),
-                SizedBox(height: 36.h),
-                profileOppition(
-                  callBack: () {},
-                  icon: SvgAssets.receipts,
-                  title: "treatment receipts",
-                ),
+                // SizedBox(height: 36.h),
+                // profileOppition(
+                //   callBack: () {
+                //     Navigator.pushNamed(
+                //       context,
+                //       SavedTreatmentScreen.routeName,
+                //     );
+                //   },
+                //   icon: SvgAssets.saveTreatment,
+                //   title: "Saved Treatments & Clinics",
+                // ),
+                // SizedBox(height: 36.h),
+                // profileOppition(
+                //   callBack: () {},
+                //   icon: SvgAssets.loyalty,
+                //   title: "Loyalty & Rewards",
+                // ),
+                // SizedBox(height: 36.h),
+                // profileOppition(
+                //   callBack: () {
+                //     Navigator.pushNamed(
+                //       context,
+                //       AllergyAndMedicalHistory.routeName,
+                //     );
+                //   },
+                //   icon: SvgAssets.medical,
+                //   title: "Medical History",
+                // ),
+                // SizedBox(height: 36.h),
+                // profileOppition(
+                //   callBack: () {},
+                //   icon: SvgAssets.receipts,
+                //   title: "treatment receipts",
+                // ),
                 SizedBox(height: 36.h),
                 profileOppition(
                   callBack: () {

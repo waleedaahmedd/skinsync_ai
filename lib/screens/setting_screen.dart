@@ -45,84 +45,84 @@ class SettingScreen extends StatelessWidget {
                     CustomSizedSwitch(),
                   ],
                 ),
-                SizedBox(height: 37.h),
-                Row(
-                  children: [
-                    SvgPicture.asset(
-                      SvgAssets.authentication,
-                      height: 24.h,
-                      width: 24.w,
-                    ),
+                // SizedBox(height: 37.h),
+                // Row(
+                //   children: [
+                //     SvgPicture.asset(
+                //       SvgAssets.authentication,
+                //       height: 24.h,
+                //       width: 24.w,
+                //     ),
 
-                    SizedBox(width: 16.w),
-                    Text(
-                      "Two-Factor Authentication",
-                      style: CustomFonts.black22w500,
-                    ),
-                    Spacer(),
-                    CustomSizedSwitch(),
-                  ],
-                ),
-                SizedBox(height: 37.h),
-                Row(
-                  children: [
-                    SvgPicture.asset(
-                      SvgAssets.biometric,
-                      height: 24.h,
-                      width: 24.w,
-                      color: Colors.black,
-                    ),
-                    SizedBox(width: 16.w),
-                    Text(
-                      "Biometric Authentication",
-                      style: CustomFonts.black22w500,
-                    ),
-                    Spacer(),
-                    // FutureBuilder(
-                    //   future: (_){}
-                    //   ,
-                    //   builder: (context, snapshot) {
-                    //     if (snapshot.hasData) {
-                    //       return CustomSizedSwitch(
-                    //         isOn: snapshot.data!,
-                    //         onChanged: (value) {
-                    //           SharedPref().writeBool(SharedPreferencesKeys.biometricAuthKey, value);
-                    //         },
-                    //       );
-                    //     } else {
-                    //       return CircularProgressIndicator();
-                    //     }
-                    //   },
-                    // ),
-                    FutureBuilder<bool>(
-                      future: BiometricHelper().isBiometricAvailable(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const SizedBox();
-                        } else if (snapshot.hasData && snapshot.data == true) {
-                          return CustomSizedSwitch(
-                            isOn:
-                                SharedPref().readBool(
-                                  SharedPreferencesKeys
-                                      .biometricAuthKey
-                                      .keyText,
-                                ) ??
-                                false,
-                            onChanged: (value) {
-                              SharedPref().saveBool(
-                                SharedPreferencesKeys.biometricAuthKey.keyText,
-                                value,
-                              );
-                            },
-                          );
-                        } else {
-                          return const SizedBox.shrink(); // No biometrics available
-                        }
-                      },
-                    ),
-                  ],
-                ),
+                //     SizedBox(width: 16.w),
+                //     Text(
+                //       "Two-Factor Authentication",
+                //       style: CustomFonts.black22w500,
+                //     ),
+                //     Spacer(),
+                //     CustomSizedSwitch(),
+                //   ],
+                // ),
+                // SizedBox(height: 37.h),
+                // Row(
+                //   children: [
+                //     SvgPicture.asset(
+                //       SvgAssets.biometric,
+                //       height: 24.h,
+                //       width: 24.w,
+                //       color: Colors.black,
+                //     ),
+                //     SizedBox(width: 16.w),
+                //     Text(
+                //       "Biometric Authentication",
+                //       style: CustomFonts.black22w500,
+                //     ),
+                //     Spacer(),
+                //     // FutureBuilder(
+                //     //   future: (_){}
+                //     //   ,
+                //     //   builder: (context, snapshot) {
+                //     //     if (snapshot.hasData) {
+                //     //       return CustomSizedSwitch(
+                //     //         isOn: snapshot.data!,
+                //     //         onChanged: (value) {
+                //     //           SharedPref().writeBool(SharedPreferencesKeys.biometricAuthKey, value);
+                //     //         },
+                //     //       );
+                //     //     } else {
+                //     //       return CircularProgressIndicator();
+                //     //     }
+                //     //   },
+                //     // ),
+                //     FutureBuilder<bool>(
+                //       future: BiometricHelper().isBiometricAvailable(),
+                //       builder: (context, snapshot) {
+                //         if (snapshot.connectionState ==
+                //             ConnectionState.waiting) {
+                //           return const SizedBox();
+                //         } else if (snapshot.hasData && snapshot.data == true) {
+                //           return CustomSizedSwitch(
+                //             isOn:
+                //                 SharedPref().readBool(
+                //                   SharedPreferencesKeys
+                //                       .biometricAuthKey
+                //                       .keyText,
+                //                 ) ??
+                //                 false,
+                //             onChanged: (value) {
+                //               SharedPref().saveBool(
+                //                 SharedPreferencesKeys.biometricAuthKey.keyText,
+                //                 value,
+                //               );
+                //             },
+                //           );
+                //         } else {
+                //           return const SizedBox.shrink(); // No biometrics available
+                //         }
+                //       },
+                //     ),
+                //   ],
+                // ),
                 SizedBox(height: 37.h),
                 Row(
                   children: [

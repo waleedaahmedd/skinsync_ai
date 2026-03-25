@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skinsync_ai/app_init.dart';
+import 'package:skinsync_ai/screens/notification_screen.dart';
 import 'package:skinsync_ai/screens/suggested_treatmentsScreen.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
@@ -17,8 +19,7 @@ class HomeScreen extends ConsumerWidget {
   static const String routeName = "HomeScreen";
 
   @override
-  Widget build(BuildContext context,WidgetRef ref) {
-       
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBarWithActionIcon(
         title: Text("Hello, Burak!", style: CustomFonts.black30w600),
@@ -28,7 +29,9 @@ class HomeScreen extends ConsumerWidget {
         ),
         action: GreyContainer(
           icon: Icons.notifications_none_outlined,
-          onTap: () {},
+          onTap: () {
+            Navigator.of(context).pushNamed(NotificationScreen.routeName);
+          },
         ),
       ),
       body: SingleChildScrollView(
@@ -42,19 +45,22 @@ class HomeScreen extends ConsumerWidget {
                   padding: EdgeInsets.symmetric(horizontal: 30.w),
                   child: Column(
                     children: [
-                      PointsEarnCard(),
-                      SizedBox(height: 30.h),
-                      HeadingWithRightArrow(
-                        title: "Your Next Appointment",
-                        onTap: () {},
-                      ),
-                      SizedBox(height: 18.h),
-                      AppointmentCard(),
+                      // PointsEarnCard(),
+                      // SizedBox(height: 30.h),
+                      // HeadingWithRightArrow(
+                      //   title: "Your Next Appointment",
+                      //   onTap: () {},
+                      // ),
+                      // SizedBox(height: 18.h),
+                      // AppointmentCard(),
                       SizedBox(height: 25.h),
                       HeadingWithRightArrow(
                         title: "Suggested Treatments",
                         onTap: () {
-                          Navigator.pushNamed(context, SuggestedTreatmentScreen.routeName);
+                          Navigator.pushNamed(
+                            context,
+                            SuggestedTreatmentScreen.routeName,
+                          );
                         },
                       ),
                       SizedBox(height: 18.h),
@@ -64,19 +70,20 @@ class HomeScreen extends ConsumerWidget {
               ],
             ),
             SizedBox(
-             
               height: 300.h,
-            
+
               child: Consumer(
-                builder: (context,ref,_) {
-                  final treatment = ref.watch(authViewModel).authResponse?.data?.treatment;
+                builder: (context, ref, _) {
+                  final treatment = ref
+                      .watch(authViewModel)
+                      .authResponse
+                      ?.data
+                      ?.treatment;
                   return ListView.builder(
-                              
                     shrinkWrap: true,
-                    itemCount: treatment?.length ?? 0 ,
+                    itemCount: treatment?.length ?? 0,
                     scrollDirection: Axis.horizontal,
                     itemBuilder: (context, index) {
-                  
                       return Padding(
                         padding: EdgeInsets.only(
                           left: index == 0 ? 30.w : 17.w,
@@ -90,7 +97,7 @@ class HomeScreen extends ConsumerWidget {
                       );
                     },
                   );
-                }
+                },
               ),
             ),
             // SizedBox(height: 18.h),
@@ -101,7 +108,7 @@ class HomeScreen extends ConsumerWidget {
             //     style: CustomFonts.black22w600,
             //   ),
             // ),
-           // SizedBox(height: 18.h),
+            // SizedBox(height: 18.h),
             // SizedBox(
             //   height: 144.h,
             //   child: ListView.builder(

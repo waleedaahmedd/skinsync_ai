@@ -151,46 +151,46 @@ void loginBottomSheet(BuildContext context) {
                           ),
                         ),
                       ),
-                      SizedBox(height: 10.h),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 16.h),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.r),
-                                color: CustomColors.greyColor,
-                              ),
-                              child: Center(
-                                child: Image.asset(
-                                  PngAssets.google,
-                                  height: 32.h,
-                                  width: 32.w,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 16.h),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.r),
-                                color: CustomColors.greyColor,
-                              ),
-                              child: Center(
-                                child: Image.asset(
-                                  PngAssets.apple,
-                                  height: 32.h,
-                                  width: 32.w,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      // SizedBox(height: 10.h),
+                      // Row(
+                      //   children: [
+                      //     Expanded(
+                      //       child: Container(
+                      //         padding: EdgeInsets.symmetric(vertical: 16.h),
+                      //         decoration: BoxDecoration(
+                      //           borderRadius: BorderRadius.circular(10.r),
+                      //           color: CustomColors.greyColor,
+                      //         ),
+                      //         child: Center(
+                      //           child: Image.asset(
+                      //             PngAssets.google,
+                      //             height: 32.h,
+                      //             width: 32.w,
+                      //             fit: BoxFit.contain,
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     SizedBox(width: 8),
+                      //     Expanded(
+                      //       child: Container(
+                      //         padding: EdgeInsets.symmetric(vertical: 16.h),
+                      //         decoration: BoxDecoration(
+                      //           borderRadius: BorderRadius.circular(10.r),
+                      //           color: CustomColors.greyColor,
+                      //         ),
+                      //         child: Center(
+                      //           child: Image.asset(
+                      //             PngAssets.apple,
+                      //             height: 32.h,
+                      //             width: 32.w,
+                      //             fit: BoxFit.contain,
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
                       SizedBox(height: 20.h),
 
                       FutureBuilder<bool>(
