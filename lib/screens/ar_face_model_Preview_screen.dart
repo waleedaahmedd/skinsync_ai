@@ -8,7 +8,6 @@ import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
 import 'package:skinsync_ai/widgets/bottom_sheets/syringe_level_sheet.dart';
 import 'package:skinsync_ai/widgets/service_type_button.dart';
 
@@ -849,14 +848,8 @@ class _ArFaceModelPreviewScreenState
                         .read(checkoutViewModel.notifier)
                         .updateState(treatmentSubAreaId: subAreaIds);
                     ref
-                        .read(clincDoctorProvider.notifier)
-                        .getClinic(
-                          treatmentId: treatmentId ?? 0,
-                          sideAreaIds: subAreaIds,
-                        );
-                    ref
                         .read(checkoutViewModel.notifier)
-                        .setSelectedTreamtment(
+                        .setSelectedTreatment(
                           treatment: treatment!,
                           selectedSubAreasList: subAreas,
                         );

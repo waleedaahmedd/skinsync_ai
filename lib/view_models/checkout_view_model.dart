@@ -73,14 +73,21 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       return "/error";
     }
   }
-  void setSelectedTreamtment({required TreatmentsModel treatment, required List<TreatmentSubAreaModel> selectedSubAreasList}){
-    state = state.copyWith(selectedTreatment: treatment,selectedSubAreasList: selectedSubAreasList );
+
+  void setSelectedTreatment({
+    required TreatmentsModel treatment,
+    required List<TreatmentSubAreaModel> selectedSubAreasList,
+  }) {
+    state = state.copyWith(
+      selectedTreatment: treatment,
+      selectedSubAreasList: selectedSubAreasList,
+    );
   }
 }
 
 class CheckoutState {
-   final List<TreatmentSubAreaModel>? selectedSubAreasList;
-   final TreatmentsModel? selectedTreatment;
+  final List<TreatmentSubAreaModel>? selectedSubAreasList;
+  final TreatmentsModel? selectedTreatment;
   final int? treatmentId;
   final int? treatmentAreaId;
   final List<int>? treatmentSubAreaId;
@@ -100,7 +107,7 @@ class CheckoutState {
     this.appointmentTime,
     this.capturedImage,
     this.selectedSubAreasList,
-    this.selectedTreatment
+    this.selectedTreatment,
   });
 
   CheckoutState copyWith({
@@ -112,8 +119,8 @@ class CheckoutState {
     String? appointmentDate,
     String? appointmentTime,
     XFile? capturedImage,
-   List<TreatmentSubAreaModel>? selectedSubAreasList,
-   TreatmentsModel? selectedTreatment,
+    List<TreatmentSubAreaModel>? selectedSubAreasList,
+    TreatmentsModel? selectedTreatment,
   }) {
     return CheckoutState(
       treatmentId: treatmentId ?? this.treatmentId,
@@ -125,8 +132,7 @@ class CheckoutState {
       appointmentTime: appointmentTime ?? this.appointmentTime,
       capturedImage: capturedImage ?? this.capturedImage,
       selectedSubAreasList: selectedSubAreasList ?? this.selectedSubAreasList,
-      selectedTreatment: selectedTreatment ?? this.selectedTreatment
-
+      selectedTreatment: selectedTreatment ?? this.selectedTreatment,
     );
   }
 }

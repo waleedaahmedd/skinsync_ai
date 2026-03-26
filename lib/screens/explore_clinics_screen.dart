@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
@@ -16,13 +17,28 @@ import '../utills/custom_fonts.dart';
 import '../utills/enums.dart';
 import 'clinics_detail_screen.dart';
 
-class ExploreClinicsScreen extends ConsumerWidget {
+class ExploreClinicsScreen extends ConsumerStatefulWidget {
   const ExploreClinicsScreen({super.key});
   static const String routeName = '/ExploreClinicsScreen';
 
   @override
-  Widget build(BuildContext context, ref) {
-    final state = ref.watch(clincDoctorProvider);
+  ConsumerState<ExploreClinicsScreen> createState() =>
+      _ExploreClinicsScreenState();
+}
+
+class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(clinicDoctorProvider.notifier).fetchClinicsFromMap();
+      // ref.read(clinicDoctorProvider.notifier).getClinic(treatmentId: treatmentId, sideAreaIds: sideAreaIds);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(clinicDoctorProvider);
     return Scaffold(
       appBar: CustomAppBar(showTitle: true, title: "Explore clinics"),
 
@@ -52,13 +68,12 @@ class ExploreClinicsScreen extends ConsumerWidget {
                     ),
                   ),
                 )
-              else if (state.clinicResponse?.data != null &&
-                  state.clinicResponse!.data!.isNotEmpty)
+              else if (state.clinics.isNotEmpty)
                 Expanded(
                   child: _buildViewType(
                     ref: ref,
                     viewType: state.viewType,
-                    clinics: state.clinicResponse!.data!,
+                    clinics: state.clinics,
                   ),
                 )
               else
@@ -72,7 +87,7 @@ class ExploreClinicsScreen extends ConsumerWidget {
                 ),
             ],
           ),
-          if (state.clinicResponse?.data?.isNotEmpty ?? false)
+          if (state.clinics.isNotEmpty)
             Positioned(
               left: 0,
               right: 0,
@@ -80,7 +95,7 @@ class ExploreClinicsScreen extends ConsumerWidget {
               child: Center(
                 child: FloatingActionButton.extended(
                   onPressed: ref
-                      .read(clincDoctorProvider.notifier)
+                      .read(clinicDoctorProvider.notifier)
                       .toggleViewType,
 
                   backgroundColor: Colors.black,
@@ -120,20 +135,17 @@ class ExploreClinicsScreen extends ConsumerWidget {
     return switch (viewType) {
       ViewType.grid => Padding(
         padding: EdgeInsets.symmetric(horizontal: 30.w),
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 18.w,
-            mainAxisSpacing: 18.h,
-            childAspectRatio: 0.7,
-          ),
+        child: MasonryGridView.count(
+          crossAxisCount: 2,
           itemCount: clinics.length,
+          crossAxisSpacing: 18.w,
+          mainAxisSpacing: 18.h,
           itemBuilder: (context, index) {
             return CustomClinicGridViewTile(
               clinicData: clinics[index],
               onTap: () {
                 ref
-                    .read(clincDoctorProvider.notifier)
+                    .read(clinicDoctorProvider.notifier)
                     .setClinicId(clinics[index].clinicId!);
                 Navigator.pushNamed(
                   context,
@@ -144,6 +156,30 @@ class ExploreClinicsScreen extends ConsumerWidget {
             );
           },
         ),
+        // child: GridView.builder(
+        //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        //     crossAxisCount: 2,
+        //     crossAxisSpacing: 18.w,
+        //     mainAxisSpacing: 18.h,
+        //     childAspectRatio: 0.7,
+        //   ),
+        //   itemCount: clinics.length,
+        //   itemBuilder: (context, index) {
+        //     return CustomClinicGridViewTile(
+        //       clinicData: clinics[index],
+        //       onTap: () {
+        //         ref
+        //             .read(clinicDoctorProvider.notifier)
+        //             .setClinicId(clinics[index].clinicId!);
+        //         Navigator.pushNamed(
+        //           context,
+        //           ClinicsDetailScreen.routeName,
+        //           arguments: clinics[index],
+        //         );
+        //       },
+        //     );
+        //   },
+        // ),
       ),
       ViewType.map => Consumer(
         builder: (_, ref, _) {

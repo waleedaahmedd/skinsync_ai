@@ -47,12 +47,12 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
 
       if (widget.clinic?.clinicId != null) {
         ref
-            .read(clincDoctorProvider.notifier)
+            .read(clinicDoctorProvider.notifier)
             .setClinicId(widget.clinic!.clinicId!);
       }
 
       ref
-          .read(clincDoctorProvider.notifier)
+          .read(clinicDoctorProvider.notifier)
           .getDoctors(
             treatmentId: treatment?.id ?? 0,
             sideAreaIds: subAreaIds,
@@ -74,7 +74,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
       selecteTime = null;
       if (widget.clinic?.clinicId != null) {
         ref
-            .read(clincDoctorProvider.notifier)
+            .read(clinicDoctorProvider.notifier)
             .fetchAvailability(
               date: picked,
               clinicId: widget.clinic!.clinicId!,
@@ -111,7 +111,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
 
               Consumer(
                 builder: (context, ref, _) {
-                  final state = ref.watch(clincDoctorProvider);
+                  final state = ref.watch(clinicDoctorProvider);
                   final doctors = state.doctorResponse?.data;
                   if (state.doctorLoading) {
                     return SizedBox(
@@ -265,7 +265,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                     Consumer(
                       builder: (_, ref, _) {
                         final state = ref.watch(
-                          clincDoctorProvider.select(
+                          clinicDoctorProvider.select(
                             (s) => (s.slots, s.loading),
                           ),
                         );
@@ -389,7 +389,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                       SizedBox(width: 47.h),
                       GestureDetector(
                         onTap: () {
-                          final state = ref.read(clincDoctorProvider);
+                          final state = ref.read(clinicDoctorProvider);
                           if (state.selectedDoctor == null) {
                             EasyLoading.showError('Select a doctor first!');
                             return;
@@ -439,12 +439,14 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
   Widget _buildDoctorCard(Doctor doctor, int index, bool isSelected) {
     return GestureDetector(
       onTap: () {
-        ref.read(clincDoctorProvider.notifier).setSelectedDoctor(doctor);
+        ref.read(clinicDoctorProvider.notifier).setSelectedDoctor(doctor);
         if (widget.clinic?.clinicId != null) {
-          ref.read(clincDoctorProvider.notifier).fetchAvailability(
-            date: selectedDate,
-            clinicId: widget.clinic!.clinicId!,
-          );
+          ref
+              .read(clinicDoctorProvider.notifier)
+              .fetchAvailability(
+                date: selectedDate,
+                clinicId: widget.clinic!.clinicId!,
+              );
         }
         setState(() {
           selecteTime = null;

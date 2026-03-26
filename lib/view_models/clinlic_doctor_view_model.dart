@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,6 +10,7 @@ import 'package:skinsync_ai/models/responses/get_doctor_response.dart';
 import 'package:skinsync_ai/repositories/clinic_doctor_repository.dart';
 import 'package:skinsync_ai/services/api_base_helper.dart';
 import 'package:skinsync_ai/services/clinic_doctor_service.dart';
+import 'package:skinsync_ai/services/location_service.dart';
 import 'package:skinsync_ai/services/media_service.dart';
 import 'package:skinsync_ai/utills/enums.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
@@ -20,7 +23,7 @@ import '../models/responses/payment_options_response.dart';
 import '../models/responses/treatment_pricing_response.dart' hide Treatment;
 import '../utills/date_time_utills.dart';
 
-final clincDoctorProvider = NotifierProvider(() {
+final clinicDoctorProvider = NotifierProvider(() {
   final apiBaseHelper = ApiBaseHelper();
   final clinicService = ClinicDoctorService(apiClient: apiBaseHelper);
   return ClinicDoctorViewModel(clinicRepository: clinicService);
@@ -54,8 +57,32 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
         treatmentId: treatmentId,
         sideAreaIdsList: sideAreas,
       );
-      state = state.copyWith(clinicLoading: false, clinicResponse: response);
+      state = state.copyWith(clinicLoading: false, clinics: response.data);
       return response.isSuccess == true;
+    });
+  }
+
+  Future<void> fetchClinicsFromMap() async {
+    return await runSafely(() async {
+      state = state.copyWith(clinicLoading: true);
+      final location = ref.read(authViewModel).addressData!.latLng;
+      final places = await LocationService().fetchNearbyClinics(
+        location: location,
+      );
+      final List<Clinic> clinics = [];
+      for (final place in places) {
+        log('NAME: ${place.displayName?.text}');
+        clinics.add(
+          Clinic(
+            clinicId: 0,
+            phone: place.internationalPhoneNumber,
+            address: place.formattedAddress,
+            clinicName: place.displayName?.text,
+            logo: place.photos?.firstOrNull?.name,
+          ),
+        );
+      }
+      state = state.copyWith(clinicLoading: false, clinics: clinics);
     });
   }
 
@@ -256,7 +283,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
 
 @immutable
 class ClinicDoctorState extends BaseStateModel {
-  final GetClinicResponse? clinicResponse;
+  final List<Clinic> clinics;
   final bool clinicLoading;
   final GetDoctorResponse? doctorResponse;
   final bool doctorLoading;
@@ -270,7 +297,7 @@ class ClinicDoctorState extends BaseStateModel {
   const ClinicDoctorState({
     super.loading = false,
     super.errorMessage,
-    this.clinicResponse,
+    this.clinics = const [],
     this.clinicLoading = false,
     this.doctorResponse,
     this.doctorLoading = false,
@@ -286,7 +313,7 @@ class ClinicDoctorState extends BaseStateModel {
   ClinicDoctorState copyWith({
     bool? loading,
     String? errorMessage,
-    GetClinicResponse? clinicResponse,
+    List<Clinic>? clinics,
     bool? clinicLoading,
     GetDoctorResponse? doctorResponse,
     bool? doctorLoading,
@@ -301,7 +328,7 @@ class ClinicDoctorState extends BaseStateModel {
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
       clinicLoading: clinicLoading ?? this.clinicLoading,
-      clinicResponse: clinicResponse ?? this.clinicResponse,
+      clinics: clinics ?? this.clinics,
       doctorResponse: doctorResponse ?? this.doctorResponse,
       doctorLoading: doctorLoading ?? this.doctorLoading,
       clinicId: clinicId ?? this.clinicId,

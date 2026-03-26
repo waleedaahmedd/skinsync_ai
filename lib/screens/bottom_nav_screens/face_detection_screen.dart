@@ -61,7 +61,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       }
 
       final front = cameras.firstWhere(
-            (c) => c.lensDirection == CameraLensDirection.front,
+        (c) => c.lensDirection == CameraLensDirection.front,
         orElse: () => cameras.first,
       );
 
@@ -284,7 +284,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
         isFullyVisible && // Must be fully visible (not cut off)
         isReasonableSize && // Must have reasonable size
         isNormalAspectRatio; // Must have normal proportions
-
   }
 
   Future<void> _captureAndNavigate(WidgetRef ref) async {
@@ -306,7 +305,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       centerXPercent: 0.5, // Center horizontally
       centerYPercent: 0.42, // Position at top (28% from top)
       radiusPercent: 0.5, // 50% of image width
-      flipHorizontally: _cameraController!.description.lensDirection ==
+      flipHorizontally:
+          _cameraController!.description.lensDirection ==
           CameraLensDirection.front, // Flip if front camera
     );
 
@@ -460,11 +460,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          if (_cameraController != null) _buildCameraView(),
-        ],
-      ),
+      body: _cameraController != null ? _buildCameraView() : SizedBox.shrink(),
     );
   }
 
@@ -482,7 +478,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     final circleCenterYPercent = 0.42;
 
     return SizedBox.expand(
-          child: Stack(
+      child: Stack(
         children: [
           Align(
             alignment: Alignment.topCenter,
@@ -496,20 +492,19 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                   final circleRadius = canvasWidth * circleRadiusPercent;
                   final circleCenterY = canvasHeight * circleCenterYPercent;
                   return Stack(
-            children: [
-              CameraPreview(_cameraController!),
+                    children: [
+                      CameraPreview(_cameraController!),
                       // Face bounding box overlay - must be before dark overlay to be visible
                       // if (_faceBoundingBoxPaint != null)
                       //   Positioned.fill(child: _faceBoundingBoxPaint!),
                       // White square (camera lens corners) - keep visible
-              CustomPaint(
+                      CustomPaint(
                         painter: TintOverlayPainter(
                           centerRadius: circleRadius,
                           centerY: circleCenterY,
                         ),
-                child: const SizedBox.expand(),
-              ),
-
+                        child: const SizedBox.expand(),
+                      ),
                     ],
                   );
                 },
@@ -528,126 +523,123 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
           ),
           Align(
             alignment: Alignment.bottomCenter,
-            child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: 30.w,
-                vertical: 5.h,
-              ),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.0),
-                    Colors.black.withOpacity(0.8),
-                    Colors.black.withOpacity(0.95),
-                    Colors.black
-                  ],
+            child: SafeArea(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 5.h),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.0),
+                      Colors.black.withValues(alpha: 0.8),
+                      Colors.black.withValues(alpha: 0.95),
+                      Colors.black,
+                    ],
+                  ),
                 ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: 24.h),
-                  Text(
-                    "Face Scan",
-                    style: CustomFonts.white22w600.copyWith(
-                      fontSize: 24.sp,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    "We'll scan your face and create a cool model just for you to enhance your experience!",
-                    style: CustomFonts.white22w600.copyWith(
-                      fontSize: 14.sp,
-                      color: Colors.white.withOpacity(0.9),
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
-                  _buildInstructionRow(
-                    icon: SvgAssets.eye,
-                    text:
-                    "Face forward and make sure your eyes are clearly visible.",
-                    iconHeight: 24.h,
-                    iconWidth: 26.w,
-                  ),
-                  SizedBox(height: 16.h),
-                  _buildInstructionRow(
-                    icon: SvgAssets.profileIcon,
-                    text: "Align your face within the circular frame.",
-                    iconHeight: 24.h,
-                    iconWidth: 24.w,
-                    iconColor: CustomColors.purpleColor,
-                  ),
-                  SizedBox(height: 16.h),
-                  _buildInstructionRow(
-                    icon: SvgAssets.glasses,
-                    text:
-                    "Remove anything that covers your face eg: Eye glasses, Cap etc",
-                    iconHeight: 8.h,
-                    iconWidth: 22.w,
-                  ),
-                  SizedBox(height: 16.h),
-                  _buildInstructionRow(
-                    icon: SvgAssets.face,
-                    text: "Move Your Face Inside The Border",
-                    iconHeight: 24.h,
-                    iconWidth: 22.w,
-                  ),
-                  SizedBox(height: 30.h),
-                  // Capture button
-                  SizedBox(
-                    width: double.infinity,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: CustomColors.purpleColor,
-                        borderRadius: BorderRadius.circular(12.r),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(height: 24.h),
+                    Text(
+                      "Face Scan",
+                      style: CustomFonts.white22w600.copyWith(
+                        fontSize: 24.sp,
+                        color: Colors.white,
                       ),
-                      child: Material(
-                        color: Colors.transparent,
-                        child: InkWell(
-                          onTap: _isCapturing
-                              ? null
-                              : () {
-                            if (_storedRef != null) {
-                              _captureAndNavigate(_storedRef!);
-                            }
-                          },
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      "We'll scan your face and create a cool model just for you to enhance your experience!",
+                      style: CustomFonts.white22w600.copyWith(
+                        fontSize: 14.sp,
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
+                    _buildInstructionRow(
+                      icon: SvgAssets.eye,
+                      text:
+                          "Face forward and make sure your eyes are clearly visible.",
+                      iconHeight: 24.h,
+                      iconWidth: 26.w,
+                    ),
+                    SizedBox(height: 16.h),
+                    _buildInstructionRow(
+                      icon: SvgAssets.profileIcon,
+                      text: "Align your face within the circular frame.",
+                      iconHeight: 24.h,
+                      iconWidth: 24.w,
+                      iconColor: CustomColors.purpleColor,
+                    ),
+                    SizedBox(height: 16.h),
+                    _buildInstructionRow(
+                      icon: SvgAssets.glasses,
+                      text:
+                          "Remove anything that covers your face eg: Eye glasses, Cap etc",
+                      iconHeight: 8.h,
+                      iconWidth: 22.w,
+                    ),
+                    SizedBox(height: 16.h),
+                    _buildInstructionRow(
+                      icon: SvgAssets.face,
+                      text: "Move Your Face Inside The Border",
+                      iconHeight: 24.h,
+                      iconWidth: 22.w,
+                    ),
+                    SizedBox(height: 30.h),
+                    // Capture button
+                    SizedBox(
+                      width: double.infinity,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: CustomColors.purpleColor,
                           borderRadius: BorderRadius.circular(12.r),
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 18.h,
-                            ),
-                            alignment: Alignment.center,
-                            child: _isCapturing
-                                ? SizedBox(
-                              height: 20.h,
-                              width: 20.w,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor:
-                                AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                ),
-                            )
-                                : Text(
-                              "Capture",
-                              style: CustomFonts.white18w600,
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: _isCapturing
+                                ? null
+                                : () {
+                                    if (_storedRef != null) {
+                                      _captureAndNavigate(_storedRef!);
+                                    }
+                                  },
+                            borderRadius: BorderRadius.circular(12.r),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 18.h),
+                              alignment: Alignment.center,
+                              child: _isCapturing
+                                  ? SizedBox(
+                                      height: 20.h,
+                                      width: 20.w,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
+                                      ),
+                                    )
+                                  : Text(
+                                      "Capture",
+                                      style: CustomFonts.white18w600,
+                                    ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 20.h),
-            ],
+                    SizedBox(height: 20.h),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ),
-      ),
         ],
       ),
     );
@@ -677,7 +669,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
             text,
             style: CustomFonts.white22w600.copyWith(
               fontSize: 14.sp,
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               fontWeight: FontWeight.w400,
             ),
           ),

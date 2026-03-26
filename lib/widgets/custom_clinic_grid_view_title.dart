@@ -7,8 +7,8 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/frosted_container.dart';
 
 class CustomClinicGridViewTile extends StatelessWidget {
-  Clinic? clinicData;
-  CustomClinicGridViewTile({
+  final Clinic? clinicData;
+  const CustomClinicGridViewTile({
     super.key,
     required this.onTap,
     required this.clinicData,
