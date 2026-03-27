@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
 import 'package:skinsync_ai/models/responses/get_doctor_response.dart';
+import 'package:skinsync_ai/screens/bottom_nav_page.dart';
 import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/time_container.dart';
@@ -17,7 +18,7 @@ import '../utills/custom_fonts.dart';
 import '../utills/date_time_utills.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_view_model.dart';
-import 'payment_screen.dart';
+import '../widgets/dialogs/appointment_success_dialog.dart';
 
 class ClinicServiceScreen extends ConsumerStatefulWidget {
   final Clinic? clinic;
@@ -77,7 +78,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
             .read(clinicDoctorProvider.notifier)
             .fetchAvailability(
               date: picked,
-              clinicId: widget.clinic!.clinicId!,
+              clinicId: 5, // widget.clinic!.clinicId!,
             );
       }
       setState(() {
@@ -398,15 +399,25 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                             EasyLoading.showError('Select a slot first!');
                             return;
                           }
-                          Navigator.pushNamed(
-                            context,
-                            PaymentScreen.routeName,
-                            arguments: {
-                              'clinic': widget.clinic!,
-                              'doctor': state.selectedDoctor!,
-                              'slot': state.slots[selecteTime!],
+                          showAppointmentSuccessDialog(
+                            context: context,
+                            onDone: () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                BottomNavPage.routeName,
+                                (_) => false,
+                              );
                             },
                           );
+                          // Navigator.pushNamed(
+                          //   context,
+                          //   PaymentScreen.routeName,
+                          //   arguments: {
+                          //     'clinic': widget.clinic!,
+                          //     'doctor': state.selectedDoctor!,
+                          //     'slot': state.slots[selecteTime!],
+                          //   },
+                          // );
                         },
                         child: Container(
                           width: 187.w,

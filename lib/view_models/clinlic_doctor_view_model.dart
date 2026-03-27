@@ -74,7 +74,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
         log('NAME: ${place.displayName?.text}');
         clinics.add(
           Clinic(
-            clinicId: 0,
+            clinicId: 29,
             phone: place.internationalPhoneNumber,
             address: place.formattedAddress,
             clinicName: place.displayName?.text,
@@ -96,7 +96,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
     final String sideAreas = sideAreaIds.join(',');
     return runSafely(() async {
       final response = await _clinicRepository.getDoctors(
-        clinicId: state.clinicId ?? 0,
+        clinicId: 5, //state.clinicId ?? 0,
 
         treatmentId: treatmentId,
         sideAreaIdsList: sideAreas,

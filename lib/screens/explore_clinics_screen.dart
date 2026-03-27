@@ -156,30 +156,6 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
             );
           },
         ),
-        // child: GridView.builder(
-        //   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        //     crossAxisCount: 2,
-        //     crossAxisSpacing: 18.w,
-        //     mainAxisSpacing: 18.h,
-        //     childAspectRatio: 0.7,
-        //   ),
-        //   itemCount: clinics.length,
-        //   itemBuilder: (context, index) {
-        //     return CustomClinicGridViewTile(
-        //       clinicData: clinics[index],
-        //       onTap: () {
-        //         ref
-        //             .read(clinicDoctorProvider.notifier)
-        //             .setClinicId(clinics[index].clinicId!);
-        //         Navigator.pushNamed(
-        //           context,
-        //           ClinicsDetailScreen.routeName,
-        //           arguments: clinics[index],
-        //         );
-        //       },
-        //     );
-        //   },
-        // ),
       ),
       ViewType.map => Consumer(
         builder: (_, ref, _) {
