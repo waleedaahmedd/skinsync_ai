@@ -442,8 +442,6 @@ class _ArFaceModelPreviewScreenState
                                                             .onTapTreatmentSubArea(
                                                               treatmentSubArea:
                                                                   subArea,
-                                                              isCallPredictAPI:
-                                                                  false,
                                                             );
 
                                                         int initialLevel = 0;
@@ -468,13 +466,13 @@ class _ArFaceModelPreviewScreenState
                                                         //     .updateSyringeLevel(
                                                         //       initialLevel,
                                                         //     );
-                                                        ref
-                                                            .read(
-                                                              treatmentViewModel
-                                                                  .notifier,
-                                                            )
-                                                            .callPredictAPI(
-                                                            );
+                                                        // ref
+                                                        //     .read(
+                                                        //       treatmentViewModel
+                                                        //           .notifier,
+                                                        //     )
+                                                        //     .callPredictAPI(
+                                                        //     );
 
                                                         if (!(minSyringe == 0 &&
                                                                 maxSyringe ==
@@ -557,6 +555,7 @@ class _ArFaceModelPreviewScreenState
                                           runSpacing: 8.h,
                                           children: selectedSubAreas.map((e) {
                                             final name = e.name ?? '-';
+                                            final syringes = e.currentSyringe;
                                             return Container(
                                               padding: EdgeInsets.symmetric(
                                                 horizontal: 12.w,
@@ -573,9 +572,20 @@ class _ArFaceModelPreviewScreenState
                                                       .withValues(alpha: 0.08),
                                                 ),
                                               ),
-                                              child: Text(
-                                                name,
-                                                style: CustomFonts.black14w500,
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                    name,
+                                                    style:
+                                                        CustomFonts.black14w500,
+                                                  ),
+                                                  if (syringes != 0)
+                                                    Text(
+                                                      ' Syringe${syringes > 1 ? 's' : ''} $syringes',
+                                                      style: CustomFonts
+                                                          .black14w500,
+                                                    ),
+                                                ],
                                               ),
                                             );
                                           }).toList(),
@@ -800,14 +810,19 @@ class _ArFaceModelPreviewScreenState
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    ref.read(treatmentViewModel.notifier).callPredictAPI();
+                  },
                   style: OutlinedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.r),
                     ),
                     padding: EdgeInsets.symmetric(vertical: 19.h),
                   ),
-                  child: Text('Save', style: CustomFonts.black22w600),
+                  child: Text(
+                    'Generate Ai Image',
+                    style: CustomFonts.black22w600,
+                  ),
                 ),
               ),
               const SizedBox(width: 16),

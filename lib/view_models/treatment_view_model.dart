@@ -74,7 +74,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     if (treatmentModel.isArea == true) {
       getSelectSectionApi(sectionId: treatmentModel.id ?? 0);
     } else if (isCallPredictAPI) {
-      callPredictAPI();
+     // callPredictAPI();
     }
   }
 
@@ -94,13 +94,12 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       }
     } else if (isCallPredictAPI) {
       _clearSubSectionSelection();
-      callPredictAPI();
+     // callPredictAPI();
     }
   }
 
   void onTapTreatmentSubArea({
     required TreatmentSubAreaModel treatmentSubArea,
-    required bool isCallPredictAPI,
   }) {
     final id = treatmentSubArea.id;
     final alreadySelected =
@@ -113,7 +112,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       selectedTreatmentSubArea: treatmentSubArea,
       selectedSubAreasList: updatedList,
     );
-    if (isCallPredictAPI) callPredictAPI();
+    //if (isCallPredictAPI) callPredictAPI();
   }
 
   void clearAllSelectedTreatments() {
