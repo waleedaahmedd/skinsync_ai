@@ -168,7 +168,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     return raw;
   }
 
-  Future<void> callPredictAPI({int? syringeLevel}) async {
+  Future<void> callPredictAPI() async {
     if (state.capturedImage == null) {
       const msg =
           'No captured image available. Please capture your face first.';
@@ -182,10 +182,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     EasyLoading.show(status: 'Processing image...');
 
     try {
-      final jsonRes = await _uploadCapturedImage(
-        image: _imageForPredict!,
-        syringeLevel: syringeLevel ?? 0,
-      );
+      final jsonRes = await _uploadCapturedImage(image: _imageForPredict!);
       if (jsonRes == null) throw Exception('Failed to upload image');
 
       final base64 = _parseOutputImageBase64(jsonRes);
@@ -220,18 +217,20 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
   Future<Map<String, dynamic>?> _uploadCapturedImage({
     required XFile image,
-    required int syringeLevel,
   }) async {
     final request = http.MultipartRequest(
       'POST',
       Uri.parse('http://18.116.65.70/api/'),
     );
+
+    final subSectionData = state.selectedSubAreasList.map((e) {
+      return {'sub_section_id': e.id, 'syringe': e.currentSyringe};
+    }).toList();
+
     request.fields.addAll({
       'treatment_id': (state.selectedTreatment?.id ?? 0).toString(),
       'treatment_section_id': (state.selectTreatmentArea?.id ?? 0).toString(),
-      'treatment_sub_section_id': (state.selectedTreatmentSubArea?.id ?? 0)
-          .toString(),
-      'syringes': syringeLevel.toString(),
+      'treatment_sub_section': jsonEncode(subSectionData),
     });
     request.files.add(await _imageMultipartFile(image));
 

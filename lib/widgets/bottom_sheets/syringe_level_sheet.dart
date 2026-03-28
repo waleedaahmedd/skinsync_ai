@@ -118,7 +118,7 @@ class _SyringeLevelSheetState extends State<SyringeLevelSheet> {
                           .updateSyringeLevel(subArea: updatedSubArea);
                       ref
                           .read(treatmentViewModel.notifier)
-                          .callPredictAPI(syringeLevel: next);
+                          .callPredictAPI();
                     },
                   ),
                 ),

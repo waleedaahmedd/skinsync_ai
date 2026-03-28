@@ -474,8 +474,6 @@ class _ArFaceModelPreviewScreenState
                                                                   .notifier,
                                                             )
                                                             .callPredictAPI(
-                                                              syringeLevel:
-                                                                  initialLevel,
                                                             );
 
                                                         if (!(minSyringe == 0 &&
