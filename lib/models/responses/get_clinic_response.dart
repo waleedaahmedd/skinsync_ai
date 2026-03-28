@@ -1,8 +1,8 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
 
 class GetClinicResponse extends BaseResponseModel {
   List<Clinic>? data;
- 
 
   GetClinicResponse({this.data, super.isSuccess, super.message});
 
@@ -29,37 +29,43 @@ class GetClinicResponse extends BaseResponseModel {
 }
 
 class Clinic {
-  int? clinicId;
-  String? clinicName;
-  String? email;
-  String? phone;
-  String? address;
-  String? logo;
-  int? price;
-  int? syringeSize;
-  String? status;
+  final int? clinicId;
+  final String? clinicName;
+  final String? email;
+  final String? phone;
+  final String? address;
+  final String? logo;
+  final int? price;
+  final int? syringeSize;
+  final String? status;
+  final LatLng? location;
 
-  Clinic(
-      {this.clinicId,
-      this.clinicName,
-      this.email,
-      this.phone,
-      this.address,
-      this.logo,
-      this.price,
-      this.syringeSize,
-      this.status});
+  Clinic({
+    this.clinicId,
+    this.clinicName,
+    this.email,
+    this.phone,
+    this.address,
+    this.logo,
+    this.price,
+    this.syringeSize,
+    this.status,
+    this.location,
+  });
 
-  Clinic.fromJson(Map<String, dynamic> json) {
-    clinicId = json['clinic_id'];
-    clinicName = json['clinic_name'];
-    email = json['email'];
-    phone = json['phone'];
-    address = json['address'];
-    logo = json['logo'];
-    price = json['price'];
-    syringeSize = json['syringe_size'];
-    status = json['status'];
+  factory Clinic.fromJson(Map<String, dynamic> json) {
+    return Clinic(
+      clinicId: json['clinic_id'],
+      clinicName: json['clinic_name'],
+      email: json['email'],
+      phone: json['phone'],
+      address: json['address'],
+      logo: json['logo'],
+      price: json['price'],
+      syringeSize: json['syringe_size'],
+      status: json['status'],
+      location: LatLng(json['location']['lat'], json['location']['lng']),
+    );
   }
 
   Map<String, dynamic> toJson() {

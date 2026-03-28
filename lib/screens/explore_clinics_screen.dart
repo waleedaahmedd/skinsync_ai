@@ -170,10 +170,17 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
           return GoogleMap(
             initialCameraPosition: position,
             padding: MediaQuery.paddingOf(ref.context),
-            markers: clinics.map((clinic) {
+            markers: clinics.where((clinic) => clinic.location != null).map((
+              clinic,
+            ) {
               return Marker(
                 markerId: MarkerId('${clinic.clinicId}'),
-                position: position.target,
+                position: clinic.location!,
+                icon: AssetMapBitmap(
+                  PngAssets.customMarker,
+                  width: 50.w,
+                  height: 50.w,
+                ),
               );
             }).toSet(),
             onMapCreated: (controller) async {

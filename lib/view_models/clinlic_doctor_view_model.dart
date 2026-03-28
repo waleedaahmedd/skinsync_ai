@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:skinsync_ai/models/base_state_model.dart';
 import 'package:skinsync_ai/models/responses/appointment_response.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
@@ -79,6 +80,9 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
             address: place.formattedAddress,
             clinicName: place.displayName?.text,
             logo: place.photos?.firstOrNull?.name,
+            location: place.location != null
+                ? LatLng(place.location!.latitude!, place.location!.longitude!)
+                : null,
           ),
         );
       }
