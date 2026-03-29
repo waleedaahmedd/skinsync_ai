@@ -51,6 +51,37 @@ class _ArFaceModelPreviewScreenState
     );
   }
 
+  void _showRemoveConfirmation(
+    BuildContext context,
+    WidgetRef ref,
+    int id,
+    String name,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title:  Text('Remove Sub Area',style: CustomFonts.black16w400),
+          content: Text('Do you want to remove $name?',style: CustomFonts.black16w400),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('No',style: CustomFonts.black16w400,),
+
+            ),
+            TextButton(
+              onPressed: () {
+                ref.read(treatmentViewModel.notifier).removeSubArea(id);
+                Navigator.pop(context);
+              },
+              child: Text('Yes',style: CustomFonts.black16w400),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -441,8 +472,6 @@ class _ArFaceModelPreviewScreenState
                                                             .onTapTreatmentSubArea(
                                                               treatmentSubArea:
                                                                   subArea,
-                                                              isCallPredictAPI:
-                                                                  false,
                                                             );
 
                                                         int initialLevel = 0;
@@ -467,15 +496,13 @@ class _ArFaceModelPreviewScreenState
                                                         //     .updateSyringeLevel(
                                                         //       initialLevel,
                                                         //     );
-                                                        ref
-                                                            .read(
-                                                              treatmentViewModel
-                                                                  .notifier,
-                                                            )
-                                                            .callPredictAPI(
-                                                              syringeLevel:
-                                                                  initialLevel,
-                                                            );
+                                                        // ref
+                                                        //     .read(
+                                                        //       treatmentViewModel
+                                                        //           .notifier,
+                                                        //     )
+                                                        //     .callPredictAPI(
+                                                        //     );
 
                                                         if (!(minSyringe == 0 &&
                                                                 maxSyringe ==
@@ -558,6 +585,7 @@ class _ArFaceModelPreviewScreenState
                                           runSpacing: 8.h,
                                           children: selectedSubAreas.map((e) {
                                             final name = e.name ?? '-';
+                                            final syringes = e.currentSyringe;
                                             return Container(
                                               padding: EdgeInsets.symmetric(
                                                 horizontal: 12.w,
@@ -571,12 +599,46 @@ class _ArFaceModelPreviewScreenState
                                                     ),
                                                 border: Border.all(
                                                   color: Colors.black
-                                                      .withValues(alpha: 0.08),
+                                                      .withValues(
+                                                        alpha: 0.08,
+                                                      ),
                                                 ),
                                               ),
-                                              child: Text(
-                                                name,
-                                                style: CustomFonts.black14w500,
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Column(
+                                                    children: [
+                                                      Text(
+                                                        name,
+                                                        style:
+                                                            CustomFonts.black14w500,
+                                                      ),
+                                                      if (syringes != 0)
+                                                        Text(
+                                                          ' Syringe${syringes > 1 ? 's' : ''} $syringes',
+                                                          style: CustomFonts
+                                                              .black14w500,
+                                                        ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(width: 5.w,),
+                                                  GestureDetector(
+                                                    onTap:
+                                                        () =>
+                                                        _showRemoveConfirmation(
+                                                          context,
+                                                          ref,
+                                                          e.id!,
+                                                          name,
+                                                        ),
+                                                    child: const Icon(
+                                                      Icons.cancel,
+                                                      size: 20,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  )
+                                                ],
                                               ),
                                             );
                                           }).toList(),
@@ -801,14 +863,19 @@ class _ArFaceModelPreviewScreenState
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    ref.read(treatmentViewModel.notifier).callPredictAPI();
+                  },
                   style: OutlinedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.r),
                     ),
                     padding: EdgeInsets.symmetric(vertical: 19.h),
                   ),
-                  child: Text('Save', style: CustomFonts.black22w600),
+                  child: Text(
+                    'Generate Ai Image',
+                    style: CustomFonts.black22w600,
+                  ),
                 ),
               ),
               const SizedBox(width: 16),
