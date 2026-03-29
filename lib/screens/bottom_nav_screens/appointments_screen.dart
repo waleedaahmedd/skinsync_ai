@@ -12,8 +12,6 @@ import 'package:skinsync_ai/widgets/scheduled_appointment_tile.dart';
 
 import '../../utills/custom_fonts.dart';
 import '../../widgets/app_bar_with_action_icon.dart';
-import '../../widgets/grey_container.dart';
-import 'package:skinsync_ai/utills/date_time_utills.dart';
 
 class ApppointmentsScreen extends ConsumerStatefulWidget {
   const ApppointmentsScreen({super.key});
@@ -109,6 +107,9 @@ class _ApppointmentsScreenState extends ConsumerState<ApppointmentsScreen> {
                 builder: (context, state, fetchNextPage) {
                   return PagedListView(
                     state: state,
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.paddingOf(context).bottom,
+                    ),
                     fetchNextPage: fetchNextPage,
                     builderDelegate: PagedChildBuilderDelegate(
                       noItemsFoundIndicatorBuilder: (context) {
@@ -120,15 +121,17 @@ class _ApppointmentsScreenState extends ConsumerState<ApppointmentsScreen> {
                         );
                       },
                       itemBuilder: (_, Appointment appointment, __) {
-                        return SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-
+                        return Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.h),
                           child: Row(
                             mainAxisAlignment: .start,
                             crossAxisAlignment: .start,
                             children: [
                               Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 30.w),
+                                padding: EdgeInsets.only(
+                                  left: 30.w,
+                                  right: 15.w,
+                                ),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     color: CustomColors.purpleColor,
@@ -147,13 +150,18 @@ class _ApppointmentsScreenState extends ConsumerState<ApppointmentsScreen> {
                                   ),
                                 ),
                               ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 30.w),
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                    left: 15.w,
+                                    right: 30.w,
+                                  ),
 
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: ScheduledAppointmentTile(
-                                    appointment: appointment,
+                                  child: Align(
+                                    alignment: Alignment.centerRight,
+                                    child: ScheduledAppointmentTile(
+                                      appointment: appointment,
+                                    ),
                                   ),
                                 ),
                               ),

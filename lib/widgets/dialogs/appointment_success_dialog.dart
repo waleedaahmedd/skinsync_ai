@@ -44,7 +44,7 @@ void showAppointmentSuccessDialog({
               Text("Success!", style: CustomFonts.black28w600),
               SizedBox(height: 12.h),
               Text(
-                "Appointment has been created.",
+                "Appointment has been created. The clinic will coordinate with you soon!",
                 textAlign: TextAlign.center,
                 style: CustomFonts.grey18w400,
               ),

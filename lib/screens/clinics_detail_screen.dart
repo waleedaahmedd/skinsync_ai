@@ -6,10 +6,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
-import 'package:skinsync_ai/screens/clinic_service_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+
+import '../widgets/dialogs/appointment_success_dialog.dart';
+import 'bottom_nav_page.dart';
 
 class ClinicsDetailScreen extends ConsumerWidget {
   final Clinic? clinic;
@@ -456,10 +458,20 @@ class ClinicsDetailScreen extends ConsumerWidget {
                       //     .read(checkoutViewModel.notifier)
                       //     .updateState(clinicId: "xx");
 
-                      Navigator.pushNamed(
-                        context,
-                        ClinicServiceScreen.routeName,
-                        arguments: clinic,
+                      // Navigator.pushNamed(
+                      //   context,
+                      //   ClinicServiceScreen.routeName,
+                      //   arguments: clinic,
+                      // );
+                      showAppointmentSuccessDialog(
+                        context: context,
+                        onDone: () {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            BottomNavPage.routeName,
+                            (_) => false,
+                          );
+                        },
                       );
                     },
                     child: Text("Book An Appointment"),
