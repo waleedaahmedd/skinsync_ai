@@ -40,6 +40,14 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     );
   }
 
+  void removeSubArea(int id) {
+    state = state.copyWith(
+      selectedSubAreasList: state.selectedSubAreasList
+          .where((element) => element.id != id)
+          .toList(),
+    );
+  }
+
   void toggleIsBefore() => state = state.copyWith(isBefore: !state.isBefore);
 
   Future<void> setCapturedImage(XFile image) async =>
@@ -74,7 +82,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     if (treatmentModel.isArea == true) {
       getSelectSectionApi(sectionId: treatmentModel.id ?? 0);
     } else if (isCallPredictAPI) {
-     // callPredictAPI();
+      // callPredictAPI();
     }
   }
 
@@ -94,13 +102,11 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       }
     } else if (isCallPredictAPI) {
       _clearSubSectionSelection();
-     // callPredictAPI();
+      // callPredictAPI();
     }
   }
 
-  void onTapTreatmentSubArea({
-    required TreatmentSubAreaModel treatmentSubArea,
-  }) {
+  void onTapTreatmentSubArea({required TreatmentSubAreaModel treatmentSubArea}) {
     final id = treatmentSubArea.id;
     final alreadySelected =
         id != null && state.selectedSubAreasList.any((e) => e.id == id);
@@ -127,7 +133,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       treatmentSubAreaLoading: state.treatmentSubAreaLoading,
       selectedTreatment: null,
       selectTreatmentArea: null,
-      selectedTreatmentSubArea: null,
       selectedSubAreasList: const [],
       isBefore: true,
       capturedImage: state.capturedImage,
@@ -214,9 +219,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     return http.MultipartFile.fromBytes('image', bytes, filename: 'image.jpg');
   }
 
-  Future<Map<String, dynamic>?> _uploadCapturedImage({
-    required XFile image,
-  }) async {
+  Future<Map<String, dynamic>?> _uploadCapturedImage({required XFile image}) async {
     final request = http.MultipartRequest(
       'POST',
       Uri.parse('http://18.116.65.70/api/'),
@@ -300,7 +303,6 @@ class TreatmentsState extends BaseStateModel {
 
   final TreatmentsModel? selectedTreatment;
   final TreatmentAreaModel? selectTreatmentArea;
-  final TreatmentSubAreaModel? selectedTreatmentSubArea;
   final List<TreatmentSubAreaModel> selectedSubAreasList;
 
   final bool isBefore;
@@ -318,7 +320,6 @@ class TreatmentsState extends BaseStateModel {
     this.treatmentSubAreaLoading = false,
     this.selectedTreatment,
     this.selectTreatmentArea,
-    this.selectedTreatmentSubArea,
     this.selectedSubAreasList = const [],
     this.isBefore = false,
     this.capturedImage,
@@ -362,9 +363,6 @@ class TreatmentsState extends BaseStateModel {
       selectTreatmentArea: clearSelectSectionId
           ? null
           : (selectedTreatmentArea ?? this.selectTreatmentArea),
-      selectedTreatmentSubArea: clearSubSectionId
-          ? null
-          : (selectedTreatmentSubArea ?? this.selectedTreatmentSubArea),
       selectedSubAreasList: clearSubSectionIds
           ? const []
           : (selectedSubAreasList ?? this.selectedSubAreasList),

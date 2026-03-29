@@ -52,6 +52,37 @@ class _ArFaceModelPreviewScreenState
     );
   }
 
+  void _showRemoveConfirmation(
+    BuildContext context,
+    WidgetRef ref,
+    int id,
+    String name,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title:  Text('Remove Sub Area',style: CustomFonts.black16w400),
+          content: Text('Do you want to remove $name?',style: CustomFonts.black16w400),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text('No',style: CustomFonts.black16w400,),
+
+            ),
+            TextButton(
+              onPressed: () {
+                ref.read(treatmentViewModel.notifier).removeSubArea(id);
+                Navigator.pop(context);
+              },
+              child: Text('Yes',style: CustomFonts.black16w400),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -569,22 +600,45 @@ class _ArFaceModelPreviewScreenState
                                                     ),
                                                 border: Border.all(
                                                   color: Colors.black
-                                                      .withValues(alpha: 0.08),
+                                                      .withValues(
+                                                        alpha: 0.08,
+                                                      ),
                                                 ),
                                               ),
-                                              child: Column(
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
                                                 children: [
-                                                  Text(
-                                                    name,
-                                                    style:
-                                                        CustomFonts.black14w500,
+                                                  Column(
+                                                    children: [
+                                                      Text(
+                                                        name,
+                                                        style:
+                                                            CustomFonts.black14w500,
+                                                      ),
+                                                      if (syringes != 0)
+                                                        Text(
+                                                          ' Syringe${syringes > 1 ? 's' : ''} $syringes',
+                                                          style: CustomFonts
+                                                              .black14w500,
+                                                        ),
+                                                    ],
                                                   ),
-                                                  if (syringes != 0)
-                                                    Text(
-                                                      ' Syringe${syringes > 1 ? 's' : ''} $syringes',
-                                                      style: CustomFonts
-                                                          .black14w500,
+                                                  SizedBox(width: 5.w,),
+                                                  GestureDetector(
+                                                    onTap:
+                                                        () =>
+                                                        _showRemoveConfirmation(
+                                                          context,
+                                                          ref,
+                                                          e.id!,
+                                                          name,
+                                                        ),
+                                                    child: const Icon(
+                                                      Icons.cancel,
+                                                      size: 20,
+                                                      color: Colors.grey,
                                                     ),
+                                                  )
                                                 ],
                                               ),
                                             );
