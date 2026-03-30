@@ -25,7 +25,7 @@
 -dontwarn com.google.mlkit.**
 
 # Keep models for serialization
--keep class com.nextapp.skinsyncai.models.** { *; }
+-keep class com.skinsyncaiinc.skinsyncai.models.** { *; }
 
 # Riverpod / Kotlin
 -keep class kotlin.reflect.jvm.internal.** { *; }
