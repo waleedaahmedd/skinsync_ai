@@ -197,7 +197,9 @@ void loginBottomSheet(BuildContext context) {
                         future: () async {
                           final result =
                               await SharedPref().readBool(
-                                SharedPreferencesKeys.biometricAuthKey.keyText,
+                                SharedPreferencesKeys
+                                    .biometricEnabledKey
+                                    .keyText,
                               ) ??
                               false;
                           return result;

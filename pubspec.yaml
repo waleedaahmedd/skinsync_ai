@@ -61,6 +61,8 @@ dependencies:
   location: ^8.0.1
   infinite_scroll_pagination: ^5.1.1
   firebase_storage: ^13.1.0
+  device_info_plus: ^12.4.0
+  crypto: ^3.0.7
 
 dev_dependencies:
   flutter_test:
