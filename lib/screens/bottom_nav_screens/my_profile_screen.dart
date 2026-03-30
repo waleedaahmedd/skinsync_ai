@@ -3,16 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 import 'package:skinsync_ai/screens/personal_detail_screen.dart';
-import 'package:skinsync_ai/screens/saved_treatment_screen.dart';
 import 'package:skinsync_ai/screens/setting_screen.dart';
+import 'package:skinsync_ai/screens/webview_page.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/utills/secure_storage_service.dart';
-import 'package:skinsync_ai/utills/shared_pref.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/logout_dialog_box.dart';
 
@@ -136,6 +133,30 @@ class MyProfileScreen extends StatelessWidget {
                   icon: SvgAssets.profileIcon,
                   title: "Personal Details",
                 ),
+                SizedBox(height: 36.h),
+                profileOppition(
+                  callBack: () {
+                    WebviewPage.open(
+                      context: context,
+                      url: 'https://skinsyncai.com/terms-of-service/',
+                      title: 'Terms Of Service',
+                    );
+                  },
+                  icon: Iconsax.document,
+                  title: "Terms Of Service",
+                ),
+                SizedBox(height: 36.h),
+                profileOppition(
+                  callBack: () {
+                    WebviewPage.open(
+                      context: context,
+                      url: 'https://skinsyncai.com/privacy-policy/',
+                      title: 'Privacy Policy',
+                    );
+                  },
+                  icon: Iconsax.security,
+                  title: "Privacy Policy",
+                ),
                 // SizedBox(height: 36.h),
                 // profileOppition(
                 //   callBack: () {
@@ -201,7 +222,7 @@ class MyProfileScreen extends StatelessWidget {
 }
 
 InkWell profileOppition({
-  required String icon,
+  required dynamic icon,
   required String title,
   required VoidCallback callBack,
 }) {
@@ -210,7 +231,10 @@ InkWell profileOppition({
 
     child: Row(
       children: [
-        SvgPicture.asset(icon, height: 24.h, width: 24.w),
+        if (icon is String)
+          SvgPicture.asset(icon, height: 24.h, width: 24.w)
+        else
+          Icon(icon, size: 24.sp, weight: 1),
         SizedBox(width: 16.w),
         Text(title, style: CustomFonts.black22w500),
       ],
