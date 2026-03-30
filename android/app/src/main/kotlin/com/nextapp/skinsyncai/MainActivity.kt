@@ -1,4 +1,4 @@
-package com.nextapp.skinsyncai
+package com.skinsyncaiinc.skinsyncai
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

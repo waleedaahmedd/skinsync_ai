@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '55541632083',
     projectId: 'skinsync-2aa8e',
     storageBucket: 'skinsync-2aa8e.firebasestorage.app',
-    iosBundleId: 'com.nextapp.skinsyncai',
+    iosBundleId: 'com.skinsyncaiinc.skinsyncai',
   );
 }
