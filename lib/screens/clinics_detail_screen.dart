@@ -1,14 +1,18 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
 import '../widgets/dialogs/appointment_success_dialog.dart';
 import 'bottom_nav_page.dart';
@@ -199,124 +203,156 @@ class ClinicsDetailScreen extends ConsumerWidget {
                       color: CustomColors.blackColor.withValues(alpha: 0.1),
                     ),
                     SizedBox(height: 18.h),
-                    Row(
-                      children: [
-                        Icon(
-                          Iconsax.location,
-                          color: Colors.black,
-                          size: 20.sp,
-                        ),
-                        SizedBox(width: 14.w),
-                        Flexible(
-                          child: Text(
-                            "Bedford-Stuyvesant, Brooklyn, NY 11221",
-                            overflow: TextOverflow.ellipsis,
-                            style: CustomFonts.black20w600,
-                          ),
-                        ),
-                      ],
+                    SizedBox(
+                      height: 300.h, // ✅ fixed height
+                      width: double.infinity,
+                      child: Consumer(
+                        builder: (_, ref, _) {
+                          final position = CameraPosition(
+                            target:
+                                clinic?.location ??
+                                LatLng(24.9211313, 67.0708059),
+                            zoom: 13,
+                          );
+                          log('ADDRESS: ${clinic?.location}');
+                          return GoogleMap(
+                            initialCameraPosition: position,
+                            padding: MediaQuery.paddingOf(ref.context),
+                            markers: {
+                              Marker(
+                                markerId: const MarkerId("clinic_location"),
+                                position:
+                                    clinic?.location ??
+                                    LatLng(24.9211313, 67.0708059),
+                              ),
+                            },
+                            onMapCreated: (controller) async {
+                              await controller.animateCamera(
+                                CameraUpdate.newCameraPosition(position),
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ),
+                    // Row(
+                    //   children: [
+                    //     Icon(
+                    //       Iconsax.location,
+                    //       color: Colors.black,
+                    //       size: 20.sp,
+                    //     ),
+                    //     SizedBox(width: 14.w),
+                    //     Flexible(
+                    //       child: Text(
+                    //         "Bedford-Stuyvesant, Brooklyn, NY 11221",
+                    //         overflow: TextOverflow.ellipsis,
+                    //         style: CustomFonts.black20w600,
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
 
-                    Image.asset(DummyAssets.map, height: 203.h, width: 380.w),
+                    // Image.asset(DummyAssets.map, height: 203.h, width: 380.w),
                   ],
                 ),
               ),
             ),
-            SizedBox(height: 26.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.0.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Glow Med Spa Services",
-                        style: CustomFonts.black22w600,
-                      ),
-                      SizedBox(height: 9.h),
-                      Text(
-                        "Beloved Services for Everyone",
-                        style: CustomFonts.black16w400,
-                      ),
-                    ],
-                  ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Container(
-                      padding: EdgeInsets.all(7.w),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: CustomColors.greyColor,
-                      ),
-                      child: Icon(
-                        CupertinoIcons.arrow_right,
-                        size: 16.sp,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            ListView.builder(
-              padding: EdgeInsets.only(top: 20.h, bottom: 0),
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              // ⭐ ADD THIS
-              itemCount: 3,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30.w),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        visualDensity: const VisualDensity(vertical: 0),
-                        contentPadding: EdgeInsets.zero,
-                        leading: ClipRRect(
-                          // ⭐ Better image clipping
-                          borderRadius: BorderRadius.circular(15.r),
-                          child: Image.asset(
-                            DummyAssets.treatmentimage,
-                            height: 69.h,
-                            width: 69.w,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        title: Text(
-                          "Botox Injections",
-                          style: CustomFonts.black18w600,
-                        ),
-                        subtitle: Text(
-                          "Lorem ipsum dolor sit amet consectetur. Amet augue.",
-                          style: CustomFonts.black16w400,
-                        ),
-                        // trailing: Container(
-                        //   padding: EdgeInsets.all(5.w),
-                        //   decoration: BoxDecoration(
-                        //     color: CustomColors.lightPurpleColor.withValues(
-                        //       alpha: 0.2,
-                        //     ),
-                        //     borderRadius: BorderRadius.circular(8.r),
-                        //   ),
-                        //   child: Icon(
-                        //     Icons.add,
-                        //     size: 16.sp,
-                        //     color: CustomColors.pinkColor,
-                        //   ),
-                        // ),
-                      ),
-                      SizedBox(height: 18.h),
-                      Divider(color: CustomColors.greyColor),
-                    ],
-                  ),
-                );
-              },
-            ),
+            //  SizedBox(height: 26.h),
+            // Padding(
+            //   padding: EdgeInsets.symmetric(horizontal: 30.0.w),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: [
+            //       Column(
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         children: [
+            //           Text(
+            //             "Glow Med Spa Services",
+            //             style: CustomFonts.black22w600,
+            //           ),
+            //           SizedBox(height: 9.h),
+            //           Text(
+            //             "Beloved Services for Everyone",
+            //             style: CustomFonts.black16w400,
+            //           ),
+            //         ],
+            //       ),
+            //       GestureDetector(
+            //         onTap: () {},
+            //         child: Container(
+            //           padding: EdgeInsets.all(7.w),
+            //           decoration: BoxDecoration(
+            //             shape: BoxShape.circle,
+            //             color: CustomColors.greyColor,
+            //           ),
+            //           child: Icon(
+            //             CupertinoIcons.arrow_right,
+            //             size: 16.sp,
+            //             color: Colors.black,
+            //           ),
+            //         ),
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // ListView.builder(
+            //   padding: EdgeInsets.only(top: 20.h, bottom: 0),
+            //   shrinkWrap: true,
+            //   physics: const NeverScrollableScrollPhysics(),
+            //   // ⭐ ADD THIS
+            //   itemCount: 3,
+            //   itemBuilder: (context, index) {
+            //     return Padding(
+            //       padding: EdgeInsets.symmetric(horizontal: 30.w),
+            //       child: Column(
+            //         children: [
+            //           ListTile(
+            //             visualDensity: const VisualDensity(vertical: 0),
+            //             contentPadding: EdgeInsets.zero,
+            //             leading: ClipRRect(
+            //               // ⭐ Better image clipping
+            //               borderRadius: BorderRadius.circular(15.r),
+            //               child: Image.network(
+            //                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl-cyJqFlcZav1TlRMEuajtrg2RJlWY3rTQA&s",
+            //                 height: 69.h,
+            //                 width: 69.w,
+            //                 fit: BoxFit.cover,
+            //               ),
+            //             ),
+            //             title: Text(
+            //               "Botox Injections",
+            //               style: CustomFonts.black18w600,
+            //             ),
+            //             subtitle: Text(
+            //               "Enhance your natural beauty with precision. Subtle results that make a big difference.",
+            //               style: CustomFonts.black16w400,
+            //             ),
+            //             // trailing: Container(
+            //             //   padding: EdgeInsets.all(5.w),
+            //             //   decoration: BoxDecoration(
+            //             //     color: CustomColors.lightPurpleColor.withValues(
+            //             //       alpha: 0.2,
+            //             //     ),
+            //             //     borderRadius: BorderRadius.circular(8.r),
+            //             //   ),
+            //             //   child: Icon(
+            //             //     Icons.add,
+            //             //     size: 16.sp,
+            //             //     color: CustomColors.pinkColor,
+            //             //   ),
+            //             // ),
+            //           ),
+            //           SizedBox(height: 18.h),
+            //           Divider(color: CustomColors.greyColor),
+            //         ],
+            //       ),
+            //     );
+            //   },
+            // ),
 
-            // Divider(color: CustomColors.greyColor),
-            SizedBox(height: 27.h),
+            // // Divider(color: CustomColors.greyColor),
+            SizedBox(height: 160.h),
             // Padding(
             //   padding: EdgeInsets.symmetric(horizontal: 30.0.w),
             //   child: Text("Proof Of Expertise", style: CustomFonts.black22w600),

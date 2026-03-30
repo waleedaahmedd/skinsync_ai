@@ -49,8 +49,7 @@ void loginBottomSheet(BuildContext context) {
               child: Consumer(
                 builder: (context, ref, _) {
                   return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-
+                   
                     children: [
                       Text(
                         "Get Started",
@@ -64,7 +63,7 @@ void loginBottomSheet(BuildContext context) {
                       SizedBox(height: 4.h),
 
                       Text(
-                        "Lorem ipsum dolor sit amet consectetur Ut consectetur mauris tellus ultricies.",
+                        "Smart skincare powered by AI.\nSign in to get personalized insights.",
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w400,

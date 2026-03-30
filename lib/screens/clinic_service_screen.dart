@@ -163,7 +163,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                     Text("Selected Services", style: CustomFonts.black22w600),
                     SizedBox(height: 17.h),
                     Text(
-                      "Lorem ipsum dolor sit amet consectetur. Cursus iaculis est cras viverra vitae sit pellentesq",
+                      "Review your selected treatments and details.\nEverything is tailored for your personalized care.",
                       style: CustomFonts.grey13w400,
                     ),
                     SizedBox(height: 10.h),

@@ -89,7 +89,8 @@ class TreatmentContainer extends StatelessWidget {
                           // ),
                         ),
                         child: Image.network(
-                          treatments.imageUrl ?? '',
+                          treatments.name == "Botox"? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl-cyJqFlcZav1TlRMEuajtrg2RJlWY3rTQA&s":
+                         "https://movelmedspa.com/storage/2024/05/Cheek-Filler-Treatment-at-Movel-Med-Spa.webp",
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Icon(Icons.broken_image);
