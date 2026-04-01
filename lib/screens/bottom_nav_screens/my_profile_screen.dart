@@ -76,7 +76,7 @@ class MyProfileScreen extends StatelessWidget {
                         //     ?.name;
                         return Center(
                           child: Image.asset(
-                            DummyAssets.acen,
+                            DummyAssets.profile,
                             fit: BoxFit.cover,
                             height: 103.w,
                             width: 103.w,

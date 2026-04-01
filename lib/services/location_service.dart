@@ -63,7 +63,7 @@ class LocationService {
     final uri = Uri.parse('https://places.googleapis.com/v1/places:searchText');
     final body = {
       'textQuery': 'MedSpa Clinic',
-      'maxResultCount': 20,
+      'maxResultCount': 100,
       'locationBias': {
         'circle': {
           'center': {

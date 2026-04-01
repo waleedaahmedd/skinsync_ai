@@ -34,6 +34,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
   ClinicDoctorViewModel({required ClinicDoctorRepository clinicRepository})
     : _clinicRepository = clinicRepository,
       super(initialState: ClinicDoctorState());
+  final List<Clinic> _allClinics = <Clinic>[];
 
   final ClinicDoctorRepository _clinicRepository;
   final _mediaService = MediaService();
@@ -86,6 +87,8 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
           ),
         );
       }
+      _allClinics.clear();
+      _allClinics.addAll(clinics);
       state = state.copyWith(clinicLoading: false, clinics: clinics);
     });
   }
@@ -271,6 +274,27 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
 
   void clearState() {
     state = ClinicDoctorState();
+  }
+
+  void onSearchChanged(String search) {
+    if (search.trim().isEmpty) {
+      state = state.copyWith(clinics: _allClinics);
+      return;
+    }
+    final searchedClinics = <Clinic>[];
+    for (final clinic in _allClinics) {
+      if (clinic.clinicName?.toLowerCase().contains(search.toLowerCase()) ??
+          false) {
+        searchedClinics.add(clinic);
+      } else if (clinic.address?.toLowerCase().contains(search.toLowerCase()) ??
+          false) {
+        searchedClinics.add(clinic);
+      } else if (clinic.phone?.toLowerCase().contains(search.toLowerCase()) ??
+          false) {
+        searchedClinics.add(clinic);
+      }
+    }
+    state = state.copyWith(clinics: searchedClinics);
   }
 
   @override

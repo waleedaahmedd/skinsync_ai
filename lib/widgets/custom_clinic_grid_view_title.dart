@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -30,12 +31,12 @@ class CustomClinicGridViewTile extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10.r),
-                  child: Image.network(
-                    clinicData?.logo ?? "",
+                  child: CachedNetworkImage(
+                    imageUrl: clinicData?.logo ?? "",
                     height: 174.h,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
+                    errorWidget: (context, error, stackTrace) {
                       return Container(
                         height: 174.h,
                         width: double.infinity,
