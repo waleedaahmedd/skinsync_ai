@@ -6,6 +6,7 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
+import 'package:skinsync_ai/widgets/scan_face_dialog.dart';
 
 import '../models/responses/treatment_response_model.dart';
 import '../view_models/checkout_view_model.dart';
@@ -38,11 +39,12 @@ class TreatmentContainer extends StatelessWidget {
                   );
               // TreatmentAreaScreen.show(context);
             }
+             showMScanFaceDialog(context);
             //else {
-            Navigator.pushNamed(
-              context,
-              ref.read(checkoutViewModel.notifier).navigateTo(),
-            );
+            // Navigator.pushNamed(
+            //   context,
+            //   ref.read(checkoutViewModel.notifier).navigateTo(),
+            // );
             // }
           },
           child: Container(
