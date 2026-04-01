@@ -41,10 +41,10 @@ class TreatmentContainer extends StatelessWidget {
             }
              showMScanFaceDialog(context);
             //else {
-            Navigator.pushNamed(
-              context,
-              ref.read(checkoutViewModel.notifier).navigateTo(),
-            );
+            // Navigator.pushNamed(
+            //   context,
+            //   ref.read(checkoutViewModel.notifier).navigateTo(),
+            // );
             // }
           },
           child: Container(
