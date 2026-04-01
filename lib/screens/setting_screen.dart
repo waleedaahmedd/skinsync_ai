@@ -149,6 +149,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                                   // ❗ force OFF if failed
                                   setState(() => isBiometricEnabled = false);
                                 }
+                                // BiometricHelper.clearSignature();
                               } else {
                                 final success =
                                     await BiometricHelper.clearSignature();

@@ -37,7 +37,9 @@ class SecureStorage {
     required String value,
   }) async {
     await _storage!.write(key: key, value: value);
-    _cachedToken = value;
+    if (key == _accessTokenKey) {
+      _cachedToken = value;
+    }
   }
 
   Future<String?> getSecureString({required String key}) async {
