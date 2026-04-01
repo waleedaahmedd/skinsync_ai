@@ -1,8 +1,73 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:crypto/crypto.dart';
+import 'package:skinsync_ai/utills/enums.dart';
+import 'package:skinsync_ai/utills/secure_storage_service.dart';
+
+import '../models/requests/register_biometric_req_model.dart';
 
 class BiometricHelper {
   final LocalAuthentication _auth = LocalAuthentication();
+
+  static final DeviceInfoPlugin _deviceInfo = DeviceInfoPlugin();
+
+  /// Generates a unique device signature (hashed)
+  static Future<RegisterBiometricReqModel> getDeviceSignature() async {
+    String rawData = '';
+    String deviceId = '';
+
+    try {
+      if (Platform.isAndroid) {
+        final android = await _deviceInfo.androidInfo;
+
+        deviceId = android.id; // semi-unique ID
+
+        rawData =
+            '${android.id}_${android.model}_${android.brand}_${android.device}_${android.version.sdkInt}';
+      } else if (Platform.isIOS) {
+        final ios = await _deviceInfo.iosInfo;
+
+        deviceId = ios.identifierForVendor ?? '';
+
+        rawData =
+            '${ios.identifierForVendor}_${ios.model}_${ios.systemVersion}';
+      } else {
+        rawData = 'unknown_device';
+        deviceId = 'unknown';
+      }
+
+      // Hash it for fingerprint
+      final bytes = utf8.encode(rawData);
+      final hash = sha256.convert(bytes).toString();
+
+      final req = RegisterBiometricReqModel(
+        deviceId: deviceId,
+        deviceHash: hash,
+      );
+
+      await SecureStorage().saveSecureString(
+        key: SharedPreferencesKeys.biometricAuthKey.keyText,
+        value: hash,
+      );
+
+      return req;
+    } catch (e) {
+      return RegisterBiometricReqModel(
+        deviceId: "unknown",
+        deviceHash: "unknown_signature",
+      );
+    }
+  }
+
+  static Future<bool> clearSignature() async {
+    await SecureStorage().deleteSecureString(
+      key: SharedPreferencesKeys.biometricAuthKey.keyText,
+    );
+    return true;
+  }
 
   /// Checks if device supports biometrics
   Future<bool> isBiometricAvailable() async {
@@ -44,7 +109,6 @@ class BiometricHelper {
     try {
       return await _auth.authenticate(
         localizedReason: reason,
-
         biometricOnly: true,
       );
     } catch (e) {

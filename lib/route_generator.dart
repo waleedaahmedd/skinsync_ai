@@ -32,6 +32,7 @@ import 'screens/bottom_nav_screens/face_detection_screen.dart';
 import 'screens/bottom_nav_screens/my_profile_screen.dart';
 import 'screens/bottom_nav_screens/treatments_screen.dart';
 import 'screens/explore_clinics_screen.dart';
+import 'screens/notification_screen.dart';
 import 'utills/colored_print.dart';
 
 // const String getStartedScreen = '/get_started_screen';
@@ -225,6 +226,13 @@ class RouteGenerator {
               doctor: data['doctor'],
               paymentOption: data['paymentOption'],
             );
+          },
+        );
+      case NotificationScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: NotificationScreen.routeName),
+          builder: (_) {
+            return NotificationScreen();
           },
         );
       case ProgressDetailScreen.routeName:

@@ -68,22 +68,26 @@ class MyProfileScreen extends StatelessWidget {
                       width: 7.w,
                     ),
                   ),
-                  child:  ClipOval(
-                        child: Center(
-                          child: Image.asset(
-                            DummyAssets.acen,
-                            fit: BoxFit.cover,
-                            height: 103.w,
-                            width: 103.w,
-                          ),
-                        ),
-                      )
-                    
+                  child: ClipOval(
+                    child: Center(
+                      child: Image.asset(
+                        DummyAssets.acen,
+                        fit: BoxFit.cover,
+                        height: 103.w,
+                        width: 103.w,
+                      ),
+                    ),
+                  ),
                 ),
                 SizedBox(width: 25.w),
                 Consumer(
-                  builder: (context,ref,_) {
-                    final name = ref.watch(authViewModel).authResponse?.data?.userDetails?.name;
+                  builder: (context, ref, _) {
+                    final name = ref
+                        .watch(authViewModel)
+                        .authResponse
+                        ?.data
+                        ?.userDetails
+                        ?.name;
                     return Column(
                       crossAxisAlignment: .start,
                       children: [
@@ -100,7 +104,7 @@ class MyProfileScreen extends StatelessWidget {
                         ),
                       ],
                     );
-                  }
+                  },
                 ),
               ],
             ),
@@ -163,8 +167,9 @@ class MyProfileScreen extends StatelessWidget {
                       screenContext: context,
                       desc: "Logout successful",
                       onSuccess: () async {
-                        SecureStorage secureStorage = SecureStorage();
-                        await secureStorage.clearAllSecureStrings();
+                        // SecureStorage secureStorage = SecureStorage();
+                        // await secureStorage.clearAllSecureStrings();
+
                         Navigator.pushNamedAndRemoveUntil(
                           context,
                           GetStartedScreen.routeName,

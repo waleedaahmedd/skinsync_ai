@@ -8,8 +8,11 @@ import 'package:skinsync_ai/screens/your_profile_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/secure_storage_service.dart';
+import 'package:skinsync_ai/utills/shared_pref.dart';
 
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
+
+import '../utills/enums.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -36,54 +39,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       await Future.delayed(Duration(milliseconds: _duration - 800));
 
       if (mounted) {
-        final token = SecureStorage().cachedAuthToken;
-        
-        if ( token != null) {
-          ref.read(authViewModel.notifier).callGetMe().then((value) {
-            if (value == true) {
-              final islogin = ref.read(authViewModel).authResponse?.data?.isFirstLogin;
-              if(islogin == false){
-               Navigator.pushNamedAndRemoveUntil(
-                context,
-                BottomNavPage.routeName,
-                (Route<dynamic> route) => false,
-              );
-              }else {
-                Navigator.pushNamedAndRemoveUntil(
-                context,
-                YourProfileScreen.routeName,
-                (Route<dynamic> route) => false,
-              );
-              }  
-            } else{
-              Navigator.of(context).pushReplacement(
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) =>
-                  const GetStartedScreen(),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                    // Use ease-in curve
-                    var curve = Curves.easeIn;
-                    var curvedAnimation = CurvedAnimation(
-                      parent: animation,
-                      curve: curve,
-                    );
-                    return FadeTransition(
-                      opacity: curvedAnimation,
-                      child: child,
-                    );
-                  },
-              transitionDuration: const Duration(milliseconds: 900),
-            ),
-          );
-            }
-          });
-        } else {
-          // Navigator.pushNamedAndRemoveUntil(
-          //   context,
-          //   BottomNavPage.routeName,
-          //   (Route<dynamic> route) => false,
-          // );
+        final isBioMetricEnabled =
+            SharedPref().readBool(
+              SharedPreferencesKeys.biometricEnabledKey.keyText,
+            ) ??
+            false;
+        if (isBioMetricEnabled) {
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>
@@ -104,6 +65,80 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               transitionDuration: const Duration(milliseconds: 900),
             ),
           );
+        } else {
+          final token = SecureStorage().cachedAuthToken;
+
+          if (token != null) {
+            ref.read(authViewModel.notifier).callGetMe().then((value) {
+              if (value == true) {
+                final islogin = ref
+                    .read(authViewModel)
+                    .authResponse
+                    ?.data
+                    ?.isFirstLogin;
+                if (islogin == false) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    BottomNavPage.routeName,
+                    (Route<dynamic> route) => false,
+                  );
+                } else {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    YourProfileScreen.routeName,
+                    (Route<dynamic> route) => false,
+                  );
+                }
+              } else {
+                Navigator.of(context).pushReplacement(
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const GetStartedScreen(),
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                          // Use ease-in curve
+                          var curve = Curves.easeIn;
+                          var curvedAnimation = CurvedAnimation(
+                            parent: animation,
+                            curve: curve,
+                          );
+                          return FadeTransition(
+                            opacity: curvedAnimation,
+                            child: child,
+                          );
+                        },
+                    transitionDuration: const Duration(milliseconds: 900),
+                  ),
+                );
+              }
+            });
+          } else {
+            // Navigator.pushNamedAndRemoveUntil(
+            //   context,
+            //   BottomNavPage.routeName,
+            //   (Route<dynamic> route) => false,
+            // );
+            Navigator.of(context).pushReplacement(
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) =>
+                    const GetStartedScreen(),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) {
+                      // Use ease-in curve
+                      var curve = Curves.easeIn;
+                      var curvedAnimation = CurvedAnimation(
+                        parent: animation,
+                        curve: curve,
+                      );
+                      return FadeTransition(
+                        opacity: curvedAnimation,
+                        child: child,
+                      );
+                    },
+                transitionDuration: const Duration(milliseconds: 900),
+              ),
+            );
+          }
         }
       }
     });

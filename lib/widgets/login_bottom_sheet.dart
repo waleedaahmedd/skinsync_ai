@@ -12,6 +12,8 @@ import 'package:skinsync_ai/utills/enums.dart';
 import 'package:skinsync_ai/utills/secure_storage_service.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
+import '../utills/shared_pref.dart';
+
 void loginBottomSheet(BuildContext context) {
   showModalBottomSheet(
     backgroundColor: Colors.transparent,
@@ -192,7 +194,16 @@ void loginBottomSheet(BuildContext context) {
                       SizedBox(height: 20.h),
 
                       FutureBuilder<bool>(
-                        future: BiometricHelper().isBiometricAvailable(),
+                        future: () async {
+                          final result =
+                              await SharedPref().readBool(
+                                SharedPreferencesKeys
+                                    .biometricEnabledKey
+                                    .keyText,
+                              ) ??
+                              false;
+                          return result;
+                        }(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -220,14 +231,26 @@ void loginBottomSheet(BuildContext context) {
                                                     reason:
                                                         'Login with Biometrics',
                                                   );
-                                          if (authenticated && context.mounted) {
-                                            Navigator.pushNamed(
-                                              context,
-                                              BottomNavPage.routeName,
+                                          if (authenticated &&
+                                              context.mounted) {
+                                            EasyLoading.show(
+                                              status: "Please Wait...",
                                             );
-                                          } 
-                                        }
-                                        else {
+                                            ref
+                                                .read(authViewModel.notifier)
+                                                .callGetMe()
+                                                .then((value) {
+                                                  EasyLoading.dismiss();
+                                                  if (value == true &&
+                                                      context.mounted) {
+                                                    Navigator.pushNamed(
+                                                      context,
+                                                      BottomNavPage.routeName,
+                                                    );
+                                                  }
+                                                });
+                                          }
+                                        } else {
                                           EasyLoading.showError(
                                             "Please Login First",
                                           );

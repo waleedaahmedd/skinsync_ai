@@ -1,17 +1,43 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/utills/shared_pref.dart';
+import 'package:skinsync_ai/view_models/auth_view_model.dart';
+import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
 
+import '../utills/biometric_helper.dart';
+import '../utills/enums.dart';
 import '../widgets/custom_app_bar.dart';
 
-class SettingScreen extends StatelessWidget {
+class SettingScreen extends ConsumerStatefulWidget {
   const SettingScreen({super.key});
   static const String routeName = '/SettingScreen';
+
+  @override
+  ConsumerState<SettingScreen> createState() => _SettingScreenState();
+}
+
+class _SettingScreenState extends ConsumerState<SettingScreen> {
+  bool isBiometricEnabled = false;
+  bool isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    isBiometricEnabled =
+        SharedPref().readBool(
+          SharedPreferencesKeys.biometricEnabledKey.keyText,
+        ) ??
+        false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +100,79 @@ class SettingScreen extends StatelessWidget {
                       "Biometric Authentication",
                       style: CustomFonts.black22w500,
                     ),
+                    Spacer(),
+                    // FutureBuilder(
+                    //   future: (_){}
+                    //   ,
+                    //   builder: (context, snapshot) {
+                    //     if (snapshot.hasData) {
+                    //       return CustomSizedSwitch(
+                    //         isOn: snapshot.data!,
+                    //         onChanged: (value) {
+                    //           SharedPref().writeBool(SharedPreferencesKeys.biometricAuthKey, value);
+                    //         },
+                    //       );
+                    //     } else {
+                    //       return CircularProgressIndicator();
+                    //     }
+                    //   },
+                    // ),
+                    FutureBuilder<bool>(
+                      future: BiometricHelper().isBiometricAvailable(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const SizedBox();
+                        } else if (snapshot.hasData && snapshot.data == true) {
+                          return CustomSizedSwitch(
+                            isOn: isBiometricEnabled,
+                            onChanged: (value) async {
+                              if (isLoading) return;
+
+                              setState(() => isLoading = true);
+
+                              if (value) {
+                                final success = await ref
+                                    .read(authViewModel.notifier)
+                                    .callBiometricRegisterApi();
+
+                                if (success ?? false) {
+                                  setState(() => isBiometricEnabled = true);
+
+                                  SharedPref().saveBool(
+                                    SharedPreferencesKeys
+                                        .biometricEnabledKey
+                                        .keyText,
+                                    true,
+                                  );
+                                } else {
+                                  // ❗ force OFF if failed
+                                  setState(() => isBiometricEnabled = false);
+                                }
+                              } else {
+                                final success =
+                                    await BiometricHelper.clearSignature();
+
+                                if (success) {
+                                  setState(() => isBiometricEnabled = false);
+
+                                  SharedPref().saveBool(
+                                    SharedPreferencesKeys
+                                        .biometricEnabledKey
+                                        .keyText,
+                                    false,
+                                  );
+                                }
+                              }
+
+                              setState(() => isLoading = false);
+                            },
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      },
+                    ),
                   ],
                 ),
                 SizedBox(height: 37.h),
@@ -94,15 +193,15 @@ class SettingScreen extends StatelessWidget {
 }
 
 class CustomSizedSwitch extends StatefulWidget {
-  const CustomSizedSwitch({super.key});
+  CustomSizedSwitch({super.key, this.isOn = false, this.onChanged});
+  bool isOn;
+  void Function(bool)? onChanged;
 
   @override
   State<CustomSizedSwitch> createState() => _CustomSizedSwitchState();
 }
 
 class _CustomSizedSwitchState extends State<CustomSizedSwitch> {
-  bool isOn = false;
-
   @override
   Widget build(BuildContext context) {
     return Transform.scale(
@@ -115,11 +214,12 @@ class _CustomSizedSwitchState extends State<CustomSizedSwitch> {
           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
         child: Switch(
-          value: isOn,
+          value: widget.isOn,
           onChanged: (value) {
             setState(() {
-              isOn = value;
+              widget.isOn = value;
             });
+            widget.onChanged?.call(value);
           },
         ),
       ),
