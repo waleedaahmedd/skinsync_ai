@@ -590,6 +590,15 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                       iconHeight: 24.h,
                       iconWidth: 22.w,
                     ),
+                    SizedBox(height: 16.h),
+                    _buildInstructionRow(
+                      icon: Icons.warning,
+                      iconColor: CustomColors.purpleColor,
+                      text:
+                          "The app is not a medical device. Any results provided are for informational and aesthetic purposes only.",
+                      iconHeight: 24.h,
+                      iconWidth: 22.w,
+                    ),
                     SizedBox(height: 30.h),
                     // Capture button
                     SizedBox(
@@ -646,23 +655,26 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   }
 
   Widget _buildInstructionRow({
-    required String icon,
+    required dynamic icon,
     required String text,
     required double iconHeight,
     required double iconWidth,
     Color? iconColor,
   }) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SvgPicture.asset(
-          icon,
-          height: iconHeight,
-          width: iconWidth,
-          colorFilter: iconColor != null
-              ? ColorFilter.mode(iconColor, BlendMode.srcIn)
-              : null,
-        ),
+        if (icon is String)
+          SvgPicture.asset(
+            icon,
+            height: iconHeight,
+            width: iconWidth,
+            colorFilter: iconColor != null
+                ? ColorFilter.mode(iconColor, BlendMode.srcIn)
+                : null,
+          )
+        else
+          Icon(icon, size: iconHeight, color: iconColor),
         SizedBox(width: 17.w),
         Flexible(
           child: Text(

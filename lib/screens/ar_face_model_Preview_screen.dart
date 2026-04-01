@@ -61,20 +61,22 @@ class _ArFaceModelPreviewScreenState
       context: context,
       builder: (context) {
         return AlertDialog(
-          title:  Text('Remove Sub Area',style: CustomFonts.black16w400),
-          content: Text('Do you want to remove $name?',style: CustomFonts.black16w400),
+          title: Text('Remove Sub Area', style: CustomFonts.black16w400),
+          content: Text(
+            'Do you want to remove $name?',
+            style: CustomFonts.black16w400,
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('No',style: CustomFonts.black16w400,),
-
+              child: Text('No', style: CustomFonts.black16w400),
             ),
             TextButton(
               onPressed: () {
                 ref.read(treatmentViewModel.notifier).removeSubArea(id);
                 Navigator.pop(context);
               },
-              child: Text('Yes',style: CustomFonts.black16w400),
+              child: Text('Yes', style: CustomFonts.black16w400),
             ),
           ],
         );
@@ -599,9 +601,7 @@ class _ArFaceModelPreviewScreenState
                                                     ),
                                                 border: Border.all(
                                                   color: Colors.black
-                                                      .withValues(
-                                                        alpha: 0.08,
-                                                      ),
+                                                      .withValues(alpha: 0.08),
                                                 ),
                                               ),
                                               child: Row(
@@ -611,8 +611,8 @@ class _ArFaceModelPreviewScreenState
                                                     children: [
                                                       Text(
                                                         name,
-                                                        style:
-                                                            CustomFonts.black14w500,
+                                                        style: CustomFonts
+                                                            .black14w500,
                                                       ),
                                                       if (syringes != 0)
                                                         Text(
@@ -622,10 +622,9 @@ class _ArFaceModelPreviewScreenState
                                                         ),
                                                     ],
                                                   ),
-                                                  SizedBox(width: 5.w,),
+                                                  SizedBox(width: 5.w),
                                                   GestureDetector(
-                                                    onTap:
-                                                        () =>
+                                                    onTap: () =>
                                                         _showRemoveConfirmation(
                                                           context,
                                                           ref,
@@ -637,7 +636,7 @@ class _ArFaceModelPreviewScreenState
                                                       size: 20,
                                                       color: Colors.grey,
                                                     ),
-                                                  )
+                                                  ),
                                                 ],
                                               ),
                                             );
@@ -797,14 +796,37 @@ class _ArFaceModelPreviewScreenState
               right: 10.w,
               child: Consumer(
                 builder: (context, ref, _) {
-                  return GestureDetector(
-                    onTap: () {
-                      ref.read(treatmentViewModel.notifier).toggleIsBefore();
-                    },
-                    child: CircleAvatar(
-                      backgroundColor: CustomColors.greyColor,
-                      child: Image.asset(PngAssets.beforeAfter, width: 18.w),
-                    ),
+                  final image = ref.watch(
+                    treatmentViewModel.select((s) => s.aiImage),
+                  );
+                  return Row(
+                    spacing: 10.w,
+                    children: [
+                      if (image != null)
+                        GestureDetector(
+                          onTap: () {
+                            ref.read(treatmentViewModel.notifier).saveAiImage();
+                          },
+                          child: CircleAvatar(
+                            backgroundColor: CustomColors.greyColor,
+                            child: Icon(Icons.download_outlined),
+                          ),
+                        ),
+                      GestureDetector(
+                        onTap: () {
+                          ref
+                              .read(treatmentViewModel.notifier)
+                              .toggleIsBefore();
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: CustomColors.greyColor,
+                          child: Image.asset(
+                            PngAssets.beforeAfter,
+                            width: 18.w,
+                          ),
+                        ),
+                      ),
+                    ],
                   );
                 },
               ),

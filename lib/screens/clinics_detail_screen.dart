@@ -12,7 +12,6 @@ import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
 import '../widgets/dialogs/appointment_success_dialog.dart';
 import 'bottom_nav_page.dart';
@@ -510,7 +509,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                         },
                       );
                     },
-                    child: Text("Book An Appointment"),
+                    child: Text("Invite this Medical Spa"),
                   ),
                 ),
               ),
