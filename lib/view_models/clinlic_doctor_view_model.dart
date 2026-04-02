@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -73,17 +71,18 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
       );
       final List<Clinic> clinics = [];
       for (final place in places) {
-        log('NAME: ${place.displayName?.text}');
         clinics.add(
           Clinic(
             clinicId: 29,
             phone: place.internationalPhoneNumber,
-            address: place.formattedAddress,
+            description: place.primaryTypeDisplayName?.text,
+            address: place.shortFormattedAddress,
             clinicName: place.displayName?.text,
             logo: place.photos?.firstOrNull?.name,
             location: place.location != null
                 ? LatLng(place.location!.latitude!, place.location!.longitude!)
                 : null,
+            place: place,
           ),
         );
       }

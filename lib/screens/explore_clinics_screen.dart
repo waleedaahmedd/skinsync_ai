@@ -53,7 +53,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                   style: CustomFonts.black18w400,
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.search),
-                    hintText: "Search doctor, injector, treatment & clinic",
+                    hintText: "Search clinics",
                   ),
                   onChanged: ref
                       .read(clinicDoctorProvider.notifier)

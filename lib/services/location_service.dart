@@ -81,6 +81,7 @@ class LocationService {
     };
     final response = await post(uri, body: jsonEncode(body), headers: headers);
     final jsonString = response.body;
+    log('JSON: $jsonString');
     return MapClinicsResponse.fromJson(jsonDecode(jsonString)).places ?? [];
   }
 }

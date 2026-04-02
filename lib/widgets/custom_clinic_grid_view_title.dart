@@ -79,7 +79,10 @@ class CustomClinicGridViewTile extends StatelessWidget {
                       children: [
                         Icon(Icons.star, color: Color(0XFFF68712), size: 16.sp),
                         SizedBox(width: 4.w),
-                        Text("4.9", style: CustomFonts.black12w600),
+                        Text(
+                          '${clinicData?.place?.rating ?? 0}',
+                          style: CustomFonts.black12w600,
+                        ),
                       ],
                     ),
                   ),
@@ -104,8 +107,13 @@ class CustomClinicGridViewTile extends StatelessWidget {
             ),
           ),
           Text(clinicData?.clinicName ?? "", style: CustomFonts.black18w600),
-          Text(clinicData?.address ?? "", style: CustomFonts.black14w400),
-          Text("11:00 AM - 12:00 PM", style: CustomFonts.black14w400),
+          if (clinicData?.address != null)
+            Text(clinicData!.address!, style: CustomFonts.black14w400),
+          if (clinicData?.place?.currentOpeningHours != null)
+            Text(
+              clinicData!.place!.currentOpeningHours!.todayOpeningHours,
+              style: CustomFonts.black14w400,
+            ),
         ],
       ),
     );

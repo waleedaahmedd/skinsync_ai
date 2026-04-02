@@ -1,5 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
+import 'package:skinsync_ai/models/responses/map_clinics_response.dart';
 
 class GetClinicResponse extends BaseResponseModel {
   List<Clinic>? data;
@@ -16,16 +17,6 @@ class GetClinicResponse extends BaseResponseModel {
     isSuccess = json['is_success'];
     message = json['message'];
   }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
-    }
-    data['is_success'] = this.isSuccess;
-    data['message'] = this.message;
-    return data;
-  }
 }
 
 class Clinic {
@@ -33,24 +24,28 @@ class Clinic {
   final String? clinicName;
   final String? email;
   final String? phone;
+  final String? description;
   final String? address;
   final String? logo;
   final int? price;
   final int? syringeSize;
   final String? status;
   final LatLng? location;
+  final Place? place;
 
   Clinic({
     this.clinicId,
     this.clinicName,
     this.email,
     this.phone,
+    this.description,
     this.address,
     this.logo,
     this.price,
     this.syringeSize,
     this.status,
     this.location,
+    this.place,
   });
 
   factory Clinic.fromJson(Map<String, dynamic> json) {
@@ -59,6 +54,7 @@ class Clinic {
       clinicName: json['clinic_name'],
       email: json['email'],
       phone: json['phone'],
+      description: json['description'],
       address: json['address'],
       logo: json['logo'],
       price: json['price'],
@@ -66,19 +62,5 @@ class Clinic {
       status: json['status'],
       location: LatLng(json['location']['lat'], json['location']['lng']),
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['clinic_id'] = this.clinicId;
-    data['clinic_name'] = this.clinicName;
-    data['email'] = this.email;
-    data['phone'] = this.phone;
-    data['address'] = this.address;
-    data['logo'] = this.logo;
-    data['price'] = this.price;
-    data['syringe_size'] = this.syringeSize;
-    data['status'] = this.status;
-    return data;
   }
 }
