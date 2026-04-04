@@ -12,6 +12,7 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
+import '../widgets/bottom_sheets/before_you_book_bottomsheet.dart';
 import '../widgets/dialogs/appointment_success_dialog.dart';
 import 'bottom_nav_page.dart';
 
@@ -536,13 +537,18 @@ class ClinicsDetailScreen extends ConsumerWidget {
                       //   ClinicServiceScreen.routeName,
                       //   arguments: clinic,
                       // );
-                      showAppointmentSuccessDialog(
-                        context: context,
-                        onDone: () {
-                          Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            BottomNavPage.routeName,
-                            (_) => false,
+                      BeforeYouBookBottomSheet.show(
+                        context,
+                        onConfirm: () {
+                          showAppointmentSuccessDialog(
+                            context: context,
+                            onDone: () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                BottomNavPage.routeName,
+                                (_) => false,
+                              );
+                            },
                           );
                         },
                       );

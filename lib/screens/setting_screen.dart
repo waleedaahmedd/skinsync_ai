@@ -124,7 +124,6 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                             isOn: isBiometricEnabled,
                             onChanged: (value) async {
                               if (isLoading) return;
-
                               setState(() => isLoading = true);
 
                               if (value) {
