@@ -7,8 +7,9 @@ import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
 import 'package:skinsync_ai/models/responses/address_data.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
+import 'package:skinsync_ai/services/google_auth_service.dart';
 import 'package:skinsync_ai/services/location_service.dart';
-import 'package:skinsync_ai/utills/shared_pref.dart';
+import 'package:skinsync_ai/utills/enums.dart';
 
 import '../models/base_state_model.dart';
 import '../models/requests/sign_in_request.dart';
@@ -168,6 +169,27 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       }
 
       return response.isSuccess == true;
+    });
+  }
+
+  Future<bool?> callGoogleSignInApi() async {
+    return await runSafely<bool>(() async {
+      state = state.copyWith(loading: true);
+      final user = await GoogleAuthService().signIn();
+      final response = await _authRepository.googleSignInApi(
+        request: SignInWithGoogleRequest(
+          email: user.email!,
+          googleUid: user.uid,
+          provider: LoginProviders.google,
+          deviceInfo: '',
+          ipAddress: '',
+        ),
+      );
+      if (response.isSuccess ?? false) {
+        await callGetMe();
+      }
+      state = state.copyWith(loading: false);
+      return response.isSuccess ?? false;
     });
   }
 

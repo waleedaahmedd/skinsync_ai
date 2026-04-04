@@ -13,6 +13,8 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/logout_dialog_box.dart';
 
+import '../../utills/secure_storage_service.dart';
+
 class MyProfileScreen extends StatelessWidget {
   const MyProfileScreen({super.key});
   static const String routeName = "/MyProfileScreen";
@@ -198,8 +200,8 @@ class MyProfileScreen extends StatelessWidget {
                       screenContext: context,
                       desc: "Logout successful",
                       onSuccess: () async {
-                        // SecureStorage secureStorage = SecureStorage();
-                        // await secureStorage.clearAllSecureStrings();
+                        SecureStorage secureStorage = SecureStorage();
+                        await secureStorage.clearAllSecureStrings();
 
                         Navigator.pushNamedAndRemoveUntil(
                           context,
