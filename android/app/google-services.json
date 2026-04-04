@@ -12,7 +12,12 @@
           "package_name": "com.skinsync.clinic"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "55541632083-rmv67oi9q88454a3v18sn1e9a3sfopgh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBKG-wtOds3eQ1tLBR3j-uBfg5CPPlvw-w"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "55541632083-rmv67oi9q88454a3v18sn1e9a3sfopgh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "55541632083-1ck0pteg4gso7kbjrm1e1hsq74qp9jsm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.skinsyncaiinc.skinsyncai"
+              }
+            }
+          ]
         }
       }
     },
@@ -31,7 +48,20 @@
           "package_name": "com.skinsyncaiinc.skinsyncai"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "55541632083-09c7mg023dhonqchhaj1tm08ot60d7uq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skinsyncaiinc.skinsyncai",
+            "certificate_hash": "c1debe1375b1df77f71f17da8f0f752b78f439d0"
+          }
+        },
+        {
+          "client_id": "55541632083-rmv67oi9q88454a3v18sn1e9a3sfopgh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBKG-wtOds3eQ1tLBR3j-uBfg5CPPlvw-w"
@@ -39,7 +69,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "55541632083-rmv67oi9q88454a3v18sn1e9a3sfopgh.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "55541632083-1ck0pteg4gso7kbjrm1e1hsq74qp9jsm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.skinsyncaiinc.skinsyncai"
+              }
+            }
+          ]
         }
       }
     }
