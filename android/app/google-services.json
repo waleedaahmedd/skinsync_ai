@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:55541632083:android:b8b47063b920bb3490caa6",
+        "mobilesdk_app_id": "1:55541632083:android:d8f25fe215ea148d90caa6",
         "android_client_info": {
-          "package_name": "com.nextapp.skinsyncai"
+          "package_name": "com.skinsync.clinic"
         }
       },
       "oauth_client": [],
@@ -26,9 +26,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:55541632083:android:03386cc54345a3d290caa6",
+        "mobilesdk_app_id": "1:55541632083:android:250cd09d1fe64b6d90caa6",
         "android_client_info": {
-          "package_name": "com.skinsyncai"
+          "package_name": "com.skinsyncaiinc.skinsyncai"
         }
       },
       "oauth_client": [],

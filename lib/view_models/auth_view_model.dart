@@ -97,6 +97,26 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     });
   }
 
+  Future<bool?> callBiometricRegisterApi() async {
+    return await runSafely(() async {
+      state = state.copyWith(loading: true);
+      final BaseResponseModel response = await _authRepository
+          .biometricRegisterApi();
+      state = state.copyWith(loading: false);
+      return response.isSuccess == true;
+    });
+  }
+
+  Future<bool?> callBiometricLoginApi(String key) async {
+    return await runSafely(() async {
+      state = state.copyWith(loading: true);
+      final BaseResponseModel response = await _authRepository
+          .biometricLoginApi();
+      state = state.copyWith(loading: false);
+      return response.isSuccess == true;
+    });
+  }
+
   Future<bool?> callVerifyOtpApi() async {
     final request = OtpRequest(
       email: emailController.text,
@@ -107,9 +127,12 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       final AuthResponse response = await _authRepository.verifyOTP(
         otpRequest: request,
       );
-        final addressData = await LocationService().fetchAddress();
-      state = state.copyWith(loading: false, authResponse: response,
-        addressData: addressData,);
+      final addressData = await LocationService().fetchAddress();
+      state = state.copyWith(
+        loading: false,
+        authResponse: response,
+        addressData: addressData,
+      );
       if (response.isSuccess == true) {
         otpController.clear();
         print(response.data?.accessToken ?? "");

@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBKG-wtOds3eQ1tLBR3j-uBfg5CPPlvw-w',
-    appId: '1:55541632083:android:b8b47063b920bb3490caa6',
+    appId: '1:55541632083:android:250cd09d1fe64b6d90caa6',
     messagingSenderId: '55541632083',
     projectId: 'skinsync-2aa8e',
     storageBucket: 'skinsync-2aa8e.firebasestorage.app',
@@ -59,10 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBgT0S6-AInuNw-DvBa2mBLRhp2lkmvIyo',
-    appId: '1:55541632083:ios:6ebc69b9fd37590190caa6',
+    appId: '1:55541632083:ios:aee65901cda970e990caa6',
     messagingSenderId: '55541632083',
     projectId: 'skinsync-2aa8e',
     storageBucket: 'skinsync-2aa8e.firebasestorage.app',
-    iosBundleId: 'com.nextapp.skinsyncai',
+    iosBundleId: 'com.skinsyncaiinc.skinsyncai',
   );
+
 }

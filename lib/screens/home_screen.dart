@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/screens/notification_screen.dart';
-import 'package:skinsync_ai/screens/suggested_treatmentsScreen.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
-import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
-import 'package:skinsync_ai/widgets/grey_container.dart';
-import 'package:skinsync_ai/widgets/heading_with_right_arrow.dart';
-import 'package:skinsync_ai/widgets/treatment_container.dart';
+
+import '../view_models/auth_view_model.dart';
+import '../widgets/app_bar_with_action_icon.dart';
+import '../widgets/grey_container.dart';
+import '../widgets/heading_with_right_arrow.dart';
+import '../widgets/treatment_container.dart';
+import 'notification_screen.dart';
+import 'suggested_treatmentsScreen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
