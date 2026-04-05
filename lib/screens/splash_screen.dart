@@ -41,7 +41,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       if (mounted) {
         final isBioMetricEnabled =
             SharedPref().readBool(
-              SharedPreferencesKeys.biometricAuthKey.keyText,
+              SharedPreferencesKeys.biometricEnabledKey.keyText,
             ) ??
             false;
         if (isBioMetricEnabled) {

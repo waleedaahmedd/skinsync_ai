@@ -9,6 +9,7 @@ import '../exceptions/app_exception.dart';
 import '../models/requests/sign_in_request.dart';
 import '../models/responses/auth_response.dart';
 import '../repositories/auth_repository.dart';
+import '../utills/biometric_helper.dart';
 import '../utills/enums.dart';
 import '../utills/secure_storage_service.dart';
 import 'api_base_helper.dart';
@@ -27,6 +28,75 @@ class AuthService implements AuthRepository {
       endPoint: EndPoints.signIn,
       requestType: 'POST',
       requestBody: signInRequest,
+      params: '',
+    );
+
+    // Check HTTP status code
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      AuthResponse authResponse = AuthResponse.fromJson(parsed);
+      if (authResponse.isSuccess == true) {
+        // _secureStorage.saveSecureString(
+        //   key: SharedPreferencesKeys.accessTokenKey.name,
+        //   value: authResponse.data!.accessToken ?? '',
+        // );
+        if (authResponse.data != null) {
+          await _secureStorage.saveToken(authResponse.data!.accessToken!);
+          await _secureStorage.saveRefreshToken(
+            authResponse.data!.refreshToken!,
+          );
+          await _secureStorage.saveAccessTokenExpiry(
+            DateTime.fromMillisecondsSinceEpoch(
+              authResponse.data!.accessExpiresAt! * 1000,
+            ),
+          );
+          await _secureStorage.saveRefreshTokenExpiry(
+            DateTime.fromMillisecondsSinceEpoch(
+              authResponse.data!.refreshExpiresAt! * 1000,
+            ),
+          );
+        }
+      }
+      return authResponse;
+    } else {
+      // Handle HTTP error status codes
+      final parsed = json.decode(response.body);
+      throw AppException(BaseResponseModel.fromJson(parsed).message as String);
+    }
+  }
+
+  @override
+  Future<BaseResponseModel> biometricRegisterApi() async {
+    final req = await BiometricHelper.getDeviceSignature();
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.biometricRegister,
+      requestType: 'POST',
+      requestBody: req.toJson(),
+      params: '',
+    );
+
+    // Check HTTP status code
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      AuthResponse authResponse = AuthResponse.fromJson(parsed);
+      if (authResponse.isSuccess == true) {}
+      return authResponse;
+    } else {
+      // Handle HTTP error status codes
+      final parsed = json.decode(response.body);
+      throw AppException(BaseResponseModel.fromJson(parsed).message as String);
+    }
+  }
+
+  @override
+  Future<BaseResponseModel> biometricLoginApi() async {
+    final key = await _secureStorage.getSecureString(
+      key: SharedPreferencesKeys.biometricAuthKey.keyText,
+    );
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.biometricLogin,
+      requestType: 'POST',
+      requestBody: {"biometric_key": key},
       params: '',
     );
 
@@ -133,6 +203,45 @@ class AuthService implements AuthRepository {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
       AuthResponse authResponse = AuthResponse.fromJson(parsed);
+      return authResponse;
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(BaseResponseModel.fromJson(parsed).message as String);
+    }
+  }
+
+  @override
+  Future<AuthResponse> googleSignInApi({
+    required SignInWithGoogleRequest request,
+  }) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.signIn,
+      requestType: 'POST',
+      requestBody: request,
+      params: '',
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      AuthResponse authResponse = AuthResponse.fromJson(parsed);
+      if (authResponse.isSuccess == true) {
+        if (authResponse.data != null) {
+          await _secureStorage.saveToken(authResponse.data!.accessToken!);
+          await _secureStorage.saveRefreshToken(
+            authResponse.data!.refreshToken!,
+          );
+          await _secureStorage.saveAccessTokenExpiry(
+            DateTime.fromMillisecondsSinceEpoch(
+              authResponse.data!.accessExpiresAt! * 1000,
+            ),
+          );
+          await _secureStorage.saveRefreshTokenExpiry(
+            DateTime.fromMillisecondsSinceEpoch(
+              authResponse.data!.refreshExpiresAt! * 1000,
+            ),
+          );
+        }
+      }
       return authResponse;
     } else {
       final parsed = json.decode(response.body);

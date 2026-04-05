@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
@@ -20,17 +18,6 @@ class TreatmentsScreen extends ConsumerWidget {
   Widget build(BuildContext context, ref) {
     return Scaffold(
       appBar: AppBarWithActionIcon(
-        title: Row(
-          children: [
-            Icon(Iconsax.location, size: 20.sp, color: Colors.black),
-            SizedBox(width: 6.w),
-            Text("Hello, Burak!", style: CustomFonts.black30w600),
-          ],
-        ),
-        subTitle: Text(
-          "195 Karlie Brooks, Anderson",
-          style: CustomFonts.grey18w400,
-        ),
         action: GreyContainer(
           icon: Icons.notifications_none_outlined,
           onTap: () {},
@@ -270,7 +257,8 @@ class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
               child: Consumer(
                 builder: (context, ref, _) {
                   final state = ref.watch(treatmentViewModel);
-                  final isLoading = state.treatmentsLoading; // Use separate loading for treatments
+                  final isLoading = state
+                      .treatmentsLoading; // Use separate loading for treatments
                   final treatments = state.treatmentResponse?.data ?? [];
 
                   // Fetch treatments if not already loaded and not currently loading
@@ -290,35 +278,35 @@ class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
                   }
 
                   return AnimationLimiter(
-                          key: const ValueKey('treatments_list'),
-                          child: ListView.builder(
-                            scrollDirection: Axis.vertical,
-                            itemCount: treatments.length + 1,
-                            itemBuilder: (context, index) {
-                              if (index == treatments.length) {
-                                return SizedBox(height: 60.h);
-                              }
-                              return AnimationConfiguration.staggeredList(
-                                position: index,
-                                duration: const Duration(milliseconds: 800),
-                                child: SlideAnimation(
-                                  horizontalOffset: 100.0,
-                                  child: FadeInAnimation(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                        left: 12.w,
-                                        right: 12.w,
-                                      ),
-                                      child: TreatmentContainer(
-                                        treatments: treatments[index],
-                                      ),
-                                    ),
-                                  ),
+                    key: const ValueKey('treatments_list'),
+                    child: ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: treatments.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == treatments.length) {
+                          return SizedBox(height: 60.h);
+                        }
+                        return AnimationConfiguration.staggeredList(
+                          position: index,
+                          duration: const Duration(milliseconds: 800),
+                          child: SlideAnimation(
+                            horizontalOffset: 100.0,
+                            child: FadeInAnimation(
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                  left: 12.w,
+                                  right: 12.w,
                                 ),
-                              );
-                            },
+                                child: TreatmentContainer(
+                                  treatments: treatments[index],
+                                ),
+                              ),
+                            ),
                           ),
                         );
+                      },
+                    ),
+                  );
                 },
               ),
             ),

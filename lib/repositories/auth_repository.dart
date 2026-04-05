@@ -6,8 +6,17 @@ import '../models/requests/sign_in_request.dart';
 import '../models/responses/auth_response.dart';
 
 abstract class AuthRepository {
-  Future<BaseResponseModel> signInApi({required BaseSignInRequest signInRequest});
-  Future<AuthResponse>  verifyOTP({required OtpRequest otpRequest});
-  Future<BaseResponseModel> onboardingProfile({required OnBoardingProfileRequest onBoardingProfileRequest});
-   Future<AuthResponse> getMe();
+  Future<BaseResponseModel> signInApi({
+    required BaseSignInRequest signInRequest,
+  });
+  Future<BaseResponseModel> biometricRegisterApi();
+  Future<BaseResponseModel> biometricLoginApi();
+  Future<AuthResponse> verifyOTP({required OtpRequest otpRequest});
+  Future<BaseResponseModel> onboardingProfile({
+    required OnBoardingProfileRequest onBoardingProfileRequest,
+  });
+  Future<AuthResponse> getMe();
+  Future<AuthResponse> googleSignInApi({
+    required SignInWithGoogleRequest request,
+  });
 }

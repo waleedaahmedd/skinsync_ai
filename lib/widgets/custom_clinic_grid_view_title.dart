@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -30,12 +31,12 @@ class CustomClinicGridViewTile extends StatelessWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10.r),
-                  child: Image.network(
-                    clinicData?.logo ?? "",
+                  child: CachedNetworkImage(
+                    imageUrl: clinicData?.logo ?? "",
                     height: 174.h,
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
+                    errorWidget: (context, error, stackTrace) {
                       return Container(
                         height: 174.h,
                         width: double.infinity,
@@ -78,7 +79,10 @@ class CustomClinicGridViewTile extends StatelessWidget {
                       children: [
                         Icon(Icons.star, color: Color(0XFFF68712), size: 16.sp),
                         SizedBox(width: 4.w),
-                        Text("4.9", style: CustomFonts.black12w600),
+                        Text(
+                          '${clinicData?.place?.rating ?? 0}',
+                          style: CustomFonts.black12w600,
+                        ),
                       ],
                     ),
                   ),
@@ -103,8 +107,13 @@ class CustomClinicGridViewTile extends StatelessWidget {
             ),
           ),
           Text(clinicData?.clinicName ?? "", style: CustomFonts.black18w600),
-          Text(clinicData?.address ?? "", style: CustomFonts.black14w400),
-          Text("11:00 AM - 12:00 PM", style: CustomFonts.black14w400),
+          if (clinicData?.address != null)
+            Text(clinicData!.address!, style: CustomFonts.black14w400),
+          if (clinicData?.place?.currentOpeningHours != null)
+            Text(
+              clinicData!.place!.currentOpeningHours!.todayOpeningHours,
+              style: CustomFonts.black14w400,
+            ),
         ],
       ),
     );

@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:skinsync_ai/models/responses/get_appointment_response.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
@@ -48,19 +47,7 @@ class _ApppointmentsScreenState extends ConsumerState<ApppointmentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWithActionIcon(
-        title: Row(
-          children: [
-            Icon(Iconsax.location, size: 20.sp, color: Colors.black),
-            SizedBox(width: 6.w),
-            Text("Hello, Burak!", style: CustomFonts.black30w600),
-          ],
-        ),
-        subTitle: Text(
-          "195 Karlie Brooks, Anderson",
-          style: CustomFonts.grey18w400,
-        ),
-      ),
+      appBar: AppBarWithActionIcon(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: .start,

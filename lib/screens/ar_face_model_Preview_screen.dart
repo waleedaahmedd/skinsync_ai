@@ -14,6 +14,7 @@ import 'package:skinsync_ai/widgets/service_type_button.dart';
 import '../models/responses/treatment_sub_area_response.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_view_model.dart';
+import '../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
 import '../widgets/custom_app_bar.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
@@ -61,20 +62,22 @@ class _ArFaceModelPreviewScreenState
       context: context,
       builder: (context) {
         return AlertDialog(
-          title:  Text('Remove Sub Area',style: CustomFonts.black16w400),
-          content: Text('Do you want to remove $name?',style: CustomFonts.black16w400),
+          title: Text('Remove Sub Area', style: CustomFonts.black16w400),
+          content: Text(
+            'Do you want to remove $name?',
+            style: CustomFonts.black16w400,
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('No',style: CustomFonts.black16w400,),
-
+              child: Text('No', style: CustomFonts.black16w400),
             ),
             TextButton(
               onPressed: () {
                 ref.read(treatmentViewModel.notifier).removeSubArea(id);
                 Navigator.pop(context);
               },
-              child: Text('Yes',style: CustomFonts.black16w400),
+              child: Text('Yes', style: CustomFonts.black16w400),
             ),
           ],
         );
@@ -164,7 +167,30 @@ class _ArFaceModelPreviewScreenState
                   children: [
                     SizedBox(height: 20.h),
                     _facePreview(),
-                    // SizedBox(height: 18.h),
+
+                    SizedBox(height: 5.h),
+                    GestureDetector(
+                      onTap: () {
+                        MedicalDisclaimerBottomSheet.show(context);
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 30.w,
+                          vertical: 12.h,
+                        ),
+                        margin: EdgeInsets.symmetric(horizontal: 20.w),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.7),
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: Text(
+                          "This is an AI-generated Simulation for  Visualization Purpose only, Actual Result will vary.",
+                          style: CustomFonts.white14w500,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
                     // _accuracyRate(),
                     Expanded(
                       child: SingleChildScrollView(
@@ -599,9 +625,7 @@ class _ArFaceModelPreviewScreenState
                                                     ),
                                                 border: Border.all(
                                                   color: Colors.black
-                                                      .withValues(
-                                                        alpha: 0.08,
-                                                      ),
+                                                      .withValues(alpha: 0.08),
                                                 ),
                                               ),
                                               child: Row(
@@ -611,8 +635,8 @@ class _ArFaceModelPreviewScreenState
                                                     children: [
                                                       Text(
                                                         name,
-                                                        style:
-                                                            CustomFonts.black14w500,
+                                                        style: CustomFonts
+                                                            .black14w500,
                                                       ),
                                                       if (syringes != 0)
                                                         Text(
@@ -622,10 +646,9 @@ class _ArFaceModelPreviewScreenState
                                                         ),
                                                     ],
                                                   ),
-                                                  SizedBox(width: 5.w,),
+                                                  SizedBox(width: 5.w),
                                                   GestureDetector(
-                                                    onTap:
-                                                        () =>
+                                                    onTap: () =>
                                                         _showRemoveConfirmation(
                                                           context,
                                                           ref,
@@ -637,7 +660,7 @@ class _ArFaceModelPreviewScreenState
                                                       size: 20,
                                                       color: Colors.grey,
                                                     ),
-                                                  )
+                                                  ),
                                                 ],
                                               ),
                                             );
@@ -797,19 +820,41 @@ class _ArFaceModelPreviewScreenState
               right: 10.w,
               child: Consumer(
                 builder: (context, ref, _) {
-                  return GestureDetector(
-                    onTap: () {
-                      ref.read(treatmentViewModel.notifier).toggleIsBefore();
-                    },
-                    child: CircleAvatar(
-                      backgroundColor: CustomColors.greyColor,
-                      child: Image.asset(PngAssets.beforeAfter, width: 18.w),
-                    ),
+                  final image = ref.watch(
+                    treatmentViewModel.select((s) => s.aiImage),
+                  );
+                  return Row(
+                    spacing: 10.w,
+                    children: [
+                      if (image != null)
+                        GestureDetector(
+                          onTap: () {
+                            ref.read(treatmentViewModel.notifier).saveAiImage();
+                          },
+                          child: CircleAvatar(
+                            backgroundColor: CustomColors.greyColor,
+                            child: Icon(Icons.download_outlined),
+                          ),
+                        ),
+                      GestureDetector(
+                        onTap: () {
+                          ref
+                              .read(treatmentViewModel.notifier)
+                              .toggleIsBefore();
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: CustomColors.greyColor,
+                          child: Image.asset(
+                            PngAssets.beforeAfter,
+                            width: 18.w,
+                          ),
+                        ),
+                      ),
+                    ],
                   );
                 },
               ),
             ),
-
             // Positioned(
             //   bottom: 16.h,
             //   left: 16.w,

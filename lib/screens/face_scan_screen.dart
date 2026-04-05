@@ -9,7 +9,7 @@ import 'bottom_nav_screens/face_detection_screen.dart';
 
 class FaceScanScreen extends StatelessWidget {
   const FaceScanScreen({super.key});
-    static const String routeName = '/FaceScanScreen';
+  static const String routeName = '/FaceScanScreen';
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +92,9 @@ class FaceScanScreen extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.of(context).pushNamed(FaceDetectionScreen.routeName);
+                          Navigator.of(
+                            context,
+                          ).pushNamed(FaceDetectionScreen.routeName);
                         },
                         child: Text("Scan Your Face"),
                       ),

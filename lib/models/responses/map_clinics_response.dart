@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 import 'geocoding_response.dart';
 
 class MapClinicsResponse {
@@ -336,6 +338,36 @@ class OpeningHours {
         ? null
         : DateTime.parse(json["nextCloseTime"]),
   );
+
+  static final DateFormat _format = DateFormat('hh:mm a');
+
+  String get todayOpeningHours {
+    final today = DateTime.now().weekday;
+    for (final day in periods ?? <CurrentOpeningHoursPeriod>[]) {
+      if (today == day.open?.day) {
+        if (day.open != null && day.close != null) {
+          final openTime = _convertToFormattedTime(
+            day.open!.hour,
+            day.open!.minute,
+          );
+          final closeTime = _convertToFormattedTime(
+            day.close!.hour,
+            day.close!.minute,
+          );
+          return '$openTime - $closeTime';
+        }
+      }
+    }
+    return 'Closed now';
+  }
+
+  String _convertToFormattedTime(int? hours, int? minutes) {
+    if (hours == null || minutes == null) {
+      return 'Closed now';
+    }
+    final dateTime = DateTime(0, 0, 0, hours, minutes);
+    return _format.format(dateTime);
+  }
 }
 
 class CurrentOpeningHoursPeriod {

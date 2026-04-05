@@ -14,6 +14,23 @@
     <array/>
 	<key>CFBundleDisplayName</key>
 	<string>Skinsync Ai</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This permission is used to save AI images in gallery.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This permission is used to save AI images in gallery.</string>
+	<key>GIDClientID</key>
+	<string>55541632083-1ck0pteg4gso7kbjrm1e1hsq74qp9jsm.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+    <array>
+    	<dict>
+    		<key>CFBundleTypeRole</key>
+    		<string>Editor</string>
+    		<key>CFBundleURLSchemes</key>
+    		<array>
+    			<string>com.googleusercontent.apps.55541632083-1ck0pteg4gso7kbjrm1e1hsq74qp9jsm</string>
+    		</array>
+    	</dict>
+    </array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

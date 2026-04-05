@@ -63,7 +63,7 @@ class LocationService {
     final uri = Uri.parse('https://places.googleapis.com/v1/places:searchText');
     final body = {
       'textQuery': 'MedSpa Clinic',
-      'maxResultCount': 20,
+      'maxResultCount': 100,
       'locationBias': {
         'circle': {
           'center': {
@@ -81,6 +81,7 @@ class LocationService {
     };
     final response = await post(uri, body: jsonEncode(body), headers: headers);
     final jsonString = response.body;
+    log('JSON: $jsonString');
     return MapClinicsResponse.fromJson(jsonDecode(jsonString)).places ?? [];
   }
 }

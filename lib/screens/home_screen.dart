@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/app_init.dart';
-import 'package:skinsync_ai/screens/notification_screen.dart';
-import 'package:skinsync_ai/screens/suggested_treatmentsScreen.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
-import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/appointment_card.dart';
 
-import 'package:skinsync_ai/widgets/grey_container.dart';
-import 'package:skinsync_ai/widgets/heading_with_right_arrow.dart';
-import 'package:skinsync_ai/widgets/points_earn_card.dart';
-import 'package:skinsync_ai/widgets/treatment_container.dart';
+import '../view_models/auth_view_model.dart';
+import '../widgets/app_bar_with_action_icon.dart';
+import '../widgets/grey_container.dart';
+import '../widgets/heading_with_right_arrow.dart';
+import '../widgets/treatment_container.dart';
+import 'notification_screen.dart';
+import 'suggested_treatmentsScreen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -22,11 +18,6 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBarWithActionIcon(
-        title: Text("Hello, Burak!", style: CustomFonts.black30w600),
-        subTitle: Text(
-          "Your journey to radiant skin starts now.",
-          style: CustomFonts.grey18w400,
-        ),
         action: GreyContainer(
           icon: Icons.notifications_none_outlined,
           onTap: () {

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -34,6 +32,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
   ClinicDoctorViewModel({required ClinicDoctorRepository clinicRepository})
     : _clinicRepository = clinicRepository,
       super(initialState: ClinicDoctorState());
+  final List<Clinic> _allClinics = <Clinic>[];
 
   final ClinicDoctorRepository _clinicRepository;
   final _mediaService = MediaService();
@@ -72,20 +71,23 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
       );
       final List<Clinic> clinics = [];
       for (final place in places) {
-        log('NAME: ${place.displayName?.text}');
         clinics.add(
           Clinic(
             clinicId: 29,
             phone: place.internationalPhoneNumber,
-            address: place.formattedAddress,
+            description: place.primaryTypeDisplayName?.text,
+            address: place.shortFormattedAddress,
             clinicName: place.displayName?.text,
             logo: place.photos?.firstOrNull?.name,
             location: place.location != null
                 ? LatLng(place.location!.latitude!, place.location!.longitude!)
                 : null,
+            place: place,
           ),
         );
       }
+      _allClinics.clear();
+      _allClinics.addAll(clinics);
       state = state.copyWith(clinicLoading: false, clinics: clinics);
     });
   }
@@ -271,6 +273,27 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
 
   void clearState() {
     state = ClinicDoctorState();
+  }
+
+  void onSearchChanged(String search) {
+    if (search.trim().isEmpty) {
+      state = state.copyWith(clinics: _allClinics);
+      return;
+    }
+    final searchedClinics = <Clinic>[];
+    for (final clinic in _allClinics) {
+      if (clinic.clinicName?.toLowerCase().contains(search.toLowerCase()) ??
+          false) {
+        searchedClinics.add(clinic);
+      } else if (clinic.address?.toLowerCase().contains(search.toLowerCase()) ??
+          false) {
+        searchedClinics.add(clinic);
+      } else if (clinic.phone?.toLowerCase().contains(search.toLowerCase()) ??
+          false) {
+        searchedClinics.add(clinic);
+      }
+    }
+    state = state.copyWith(clinics: searchedClinics);
   }
 
   @override

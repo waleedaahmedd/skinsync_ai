@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
+import 'package:skinsync_ai/widgets/scan_face_dialog.dart';
 
 import '../models/responses/treatment_response_model.dart';
 import '../view_models/checkout_view_model.dart';
@@ -14,7 +14,12 @@ class TreatmentContainer extends StatelessWidget {
   final double? imageHeight;
   final double? width;
   final TreatmentsModel treatments;
-  const TreatmentContainer({super.key, required this.treatments,this.imageHeight,this.width});
+  const TreatmentContainer({
+    super.key,
+    required this.treatments,
+    this.imageHeight,
+    this.width,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,11 +43,12 @@ class TreatmentContainer extends StatelessWidget {
                   );
               // TreatmentAreaScreen.show(context);
             }
+            showMScanFaceDialog(context);
             //else {
-            Navigator.pushNamed(
-              context,
-              ref.read(checkoutViewModel.notifier).navigateTo(),
-            );
+            // Navigator.pushNamed(
+            //   context,
+            //   ref.read(checkoutViewModel.notifier).navigateTo(),
+            // );
             // }
           },
           child: Container(
@@ -77,7 +83,7 @@ class TreatmentContainer extends StatelessWidget {
                   Stack(
                     children: [
                       Container(
-                        height:imageHeight ??  180.h,
+                        height: imageHeight ?? 180.h,
                         width: double.infinity,
                         decoration: BoxDecoration(
                           // image: DecorationImage(
@@ -89,8 +95,9 @@ class TreatmentContainer extends StatelessWidget {
                           // ),
                         ),
                         child: Image.network(
-                          treatments.name == "Botox"? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl-cyJqFlcZav1TlRMEuajtrg2RJlWY3rTQA&s":
-                         "https://movelmedspa.com/storage/2024/05/Cheek-Filler-Treatment-at-Movel-Med-Spa.webp",
+                          treatments.name == "Botox"
+                              ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl-cyJqFlcZav1TlRMEuajtrg2RJlWY3rTQA&s"
+                              : "https://movelmedspa.com/storage/2024/05/Cheek-Filler-Treatment-at-Movel-Med-Spa.webp",
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Icon(Icons.broken_image);

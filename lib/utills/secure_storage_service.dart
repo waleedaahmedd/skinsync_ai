@@ -1,5 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'enums.dart';
+
 class SecureStorage {
   static SecureStorage? _instance;
   static FlutterSecureStorage? _storage;
@@ -37,17 +39,32 @@ class SecureStorage {
     required String value,
   }) async {
     await _storage!.write(key: key, value: value);
-    _cachedToken = value;
+    if (key == _accessTokenKey) {
+      _cachedToken = value;
+    }
+  }
+
+  Future<String?> getSecureString({required String key}) async {
+    return await _storage!.read(key: key);
   }
 
   /// Remove token from storage + cache
   Future<void> deleteSecureString({required String key}) async {
     await _storage!.delete(key: key);
-    _cachedToken = null;
+    if (key == _accessTokenKey) {
+      _cachedToken = null;
+    }
   }
 
   Future<void> clearAllSecureStrings() async {
+    final value = await getSecureString(
+      key: SharedPreferencesKeys.biometricAuthKey.keyText,
+    );
     await _storage!.deleteAll();
+    await _storage!.write(
+      key: SharedPreferencesKeys.biometricAuthKey.keyText,
+      value: value,
+    );
     _cachedToken = null;
   }
 

@@ -53,8 +53,11 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                   style: CustomFonts.black18w400,
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.search),
-                    hintText: "Search doctor, injector, treatment & clinic",
+                    hintText: "Search clinics",
                   ),
+                  onChanged: ref
+                      .read(clinicDoctorProvider.notifier)
+                      .onSearchChanged,
                 ),
               ),
               SizedBox(height: 15.h),
@@ -168,6 +171,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
           );
           log('ADDRESS: ${addressData?.address}');
           return GoogleMap(
+            key: ValueKey(clinics.length),
             initialCameraPosition: position,
             padding: MediaQuery.paddingOf(ref.context),
             markers: clinics.where((clinic) => clinic.location != null).map((
