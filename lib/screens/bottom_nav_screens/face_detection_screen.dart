@@ -52,7 +52,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     _initCamera(ref);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final show = await SecureStorage().getMedicalDisclaimer();
-      if (!show) {
+      if (show) {
         MedicalDisclaimerBottomSheet.show(context);
       }
     });
