@@ -14,7 +14,7 @@ class AppTheme {
       ),
     ).copyWith(
       brightness: Brightness.light,
-      
+      bannerTheme: MaterialBannerThemeData(),
 
       scaffoldBackgroundColor: Colors.white,
       appBarTheme: AppBarTheme(
@@ -34,8 +34,8 @@ class AppTheme {
         cursorColor: CustomColors.lightPurpleColor, // Cursor color
       ),
       progressIndicatorTheme: const ProgressIndicatorThemeData(
-      color: CustomColors.whiteColor,
-    ),
+        color: CustomColors.whiteColor,
+      ),
 
       iconTheme: const IconThemeData(color: Colors.black54),
       checkboxTheme: CheckboxThemeData(
@@ -67,7 +67,7 @@ class AppTheme {
         contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 15.h),
         errorStyle: TextStyle(fontSize: 11.sp, overflow: TextOverflow.visible),
         errorMaxLines: 2,
-        
+
         hintStyle: CustomFonts.grey18w400,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14.r),

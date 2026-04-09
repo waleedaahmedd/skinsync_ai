@@ -230,86 +230,11 @@ void loginBottomSheet(BuildContext context) {
                                 ],
                               ),
                               SizedBox(height: 20.h),
+                              _buildBiometricButton(ref),
                             ],
                           );
                         },
                       ),
-
-                      FutureBuilder<bool>(
-                        future: () async {
-                          final result =
-                              await SharedPref().readBool(
-                                SharedPreferencesKeys
-                                    .biometricEnabledKey
-                                    .keyText,
-                              ) ??
-                              false;
-                          return result;
-                        }(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const SizedBox();
-                          } else if (snapshot.hasData &&
-                              snapshot.data == true) {
-                            // Biometric available, now get icon
-                            return FutureBuilder<IconData>(
-                              future: BiometricHelper().getBiometricIcon(),
-                              builder: (context, iconSnapshot) {
-                                if (!iconSnapshot.hasData) {
-                                  return const SizedBox();
-                                }
-                                final icon = iconSnapshot.data!;
-                                return Center(
-                                  child: InkWell(
-                                    onTap: () async {
-                                      if (context.mounted) {
-                                        final token =
-                                            SecureStorage().cachedAuthToken;
-                                        if (token != null) {
-                                          bool authenticated =
-                                              await BiometricHelper()
-                                                  .authenticate(
-                                                    reason:
-                                                        'Login with Biometrics',
-                                                  );
-                                          if (authenticated &&
-                                              context.mounted) {
-                                            EasyLoading.show(
-                                              status: "Please Wait...",
-                                            );
-                                            ref
-                                                .read(authViewModel.notifier)
-                                                .callGetMe()
-                                                .then((value) {
-                                                  EasyLoading.dismiss();
-                                                  if (value == true &&
-                                                      context.mounted) {
-                                                    Navigator.pushNamed(
-                                                      context,
-                                                      BottomNavPage.routeName,
-                                                    );
-                                                  }
-                                                });
-                                          }
-                                        } else {
-                                          EasyLoading.showError(
-                                            "Please Login First",
-                                          );
-                                        }
-                                      }
-                                    },
-                                    child: Icon(icon, size: 60.h),
-                                  ),
-                                );
-                              },
-                            );
-                          } else {
-                            return const SizedBox.shrink(); // No biometrics available
-                          }
-                        },
-                      ),
-
                       SizedBox(height: 10.h),
                     ],
                   );
@@ -319,6 +244,68 @@ void loginBottomSheet(BuildContext context) {
           ),
         ),
       );
+    },
+  );
+}
+
+FutureBuilder<bool> _buildBiometricButton(WidgetRef ref) {
+  return FutureBuilder<bool>(
+    future: () async {
+      final result =
+          await SharedPref().readBool(
+            SharedPreferencesKeys.biometricEnabledKey.keyText,
+          ) ??
+          false;
+      return result;
+    }(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const SizedBox();
+      } else if (snapshot.hasData && snapshot.data == true) {
+        // Biometric available, now get icon
+        return FutureBuilder<IconData>(
+          future: BiometricHelper().getBiometricIcon(),
+          builder: (context, iconSnapshot) {
+            if (!iconSnapshot.hasData) {
+              return const SizedBox();
+            }
+            final icon = iconSnapshot.data!;
+            return Center(
+              child: InkWell(
+                onTap: () async {
+                  if (context.mounted) {
+                    final token = SecureStorage().cachedAuthToken;
+                    if (token != null) {
+                      bool authenticated = await BiometricHelper().authenticate(
+                        reason: 'Login with Biometrics',
+                      );
+                      if (authenticated && context.mounted) {
+                        EasyLoading.show(status: "Please Wait...");
+                        ref.read(authViewModel.notifier).callGetMe().then((
+                          value,
+                        ) {
+                          EasyLoading.dismiss();
+                          if (value == true && context.mounted) {
+                            Navigator.pushNamed(
+                              context,
+                              BottomNavPage.routeName,
+                            );
+                          }
+                        });
+                      }
+                    } else {
+                      EasyLoading.showError("Please Login First");
+                    }
+                  }
+                },
+                child: Icon(icon, size: 60.h),
+              ),
+            );
+          },
+        );
+      } else {
+        return const SizedBox.shrink(); // No biometrics available
+      }
     },
   );
 }

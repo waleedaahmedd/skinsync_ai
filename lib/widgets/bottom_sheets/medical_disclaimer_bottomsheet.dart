@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
 import '../../utills/color_constant.dart';
+import '../../utills/secure_storage_service.dart';
 
 class MedicalDisclaimerBottomSheet extends StatelessWidget {
   final String title;
@@ -10,15 +11,16 @@ class MedicalDisclaimerBottomSheet extends StatelessWidget {
 
   const MedicalDisclaimerBottomSheet({
     super.key,
-    this.title = 'Medical Disclaimer',
-    this.description =
-        'SkinSync AI Inc. does not provide medical advice, diagnosis, or treatment. All visualizations are AI-generated, illustrative, and for educational purposes only. They do not predict outcomes, guarantee results, or replace consultation with a licensed medical professional.',
+    required this.title,
+    required this.description,
   });
 
   static void show(BuildContext context, {String? title, String? description}) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      isDismissible: false,
+      enableDrag: false,
       builder: (_) => MedicalDisclaimerBottomSheet(
         title: title ?? 'Medical Disclaimer',
         description:
@@ -50,7 +52,10 @@ class MedicalDisclaimerBottomSheet extends StatelessWidget {
                 SizedBox(width: 28.w),
                 Text(title, style: CustomFonts.black20w600),
                 GestureDetector(
-                  onTap: () => Navigator.pop(context),
+                  onTap: () {
+                    SecureStorage().saveMedicalDisclaimer();
+                    Navigator.pop(context);
+                  },
                   child: Container(
                     width: 28.w,
                     height: 28.w,

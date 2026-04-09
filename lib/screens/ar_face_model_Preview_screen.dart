@@ -14,7 +14,6 @@ import 'package:skinsync_ai/widgets/service_type_button.dart';
 import '../models/responses/treatment_sub_area_response.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_view_model.dart';
-import '../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
 import '../widgets/custom_app_bar.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
@@ -169,28 +168,24 @@ class _ArFaceModelPreviewScreenState
                     _facePreview(),
 
                     SizedBox(height: 5.h),
-                    GestureDetector(
-                      onTap: () {
-                        MedicalDisclaimerBottomSheet.show(context);
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 30.w,
-                          vertical: 12.h,
-                        ),
-                        margin: EdgeInsets.symmetric(horizontal: 20.w),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.7),
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                        child: Text(
-                          "This is an AI-generated Simulation for  Visualization Purpose only, Actual Result will vary.",
-                          style: CustomFonts.white14w500,
-                          textAlign: TextAlign.center,
-                        ),
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 30.w,
+                        vertical: 12.h,
+                      ),
+                      margin: EdgeInsets.symmetric(horizontal: 20.w),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.7),
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Text(
+                        "This is an AI-generated Simulation for  Visualization Purpose only, Actual Result will vary.",
+                        style: CustomFonts.white14w500,
+                        textAlign: TextAlign.center,
                       ),
                     ),
+
                     // _accuracyRate(),
                     Expanded(
                       child: SingleChildScrollView(
@@ -872,6 +867,23 @@ class _ArFaceModelPreviewScreenState
             //     ),
             //   ),
             // ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: ClipRRect(
+                borderRadius: BorderRadiusGeometry.circular(cardRadius.r),
+                child: MaterialBanner(
+                  backgroundColor: CustomColors.blackColor.withValues(
+                    alpha: 0.7,
+                  ),
+                  content: Text(
+                    'This is AI-Generated Simulation For Visualization Purposes Only. Actual Results Will Vary!',
+                  ),
+                  actions: [SizedBox.shrink()],
+                ),
+              ),
+            ),
           ],
         ),
       ),
