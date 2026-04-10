@@ -193,6 +193,28 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     });
   }
 
+  Future<bool?> callAppleSignInApi() async {
+    return await runSafely<bool>(() async {
+      state = state.copyWith(loading: true);
+      final user = await GoogleAuthService().signIn();
+      final response = await _authRepository.googleSignInApi(
+        request: SignInWithGoogleRequest(
+          email: user.email!,
+          googleUid: user.uid,
+          provider: LoginProviders.apple,
+          deviceInfo: '',
+          ipAddress: '',
+        ),
+      );
+      if (response.isSuccess ?? false) {
+        await callGetMe();
+      }
+      state = state.copyWith(loading: false);
+      return response.isSuccess ?? false;
+    });
+  }
+
+
   void clearData() {
     emailController.clear();
     otpController.clear();

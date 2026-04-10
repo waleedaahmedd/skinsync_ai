@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -170,84 +172,105 @@ void loginBottomSheet(BuildContext context) {
                                 ),
                               ),
                               SizedBox(height: 10.h),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        final success = await ref
-                                            .read(authViewModel.notifier)
-                                            .callGoogleSignInApi();
-                                        if (success ?? false) {
-                                          bool? isLoggedIn =
-                                              ref
-                                                  .read(authViewModel)
-                                                  .authResponse
-                                                  ?.data
-                                                  ?.isFirstLogin ??
-                                              false;
-                                          isLoggedIn
-                                              ? Navigator.pushNamedAndRemoveUntil(
-                                                  context,
-                                                  SignupOnboarding.routeName,
-                                                  (Route<dynamic> route) =>
-                                                      route.settings.name ==
-                                                      LoginScreen.routeName,
-                                                )
-                                              : Navigator.pushNamedAndRemoveUntil(
-                                                  context,
-                                                  FaceScanScreen.routeName,
-                                                  (Route<dynamic> route) =>
-                                                      false,
-                                                );
-                                        }
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 16.h,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            10.r,
-                                          ),
-                                          color: CustomColors.greyColor,
-                                        ),
-                                        child: Center(
-                                          child: Image.asset(
-                                            PngAssets.google,
-                                            height: 32.h,
-                                            width: 32.w,
-                                            fit: BoxFit.contain,
-                                          ),
-                                        ),
-                                      ),
+                              Platform.isIOS?
+                              GestureDetector(
+                                onTap: () async {
+                                  final success = await ref
+                                      .read(authViewModel.notifier)
+                                      .callAppleSignInApi();
+                                  if (success ?? false) {
+                                    bool? isLoggedIn =
+                                        ref
+                                            .read(authViewModel)
+                                            .authResponse
+                                            ?.data
+                                            ?.isFirstLogin ??
+                                            false;
+                                    isLoggedIn
+                                        ? Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      SignupOnboarding.routeName,
+                                          (Route<dynamic> route) =>
+                                      route.settings.name ==
+                                          LoginScreen.routeName,
+                                    )
+                                        : Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      FaceScanScreen.routeName,
+                                          (Route<dynamic> route) =>
+                                      false,
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 16.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                      10.r,
+                                    ),
+                                    color: CustomColors.greyColor,
+                                  ),
+                                  child: Center(
+                                    child: Image.asset(
+                                      PngAssets.apple,
+                                      height: 32.h,
+                                      width: 32.w,
+                                      fit: BoxFit.contain,
                                     ),
                                   ),
-                                  SizedBox(width: 8),
-                                  Expanded(
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 16.h,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(
-                                          10.r,
-                                        ),
-                                        color: CustomColors.greyColor,
-                                      ),
-                                      child: Center(
-                                        child: Image.asset(
-                                          PngAssets.apple,
-                                          height: 32.h,
-                                          width: 32.w,
-                                          fit: BoxFit.contain,
-                                        ),
-                                      ),
+                                ),
+                              ):
+                              GestureDetector(
+                                onTap: () async {
+                                  final success = await ref
+                                      .read(authViewModel.notifier)
+                                      .callGoogleSignInApi();
+                                  if (success ?? false) {
+                                    bool? isLoggedIn =
+                                        ref
+                                            .read(authViewModel)
+                                            .authResponse
+                                            ?.data
+                                            ?.isFirstLogin ??
+                                            false;
+                                    isLoggedIn
+                                        ? Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      SignupOnboarding.routeName,
+                                          (Route<dynamic> route) =>
+                                      route.settings.name ==
+                                          LoginScreen.routeName,
+                                    )
+                                        : Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      FaceScanScreen.routeName,
+                                          (Route<dynamic> route) =>
+                                      false,
+                                    );
+                                  }
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 16.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                      10.r,
+                                    ),
+                                    color: CustomColors.greyColor,
+                                  ),
+                                  child: Center(
+                                    child: Image.asset(
+                                      PngAssets.google,
+                                      height: 32.h,
+                                      width: 32.w,
+                                      fit: BoxFit.contain,
                                     ),
                                   ),
-                                ],
-                              ),
-                              SizedBox(height: 20.h),
+                                ),
+                              ),                              SizedBox(height: 20.h),
                               _buildBiometricButton(ref),
                             ],
                           );

@@ -246,4 +246,41 @@ class AuthService implements AuthRepository {
       throw AppException(BaseResponseModel.fromJson(parsed).message as String);
     }
   }
+
+  @override
+  Future<AuthResponse> appleSignInApi({
+    required SignInWithAppleRequest request,
+  }) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.signIn,
+      requestType: 'POST',
+      requestBody: request,
+      params: '',
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      AuthResponse authResponse = AuthResponse.fromJson(parsed);
+      if (!(authResponse.isSuccess ?? false) ||
+          authResponse.data?.accessToken == null) {
+        throw AppException(authResponse.message ?? 'Something went wrong!');
+      }
+      await _secureStorage.saveToken(authResponse.data!.accessToken!);
+      await _secureStorage.saveRefreshToken(authResponse.data!.refreshToken!);
+      await _secureStorage.saveAccessTokenExpiry(
+        DateTime.fromMillisecondsSinceEpoch(
+          authResponse.data!.accessExpiresAt! * 1000,
+        ),
+      );
+      await _secureStorage.saveRefreshTokenExpiry(
+        DateTime.fromMillisecondsSinceEpoch(
+          authResponse.data!.refreshExpiresAt! * 1000,
+        ),
+      );
+      return authResponse;
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(BaseResponseModel.fromJson(parsed).message as String);
+    }
+  }
 }

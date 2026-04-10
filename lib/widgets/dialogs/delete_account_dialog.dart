@@ -29,7 +29,7 @@ void showDeleteAccountDialog({
                 SizedBox(height: 40.h),
                 Icon(
                   Iconsax.user_remove,
-                  size: 120.sp,
+                  size: 100.sp,
                   color: const Color(0xffD72547),
                 ),
                 SizedBox(height: 30.h),

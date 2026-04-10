@@ -19,4 +19,8 @@ abstract class AuthRepository {
   Future<AuthResponse> googleSignInApi({
     required SignInWithGoogleRequest request,
   });
+  Future<AuthResponse> appleSignInApi({
+    required SignInWithAppleRequest request,
+  });
+
 }

@@ -70,6 +70,7 @@ dependencies:
   crypto: ^3.0.7
   firebase_auth: ^6.3.0
   google_sign_in: ^7.2.0
+  sign_in_with_apple: ^7.0.1
 
 dependency_overrides:
   http: ^1.6.0

@@ -20,11 +20,13 @@ import 'clinics_detail_screen.dart';
 class ExploreClinicsScreen extends ConsumerStatefulWidget {
   final int treatmentId;
   final List<int> sideAreaIds;
+
   const ExploreClinicsScreen({
     super.key,
     required this.treatmentId,
     required this.sideAreaIds,
   });
+
   static const String routeName = '/ExploreClinicsScreen';
 
   @override
@@ -102,11 +104,17 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                   Expanded(
                     child: TabBarView(
                       children: [
-                        _buildViewType(
-                          ref: ref,
-                          viewType: state.viewType,
-                          clinics: state.clinics,
+                        Center(
+                          child: Text(
+                            "No Clinic Found",
+                            style: CustomFonts.black18w600,
+                          ),
                         ),
+                        // _buildViewType(
+                        //   ref: ref,
+                        //   viewType: state.viewType,
+                        //   clinics: state.clinics,
+                        // ),
                         _buildViewType(
                           ref: ref,
                           viewType: state.viewType,

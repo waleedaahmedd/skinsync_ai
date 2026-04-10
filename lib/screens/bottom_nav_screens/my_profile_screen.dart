@@ -11,7 +11,7 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
-import 'package:skinsync_ai/widgets/delete_account_dialog.dart';
+import 'package:skinsync_ai/widgets/dialogs/delete_account_dialog.dart';
 import 'package:skinsync_ai/widgets/logout_dialog_box.dart';
 
 import '../../utills/secure_storage_service.dart';
@@ -102,16 +102,16 @@ class MyProfileScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(name ?? 'N/A', style: CustomFonts.black28w600),
-                        Row(
-                          children: [
-                            Icon(Icons.star, size: 17.sp, color: Colors.black),
-                            SizedBox(width: 3.w),
-                            Text(
-                              "214 Points Earned!",
-                              style: CustomFonts.black16w400,
-                            ),
-                          ],
-                        ),
+                        // Row(
+                        //   children: [
+                        //     Icon(Icons.star, size: 17.sp, color: Colors.black),
+                        //     SizedBox(width: 3.w),
+                        //     Text(
+                        //       "214 Points Earned!",
+                        //       style: CustomFonts.black16w400,
+                        //     ),
+                        //   ],
+                        // ),
                       ],
                     );
                   },
