@@ -224,24 +224,22 @@ class AuthService implements AuthRepository {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
       AuthResponse authResponse = AuthResponse.fromJson(parsed);
-      if (authResponse.isSuccess == true) {
-        if (authResponse.data != null) {
-          await _secureStorage.saveToken(authResponse.data!.accessToken!);
-          await _secureStorage.saveRefreshToken(
-            authResponse.data!.refreshToken!,
-          );
-          await _secureStorage.saveAccessTokenExpiry(
-            DateTime.fromMillisecondsSinceEpoch(
-              authResponse.data!.accessExpiresAt! * 1000,
-            ),
-          );
-          await _secureStorage.saveRefreshTokenExpiry(
-            DateTime.fromMillisecondsSinceEpoch(
-              authResponse.data!.refreshExpiresAt! * 1000,
-            ),
-          );
-        }
+      if (!(authResponse.isSuccess ?? false) ||
+          authResponse.data?.accessToken == null) {
+        throw AppException(authResponse.message ?? 'Something went wrong!');
       }
+      await _secureStorage.saveToken(authResponse.data!.accessToken!);
+      await _secureStorage.saveRefreshToken(authResponse.data!.refreshToken!);
+      await _secureStorage.saveAccessTokenExpiry(
+        DateTime.fromMillisecondsSinceEpoch(
+          authResponse.data!.accessExpiresAt! * 1000,
+        ),
+      );
+      await _secureStorage.saveRefreshTokenExpiry(
+        DateTime.fromMillisecondsSinceEpoch(
+          authResponse.data!.refreshExpiresAt! * 1000,
+        ),
+      );
       return authResponse;
     } else {
       final parsed = json.decode(response.body);

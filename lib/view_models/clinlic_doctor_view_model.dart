@@ -88,7 +88,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
       }
       _allClinics.clear();
       _allClinics.addAll(clinics);
-      state = state.copyWith(clinicLoading: false, clinics: clinics);
+      state = state.copyWith(clinicLoading: false, clinicsToInvite: clinics);
     });
   }
 
@@ -310,6 +310,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
 
 @immutable
 class ClinicDoctorState extends BaseStateModel {
+  final List<Clinic> clinicsToInvite;
   final List<Clinic> clinics;
   final bool clinicLoading;
   final GetDoctorResponse? doctorResponse;
@@ -324,6 +325,7 @@ class ClinicDoctorState extends BaseStateModel {
   const ClinicDoctorState({
     super.loading = false,
     super.errorMessage,
+    this.clinicsToInvite = const [],
     this.clinics = const [],
     this.clinicLoading = false,
     this.doctorResponse,
@@ -340,6 +342,7 @@ class ClinicDoctorState extends BaseStateModel {
   ClinicDoctorState copyWith({
     bool? loading,
     String? errorMessage,
+    List<Clinic>? clinicsToInvite,
     List<Clinic>? clinics,
     bool? clinicLoading,
     GetDoctorResponse? doctorResponse,
@@ -355,6 +358,7 @@ class ClinicDoctorState extends BaseStateModel {
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
       clinicLoading: clinicLoading ?? this.clinicLoading,
+      clinicsToInvite: clinicsToInvite ?? this.clinicsToInvite,
       clinics: clinics ?? this.clinics,
       doctorResponse: doctorResponse ?? this.doctorResponse,
       doctorLoading: doctorLoading ?? this.doctorLoading,

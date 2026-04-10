@@ -60,7 +60,9 @@ class Clinic {
       price: json['price'],
       syringeSize: json['syringe_size'],
       status: json['status'],
-      location: LatLng(json['location']['lat'], json['location']['lng']),
+      location: json['location'] != null
+          ? LatLng(json['location']['lat'], json['location']['lng'])
+          : null,
     );
   }
 }

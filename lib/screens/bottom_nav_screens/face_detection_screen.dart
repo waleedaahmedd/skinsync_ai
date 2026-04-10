@@ -8,6 +8,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:skinsync_ai/utills/image_utills.dart';
+import 'package:skinsync_ai/utills/secure_storage_service.dart';
+import 'package:skinsync_ai/widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
 
 import '../../utills/assets.dart';
 import '../../utills/color_constant.dart';
@@ -48,6 +50,12 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     );
     _storedRef = ref;
     _initCamera(ref);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final show = await SecureStorage().getMedicalDisclaimer();
+      if (show) {
+        MedicalDisclaimerBottomSheet.show(context);
+      }
+    });
   }
 
   Future<void> _initCamera(WidgetRef ref) async {

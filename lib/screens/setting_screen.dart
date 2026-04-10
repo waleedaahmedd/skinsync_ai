@@ -113,7 +113,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                     //     }
                     //   },
                     // ),
-                    FutureBuilder<bool>(
+                    FutureBuilder(
                       future: BiometricHelper().isBiometricAvailable(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==

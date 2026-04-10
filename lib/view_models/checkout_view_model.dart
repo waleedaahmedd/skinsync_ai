@@ -2,11 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skinsync_ai/models/responses/treatment_response_model.dart';
 import 'package:skinsync_ai/models/responses/treatment_sub_area_response.dart';
-import 'package:skinsync_ai/screens/bottom_nav_screens/face_detection_screen.dart';
 
-import '../screens/ar_face_model_Preview_screen.dart';
-import '../screens/bottom_nav_screens/treatments_screen.dart';
-import '../screens/explore_clinics_screen.dart';
 import 'base_view_model.dart';
 
 final checkoutViewModel = NotifierProvider(() => CheckoutViewModel());
@@ -56,22 +52,6 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       appointmentTime: null,
       capturedImage: null,
     );
-  }
-
-  String navigateTo() {
-    if (state.treatmentId == null) {
-      return TreatmentsScreen.routeName;
-    } else if (state.capturedImage == null) {
-      return FaceDetectionScreen.routeName;
-    } else if (state.capturedImage != null &&
-        state.treatmentId != null &&
-        state.clinicId == null) {
-      return ArFaceModelPreviewScreen.routeName;
-    } else if (state.clinicId == null) {
-      return ExploreClinicsScreen.routeName;
-    } else {
-      return "/error";
-    }
   }
 
   void setSelectedTreatment({

@@ -12,6 +12,7 @@ class SecureStorage {
   static const String _refreshTokenKey = 'refresh-token';
   static const String _accessTokenExpiryKey = 'access-token-expiry';
   static const String _refreshTokenExpiryKey = 'refresh-token-expiry';
+  static const String _medicalDisclaimerKey = 'medical-disclaimer';
 
   SecureStorage._();
 
@@ -113,5 +114,14 @@ class SecureStorage {
       return null;
     }
     return DateTime.tryParse(expiryDate);
+  }
+
+  Future<void> saveMedicalDisclaimer() async {
+    await _storage?.write(key: _medicalDisclaimerKey, value: 'true');
+  }
+
+  Future<bool> getMedicalDisclaimer() async {
+    final disclaimer = await _storage?.read(key: _medicalDisclaimerKey);
+    return disclaimer == null;
   }
 }

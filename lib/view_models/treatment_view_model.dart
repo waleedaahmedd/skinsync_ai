@@ -288,11 +288,9 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
   Future<void> saveAiImage() async {
     return await runSafely(() async {
-      if (state.aiImage == null) {
-        throw Exception('AI Image not generated yet!');
-      }
-      final bytes = await state.aiImage!.readAsBytes();
-      await ImageGallerySaverPlus.saveImage(bytes, name: state.aiImage!.name);
+      final image = state.aiImage ?? state.capturedImage!;
+      final bytes = await image.readAsBytes();
+      await ImageGallerySaverPlus.saveImage(bytes, name: image.name);
       EasyLoading.showSuccess('Image saved!');
     });
   }

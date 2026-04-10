@@ -14,7 +14,6 @@ import 'package:skinsync_ai/widgets/service_type_button.dart';
 import '../models/responses/treatment_sub_area_response.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_view_model.dart';
-import '../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
 import '../widgets/custom_app_bar.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
@@ -169,28 +168,7 @@ class _ArFaceModelPreviewScreenState
                     _facePreview(),
 
                     SizedBox(height: 5.h),
-                    GestureDetector(
-                      onTap: () {
-                        MedicalDisclaimerBottomSheet.show(context);
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 30.w,
-                          vertical: 12.h,
-                        ),
-                        margin: EdgeInsets.symmetric(horizontal: 20.w),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.7),
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                        child: Text(
-                          "This is an AI-generated Simulation for  Visualization Purpose only, Actual Result will vary.",
-                          style: CustomFonts.white14w500,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
+
                     // _accuracyRate(),
                     Expanded(
                       child: SingleChildScrollView(
@@ -826,16 +804,15 @@ class _ArFaceModelPreviewScreenState
                   return Row(
                     spacing: 10.w,
                     children: [
-                      if (image != null)
-                        GestureDetector(
-                          onTap: () {
-                            ref.read(treatmentViewModel.notifier).saveAiImage();
-                          },
-                          child: CircleAvatar(
-                            backgroundColor: CustomColors.greyColor,
-                            child: Icon(Icons.download_outlined),
-                          ),
+                      GestureDetector(
+                        onTap: () {
+                          ref.read(treatmentViewModel.notifier).saveAiImage();
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: CustomColors.greyColor,
+                          child: Icon(Icons.download_outlined),
                         ),
+                      ),
                       GestureDetector(
                         onTap: () {
                           ref
@@ -872,6 +849,24 @@ class _ArFaceModelPreviewScreenState
             //     ),
             //   ),
             // ),
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.7),
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Text(
+                  "This is an AI-generated Simulation for  Visualization Purpose only, Actual Result will vary.",
+                  style: CustomFonts.white14w500,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -968,6 +963,10 @@ class _ArFaceModelPreviewScreenState
                     Navigator.pushNamed(
                       context,
                       ExploreClinicsScreen.routeName,
+                      arguments: {
+                        'treatmentId': treatmentId,
+                        'sideAreaIds': subAreaIds,
+                      },
                     );
                   },
                   style: ElevatedButton.styleFrom(
