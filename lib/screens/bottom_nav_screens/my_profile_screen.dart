@@ -11,6 +11,7 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
+import 'package:skinsync_ai/widgets/delete_account_dialog.dart';
 import 'package:skinsync_ai/widgets/logout_dialog_box.dart';
 
 import '../../utills/secure_storage_service.dart';
@@ -98,7 +99,7 @@ class MyProfileScreen extends StatelessWidget {
                         ?.userDetails
                         ?.name;
                     return Column(
-                      crossAxisAlignment: .start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(name ?? 'N/A', style: CustomFonts.black28w600),
                         Row(
@@ -194,6 +195,27 @@ class MyProfileScreen extends StatelessWidget {
                 //   title: "treatment receipts",
                 // ),
                 SizedBox(height: 36.h),
+                Consumer(
+                  builder: (context, ref, _) {
+                    return profileOppition(
+                      callBack: () {
+                        showDeleteAccountDialog(
+                          screenContext: context,
+                          onSuccess: () async {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              GetStartedScreen.routeName,
+                              (route) => false,
+                            );
+                          },
+                        );
+                      },
+                      icon: Iconsax.user_remove,
+                      title: "Delete Account",
+                    );
+                  },
+                ),
+                SizedBox(height: 36.h),
                 profileOppition(
                   callBack: () {
                     showLogoutDialog(
@@ -230,7 +252,6 @@ InkWell profileOppition({
 }) {
   return InkWell(
     onTap: callBack,
-
     child: Row(
       children: [
         if (icon is String)

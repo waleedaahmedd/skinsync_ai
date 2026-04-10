@@ -167,8 +167,21 @@ class _ArFaceModelPreviewScreenState
                     SizedBox(height: 20.h),
                     _facePreview(),
 
-                    SizedBox(height: 5.h),
-
+                    SizedBox(height: 10.h),
+                    Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.symmetric(horizontal: 20.w),
+                      padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.7),
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Text(
+                        "This is an AI-generated Simulation for  Visualization Purpose only, Actual Result will vary.",
+                        style: CustomFonts.white14w500,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                     // _accuracyRate(),
                     Expanded(
                       child: SingleChildScrollView(
@@ -177,24 +190,27 @@ class _ArFaceModelPreviewScreenState
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(height: 36.h),
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: InkWell(
-                                  onTap: () {
-                                    ref
-                                        .read(treatmentViewModel.notifier)
-                                        .clearAllSelectedTreatments();
-                                  },
-                                  child: Text(
-                                    "Reset",
-                                    style: CustomFonts.pinkunderlined20w600,
+                              SizedBox(height: 30.h),
+
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Treatment Selection',
+                                    style: CustomFonts.black18w600,
                                   ),
-                                ),
-                              ),
-                              Text(
-                                'Treatment Selection',
-                                style: CustomFonts.black18w600,
+                                  InkWell(
+                                    onTap: () {
+                                      ref
+                                          .read(treatmentViewModel.notifier)
+                                          .clearAllSelectedTreatments();
+                                    },
+                                    child: Text(
+                                      "Reset",
+                                      style: CustomFonts.pinkunderlined20w600,
+                                    ),
+                                  ),
+                                ],
                               ),
                               SizedBox(height: 8.h),
                               Consumer(
@@ -849,24 +865,7 @@ class _ArFaceModelPreviewScreenState
             //     ),
             //   ),
             // ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.7),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Text(
-                  "This is an AI-generated Simulation for  Visualization Purpose only, Actual Result will vary.",
-                  style: CustomFonts.white14w500,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
+
           ],
         ),
       ),

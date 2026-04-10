@@ -52,7 +52,7 @@ void showAppointmentSuccessDialog({
               // Consistent Black Button
               SizedBox(
                 width: double.infinity,
-                height: 55.h,
+                height: 60.h,
                 child: ElevatedButton(
                   onPressed: () {
                     if (onDone != null) onDone();
