@@ -804,16 +804,15 @@ class _ArFaceModelPreviewScreenState
                   return Row(
                     spacing: 10.w,
                     children: [
-                      if (image != null)
-                        GestureDetector(
-                          onTap: () {
-                            ref.read(treatmentViewModel.notifier).saveAiImage();
-                          },
-                          child: CircleAvatar(
-                            backgroundColor: CustomColors.greyColor,
-                            child: Icon(Icons.download_outlined),
-                          ),
+                      GestureDetector(
+                        onTap: () {
+                          ref.read(treatmentViewModel.notifier).saveAiImage();
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: CustomColors.greyColor,
+                          child: Icon(Icons.download_outlined),
                         ),
+                      ),
                       GestureDetector(
                         onTap: () {
                           ref
