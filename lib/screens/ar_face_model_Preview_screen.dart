@@ -964,6 +964,10 @@ class _ArFaceModelPreviewScreenState
                     Navigator.pushNamed(
                       context,
                       ExploreClinicsScreen.routeName,
+                      arguments: {
+                        'treatmentId': treatmentId,
+                        'sideAreaIds': subAreaIds,
+                      },
                     );
                   },
                   style: ElevatedButton.styleFrom(

@@ -553,7 +553,11 @@ class ClinicsDetailScreen extends ConsumerWidget {
                         },
                       );
                     },
-                    child: Text("Invite this Medical Spa"),
+                    child: Text(
+                      clinic?.place != null
+                          ? "Invite this Medical Spa"
+                          : 'Book an Appointment',
+                    ),
                   ),
                 ),
               ),

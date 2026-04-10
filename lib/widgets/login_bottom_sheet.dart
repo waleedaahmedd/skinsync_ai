@@ -12,6 +12,8 @@ import 'package:skinsync_ai/utills/enums.dart';
 import 'package:skinsync_ai/utills/secure_storage_service.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
+import '../screens/face_scan_screen.dart';
+import '../screens/signup_onboarding.dart';
 import '../utills/shared_pref.dart';
 
 void loginBottomSheet(BuildContext context) {
@@ -177,11 +179,27 @@ void loginBottomSheet(BuildContext context) {
                                             .read(authViewModel.notifier)
                                             .callGoogleSignInApi();
                                         if (success ?? false) {
-                                          Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            BottomNavPage.routeName,
-                                            (_) => false,
-                                          );
+                                          bool? isLoggedIn =
+                                              ref
+                                                  .read(authViewModel)
+                                                  .authResponse
+                                                  ?.data
+                                                  ?.isFirstLogin ??
+                                              false;
+                                          isLoggedIn
+                                              ? Navigator.pushNamedAndRemoveUntil(
+                                                  context,
+                                                  SignupOnboarding.routeName,
+                                                  (Route<dynamic> route) =>
+                                                      route.settings.name ==
+                                                      LoginScreen.routeName,
+                                                )
+                                              : Navigator.pushNamedAndRemoveUntil(
+                                                  context,
+                                                  FaceScanScreen.routeName,
+                                                  (Route<dynamic> route) =>
+                                                      false,
+                                                );
                                         }
                                       },
                                       child: Container(

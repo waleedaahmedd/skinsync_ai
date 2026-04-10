@@ -15,7 +15,10 @@ class AppTheme {
     ).copyWith(
       brightness: Brightness.light,
       bannerTheme: MaterialBannerThemeData(),
-
+      tabBarTheme: TabBarThemeData(
+        indicatorColor: CustomColors.blackColor,
+        labelColor: CustomColors.blackColor,
+      ),
       scaffoldBackgroundColor: Colors.white,
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.white,

@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
+import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/custom_clinic_grid_view_title.dart';
 
@@ -18,7 +18,13 @@ import '../utills/enums.dart';
 import 'clinics_detail_screen.dart';
 
 class ExploreClinicsScreen extends ConsumerStatefulWidget {
-  const ExploreClinicsScreen({super.key});
+  final int treatmentId;
+  final List<int> sideAreaIds;
+  const ExploreClinicsScreen({
+    super.key,
+    required this.treatmentId,
+    required this.sideAreaIds,
+  });
   static const String routeName = '/ExploreClinicsScreen';
 
   @override
@@ -31,8 +37,13 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(clinicDoctorProvider.notifier).fetchClinicsFromMap();
-      // ref.read(clinicDoctorProvider.notifier).getClinic(treatmentId: treatmentId, sideAreaIds: sideAreaIds);
+      // ref.read(clinicDoctorProvider.notifier).fetchClinicsFromMap();
+      ref
+          .read(clinicDoctorProvider.notifier)
+          .getClinic(
+            treatmentId: widget.treatmentId,
+            sideAreaIds: widget.sideAreaIds,
+          );
     });
   }
 
@@ -44,53 +55,70 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
 
       body: Stack(
         children: [
-          Column(
-            children: [
-              SizedBox(height: 28.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30.w),
-                child: TextField(
-                  style: CustomFonts.black18w400,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    hintText: "Search clinics",
+          DefaultTabController(
+            length: 2,
+            child: Column(
+              children: [
+                SizedBox(height: 28.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                  child: TextField(
+                    style: CustomFonts.black18w400,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.search),
+                      hintText: "Search clinics",
+                    ),
+                    onChanged: ref
+                        .read(clinicDoctorProvider.notifier)
+                        .onSearchChanged,
                   ),
-                  onChanged: ref
-                      .read(clinicDoctorProvider.notifier)
-                      .onSearchChanged,
                 ),
-              ),
-              SizedBox(height: 15.h),
-              SizedBox(height: 20.h),
+                SizedBox(height: 15.h),
+                TabBar(
+                  onTap: (index) {
+                    if (index == 0) {
+                      ref
+                          .read(clinicDoctorProvider.notifier)
+                          .getClinic(
+                            treatmentId: widget.treatmentId,
+                            sideAreaIds: widget.sideAreaIds,
+                          );
+                    } else {
+                      ref
+                          .read(clinicDoctorProvider.notifier)
+                          .fetchClinicsFromMap();
+                    }
+                  },
+                  tabs: [
+                    Tab(child: Text('Clinics')),
+                    Tab(child: Text('Invite Clinics')),
+                  ],
+                ),
+                SizedBox(height: 20.h),
 
-              if (state.clinicLoading)
-                const Expanded(
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: CustomColors.lightPurpleColor,
+                if (state.clinicLoading)
+                  const Expanded(child: AppLoader())
+                else
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        _buildViewType(
+                          ref: ref,
+                          viewType: state.viewType,
+                          clinics: state.clinics,
+                        ),
+                        _buildViewType(
+                          ref: ref,
+                          viewType: state.viewType,
+                          clinics: state.clinicsToInvite,
+                        ),
+                      ],
                     ),
                   ),
-                )
-              else if (state.clinics.isNotEmpty)
-                Expanded(
-                  child: _buildViewType(
-                    ref: ref,
-                    viewType: state.viewType,
-                    clinics: state.clinics,
-                  ),
-                )
-              else
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      "No Clinic Found",
-                      style: CustomFonts.black18w600,
-                    ),
-                  ),
-                ),
-            ],
+              ],
+            ),
           ),
-          if (state.clinics.isNotEmpty)
+          if (state.clinicsToInvite.isNotEmpty)
             Positioned(
               left: 0,
               right: 0,
@@ -135,6 +163,11 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
     required ViewType viewType,
     required List<Clinic> clinics,
   }) {
+    if (clinics.isEmpty) {
+      return Center(
+        child: Text("No Clinic Found", style: CustomFonts.black18w600),
+      );
+    }
     return switch (viewType) {
       ViewType.grid => Padding(
         padding: EdgeInsets.symmetric(horizontal: 30.w),
