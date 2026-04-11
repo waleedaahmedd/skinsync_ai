@@ -46,7 +46,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
     state = state.copyWith(selectedDoctor: doctor);
   }
 
-  Future<bool?> getClinic({
+/*  Future<bool?> getClinic({
     required int treatmentId,
     required List<int> sideAreaIds,
   }) async {
@@ -60,7 +60,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
       state = state.copyWith(clinicLoading: false, clinics: response.data);
       return response.isSuccess == true;
     });
-  }
+  }*/
 
   Future<void> fetchClinicsFromMap() async {
     return await runSafely(() async {

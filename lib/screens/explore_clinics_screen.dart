@@ -40,12 +40,12 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // ref.read(clinicDoctorProvider.notifier).fetchClinicsFromMap();
-      ref
-          .read(clinicDoctorProvider.notifier)
-          .getClinic(
-            treatmentId: widget.treatmentId,
-            sideAreaIds: widget.sideAreaIds,
-          );
+      // ref
+      //     .read(clinicDoctorProvider.notifier)
+      //     .getClinic(
+      //       treatmentId: widget.treatmentId,
+      //       sideAreaIds: widget.sideAreaIds,
+      //     );
     });
   }
 
@@ -79,12 +79,12 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                 TabBar(
                   onTap: (index) {
                     if (index == 0) {
-                      ref
+                    /*  ref
                           .read(clinicDoctorProvider.notifier)
                           .getClinic(
                             treatmentId: widget.treatmentId,
                             sideAreaIds: widget.sideAreaIds,
-                          );
+                          );*/
                     } else {
                       ref
                           .read(clinicDoctorProvider.notifier)

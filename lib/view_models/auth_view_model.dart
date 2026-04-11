@@ -7,6 +7,7 @@ import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
 import 'package:skinsync_ai/models/responses/address_data.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
+import 'package:skinsync_ai/services/apple_auth_service.dart';
 import 'package:skinsync_ai/services/google_auth_service.dart';
 import 'package:skinsync_ai/services/location_service.dart';
 import 'package:skinsync_ai/utills/enums.dart';
@@ -196,11 +197,11 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   Future<bool?> callAppleSignInApi() async {
     return await runSafely<bool>(() async {
       state = state.copyWith(loading: true);
-      final user = await GoogleAuthService().signIn();
-      final response = await _authRepository.googleSignInApi(
-        request: SignInWithGoogleRequest(
-          email: user.email!,
-          googleUid: user.uid,
+      final user = await AppleAuthService().signIn();
+      final response = await _authRepository.appleSignInApi(
+        request: SignInWithAppleRequest(
+          email: user.email ?? '',
+          appleUid: user.uid,
           provider: LoginProviders.apple,
           deviceInfo: '',
           ipAddress: '',

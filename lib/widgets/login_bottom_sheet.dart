@@ -88,59 +88,6 @@ void loginBottomSheet(BuildContext context) {
                           }
                           return Column(
                             children: [
-                              // SizedBox(
-                              //   width: double.infinity,
-                              //   child: InkWell(
-                              //     onTap: () {
-                              //       ref.read(authViewModel.notifier).clearData();
-                              //       // Navigator.pushNamed(context, loginScreen);
-                              //       Navigator.of(context).pushReplacement(
-                              //         PageRouteBuilder(
-                              //           pageBuilder:
-                              //               (context, animation, secondaryAnimation) =>
-                              //                   const LoginScreen(
-                              //                     loginWith: LoginProviders.phone,
-                              //                   ),
-                              //           transitionsBuilder:
-                              //               (
-                              //                 context,
-                              //                 animation,
-                              //                 secondaryAnimation,
-                              //                 child,
-                              //               ) {
-                              //                 // Use ease-in curve
-                              //                 var curve = Curves.easeIn;
-                              //                 var curvedAnimation = CurvedAnimation(
-                              //                   parent: animation,
-                              //                   curve: curve,
-                              //                 );
-                              //                 return FadeTransition(
-                              //                   opacity: curvedAnimation,
-                              //                   child: child,
-                              //                 );
-                              //               },
-                              //           transitionDuration: const Duration(
-                              //             milliseconds: 500,
-                              //           ),
-                              //         ),
-                              //       );
-                              //     },
-                              //     child: Container(
-                              //       padding: EdgeInsets.symmetric(vertical: 16.h),
-                              //       decoration: BoxDecoration(
-                              //         borderRadius: BorderRadius.circular(10.r),
-                              //         color: Colors.black,
-                              //       ),
-                              //       child: Center(
-                              //         child: Text(
-                              //           "Continue With Phone",
-                              //           style: CustomFonts.white18w600,
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
-                              // SizedBox(height: 10.h),
                               SizedBox(
                                 width: double.infinity,
                                 child: InkWell(
@@ -171,106 +118,109 @@ void loginBottomSheet(BuildContext context) {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 10.h),
-                              Platform.isIOS?
-                              GestureDetector(
-                                onTap: () async {
-                                  final success = await ref
-                                      .read(authViewModel.notifier)
-                                      .callAppleSignInApi();
-                                  if (success ?? false) {
-                                    bool? isLoggedIn =
-                                        ref
-                                            .read(authViewModel)
-                                            .authResponse
-                                            ?.data
-                                            ?.isFirstLogin ??
-                                            false;
-                                    isLoggedIn
-                                        ? Navigator.pushNamedAndRemoveUntil(
-                                      context,
-                                      SignupOnboarding.routeName,
-                                          (Route<dynamic> route) =>
-                                      route.settings.name ==
-                                          LoginScreen.routeName,
-                                    )
-                                        : Navigator.pushNamedAndRemoveUntil(
-                                      context,
-                                      FaceScanScreen.routeName,
-                                          (Route<dynamic> route) =>
-                                      false,
-                                    );
-                                  }
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 16.h,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                      10.r,
-                                    ),
-                                    color: CustomColors.greyColor,
-                                  ),
-                                  child: Center(
-                                    child: Image.asset(
-                                      PngAssets.apple,
-                                      height: 32.h,
-                                      width: 32.w,
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                ),
-                              ):
-                              GestureDetector(
-                                onTap: () async {
-                                  final success = await ref
-                                      .read(authViewModel.notifier)
-                                      .callGoogleSignInApi();
-                                  if (success ?? false) {
-                                    bool? isLoggedIn =
-                                        ref
-                                            .read(authViewModel)
-                                            .authResponse
-                                            ?.data
-                                            ?.isFirstLogin ??
-                                            false;
-                                    isLoggedIn
-                                        ? Navigator.pushNamedAndRemoveUntil(
-                                      context,
-                                      SignupOnboarding.routeName,
-                                          (Route<dynamic> route) =>
-                                      route.settings.name ==
-                                          LoginScreen.routeName,
-                                    )
-                                        : Navigator.pushNamedAndRemoveUntil(
-                                      context,
-                                      FaceScanScreen.routeName,
-                                          (Route<dynamic> route) =>
-                                      false,
-                                    );
-                                  }
-                                },
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 16.h,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                      10.r,
-                                    ),
-                                    color: CustomColors.greyColor,
-                                  ),
-                                  child: Center(
-                                    child: Image.asset(
-                                      PngAssets.google,
-                                      height: 32.h,
-                                      width: 32.w,
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                ),
-                              ),                              SizedBox(height: 20.h),
+                              //SizedBox(height: 10.h),
+                              // GestureDetector(
+                              //   onTap: () async {
+                              //     final success = await ref
+                              //         .read(authViewModel.notifier)
+                              //         .callGoogleSignInApi();
+                              //     if (success ?? false) {
+                              //       bool? isLoggedIn =
+                              //           ref
+                              //               .read(authViewModel)
+                              //               .authResponse
+                              //               ?.data
+                              //               ?.isFirstLogin ??
+                              //               false;
+                              //       isLoggedIn
+                              //           ? Navigator.pushNamedAndRemoveUntil(
+                              //         context,
+                              //         SignupOnboarding.routeName,
+                              //             (Route<dynamic> route) =>
+                              //         route.settings.name ==
+                              //             LoginScreen.routeName,
+                              //       )
+                              //           : Navigator.pushNamedAndRemoveUntil(
+                              //         context,
+                              //         FaceScanScreen.routeName,
+                              //             (Route<dynamic> route) =>
+                              //         false,
+                              //       );
+                              //     }
+                              //   },
+                              //   child: Container(
+                              //     padding: EdgeInsets.symmetric(
+                              //       vertical: 16.h,
+                              //     ),
+                              //     decoration: BoxDecoration(
+                              //       borderRadius: BorderRadius.circular(
+                              //         10.r,
+                              //       ),
+                              //       color: CustomColors.greyColor,
+                              //     ),
+                              //     child: Center(
+                              //       child: Image.asset(
+                              //         PngAssets.google,
+                              //         height: 32.h,
+                              //         width: 32.w,
+                              //         fit: BoxFit.contain,
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+                              // if (Platform.isIOS) ...[
+                              //   SizedBox(height: 10.h),
+                              //   GestureDetector(
+                              //     onTap: () async {
+                              //       final success = await ref
+                              //           .read(authViewModel.notifier)
+                              //           .callAppleSignInApi();
+                              //       if (success ?? false) {
+                              //         bool? isLoggedIn =
+                              //             ref
+                              //                 .read(authViewModel)
+                              //                 .authResponse
+                              //                 ?.data
+                              //                 ?.isFirstLogin ??
+                              //                 false;
+                              //         isLoggedIn
+                              //             ? Navigator.pushNamedAndRemoveUntil(
+                              //           context,
+                              //           SignupOnboarding.routeName,
+                              //               (Route<dynamic> route) =>
+                              //           route.settings.name ==
+                              //               LoginScreen.routeName,
+                              //         )
+                              //             : Navigator.pushNamedAndRemoveUntil(
+                              //           context,
+                              //           FaceScanScreen.routeName,
+                              //               (Route<dynamic> route) =>
+                              //           false,
+                              //         );
+                              //       }
+                              //     },
+                              //     child: Container(
+                              //       padding: EdgeInsets.symmetric(
+                              //         vertical: 16.h,
+                              //       ),
+                              //       decoration: BoxDecoration(
+                              //         borderRadius: BorderRadius.circular(
+                              //           10.r,
+                              //         ),
+                              //         color: CustomColors.greyColor,
+                              //       ),
+                              //       child: Center(
+                              //         child: Image.asset(
+                              //           PngAssets.apple,
+                              //           height: 32.h,
+                              //           width: 32.w,
+                              //           fit: BoxFit.contain,
+                              //         ),
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ],
+                              SizedBox(height: 20.h),
                               _buildBiometricButton(ref),
                             ],
                           );
