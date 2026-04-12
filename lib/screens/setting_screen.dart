@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:skinsync_ai/screens/biometric_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -83,93 +84,99 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                   ],
                 ),
                 SizedBox(height: 37.h),
-                Row(
-                  children: [
-                    SvgPicture.asset(
-                      SvgAssets.biometric,
-                      height: 24.h,
-                      width: 24.w,
-                      color: Colors.black,
-                    ),
-                    SizedBox(width: 16.w),
-                    Text(
-                      "Biometric Authentication",
-                      style: CustomFonts.black22w500,
-                    ),
-                    Spacer(),
-                    // FutureBuilder(
-                    //   future: (_){}
-                    //   ,
-                    //   builder: (context, snapshot) {
-                    //     if (snapshot.hasData) {
-                    //       return CustomSizedSwitch(
-                    //         isOn: snapshot.data!,
-                    //         onChanged: (value) {
-                    //           SharedPref().writeBool(SharedPreferencesKeys.biometricAuthKey, value);
-                    //         },
-                    //       );
-                    //     } else {
-                    //       return CircularProgressIndicator();
-                    //     }
-                    //   },
-                    // ),
-                    FutureBuilder(
-                      future: BiometricHelper().isBiometricAvailable(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const SizedBox();
-                        } else if (snapshot.hasData && snapshot.data == true) {
-                          return CustomSizedSwitch(
-                            isOn: isBiometricEnabled,
-                            onChanged: (value) async {
-                              if (isLoading) return;
-                              setState(() => isLoading = true);
-
-                              if (value) {
-                                final success = await ref
-                                    .read(authViewModel.notifier)
-                                    .callBiometricRegisterApi();
-
-                                if (success ?? false) {
-                                  setState(() => isBiometricEnabled = true);
-
-                                  SharedPref().saveBool(
-                                    SharedPreferencesKeys
-                                        .biometricEnabledKey
-                                        .keyText,
-                                    true,
-                                  );
-                                } else {
-                                  // ❗ force OFF if failed
-                                  setState(() => isBiometricEnabled = false);
-                                }
-                                // BiometricHelper.clearSignature();
-                              } else {
-                                final success =
-                                    await BiometricHelper.clearSignature();
-
-                                if (success) {
-                                  setState(() => isBiometricEnabled = false);
-
-                                  SharedPref().saveBool(
-                                    SharedPreferencesKeys
-                                        .biometricEnabledKey
-                                        .keyText,
-                                    false,
-                                  );
-                                }
-                              }
-
-                              setState(() => isLoading = false);
-                            },
-                          );
-                        } else {
-                          return const SizedBox.shrink();
-                        }
-                      },
-                    ),
-                  ],
+                GestureDetector(
+                  onTap: (){
+                    Navigator.pushNamed(context, BiometricScreen.routeName);
+                  },
+                  child: Row(
+                    children: [
+                      SvgPicture.asset(
+                        SvgAssets.biometric,
+                        height: 24.h,
+                        width: 24.w,
+                        color: Colors.black,
+                      ),
+                      SizedBox(width: 16.w),
+                      Text(
+                        "Biometric Authentication",
+                        style: CustomFonts.black22w500,
+                      ),
+                      // Spacer(),
+                      // // FutureBuilder(
+                      // //   future: (_){}
+                      // //   ,
+                      // //   builder: (context, snapshot) {
+                      // //     if (snapshot.hasData) {
+                      // //       return CustomSizedSwitch(
+                      // //         isOn: snapshot.data!,
+                      // //         onChanged: (value) {
+                      // //           SharedPref().writeBool(SharedPreferencesKeys.biometricAuthKey, value);
+                      // //         },
+                      // //       );
+                      // //     } else {
+                      // //       return CircularProgressIndicator();
+                      // //     }
+                      // //   },
+                      // // ),
+                      // FutureBuilder(
+                      //   future: BiometricHelper().isBiometricAvailable(),
+                      //   builder: (context, snapshot) {
+                      //     if (snapshot.connectionState ==
+                      //         ConnectionState.waiting) {
+                      //       return const SizedBox();
+                      //     } else if (snapshot.hasData && snapshot.data == true) {
+                      //       return CustomSizedSwitch(
+                      //         isOn: isBiometricEnabled,
+                      //         onChanged: (value) async {
+                      //           if (isLoading) return;
+                      //           setState(() => isLoading = true);
+                  
+                      //           if (value) {
+                      //             final success = await ref
+                      //                 .read(authViewModel.notifier)
+                      //                 .callBiometricRegisterApi();
+                  
+                      //             if (success ?? false) {
+                      //               setState(() => isBiometricEnabled = true);
+                  
+                      //               SharedPref().saveBool(
+                      //                 SharedPreferencesKeys
+                      //                     .biometricEnabledKey
+                      //                     .keyText,
+                      //                 true,
+                      //               );
+                      //             } else {
+                      //               // ❗ force OFF if failed
+                      //               setState(() => isBiometricEnabled = false);
+                      //             }
+                      //             // BiometricHelper.clearSignature();
+                      //           } else {
+                      //             final success =
+                      //                 await BiometricHelper.clearSignature();
+                  
+                      //             if (success) {
+                      //               setState(() => isBiometricEnabled = false);
+                  
+                      //               SharedPref().saveBool(
+                      //                 SharedPreferencesKeys
+                      //                     .biometricEnabledKey
+                      //                     .keyText,
+                      //                 false,
+                      //               );
+                      //             }
+                      //           }
+                  
+                      //           setState(() => isLoading = false);
+                      //         },
+                      //       );
+                      //     } else {
+                      //       return const SizedBox.shrink();
+                      //     }
+                      //   },
+                      // ),
+                   
+                    ],
+                  ),
                 ),
                 SizedBox(height: 37.h),
                 Row(

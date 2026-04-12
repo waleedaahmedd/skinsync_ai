@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
 import 'package:skinsync_ai/screens/additional_info_screen.dart';
 import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
+import 'package:skinsync_ai/screens/biometric_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/face_scanning_complete_screen.dart';
 import 'package:skinsync_ai/screens/clinic_service_screen.dart';
@@ -245,6 +246,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: ProgressDetailScreen.routeName),
           builder: (_) => ProgressDetailScreen(),
+        );
+        case BiometricScreen.routeName:
+           return MaterialPageRoute(
+          settings: RouteSettings(name: BiometricScreen.routeName),
+          builder: (_) => BiometricScreen(),
         );
       default:
         return _errorRoute();

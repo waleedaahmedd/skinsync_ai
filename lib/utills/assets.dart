@@ -23,6 +23,7 @@ class PngAssets {
   static const String masterLogo = '${_assets}master_logo.png';
   static const String mapIcon = '${_assets}map_icon.png';
   static const String customMarker = '${_assets}custom_marker.png';
+  static const String biometricImage = '${_assets}biometric_image.png';
 }
 
 class SvgAssets {
