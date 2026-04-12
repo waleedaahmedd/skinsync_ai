@@ -7,6 +7,8 @@ import 'package:location/location.dart';
 import 'package:skinsync_ai/exceptions/app_exception.dart';
 import 'package:skinsync_ai/models/responses/address_data.dart';
 import 'package:skinsync_ai/models/responses/geocoding_response.dart';
+import 'package:skinsync_ai/models/responses/map_clinics_response.dart'
+    hide Location;
 
 class LocationService {
   static LocationService? _instance;
@@ -55,5 +57,31 @@ class LocationService {
       throw AppException('No address found!');
     }
     return data.results!.first.formattedAddress!;
+  }
+
+  Future<List<Place>> fetchNearbyClinics({required LatLng location}) async {
+    final uri = Uri.parse('https://places.googleapis.com/v1/places:searchText');
+    final body = {
+      'textQuery': 'MedSpa Clinic',
+      'maxResultCount': 100,
+      'locationBias': {
+        'circle': {
+          'center': {
+            'latitude': location.latitude,
+            'longitude': location.longitude,
+          },
+          'radius': 1000,
+        },
+      },
+    };
+    final headers = {
+      'Content-Type': 'application/json',
+      'X-Goog-Api-Key': _apiKey,
+      'X-Goog-FieldMask': '*',
+    };
+    final response = await post(uri, body: jsonEncode(body), headers: headers);
+    final jsonString = response.body;
+    log('JSON: $jsonString');
+    return MapClinicsResponse.fromJson(jsonDecode(jsonString)).places ?? [];
   }
 }

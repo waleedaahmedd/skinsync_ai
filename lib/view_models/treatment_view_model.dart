@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:skinsync_ai/models/responses/treatment_area_response.dart';
 import 'package:skinsync_ai/models/responses/treatment_sub_area_response.dart';
 import 'package:skinsync_ai/services/api_base_helper.dart';
@@ -106,7 +107,9 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     }
   }
 
-  void onTapTreatmentSubArea({required TreatmentSubAreaModel treatmentSubArea}) {
+  void onTapTreatmentSubArea({
+    required TreatmentSubAreaModel treatmentSubArea,
+  }) {
     final id = treatmentSubArea.id;
     final alreadySelected =
         id != null && state.selectedSubAreasList.any((e) => e.id == id);
@@ -152,7 +155,8 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     });
   }
 
-  XFile? get _imageForPredict => state.aiImage ?? state.capturedImage;
+  XFile? get _imageForPredict => //state.aiImage ??
+      state.capturedImage;
 
   String _parseOutputImageBase64(Map<String, dynamic> jsonRes) {
     final outputImage = jsonRes['output_image'];
@@ -219,7 +223,9 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     return http.MultipartFile.fromBytes('image', bytes, filename: 'image.jpg');
   }
 
-  Future<Map<String, dynamic>?> _uploadCapturedImage({required XFile image}) async {
+  Future<Map<String, dynamic>?> _uploadCapturedImage({
+    required XFile image,
+  }) async {
     final request = http.MultipartRequest(
       'POST',
       Uri.parse('http://18.116.65.70/api/'),
@@ -277,6 +283,15 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         subSelectionResponse: response,
       );
       return response.isSuccess == true;
+    });
+  }
+
+  Future<void> saveAiImage() async {
+    return await runSafely(() async {
+      final image = state.aiImage ?? state.capturedImage!;
+      final bytes = await image.readAsBytes();
+      await ImageGallerySaverPlus.saveImage(bytes, name: image.name);
+      EasyLoading.showSuccess('Image saved!');
     });
   }
 

@@ -3,10 +3,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
+import 'package:skinsync_ai/main.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
+import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/custom_clinic_grid_view_title.dart';
 
@@ -16,63 +18,118 @@ import '../utills/custom_fonts.dart';
 import '../utills/enums.dart';
 import 'clinics_detail_screen.dart';
 
-class ExploreClinicsScreen extends ConsumerWidget {
-  const ExploreClinicsScreen({super.key});
+class ExploreClinicsScreen extends ConsumerStatefulWidget {
+  final int? treatmentId;
+  final List<int>? sideAreaIds;
+
+  const ExploreClinicsScreen({super.key, this.treatmentId, this.sideAreaIds});
+
   static const String routeName = '/ExploreClinicsScreen';
 
   @override
-  Widget build(BuildContext context, ref) {
-    final state = ref.watch(clincDoctorProvider);
+  ConsumerState<ExploreClinicsScreen> createState() =>
+      _ExploreClinicsScreenState();
+}
+
+class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (isDeploymentMode) {
+        ref.read(clinicDoctorProvider.notifier).fetchClinicsFromMap();
+      } else {
+        ref
+            .read(clinicDoctorProvider.notifier)
+            .getClinic(
+              treatmentId: widget.treatmentId,
+              sideAreaIds: widget.sideAreaIds,
+            );
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(clinicDoctorProvider);
     return Scaffold(
       appBar: CustomAppBar(showTitle: true, title: "Explore clinics"),
 
       body: Stack(
         children: [
-          Column(
-            children: [
-              SizedBox(height: 28.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30.w),
-                child: TextField(
-                  style: CustomFonts.black18w400,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    hintText: "Search doctor, injector, treatment & clinic",
+          DefaultTabController(
+            length: isDeploymentMode ? 1 : 2,
+            child: Column(
+              children: [
+                SizedBox(height: 28.h),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 30.w),
+                  child: TextField(
+                    style: CustomFonts.black18w400,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.search),
+                      hintText: "Search clinics",
+                    ),
+                    onChanged: ref
+                        .read(clinicDoctorProvider.notifier)
+                        .onSearchChanged,
                   ),
                 ),
-              ),
-              SizedBox(height: 15.h),
-              SizedBox(height: 20.h),
+                SizedBox(height: 15.h),
+                if (!isDeploymentMode)
+                  TabBar(
+                    onTap: (index) {
+                      if (index == 0) {
+                        ref
+                            .read(clinicDoctorProvider.notifier)
+                            .getClinic(
+                              treatmentId: widget.treatmentId,
+                              sideAreaIds: widget.sideAreaIds,
+                            );
+                      } else {
+                        ref
+                            .read(clinicDoctorProvider.notifier)
+                            .fetchClinicsFromMap();
+                      }
+                    },
+                    tabs: [
+                      if (!isDeploymentMode) Tab(child: Text('Clinics')),
+                      Tab(child: Text('Invite Clinics')),
+                    ],
+                  ),
+                SizedBox(height: 20.h),
 
-              if (state.clinicLoading)
-                const Expanded(
-                  child: Center(
-                    child: CircularProgressIndicator(
-                      color: CustomColors.lightPurpleColor,
+                if (state.clinicLoading)
+                  const Expanded(child: AppLoader())
+                else
+                  Expanded(
+                    child: TabBarView(
+                      physics: NeverScrollableScrollPhysics(),
+                      children: [
+                        // Center(
+                        //   child: Text(
+                        //     "No Clinic Found",
+                        //     style: CustomFonts.black18w600,
+                        //   ),
+                        // ),
+                        if (!isDeploymentMode)
+                          _buildViewType(
+                            ref: ref,
+                            viewType: state.viewType,
+                            clinics: state.clinics,
+                          ),
+                        _buildViewType(
+                          ref: ref,
+                          viewType: state.viewType,
+                          clinics: state.clinicsToInvite,
+                        ),
+                      ],
                     ),
                   ),
-                )
-              else if (state.clinicResponse?.data != null &&
-                  state.clinicResponse!.data!.isNotEmpty)
-                Expanded(
-                  child: _buildViewType(
-                    ref: ref,
-                    viewType: state.viewType,
-                    clinics: state.clinicResponse!.data!,
-                  ),
-                )
-              else
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      "No Clinic Found",
-                      style: CustomFonts.black18w600,
-                    ),
-                  ),
-                ),
-            ],
+              ],
+            ),
           ),
-          if (state.clinicResponse?.data?.isNotEmpty ?? false)
+          if (state.clinicsToInvite.isNotEmpty)
             Positioned(
               left: 0,
               right: 0,
@@ -80,7 +137,7 @@ class ExploreClinicsScreen extends ConsumerWidget {
               child: Center(
                 child: FloatingActionButton.extended(
                   onPressed: ref
-                      .read(clincDoctorProvider.notifier)
+                      .read(clinicDoctorProvider.notifier)
                       .toggleViewType,
 
                   backgroundColor: Colors.black,
@@ -117,23 +174,25 @@ class ExploreClinicsScreen extends ConsumerWidget {
     required ViewType viewType,
     required List<Clinic> clinics,
   }) {
+    if (clinics.isEmpty) {
+      return Center(
+        child: Text("No Clinic Found", style: CustomFonts.black18w600),
+      );
+    }
     return switch (viewType) {
       ViewType.grid => Padding(
         padding: EdgeInsets.symmetric(horizontal: 30.w),
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 18.w,
-            mainAxisSpacing: 18.h,
-            childAspectRatio: 0.7,
-          ),
+        child: MasonryGridView.count(
+          crossAxisCount: 2,
           itemCount: clinics.length,
+          crossAxisSpacing: 18.w,
+          mainAxisSpacing: 18.h,
           itemBuilder: (context, index) {
             return CustomClinicGridViewTile(
               clinicData: clinics[index],
               onTap: () {
                 ref
-                    .read(clincDoctorProvider.notifier)
+                    .read(clinicDoctorProvider.notifier)
                     .setClinicId(clinics[index].clinicId!);
                 Navigator.pushNamed(
                   context,
@@ -156,12 +215,20 @@ class ExploreClinicsScreen extends ConsumerWidget {
           );
           log('ADDRESS: ${addressData?.address}');
           return GoogleMap(
+            key: ValueKey(clinics.length),
             initialCameraPosition: position,
             padding: MediaQuery.paddingOf(ref.context),
-            markers: clinics.map((clinic) {
+            markers: clinics.where((clinic) => clinic.location != null).map((
+              clinic,
+            ) {
               return Marker(
                 markerId: MarkerId('${clinic.clinicId}'),
-                position: position.target,
+                position: clinic.location!,
+                icon: AssetMapBitmap(
+                  PngAssets.customMarker,
+                  width: 50.w,
+                  height: 50.w,
+                ),
               );
             }).toSet(),
             onMapCreated: (controller) async {

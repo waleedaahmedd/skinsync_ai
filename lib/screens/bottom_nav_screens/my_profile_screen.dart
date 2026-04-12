@@ -12,9 +12,10 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/utills/secure_storage_service.dart';
-import 'package:skinsync_ai/utills/shared_pref.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/logout_dialog_box.dart';
+
+import '../../widgets/dialogs/delete_account_dialog.dart';
 
 class MyProfileScreen extends StatelessWidget {
   const MyProfileScreen({super.key});
@@ -116,7 +117,7 @@ class MyProfileScreen extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 30.0.w),
             child: Column(
               children: [
-                profileOppition(
+                profileOption(
                   callBack: () {
                     Navigator.pushNamed(
                       context,
@@ -127,7 +128,7 @@ class MyProfileScreen extends StatelessWidget {
                   title: "Personal Details",
                 ),
                 SizedBox(height: 36.h),
-                profileOppition(
+                profileOption(
                   callBack: () {
                     Navigator.pushNamed(
                       context,
@@ -138,13 +139,13 @@ class MyProfileScreen extends StatelessWidget {
                   title: "Saved Treatments & Clinics",
                 ),
                 SizedBox(height: 36.h),
-                profileOppition(
+                profileOption(
                   callBack: () {},
                   icon: SvgAssets.loyalty,
                   title: "Loyalty & Rewards",
                 ),
                 SizedBox(height: 36.h),
-                profileOppition(
+                profileOption(
                   callBack: () {
                     Navigator.pushNamed(
                       context,
@@ -155,20 +156,41 @@ class MyProfileScreen extends StatelessWidget {
                   title: "Medical History",
                 ),
                 SizedBox(height: 36.h),
-                profileOppition(
+                profileOption(
                   callBack: () {},
                   icon: SvgAssets.receipts,
-                  title: "treatment receipts",
+                  title: "Treatment Receipts",
                 ),
                 SizedBox(height: 36.h),
-                profileOppition(
+                Consumer(
+                  builder: (context, ref, _) {
+                    return profileOption(
+                      callBack: () {
+                        showDeleteAccountDialog(
+                          screenContext: context,
+                          onSuccess: () async {
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              GetStartedScreen.routeName,
+                              (route) => false,
+                            );
+                          },
+                        );
+                      },
+                      icon: Iconsax.user_remove,
+                      title: "Delete Account",
+                    );
+                  },
+                ),
+                SizedBox(height: 36.h),
+                profileOption(
                   callBack: () {
                     showLogoutDialog(
                       screenContext: context,
                       desc: "Logout successful",
                       onSuccess: () async {
-                        // SecureStorage secureStorage = SecureStorage();
-                        // await secureStorage.clearAllSecureStrings();
+                        SecureStorage secureStorage = SecureStorage();
+                        await secureStorage.clearAllSecureStrings();
 
                         Navigator.pushNamedAndRemoveUntil(
                           context,
@@ -188,22 +210,25 @@ class MyProfileScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-InkWell profileOppition({
-  required String icon,
-  required String title,
-  required VoidCallback callBack,
-}) {
-  return InkWell(
-    onTap: callBack,
+  InkWell profileOption({
+    required dynamic icon,
+    required String title,
+    required VoidCallback callBack,
+  }) {
+    return InkWell(
+      onTap: callBack,
 
-    child: Row(
-      children: [
-        SvgPicture.asset(icon, height: 24.h, width: 24.w),
-        SizedBox(width: 16.w),
-        Text(title, style: CustomFonts.black22w500),
-      ],
-    ),
-  );
+      child: Row(
+        children: [
+          if (icon is String)
+            SvgPicture.asset(icon, height: 24.w, width: 24.w)
+          else
+            Icon(icon, size: 24.w),
+          SizedBox(width: 16.w),
+          Text(title, style: CustomFonts.black22w500),
+        ],
+      ),
+    );
+  }
 }

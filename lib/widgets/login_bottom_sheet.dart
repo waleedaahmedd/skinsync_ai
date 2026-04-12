@@ -12,6 +12,8 @@ import 'package:skinsync_ai/utills/enums.dart';
 import 'package:skinsync_ai/utills/secure_storage_service.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
+import '../screens/face_scan_screen.dart';
+import '../screens/signup_onboarding.dart';
 import '../utills/shared_pref.dart';
 
 void loginBottomSheet(BuildContext context) {
@@ -125,148 +127,59 @@ void loginBottomSheet(BuildContext context) {
                       //   ),
                       // ),
                       // SizedBox(height: 10.h),
-                      SizedBox(
-                        width: double.infinity,
-                        child: InkWell(
-                          onTap: () {
-                            ref.read(authViewModel.notifier).clearData();
-                            Navigator.pushNamed(
-                              context,
-                              LoginScreen.routeName,
-                              arguments: LoginProviders.email,
+                      Consumer(
+                        builder: (_, ref, _) {
+                          final loading = ref.watch(
+                            authViewModel.select((s) => s.loading),
+                          );
+                          if (loading) {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color: CustomColors.pinkColor,
+                              ),
                             );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 16.h),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.r),
-                              color: CustomColors.greyColor,
-                            ),
-                            child: Center(
-                              child: Text(
-                                "Continue With Email",
-                                style: CustomFonts.black18w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 10.h),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 16.h),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.r),
-                                color: CustomColors.greyColor,
-                              ),
-                              child: Center(
-                                child: Image.asset(
-                                  PngAssets.google,
-                                  height: 32.h,
-                                  width: 32.w,
-                                  fit: BoxFit.contain,
+                          }
+                          return Column(
+                            children: [
+                              SizedBox(
+                                width: double.infinity,
+                                child: InkWell(
+                                  onTap: () {
+                                    ref
+                                        .read(authViewModel.notifier)
+                                        .clearData();
+                                    Navigator.pushNamed(
+                                      context,
+                                      LoginScreen.routeName,
+                                      arguments: LoginProviders.email,
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 16.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.r),
+                                      color: CustomColors.greyColor,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        "Continue With Email",
+                                        style: CustomFonts.black18w600,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 16.h),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.r),
-                                color: CustomColors.greyColor,
-                              ),
-                              child: Center(
-                                child: Image.asset(
-                                  PngAssets.apple,
-                                  height: 32.h,
-                                  width: 32.w,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                              SizedBox(height: 10.h),
+                              _buildSocialSignIns(ref),
+                            ],
+                          );
+                        },
                       ),
                       SizedBox(height: 20.h),
 
-                      FutureBuilder<bool>(
-                        future: () async {
-                          final result =
-                              await SharedPref().readBool(
-                                SharedPreferencesKeys
-                                    .biometricEnabledKey
-                                    .keyText,
-                              ) ??
-                              false;
-                          return result;
-                        }(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const SizedBox();
-                          } else if (snapshot.hasData &&
-                              snapshot.data == true) {
-                            // Biometric available, now get icon
-                            return FutureBuilder<IconData>(
-                              future: BiometricHelper().getBiometricIcon(),
-                              builder: (context, iconSnapshot) {
-                                if (!iconSnapshot.hasData) {
-                                  return const SizedBox();
-                                }
-                                final icon = iconSnapshot.data!;
-                                return Center(
-                                  child: InkWell(
-                                    onTap: () async {
-                                      if (context.mounted) {
-                                        final token =
-                                            SecureStorage().cachedAuthToken;
-                                        if (token != null) {
-                                          bool authenticated =
-                                              await BiometricHelper()
-                                                  .authenticate(
-                                                    reason:
-                                                        'Login with Biometrics',
-                                                  );
-                                          if (authenticated &&
-                                              context.mounted) {
-                                            EasyLoading.show(
-                                              status: "Please Wait...",
-                                            );
-                                            ref
-                                                .read(authViewModel.notifier)
-                                                .callGetMe()
-                                                .then((value) {
-                                                  EasyLoading.dismiss();
-                                                  if (value == true &&
-                                                      context.mounted) {
-                                                    Navigator.pushNamed(
-                                                      context,
-                                                      BottomNavPage.routeName,
-                                                    );
-                                                  }
-                                                });
-                                          }
-                                        } else {
-                                          EasyLoading.showError(
-                                            "Please Login First",
-                                          );
-                                        }
-                                      }
-                                    },
-                                    child: Icon(icon, size: 60.h),
-                                  ),
-                                );
-                              },
-                            );
-                          } else {
-                            return const SizedBox.shrink(); // No biometrics available
-                          }
-                        },
-                      ),
+                      _buildBiometricButton(ref),
 
                       SizedBox(height: 10.h),
                     ],
@@ -277,6 +190,158 @@ void loginBottomSheet(BuildContext context) {
           ),
         ),
       );
+    },
+  );
+}
+
+Row _buildSocialSignIns(WidgetRef ref) {
+  return Row(
+    children: [
+      Expanded(
+        child: GestureDetector(
+          onTap: () async {
+            final success = await ref
+                .read(authViewModel.notifier)
+                .callGoogleSignInApi();
+            if (success ?? false) {
+              bool? isLoggedIn =
+                  ref.read(authViewModel).authResponse?.data?.isFirstLogin ??
+                  false;
+              isLoggedIn
+                  ? Navigator.pushNamedAndRemoveUntil(
+                      ref.context,
+                      SignupOnboarding.routeName,
+                      (Route<dynamic> route) =>
+                          route.settings.name == LoginScreen.routeName,
+                    )
+                  : Navigator.pushNamedAndRemoveUntil(
+                      ref.context,
+                      FaceScanScreen.routeName,
+                      (Route<dynamic> route) => false,
+                    );
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 16.h),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.r),
+              color: CustomColors.greyColor,
+            ),
+            child: Center(
+              child: Image.asset(
+                PngAssets.google,
+                height: 32.h,
+                width: 32.w,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
+      ),
+      SizedBox(width: 8),
+      Expanded(
+        child: GestureDetector(
+          onTap: () async {
+            final success = await ref
+                .read(authViewModel.notifier)
+                .callAppleSignInApi();
+            if (success ?? false) {
+              bool? isLoggedIn =
+                  ref.read(authViewModel).authResponse?.data?.isFirstLogin ??
+                  false;
+              isLoggedIn
+                  ? Navigator.pushNamedAndRemoveUntil(
+                      ref.context,
+                      SignupOnboarding.routeName,
+                      (Route<dynamic> route) =>
+                          route.settings.name == LoginScreen.routeName,
+                    )
+                  : Navigator.pushNamedAndRemoveUntil(
+                      ref.context,
+                      FaceScanScreen.routeName,
+                      (Route<dynamic> route) => false,
+                    );
+            }
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 16.h),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.r),
+              color: CustomColors.greyColor,
+            ),
+            child: Center(
+              child: Image.asset(
+                PngAssets.apple,
+                height: 32.h,
+                width: 32.w,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+FutureBuilder<bool> _buildBiometricButton(WidgetRef ref) {
+  return FutureBuilder<bool>(
+    future: () async {
+      final result =
+          await SharedPref().readBool(
+            SharedPreferencesKeys.biometricEnabledKey.keyText,
+          ) ??
+          false;
+      return result;
+    }(),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const SizedBox();
+      } else if (snapshot.hasData && snapshot.data == true) {
+        // Biometric available, now get icon
+        return FutureBuilder<IconData>(
+          future: BiometricHelper().getBiometricIcon(),
+          builder: (context, iconSnapshot) {
+            if (!iconSnapshot.hasData) {
+              return const SizedBox();
+            }
+            final icon = iconSnapshot.data!;
+            return Center(
+              child: InkWell(
+                onTap: () async {
+                  if (context.mounted) {
+                    final token = SecureStorage().cachedAuthToken;
+                    if (token != null) {
+                      bool authenticated = await BiometricHelper().authenticate(
+                        reason: 'Login with Biometrics',
+                      );
+                      if (authenticated && context.mounted) {
+                        EasyLoading.show(status: "Please Wait...");
+                        ref.read(authViewModel.notifier).callGetMe().then((
+                          value,
+                        ) {
+                          EasyLoading.dismiss();
+                          if (value == true && context.mounted) {
+                            Navigator.pushNamed(
+                              context,
+                              BottomNavPage.routeName,
+                            );
+                          }
+                        });
+                      }
+                    } else {
+                      EasyLoading.showError("Please Login First");
+                    }
+                  }
+                },
+                child: Icon(icon, size: 60.h),
+              ),
+            );
+          },
+        );
+      } else {
+        return const SizedBox.shrink(); // No biometrics available
+      }
     },
   );
 }

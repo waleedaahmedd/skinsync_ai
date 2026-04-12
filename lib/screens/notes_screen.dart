@@ -37,7 +37,7 @@ class NotesScreen extends ConsumerWidget {
     ClinicDoctorState next,
   ) {
     if (next.appointment != null) {
-      ref.read(clincDoctorProvider.notifier).clearState();
+      ref.read(clinicDoctorProvider.notifier).clearState();
       Navigator.pushNamedAndRemoveUntil(
         ref.context,
         BottomNavPage.routeName,
@@ -48,7 +48,10 @@ class NotesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(clincDoctorProvider, (prev, next) => _listener(ref, prev, next));
+    ref.listen(
+      clinicDoctorProvider,
+      (prev, next) => _listener(ref, prev, next),
+    );
     return Scaffold(
       appBar: CustomAppBar(showTitle: true, title: "Notes"),
       body: Padding(
@@ -119,7 +122,7 @@ class NotesScreen extends ConsumerWidget {
               child: Consumer(
                 builder: (_, ref, _) {
                   final loading = ref.watch(
-                    clincDoctorProvider.select((s) => s.loading),
+                    clinicDoctorProvider.select((s) => s.loading),
                   );
                   final agreed = ref.watch(notesAgreementProvider);
                   if (loading) {
@@ -132,7 +135,7 @@ class NotesScreen extends ConsumerWidget {
                   return ElevatedButton(
                     onPressed: agreed
                         ? () => ref
-                              .read(clincDoctorProvider.notifier)
+                              .read(clinicDoctorProvider.notifier)
                               .createAppointment(
                                 clinic: clinic,
                                 doctor: doctor,

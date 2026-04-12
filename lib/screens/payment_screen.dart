@@ -39,7 +39,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
-          .read(clincDoctorProvider.notifier)
+          .read(clinicDoctorProvider.notifier)
           .getPaymentOptions(
             clinicId: widget.clinic.clinicId!,
             doctorId: widget.doctor.id!,
@@ -91,7 +91,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     return Consumer(
       builder: (_, ref, _) {
         final state = ref.watch(
-          clincDoctorProvider.select((s) => (s.paymentOptions, s.loading)),
+          clinicDoctorProvider.select((s) => (s.paymentOptions, s.loading)),
         );
         if (state.$2) {
           return Center(

@@ -1,8 +1,10 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
+
+import 'map_clinics_response.dart';
 
 class GetClinicResponse extends BaseResponseModel {
   List<Clinic>? data;
- 
 
   GetClinicResponse({this.data, super.isSuccess, super.message});
 
@@ -16,63 +18,52 @@ class GetClinicResponse extends BaseResponseModel {
     isSuccess = json['is_success'];
     message = json['message'];
   }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
-    }
-    data['is_success'] = this.isSuccess;
-    data['message'] = this.message;
-    return data;
-  }
 }
 
 class Clinic {
-  int? clinicId;
-  String? clinicName;
-  String? email;
-  String? phone;
-  String? address;
-  String? logo;
-  int? price;
-  int? syringeSize;
-  String? status;
+  final int? clinicId;
+  final String? clinicName;
+  final String? email;
+  final String? phone;
+  final String? description;
+  final String? address;
+  final String? logo;
+  final int? price;
+  final int? syringeSize;
+  final String? status;
+  final LatLng? location;
+  final Place? place;
 
-  Clinic(
-      {this.clinicId,
-      this.clinicName,
-      this.email,
-      this.phone,
-      this.address,
-      this.logo,
-      this.price,
-      this.syringeSize,
-      this.status});
+  Clinic({
+    this.clinicId,
+    this.clinicName,
+    this.email,
+    this.phone,
+    this.description,
+    this.address,
+    this.logo,
+    this.price,
+    this.syringeSize,
+    this.status,
+    this.location,
+    this.place,
+  });
 
-  Clinic.fromJson(Map<String, dynamic> json) {
-    clinicId = json['clinic_id'];
-    clinicName = json['clinic_name'];
-    email = json['email'];
-    phone = json['phone'];
-    address = json['address'];
-    logo = json['logo'];
-    price = json['price'];
-    syringeSize = json['syringe_size'];
-    status = json['status'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['clinic_id'] = this.clinicId;
-    data['clinic_name'] = this.clinicName;
-    data['email'] = this.email;
-    data['phone'] = this.phone;
-    data['address'] = this.address;
-    data['logo'] = this.logo;
-    data['price'] = this.price;
-    data['syringe_size'] = this.syringeSize;
-    data['status'] = this.status;
-    return data;
+  factory Clinic.fromJson(Map<String, dynamic> json) {
+    return Clinic(
+      clinicId: json['clinic_id'],
+      clinicName: json['clinic_name'],
+      email: json['email'],
+      phone: json['phone'],
+      description: json['description'],
+      address: json['address'],
+      logo: json['logo'],
+      price: json['price'],
+      syringeSize: json['syringe_size'],
+      status: json['status'],
+      location: json['location'] != null
+          ? LatLng(json['location']['lat'], json['location']['lng'])
+          : null,
+    );
   }
 }

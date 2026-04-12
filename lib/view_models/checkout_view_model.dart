@@ -2,11 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skinsync_ai/models/responses/treatment_response_model.dart';
 import 'package:skinsync_ai/models/responses/treatment_sub_area_response.dart';
-import 'package:skinsync_ai/screens/bottom_nav_screens/face_detection_screen.dart';
 
-import '../screens/ar_face_model_Preview_screen.dart';
-import '../screens/bottom_nav_screens/treatments_screen.dart';
-import '../screens/explore_clinics_screen.dart';
 import 'base_view_model.dart';
 
 final checkoutViewModel = NotifierProvider(() => CheckoutViewModel());
@@ -58,29 +54,20 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     );
   }
 
-  String navigateTo() {
-    if (state.treatmentId == null) {
-      return TreatmentsScreen.routeName;
-    } else if (state.capturedImage == null) {
-      return FaceDetectionScreen.routeName;
-    } else if (state.capturedImage != null &&
-        state.treatmentId != null &&
-        state.clinicId == null) {
-      return ArFaceModelPreviewScreen.routeName;
-    } else if (state.clinicId == null) {
-      return ExploreClinicsScreen.routeName;
-    } else {
-      return "/error";
-    }
-  }
-  void setSelectedTreamtment({required TreatmentsModel treatment, required List<TreatmentSubAreaModel> selectedSubAreasList}){
-    state = state.copyWith(selectedTreatment: treatment,selectedSubAreasList: selectedSubAreasList );
+  void setSelectedTreatment({
+    required TreatmentsModel treatment,
+    required List<TreatmentSubAreaModel> selectedSubAreasList,
+  }) {
+    state = state.copyWith(
+      selectedTreatment: treatment,
+      selectedSubAreasList: selectedSubAreasList,
+    );
   }
 }
 
 class CheckoutState {
-   final List<TreatmentSubAreaModel>? selectedSubAreasList;
-   final TreatmentsModel? selectedTreatment;
+  final List<TreatmentSubAreaModel>? selectedSubAreasList;
+  final TreatmentsModel? selectedTreatment;
   final int? treatmentId;
   final int? treatmentAreaId;
   final List<int>? treatmentSubAreaId;
@@ -100,7 +87,7 @@ class CheckoutState {
     this.appointmentTime,
     this.capturedImage,
     this.selectedSubAreasList,
-    this.selectedTreatment
+    this.selectedTreatment,
   });
 
   CheckoutState copyWith({
@@ -112,8 +99,8 @@ class CheckoutState {
     String? appointmentDate,
     String? appointmentTime,
     XFile? capturedImage,
-   List<TreatmentSubAreaModel>? selectedSubAreasList,
-   TreatmentsModel? selectedTreatment,
+    List<TreatmentSubAreaModel>? selectedSubAreasList,
+    TreatmentsModel? selectedTreatment,
   }) {
     return CheckoutState(
       treatmentId: treatmentId ?? this.treatmentId,
@@ -125,8 +112,7 @@ class CheckoutState {
       appointmentTime: appointmentTime ?? this.appointmentTime,
       capturedImage: capturedImage ?? this.capturedImage,
       selectedSubAreasList: selectedSubAreasList ?? this.selectedSubAreasList,
-      selectedTreatment: selectedTreatment ?? this.selectedTreatment
-
+      selectedTreatment: selectedTreatment ?? this.selectedTreatment,
     );
   }
 }

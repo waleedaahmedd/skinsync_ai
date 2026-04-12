@@ -8,14 +8,16 @@ import 'package:skinsync_ai/models/requests/otp_request.dart';
 import 'package:skinsync_ai/models/responses/address_data.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
 import 'package:skinsync_ai/services/location_service.dart';
-import 'package:skinsync_ai/utills/shared_pref.dart';
 
 import '../models/base_state_model.dart';
 import '../models/requests/sign_in_request.dart';
 import '../models/responses/auth_response.dart';
 import '../repositories/auth_repository.dart';
 import '../services/api_base_helper.dart';
+import '../services/apple_auth_service.dart';
 import '../services/auth_service.dart';
+import '../services/google_auth_service.dart';
+import '../utills/enums.dart';
 import 'base_view_model.dart';
 
 final authViewModel = NotifierProvider(() {
@@ -94,6 +96,48 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       );
       state = state.copyWith(loading: false);
       return response.isSuccess == true;
+    });
+  }
+
+  Future<bool?> callGoogleSignInApi() async {
+    return await runSafely<bool>(() async {
+      state = state.copyWith(loading: true);
+      final user = await GoogleAuthService().signIn();
+      final response = await _authRepository.googleSignInApi(
+        request: SignInWithGoogleRequest(
+          email: user.email!,
+          googleUid: user.uid,
+          provider: LoginProviders.google,
+          deviceInfo: '',
+          ipAddress: '',
+        ),
+      );
+      if (response.isSuccess ?? false) {
+        await callGetMe();
+      }
+      state = state.copyWith(loading: false);
+      return response.isSuccess ?? false;
+    });
+  }
+
+  Future<bool?> callAppleSignInApi() async {
+    return await runSafely<bool>(() async {
+      state = state.copyWith(loading: true);
+      final user = await AppleAuthService().signIn();
+      final response = await _authRepository.appleSignInApi(
+        request: SignInWithAppleRequest(
+          email: user.email ?? '',
+          appleUid: user.uid,
+          provider: LoginProviders.apple,
+          deviceInfo: '',
+          ipAddress: '',
+        ),
+      );
+      if (response.isSuccess ?? false) {
+        await callGetMe();
+      }
+      state = state.copyWith(loading: false);
+      return response.isSuccess ?? false;
     });
   }
 
