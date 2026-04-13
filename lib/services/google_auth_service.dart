@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:skinsync_ai/exceptions/app_exception.dart';
@@ -18,8 +20,12 @@ class GoogleAuthService extends BaseAuthService {
 
   @override
   Future<void> logout() async {
-    await _auth.signOut();
-    await GoogleSignIn.instance.signOut();
+    try {
+      await _auth.signOut();
+      await GoogleSignIn.instance.signOut();
+    } catch (e, s) {
+      log(e.toString(), stackTrace: s);
+    }
   }
 
   @override

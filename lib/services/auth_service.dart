@@ -177,7 +177,7 @@ class AuthService implements AuthRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.onBoardingProfile,
-      requestType: 'POST',
+      requestType: 'PATCH',
       requestBody: onBoardingProfileRequest,
       params: '',
     );

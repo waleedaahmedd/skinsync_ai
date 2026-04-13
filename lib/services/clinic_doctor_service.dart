@@ -21,8 +21,8 @@ class ClinicDoctorService implements ClinicDoctorRepository {
 
   @override
   Future<GetClinicResponse> getClinic({
-    required int treatmentId,
-    required String sideAreaIdsList,
+    int? treatmentId,
+    String? sideAreaIdsList,
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.getClinic,

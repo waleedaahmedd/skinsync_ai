@@ -171,7 +171,10 @@ class _ArFaceModelPreviewScreenState
                     Container(
                       width: double.infinity,
                       margin: EdgeInsets.symmetric(horizontal: 20.w),
-                      padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 12.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 30.w,
+                        vertical: 12.h,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.black.withValues(alpha: 0.7),
                         borderRadius: BorderRadius.circular(20.r),
@@ -193,7 +196,8 @@ class _ArFaceModelPreviewScreenState
                               SizedBox(height: 30.h),
 
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     'Treatment Selection',
@@ -848,6 +852,7 @@ class _ArFaceModelPreviewScreenState
                 },
               ),
             ),
+
             // Positioned(
             //   bottom: 16.h,
             //   left: 16.w,
@@ -865,7 +870,6 @@ class _ArFaceModelPreviewScreenState
             //     ),
             //   ),
             // ),
-
           ],
         ),
       ),

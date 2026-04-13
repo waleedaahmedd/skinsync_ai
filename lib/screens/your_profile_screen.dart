@@ -1,3 +1,6 @@
+
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,12 +40,12 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _emailController.text =
-        ref.read(authViewModel).authResponse?.data?.user?.primaryEmail ?? '';
-  }
+ 
+@override
+  void initState(){
+  super.initState();
+  _emailController.text =  ref.read(authViewModel).authResponse?.data?.user?.primaryEmail ?? '';
+}
 
   void _showImageSourceDialog() {
     showModalBottomSheet(
@@ -104,7 +107,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                         clipBehavior: Clip.antiAliasWithSaveLayer,
                         child: profileImage != null
                             ? Image.file(
-                                profileImage,
+                                File(profileImage.path),
                                 fit: BoxFit.cover,
                                 height: 75.w,
                                 width: 75.w,
@@ -186,22 +189,21 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   SizedBox(height: 20.h),
                   TextFormField(
                     readOnly: true,
-                    controller: _emailController,
+                    controller : _emailController,
                     style: CustomFonts.black18w400,
                     decoration: InputDecoration(hintText: "Email Address"),
                     keyboardType: TextInputType.emailAddress,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      final emailRegExp = RegExp(
-                        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                      );
-                      if (!emailRegExp.hasMatch(value.trim())) {
-                        return 'Enter a valid email address';
-                      }
-                      return null;
-                    },
+                    // validator: (value) {
+                    //   if (value == null || value.trim().isEmpty) {
+                    //     return 'Please enter your email';
+                    //   }
+                    //   final emailRegExp = RegExp(
+                    //       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                    //   if (!emailRegExp.hasMatch(value.trim())) {
+                    //     return 'Enter a valid email address';
+                    //   }
+                    //   return null;
+                    // },
                   ),
                   SizedBox(height: 20.h),
                   TextFormField(
@@ -233,17 +235,18 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
+                      
                         if (_formKey.currentState?.validate() ?? false) {
                           ref
                               .read(authViewModel.notifier)
                               .callOnboardingProfileApi(
-                                request: OnBoardingProfileRequest(
+                                
                                   name: _nameController.text,
                                   phoneNumber: _phoneController.text.trim(),
-                                  emailAddress: _emailController.text.trim(),
+                                  emailAddress:_emailController.text.trim(),
                                   location: _locationController.text.trim(),
                                   bio: _bioController.text.trim(),
-                                ),
+                              
                               )
                               .then((value) {
                                 if (value == true) {
@@ -257,8 +260,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                         }
                       },
                       child: ref.watch(authViewModel).loading
-                          ? CircularProgressIndicator()
-                          : Text("Next"),
+                  ? CircularProgressIndicator(): Text("Next"),
                     ),
                   ),
                 ],

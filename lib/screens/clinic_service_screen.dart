@@ -171,9 +171,11 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                           selectedTreatment: ref
                               .watch(checkoutViewModel)
                               .selectedTreatment,
-                          selectedSubAreasList: ref
-                              .watch(checkoutViewModel)
-                              .selectedSubAreasList!,
+                          selectedSubAreasList:
+                              ref
+                                  .watch(checkoutViewModel)
+                                  .selectedSubAreasList ??
+                              [],
 
                           image: DummyAssets.treatmentimage,
                         );

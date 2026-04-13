@@ -103,6 +103,7 @@ class UserDetails {
   String? bio;
   String? createdAt;
   String? updatedAt;
+  String? profileImage;
 
   UserDetails(
       {this.userProfileId,
@@ -112,6 +113,7 @@ class UserDetails {
       this.emailAddress,
       this.location,
       this.bio,
+      this.profileImage,
       this.createdAt,
       this.updatedAt});
 
@@ -119,6 +121,7 @@ class UserDetails {
     userProfileId = json['user_profile_id'];
     userId = json['user_id'];
     name = json['name'];
+    profileImage = json["profile_image_url"];
     phoneNumber = json['phone_number'];
     emailAddress = json['email_address'];
     location = json['location'];

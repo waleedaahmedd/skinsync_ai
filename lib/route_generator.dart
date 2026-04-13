@@ -141,10 +141,10 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: ExploreClinicsScreen.routeName),
           builder: (_) {
-            final arguments = args as Map<String, dynamic>;
+            final arguments = args as Map<String, dynamic>?;
             return ExploreClinicsScreen(
-              sideAreaIds: arguments['sideAreaIds'],
-              treatmentId: arguments['treatmentId'],
+              sideAreaIds: arguments?['sideAreaIds'] ?? [],
+              treatmentId: arguments?['treatmentId'] ?? 0,
             );
           },
         );
@@ -247,7 +247,7 @@ class RouteGenerator {
           settings: RouteSettings(name: ProgressDetailScreen.routeName),
           builder: (_) => ProgressDetailScreen(),
         );
-        case BiometricScreen.routeName:
+         case BiometricScreen.routeName:
            return MaterialPageRoute(
           settings: RouteSettings(name: BiometricScreen.routeName),
           builder: (_) => BiometricScreen(),

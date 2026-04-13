@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/models/responses/treatment_response_model.dart';
 import 'package:skinsync_ai/models/responses/treatment_sub_area_response.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/checkout_view_model.dart';
-import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 
 class TreatmentPriceContainer extends StatelessWidget {
   final List<TreatmentSubAreaModel> selectedSubAreasList;
@@ -19,7 +16,7 @@ class TreatmentPriceContainer extends StatelessWidget {
     super.key,
     required this.image,
     required this.isSelected,
-    required this.selectedSubAreasList,
+    this.selectedSubAreasList = const [],
     required this.selectedTreatment,
   });
 
