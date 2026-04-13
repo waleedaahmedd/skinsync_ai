@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
+import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 
 class PersonalDetailScreen extends ConsumerStatefulWidget {
@@ -219,7 +220,10 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                 SizedBox(height: 35.h),
                 SizedBox(
                   width: double.infinity,
-                  child: ElevatedButton(onPressed: () {
+                  child: ref.watch(authViewModel).loading
+                      ? AppLoader()
+                      : ElevatedButton(
+                          onPressed: () {
                      ref
                               .read(authViewModel.notifier)
                               .callOnboardingProfileApi(
@@ -232,8 +236,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                               
                               );
                     
-                  }, child:ref.watch(authViewModel).loading
-                  ? CircularProgressIndicator(): Text("Save")),
+                  }, child: Text("Save")),
                 ),
               ],
             ),

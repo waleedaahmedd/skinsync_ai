@@ -11,6 +11,7 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
+import 'package:skinsync_ai/widgets/app_loader.dart';
 
 import 'get_notified_screen.dart';
 
@@ -233,7 +234,9 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   SizedBox(height: 35.h),
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
+                    child: ref.watch(authViewModel).loading
+                        ? AppLoader()
+                        : ElevatedButton(
                       onPressed: () {
                       
                         if (_formKey.currentState?.validate() ?? false) {
@@ -259,8 +262,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                               });
                         }
                       },
-                      child: ref.watch(authViewModel).loading
-                  ? CircularProgressIndicator(): Text("Next"),
+                      child: Text("Next"),
                     ),
                   ),
                 ],
