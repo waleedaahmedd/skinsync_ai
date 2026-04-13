@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -105,7 +107,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                         clipBehavior: Clip.antiAliasWithSaveLayer,
                         child: profileImage != null
                             ? Image.file(
-                                profileImage,
+                                File(profileImage.path),
                                 fit: BoxFit.cover,
                                 height: 75.w,
                                 width: 75.w,
@@ -238,13 +240,13 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                           ref
                               .read(authViewModel.notifier)
                               .callOnboardingProfileApi(
-                                request: OnBoardingProfileRequest(
+                                
                                   name: _nameController.text,
                                   phoneNumber: _phoneController.text.trim(),
                                   emailAddress:_emailController.text.trim(),
                                   location: _locationController.text.trim(),
                                   bio: _bioController.text.trim(),
-                                ),
+                              
                               )
                               .then((value) {
                                 if (value == true) {

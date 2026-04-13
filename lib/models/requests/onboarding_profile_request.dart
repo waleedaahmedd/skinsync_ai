@@ -5,6 +5,7 @@ class OnBoardingProfileRequest {
   final String emailAddress;
   final String location;
   final String bio;
+  final String? profileImageUrl;
 
 
   OnBoardingProfileRequest({
@@ -13,6 +14,7 @@ class OnBoardingProfileRequest {
     required this.emailAddress,
     required this.location,
     required this.bio,
+    this.profileImageUrl,
 
   });
 
@@ -23,6 +25,7 @@ class OnBoardingProfileRequest {
       'email_address': emailAddress,
       'location': location,
       'bio': bio,
+      'profile_image_url': profileImageUrl,
       
     };
   }

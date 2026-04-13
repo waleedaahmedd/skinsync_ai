@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -132,25 +133,47 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                               setState(() => isLoading = true);
 
                               if (value) {
-                                final success = await ref
-                                    .read(authViewModel.notifier)
-                                    .callBiometricRegisterApi();
+                                // ✅ Check biometric support again
+                                final isAvailable = await BiometricHelper()
+                                    .isBiometricAvailable();
 
-                                if (success ?? false) {
-                                  setState(() => isBiometricEnabled = true);
-
-                                  SharedPref().saveBool(
-                                    SharedPreferencesKeys
-                                        .biometricEnabledKey
-                                        .keyText,
-                                    true,
+                                if (!isAvailable) {
+                                  EasyLoading.showError(
+                                    "Device does not support biometric",
                                   );
-                                } else {
-                                  // ❗ force OFF if failed
-                                  setState(() => isBiometricEnabled = false);
+
+                                  setState(() {
+                                    isBiometricEnabled = false; // force OFF
+                                    isLoading = false;
+                                  });
+                                  return;
                                 }
-                                // BiometricHelper.clearSignature();
+
+                                // ✅ Navigate to biometric screen
+                                Navigator.pushNamed(
+                                  context,
+                                  "/biometricScreen",
+                                );
+
+                                // // OR if you want API call first, do it here
+                                // final success = await ref
+                                //     .read(authViewModel.notifier)
+                                //     .callBiometricRegisterApi();
+
+                                // if (success ?? false) {
+                                //   setState(() => isBiometricEnabled = true);
+
+                                //   SharedPref().saveBool(
+                                //     SharedPreferencesKeys
+                                //         .biometricEnabledKey
+                                //         .keyText,
+                                //     true,
+                                //   );
+                                // } else {
+                                //   setState(() => isBiometricEnabled = false);
+                                // }
                               } else {
+                                // ✅ Switch OFF logic (no check needed)
                                 final success =
                                     await BiometricHelper.clearSignature();
 
