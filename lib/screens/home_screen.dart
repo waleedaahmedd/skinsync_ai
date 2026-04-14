@@ -39,14 +39,14 @@ class HomeScreen extends ConsumerWidget {
                   child: Column(
                     children: [
                       PointsEarnCard(),
-                      SizedBox(height: 30.h),
+                      /*SizedBox(height: 30.h),
                       HeadingWithRightArrow(
                         title: "Your Next Appointment",
                         onTap: () {},
                       ),
                       SizedBox(height: 18.h),
-                      AppointmentCard(),
-                      SizedBox(height: 25.h),
+                      AppointmentCard(),*/
+                      SizedBox(height: 30.h),
                       HeadingWithRightArrow(
                         title: "Suggested Treatments",
                         onTap: () {

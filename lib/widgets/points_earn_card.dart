@@ -46,7 +46,7 @@ class PointsEarnCard extends StatelessWidget {
                 crossAxisAlignment: .start,
                 children: [
                   Text('Current Points', style: CustomFonts.black14w700),
-                  Text('565 pts', style: CustomFonts.purple30w700),
+                  Text('0 pts', style: CustomFonts.purple30w700),
                 ],
               ),
             ],

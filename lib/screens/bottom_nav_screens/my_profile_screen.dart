@@ -3,21 +3,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 import 'package:skinsync_ai/screens/personal_detail_screen.dart';
+import 'package:skinsync_ai/screens/saved_treatment_screen.dart';
 import 'package:skinsync_ai/screens/setting_screen.dart';
 import 'package:skinsync_ai/screens/webview_page.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/utills/secure_storage_service.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
-import 'package:skinsync_ai/widgets/dialogs/delete_account_dialog.dart';
 import 'package:skinsync_ai/widgets/logout_dialog_box.dart';
 
 import '../../main.dart';
-import '../../utills/secure_storage_service.dart';
-import '../allergy_and_medical_history.dart';
-import '../saved_treatment_screen.dart';
+import '../../widgets/dialogs/delete_account_dialog.dart';
 
 class MyProfileScreen extends StatelessWidget {
   const MyProfileScreen({super.key});
@@ -265,7 +265,6 @@ class MyProfileScreen extends StatelessWidget {
   }) {
     return InkWell(
       onTap: callBack,
-
       child: Row(
         children: [
           if (icon is String)

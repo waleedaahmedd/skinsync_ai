@@ -1,7 +1,7 @@
-/*
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class WebviewPage extends StatefulWidget {
   final String url;
@@ -26,12 +26,12 @@ class WebviewPage extends StatefulWidget {
 }
 
 class _WebviewPageState extends State<WebviewPage> {
-  final _controller = WebViewController();
+  late final WebViewController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller
+    _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..loadRequest(Uri.parse(widget.url));
   }
@@ -44,4 +44,3 @@ class _WebviewPageState extends State<WebviewPage> {
     );
   }
 }
-*/
