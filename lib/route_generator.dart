@@ -247,8 +247,8 @@ class RouteGenerator {
           settings: RouteSettings(name: ProgressDetailScreen.routeName),
           builder: (_) => ProgressDetailScreen(),
         );
-         case BiometricScreen.routeName:
-           return MaterialPageRoute(
+      case BiometricScreen.routeName:
+        return MaterialPageRoute(
           settings: RouteSettings(name: BiometricScreen.routeName),
           builder: (_) => BiometricScreen(),
         );

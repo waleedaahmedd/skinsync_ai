@@ -5,6 +5,7 @@ import 'package:skinsync_ai/models/requests/save_answer_request.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
+import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/question_title.dart';
 
 class SkinType extends StatelessWidget {
@@ -55,7 +56,9 @@ class SkinType extends StatelessWidget {
                 width: double.infinity,
                 child: Consumer(
                   builder: (_, ref, _) {
-                    return ElevatedButton(
+                    return ref.watch(onBoardingViewModel).isSaveAnswerLoding
+                        ? AppLoader()
+                        : ElevatedButton(
                       onPressed: () {
                         final onBoardingVM =    ref
                             .read(onBoardingViewModel.notifier);
@@ -74,9 +77,7 @@ class SkinType extends StatelessWidget {
                          }
                       
                       },
-                      child:ref.watch(onBoardingViewModel).isSaveAnswerLoding
-                  ? CircularProgressIndicator()
-                  : Text("Next"),
+                      child: Text("Next"),
                      
                     );
                   },

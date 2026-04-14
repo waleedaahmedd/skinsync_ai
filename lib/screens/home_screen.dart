@@ -4,8 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../view_models/auth_view_model.dart';
 import '../widgets/app_bar_with_action_icon.dart';
+import '../widgets/appointment_card.dart';
 import '../widgets/grey_container.dart';
 import '../widgets/heading_with_right_arrow.dart';
+import '../widgets/points_earn_card.dart';
 import '../widgets/treatment_container.dart';
 import 'notification_screen.dart';
 import 'suggested_treatmentsScreen.dart';
@@ -36,14 +38,14 @@ class HomeScreen extends ConsumerWidget {
                   padding: EdgeInsets.symmetric(horizontal: 30.w),
                   child: Column(
                     children: [
-                      // PointsEarnCard(),
-                      // SizedBox(height: 30.h),
-                      // HeadingWithRightArrow(
-                      //   title: "Your Next Appointment",
-                      //   onTap: () {},
-                      // ),
-                      // SizedBox(height: 18.h),
-                      // AppointmentCard(),
+                      PointsEarnCard(),
+                      SizedBox(height: 30.h),
+                      HeadingWithRightArrow(
+                        title: "Your Next Appointment",
+                        onTap: () {},
+                      ),
+                      SizedBox(height: 18.h),
+                      AppointmentCard(),
                       SizedBox(height: 25.h),
                       HeadingWithRightArrow(
                         title: "Suggested Treatments",

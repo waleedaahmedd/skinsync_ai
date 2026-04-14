@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'color_constant.dart';
 
-class CustomFonts {
+abstract final class CustomFonts {
   static TextStyle black50w600 = TextStyle(
     height: 0,
     fontSize: 50.sp,
@@ -137,7 +137,7 @@ class CustomFonts {
     color: CustomColors.blackColor,
     fontFamily: 'Degular',
   );
-  static TextStyle black14w400Underline= TextStyle(
+  static TextStyle black14w400Underline = TextStyle(
     height: 0,
     fontSize: 14.sp,
     fontWeight: FontWeight.w400,
@@ -147,7 +147,7 @@ class CustomFonts {
     decorationThickness: 1.0,
     fontFamily: 'Degular',
   );
-  static TextStyle blue14w400Underline= TextStyle(
+  static TextStyle blue14w400Underline = TextStyle(
     height: 0,
     fontSize: 14.sp,
     fontWeight: FontWeight.w400,
@@ -157,7 +157,7 @@ class CustomFonts {
     decorationThickness: 1.0,
     fontFamily: 'Degular',
   );
-  static TextStyle black14w500Underline= TextStyle(
+  static TextStyle black14w500Underline = TextStyle(
     height: 0,
     fontSize: 14.sp,
     fontWeight: FontWeight.w500,
@@ -167,7 +167,7 @@ class CustomFonts {
     decorationThickness: 1.0,
     fontFamily: 'Degular',
   );
-    static TextStyle black22w600Underline= TextStyle(
+  static TextStyle black22w600Underline = TextStyle(
     height: 0,
     fontSize: 22.sp,
     fontWeight: FontWeight.w600,
@@ -306,7 +306,7 @@ class CustomFonts {
     color: CustomColors.blackColor,
     fontFamily: 'Degular',
   );
-   static TextStyle red13w500 = TextStyle(
+  static TextStyle red13w500 = TextStyle(
     height: 0,
     fontSize: 13.sp,
     fontWeight: FontWeight.w500,
@@ -376,7 +376,7 @@ class CustomFonts {
     color: CustomColors.blackColor,
     fontFamily: 'Degular',
   );
-   static TextStyle black16w600 = TextStyle(
+  static TextStyle black16w600 = TextStyle(
     height: 0,
     fontSize: 16.sp,
     fontWeight: FontWeight.w600,
@@ -404,5 +404,10 @@ class CustomFonts {
     decoration: TextDecoration.underline,
     color: CustomColors.purpleColor,
     fontFamily: 'Degular',
+  );
+
+  static TextStyle purple30w700 = black30w600.copyWith(
+    color: CustomColors.darkPurple,
+    fontWeight: FontWeight.w700,
   );
 }

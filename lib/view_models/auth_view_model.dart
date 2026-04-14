@@ -1,13 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'dart:io';
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
 import 'package:skinsync_ai/models/responses/address_data.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
+import 'package:skinsync_ai/services/apple_auth_service.dart';
+import 'package:skinsync_ai/services/google_auth_service.dart';
 import 'package:skinsync_ai/services/location_service.dart';
 import 'package:skinsync_ai/services/media_service.dart';
 
@@ -16,9 +18,7 @@ import '../models/requests/sign_in_request.dart';
 import '../models/responses/auth_response.dart';
 import '../repositories/auth_repository.dart';
 import '../services/api_base_helper.dart';
-import '../services/apple_auth_service.dart';
 import '../services/auth_service.dart';
-import '../services/google_auth_service.dart';
 import '../utills/enums.dart';
 import 'base_view_model.dart';
 
@@ -68,6 +68,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     state = state.copyWith(clearProfileImage: true);
   }
 
+  // Validate OTP
   bool validateOtp() {
     String otp = otpController.text.trim();
     String? errorMessage;
@@ -95,6 +96,110 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       );
       state = state.copyWith(loading: false);
       return response.isSuccess == true;
+    });
+  }
+
+  Future<bool?> callBiometricRegisterApi() async {
+    return await runSafely(() async {
+      state = state.copyWith(loading: true);
+      final BaseResponseModel response = await _authRepository
+          .biometricRegisterApi();
+      state = state.copyWith(loading: false);
+      return response.isSuccess == true;
+    });
+  }
+
+  Future<bool?> callBiometricLoginApi(String key) async {
+    return await runSafely(() async {
+      state = state.copyWith(loading: true);
+      final BaseResponseModel response = await _authRepository
+          .biometricLoginApi();
+      state = state.copyWith(loading: false);
+      return response.isSuccess == true;
+    });
+  }
+
+  Future<bool?> callVerifyOtpApi() async {
+    final request = OtpRequest(
+      email: emailController.text,
+      otp: otpController.text,
+    );
+    return await runSafely(() async {
+      state = state.copyWith(loading: true);
+      final AuthResponse response = await _authRepository.verifyOTP(
+        otpRequest: request,
+      );
+
+      state = state.copyWith(
+        loading: false,
+        authResponse: response,
+      );
+
+      if (response.isSuccess == true) {
+        otpController.clear();
+        _fetchLocationInBackground();
+      }
+      return response.isSuccess == true;
+    });
+  }
+
+  Future<bool?> callOnboardingProfileApi({
+    required String name,
+    required String phoneNumber,
+    required String emailAddress,
+    required String location,
+    required String bio,
+  }) async {
+    return await runSafely(() async {
+      state = state.copyWith(loading: true);
+
+      String? imageUrl;
+      if (state.profileImage != null) {
+        imageUrl = await MediaService().uploadImage(state.authResponse?.data?.user?.primaryEmail ?? '', state.profileImage!);
+      }
+
+      final request = OnBoardingProfileRequest(
+        name: name,
+        phoneNumber: phoneNumber,
+        emailAddress: emailAddress,
+        location: location,
+        bio: bio,
+        profileImageUrl: imageUrl ?? state.authResponse?.data?.userDetails?.profileImage ?? "",
+      );
+
+      final BaseResponseModel response = await _authRepository
+          .onboardingProfile(onBoardingProfileRequest: request);
+
+      state = state.copyWith(loading: false);
+      if (response.isSuccess == true) {
+        await callGetMe();
+        clearProfileImage();
+      }
+      return response.isSuccess == true;
+    });
+  }
+
+  Future<bool?> callGetMe() async {
+    return await runSafely(() async {
+      final AuthResponse response = await _authRepository.getMe();
+      if (response.isSuccess == true) {
+        state = state.copyWith(authResponse: response);
+        // Location is fetched in background to avoid blocking the UI thread during splash/init
+        _fetchLocationInBackground();
+      }
+      return response.isSuccess == true;
+    });
+  }
+
+  void _fetchLocationInBackground() {
+    // Slight delay to ensure it doesn't collide with navigation animations
+    Future.delayed(const Duration(seconds: 2), () async {
+      try {
+        final addressData = await LocationService().fetchAddress();
+        state = state.copyWith(addressData: addressData);
+      } catch (e) {
+        log('Background location fetch skipped or failed: $e');
+      }
     });
   }
 
@@ -137,110 +242,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       }
       state = state.copyWith(loading: false);
       return response.isSuccess ?? false;
-    });
-  }
-
-  Future<bool?> callBiometricRegisterApi() async {
-    return await runSafely(() async {
-      state = state.copyWith(loading: true);
-      final BaseResponseModel response = await _authRepository
-          .biometricRegisterApi();
-      state = state.copyWith(loading: false);
-      return response.isSuccess == true;
-    });
-  }
-
-  Future<bool?> callBiometricLoginApi(String key) async {
-    return await runSafely(() async {
-      state = state.copyWith(loading: true);
-      final BaseResponseModel response = await _authRepository
-          .biometricLoginApi();
-      state = state.copyWith(loading: false);
-      return response.isSuccess == true;
-    });
-  }
-
-  Future<bool?> callVerifyOtpApi() async {
-    final request = OtpRequest(
-      email: emailController.text,
-      otp: otpController.text,
-    );
-    return await runSafely(() async {
-      state = state.copyWith(loading: true);
-      final AuthResponse response = await _authRepository.verifyOTP(
-        otpRequest: request,
-      );
-      
-      state = state.copyWith(
-        loading: false,
-        authResponse: response,
-      );
-
-      if (response.isSuccess == true) {
-        otpController.clear();
-        _fetchLocationInBackground();
-      }
-      return response.isSuccess == true;
-    });
-  }
-
-  Future<bool?> callOnboardingProfileApi({
-    required String name,
-    required String phoneNumber,
-    required String emailAddress,
-    required String location,
-    required String bio,
-  }) async { 
-    return await runSafely(() async {
-      state = state.copyWith(loading: true);
-      
-      String? imageUrl;
-      if (state.profileImage != null) {
-        imageUrl = await MediaService().uploadImage(state.authResponse?.data?.user?.primaryEmail ?? '', state.profileImage!);
-      }
-      
-      final request = OnBoardingProfileRequest(
-        name: name,
-        phoneNumber: phoneNumber,
-        emailAddress: emailAddress,
-        location: location,
-        bio: bio,
-        profileImageUrl: imageUrl ?? state.authResponse?.data?.userDetails?.profileImage ?? "",
-      ); 
-
-      final BaseResponseModel response = await _authRepository
-          .onboardingProfile(onBoardingProfileRequest: request);
-      
-      state = state.copyWith(loading: false);
-      if (response.isSuccess == true) {
-        await callGetMe();
-        clearProfileImage();
-      }
-      return response.isSuccess == true;
-    });
-  }
-
-  Future<bool?> callGetMe() async {
-    return await runSafely(() async {
-      final AuthResponse response = await _authRepository.getMe();
-      if (response.isSuccess == true) {
-        state = state.copyWith(authResponse: response);
-        // Location is fetched in background to avoid blocking the UI thread during splash/init
-        _fetchLocationInBackground();
-      }
-      return response.isSuccess == true;
-    });
-  }
-
-  void _fetchLocationInBackground() {
-    // Slight delay to ensure it doesn't collide with navigation animations
-    Future.delayed(const Duration(seconds: 2), () async {
-      try {
-        final addressData = await LocationService().fetchAddress();
-        state = state.copyWith(addressData: addressData);
-      } catch (e) {
-        log('Background location fetch skipped or failed: $e');
-      }
     });
   }
 

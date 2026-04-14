@@ -1,18 +1,14 @@
-import 'dart:math';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:skinsync_ai/screens/biometric_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/utills/shared_pref.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
-import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
 
 import '../utills/biometric_helper.dart';
 import '../utills/enums.dart';
@@ -69,7 +65,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                     CustomSizedSwitch(),
                   ],
                 ),
-               /* SizedBox(height: 37.h),
+                SizedBox(height: 37.h),
                 Row(
                   children: [
                     SvgPicture.asset(
@@ -86,7 +82,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                     Spacer(),
                     CustomSizedSwitch(),
                   ],
-                ),*/
+                ),
                 SizedBox(height: 37.h),
                 Row(
                   children: [
@@ -102,23 +98,8 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                       style: CustomFonts.black22w500,
                     ),
                     Spacer(),
-                    // FutureBuilder(
-                    //   future: (_){}
-                    //   ,
-                    //   builder: (context, snapshot) {
-                    //     if (snapshot.hasData) {
-                    //       return CustomSizedSwitch(
-                    //         isOn: snapshot.data!,
-                    //         onChanged: (value) {
-                    //           SharedPref().writeBool(SharedPreferencesKeys.biometricAuthKey, value);
-                    //         },
-                    //       );
-                    //     } else {
-                    //       return CircularProgressIndicator();
-                    //     }
-                    //   },
-                    // ),
                     FutureBuilder<bool>(
+                      key: UniqueKey(),
                       future: BiometricHelper().isBiometricAvailable(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
@@ -133,7 +114,6 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                               setState(() => isLoading = true);
 
                               if (value) {
-                                // ✅ Check biometric support again
                                 final isAvailable = await BiometricHelper()
                                     .isBiometricAvailable();
 
@@ -150,28 +130,18 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                                 }
 
                                 // ✅ Navigate to biometric screen
-                                Navigator.pushNamed(
+                                await Navigator.pushNamed(
                                   context,
-                                  "/biometricScreen",
+                                  BiometricScreen.routeName,
                                 );
-
-                                // // OR if you want API call first, do it here
-                                // final success = await ref
-                                //     .read(authViewModel.notifier)
-                                //     .callBiometricRegisterApi();
-
-                                // if (success ?? false) {
-                                //   setState(() => isBiometricEnabled = true);
-
-                                //   SharedPref().saveBool(
-                                //     SharedPreferencesKeys
-                                //         .biometricEnabledKey
-                                //         .keyText,
-                                //     true,
-                                //   );
-                                // } else {
-                                //   setState(() => isBiometricEnabled = false);
-                                // }
+                                isBiometricEnabled =
+                                    SharedPref().readBool(
+                                      SharedPreferencesKeys
+                                          .biometricEnabledKey
+                                          .keyText,
+                                    ) ??
+                                    false;
+                                setState(() {});
                               } else {
                                 // ✅ Switch OFF logic (no check needed)
                                 final success =
@@ -199,14 +169,14 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                     ),
                   ],
                 ),
-              /*  SizedBox(height: 37.h),
+                SizedBox(height: 37.h),
                 Row(
                   children: [
                     SvgPicture.asset(SvgAssets.card, height: 24.h, width: 24.w),
                     SizedBox(width: 16.w),
                     Text("Payments & Wallets", style: CustomFonts.black22w500),
                   ],
-                ),*/
+                ),
               ],
             ),
           ),
