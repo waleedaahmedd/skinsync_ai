@@ -112,6 +112,7 @@ class MyProfileScreen extends StatelessWidget {
                       crossAxisAlignment: .start,
                       children: [
                         Text(name ?? 'N/A', style: CustomFonts.black28w600),
+/*
                         Row(
                           children: [
                             Icon(Icons.star, size: 17.sp, color: Colors.black),
@@ -122,6 +123,7 @@ class MyProfileScreen extends StatelessWidget {
                             ),
                           ],
                         ),
+*/
                       ],
                     );
                   },
@@ -146,7 +148,7 @@ class MyProfileScreen extends StatelessWidget {
                   icon: SvgAssets.profileIcon,
                   title: "Personal Details",
                 ),
-                SizedBox(height: 36.h),
+                /*SizedBox(height: 36.h),
                 profileOption(
                   callBack: () {
                     Navigator.pushNamed(
@@ -162,8 +164,8 @@ class MyProfileScreen extends StatelessWidget {
                   callBack: () {},
                   icon: SvgAssets.loyalty,
                   title: "Loyalty & Rewards",
-                ),
-                SizedBox(height: 36.h),
+                ),*/
+              /*  SizedBox(height: 36.h),
                 profileOption(
                   callBack: () {
                     Navigator.pushNamed(
@@ -173,13 +175,13 @@ class MyProfileScreen extends StatelessWidget {
                   },
                   icon: SvgAssets.medical,
                   title: "Medical History",
-                ),
-                SizedBox(height: 36.h),
+                ),*/
+              /*  SizedBox(height: 36.h),
                 profileOption(
                   callBack: () {},
                   icon: SvgAssets.receipts,
                   title: "Treatment Receipts",
-                ),
+                ),*/
                 SizedBox(height: 36.h),
                 Consumer(
                   builder: (context, ref, _) {

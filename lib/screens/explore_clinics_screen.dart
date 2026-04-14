@@ -38,14 +38,14 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (isDeploymentMode) {
         ref.read(clinicDoctorProvider.notifier).fetchClinicsFromMap();
-      } else {
+      } /*else {
         ref
             .read(clinicDoctorProvider.notifier)
             .getClinic(
               treatmentId: widget.treatmentId,
               sideAreaIds: widget.sideAreaIds,
             );
-      }
+      }*/
     });
   }
 
@@ -80,12 +80,12 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                   TabBar(
                     onTap: (index) {
                       if (index == 0) {
-                        ref
+                       /* ref
                             .read(clinicDoctorProvider.notifier)
                             .getClinic(
                               treatmentId: widget.treatmentId,
                               sideAreaIds: widget.sideAreaIds,
-                            );
+                            );*/
                       } else {
                         ref
                             .read(clinicDoctorProvider.notifier)

@@ -7,16 +7,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/main.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
-import '../widgets/bottom_sheets/before_you_bookbottomsheet.dart';
+import '../widgets/bottom_sheets/before_you_book_bottomsheet.dart';
 import '../widgets/dialogs/appointment_success_dialog.dart';
 import 'bottom_nav_page.dart';
-import 'clinic_service_screen.dart';
 
 class ClinicsDetailScreen extends ConsumerWidget {
   final Clinic? clinic;
@@ -530,31 +528,33 @@ class ClinicsDetailScreen extends ConsumerWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      if (isDeploymentMode) {
-                        BeforeYouBookBottomSheet.show(
-                          context,
-                          onConfirm: () {
-                            showAppointmentSuccessDialog(
-                              context: context,
-                              onDone: () {
-                                Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  BottomNavPage.routeName,
-                                  (_) => false,
-                                );
-                              },
-                            );
-                          },
-                        );
-                      } else {
-                        Navigator.pushNamed(
-                          context,
-                          ClinicServiceScreen.routeName,
-                        );
-                      }
+                      // ref
+                      //     .read(checkoutViewModel.notifier)
+                      //     .updateState(clinicId: "xx");
+
+                      // Navigator.pushNamed(
+                      //   context,
+                      //   ClinicServiceScreen.routeName,
+                      //   arguments: clinic,
+                      // );
+                      BeforeYouBookBottomSheet.show(
+                        context,
+                        onConfirm: () {
+                          showAppointmentSuccessDialog(
+                            context: context,
+                            onDone: () {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                BottomNavPage.routeName,
+                                (_) => false,
+                              );
+                            },
+                          );
+                        },
+                      );
                     },
                     child: Text(
-                      clinic?.place != null && isDeploymentMode
+                      clinic?.place != null
                           ? "Invite this Medical Spa"
                           : 'Book an Appointment',
                     ),
