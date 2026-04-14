@@ -86,9 +86,8 @@ class _BiometricScreenState extends State<BiometricScreen> {
                                     .keyText,
                                 true,
                               );
-                               EasyLoading.showSuccess(
-                                "Biometric enabled",
-                              );
+                              EasyLoading.showSuccess("Biometric enabled");
+                              Navigator.pop(context);
                             }
 
                             isLoading = false;
@@ -106,10 +105,11 @@ class _BiometricScreenState extends State<BiometricScreen> {
 
             SizedBox(height: 24.h),
             GestureDetector(
-              onTap: (){
+              onTap: () {
                 Navigator.pop(context);
               },
-              child: Text("Back to Settings", style: CustomFonts.black20w600)),
+              child: Text("Back to Settings", style: CustomFonts.black20w600),
+            ),
             Padding(
               padding: EdgeInsets.only(
                 bottom: MediaQuery.paddingOf(context).bottom + 60.h,

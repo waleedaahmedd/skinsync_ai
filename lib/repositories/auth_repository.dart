@@ -16,11 +16,12 @@ abstract class AuthRepository {
     required OnBoardingProfileRequest onBoardingProfileRequest,
   });
   Future<AuthResponse> getMe();
+
   Future<AuthResponse> googleSignInApi({
     required SignInWithGoogleRequest request,
   });
+
   Future<AuthResponse> appleSignInApi({
     required SignInWithAppleRequest request,
   });
-
 }

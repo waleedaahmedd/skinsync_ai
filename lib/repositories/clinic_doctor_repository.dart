@@ -9,8 +9,8 @@ import '../models/responses/availability_response.dart';
 
 abstract class ClinicDoctorRepository {
   Future<GetClinicResponse> getClinic({
-    required int treatmentId,
-    required String sideAreaIdsList,
+    int? treatmentId,
+    String? sideAreaIdsList,
   });
 
   Future<GetDoctorResponse> getDoctors({

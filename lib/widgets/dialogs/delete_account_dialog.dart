@@ -14,7 +14,9 @@ void showDeleteAccountDialog({
       return Dialog(
         backgroundColor: Colors.white,
         insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
         child: ConstrainedBox(
           constraints: BoxConstraints(maxHeight: 0.8.sh),
           child: SingleChildScrollView(
@@ -85,7 +87,10 @@ void showDeleteAccountDialog({
                       decoration: BoxDecoration(
                         color: CustomColors.greyColor,
                         borderRadius: BorderRadius.circular(10.r),
-                        border: Border.all(width: 1.w, color: Colors.grey[200]!),
+                        border: Border.all(
+                          width: 1.w,
+                          color: Colors.grey[200]!,
+                        ),
                       ),
                       child: Text(
                         "Cancel",

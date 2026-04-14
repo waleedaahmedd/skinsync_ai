@@ -29,13 +29,23 @@ class AppBarWithActionIcon extends StatelessWidget
                   child: Consumer(
                     builder: (context, ref, _) {
                       final state = ref.watch(authViewModel);
-                      final name = state.authResponse?.data?.userDetails?.name;
+                      final name =
+                          state.authResponse?.data?.userDetails?.firstName;
                       // final address = state.addressData?.address;
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(name ?? 'N/A', style: CustomFonts.black30w600),
-                          // SizedBox(height: 4),
+                          Text(
+                            'Hello, ${name ?? ''}!',
+                            style: CustomFonts.black30w600,
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'Your journey to radiant skin starts now.',
+                            style: CustomFonts.grey18w400,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
                           // Text(address ?? 'N/A', style: CustomFonts.grey18w400,overflow: TextOverflow.ellipsis,maxLines: 1,),
                         ],
                       );

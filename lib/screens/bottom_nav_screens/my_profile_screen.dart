@@ -14,7 +14,10 @@ import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/dialogs/delete_account_dialog.dart';
 import 'package:skinsync_ai/widgets/logout_dialog_box.dart';
 
+import '../../main.dart';
 import '../../utills/secure_storage_service.dart';
+import '../allergy_and_medical_history.dart';
+import '../saved_treatment_screen.dart';
 
 class MyProfileScreen extends StatelessWidget {
   const MyProfileScreen({super.key});
@@ -68,25 +71,34 @@ class MyProfileScreen extends StatelessWidget {
                       width: 7.w,
                     ),
                   ),
-                  child: ClipOval(
-                    child: Consumer(
-                      builder: (context, ref, _) {
-                        // final name = ref
-                        //     .watch(authViewModel)
-                        //     .authResponse
-                        //     ?.data
-                        //     ?.userDetails
-                        //     ?.name;
-                        return Center(
-                          child: Image.asset(
-                            DummyAssets.profile,
+                  child: Consumer(
+                    builder: (context, ref, _) {
+                      final image = ref
+                          .watch(authViewModel)
+                          .authResponse
+                          ?.data
+                          ?.userDetails
+                          ?.profileImage;
+                      return ClipOval(
+                        child: Center(
+                          child: Image.network(
+                            image ?? "",
                             fit: BoxFit.cover,
                             height: 103.w,
                             width: 103.w,
+                            errorBuilder: (context, error, stackTrace) {
+                              return SizedBox(
+                                height: 103.w,
+                                width: 103.w,
+                                child: Center(
+                                  child: Icon(Icons.broken_image, size: 51.sp),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 SizedBox(width: 25.w),
@@ -126,7 +138,7 @@ class MyProfileScreen extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 30.0.w),
             child: Column(
               children: [
-                profileOppition(
+                profileOption(
                   callBack: () {
                     Navigator.pushNamed(
                       context,
@@ -137,67 +149,69 @@ class MyProfileScreen extends StatelessWidget {
                   title: "Personal Details",
                 ),
                 SizedBox(height: 36.h),
-                profileOppition(
-                  callBack: () {
-                    WebviewPage.open(
-                      context: context,
-                      url: 'https://skinsyncai.com/terms-of-service/',
-                      title: 'Terms Of Service',
-                    );
-                  },
-                  icon: Iconsax.document,
-                  title: "Terms Of Service",
-                ),
-                SizedBox(height: 36.h),
-                profileOppition(
-                  callBack: () {
-                    WebviewPage.open(
-                      context: context,
-                      url: 'https://skinsyncai.com/privacy-policy/',
-                      title: 'Privacy Policy',
-                    );
-                  },
-                  icon: Iconsax.security,
-                  title: "Privacy Policy",
-                ),
-                // SizedBox(height: 36.h),
-                // profileOppition(
-                //   callBack: () {
-                //     Navigator.pushNamed(
-                //       context,
-                //       SavedTreatmentScreen.routeName,
-                //     );
-                //   },
-                //   icon: SvgAssets.saveTreatment,
-                //   title: "Saved Treatments & Clinics",
-                // ),
-                // SizedBox(height: 36.h),
-                // profileOppition(
-                //   callBack: () {},
-                //   icon: SvgAssets.loyalty,
-                //   title: "Loyalty & Rewards",
-                // ),
-                // SizedBox(height: 36.h),
-                // profileOppition(
-                //   callBack: () {
-                //     Navigator.pushNamed(
-                //       context,
-                //       AllergyAndMedicalHistory.routeName,
-                //     );
-                //   },
-                //   icon: SvgAssets.medical,
-                //   title: "Medical History",
-                // ),
-                // SizedBox(height: 36.h),
-                // profileOppition(
-                //   callBack: () {},
-                //   icon: SvgAssets.receipts,
-                //   title: "treatment receipts",
-                // ),
+                if (!isDeploymentMode) ...{
+                  profileOption(
+                    callBack: () {
+                      Navigator.pushNamed(
+                        context,
+                        SavedTreatmentScreen.routeName,
+                      );
+                    },
+                    icon: SvgAssets.saveTreatment,
+                    title: "Saved Treatments & Clinics",
+                  ),
+                  SizedBox(height: 36.h),
+                  profileOption(
+                    callBack: () {},
+                    icon: SvgAssets.loyalty,
+                    title: "Loyalty & Rewards",
+                  ),
+                  SizedBox(height: 36.h),
+                  profileOption(
+                    callBack: () {
+                      Navigator.pushNamed(
+                        context,
+                        AllergyAndMedicalHistory.routeName,
+                      );
+                    },
+                    icon: SvgAssets.medical,
+                    title: "Medical History",
+                  ),
+                  SizedBox(height: 36.h),
+                  profileOption(
+                    callBack: () {},
+                    icon: SvgAssets.receipts,
+                    title: "Treatment Receipts",
+                  ),
+                } else ...{
+                  profileOption(
+                    callBack: () {
+                      WebviewPage.open(
+                        context: context,
+                        url: 'https://skinsyncai.com/terms-of-service/',
+                        title: 'Terms Of Service',
+                      );
+                    },
+                    icon: Iconsax.document,
+                    title: "Terms Of Service",
+                  ),
+                  SizedBox(height: 36.h),
+                  profileOption(
+                    callBack: () {
+                      WebviewPage.open(
+                        context: context,
+                        url: 'https://skinsyncai.com/privacy-policy/',
+                        title: 'Privacy Policy',
+                      );
+                    },
+                    icon: Iconsax.security,
+                    title: "Privacy Policy",
+                  ),
+                },
                 SizedBox(height: 36.h),
                 Consumer(
                   builder: (context, ref, _) {
-                    return profileOppition(
+                    return profileOption(
                       callBack: () {
                         showDeleteAccountDialog(
                           screenContext: context,
@@ -216,7 +230,7 @@ class MyProfileScreen extends StatelessWidget {
                   },
                 ),
                 SizedBox(height: 36.h),
-                profileOppition(
+                profileOption(
                   callBack: () {
                     showLogoutDialog(
                       screenContext: context,
@@ -243,24 +257,25 @@ class MyProfileScreen extends StatelessWidget {
       ),
     );
   }
-}
 
-InkWell profileOppition({
-  required dynamic icon,
-  required String title,
-  required VoidCallback callBack,
-}) {
-  return InkWell(
-    onTap: callBack,
-    child: Row(
-      children: [
-        if (icon is String)
-          SvgPicture.asset(icon, height: 24.h, width: 24.w)
-        else
-          Icon(icon, size: 24.sp, weight: 1),
-        SizedBox(width: 16.w),
-        Text(title, style: CustomFonts.black22w500),
-      ],
-    ),
-  );
+  InkWell profileOption({
+    required dynamic icon,
+    required String title,
+    required VoidCallback callBack,
+  }) {
+    return InkWell(
+      onTap: callBack,
+
+      child: Row(
+        children: [
+          if (icon is String)
+            SvgPicture.asset(icon, height: 24.w, width: 24.w)
+          else
+            Icon(icon, size: 24.w),
+          SizedBox(width: 16.w),
+          Text(title, style: CustomFonts.black22w500),
+        ],
+      ),
+    );
+  }
 }

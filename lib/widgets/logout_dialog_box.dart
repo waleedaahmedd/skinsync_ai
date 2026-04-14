@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:iconsax/iconsax.dart';
+import 'package:skinsync_ai/services/google_auth_service.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 
 void showLogoutDialog({
@@ -63,7 +63,8 @@ void showLogoutDialog({
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      await GoogleAuthService().logout();
                       onSuccess();
                     },
                     style: ElevatedButton.styleFrom(

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,7 +8,7 @@ import 'package:skinsync_ai/models/responses/base_response_model.dart';
 import 'package:skinsync_ai/services/apple_auth_service.dart';
 import 'package:skinsync_ai/services/google_auth_service.dart';
 import 'package:skinsync_ai/services/location_service.dart';
-import 'package:skinsync_ai/utills/enums.dart';
+import 'package:skinsync_ai/services/media_service.dart';
 
 import '../models/base_state_model.dart';
 import '../models/requests/sign_in_request.dart';
@@ -18,6 +16,7 @@ import '../models/responses/auth_response.dart';
 import '../repositories/auth_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/auth_service.dart';
+import '../utills/enums.dart';
 import 'base_view_model.dart';
 
 final authViewModel = NotifierProvider(() {
@@ -55,7 +54,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         maxHeight: 512,
       );
       if (image != null) {
-        state = state.copyWith(profileImage: File(image.path));
+        state = state.copyWith(profileImage: image);
       }
     } catch (e) {
       onError('Error picking image: $e');
@@ -144,8 +143,29 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   }
 
   Future<bool?> callOnboardingProfileApi({
-    required OnBoardingProfileRequest request,
+    required String name,
+    required String phoneNumber,
+    required String emailAddress,
+    required String location,
+    required String bio,
   }) async {
+    String? imageUrl;
+    if (state.profileImage != null) {
+      imageUrl = await MediaService().uploadImage(
+        state.authResponse?.data?.user?.primaryEmail ?? '',
+        state.profileImage!,
+      );
+    }
+    final request = OnBoardingProfileRequest(
+      name: name,
+      phoneNumber: phoneNumber,
+      emailAddress: emailAddress,
+      location: location,
+      bio: bio,
+      profileImageUrl:
+          imageUrl ?? state.authResponse?.data?.userDetails?.profileImage ?? "",
+    );
+
     return await runSafely(() async {
       state = state.copyWith(loading: true);
       final BaseResponseModel response = await _authRepository
@@ -153,6 +173,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       state = state.copyWith(loading: false);
       if (response.isSuccess == true) {
         callGetMe();
+        clearProfileImage();
       }
       return response.isSuccess == true;
     });
@@ -215,7 +236,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     });
   }
 
-
   void clearData() {
     emailController.clear();
     otpController.clear();
@@ -246,7 +266,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 class AuthState extends BaseStateModel {
   final AuthResponse? authResponse;
   final String? otpError;
-  final File? profileImage;
+  final XFile? profileImage;
   final AddressData? addressData;
 
   const AuthState({
@@ -267,7 +287,7 @@ class AuthState extends BaseStateModel {
     AuthResponse? authResponse,
     String? otpError,
     bool clearOtpError = false,
-    File? profileImage,
+    XFile? profileImage,
     bool clearProfileImage = false,
     AddressData? addressData,
   }) {

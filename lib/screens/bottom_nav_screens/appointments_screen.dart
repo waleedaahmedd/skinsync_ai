@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:skinsync_ai/main.dart';
 import 'package:skinsync_ai/models/responses/get_appointment_response.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/view_models/appointment_view_model.dart';
+import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/scheduled_appointment_tile.dart';
 
 import '../../utills/custom_fonts.dart';
@@ -87,84 +89,100 @@ class _ApppointmentsScreenState extends ConsumerState<ApppointmentsScreen> {
             ),
           ),
           SizedBox(height: 20.h),
-          Expanded(
-            child: RefreshIndicator(
-              child: PagingListener(
-                controller: _pagingController,
-                builder: (context, state, fetchNextPage) {
-                  return PagedListView(
-                    state: state,
-                    padding: EdgeInsets.only(
-                      bottom: MediaQuery.paddingOf(context).bottom,
-                    ),
-                    fetchNextPage: fetchNextPage,
-                    builderDelegate: PagedChildBuilderDelegate(
-                      noItemsFoundIndicatorBuilder: (context) {
-                        return Center(
-                          child: Text(
-                            'No appointments yet',
-                            style: CustomFonts.grey16w400,
-                          ),
-                        );
-                      },
-                      itemBuilder: (_, Appointment appointment, __) {
-                        return Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10.h),
-                          child: Row(
-                            mainAxisAlignment: .start,
-                            crossAxisAlignment: .start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(
-                                  left: 30.w,
-                                  right: 15.w,
-                                ),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: CustomColors.purpleColor,
-                                    borderRadius: BorderRadius.circular(8.r),
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 4.w,
-                                    vertical: 8.h,
-                                  ),
-
-                                  child: Text(
-                                    appointment.startTime != null
-                                        ? appointment.startTimeFormattedTime
-                                        : "No time",
-                                    style: CustomFonts.white12w600,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Padding(
+          if (isDeploymentMode)
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.paddingOf(context).bottom,
+                ),
+                child: Center(
+                  child: Text(
+                    'No appointments yet',
+                    style: CustomFonts.grey16w400,
+                  ),
+                ),
+              ),
+            )
+          else
+            Expanded(
+              child: RefreshIndicator(
+                child: PagingListener(
+                  controller: _pagingController,
+                  builder: (context, state, fetchNextPage) {
+                    return PagedListView(
+                      state: state,
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.paddingOf(context).bottom,
+                      ),
+                      fetchNextPage: fetchNextPage,
+                      builderDelegate: PagedChildBuilderDelegate(
+                        noItemsFoundIndicatorBuilder: (context) {
+                          return Center(
+                            child: Text(
+                              'No appointments yet',
+                              style: CustomFonts.grey16w400,
+                            ),
+                          );
+                        },
+                        itemBuilder: (_, Appointment appointment, __) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10.h),
+                            child: Row(
+                              mainAxisAlignment: .start,
+                              crossAxisAlignment: .start,
+                              children: [
+                                Padding(
                                   padding: EdgeInsets.only(
-                                    left: 15.w,
-                                    right: 30.w,
+                                    left: 30.w,
+                                    right: 15.w,
                                   ),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: CustomColors.purpleColor,
+                                      borderRadius: BorderRadius.circular(8.r),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 4.w,
+                                      vertical: 8.h,
+                                    ),
 
-                                  child: Align(
-                                    alignment: Alignment.centerRight,
-                                    child: ScheduledAppointmentTile(
-                                      appointment: appointment,
+                                    child: Text(
+                                      appointment.startTime != null
+                                          ? appointment.startTimeFormattedTime
+                                          : "No time",
+                                      style: CustomFonts.white12w600,
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  );
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      left: 15.w,
+                                      right: 30.w,
+                                    ),
+
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: ScheduledAppointmentTile(
+                                        appointment: appointment,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        firstPageProgressIndicatorBuilder: (_) => AppLoader(),
+                      ),
+                    );
+                  },
+                ),
+                onRefresh: () async {
+                  _pagingController.refresh();
                 },
               ),
-              onRefresh: () async {
-                _pagingController.refresh();
-              },
             ),
-          ),
 
           // SizedBox(height: 21.h),
           // SingleChildScrollView(

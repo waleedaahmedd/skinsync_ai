@@ -2,7 +2,6 @@ import 'package:skinsync_ai/models/responses/base_response_model.dart';
 import 'package:skinsync_ai/models/responses/treatment_response_model.dart';
 
 class AuthResponse extends BaseResponseModel {
-  
   Data? data;
 
   AuthResponse({super.isSuccess, super.message, this.data});
@@ -12,8 +11,6 @@ class AuthResponse extends BaseResponseModel {
     message = json['message'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
   }
-
- 
 }
 
 class Data {
@@ -26,15 +23,16 @@ class Data {
   UserDetails? userDetails;
   List<TreatmentsModel>? treatment;
 
-  Data(
-      {this.accessToken,
-      this.refreshToken,
-      this.accessExpiresAt,
-      this.refreshExpiresAt,
-      this.isFirstLogin,
-      this.user,
-      this.userDetails,
-      this.treatment});
+  Data({
+    this.accessToken,
+    this.refreshToken,
+    this.accessExpiresAt,
+    this.refreshExpiresAt,
+    this.isFirstLogin,
+    this.user,
+    this.userDetails,
+    this.treatment,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     accessToken = json['access_token'];
@@ -53,8 +51,6 @@ class Data {
       });
     }
   }
-
- 
 }
 
 class User {
@@ -68,16 +64,17 @@ class User {
   String? authTokens;
   String? roles;
 
-  User(
-      {this.id,
-      this.primaryEmail,
-      this.primaryPhone,
-      this.status,
-      this.createdAt,
-      this.updatedAt,
-      this.authProviders,
-      this.authTokens,
-      this.roles});
+  User({
+    this.id,
+    this.primaryEmail,
+    this.primaryPhone,
+    this.status,
+    this.createdAt,
+    this.updatedAt,
+    this.authProviders,
+    this.authTokens,
+    this.roles,
+  });
 
   User.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -90,7 +87,6 @@ class User {
     authTokens = json['AuthTokens'];
     roles = json['Roles'];
   }
-
 }
 
 class UserDetails {
@@ -103,22 +99,26 @@ class UserDetails {
   String? bio;
   String? createdAt;
   String? updatedAt;
+  String? profileImage;
 
-  UserDetails(
-      {this.userProfileId,
-      this.userId,
-      this.name,
-      this.phoneNumber,
-      this.emailAddress,
-      this.location,
-      this.bio,
-      this.createdAt,
-      this.updatedAt});
+  UserDetails({
+    this.userProfileId,
+    this.userId,
+    this.name,
+    this.phoneNumber,
+    this.emailAddress,
+    this.location,
+    this.bio,
+    this.profileImage,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   UserDetails.fromJson(Map<String, dynamic> json) {
     userProfileId = json['user_profile_id'];
     userId = json['user_id'];
     name = json['name'];
+    profileImage = json["profile_image_url"];
     phoneNumber = json['phone_number'];
     emailAddress = json['email_address'];
     location = json['location'];
@@ -127,5 +127,7 @@ class UserDetails {
     updatedAt = json['updated_at'];
   }
 
+  String? get firstName {
+    return name?.split(" ").first;
+  }
 }
-

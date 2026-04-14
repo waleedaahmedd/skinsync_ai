@@ -1,13 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
+import 'package:skinsync_ai/widgets/app_loader.dart';
 
 import 'get_notified_screen.dart';
 
@@ -104,7 +106,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                         clipBehavior: Clip.antiAliasWithSaveLayer,
                         child: profileImage != null
                             ? Image.file(
-                                profileImage,
+                                File(profileImage.path),
                                 fit: BoxFit.cover,
                                 height: 75.w,
                                 width: 75.w,
@@ -231,35 +233,36 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   SizedBox(height: 35.h),
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState?.validate() ?? false) {
-                          ref
-                              .read(authViewModel.notifier)
-                              .callOnboardingProfileApi(
-                                request: OnBoardingProfileRequest(
-                                  name: _nameController.text,
-                                  phoneNumber: _phoneController.text.trim(),
-                                  emailAddress: _emailController.text.trim(),
-                                  location: _locationController.text.trim(),
-                                  bio: _bioController.text.trim(),
-                                ),
-                              )
-                              .then((value) {
-                                if (value == true) {
-                                  Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    GetNotifiedScreen.routeName,
-                                    (Route<dynamic> route) => false,
-                                  );
-                                }
-                              });
-                        }
-                      },
-                      child: ref.watch(authViewModel).loading
-                          ? CircularProgressIndicator()
-                          : Text("Next"),
-                    ),
+                    child: ref.watch(authViewModel).loading
+                        ? AppLoader()
+                        : ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState?.validate() ?? false) {
+                                ref
+                                    .read(authViewModel.notifier)
+                                    .callOnboardingProfileApi(
+                                      name: _nameController.text,
+                                      phoneNumber: _phoneController.text.trim(),
+                                      emailAddress: _emailController.text
+                                          .trim(),
+                                      location: _locationController.text.trim(),
+                                      bio: _bioController.text.trim(),
+                                    )
+                                    .then((value) {
+                                      if (value == true) {
+                                        Navigator.pushNamedAndRemoveUntil(
+                                          context,
+                                          GetNotifiedScreen.routeName,
+                                          (Route<dynamic> route) => false,
+                                        );
+                                      }
+                                    });
+                              }
+                            },
+                            child: ref.watch(authViewModel).loading
+                                ? CircularProgressIndicator()
+                                : Text("Next"),
+                          ),
                   ),
                 ],
               ),

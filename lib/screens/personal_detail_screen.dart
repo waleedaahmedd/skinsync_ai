@@ -1,14 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/utills/assets.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
-
-import '../models/requests/onboarding_profile_request.dart';
 
 class PersonalDetailScreen extends ConsumerStatefulWidget {
   const PersonalDetailScreen({super.key});
@@ -49,13 +49,11 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
     final success = await ref
         .read(authViewModel.notifier)
         .callOnboardingProfileApi(
-          request: OnBoardingProfileRequest(
-            name: _nameController.text,
-            phoneNumber: _phoneController.text.trim(),
-            emailAddress: _emailController.text.trim(),
-            location: _locationController.text.trim(),
-            bio: _bioController.text.trim(),
-          ),
+          name: _nameController.text,
+          phoneNumber: _phoneController.text.trim(),
+          emailAddress: _emailController.text.trim(),
+          location: _locationController.text.trim(),
+          bio: _bioController.text.trim(),
         );
     if (success ?? false) {
       EasyLoading.showSuccess('Profile updated!');
@@ -72,8 +70,43 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
     super.dispose();
   }
 
+  void _showImageSourceDialog() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Choose from Gallery'),
+                onTap: () {
+                  Navigator.pop(context);
+                  ref
+                      .read(authViewModel.notifier)
+                      .pickProfileImage(ImageSource.gallery);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.photo_camera),
+                title: Text('Take a Photo'),
+                onTap: () {
+                  Navigator.pop(context);
+                  ref
+                      .read(authViewModel.notifier)
+                      .pickProfileImage(ImageSource.camera);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final profileImage = ref.watch(authViewModel).profileImage;
     return Scaffold(
       appBar: CustomAppBar(showTitle: true, title: "Personal Details"),
       body: SafeArea(
@@ -92,12 +125,38 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                     clipBehavior: Clip.none,
                     children: [
                       ClipOval(
-                        child: Image.asset(
-                          DummyAssets.acen,
-                          height: 91.w,
-                          width: 91.w,
-                          fit: BoxFit.cover,
-                        ),
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        child: profileImage != null
+                            ? Image.file(
+                                File(profileImage.path),
+                                fit: BoxFit.cover,
+                                height: 75.w,
+                                width: 75.w,
+                              )
+                            : Image.network(
+                                ref
+                                        .read(authViewModel)
+                                        .authResponse
+                                        ?.data
+                                        ?.userDetails
+                                        ?.profileImage ??
+                                    "",
+                                fit: BoxFit.cover,
+                                height: 91.w,
+                                width: 91.w,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return SizedBox(
+                                    height: 91.w,
+                                    width: 91.w,
+                                    child: Center(
+                                      child: Icon(
+                                        Icons.broken_image,
+                                        size: 40.sp,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                       ),
                       Positioned(
                         bottom: -5,

@@ -11,6 +11,7 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
+import 'package:skinsync_ai/widgets/app_loader.dart';
 
 import '../widgets/custom_app_bar.dart';
 
@@ -139,42 +140,42 @@ class OtpScreen extends StatelessWidget {
             Consumer(
               builder: (context, ref, child) => SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    if (ref.read(authViewModel.notifier).validateOtp()) {
-                      await ref
-                          .read(authViewModel.notifier)
-                          .callVerifyOtpApi()
-                          .then((value) async {
-                            if (value == true) {
-                              bool? isLoggedIn =
-                                  ref
-                                      .read(authViewModel)
-                                      .authResponse
-                                      ?.data
-                                      ?.isFirstLogin ??
-                                  false;
-                              isLoggedIn
-                                  ? Navigator.pushNamedAndRemoveUntil(
-                                      context,
-                                      SignupOnboarding.routeName,
-                                      (Route<dynamic> route) =>
-                                          route.settings.name ==
-                                          LoginScreen.routeName,
-                                    )
-                                  : Navigator.pushNamedAndRemoveUntil(
-                                      context,
-                                      FaceScanScreen.routeName,
-                                      (Route<dynamic> route) => false,
-                                    );
-                            }
-                          });
-                    }
-                  },
-                  child: ref.watch(authViewModel).loading
-                      ? CircularProgressIndicator()
-                      : Text("Next"),
-                ),
+                child: ref.watch(authViewModel).loading
+                    ? AppLoader()
+                    : ElevatedButton(
+                        onPressed: () async {
+                          if (ref.read(authViewModel.notifier).validateOtp()) {
+                            await ref
+                                .read(authViewModel.notifier)
+                                .callVerifyOtpApi()
+                                .then((value) async {
+                                  if (value == true) {
+                                    bool? isLoggedIn =
+                                        ref
+                                            .read(authViewModel)
+                                            .authResponse
+                                            ?.data
+                                            ?.isFirstLogin ??
+                                        false;
+                                    isLoggedIn
+                                        ? Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            SignupOnboarding.routeName,
+                                            (Route<dynamic> route) =>
+                                                route.settings.name ==
+                                                LoginScreen.routeName,
+                                          )
+                                        : Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            FaceScanScreen.routeName,
+                                            (Route<dynamic> route) => false,
+                                          );
+                                  }
+                                });
+                          }
+                        },
+                        child: Text("Next"),
+                      ),
               ),
             ),
             SizedBox(height: 20.h),
