@@ -1,8 +1,8 @@
 import 'dart:io';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
@@ -68,7 +68,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     state = state.copyWith(clearProfileImage: true);
   }
 
-  // Validate OTP
   bool validateOtp() {
     String otp = otpController.text.trim();
     String? errorMessage;
@@ -80,13 +79,11 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     }
 
     if (errorMessage != null) {
-      state = state.copyWith(
-        otpError: errorMessage,
-      ); // Update the error in the state
+      state = state.copyWith(otpError: errorMessage);
       return false;
     }
 
-    state = state.copyWith(clearOtpError: true); // Clear any existing errors
+    state = state.copyWith(clearOtpError: true);
     return true;
   }
 
@@ -173,47 +170,50 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       final AuthResponse response = await _authRepository.verifyOTP(
         otpRequest: request,
       );
-      final addressData = await LocationService().fetchAddress();
+      
       state = state.copyWith(
         loading: false,
         authResponse: response,
-        addressData: addressData,
       );
+
       if (response.isSuccess == true) {
         otpController.clear();
-        print(response.data?.accessToken ?? "");
+        _fetchLocationInBackground();
       }
       return response.isSuccess == true;
     });
   }
 
   Future<bool?> callOnboardingProfileApi({
-     required String name,
-  required String phoneNumber,
-  required String emailAddress,
-  required String location,
-  required String bio,
+    required String name,
+    required String phoneNumber,
+    required String emailAddress,
+    required String location,
+    required String bio,
   }) async { 
-  
-    String? imageUrl;
-    if (state.profileImage != null) {
-        imageUrl = await MediaService().uploadImage(state.authResponse?.data?.user?.primaryEmail ?? '', state.profileImage!);
-      }
-        final request = OnBoardingProfileRequest(
-      name: name,
-      phoneNumber: phoneNumber,
-      emailAddress: emailAddress,
-      location: location,
-      bio: bio,
-      profileImageUrl: imageUrl ?? state.authResponse?.data?.userDetails?.profileImage ?? ""); 
-  
     return await runSafely(() async {
       state = state.copyWith(loading: true);
+      
+      String? imageUrl;
+      if (state.profileImage != null) {
+        imageUrl = await MediaService().uploadImage(state.authResponse?.data?.user?.primaryEmail ?? '', state.profileImage!);
+      }
+      
+      final request = OnBoardingProfileRequest(
+        name: name,
+        phoneNumber: phoneNumber,
+        emailAddress: emailAddress,
+        location: location,
+        bio: bio,
+        profileImageUrl: imageUrl ?? state.authResponse?.data?.userDetails?.profileImage ?? "",
+      ); 
+
       final BaseResponseModel response = await _authRepository
           .onboardingProfile(onBoardingProfileRequest: request);
+      
       state = state.copyWith(loading: false);
       if (response.isSuccess == true) {
-        callGetMe();
+        await callGetMe();
         clearProfileImage();
       }
       return response.isSuccess == true;
@@ -223,15 +223,24 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   Future<bool?> callGetMe() async {
     return await runSafely(() async {
       final AuthResponse response = await _authRepository.getMe();
-      if (response.isSuccess!) {
-        final addressData = await LocationService().fetchAddress();
-        state = state.copyWith(
-          authResponse: response,
-          addressData: addressData,
-        );
+      if (response.isSuccess == true) {
+        state = state.copyWith(authResponse: response);
+        // Location is fetched in background to avoid blocking the UI thread during splash/init
+        _fetchLocationInBackground();
       }
-
       return response.isSuccess == true;
+    });
+  }
+
+  void _fetchLocationInBackground() {
+    // Slight delay to ensure it doesn't collide with navigation animations
+    Future.delayed(const Duration(seconds: 2), () async {
+      try {
+        final addressData = await LocationService().fetchAddress();
+        state = state.copyWith(addressData: addressData);
+      } catch (e) {
+        log('Background location fetch skipped or failed: $e');
+      }
     });
   }
 

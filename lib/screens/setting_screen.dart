@@ -69,7 +69,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                     CustomSizedSwitch(),
                   ],
                 ),
-                SizedBox(height: 37.h),
+               /* SizedBox(height: 37.h),
                 Row(
                   children: [
                     SvgPicture.asset(
@@ -86,7 +86,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                     Spacer(),
                     CustomSizedSwitch(),
                   ],
-                ),
+                ),*/
                 SizedBox(height: 37.h),
                 Row(
                   children: [
@@ -199,14 +199,14 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 37.h),
+              /*  SizedBox(height: 37.h),
                 Row(
                   children: [
                     SvgPicture.asset(SvgAssets.card, height: 24.h, width: 24.w),
                     SizedBox(width: 16.w),
                     Text("Payments & Wallets", style: CustomFonts.black22w500),
                   ],
-                ),
+                ),*/
               ],
             ),
           ),
