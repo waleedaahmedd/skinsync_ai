@@ -39,7 +39,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   @override
   void init() {
     getDeviceInfo();
-    log('hello from auth view model init');
     super.init();
   }
 
@@ -77,6 +76,8 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   Future<void> getDeviceInfo() async {
     final packageInfo = await PackageInfo.fromPlatform();
     String type = Platform.isIOS ? 'ios' : 'android';
+    log('hello from Get Device info');
+
     state = state.copyWith(
       device: type,
       version: packageInfo.version,
@@ -231,6 +232,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       );
       if (response.isSuccess == true) {
         state = state.copyWith(authResponse: response);
+        log('get me call successful,');
         appVersion();
         // Location is fetched in background to avoid blocking the UI thread during splash/init
         _fetchLocationInBackground();
