@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:skinsync_ai/models/requests/app_version_request.dart';
 import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
@@ -194,11 +195,31 @@ class AuthService implements AuthRepository {
   }
 
   @override
-  Future<AuthResponse> getMe() async {
+  Future<BaseResponseModel> appVersion({
+    required AppVersionRequest request,
+  }) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.appVersion,
+      requestType: 'PATCH',
+      requestBody: request,
+      params: '',
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      BaseResponseModel authResponse = BaseResponseModel.fromJson(parsed);
+      return authResponse;
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(BaseResponseModel.fromJson(parsed).message as String);
+    }
+  }
+
+  @override
+  Future<AuthResponse> getMe({required String type}) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.getMe,
       requestType: 'GET',
-      params: '',
+      params: '?type=$type',
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);

@@ -1,9 +1,12 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io';
 import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:skinsync_ai/models/requests/app_version_request.dart';
 import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
 import 'package:skinsync_ai/models/responses/address_data.dart';
@@ -32,6 +35,13 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   AuthViewModel({required AuthRepository authRepository})
     : _authRepository = authRepository,
       super(initialState: AuthState());
+
+  @override
+  void init() {
+    getDeviceInfo();
+    log('hello from auth view model init');
+    super.init();
+  }
 
   final AuthRepository _authRepository;
   final ImagePicker _imagePicker = ImagePicker();
@@ -62,6 +72,16 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     } catch (e) {
       onError('Error picking image: $e');
     }
+  }
+
+  Future<void> getDeviceInfo() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    String type = Platform.isIOS ? 'ios' : 'android';
+    state = state.copyWith(
+      device: type,
+      version: packageInfo.version,
+      build: packageInfo.buildNumber,
+    );
   }
 
   void clearProfileImage() {
@@ -130,10 +150,29 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         otpRequest: request,
       );
 
-      state = state.copyWith(
-        loading: false,
-        authResponse: response,
+      state = state.copyWith(loading: false, authResponse: response);
+
+      if (response.isSuccess == true) {
+        otpController.clear();
+        _fetchLocationInBackground();
+      }
+      return response.isSuccess == true;
+    });
+  }
+
+  Future<bool?> appVersion() async {
+    final request = AppVersionRequest(
+      type: state.device ?? '',
+      version: state.version ?? '',
+      buildNumber: state.build ?? '',
+    );
+    return await runSafely(() async {
+      state = state.copyWith(loading: true);
+      final BaseResponseModel response = await _authRepository.appVersion(
+        request: request,
       );
+
+      state = state.copyWith(loading: false /* authResponse: response*/);
 
       if (response.isSuccess == true) {
         otpController.clear();
@@ -155,7 +194,10 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 
       String? imageUrl;
       if (state.profileImage != null) {
-        imageUrl = await MediaService().uploadImage(state.authResponse?.data?.user?.primaryEmail ?? '', state.profileImage!);
+        imageUrl = await MediaService().uploadImage(
+          state.authResponse?.data?.user?.primaryEmail ?? '',
+          state.profileImage!,
+        );
       }
 
       final request = OnBoardingProfileRequest(
@@ -164,7 +206,10 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         emailAddress: emailAddress,
         location: location,
         bio: bio,
-        profileImageUrl: imageUrl ?? state.authResponse?.data?.userDetails?.profileImage ?? "",
+        profileImageUrl:
+            imageUrl ??
+            state.authResponse?.data?.userDetails?.profileImage ??
+            "",
       );
 
       final BaseResponseModel response = await _authRepository
@@ -181,9 +226,12 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 
   Future<bool?> callGetMe() async {
     return await runSafely(() async {
-      final AuthResponse response = await _authRepository.getMe();
+      final AuthResponse response = await _authRepository.getMe(
+        type: state.device!,
+      );
       if (response.isSuccess == true) {
         state = state.copyWith(authResponse: response);
+        appVersion();
         // Location is fetched in background to avoid blocking the UI thread during splash/init
         _fetchLocationInBackground();
       }
@@ -275,6 +323,9 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 class AuthState extends BaseStateModel {
   final AuthResponse? authResponse;
   final String? otpError;
+  final String? build;
+  final String? device;
+  final String? version;
   final XFile? profileImage;
   final AddressData? addressData;
 
@@ -285,6 +336,9 @@ class AuthState extends BaseStateModel {
     this.otpError,
     this.profileImage,
     this.addressData,
+    this.build,
+    this.device,
+    this.version,
   });
 
   @override
@@ -293,6 +347,9 @@ class AuthState extends BaseStateModel {
     String? errorMessage,
     bool? loginWithEmail,
     bool? loginWithPhone,
+    String? build,
+    String? device,
+    String? version,
     AuthResponse? authResponse,
     String? otpError,
     bool clearOtpError = false,
@@ -309,6 +366,9 @@ class AuthState extends BaseStateModel {
           ? null
           : (profileImage ?? this.profileImage),
       addressData: addressData ?? this.addressData,
+      build: build ?? this.build,
+      device: device ?? this.device,
+      version: version ?? this.version,
     );
   }
 }
