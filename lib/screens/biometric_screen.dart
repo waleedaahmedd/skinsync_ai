@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skinsync_ai/screens/face_scan_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/biometric_helper.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -64,7 +65,6 @@ class _BiometricScreenState extends State<BiometricScreen> {
                         child: ElevatedButton(
                           onPressed: () async {
                             if (isLoading) return;
-
                             if (isBiometricEnabled) {
                               EasyLoading.showSuccess(
                                 "Biometric is already enabled",
@@ -72,26 +72,63 @@ class _BiometricScreenState extends State<BiometricScreen> {
                               return;
                             }
 
-                            isLoading = true;
+                            setState(() => isLoading = true);
 
+                            // Check device support
+                            final isAvailable = await BiometricHelper()
+                                .isBiometricAvailable();
+
+                            if (!isAvailable) {
+                              EasyLoading.showError(
+                                "Device does not support biometric authentication",
+                              );
+                              setState(() => isLoading = false);
+                              return;
+                            }
+
+                            // Authenticate
+                            final isAuthenticated = await BiometricHelper()
+                                .authenticate();
+
+                            if (!isAuthenticated) {
+                              EasyLoading.showError(
+                                "Biometric authentication failed",
+                              );
+                              setState(() => isLoading = false);
+                              return;
+                            }
+
+                            // Call register API
                             final success = await ref
                                 .read(authViewModel.notifier)
                                 .callBiometricRegisterApi();
 
                             if (success ?? false) {
-                              isBiometricEnabled = true;
+                              setState(() => isBiometricEnabled = true);
                               SharedPref().saveBool(
                                 SharedPreferencesKeys
                                     .biometricEnabledKey
                                     .keyText,
                                 true,
                               );
-                               EasyLoading.showSuccess(
-                                "Biometric enabled",
+                              EasyLoading.showSuccess(
+                                "Biometric enabled successfully",
+                              );
+
+                              if (mounted) {
+                                Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  FaceScanScreen.routeName,
+                                  (Route<dynamic> route) => false,
+                                );
+                              }
+                            } else {
+                              EasyLoading.showError(
+                                "Failed to register biometric",
                               );
                             }
 
-                            isLoading = false;
+                            setState(() => isLoading = false);
                           },
                           child: Text("I understand and Agree"),
                         ),
@@ -106,10 +143,15 @@ class _BiometricScreenState extends State<BiometricScreen> {
 
             SizedBox(height: 24.h),
             GestureDetector(
-              onTap: (){
-                Navigator.pop(context);
+              onTap: () {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  FaceScanScreen.routeName,
+                  (Route<dynamic> route) => false,
+                );
               },
-              child: Text("Back to Settings", style: CustomFonts.black20w600)),
+              child: Text("Skip", style: CustomFonts.black20w600),
+            ),
             Padding(
               padding: EdgeInsets.only(
                 bottom: MediaQuery.paddingOf(context).bottom + 60.h,

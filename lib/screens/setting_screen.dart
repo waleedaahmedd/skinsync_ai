@@ -129,57 +129,49 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                             isOn: isBiometricEnabled,
                             onChanged: (value) async {
                               if (isLoading) return;
-
                               setState(() => isLoading = true);
 
                               if (value) {
-                                // ✅ Check biometric support again
+                                // Check biometric support
                                 final isAvailable = await BiometricHelper()
                                     .isBiometricAvailable();
-
                                 if (!isAvailable) {
                                   EasyLoading.showError(
                                     "Device does not support biometric",
                                   );
-
                                   setState(() {
-                                    isBiometricEnabled = false; // force OFF
+                                    isBiometricEnabled = false;
                                     isLoading = false;
                                   });
                                   return;
                                 }
 
-                                // ✅ Navigate to biometric screen
-                                Navigator.pushNamed(
-                                  context,
-                                  "/biometricScreen",
-                                );
-
-                                // // OR if you want API call first, do it here
-                                // final success = await ref
-                                //     .read(authViewModel.notifier)
-                                //     .callBiometricRegisterApi();
-
-                                // if (success ?? false) {
-                                //   setState(() => isBiometricEnabled = true);
-
-                                //   SharedPref().saveBool(
-                                //     SharedPreferencesKeys
-                                //         .biometricEnabledKey
-                                //         .keyText,
-                                //     true,
-                                //   );
-                                // } else {
-                                //   setState(() => isBiometricEnabled = false);
-                                // }
+                                // Authenticate directly
+                                final isAuthenticated = await BiometricHelper()
+                                    .authenticate();
+                                if (isAuthenticated) {
+                                  setState(() => isBiometricEnabled = true);
+                                  SharedPref().saveBool(
+                                    SharedPreferencesKeys
+                                        .biometricEnabledKey
+                                        .keyText,
+                                    true,
+                                  );
+                                  EasyLoading.showSuccess(
+                                    "Biometric enabled successfully",
+                                  );
+                                } else {
+                                  setState(() => isBiometricEnabled = false);
+                                  EasyLoading.showError(
+                                    "Biometric authentication failed",
+                                  );
+                                }
                               } else {
-                                // ✅ Switch OFF logic (no check needed)
+                                // Switch OFF
                                 final success =
                                     await BiometricHelper.clearSignature();
-
                                 if (success) {
                                   setState(() => isBiometricEnabled = false);
-
                                   SharedPref().saveBool(
                                     SharedPreferencesKeys
                                         .biometricEnabledKey

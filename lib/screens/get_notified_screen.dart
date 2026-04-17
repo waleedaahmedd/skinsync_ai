@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:skinsync_ai/screens/biometric_screen.dart';
 import 'package:skinsync_ai/screens/face_scan_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
@@ -48,11 +49,11 @@ class GetNotifiedScreen extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    FaceScanScreen.routeName,
-                    (Route<dynamic> route) => false,
-                  );
+                 Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  BiometricScreen.routeName,
+                  (Route<dynamic> route) => false,
+                );
                 },
                 child: Text("Turn On Notifications"),
               ),
@@ -62,7 +63,7 @@ class GetNotifiedScreen extends StatelessWidget {
               onTap: () {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  FaceScanScreen.routeName,
+                  BiometricScreen.routeName,
                   (Route<dynamic> route) => false,
                 );
               },
