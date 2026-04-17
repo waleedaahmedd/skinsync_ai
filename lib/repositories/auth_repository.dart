@@ -1,3 +1,4 @@
+import 'package:skinsync_ai/models/requests/app_version_request.dart';
 import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
@@ -12,10 +13,12 @@ abstract class AuthRepository {
   Future<BaseResponseModel> biometricRegisterApi();
   Future<BaseResponseModel> biometricLoginApi();
   Future<AuthResponse> verifyOTP({required OtpRequest otpRequest});
+  Future<BaseResponseModel> appVersion({required AppVersionRequest request});
+
   Future<BaseResponseModel> onboardingProfile({
     required OnBoardingProfileRequest onBoardingProfileRequest,
   });
-  Future<AuthResponse> getMe();
+  Future<AuthResponse> getMe({required String type});
 
   Future<AuthResponse> googleSignInApi({
     required SignInWithGoogleRequest request,

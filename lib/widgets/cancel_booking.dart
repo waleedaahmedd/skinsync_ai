@@ -61,7 +61,7 @@ void loginBottomSheet(BuildContext context) {
                 
                     Text(
                       
-                      "Lorem ipsum dolor sit amet consectetur Ut consectetur mauris tellus ultricies.",
+                      "Sign in to continue your journey.\nAccess personalized care and exclusive features.",
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w400,

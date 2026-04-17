@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/screens/bottom_nav_bar.dart';
-import 'package:skinsync_ai/screens/bottom_nav_screens/apppointments_screen.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/appointments_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/progress_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';

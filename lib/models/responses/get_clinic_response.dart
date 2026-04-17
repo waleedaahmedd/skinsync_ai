@@ -1,5 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
+import 'package:skinsync_ai/models/responses/map_clinics_response.dart';
 
 import 'map_clinics_response.dart';
 

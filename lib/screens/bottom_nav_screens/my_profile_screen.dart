@@ -8,6 +8,7 @@ import 'package:skinsync_ai/screens/get_started_screen.dart';
 import 'package:skinsync_ai/screens/personal_detail_screen.dart';
 import 'package:skinsync_ai/screens/saved_treatment_screen.dart';
 import 'package:skinsync_ai/screens/setting_screen.dart';
+import 'package:skinsync_ai/screens/webview_page.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -15,6 +16,7 @@ import 'package:skinsync_ai/utills/secure_storage_service.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/logout_dialog_box.dart';
 
+import '../../main.dart';
 import '../../widgets/dialogs/delete_account_dialog.dart';
 
 class MyProfileScreen extends StatelessWidget {
@@ -109,19 +111,19 @@ class MyProfileScreen extends StatelessWidget {
                         ?.userDetails
                         ?.name;
                     return Column(
-                      crossAxisAlignment: .start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(name ?? 'N/A', style: CustomFonts.black28w600),
-                        Row(
-                          children: [
-                            Icon(Icons.star, size: 17.sp, color: Colors.black),
-                            SizedBox(width: 3.w),
-                            Text(
-                              "214 Points Earned!",
-                              style: CustomFonts.black16w400,
-                            ),
-                          ],
-                        ),
+                        // Row(
+                        //   children: [
+                        //     Icon(Icons.star, size: 17.sp, color: Colors.black),
+                        //     SizedBox(width: 3.w),
+                        //     Text(
+                        //       "214 Points Earned!",
+                        //       style: CustomFonts.black16w400,
+                        //     ),
+                        //   ],
+                        // ),
                       ],
                     );
                   },
@@ -147,39 +149,65 @@ class MyProfileScreen extends StatelessWidget {
                   title: "Personal Details",
                 ),
                 SizedBox(height: 36.h),
-                profileOption(
-                  callBack: () {
-                    Navigator.pushNamed(
-                      context,
-                      SavedTreatmentScreen.routeName,
-                    );
-                  },
-                  icon: SvgAssets.saveTreatment,
-                  title: "Saved Treatments & Clinics",
-                ),
-                SizedBox(height: 36.h),
-                profileOption(
-                  callBack: () {},
-                  icon: SvgAssets.loyalty,
-                  title: "Loyalty & Rewards",
-                ),
-                SizedBox(height: 36.h),
-                profileOption(
-                  callBack: () {
-                    Navigator.pushNamed(
-                      context,
-                      AllergyAndMedicalHistory.routeName,
-                    );
-                  },
-                  icon: SvgAssets.medical,
-                  title: "Medical History",
-                ),
-                SizedBox(height: 36.h),
-                profileOption(
-                  callBack: () {},
-                  icon: SvgAssets.receipts,
-                  title: "Treatment Receipts",
-                ),
+                if (!isDeploymentMode) ...{
+                  profileOption(
+                    callBack: () {
+                      Navigator.pushNamed(
+                        context,
+                        SavedTreatmentScreen.routeName,
+                      );
+                    },
+                    icon: SvgAssets.saveTreatment,
+                    title: "Saved Treatments & Clinics",
+                  ),
+                  SizedBox(height: 36.h),
+                  profileOption(
+                    callBack: () {},
+                    icon: SvgAssets.loyalty,
+                    title: "Loyalty & Rewards",
+                  ),
+                  SizedBox(height: 36.h),
+                  profileOption(
+                    callBack: () {
+                      Navigator.pushNamed(
+                        context,
+                        AllergyAndMedicalHistory.routeName,
+                      );
+                    },
+                    icon: SvgAssets.medical,
+                    title: "Medical History",
+                  ),
+                  SizedBox(height: 36.h),
+                  profileOption(
+                    callBack: () {},
+                    icon: SvgAssets.receipts,
+                    title: "Treatment Receipts",
+                  ),
+                } else ...{
+                  profileOption(
+                    callBack: () {
+                      WebviewPage.open(
+                        context: context,
+                        url: 'https://skinsyncai.com/terms-of-service/',
+                        title: 'Terms Of Service',
+                      );
+                    },
+                    icon: Iconsax.document,
+                    title: "Terms Of Service",
+                  ),
+                  SizedBox(height: 36.h),
+                  profileOption(
+                    callBack: () {
+                      WebviewPage.open(
+                        context: context,
+                        url: 'https://skinsyncai.com/privacy-policy/',
+                        title: 'Privacy Policy',
+                      );
+                    },
+                    icon: Iconsax.security,
+                    title: "Privacy Policy",
+                  ),
+                },
                 SizedBox(height: 36.h),
                 Consumer(
                   builder: (context, ref, _) {
@@ -237,7 +265,6 @@ class MyProfileScreen extends StatelessWidget {
   }) {
     return InkWell(
       onTap: callBack,
-
       child: Row(
         children: [
           if (icon is String)

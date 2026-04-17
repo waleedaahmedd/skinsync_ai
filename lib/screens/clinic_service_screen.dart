@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
 import 'package:skinsync_ai/models/responses/get_doctor_response.dart';
 import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
+import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/time_container.dart';
 import 'package:skinsync_ai/widgets/treatment_price_container.dart';
@@ -77,7 +78,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
             .read(clinicDoctorProvider.notifier)
             .fetchAvailability(
               date: picked,
-              clinicId: widget.clinic!.clinicId!,
+              clinicId: 5, // widget.clinic!.clinicId!,
             );
       }
       setState(() {
@@ -116,11 +117,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                   if (state.doctorLoading) {
                     return SizedBox(
                       height: 150.h, // same height as doctor list
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: CustomColors.lightPurpleColor,
-                        ),
-                      ),
+                      child: AppLoader(),
                     );
                   } else if (doctors?.isEmpty ?? true) {
                     return SizedBox(
@@ -163,7 +160,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                     Text("Selected Services", style: CustomFonts.black22w600),
                     SizedBox(height: 17.h),
                     Text(
-                      "Lorem ipsum dolor sit amet consectetur. Cursus iaculis est cras viverra vitae sit pellentesq",
+                      "Review your selected treatments and details.\nEverything is tailored for your personalized care.",
                       style: CustomFonts.grey13w400,
                     ),
                     SizedBox(height: 10.h),

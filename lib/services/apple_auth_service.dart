@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,10 +24,10 @@ class AppleAuthService extends BaseAuthService {
   @override
   Future<void> logout() async {
     try {
-      await _auth.signOut();
-      await _instance?.logout();
+      await _auth.signOut(); // ✅ removed recursive call
     } catch (e, s) {
-      log(e.toString(), stackTrace: s);
+      print(e.toString());
+      print(s);
     }
   }
 
@@ -36,7 +37,7 @@ class AppleAuthService extends BaseAuthService {
       throw AppException('Apple Sign In is only supported on iOS');
     }
 
-    final rawNonce = generateNonce();
+    final rawNonce = generateNonce(); // ✅ now truly random
     final nonce = sha256.convert(utf8.encode(rawNonce)).toString();
 
     final appleCredential = await SignInWithApple.getAppleIDCredential(
@@ -47,9 +48,17 @@ class AppleAuthService extends BaseAuthService {
       nonce: nonce,
     );
 
-    final OAuthCredential credential = OAuthProvider(
-      'apple.com',
-    ).credential(idToken: appleCredential.identityToken, rawNonce: rawNonce);
+    // ✅ Check identity token before proceeding
+    if (appleCredential.identityToken == null) {
+      throw AppException('Apple identity token is null');
+    }
+
+    final OAuthCredential credential = OAuthProvider('apple.com').credential(
+      idToken: appleCredential.identityToken,
+      rawNonce: rawNonce,
+      accessToken: appleCredential.authorizationCode,
+
+    );
 
     final userCredential = await _auth.signInWithCredential(credential);
     final firebaseUser = userCredential.user;
@@ -61,17 +70,14 @@ class AppleAuthService extends BaseAuthService {
     return firebaseUser;
   }
 
+  // ✅ Secure nonce generation using Random.secure()
   String generateNonce([int length = 32]) {
     const charset =
-        '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    final random = Platform.isIOS
-        ? (DateTime.now().millisecondsSinceEpoch % 100)
-        : 0;
-    // Note: In a real app, use a more secure random generator like dart:math Random.secure()
-    // For now, keeping it simple as per standard Firebase + Apple documentation patterns
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-._';
+    final random = Random.secure();
     return List.generate(
       length,
-      (index) => charset[random % charset.length],
+          (_) => charset[random.nextInt(charset.length)],
     ).join();
   }
 }
