@@ -8,6 +8,8 @@
 	<string>This app authenticate using face id?</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location is used to find nearby clinics.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Location is used to find nearby clinics.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>keychain-access-groups</key>

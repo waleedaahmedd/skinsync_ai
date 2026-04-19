@@ -51,7 +51,6 @@ enum BaseUrls {
   api("https://api.skinsyncai.com/api/");
 
   final String url;
-
   const BaseUrls(this.url);
 }
 

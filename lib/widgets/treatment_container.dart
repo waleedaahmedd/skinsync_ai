@@ -7,6 +7,7 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/scan_face_dialog.dart';
 
+import '../main.dart';
 import '../models/responses/treatment_response_model.dart';
 import '../view_models/checkout_view_model.dart';
 
@@ -38,9 +39,9 @@ class TreatmentContainer extends StatelessWidget {
               ref
                   .read(treatmentViewModel.notifier)
                   .onTapTreatment(
-                    treatmentModel: treatments,
-                    isCallPredictAPI: false,
-                  );
+                treatmentModel: treatments,
+                isCallPredictAPI: false,
+              );
               // TreatmentAreaScreen.show(context);
             }
             showMScanFaceDialog(context);
@@ -104,28 +105,31 @@ class TreatmentContainer extends StatelessWidget {
                           },
                         ),
                       ),
-                      Positioned(
-                        top: 12.h,
-                        right: 12.w,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              TreatmentDetailScreen.routeName,
-                              arguments: treatments,
-                            );
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: Container(
-                            padding: EdgeInsets.all(8.w),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.5),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.info_outline,
-                              color: Colors.white,
-                              size: 20.sp,
+                      Visibility(
+                        visible: !isDeploymentMode,
+                        child: Positioned(
+                          top: 12.h,
+                          right: 12.w,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                TreatmentDetailScreen.routeName,
+                                arguments: treatments,
+                              );
+                            },
+                            behavior: HitTestBehavior.opaque,
+                            child: Container(
+                              padding: EdgeInsets.all(8.w),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withValues(alpha: 0.5),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.info_outline,
+                                color: Colors.white,
+                                size: 20.sp,
+                              ),
                             ),
                           ),
                         ),

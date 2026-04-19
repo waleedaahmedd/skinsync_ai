@@ -161,27 +161,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     });
   }
 
-  Future<bool?> appVersion() async {
-    final request = AppVersionRequest(
-      type: state.device ?? '',
-      version: state.version ?? '',
-      buildNumber: state.build ?? '',
-    );
-    return await runSafely(() async {
-      state = state.copyWith(loading: true);
-      final BaseResponseModel response = await _authRepository.appVersion(
-        request: request,
-      );
-
-      state = state.copyWith(loading: false /* authResponse: response*/);
-
-      if (response.isSuccess == true) {
-        otpController.clear();
-        _fetchLocationInBackground();
-      }
-      return response.isSuccess == true;
-    });
-  }
 
   Future<bool?> callOnboardingProfileApi({
     required String name,
@@ -233,7 +212,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       if (response.isSuccess == true) {
         state = state.copyWith(authResponse: response);
         log('get me call successful,');
-        appVersion();
         // Location is fetched in background to avoid blocking the UI thread during splash/init
         _fetchLocationInBackground();
       }

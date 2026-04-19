@@ -13,7 +13,6 @@ abstract class AuthRepository {
   Future<BaseResponseModel> biometricRegisterApi();
   Future<BaseResponseModel> biometricLoginApi();
   Future<AuthResponse> verifyOTP({required OtpRequest otpRequest});
-  Future<BaseResponseModel> appVersion({required AppVersionRequest request});
 
   Future<BaseResponseModel> onboardingProfile({
     required OnBoardingProfileRequest onBoardingProfileRequest,

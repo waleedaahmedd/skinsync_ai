@@ -66,7 +66,7 @@ void loginBottomSheet(BuildContext context) {
                       SizedBox(height: 4.h),
 
                       Text(
-                        "Lorem ipsum dolor sit amet consectetur Ut consectetur mauris tellus ultricies.",
+                        "Smart skincare powered by AI.\nSign in to get personalized insights.",
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w400,
@@ -206,19 +206,19 @@ Row _buildSocialSignIns(WidgetRef ref) {
             if (success ?? false) {
               bool? isLoggedIn =
                   ref.read(authViewModel).authResponse?.data?.isFirstLogin ??
-                  false;
+                      false;
               isLoggedIn
                   ? Navigator.pushNamedAndRemoveUntil(
-                      ref.context,
-                      SignupOnboarding.routeName,
-                      (Route<dynamic> route) =>
-                          route.settings.name == LoginScreen.routeName,
-                    )
+                ref.context,
+                SignupOnboarding.routeName,
+                    (Route<dynamic> route) =>
+                route.settings.name == LoginScreen.routeName,
+              )
                   : Navigator.pushNamedAndRemoveUntil(
-                      ref.context,
-                      FaceScanScreen.routeName,
-                      (Route<dynamic> route) => false,
-                    );
+                ref.context,
+                FaceScanScreen.routeName,
+                    (Route<dynamic> route) => false,
+              );
             }
           },
           child: Container(
@@ -248,19 +248,19 @@ Row _buildSocialSignIns(WidgetRef ref) {
             if (success ?? false) {
               bool? isLoggedIn =
                   ref.read(authViewModel).authResponse?.data?.isFirstLogin ??
-                  false;
+                      false;
               isLoggedIn
                   ? Navigator.pushNamedAndRemoveUntil(
-                      ref.context,
-                      SignupOnboarding.routeName,
-                      (Route<dynamic> route) =>
-                          route.settings.name == LoginScreen.routeName,
-                    )
+                ref.context,
+                SignupOnboarding.routeName,
+                    (Route<dynamic> route) =>
+                route.settings.name == LoginScreen.routeName,
+              )
                   : Navigator.pushNamedAndRemoveUntil(
-                      ref.context,
-                      FaceScanScreen.routeName,
-                      (Route<dynamic> route) => false,
-                    );
+                ref.context,
+                FaceScanScreen.routeName,
+                    (Route<dynamic> route) => false,
+              );
             }
           },
           child: Container(
@@ -291,7 +291,7 @@ FutureBuilder<bool> _buildBiometricButton(WidgetRef ref) {
           await SharedPref().readBool(
             SharedPreferencesKeys.biometricEnabledKey.keyText,
           ) ??
-          false;
+              false;
       return result;
     }(),
     builder: (context, snapshot) {
@@ -318,8 +318,8 @@ FutureBuilder<bool> _buildBiometricButton(WidgetRef ref) {
                       if (authenticated && context.mounted) {
                         EasyLoading.show(status: "Please Wait...");
                         ref.read(authViewModel.notifier).callGetMe().then((
-                          value,
-                        ) {
+                            value,
+                            ) {
                           EasyLoading.dismiss();
                           if (value == true && context.mounted) {
                             Navigator.pushNamed(
@@ -345,3 +345,4 @@ FutureBuilder<bool> _buildBiometricButton(WidgetRef ref) {
     },
   );
 }
+
