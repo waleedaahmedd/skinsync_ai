@@ -141,9 +141,11 @@ class AuthService implements AuthRepository {
 
   @override
   Future<BaseResponseModel> biometricUnregister() async {
+    final key = await BiometricHelper.getDeviceSignature();
     await BiometricHelper.clearSignature();
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.biometricUnregister,
+      requestBody: {'biometric_key': key},
       requestType: 'DELETE',
     );
     final parsed = json.decode(response.body);
