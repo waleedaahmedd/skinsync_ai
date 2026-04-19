@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
@@ -92,6 +95,9 @@ class AuthService implements AuthRepository {
     final key = await _secureStorage.getSecureString(
       key: SharedPreferencesKeys.biometricAuthKey.keyText,
     );
+    if (key == null) {
+      throw AppException('Biometrics not registered');
+    }
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.biometricLogin,
       requestType: 'POST',
@@ -134,6 +140,22 @@ class AuthService implements AuthRepository {
   }
 
   @override
+  Future<BaseResponseModel> biometricUnregister() async {
+    await BiometricHelper.clearSignature();
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.biometricUnregister,
+      requestType: 'DELETE',
+    );
+    final parsed = json.decode(response.body);
+    final model = BaseResponseModel.fromJson(parsed);
+    if (model.isSuccess ?? false) {
+      return model;
+    } else {
+      throw Exception(model.message ?? 'Something went wrong!');
+    }
+  }
+
+  @override
   Future<AuthResponse> verifyOTP({required OtpRequest otpRequest}) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.verifyOtp,
@@ -145,7 +167,18 @@ class AuthService implements AuthRepository {
       final parsed = json.decode(response.body);
       AuthResponse authResponse = AuthResponse.fromJson(parsed);
       if (authResponse.isSuccess == true) {
+        final savedEmail = await _secureStorage.getUserEmail();
+        if (savedEmail != authResponse.data?.userDetails?.emailAddress) {
+          try {
+            await biometricUnregister();
+          } catch (e) {
+            log('$e Failed to unregister biometric, Not important');
+          }
+        }
         if (authResponse.data != null) {
+          await _secureStorage.saveUserEmail(
+            authResponse.data!.userDetails?.emailAddress,
+          );
           await _secureStorage.saveToken(authResponse.data!.accessToken!);
           await _secureStorage.saveRefreshToken(
             authResponse.data!.refreshToken!,
@@ -192,9 +225,9 @@ class AuthService implements AuthRepository {
     }
   }
 
-
   @override
-  Future<AuthResponse> getMe({required String type}) async {
+  Future<AuthResponse> getMe() async {
+    String type = Platform.isIOS ? 'ios' : 'android';
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.getMe,
       requestType: 'GET',
@@ -228,6 +261,17 @@ class AuthService implements AuthRepository {
           authResponse.data?.accessToken == null) {
         throw AppException(authResponse.message ?? 'Something went wrong!');
       }
+      final savedEmail = await _secureStorage.getUserEmail();
+      if (savedEmail != authResponse.data?.userDetails?.emailAddress) {
+        try {
+          await biometricUnregister();
+        } catch (e) {
+          log('$e Failed to unregister biometric, Not important');
+        }
+      }
+      await _secureStorage.saveUserEmail(
+        authResponse.data!.userDetails?.emailAddress,
+      );
       await _secureStorage.saveToken(authResponse.data!.accessToken!);
       await _secureStorage.saveRefreshToken(authResponse.data!.refreshToken!);
       await _secureStorage.saveAccessTokenExpiry(
@@ -265,6 +309,17 @@ class AuthService implements AuthRepository {
           authResponse.data?.accessToken == null) {
         throw AppException(authResponse.message ?? 'Something went wrong!');
       }
+      final savedEmail = await _secureStorage.getUserEmail();
+      if (savedEmail != authResponse.data?.userDetails?.emailAddress) {
+        try {
+          await biometricUnregister();
+        } catch (e) {
+          log('$e Failed to unregister biometric, Not important');
+        }
+      }
+      await _secureStorage.saveUserEmail(
+        authResponse.data!.userDetails?.emailAddress,
+      );
       await _secureStorage.saveToken(authResponse.data!.accessToken!);
       await _secureStorage.saveRefreshToken(authResponse.data!.refreshToken!);
       await _secureStorage.saveAccessTokenExpiry(
@@ -283,5 +338,4 @@ class AuthService implements AuthRepository {
       throw AppException(BaseResponseModel.fromJson(parsed).message as String);
     }
   }
-
 }

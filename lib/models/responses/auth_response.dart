@@ -127,6 +127,21 @@ class UserDetails {
     updatedAt = json['updated_at'];
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'user_profile_id': userProfileId,
+      'user_id': userId,
+      'name': name,
+      'phone_number': phoneNumber,
+      'email_address': emailAddress,
+      'location': location,
+      'bio': bio,
+      'profile_image_url': profileImage,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+    };
+  }
+
   String? get firstName {
     return name?.split(" ").first;
   }

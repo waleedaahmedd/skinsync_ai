@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,8 +9,9 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/biometric_helper.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/utills/enums.dart';
-import 'package:skinsync_ai/utills/shared_pref.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
+
+import '../utills/secure_storage_service.dart';
 
 class BiometricScreen extends StatefulWidget {
   static const String routeName = '/biometricScreen';
@@ -21,14 +24,18 @@ class BiometricScreen extends StatefulWidget {
 class _BiometricScreenState extends State<BiometricScreen> {
   bool isBiometricEnabled = false;
   bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
-    isBiometricEnabled =
-        SharedPref().readBool(
-          SharedPreferencesKeys.biometricEnabledKey.keyText,
-        ) ??
-        false;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final authKey = await SecureStorage().getSecureString(
+        key: SharedPreferencesKeys.biometricAuthKey.keyText,
+      );
+      isBiometricEnabled = authKey != null;
+      log('IS ENABLED: $isBiometricEnabled');
+      setState(() {});
+    });
   }
 
   @override
@@ -105,12 +112,6 @@ class _BiometricScreenState extends State<BiometricScreen> {
 
                             if (success ?? false) {
                               setState(() => isBiometricEnabled = true);
-                              SharedPref().saveBool(
-                                SharedPreferencesKeys
-                                    .biometricEnabledKey
-                                    .keyText,
-                                true,
-                              );
                               EasyLoading.showSuccess(
                                 "Biometric enabled successfully",
                               );

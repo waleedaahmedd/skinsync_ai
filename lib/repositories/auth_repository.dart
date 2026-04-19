@@ -11,12 +11,13 @@ abstract class AuthRepository {
   });
   Future<BaseResponseModel> biometricRegisterApi();
   Future<BaseResponseModel> biometricLoginApi();
+  Future<BaseResponseModel> biometricUnregister();
   Future<AuthResponse> verifyOTP({required OtpRequest otpRequest});
 
   Future<BaseResponseModel> onboardingProfile({
     required OnBoardingProfileRequest onBoardingProfileRequest,
   });
-  Future<AuthResponse> getMe({required String type});
+  Future<AuthResponse> getMe();
 
   Future<AuthResponse> googleSignInApi({
     required SignInWithGoogleRequest request,

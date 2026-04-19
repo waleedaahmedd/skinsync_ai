@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
@@ -14,7 +13,6 @@ import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
 import '../screens/face_scan_screen.dart';
 import '../screens/signup_onboarding.dart';
-import '../utills/shared_pref.dart';
 
 void loginBottomSheet(BuildContext context) {
   showModalBottomSheet(
@@ -173,13 +171,13 @@ void loginBottomSheet(BuildContext context) {
                               ),
                               SizedBox(height: 10.h),
                               _buildSocialSignIns(ref),
+                              SizedBox(height: 20.h),
+
+                              _buildBiometricButton(ref),
                             ],
                           );
                         },
                       ),
-                      SizedBox(height: 20.h),
-
-                      _buildBiometricButton(ref),
 
                       SizedBox(height: 10.h),
                     ],
@@ -206,19 +204,19 @@ Row _buildSocialSignIns(WidgetRef ref) {
             if (success ?? false) {
               bool? isLoggedIn =
                   ref.read(authViewModel).authResponse?.data?.isFirstLogin ??
-                      false;
+                  false;
               isLoggedIn
                   ? Navigator.pushNamedAndRemoveUntil(
-                ref.context,
-                SignupOnboarding.routeName,
-                    (Route<dynamic> route) =>
-                route.settings.name == LoginScreen.routeName,
-              )
+                      ref.context,
+                      SignupOnboarding.routeName,
+                      (Route<dynamic> route) =>
+                          route.settings.name == LoginScreen.routeName,
+                    )
                   : Navigator.pushNamedAndRemoveUntil(
-                ref.context,
-                FaceScanScreen.routeName,
-                    (Route<dynamic> route) => false,
-              );
+                      ref.context,
+                      FaceScanScreen.routeName,
+                      (Route<dynamic> route) => false,
+                    );
             }
           },
           child: Container(
@@ -248,19 +246,19 @@ Row _buildSocialSignIns(WidgetRef ref) {
             if (success ?? false) {
               bool? isLoggedIn =
                   ref.read(authViewModel).authResponse?.data?.isFirstLogin ??
-                      false;
+                  false;
               isLoggedIn
                   ? Navigator.pushNamedAndRemoveUntil(
-                ref.context,
-                SignupOnboarding.routeName,
-                    (Route<dynamic> route) =>
-                route.settings.name == LoginScreen.routeName,
-              )
+                      ref.context,
+                      SignupOnboarding.routeName,
+                      (Route<dynamic> route) =>
+                          route.settings.name == LoginScreen.routeName,
+                    )
                   : Navigator.pushNamedAndRemoveUntil(
-                ref.context,
-                FaceScanScreen.routeName,
-                    (Route<dynamic> route) => false,
-              );
+                      ref.context,
+                      FaceScanScreen.routeName,
+                      (Route<dynamic> route) => false,
+                    );
             }
           },
           child: Container(
@@ -287,12 +285,10 @@ Row _buildSocialSignIns(WidgetRef ref) {
 FutureBuilder<bool> _buildBiometricButton(WidgetRef ref) {
   return FutureBuilder<bool>(
     future: () async {
-      final result =
-          await SharedPref().readBool(
-            SharedPreferencesKeys.biometricEnabledKey.keyText,
-          ) ??
-              false;
-      return result;
+      final result = await SecureStorage().getSecureString(
+        key: SharedPreferencesKeys.biometricAuthKey.keyText,
+      );
+      return result != null;
     }(),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -309,29 +305,22 @@ FutureBuilder<bool> _buildBiometricButton(WidgetRef ref) {
             return Center(
               child: InkWell(
                 onTap: () async {
-                  if (context.mounted) {
-                    final token = SecureStorage().cachedAuthToken;
-                    if (token != null) {
-                      bool authenticated = await BiometricHelper().authenticate(
-                        reason: 'Login with Biometrics',
-                      );
-                      if (authenticated && context.mounted) {
-                        EasyLoading.show(status: "Please Wait...");
-                        ref.read(authViewModel.notifier).callGetMe().then((
-                            value,
-                            ) {
-                          EasyLoading.dismiss();
+                  bool authenticated = await BiometricHelper().authenticate(
+                    reason: 'Login with Biometrics',
+                  );
+                  if (authenticated && context.mounted) {
+                    ref
+                        .read(authViewModel.notifier)
+                        .callBiometricLoginApi()
+                        .then((value) {
                           if (value == true && context.mounted) {
-                            Navigator.pushNamed(
+                            Navigator.pushNamedAndRemoveUntil(
                               context,
                               BottomNavPage.routeName,
+                              (_) => false,
                             );
                           }
                         });
-                      }
-                    } else {
-                      EasyLoading.showError("Please Login First");
-                    }
                   }
                 },
                 child: Icon(icon, size: 60.h),
@@ -345,4 +334,3 @@ FutureBuilder<bool> _buildBiometricButton(WidgetRef ref) {
     },
   );
 }
-

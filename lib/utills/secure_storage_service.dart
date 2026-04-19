@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'enums.dart';
@@ -13,6 +15,7 @@ class SecureStorage {
   static const String _accessTokenExpiryKey = 'access-token-expiry';
   static const String _refreshTokenExpiryKey = 'refresh-token-expiry';
   static const String _medicalDisclaimerKey = 'medical-disclaimer';
+  static const String _userEmailKey = 'user-data';
 
   SecureStorage._();
 
@@ -23,7 +26,7 @@ class SecureStorage {
   /// Load token once at app startup
   Future<void> init() async {
     _storage = FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
+      aOptions: AndroidOptions(),
       iOptions: IOSOptions(
         accessibility: KeychainAccessibility.first_unlock_this_device,
       ),
@@ -61,11 +64,14 @@ class SecureStorage {
     final value = await getSecureString(
       key: SharedPreferencesKeys.biometricAuthKey.keyText,
     );
+    final email = await getUserEmail();
+    log('BIOMETRIC KEY: $value $email');
     await _storage!.deleteAll();
     await _storage!.write(
       key: SharedPreferencesKeys.biometricAuthKey.keyText,
       value: value,
     );
+    await saveUserEmail(email);
     _cachedToken = null;
   }
 
@@ -123,5 +129,13 @@ class SecureStorage {
   Future<bool> getMedicalDisclaimer() async {
     final disclaimer = await _storage?.read(key: _medicalDisclaimerKey);
     return disclaimer == null;
+  }
+
+  Future<void> saveUserEmail(String? email) async {
+    await _storage?.write(key: _userEmailKey, value: email);
+  }
+
+  Future<String?> getUserEmail() async {
+    return await _storage?.read(key: _userEmailKey);
   }
 }

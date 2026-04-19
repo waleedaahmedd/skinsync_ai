@@ -1,17 +1,19 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/screens/biometric_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/utills/shared_pref.dart';
+import 'package:skinsync_ai/utills/secure_storage_service.dart';
 
 import '../utills/biometric_helper.dart';
 import '../utills/enums.dart';
+import '../view_models/auth_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 
 class SettingScreen extends ConsumerStatefulWidget {
@@ -29,11 +31,57 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
   @override
   void initState() {
     super.initState();
-    isBiometricEnabled =
-        SharedPref().readBool(
-          SharedPreferencesKeys.biometricEnabledKey.keyText,
-        ) ??
-        false;
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final authKey = await SecureStorage().getSecureString(
+        key: SharedPreferencesKeys.biometricAuthKey.keyText,
+      );
+      isBiometricEnabled = authKey != null;
+      log('IS ENABLED: $isBiometricEnabled');
+      setState(() {});
+    });
+  }
+
+  Future<void> _onBiometricChanged(bool value) async {
+    if (isLoading) return;
+    setState(() => isLoading = true);
+
+    if (value) {
+      // Check biometric support
+      final isAvailable = await BiometricHelper().isBiometricAvailable();
+      if (!isAvailable) {
+        EasyLoading.showError("Device does not support biometric");
+        setState(() {
+          isBiometricEnabled = false;
+          isLoading = false;
+        });
+        return;
+      }
+
+      // Authenticate directly
+      final isAuthenticated = await BiometricHelper().authenticate();
+      if (isAuthenticated) {
+        setState(() => isBiometricEnabled = true);
+        final success = await ref
+            .read(authViewModel.notifier)
+            .callBiometricRegisterApi();
+        if (success ?? false) {
+          EasyLoading.showSuccess("Biometric enabled successfully");
+        }
+      } else {
+        setState(() => isBiometricEnabled = false);
+        EasyLoading.showError("Biometric authentication failed");
+      }
+    } else {
+      await BiometricHelper.clearSignature();
+      final success = await ref
+          .read(authViewModel.notifier)
+          .callBiometricUnregisterApi();
+      if (success ?? false) {
+        setState(() => isBiometricEnabled = false);
+      }
+    }
+
+    setState(() => isLoading = false);
   }
 
   @override
@@ -108,62 +156,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                         } else if (snapshot.hasData && snapshot.data == true) {
                           return CustomSizedSwitch(
                             isOn: isBiometricEnabled,
-                            onChanged: (value) async {
-                              if (isLoading) return;
-                              setState(() => isLoading = true);
-
-                              if (value) {
-                                // Check biometric support
-                                final isAvailable = await BiometricHelper()
-                                    .isBiometricAvailable();
-                                if (!isAvailable) {
-                                  EasyLoading.showError(
-                                    "Device does not support biometric",
-                                  );
-                                  setState(() {
-                                    isBiometricEnabled = false;
-                                    isLoading = false;
-                                  });
-                                  return;
-                                }
-
-                                // Authenticate directly
-                                final isAuthenticated = await BiometricHelper()
-                                    .authenticate();
-                                if (isAuthenticated) {
-                                  setState(() => isBiometricEnabled = true);
-                                  SharedPref().saveBool(
-                                    SharedPreferencesKeys
-                                        .biometricEnabledKey
-                                        .keyText,
-                                    true,
-                                  );
-                                  EasyLoading.showSuccess(
-                                    "Biometric enabled successfully",
-                                  );
-                                } else {
-                                  setState(() => isBiometricEnabled = false);
-                                  EasyLoading.showError(
-                                    "Biometric authentication failed",
-                                  );
-                                }
-                              } else {
-                                // Switch OFF
-                                final success =
-                                    await BiometricHelper.clearSignature();
-                                if (success) {
-                                  setState(() => isBiometricEnabled = false);
-                                  SharedPref().saveBool(
-                                    SharedPreferencesKeys
-                                        .biometricEnabledKey
-                                        .keyText,
-                                    false,
-                                  );
-                                }
-                              }
-
-                              setState(() => isLoading = false);
-                            },
+                            onChanged: _onBiometricChanged,
                           );
                         } else {
                           return const SizedBox.shrink();
@@ -173,7 +166,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                   ],
                 ),
                 SizedBox(height: 37.h),
-             /*   Row(
+                /*   Row(
                   children: [
                     SvgPicture.asset(SvgAssets.card, height: 24.h, width: 24.w),
                     SizedBox(width: 16.w),

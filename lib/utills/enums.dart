@@ -1,6 +1,5 @@
 enum SharedPreferencesKeys {
   themeModeKey("theme-mode"),
-  biometricEnabledKey("biometric-enabled"),
   biometricAuthKey("biometric-auth"),
   accessTokenKey("access-token");
 
@@ -27,6 +26,7 @@ enum EndPoints {
   signIn('login'),
   biometricRegister('v1/biometric/register'),
   biometricLogin('v1/biometric/login'),
+  biometricUnregister('v1/biometric/unregister'),
   onBoardingQues("onboarding/masters"),
   saveAnswer("v1/onboarding/answer"),
 

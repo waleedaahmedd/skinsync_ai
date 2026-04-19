@@ -1,12 +1,8 @@
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/cupertino.dart';
-import 'dart:io';
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:skinsync_ai/models/requests/app_version_request.dart';
 import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
 import 'package:skinsync_ai/models/responses/address_data.dart';
@@ -35,12 +31,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   AuthViewModel({required AuthRepository authRepository})
     : _authRepository = authRepository,
       super(initialState: AuthState());
-
-  @override
-  void init() {
-    getDeviceInfo();
-    super.init();
-  }
 
   final AuthRepository _authRepository;
   final ImagePicker _imagePicker = ImagePicker();
@@ -71,18 +61,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     } catch (e) {
       onError('Error picking image: $e');
     }
-  }
-
-  Future<void> getDeviceInfo() async {
-    final packageInfo = await PackageInfo.fromPlatform();
-    String type = Platform.isIOS ? 'ios' : 'android';
-    log('hello from Get Device info');
-
-    state = state.copyWith(
-      device: type,
-      version: packageInfo.version,
-      build: packageInfo.buildNumber,
-    );
   }
 
   void clearProfileImage() {
@@ -130,7 +108,17 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     });
   }
 
-  Future<bool?> callBiometricLoginApi(String key) async {
+  Future<bool?> callBiometricUnregisterApi() async {
+    return await runSafely(() async {
+      state = state.copyWith(loading: true);
+      final BaseResponseModel response = await _authRepository
+          .biometricUnregister();
+      state = state.copyWith(loading: false);
+      return response.isSuccess == true;
+    });
+  }
+
+  Future<bool?> callBiometricLoginApi() async {
     return await runSafely(() async {
       state = state.copyWith(loading: true);
       final BaseResponseModel response = await _authRepository
@@ -160,7 +148,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       return response.isSuccess == true;
     });
   }
-
 
   Future<bool?> callOnboardingProfileApi({
     required String name,
@@ -206,9 +193,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 
   Future<bool?> callGetMe() async {
     return await runSafely(() async {
-      final AuthResponse response = await _authRepository.getMe(
-        type: state.device!,
-      );
+      final AuthResponse response = await _authRepository.getMe();
       if (response.isSuccess == true) {
         state = state.copyWith(authResponse: response);
         log('get me call successful,');
@@ -241,7 +226,8 @@ class AuthViewModel extends BaseViewModel<AuthState> {
           googleUid: user.uid,
           provider: LoginProviders.google,
           deviceInfo: '',
-          ipAddress: '', userName: user.displayName ?? '',
+          ipAddress: '',
+          userName: user.displayName ?? '',
         ),
       );
       if (response.isSuccess ?? false) {
@@ -262,7 +248,8 @@ class AuthViewModel extends BaseViewModel<AuthState> {
           appleUid: user.uid,
           provider: LoginProviders.apple,
           deviceInfo: '',
-          ipAddress: '', userName: user.displayName ?? '',
+          ipAddress: '',
+          userName: user.displayName ?? '',
         ),
       );
       if (response.isSuccess ?? false) {
@@ -303,9 +290,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 class AuthState extends BaseStateModel {
   final AuthResponse? authResponse;
   final String? otpError;
-  final String? build;
-  final String? device;
-  final String? version;
   final XFile? profileImage;
   final AddressData? addressData;
 
@@ -316,9 +300,6 @@ class AuthState extends BaseStateModel {
     this.otpError,
     this.profileImage,
     this.addressData,
-    this.build,
-    this.device,
-    this.version,
   });
 
   @override
@@ -346,9 +327,6 @@ class AuthState extends BaseStateModel {
           ? null
           : (profileImage ?? this.profileImage),
       addressData: addressData ?? this.addressData,
-      build: build ?? this.build,
-      device: device ?? this.device,
-      version: version ?? this.version,
     );
   }
 }

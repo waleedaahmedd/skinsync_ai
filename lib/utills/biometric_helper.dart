@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
+
+import 'package:crypto/crypto.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:crypto/crypto.dart';
 import 'package:skinsync_ai/utills/enums.dart';
 import 'package:skinsync_ai/utills/secure_storage_service.dart';
 
@@ -66,6 +68,7 @@ class BiometricHelper {
     await SecureStorage().deleteSecureString(
       key: SharedPreferencesKeys.biometricAuthKey.keyText,
     );
+    await SecureStorage().saveUserEmail(null);
     return true;
   }
 
@@ -73,7 +76,8 @@ class BiometricHelper {
   Future<bool> isBiometricAvailable() async {
     try {
       return await _auth.canCheckBiometrics;
-    } catch (_) {
+    } catch (e, s) {
+      log(e.toString(), stackTrace: s);
       return false;
     }
   }

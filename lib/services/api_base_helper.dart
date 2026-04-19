@@ -21,53 +21,52 @@ class ApiBaseHelper {
     required EndPoints endPoint,
     required String requestType,
     var requestBody,
-    required String params,
+    String? params,
     String? imagePath,
   }) async {
     authToken = _secureStorage.cachedAuthToken;
 
     try {
-      log('URL: ${BaseUrls.api.url + endPoint.path + params}');
+      final url = '${BaseUrls.api.url}${endPoint.path}${params ?? ''}';
+      log('URL: $url');
+      log('BODY: $requestBody');
       await _refreshToken();
       switch (requestType) {
         case 'GET':
           final responseJson = await http.get(
-            Uri.parse(BaseUrls.api.url + endPoint.path + params),
+            Uri.parse(url),
             headers: getHeaders(),
           );
           log('RESPONSE: ${responseJson.body}');
           return responseJson;
         case 'POST':
           final responseJson = await http.post(
-            Uri.parse(BaseUrls.api.url + endPoint.path),
+            Uri.parse(url),
             headers: getHeaders(),
             body: jsonEncode(requestBody),
           );
           return responseJson;
         case 'PUT':
-          final responseJson = await http.put(
-            Uri.parse(BaseUrls.api.url + endPoint.path + params),
+          return await http.put(
+            Uri.parse(url),
             headers: getHeaders(),
             body: requestBody != '' ? jsonEncode(requestBody) : null,
           );
         case 'PATCH':
           final responseJson = await http.patch(
-            Uri.parse(BaseUrls.api.url + endPoint.path + params),
+            Uri.parse(url),
             headers: getHeaders(),
             body: requestBody != '' ? jsonEncode(requestBody) : null,
           );
           return responseJson;
-        case 'DEL':
+        case 'DELETE':
           final responseJson = await http.delete(
-            Uri.parse(BaseUrls.api.url + endPoint.path + params),
+            Uri.parse(url),
             headers: getHeaders(),
           );
           return responseJson;
         case 'MULTIPART':
-          final request = http.MultipartRequest(
-            'POST',
-            Uri.parse(BaseUrls.api.url + endPoint.path),
-          );
+          final request = http.MultipartRequest('POST', Uri.parse(url));
           request.fields.addAll(requestBody!.toJson());
           request.files.add(
             await http.MultipartFile.fromPath('image', imagePath!),
@@ -97,7 +96,6 @@ class ApiBaseHelper {
       }
       throw e.toString();
     }
-    return http.Response('404', 404);
   }
 
   Map<String, String> getHeaders() {
