@@ -285,4 +285,5 @@ class AuthService implements AuthRepository {
       throw AppException(BaseResponseModel.fromJson(parsed).message as String);
     }
   }
+
 }

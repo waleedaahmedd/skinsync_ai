@@ -241,7 +241,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
           googleUid: user.uid,
           provider: LoginProviders.google,
           deviceInfo: '',
-          ipAddress: '',
+          ipAddress: '', userName: user.displayName ?? '',
         ),
       );
       if (response.isSuccess ?? false) {
@@ -262,7 +262,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
           appleUid: user.uid,
           provider: LoginProviders.apple,
           deviceInfo: '',
-          ipAddress: '',
+          ipAddress: '', userName: user.displayName ?? '',
         ),
       );
       if (response.isSuccess ?? false) {

@@ -1,4 +1,3 @@
-import 'package:skinsync_ai/models/requests/app_version_request.dart';
 import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';

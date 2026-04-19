@@ -59,10 +59,13 @@ class SignInWithEmailRequest extends BaseSignInRequest {
 class SignInWithGoogleRequest extends BaseSignInRequest {
   final String email;
   final String googleUid;
+  final String userName;
+
 
   const SignInWithGoogleRequest({
     required this.email,
     required this.googleUid,
+    required this.userName,
     required super.provider,
     required super.deviceInfo,
     required super.ipAddress,
@@ -73,6 +76,7 @@ class SignInWithGoogleRequest extends BaseSignInRequest {
     return {
       'email': email,
       'google_uid': googleUid,
+      'user_name': userName,
       'provider': provider.name,
       'device_info': deviceInfo,
       'ip_address': ipAddress,
@@ -83,10 +87,14 @@ class SignInWithGoogleRequest extends BaseSignInRequest {
 class SignInWithAppleRequest extends BaseSignInRequest {
   final String email;
   final String appleUid;
+  final String userName;
+
+
 
   const SignInWithAppleRequest({
     required this.email,
     required this.appleUid,
+    required this.userName,
     required super.provider,
     required super.deviceInfo,
     required super.ipAddress,
@@ -97,6 +105,7 @@ class SignInWithAppleRequest extends BaseSignInRequest {
     return {
       'email': email,
       'apple_uid': appleUid,
+      'user_name': userName,
       'provider': provider.name,
       'device_info': deviceInfo,
       'ip_address': ipAddress,
