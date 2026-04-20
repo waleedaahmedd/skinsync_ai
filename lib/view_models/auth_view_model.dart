@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
@@ -11,6 +11,7 @@ import 'package:skinsync_ai/services/apple_auth_service.dart';
 import 'package:skinsync_ai/services/google_auth_service.dart';
 import 'package:skinsync_ai/services/location_service.dart';
 import 'package:skinsync_ai/services/media_service.dart';
+import 'package:skinsync_ai/utills/biometric_helper.dart';
 
 import '../models/base_state_model.dart';
 import '../models/requests/sign_in_request.dart';
@@ -19,6 +20,7 @@ import '../repositories/auth_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/auth_service.dart';
 import '../utills/enums.dart';
+import '../utills/secure_storage_service.dart';
 import 'base_view_model.dart';
 
 final authViewModel = NotifierProvider(() {
@@ -42,6 +44,27 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   TextEditingController get phoneController => _phoneController;
 
   TextEditingController get passwordController => _passwordController;
+
+  @override
+  void init() {
+    super.init();
+    checkBiometricAvailability();
+  }
+
+  Future<void> checkBiometricAvailability() async {
+    final result = await SecureStorage().getSecureString(
+      key: SharedPreferencesKeys.biometricAuthKey.keyText,
+    );
+    final isAvailable = result != null;
+    IconData? icon;
+    if (isAvailable) {
+      icon = await BiometricHelper().getBiometricIcon();
+    }
+    state = state.copyWith(
+      isBiometricAvailable: isAvailable,
+      biometricIcon: icon,
+    );
+  }
 
   void setAuthResponse(AuthResponse response) {
     state = state.copyWith(authResponse: response);
@@ -104,6 +127,9 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       final BaseResponseModel response = await _authRepository
           .biometricRegisterApi();
       state = state.copyWith(loading: false);
+      if (response.isSuccess == true) {
+        await checkBiometricAvailability();
+      }
       return response.isSuccess == true;
     });
   }
@@ -114,16 +140,28 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       final BaseResponseModel response = await _authRepository
           .biometricUnregister();
       state = state.copyWith(loading: false);
+      if (response.isSuccess == true) {
+        state = state.copyWith(
+          isBiometricAvailable: false,
+          biometricIcon: null,
+        );
+      }
       return response.isSuccess == true;
     });
   }
+
   Future<bool?> callBiometricLoginApi() async {
-    return await runSafely(() async {
+    return await runSafely<bool>(() async {
       state = state.copyWith(loading: true);
-      final BaseResponseModel response = await _authRepository
-          .biometricLoginApi();
+      final AuthResponse response = await _authRepository.biometricLoginApi();
+      if (response.isSuccess == true) {
+        state = state.copyWith(authResponse: response);
+        //  _fetchLocationInBackground();
+        state = state.copyWith(loading: false);
+        return true;
+      }
       state = state.copyWith(loading: false);
-      return response.isSuccess == true;
+      return false;
     });
   }
 
@@ -204,7 +242,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   }
 
   void _fetchLocationInBackground() {
-    // Slight delay to ensure it doesn't collide with navigation animations
     Future.delayed(const Duration(seconds: 2), () async {
       try {
         final addressData = await LocationService().fetchAddress();
@@ -291,6 +328,8 @@ class AuthState extends BaseStateModel {
   final String? otpError;
   final XFile? profileImage;
   final AddressData? addressData;
+  final bool isBiometricAvailable;
+  final IconData? biometricIcon;
 
   const AuthState({
     super.loading = false,
@@ -299,6 +338,8 @@ class AuthState extends BaseStateModel {
     this.otpError,
     this.profileImage,
     this.addressData,
+    this.isBiometricAvailable = false,
+    this.biometricIcon,
   });
 
   @override
@@ -316,6 +357,8 @@ class AuthState extends BaseStateModel {
     XFile? profileImage,
     bool clearProfileImage = false,
     AddressData? addressData,
+    bool? isBiometricAvailable,
+    IconData? biometricIcon,
   }) {
     return AuthState(
       loading: loading ?? this.loading,
@@ -326,6 +369,8 @@ class AuthState extends BaseStateModel {
           ? null
           : (profileImage ?? this.profileImage),
       addressData: addressData ?? this.addressData,
+      isBiometricAvailable: isBiometricAvailable ?? this.isBiometricAvailable,
+      biometricIcon: biometricIcon ?? this.biometricIcon,
     );
   }
 }

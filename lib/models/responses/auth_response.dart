@@ -50,6 +50,9 @@ class Data {
         treatment!.add(new TreatmentsModel.fromJson(v));
       });
     }
+    else {
+      treatment = [];
+    }
   }
 }
 

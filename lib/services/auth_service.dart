@@ -91,7 +91,7 @@ class AuthService implements AuthRepository {
   }
 
   @override
-  Future<BaseResponseModel> biometricLoginApi() async {
+  Future<AuthResponse> biometricLoginApi() async {
     final key = await _secureStorage.getSecureString(
       key: SharedPreferencesKeys.biometricAuthKey.keyText,
     );

@@ -10,7 +10,7 @@ abstract class AuthRepository {
     required BaseSignInRequest signInRequest,
   });
   Future<BaseResponseModel> biometricRegisterApi();
-  Future<BaseResponseModel> biometricLoginApi();
+  Future<AuthResponse> biometricLoginApi();
   Future<BaseResponseModel> biometricUnregister();
   Future<AuthResponse> verifyOTP({required OtpRequest otpRequest});
 

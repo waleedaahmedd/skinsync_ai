@@ -282,55 +282,37 @@ Row _buildSocialSignIns(WidgetRef ref) {
   );
 }
 
-FutureBuilder<bool> _buildBiometricButton(WidgetRef ref) {
-  return FutureBuilder<bool>(
-    future: () async {
-      final result = await SecureStorage().getSecureString(
-        key: SharedPreferencesKeys.biometricAuthKey.keyText,
-      );
-      return result != null;
-    }(),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const SizedBox();
-      } else if (snapshot.hasData && snapshot.data == true) {
-        // Biometric available, now get icon
-        return FutureBuilder<IconData>(
-          future: BiometricHelper().getBiometricIcon(),
-          builder: (context, iconSnapshot) {
-            if (!iconSnapshot.hasData) {
-              return const SizedBox();
-            }
-            final icon = iconSnapshot.data!;
-            return Center(
-              child: InkWell(
-                onTap: () async {
-                  bool authenticated = await BiometricHelper().authenticate(
-                    reason: 'Login with Biometrics',
-                  );
-                  if (authenticated && context.mounted) {
-                    ref
-                        .read(authViewModel.notifier)
-                        .callBiometricLoginApi()
-                        .then((value) {
-                      if (value == true && context.mounted) {
-                        Navigator.pushNamedAndRemoveUntil(
-                          context,
-                          BottomNavPage.routeName,
-                              (_) => false,
-                        );
-                      }
-                    });
-                  }
-                },
-                child: Icon(icon, size: 60.h),
-              ),
-            );
-          },
+// lib/widgets/login_bottom_sheet.dart
+
+Widget _buildBiometricButton(WidgetRef ref) {
+  final state = ref.watch(authViewModel);
+
+  // Decides whether to show the button based on state
+  if (!state.isBiometricAvailable || state.biometricIcon == null) {
+    return const SizedBox.shrink();
+  }
+
+  return Center(
+    child: InkWell(
+      onTap: () async {
+        bool authenticated = await BiometricHelper().authenticate(
+          reason: 'Login with Biometrics',
         );
-      } else {
-        return const SizedBox.shrink(); // No biometrics available
-      }
-    },
+        if (authenticated && ref.context.mounted) {
+          final success = await ref
+              .read(authViewModel.notifier)
+              .callBiometricLoginApi();
+
+          if (success == true && ref.context.mounted) {
+            Navigator.pushNamedAndRemoveUntil(
+              ref.context,
+              BottomNavPage.routeName,
+                  (route) => false,
+            );
+          }
+        }
+      },
+      child: Icon(state.biometricIcon, size: 60.h),
+    ),
   );
 }
