@@ -51,7 +51,6 @@ class LocationService {
     if (response.statusCode != 200) {
       throw AppException('Could not fetch address!');
     }
-    log('RESPONSE: ${response.body}');
     final data = GeocodingResponse.fromJson(jsonDecode(response.body));
     if (data.results?.isEmpty ?? true) {
       throw AppException('No address found!');

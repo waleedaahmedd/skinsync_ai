@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
-import 'package:skinsync_ai/screens/your_profile_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/secure_storage_service.dart';
@@ -80,7 +79,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               } else {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  YourProfileScreen.routeName,
+                  GetStartedScreen.routeName,
                   (Route<dynamic> route) => false,
                 );
               }

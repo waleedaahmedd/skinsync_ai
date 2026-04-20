@@ -8,7 +8,6 @@ import 'package:skinsync_ai/utills/biometric_helper.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/utills/enums.dart';
-import 'package:skinsync_ai/utills/secure_storage_service.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
 import '../screens/face_scan_screen.dart';
@@ -303,11 +302,11 @@ Widget _buildBiometricButton(WidgetRef ref) {
               .read(authViewModel.notifier)
               .callBiometricLoginApi();
 
-          if (success == true && ref.context.mounted) {
+          if (success == true) {
             Navigator.pushNamedAndRemoveUntil(
               ref.context,
               BottomNavPage.routeName,
-                  (route) => false,
+              (route) => false,
             );
           }
         }

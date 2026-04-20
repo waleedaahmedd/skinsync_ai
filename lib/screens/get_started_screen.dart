@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/login_bottom_sheet.dart';
 
 class GetStartedScreen extends StatelessWidget {
@@ -21,7 +23,7 @@ class GetStartedScreen extends StatelessWidget {
           ),
           child: Stack(
             children: [
-                Positioned(
+              Positioned(
                 top: 70.h,
                 right: 0.w,
                 left: 0.w,
@@ -29,7 +31,6 @@ class GetStartedScreen extends StatelessWidget {
                   PngAssets.vector2,
                   height: 552.h,
                   fit: BoxFit.fill,
-                  
                 ),
               ),
               Positioned(
@@ -40,10 +41,10 @@ class GetStartedScreen extends StatelessWidget {
                   PngAssets.vector,
                   height: 376.h,
                   fit: BoxFit.fill,
-                  color: Color(0xff88E3FB).withOpacity(0.7)
+                  color: Color(0xff88E3FB).withOpacity(0.7),
                 ),
               ),
-              
+
               Positioned(
                 top: 92.h,
                 right: 0,
@@ -51,7 +52,7 @@ class GetStartedScreen extends StatelessWidget {
 
                 child: Image.asset(
                   PngAssets.face,
-                 // height: 200.w,
+                  // height: 200.w,
                   fit: BoxFit.fitWidth,
                   alignment: Alignment.topCenter,
                 ),
@@ -106,20 +107,25 @@ class GetStartedScreen extends StatelessWidget {
                     SizedBox(height: 37.2.h),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 19.h),
-                          textStyle: CustomFonts.white22w600,
-                          backgroundColor: Colors.black,
+                      child: Consumer(
+                        builder: (_, ref, _) => ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 19.h),
+                            textStyle: CustomFonts.white22w600,
+                            backgroundColor: Colors.black,
 
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50.r),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50.r),
+                            ),
                           ),
+                          onPressed: () {
+                            ref
+                                .read(authViewModel.notifier)
+                                .checkBiometricAvailability();
+                            loginBottomSheet(context);
+                          },
+                          child: Text("Get Started"),
                         ),
-                        onPressed: () {
-                          loginBottomSheet(context);
-                        },
-                        child: Text("Get Started"),
                       ),
                     ),
                   ],

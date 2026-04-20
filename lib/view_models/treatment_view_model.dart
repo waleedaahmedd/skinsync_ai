@@ -17,14 +17,14 @@ import '../services/treatment_services.dart';
 import '../utills/image_utills.dart';
 import 'base_view_model.dart';
 
-final treatmentViewModel = NotifierProvider(
-  () => TreatmentViewModel(
+final treatmentViewModel = NotifierProvider.autoDispose(
+  () => TreatmentViewModel._(
     treatmentRepository: TreatmentService(apiClient: ApiBaseHelper()),
   ),
 );
 
 class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
-  TreatmentViewModel({required TreatmentRepository treatmentRepository})
+  TreatmentViewModel._({required TreatmentRepository treatmentRepository})
     : _repo = treatmentRepository,
       super(initialState: TreatmentsState());
 
