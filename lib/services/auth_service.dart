@@ -145,7 +145,7 @@ class AuthService implements AuthRepository {
     await BiometricHelper.clearSignature();
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.biometricUnregister,
-      requestBody: {'biometric_key': key},
+      requestBody: {'biometric_key': key.deviceHash},
       requestType: 'DELETE',
     );
     final parsed = json.decode(response.body);
