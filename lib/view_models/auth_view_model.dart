@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
@@ -123,10 +124,10 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 
   Future<bool?> callBiometricRegisterApi() async {
     return await runSafely(() async {
-      state = state.copyWith(loading: true);
+      EasyLoading.show(status: "Please wait");
       final BaseResponseModel response = await _authRepository
           .biometricRegisterApi();
-      state = state.copyWith(loading: false);
+     EasyLoading.showSuccess(response.message.toString());
       if (response.isSuccess == true) {
         await checkBiometricAvailability();
       }
@@ -137,6 +138,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   Future<bool?> callBiometricUnregisterApi() async {
     return await runSafely(() async {
       state = state.copyWith(loading: true);
+     
       final BaseResponseModel response = await _authRepository
           .biometricUnregister();
       state = state.copyWith(loading: false);
@@ -305,11 +307,14 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   @override
   void onError(String message) {
     super.onError(message);
+  
     state = state.copyWith(
+
       loading: false,
       errorMessage: message,
       authResponse: AuthResponse(isSuccess: false, message: message),
     );
+    EasyLoading.dismiss();
   }
 
   @override

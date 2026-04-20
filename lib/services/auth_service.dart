@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
 import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
@@ -143,6 +144,7 @@ class AuthService implements AuthRepository {
   Future<BaseResponseModel> biometricUnregister() async {
     final key = await BiometricHelper.getDeviceSignature();
     await BiometricHelper.clearSignature();
+
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.biometricUnregister,
       requestBody: {'biometric_key': key.deviceHash},

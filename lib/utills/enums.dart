@@ -26,7 +26,7 @@ enum EndPoints {
   signIn('login'),
   biometricRegister('v1/biometric/register'),
   biometricLogin('biometric/login'),
-  biometricUnregister('v1/biometric/unregister'),
+  biometricUnregister('biometric/unregister'),
   onBoardingQues("onboarding/masters"),
   saveAnswer("v1/onboarding/answer"),
 

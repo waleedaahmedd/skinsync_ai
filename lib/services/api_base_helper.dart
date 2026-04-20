@@ -63,6 +63,7 @@ class ApiBaseHelper {
           final responseJson = await http.delete(
             Uri.parse(url),
             headers: getHeaders(),
+            body: requestBody != '' ? jsonEncode(requestBody) : null
           );
           return responseJson;
         case 'MULTIPART':
