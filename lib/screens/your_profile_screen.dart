@@ -147,7 +147,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   Text("Your Profile", style: CustomFonts.black30w600),
                   SizedBox(height: 4.h),
                   Text(
-                    "Introduce yourself to others in your events.",
+                    "Create your profile to personalize your SkinSync experience.",
                     style: CustomFonts.black18w400,
                   ),
                   SizedBox(height: 22.h),

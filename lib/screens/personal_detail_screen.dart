@@ -180,7 +180,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                   SizedBox(height: 7.h),
                   Text("Your Profile", style: CustomFonts.black30w600),
                   Text(
-                    "Introduce yourself to others in your events.",
+                    "Create your profile to personalize your SkinSync experience",
                     style: CustomFonts.grey18w400,
                   ),
                   SizedBox(height: 22.h),
