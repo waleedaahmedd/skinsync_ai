@@ -313,14 +313,14 @@ FutureBuilder<bool> _buildBiometricButton(WidgetRef ref) {
                         .read(authViewModel.notifier)
                         .callBiometricLoginApi()
                         .then((value) {
-                          if (value == true && context.mounted) {
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              BottomNavPage.routeName,
+                      if (value == true && context.mounted) {
+                        Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          BottomNavPage.routeName,
                               (_) => false,
-                            );
-                          }
-                        });
+                        );
+                      }
+                    });
                   }
                 },
                 child: Icon(icon, size: 60.h),

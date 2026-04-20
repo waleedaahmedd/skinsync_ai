@@ -117,7 +117,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       return response.isSuccess == true;
     });
   }
-
   Future<bool?> callBiometricLoginApi() async {
     return await runSafely(() async {
       state = state.copyWith(loading: true);

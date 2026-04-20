@@ -7,9 +7,9 @@
 	<key>NSFaceIDUsageDescription</key>
 	<string>This app authenticate using face id?</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Location is used to find nearby clinics.</string>
+	<string>Your location helps us show clinics closest to you for faster access to care.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Location is used to find nearby clinics.</string>
+    <string>Your location helps us show clinics closest to you for faster access to care.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>keychain-access-groups</key>
