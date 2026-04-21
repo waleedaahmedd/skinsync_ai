@@ -127,7 +127,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       EasyLoading.show(status: "Please wait");
       final BaseResponseModel response = await _authRepository
           .biometricRegisterApi();
-     EasyLoading.showSuccess(response.message.toString());
+      EasyLoading.showSuccess(response.message.toString());
       if (response.isSuccess == true) {
         await checkBiometricAvailability();
       }
@@ -138,7 +138,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   Future<bool?> callBiometricUnregisterApi() async {
     return await runSafely(() async {
       state = state.copyWith(loading: true);
-     
+      EasyLoading.show(status: 'Please wait...');
       final BaseResponseModel response = await _authRepository
           .biometricUnregister();
       state = state.copyWith(loading: false);
@@ -148,6 +148,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
           biometricIcon: null,
         );
       }
+      EasyLoading.dismiss();
       return response.isSuccess == true;
     });
   }
@@ -307,9 +308,8 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   @override
   void onError(String message) {
     super.onError(message);
-  
-    state = state.copyWith(
 
+    state = state.copyWith(
       loading: false,
       errorMessage: message,
       authResponse: AuthResponse(isSuccess: false, message: message),

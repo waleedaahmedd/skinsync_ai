@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../view_models/auth_view_model.dart';
 import '../widgets/app_bar_with_action_icon.dart';
-import '../widgets/appointment_card.dart';
 import '../widgets/grey_container.dart';
 import '../widgets/heading_with_right_arrow.dart';
 import '../widgets/points_earn_card.dart';
@@ -63,7 +62,7 @@ class HomeScreen extends ConsumerWidget {
               ],
             ),
             SizedBox(
-              height: 300.h,
+              height: 270.w,
 
               child: Consumer(
                 builder: (context, ref, _) {
@@ -83,7 +82,7 @@ class HomeScreen extends ConsumerWidget {
                           right: index == treatment!.length - 1 ? 30.w : 0.w,
                         ),
                         child: TreatmentContainer(
-                          imageHeight: 150,
+                          imageHeight: 150.h,
                           width: 313.w,
                           treatments: treatment[index],
                         ),
