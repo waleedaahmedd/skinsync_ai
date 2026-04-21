@@ -168,10 +168,13 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                             color: Colors.white,
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(
-                            Iconsax.camera,
-                            size: 20.w,
-                            color: Colors.black,
+                          child: IconButton(
+                            onPressed: _showImageSourceDialog,
+                            icon: Icon(
+                              Iconsax.camera,
+                              size: 20.w,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ),

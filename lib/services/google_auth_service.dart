@@ -41,6 +41,7 @@ class GoogleAuthService extends BaseAuthService {
     );
     final credentials = await _auth.signInWithCredential(credential);
     final firebaseUser = credentials.user;
+    log('EMAIL FROM GOOGLE: ${firebaseUser?.email}');
     if (firebaseUser == null) {
       throw AppException('Could not login to Google');
     }
