@@ -10,6 +10,7 @@ import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/app_loader.dart';
+import 'package:skinsync_ai/widgets/phone_widget.dart';
 
 import 'get_notified_screen.dart';
 
@@ -166,25 +167,26 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                     },
                   ),
                   SizedBox(height: 20.h),
-                  TextFormField(
-                    controller: _phoneController,
-                    style: CustomFonts.black18w400,
-                    decoration: InputDecoration(hintText: "Phone Number"),
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(15),
-                    ],
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your phone number';
-                      }
-                      if (value.trim().length < 10) {
-                        return 'Phone number must be at least 10 digits';
-                      }
-                      return null;
-                    },
-                  ),
+                  PhoneWidget(controller: _phoneController),
+                  // TextFormField(
+                  //   controller: _phoneController,
+                  //   style: CustomFonts.black18w400,
+                  //   decoration: InputDecoration(hintText: "Phone Number"),
+                  //   keyboardType: TextInputType.phone,
+                  //   inputFormatters: [
+                  //     FilteringTextInputFormatter.digitsOnly,
+                  //     LengthLimitingTextInputFormatter(15),
+                  //   ],
+                  //   validator: (value) {
+                  //     if (value == null || value.trim().isEmpty) {
+                  //       return 'Please enter your phone number';
+                  //     }
+                  //     if (value.trim().length < 10) {
+                  //       return 'Phone number must be at least 10 digits';
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
                   SizedBox(height: 20.h),
                   TextFormField(
                     readOnly: true,
