@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
+import 'package:skinsync_ai/widgets/phone_widget.dart';
 
 class PersonalDetailScreen extends ConsumerStatefulWidget {
   const PersonalDetailScreen({super.key});
@@ -202,20 +203,21 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                     },
                   ),
                   SizedBox(height: 20.h),
-                  TextFormField(
-                    controller: _phoneController,
-                    style: CustomFonts.black18w400,
-                    decoration: InputDecoration(hintText: "+ 012 345 6798"),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your phone number';
-                      }
-                      if (value.trim().length < 10) {
-                        return 'Phone number must be at least 10 digits';
-                      }
-                      return null;
-                    },
-                  ),
+                  PhoneWidget(controller: _phoneController),
+                  // TextFormField(
+                  //   controller: _phoneController,
+                  //   style: CustomFonts.black18w400,
+                  //   decoration: InputDecoration(hintText: "+ 012 345 6798"),
+                  //   validator: (value) {
+                  //     if (value == null || value.trim().isEmpty) {
+                  //       return 'Please enter your phone number';
+                  //     }
+                  //     if (value.trim().length < 10) {
+                  //       return 'Phone number must be at least 10 digits';
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
                   SizedBox(height: 20.h),
                   TextFormField(
                     controller: _emailController,

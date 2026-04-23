@@ -1,11 +1,9 @@
-
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-
 
 class PhoneWidget extends StatefulWidget {
   final TextEditingController controller;
@@ -44,7 +42,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
       spacing: 10.h,
       children: [
         TextFormField(
-         validator: (value) {
+          validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Please enter your phone number';
             }
@@ -67,9 +65,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
           },
           keyboardType: TextInputType.phone,
           decoration: InputDecoration(
-            
-            
-            hintText: '921 - 2341 -99908',
+            hintText: '012 345 6798',
             // hintStyle:
             //     Theme.of(context).inputDecorationTheme.hintStyle!.copyWith(
             //           // color: Colors.amber
@@ -97,7 +93,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
                 countryListTheme: CountryListThemeData(
                   bottomSheetWidth: MediaQuery.sizeOf(context).width,
                   bottomSheetHeight: 560.h,
-                  textStyle: TextStyle(fontSize: 14.sp,color: Colors.black),
+                  textStyle: TextStyle(fontSize: 14.sp, color: Colors.black),
                   searchTextStyle: TextStyle(fontSize: 14.sp),
                   margin: EdgeInsets.zero,
                   padding: EdgeInsets.only(
@@ -135,7 +131,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
                 ),
                 Center(
                   child: Text(
-                   "+ ${_selectedCountry.phoneCode}",
+                    "+ ${_selectedCountry.phoneCode}",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: CustomColors.blackColor,
