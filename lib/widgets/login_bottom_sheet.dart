@@ -201,7 +201,7 @@ Row _buildSocialSignIns(WidgetRef ref) {
                 .read(authViewModel.notifier)
                 .callGoogleSignInApi();
             if (success ?? false) {
-              bool? isLoggedIn =
+              /* bool? isLoggedIn =
                   ref.read(authViewModel).authResponse?.data?.isFirstLogin ??
                   false;
               isLoggedIn
@@ -211,7 +211,8 @@ Row _buildSocialSignIns(WidgetRef ref) {
                       (Route<dynamic> route) =>
                           route.settings.name == LoginScreen.routeName,
                     )
-                  : Navigator.pushNamedAndRemoveUntil(
+                  : */
+              Navigator.pushNamedAndRemoveUntil(
                       ref.context,
                       FaceScanScreen.routeName,
                       (Route<dynamic> route) => false,
@@ -243,7 +244,7 @@ Row _buildSocialSignIns(WidgetRef ref) {
                 .read(authViewModel.notifier)
                 .callAppleSignInApi();
             if (success ?? false) {
-              bool? isLoggedIn =
+             /* bool? isLoggedIn =
                   ref.read(authViewModel).authResponse?.data?.isFirstLogin ??
                   false;
               isLoggedIn
@@ -253,7 +254,8 @@ Row _buildSocialSignIns(WidgetRef ref) {
                       (Route<dynamic> route) =>
                           route.settings.name == LoginScreen.routeName,
                     )
-                  : Navigator.pushNamedAndRemoveUntil(
+                  : */
+                  Navigator.pushNamedAndRemoveUntil(
                       ref.context,
                       FaceScanScreen.routeName,
                       (Route<dynamic> route) => false,
