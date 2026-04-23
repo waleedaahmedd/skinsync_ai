@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,6 +30,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
+  Country? _selectedCountry;
 
   @override
   void dispose() {
@@ -43,8 +45,21 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
   @override
   void initState() {
     super.initState();
+    final authState = ref.read(authViewModel);
     _emailController.text =
-        ref.read(authViewModel).authResponse?.data?.user?.primaryEmail ?? '';
+        authState.authResponse?.data?.user?.primaryEmail ?? '';
+
+    // Initialize country if user data exists
+    final user = authState.authResponse?.data?.userDetails;
+    if (user?.cc != null) {
+      try {
+        _selectedCountry = Country.parse(user!.cc!);
+      } catch (e) {
+        _selectedCountry = Country.parse('US');
+      }
+    } else {
+      _selectedCountry = Country.parse('US');
+    }
   }
 
   void _showImageSourceDialog() {
@@ -167,26 +182,15 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                     },
                   ),
                   SizedBox(height: 20.h),
-                  PhoneWidget(controller: _phoneController),
-                  // TextFormField(
-                  //   controller: _phoneController,
-                  //   style: CustomFonts.black18w400,
-                  //   decoration: InputDecoration(hintText: "Phone Number"),
-                  //   keyboardType: TextInputType.phone,
-                  //   inputFormatters: [
-                  //     FilteringTextInputFormatter.digitsOnly,
-                  //     LengthLimitingTextInputFormatter(15),
-                  //   ],
-                  //   validator: (value) {
-                  //     if (value == null || value.trim().isEmpty) {
-                  //       return 'Please enter your phone number';
-                  //     }
-                  //     if (value.trim().length < 10) {
-                  //       return 'Phone number must be at least 10 digits';
-                  //     }
-                  //     return null;
-                  //   },
-                  // ),
+                  PhoneWidget(
+                    controller: _phoneController,
+                    initialCountryCode: _selectedCountry?.countryCode,
+                    onCountryChanged: (country) {
+                      setState(() {
+                        _selectedCountry = country;
+                      });
+                    },
+                  ),
                   SizedBox(height: 20.h),
                   TextFormField(
                     readOnly: true,
@@ -249,6 +253,8 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                                           .trim(),
                                       location: _locationController.text.trim(),
                                       bio: _bioController.text.trim(),
+                                      cc: _selectedCountry?.countryCode,
+                                      country: _selectedCountry?.name,
                                     )
                                     .then((value) {
                                       if (value == true) {
