@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:skinsync_ai/exceptions/app_exception.dart';
+import 'package:skinsync_ai/main.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 
 import '../app_init.dart';
@@ -27,7 +28,8 @@ class ApiBaseHelper {
     authToken = _secureStorage.cachedAuthToken;
 
     try {
-      final url = '${BaseUrls.api.url}${endPoint.path}${params ?? ''}';
+      final baseUrl = isDeploymentMode ? BaseUrls.api.url : BaseUrls.apiQa.url;
+      final url = '$baseUrl${endPoint.path}${params ?? ''}';
       log('URL: $url');
       log('BODY: $requestBody');
       await _refreshToken();
@@ -63,7 +65,7 @@ class ApiBaseHelper {
           final responseJson = await http.delete(
             Uri.parse(url),
             headers: getHeaders(),
-            body: requestBody != '' ? jsonEncode(requestBody) : null
+            body: requestBody != '' ? jsonEncode(requestBody) : null,
           );
           return responseJson;
         case 'MULTIPART':
