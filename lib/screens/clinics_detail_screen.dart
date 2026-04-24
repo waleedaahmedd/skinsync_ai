@@ -550,6 +550,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                         Navigator.pushNamed(
                           context,
                           ClinicServiceScreen.routeName,
+                          arguments: clinic,
                         );
                       }
                     },

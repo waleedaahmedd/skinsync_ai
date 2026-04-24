@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
@@ -32,11 +34,13 @@ class ClinicServiceScreen extends ConsumerStatefulWidget {
 
 class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
   DateTime selectedDate = DateTime.now();
+  int? selectedFilterIndex;
+  int? selectedTime;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final treatment = ref.read(
         treatmentViewModel.select((state) => state.selectedTreatment),
       );
@@ -52,7 +56,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
             .setClinicId(widget.clinic!.clinicId!);
       }
 
-      ref
+      await ref
           .read(clinicDoctorProvider.notifier)
           .getDoctors(
             treatmentId: treatment?.id ?? 0,
@@ -60,6 +64,14 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
             date: selectedDate,
             clinicId: widget.clinic?.clinicId,
           );
+      if (widget.clinic?.clinicId != null) {
+        await ref
+            .read(clinicDoctorProvider.notifier)
+            .fetchAvailability(
+              date: selectedDate,
+              clinicId: widget.clinic!.clinicId!,
+            );
+      }
     });
   }
 
@@ -72,13 +84,14 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
     );
 
     if (picked != null) {
-      selecteTime = null;
+      selectedTime = null;
+      log('CLINIC ID: ${widget.clinic?.clinicId}');
       if (widget.clinic?.clinicId != null) {
         ref
             .read(clinicDoctorProvider.notifier)
             .fetchAvailability(
               date: picked,
-              clinicId: 5, // widget.clinic!.clinicId!,
+              clinicId: widget.clinic!.clinicId!,
             );
       }
       setState(() {
@@ -87,8 +100,6 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
     }
   }
 
-  int? selectedFilterIndex;
-  int? selecteTime;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -294,13 +305,13 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                             return TimeContainer(
                               onTap: () {
                                 setState(() {
-                                  selecteTime = index;
+                                  selectedTime = index;
                                 });
                               },
                               time: slot.formattedTime,
                               isAvailable: !slot.isBooked,
                               isBooked: slot.isBooked,
-                              isSelected: selecteTime == index,
+                              isSelected: selectedTime == index,
                             );
                           }),
                         );
@@ -393,7 +404,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                             EasyLoading.showError('Select a doctor first!');
                             return;
                           }
-                          if (selecteTime == null) {
+                          if (selectedTime == null) {
                             EasyLoading.showError('Select a slot first!');
                             return;
                           }
@@ -403,7 +414,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                             arguments: {
                               'clinic': widget.clinic!,
                               'doctor': state.selectedDoctor!,
-                              'slot': state.slots[selecteTime!],
+                              'slot': state.slots[selectedTime!],
                             },
                           );
                         },
@@ -448,7 +459,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
               );
         }
         setState(() {
-          selecteTime = null;
+          selectedTime = null;
         });
       },
       child: Padding(

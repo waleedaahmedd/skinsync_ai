@@ -60,7 +60,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         //     ),
         //   );
         // } else {
-        final token = SecureStorage().cachedAuthToken;
+        final token = await SecureStorage().getToken();
 
         if (token != null) {
           ref.read(authViewModel.notifier).callGetMe().then((value) {

@@ -78,7 +78,7 @@ class ClinicDoctorService implements ClinicDoctorRepository {
           '?doctor_id=$doctorId&clinic_id=$clinicId&date=${date.millisecondsSinceEpoch ~/ 1000}',
     );
     final data = AvailabilityResponse.fromJson(jsonDecode(response.body));
-    if (response.statusCode < 200 && response.statusCode >= 300) {
+    if (data.isSuccess == false) {
       throw Exception(data.message ?? 'Something went wrong!');
     }
     return data.slots;

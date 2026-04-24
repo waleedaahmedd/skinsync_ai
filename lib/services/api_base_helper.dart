@@ -25,7 +25,7 @@ class ApiBaseHelper {
     String? params,
     String? imagePath,
   }) async {
-    authToken = _secureStorage.cachedAuthToken;
+    authToken = await _secureStorage.getToken();
 
     try {
       final baseUrl = isDeploymentMode ? BaseUrls.api.url : BaseUrls.apiQa.url;
@@ -111,7 +111,7 @@ class ApiBaseHelper {
   }
 
   Future<void> _refreshToken() async {
-    final token = _secureStorage.cachedAuthToken;
+    final token = await _secureStorage.getToken();
     if (token == null) {
       log('TOKEN IS NULL');
       return;

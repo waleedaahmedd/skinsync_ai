@@ -47,9 +47,9 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
   }
 
   Future<bool?> getClinic({int? treatmentId, List<int>? sideAreaIds}) async {
-    state = state.copyWith(clinicLoading: true);
-    final String? sideAreas = sideAreaIds?.join(',');
     return runSafely(() async {
+      state = state.copyWith(clinicLoading: true);
+      final String? sideAreas = sideAreaIds?.join(',');
       final response = await _clinicRepository.getClinic(
         treatmentId: treatmentId,
         sideAreaIdsList: sideAreas,
@@ -95,11 +95,11 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
     required int? clinicId,
     required DateTime date,
   }) async {
-    state = state.copyWith(doctorLoading: true);
-    final String sideAreas = sideAreaIds.join(',');
     return runSafely(() async {
+      state = state.copyWith(doctorLoading: true);
+      final String sideAreas = sideAreaIds.join(',');
       final response = await _clinicRepository.getDoctors(
-        clinicId: 5, //state.clinicId ?? 0,
+        clinicId: state.clinicId ?? 0,
 
         treatmentId: treatmentId,
         sideAreaIdsList: sideAreas,
@@ -131,6 +131,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
       if (state.selectedDoctor == null) {
         return;
       }
+      EasyLoading.show(status: 'Loading...');
       state = state.copyWith(loading: true);
       final availability = await _clinicRepository.getAvailability(
         doctorId: state.selectedDoctor!.id!,
@@ -142,6 +143,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
         loading: false,
         slots: availability,
       );
+      EasyLoading.dismiss();
     });
   }
 

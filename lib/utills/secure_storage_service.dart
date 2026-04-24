@@ -7,9 +7,6 @@ import 'enums.dart';
 class SecureStorage {
   static SecureStorage? _instance;
   static FlutterSecureStorage? _storage;
-
-  String? _cachedToken; // <--- in-memory cache
-
   static const String _accessTokenKey = 'auth-token';
   static const String _refreshTokenKey = 'refresh-token';
   static const String _accessTokenExpiryKey = 'access-token-expiry';
@@ -31,11 +28,7 @@ class SecureStorage {
         accessibility: KeychainAccessibility.first_unlock_this_device,
       ),
     );
-    _cachedToken = await _storage!.read(key: _accessTokenKey);
   }
-
-  /// Get token from cache (fast, no decryption)
-  String? get cachedAuthToken => _cachedToken;
 
   /// Save token to storage + update cache
   Future<void> saveSecureString({
@@ -43,9 +36,6 @@ class SecureStorage {
     required String value,
   }) async {
     await _storage!.write(key: key, value: value);
-    if (key == _accessTokenKey) {
-      _cachedToken = value;
-    }
   }
 
   Future<String?> getSecureString({required String key}) async {
@@ -55,9 +45,6 @@ class SecureStorage {
   /// Remove token from storage + cache
   Future<void> deleteSecureString({required String key}) async {
     await _storage!.delete(key: key);
-    if (key == _accessTokenKey) {
-      _cachedToken = null;
-    }
   }
 
   Future<void> clearAllSecureStrings() async {
@@ -72,16 +59,14 @@ class SecureStorage {
       value: value,
     );
     await saveUserEmail(email);
-    _cachedToken = null;
   }
 
   Future<void> saveToken(String token) async {
-    _cachedToken = token;
     await _storage?.write(key: _accessTokenKey, value: token);
   }
 
   Future<String?> getToken() async {
-    return _cachedToken ?? await _storage?.read(key: _accessTokenKey);
+    return await _storage?.read(key: _accessTokenKey);
   }
 
   Future<void> saveRefreshToken(String refreshToken) async {
