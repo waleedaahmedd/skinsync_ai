@@ -32,13 +32,13 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final user = ref.read(authViewModel).authResponse?.data?.userDetails;
+      final user = ref.watch(authViewModel).authResponse?.data;
       if (user != null) {
-        _nameController.text = user.name ?? "";
-        _phoneController.text = user.phoneNumber ?? "";
-        _emailController.text = user.emailAddress ?? "";
-        _locationController.text = user.location ?? "";
-        _bioController.text = user.bio ?? "";
+        _nameController.text = user.userDetails?.name ?? "";
+        _phoneController.text = user.userDetails?.phoneNumber ?? "";
+        _emailController.text = user.user?.primaryEmail ?? "";
+        _locationController.text = user.userDetails?.location ?? "";
+        _bioController.text = user.userDetails?.bio ?? "";
       }
     });
   }
@@ -222,6 +222,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                   TextFormField(
                     controller: _emailController,
                     style: CustomFonts.black18w400,
+                    enabled: false,
                     decoration: InputDecoration(
                       hintText: "lizzyjhonson@gmail.com",
                     ),

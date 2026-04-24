@@ -86,7 +86,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
         children: [
           GestureDetector(
             onTap: () {
-              // Open country picker dialog
+             /* // Open country picker dialog
               showCountryPicker(
                 // countryCodeWidth: 45.w,
                 moveAlongWithKeyboard: true,
@@ -110,7 +110,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
                     _selectedCountry = country;
                   });
                 },
-              );
+              );*/
             },
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,

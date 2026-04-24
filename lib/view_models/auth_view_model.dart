@@ -135,10 +135,12 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     });
   }
 
-  Future<bool?> callBiometricUnregisterApi() async {
+  Future<bool?> callBiometricUnregisterApi({required bool showLoader}) async {
     return await runSafely(() async {
       state = state.copyWith(loading: true);
-      EasyLoading.show(status: 'Please wait...');
+      if (showLoader){
+        EasyLoading.show(status: 'Please wait...');
+      }
       final BaseResponseModel response = await _authRepository
           .biometricUnregister();
       state = state.copyWith(loading: false);
@@ -183,6 +185,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 
       if (response.isSuccess == true) {
         otpController.clear();
+        await callBiometricUnregisterApi(showLoader: false);
         _fetchLocationInBackground();
       }
       return response.isSuccess == true;
@@ -259,7 +262,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     return await runSafely<bool>(() async {
       state = state.copyWith(loading: true);
       final user = await GoogleAuthService().signIn();
-      final response = await _authRepository.googleSignInApi(
+      final AuthResponse response = await _authRepository.googleSignInApi(
         request: SignInWithGoogleRequest(
           email: user.email!,
           googleUid: user.uid,
@@ -270,6 +273,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         ),
       );
       if (response.isSuccess ?? false) {
+        await callBiometricUnregisterApi(showLoader: false);
         await callGetMe();
       }
       state = state.copyWith(loading: false);
@@ -292,6 +296,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         ),
       );
       if (response.isSuccess ?? false) {
+        await callBiometricUnregisterApi(showLoader: false);
         await callGetMe();
       }
       state = state.copyWith(loading: false);

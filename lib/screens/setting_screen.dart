@@ -75,7 +75,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
       await BiometricHelper.clearSignature();
       final success = await ref
           .read(authViewModel.notifier)
-          .callBiometricUnregisterApi();
+          .callBiometricUnregisterApi(showLoader: true);
       if (success ?? false) {
         setState(() => isBiometricEnabled = false);
       }
