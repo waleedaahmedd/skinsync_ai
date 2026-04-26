@@ -198,6 +198,8 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     required String emailAddress,
     required String location,
     required String bio,
+    String? cc,
+    String? country,
   }) async {
     return await runSafely(() async {
       state = state.copyWith(loading: true);
@@ -216,6 +218,8 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         emailAddress: emailAddress,
         location: location,
         bio: bio,
+        cc: cc,
+        country: country,
         profileImageUrl:
             imageUrl ??
             state.authResponse?.data?.userDetails?.profileImage ??

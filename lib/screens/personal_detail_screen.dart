@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,6 +28,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  Country? _selectedCountry;
 
   @override
   void initState() {
@@ -34,11 +36,20 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final user = ref.watch(authViewModel).authResponse?.data;
       if (user != null) {
-        _nameController.text = user.userDetails?.name ?? "";
-        _phoneController.text = user.userDetails?.phoneNumber ?? "";
-        _emailController.text = user.user?.primaryEmail ?? "";
-        _locationController.text = user.userDetails?.location ?? "";
-        _bioController.text = user.userDetails?.bio ?? "";
+        _nameController.text = user.name ?? "";
+        _phoneController.text = user.phoneNumber ?? "";
+        _emailController.text = user.emailAddress ?? "";
+        _locationController.text = user.location ?? "";
+        _bioController.text = user.bio ?? "";
+        if (user.cc != null) {
+          try {
+            setState(() {
+              _selectedCountry = Country.parse(user.cc!);
+            });
+          } catch (e) {
+            _selectedCountry = Country.parse('US');
+          }
+        }
       }
     });
   }
@@ -203,21 +214,15 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                     },
                   ),
                   SizedBox(height: 20.h),
-                  PhoneWidget(controller: _phoneController),
-                  // TextFormField(
-                  //   controller: _phoneController,
-                  //   style: CustomFonts.black18w400,
-                  //   decoration: InputDecoration(hintText: "+ 012 345 6798"),
-                  //   validator: (value) {
-                  //     if (value == null || value.trim().isEmpty) {
-                  //       return 'Please enter your phone number';
-                  //     }
-                  //     if (value.trim().length < 10) {
-                  //       return 'Phone number must be at least 10 digits';
-                  //     }
-                  //     return null;
-                  //   },
-                  // ),
+                  PhoneWidget(
+                    controller: _phoneController,
+                    initialCountryCode: _selectedCountry?.countryCode,
+                    onCountryChanged: (country) {
+                      setState(() {
+                        _selectedCountry = country;
+                      });
+                    },
+                  ),
                   SizedBox(height: 20.h),
                   TextFormField(
                     controller: _emailController,

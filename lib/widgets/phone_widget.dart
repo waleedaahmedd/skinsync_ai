@@ -8,6 +8,8 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 class PhoneWidget extends StatefulWidget {
   final TextEditingController controller;
   final ValueSetter<String>? onChanged;
+  final void Function(Country country)? onCountryChanged;
+  final String? initialCountryCode;
   final bool showLabel;
   final bool filled;
   final bool removeValidation;
@@ -16,6 +18,8 @@ class PhoneWidget extends StatefulWidget {
     super.key,
     required this.controller,
     this.onChanged,
+    this.onCountryChanged,
+    this.initialCountryCode,
     this.showLabel = true,
     this.filled = false,
     this.removeValidation = false,
@@ -27,7 +31,24 @@ class PhoneWidget extends StatefulWidget {
 
 class _PhoneWidgetState extends State<PhoneWidget> {
   final FocusNode _focusNode = FocusNode();
-  Country _selectedCountry = Country.parse('US');
+  late Country _selectedCountry;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedCountry = Country.parse(widget.initialCountryCode ?? 'US');
+  }
+
+  @override
+  void didUpdateWidget(covariant PhoneWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialCountryCode != null &&
+        widget.initialCountryCode != oldWidget.initialCountryCode) {
+      setState(() {
+        _selectedCountry = Country.parse(widget.initialCountryCode!);
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -52,7 +73,6 @@ class _PhoneWidgetState extends State<PhoneWidget> {
             return null; // Valid input
           },
           controller: widget.controller,
-          // focusNode: _focusNode,
           onChanged: widget.onChanged,
           autofocus: false,
           inputFormatters: [
@@ -66,11 +86,6 @@ class _PhoneWidgetState extends State<PhoneWidget> {
           keyboardType: TextInputType.phone,
           decoration: InputDecoration(
             hintText: '012 345 6798',
-            // hintStyle:
-            //     Theme.of(context).inputDecorationTheme.hintStyle!.copyWith(
-            //           // color: Colors.amber
-            //           fontFamily: "General Sans",
-            //         ),
             hintStyle: CustomFonts.grey18w400,
             prefixIcon: _buildPhoneNumberPicker(context: context),
           ),
@@ -86,7 +101,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
         children: [
           GestureDetector(
             onTap: () {
-             /* // Open country picker dialog
+              // Open country picker dialog
               showCountryPicker(
                 // countryCodeWidth: 45.w,
                 moveAlongWithKeyboard: true,
@@ -109,8 +124,11 @@ class _PhoneWidgetState extends State<PhoneWidget> {
                   setState(() {
                     _selectedCountry = country;
                   });
+                  if (widget.onCountryChanged != null) {
+                    widget.onCountryChanged!(country);
+                  }
                 },
-              );*/
+              );
             },
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -121,11 +139,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
                     child: Text(
                       _selectedCountry.flagEmoji,
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        // fontFamily: languageController
-                        // .fontFamily.value,
-                        fontSize: 14.sp,
-                      ), // Adjust flag size
+                      style: TextStyle(fontSize: 14.sp),
                     ),
                   ),
                 ),

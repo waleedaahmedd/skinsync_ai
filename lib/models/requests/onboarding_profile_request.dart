@@ -1,4 +1,3 @@
-
 class OnBoardingProfileRequest {
   final String name;
   final String phoneNumber;
@@ -6,7 +5,8 @@ class OnBoardingProfileRequest {
   final String location;
   final String bio;
   final String? profileImageUrl;
-
+  final String? cc;
+  final String? country;
 
   OnBoardingProfileRequest({
     required this.name,
@@ -15,7 +15,8 @@ class OnBoardingProfileRequest {
     required this.location,
     required this.bio,
     this.profileImageUrl,
-
+    this.cc,
+    this.country,
   });
 
   Map<String, dynamic> toJson() {
@@ -26,10 +27,8 @@ class OnBoardingProfileRequest {
       'location': location,
       'bio': bio,
       'profile_image_url': profileImageUrl,
-      
+      'cc': cc,
+      'country': country,
     };
   }
-
-
-  }
-
+}

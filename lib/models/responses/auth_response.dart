@@ -49,8 +49,7 @@ class Data {
       json['treatment'].forEach((v) {
         treatment!.add(new TreatmentsModel.fromJson(v));
       });
-    }
-    else {
+    } else {
       treatment = [];
     }
   }
@@ -103,6 +102,8 @@ class UserDetails {
   String? createdAt;
   String? updatedAt;
   String? profileImage;
+  String? cc;
+  String? country;
 
   UserDetails({
     this.userProfileId,
@@ -115,6 +116,8 @@ class UserDetails {
     this.profileImage,
     this.createdAt,
     this.updatedAt,
+    this.cc,
+    this.country,
   });
 
   UserDetails.fromJson(Map<String, dynamic> json) {
@@ -128,6 +131,8 @@ class UserDetails {
     bio = json['bio'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    cc = json['cc'];
+    country = json['country'];
   }
 
   Map<String, dynamic> toJson() {
@@ -142,6 +147,8 @@ class UserDetails {
       'profile_image_url': profileImage,
       'created_at': createdAt,
       'updated_at': updatedAt,
+      'cc': cc,
+      'country': country,
     };
   }
 
