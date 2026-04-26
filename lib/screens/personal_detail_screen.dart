@@ -34,7 +34,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final user = ref.watch(authViewModel).authResponse?.data;
+      final user = ref.read(authViewModel).authResponse?.data?.userDetails;
       if (user != null) {
         _nameController.text = user.name ?? "";
         _phoneController.text = user.phoneNumber ?? "";

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:glow_container/glow_container.dart';
 import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
@@ -898,6 +899,9 @@ class _ArFaceModelPreviewScreenState
   Widget _bottomButtons(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
+        final isAiImageGenerated = ref.watch(
+          treatmentViewModel.select((s) => s.isAiImageGenerated),
+        );
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.paddingOf(context).bottom + 20.0.h,
@@ -905,21 +909,72 @@ class _ArFaceModelPreviewScreenState
           child: Row(
             children: [
               Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    ref.read(treatmentViewModel.notifier).callPredictAPI();
-                  },
-                  style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 19.h),
-                  ),
-                  child: Text(
-                    'Generate Ai Image',
-                    style: CustomFonts.black22w600,
-                  ),
-                ),
+                child: isAiImageGenerated
+                    ? OutlinedButton(
+                        onPressed: () {
+                          ref
+                              .read(treatmentViewModel.notifier)
+                              .callPredictAPI();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.r),
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 19.h),
+                        ),
+                        child: Text(
+                          'Generate Ai Image',
+                          style: CustomFonts.black22w600,
+                        ),
+                      )
+                    : GlowContainer(
+                        gradientColors: [
+                          CustomColors.pinkColor,
+                          CustomColors.purpleColor,
+                        ],
+                        containerOptions: ContainerOptions(
+                          borderRadius: 30.r,
+                          width: 2.r,
+                        ),
+                        child: OutlinedButton(
+                          onPressed: () {
+                            ref
+                                .read(treatmentViewModel.notifier)
+                                .callPredictAPI();
+                          },
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide.none,
+                            padding: EdgeInsets.symmetric(vertical: 19.h),
+                          ),
+                          child: Text(
+                            'Generate Ai Image',
+                            style: CustomFonts.black22w600.copyWith(
+                              color: CustomColors.pinkColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                // : AnimatedLoadingBorder(
+                //     cornerRadius: 30.r,
+                //     isTrailingTransparent: true,
+                //     borderWidth: 2,
+                //     borderColor: CustomColors.pinkColor,
+                //     child: OutlinedButton(
+                //       onPressed: () {
+                //         ref
+                //             .read(treatmentViewModel.notifier)
+                //             .callPredictAPI();
+                //       },
+                //       style: OutlinedButton.styleFrom(
+                //         side: BorderSide.none,
+                //         padding: EdgeInsets.symmetric(vertical: 19.h),
+                //       ),
+                //       child: Text(
+                //         'Generate Ai Image',
+                //         style: CustomFonts.black22w600,
+                //       ),
+                //     ),
+                //   ),
               ),
               const SizedBox(width: 16),
               Expanded(

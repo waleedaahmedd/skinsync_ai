@@ -46,6 +46,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       selectedSubAreasList: state.selectedSubAreasList
           .where((element) => element.id != id)
           .toList(),
+      isAiImageGenerated: false,
     );
   }
 
@@ -120,6 +121,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     state = state.copyWith(
       selectedTreatmentSubArea: treatmentSubArea,
       selectedSubAreasList: updatedList,
+      isAiImageGenerated: false,
     );
     //if (isCallPredictAPI) callPredictAPI();
   }
@@ -140,6 +142,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       isBefore: true,
       capturedImage: state.capturedImage,
       aiImage: null,
+      isAiImageGenerated: false,
     );
   }
 
@@ -202,7 +205,11 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       setAiImage(ximage);
       if (wasBefore) toggleIsBefore();
 
-      state = state.copyWith(loading: false, errorMessage: null);
+      state = state.copyWith(
+        loading: false,
+        errorMessage: null,
+        isAiImageGenerated: true,
+      );
       EasyLoading.dismiss();
       EasyLoading.showSuccess('Image processed successfully!');
     } catch (e) {
@@ -323,6 +330,7 @@ class TreatmentsState extends BaseStateModel {
   final bool isBefore;
   final XFile? capturedImage;
   final XFile? aiImage;
+  final bool isAiImageGenerated;
 
   const TreatmentsState({
     super.loading = false,
@@ -339,6 +347,7 @@ class TreatmentsState extends BaseStateModel {
     this.isBefore = false,
     this.capturedImage,
     this.aiImage,
+    this.isAiImageGenerated = false,
   });
 
   @override
@@ -362,6 +371,7 @@ class TreatmentsState extends BaseStateModel {
     bool clearSubSectionId = false,
     bool clearSubSectionIds = false,
     bool clearAiImage = false,
+    bool? isAiImageGenerated,
   }) {
     return TreatmentsState(
       loading: loading ?? this.loading,
@@ -384,6 +394,7 @@ class TreatmentsState extends BaseStateModel {
       isBefore: isBefore ?? this.isBefore,
       capturedImage: capturedImage ?? this.capturedImage,
       aiImage: clearAiImage ? null : (aiImage ?? this.aiImage),
+      isAiImageGenerated: isAiImageGenerated ?? this.isAiImageGenerated,
     );
   }
 }
