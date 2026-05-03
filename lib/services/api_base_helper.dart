@@ -6,7 +6,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:skinsync_ai/exceptions/app_exception.dart';
-import 'package:skinsync_ai/main.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 
 import '../app_init.dart';
@@ -28,7 +27,7 @@ class ApiBaseHelper {
     authToken = await _secureStorage.getToken();
 
     try {
-      final baseUrl = isDeploymentMode ? BaseUrls.api.url : BaseUrls.apiQa.url;
+      final baseUrl = true ? BaseUrls.api.url : BaseUrls.apiQa.url;
       final url = '$baseUrl${endPoint.path}${params ?? ''}';
       log('URL: $url');
       log('BODY: $requestBody');

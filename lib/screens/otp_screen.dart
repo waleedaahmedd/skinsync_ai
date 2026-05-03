@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:pinput/pinput.dart';
 import 'package:skinsync_ai/screens/face_scan_screen.dart';
 import 'package:skinsync_ai/screens/login_screen.dart';
