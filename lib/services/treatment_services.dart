@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:skinsync_ai/models/requests/save_history_request.dart';
+import 'package:skinsync_ai/models/responses/base_response_model.dart';
 import 'package:skinsync_ai/models/responses/treatment_area_response.dart';
 import 'package:skinsync_ai/models/responses/treatment_sub_area_response.dart';
 import 'package:skinsync_ai/repositories/treatment_repository.dart';
@@ -32,9 +34,11 @@ class TreatmentService implements TreatmentRepository {
       throw AppException(AuthResponse.fromJson(parsed).message as String);
     }
   }
-  
+
   @override
-  Future<TreatmentAreaResponse> getSelectSectionApi({required int sectionId}) async {
+  Future<TreatmentAreaResponse> getSelectSectionApi({
+    required int sectionId,
+  }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.treatments,
       requestType: 'GET',
@@ -43,7 +47,8 @@ class TreatmentService implements TreatmentRepository {
     // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
-      TreatmentAreaResponse selectSelectionResponse = TreatmentAreaResponse.fromJson(parsed);
+      TreatmentAreaResponse selectSelectionResponse =
+          TreatmentAreaResponse.fromJson(parsed);
       return selectSelectionResponse;
     } else {
       // Handle HTTP error status codes
@@ -51,9 +56,12 @@ class TreatmentService implements TreatmentRepository {
       throw AppException(AuthResponse.fromJson(parsed).message as String);
     }
   }
-  
+
   @override
-  Future<TreatmentSubAreaResponse> getSubSectionApi({required int sectionId,required int subSectionId}) async {
+  Future<TreatmentSubAreaResponse> getSubSectionApi({
+    required int sectionId,
+    required int subSectionId,
+  }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.treatments,
       requestType: 'GET',
@@ -62,8 +70,27 @@ class TreatmentService implements TreatmentRepository {
     // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
-      TreatmentSubAreaResponse subSelectionResponse = TreatmentSubAreaResponse.fromJson(parsed);
+      TreatmentSubAreaResponse subSelectionResponse =
+          TreatmentSubAreaResponse.fromJson(parsed);
       return subSelectionResponse;
+    } else {
+      // Handle HTTP error status codes
+      final parsed = json.decode(response.body);
+      throw AppException(AuthResponse.fromJson(parsed).message as String);
+    }
+  }
+
+  @override
+  Future<void> saveAiHistory(SaveHistoryRequest request) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.saveHistory,
+      requestType: 'POST',
+      requestBody: request.toJson(),
+    );
+    // Check HTTP status code
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      final _ = BaseResponseModel.fromJson(parsed);
     } else {
       // Handle HTTP error status codes
       final parsed = json.decode(response.body);

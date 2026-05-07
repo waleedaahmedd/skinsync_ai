@@ -819,9 +819,6 @@ class _ArFaceModelPreviewScreenState
               right: 10.w,
               child: Consumer(
                 builder: (context, ref, _) {
-                  final image = ref.watch(
-                    treatmentViewModel.select((s) => s.aiImage),
-                  );
                   return Row(
                     spacing: 10.w,
                     children: [

@@ -27,7 +27,7 @@ class ApiBaseHelper {
     authToken = await _secureStorage.getToken();
 
     try {
-      final baseUrl = true ? BaseUrls.api.url : BaseUrls.apiQa.url;
+      final baseUrl = false ? BaseUrls.api.url : BaseUrls.apiQa.url;
       final url = '$baseUrl${endPoint.path}${params ?? ''}';
       log('URL: $url');
       log('BODY: $requestBody');

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
+import 'package:skinsync_ai/models/requests/save_history_request.dart';
 import 'package:skinsync_ai/models/responses/treatment_area_response.dart';
 import 'package:skinsync_ai/models/responses/treatment_sub_area_response.dart';
 import 'package:skinsync_ai/services/api_base_helper.dart';
@@ -13,8 +13,10 @@ import 'package:skinsync_ai/services/api_base_helper.dart';
 import '../models/base_state_model.dart';
 import '../models/responses/treatment_response_model.dart';
 import '../repositories/treatment_repository.dart';
+import '../services/media_service.dart';
 import '../services/treatment_services.dart';
 import '../utills/image_utills.dart';
+import 'auth_view_model.dart';
 import 'base_view_model.dart';
 
 final treatmentViewModel = NotifierProvider.autoDispose(
@@ -295,9 +297,49 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
   Future<void> saveAiImage() async {
     return await runSafely(() async {
-      final image = state.aiImage ?? state.capturedImage!;
-      final bytes = await image.readAsBytes();
-      await ImageGallerySaverPlus.saveImage(bytes, name: image.name);
+      EasyLoading.show(status: 'Please wait...');
+      final treatmentId = state.selectedTreatment?.id;
+      if (treatmentId == null) {
+        EasyLoading.showError('No treatment selected');
+        return;
+      }
+      final beforeImage = state.capturedImage?.path;
+      final afterImage = state.aiImage?.path;
+      final subSections = state.selectedSubAreasList.map((subArea) {
+        return SubSectionRequest(
+          sectionId: subArea.id!,
+          syringesQuantity: subArea.currentSyringe,
+        );
+      }).toList();
+      if (beforeImage == null || afterImage == null) {
+        EasyLoading.showError('Both images need to be selected!');
+        return;
+      }
+      final mediaService = MediaService();
+      final userId = ref.read(authViewModel).authResponse!.data!.user!.id!;
+      final beforeUrl = await mediaService.uploadImage(
+        '$userId/appointments/before/',
+        XFile(beforeImage),
+      );
+      if (beforeUrl == null) {
+        EasyLoading.showError('Failed to upload before image');
+        return;
+      }
+      final afterUrl = await mediaService.uploadImage(
+        '$userId/appointments/after/',
+        XFile(afterImage),
+      );
+      if (afterUrl == null) {
+        EasyLoading.showError('Failed to upload after image');
+        return;
+      }
+      final request = SaveHistoryRequest(
+        treatmentId: treatmentId,
+        beforeImage: beforeUrl,
+        afterImage: afterUrl,
+        subSections: subSections,
+      );
+      await _repo.saveAiHistory(request);
       EasyLoading.showSuccess('Image saved!');
     });
   }
