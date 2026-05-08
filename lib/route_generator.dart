@@ -34,6 +34,7 @@ import 'screens/bottom_nav_screens/my_profile_screen.dart';
 import 'screens/bottom_nav_screens/treatments_screen.dart';
 import 'screens/explore_clinics_screen.dart';
 import 'screens/notification_screen.dart';
+import 'screens/simulation_history_screen.dart';
 import 'utills/colored_print.dart';
 
 // const String getStartedScreen = '/get_started_screen';
@@ -167,7 +168,6 @@ class RouteGenerator {
       //     builder: (_) => SelectSubSectionsScreen(),
       //   );
       case ClinicsDetailScreen.routeName:
-        final clinic = settings.arguments as Clinic;
         return MaterialPageRoute(
           settings: RouteSettings(name: ClinicsDetailScreen.routeName),
           builder: (_) => ClinicsDetailScreen(clinic: args as Clinic?),
@@ -251,6 +251,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: BiometricScreen.routeName),
           builder: (_) => BiometricScreen(),
+        );
+      case SimulationHistoryScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: SimulationHistoryScreen.routeName),
+          builder: (_) => SimulationHistoryScreen(),
         );
       default:
         return _errorRoute();

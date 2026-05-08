@@ -9,6 +9,7 @@ import 'package:skinsync_ai/exceptions/app_exception.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 
 import '../app_init.dart';
+import '../main.dart';
 import '../models/responses/refresh_token_response.dart';
 import '../utills/enums.dart';
 import '../utills/secure_storage_service.dart';
@@ -27,7 +28,7 @@ class ApiBaseHelper {
     authToken = await _secureStorage.getToken();
 
     try {
-      final baseUrl = false ? BaseUrls.api.url : BaseUrls.apiQa.url;
+      final baseUrl = isDeploymentMode ? BaseUrls.api.url : BaseUrls.apiQa.url;
       final url = '$baseUrl${endPoint.path}${params ?? ''}';
       log('URL: $url');
       log('BODY: $requestBody');

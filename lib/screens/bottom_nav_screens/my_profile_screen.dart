@@ -18,6 +18,7 @@ import 'package:skinsync_ai/widgets/logout_dialog_box.dart';
 
 import '../../main.dart';
 import '../../widgets/dialogs/delete_account_dialog.dart';
+import '../simulation_history_screen.dart';
 
 class MyProfileScreen extends StatelessWidget {
   const MyProfileScreen({super.key});
@@ -134,123 +135,136 @@ class MyProfileScreen extends StatelessWidget {
           SizedBox(height: 26.h),
           Divider(color: CustomColors.greyColor),
           SizedBox(height: 31.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 30.0.w),
-            child: Column(
-              children: [
-                profileOption(
-                  callBack: () {
-                    Navigator.pushNamed(
-                      context,
-                      PersonalDetailScreen.routeName,
-                    );
-                  },
-                  icon: SvgAssets.profileIcon,
-                  title: "Personal Details",
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.0.w),
+              child: ListView(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.paddingOf(context).bottom,
                 ),
-                SizedBox(height: 36.h),
-                if (!isDeploymentMode) ...{
+                children: [
                   profileOption(
                     callBack: () {
                       Navigator.pushNamed(
                         context,
-                        SavedTreatmentScreen.routeName,
+                        PersonalDetailScreen.routeName,
                       );
                     },
-                    icon: SvgAssets.saveTreatment,
-                    title: "Saved Treatments & Clinics",
+                    icon: SvgAssets.profileIcon,
+                    title: "Personal Details",
                   ),
                   SizedBox(height: 36.h),
-                  profileOption(
-                    callBack: () {},
-                    icon: SvgAssets.loyalty,
-                    title: "Loyalty & Rewards",
-                  ),
-                  SizedBox(height: 36.h),
-                  profileOption(
-                    callBack: () {
-                      Navigator.pushNamed(
-                        context,
-                        AllergyAndMedicalHistory.routeName,
-                      );
-                    },
-                    icon: SvgAssets.medical,
-                    title: "Medical History",
-                  ),
-                  SizedBox(height: 36.h),
-                  profileOption(
-                    callBack: () {},
-                    icon: SvgAssets.receipts,
-                    title: "Treatment Receipts",
-                  ),
-                } else ...{
-                  profileOption(
-                    callBack: () {
-                      WebviewPage.open(
-                        context: context,
-                        url: 'https://skinsyncai.com/terms-of-service/',
-                        title: 'Terms Of Service',
-                      );
-                    },
-                    icon: Iconsax.document,
-                    title: "Terms Of Service",
-                  ),
-                  SizedBox(height: 36.h),
-                  profileOption(
-                    callBack: () {
-                      WebviewPage.open(
-                        context: context,
-                        url: 'https://skinsyncai.com/privacy-policy/',
-                        title: 'Privacy Policy',
-                      );
-                    },
-                    icon: Iconsax.security,
-                    title: "Privacy Policy",
-                  ),
-                },
-                SizedBox(height: 36.h),
-                Consumer(
-                  builder: (context, ref, _) {
-                    return profileOption(
+                  if (!isDeploymentMode) ...{
+                    profileOption(
                       callBack: () {
-                        showDeleteAccountDialog(
-                          screenContext: context,
-                          onSuccess: () async {
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              GetStartedScreen.routeName,
-                              (route) => false,
-                            );
-                          },
-                        );
-                      },
-                      icon: Iconsax.user_remove,
-                      title: "Delete Account",
-                    );
-                  },
-                ),
-                SizedBox(height: 36.h),
-                profileOption(
-                  callBack: () {
-                    showLogoutDialog(
-                      screenContext: context,
-                      desc: "Logout successful",
-                      onSuccess: () async {
-                        SecureStorage secureStorage = SecureStorage();
-                        await secureStorage.clearAllSecureStrings();
-
-                        Navigator.pushNamedAndRemoveUntil(
+                        Navigator.pushNamed(
                           context,
-                          GetStartedScreen.routeName,
-                          (route) => false,
+                          SavedTreatmentScreen.routeName,
                         );
                       },
-                    );
+                      icon: SvgAssets.saveTreatment,
+                      title: "Saved Treatments & Clinics",
+                    ),
+                    SizedBox(height: 36.h),
+                    profileOption(
+                      callBack: () {},
+                      icon: SvgAssets.loyalty,
+                      title: "Loyalty & Rewards",
+                    ),
+                    SizedBox(height: 36.h),
+                    profileOption(
+                      callBack: () {
+                        Navigator.pushNamed(
+                          context,
+                          AllergyAndMedicalHistory.routeName,
+                        );
+                      },
+                      icon: SvgAssets.medical,
+                      title: "Medical History",
+                    ),
+                    SizedBox(height: 36.h),
+                    profileOption(
+                      callBack: () {
+                        Navigator.pushNamed(
+                          context,
+                          SimulationHistoryScreen.routeName,
+                        );
+                      },
+                      icon: SvgAssets.appointments,
+                      title: "Simulation History",
+                    ),
+                    SizedBox(height: 36.h),
+                    profileOption(
+                      callBack: () {},
+                      icon: SvgAssets.receipts,
+                      title: "Treatment Receipts",
+                    ),
+                  } else ...{
+                    profileOption(
+                      callBack: () {
+                        WebviewPage.open(
+                          context: context,
+                          url: 'https://skinsyncai.com/terms-of-service/',
+                          title: 'Terms Of Service',
+                        );
+                      },
+                      icon: Iconsax.document,
+                      title: "Terms Of Service",
+                    ),
+                    SizedBox(height: 36.h),
+                    profileOption(
+                      callBack: () {
+                        WebviewPage.open(
+                          context: context,
+                          url: 'https://skinsyncai.com/privacy-policy/',
+                          title: 'Privacy Policy',
+                        );
+                      },
+                      icon: Iconsax.security,
+                      title: "Privacy Policy",
+                    ),
                   },
-                  icon: SvgAssets.logOut,
-                  title: "Log Out",
-                ),
-              ],
+                  SizedBox(height: 36.h),
+                  profileOption(
+                    callBack: () {
+                      showDeleteAccountDialog(
+                        screenContext: context,
+                        onSuccess: () async {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            GetStartedScreen.routeName,
+                            (route) => false,
+                          );
+                        },
+                      );
+                    },
+                    icon: Iconsax.user_remove,
+                    title: "Delete Account",
+                  ),
+                  SizedBox(height: 36.h),
+                  profileOption(
+                    callBack: () {
+                      showLogoutDialog(
+                        screenContext: context,
+                        desc: "Logout successful",
+                        onSuccess: () async {
+                          SecureStorage secureStorage = SecureStorage();
+                          await secureStorage.clearAllSecureStrings();
+
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            GetStartedScreen.routeName,
+                            (route) => false,
+                          );
+                        },
+                      );
+                    },
+                    icon: SvgAssets.logOut,
+                    title: "Log Out",
+                  ),
+                  SizedBox(height: 100.h),
+                ],
+              ),
             ),
           ),
         ],

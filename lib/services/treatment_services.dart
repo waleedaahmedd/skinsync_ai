@@ -83,7 +83,7 @@ class TreatmentService implements TreatmentRepository {
   @override
   Future<void> saveAiHistory(SaveHistoryRequest request) async {
     final response = await _apiClient.httpRequest(
-      endPoint: EndPoints.saveHistory,
+      endPoint: EndPoints.simulationHistory,
       requestType: 'POST',
       requestBody: request.toJson(),
     );

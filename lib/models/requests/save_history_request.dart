@@ -16,7 +16,7 @@ class SaveHistoryRequest {
       'treatment_id': treatmentId,
       'before_image': beforeImage,
       'after_image': afterImage,
-      'sub_sections': subSections.map((e) => e.toJson()).toList(),
+      'subsections': subSections.map((e) => e.toJson()).toList(),
     };
   }
 }
