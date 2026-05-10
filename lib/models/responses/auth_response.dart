@@ -1,111 +1,114 @@
-import 'package:skinsync_ai/models/responses/base_response_model.dart';
 import 'package:skinsync_ai/models/responses/treatment_response_model.dart';
 
+import 'base_response_model.dart';
+
 class AuthResponse extends BaseResponseModel {
-  Data? data;
+  final Data? data;
 
   AuthResponse({super.isSuccess, super.message, this.data});
 
-  AuthResponse.fromJson(Map<String, dynamic> json) {
-    isSuccess = json['is_success'];
-    message = json['message'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
-  }
+  factory AuthResponse.fromJson(Map<String, dynamic> json) => AuthResponse(
+    isSuccess: json["is_success"],
+    message: json["message"],
+    data: json["data"] == null ? null : Data.fromJson(json["data"]),
+  );
 }
 
 class Data {
-  String? accessToken;
-  String? refreshToken;
-  int? accessExpiresAt;
-  int? refreshExpiresAt;
-  bool? isFirstLogin;
-  User? user;
-  UserDetails? userDetails;
-  List<TreatmentsModel>? treatment;
+  final String? accessToken;
+  final String? refreshToken;
+  final int? isActiveExpiry;
+  final int? refreshTokenExpiry;
+  final bool? isFirstLogin;
+  final bool? isActive;
+  final User? user;
+  final UserDetails? userDetails;
+  final List<TreatmentsModel>? treatment;
 
-  Data({
+  const Data({
     this.accessToken,
     this.refreshToken,
-    this.accessExpiresAt,
-    this.refreshExpiresAt,
+    this.isActiveExpiry,
+    this.refreshTokenExpiry,
     this.isFirstLogin,
+    this.isActive,
     this.user,
     this.userDetails,
     this.treatment,
   });
 
-  Data.fromJson(Map<String, dynamic> json) {
-    accessToken = json['access_token'];
-    refreshToken = json['refresh_token'];
-    accessExpiresAt = json['access_expires_at'];
-    refreshExpiresAt = json['refresh_expires_at'];
-    isFirstLogin = json['is_first_login'];
-    user = json['user'] != null ? new User.fromJson(json['user']) : null;
-    userDetails = json['userDetails'] != null
-        ? new UserDetails.fromJson(json['userDetails'])
-        : null;
-    if (json['treatment'] != null) {
-      treatment = <TreatmentsModel>[];
-      json['treatment'].forEach((v) {
-        treatment!.add(new TreatmentsModel.fromJson(v));
-      });
-    } else {
-      treatment = [];
-    }
-  }
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+    accessToken: json["access_token"],
+    refreshToken: json["refresh_token"],
+    isActiveExpiry: json["is_active_expiry"],
+    refreshTokenExpiry: json["refresh_token_expiry"],
+    isFirstLogin: json["is_first_login"],
+    isActive: json["is_active"],
+    user: json["user"] == null ? null : User.fromJson(json["user"]),
+    userDetails: json["userDetails"] == null
+        ? null
+        : UserDetails.fromJson(json["userDetails"]),
+    treatment: json["treatment"] == null
+        ? []
+        : List<TreatmentsModel>.from(
+            json["treatment"]!.map((x) => TreatmentsModel.fromJson(x)),
+          ),
+  );
 }
 
 class User {
-  int? id;
-  String? primaryEmail;
-  String? primaryPhone;
-  String? status;
-  String? createdAt;
-  String? updatedAt;
-  String? authProviders;
-  String? authTokens;
-  String? roles;
+  final int? id;
+  final String? primaryEmail;
+  final String? primaryPhone;
+  final String? status;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final List<String> authProviders;
+  final List<String> authTokens;
+  final List<String> roles;
 
-  User({
+  const User({
     this.id,
     this.primaryEmail,
     this.primaryPhone,
     this.status,
     this.createdAt,
     this.updatedAt,
-    this.authProviders,
-    this.authTokens,
-    this.roles,
+    this.authProviders = const [],
+    this.authTokens = const [],
+    this.roles = const [],
   });
 
-  User.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    primaryEmail = json['primary_email'];
-    primaryPhone = json['primary_phone'];
-    status = json['status'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    authProviders = json['AuthProviders'];
-    authTokens = json['AuthTokens'];
-    roles = json['Roles'];
-  }
+  factory User.fromJson(Map<String, dynamic> json) => User(
+    id: json["id"],
+    primaryEmail: json["primary_email"],
+    primaryPhone: json["primary_phone"],
+    status: json["status"],
+    createdAt: json["created_at"] == null
+        ? null
+        : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null
+        ? null
+        : DateTime.parse(json["updated_at"]),
+    authProviders: json["AuthProviders"] ?? <String>[],
+    authTokens: json["AuthTokens"] ?? <String>[],
+    roles: json["Roles"] ?? <String>[],
+  );
 }
 
 class UserDetails {
-  int? userProfileId;
-  int? userId;
-  String? name;
-  String? phoneNumber;
-  String? emailAddress;
-  String? location;
-  String? bio;
-  String? createdAt;
-  String? updatedAt;
-  String? profileImage;
-  String? cc;
-  String? country;
+  final int? userProfileId;
+  final int? userId;
+  final String? name;
+  final String? phoneNumber;
+  final String? emailAddress;
+  final String? location;
+  final String? bio;
+  final String? profileImageUrl;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
-  UserDetails({
+  const UserDetails({
     this.userProfileId,
     this.userId,
     this.name,
@@ -113,46 +116,25 @@ class UserDetails {
     this.emailAddress,
     this.location,
     this.bio,
-    this.profileImage,
+    this.profileImageUrl,
     this.createdAt,
     this.updatedAt,
-    this.cc,
-    this.country,
   });
 
-  UserDetails.fromJson(Map<String, dynamic> json) {
-    userProfileId = json['user_profile_id'];
-    userId = json['user_id'];
-    name = json['name'];
-    profileImage = json["profile_image_url"];
-    phoneNumber = json['phone_number'];
-    emailAddress = json['email_address'];
-    location = json['location'];
-    bio = json['bio'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    cc = json['cc'];
-    country = json['country'];
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'user_profile_id': userProfileId,
-      'user_id': userId,
-      'name': name,
-      'phone_number': phoneNumber,
-      'email_address': emailAddress,
-      'location': location,
-      'bio': bio,
-      'profile_image_url': profileImage,
-      'created_at': createdAt,
-      'updated_at': updatedAt,
-      'cc': cc,
-      'country': country,
-    };
-  }
-
-  String? get firstName {
-    return name?.split(" ").first;
-  }
+  factory UserDetails.fromJson(Map<String, dynamic> json) => UserDetails(
+    userProfileId: json["user_profile_id"],
+    userId: json["user_id"],
+    name: json["name"],
+    phoneNumber: json["phone_number"],
+    emailAddress: json["email_address"],
+    location: json["location"],
+    bio: json["bio"],
+    profileImageUrl: json["profile_image_url"],
+    createdAt: json["created_at"] == null
+        ? null
+        : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null
+        ? null
+        : DateTime.parse(json["updated_at"]),
+  );
 }

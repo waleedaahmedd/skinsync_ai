@@ -47,6 +47,7 @@ class ApiBaseHelper {
             headers: getHeaders(),
             body: jsonEncode(requestBody),
           );
+          log('RESPONSE: ${responseJson.body}');
           return responseJson;
         case 'PUT':
           return await http.put(

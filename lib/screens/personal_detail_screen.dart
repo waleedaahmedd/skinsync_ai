@@ -41,15 +41,17 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
         _emailController.text = user.emailAddress ?? "";
         _locationController.text = user.location ?? "";
         _bioController.text = user.bio ?? "";
-        if (user.cc != null) {
-          try {
-            setState(() {
-              _selectedCountry = Country.parse(user.cc!);
-            });
-          } catch (e) {
-            _selectedCountry = Country.parse('US');
-          }
-        }
+        // TODO: CC Not provided in AuthResponse, uncomment when response is
+        // TODO: fixed
+        // if (user.cc != null) {
+        //   try {
+        //     setState(() {
+        //       _selectedCountry = Country.parse(user.cc!);
+        //     });
+        //   } catch (e) {
+        //     _selectedCountry = Country.parse('US');
+        //   }
+        // }
       }
     });
   }
@@ -151,7 +153,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                                         .authResponse
                                         ?.data
                                         ?.userDetails
-                                        ?.profileImage ??
+                                        ?.profileImageUrl ??
                                     "",
                                 fit: BoxFit.cover,
                                 height: 91.w,

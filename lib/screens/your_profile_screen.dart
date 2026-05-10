@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
@@ -50,16 +49,18 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
         authState.authResponse?.data?.user?.primaryEmail ?? '';
 
     // Initialize country if user data exists
-    final user = authState.authResponse?.data?.userDetails;
-    if (user?.cc != null) {
-      try {
-        _selectedCountry = Country.parse(user!.cc!);
-      } catch (e) {
-        _selectedCountry = Country.parse('US');
-      }
-    } else {
-      _selectedCountry = Country.parse('US');
-    }
+    // TODO: CC Not provided in AuthResponse, uncomment when response is
+    // TODO: fixed
+    // final user = authState.authResponse?.data?.userDetails;
+    // if (user?.cc != null) {
+    //   try {
+    //     _selectedCountry = Country.parse(user!.cc!);
+    //   } catch (e) {
+    //     _selectedCountry = Country.parse('US');
+    //   }
+    // } else {
+    //   _selectedCountry = Country.parse('US');
+    // }
   }
 
   void _showImageSourceDialog() {

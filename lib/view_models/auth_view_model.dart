@@ -138,7 +138,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   Future<bool?> callBiometricUnregisterApi({required bool showLoader}) async {
     return await runSafely(() async {
       state = state.copyWith(loading: true);
-      if (showLoader){
+      if (showLoader) {
         EasyLoading.show(status: 'Please wait...');
       }
       final BaseResponseModel response = await _authRepository
@@ -222,8 +222,8 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         country: country,
         profileImageUrl:
             imageUrl ??
-            state.authResponse?.data?.userDetails?.profileImage ??
-            "",
+            state.authResponse?.data?.userDetails?.profileImageUrl ??
+            '',
       );
 
       final BaseResponseModel response = await _authRepository

@@ -29,8 +29,7 @@ class AppBarWithActionIcon extends StatelessWidget
                   child: Consumer(
                     builder: (context, ref, _) {
                       final state = ref.watch(authViewModel);
-                      final name =
-                          state.authResponse?.data?.userDetails?.firstName;
+                      final name = state.authResponse?.data?.userDetails?.name;
                       // final address = state.addressData?.address;
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

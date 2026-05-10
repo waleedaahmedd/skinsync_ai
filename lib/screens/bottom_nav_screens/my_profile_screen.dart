@@ -79,7 +79,7 @@ class MyProfileScreen extends StatelessWidget {
                           .authResponse
                           ?.data
                           ?.userDetails
-                          ?.profileImage;
+                          ?.profileImageUrl;
                       return ClipOval(
                         child: Center(
                           child: Image.network(

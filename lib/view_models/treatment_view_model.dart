@@ -19,7 +19,7 @@ import '../utills/image_utills.dart';
 import 'auth_view_model.dart';
 import 'base_view_model.dart';
 
-final treatmentViewModel = NotifierProvider.autoDispose(
+final treatmentViewModel = NotifierProvider(
   () => TreatmentViewModel._(
     treatmentRepository: TreatmentService(apiClient: ApiBaseHelper()),
   ),

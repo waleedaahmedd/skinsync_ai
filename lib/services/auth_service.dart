@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:http/http.dart' as http;
 import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
@@ -50,12 +49,12 @@ class AuthService implements AuthRepository {
           );
           await _secureStorage.saveAccessTokenExpiry(
             DateTime.fromMillisecondsSinceEpoch(
-              authResponse.data!.accessExpiresAt! * 1000,
+              authResponse.data!.isActiveExpiry! * 1000,
             ),
           );
           await _secureStorage.saveRefreshTokenExpiry(
             DateTime.fromMillisecondsSinceEpoch(
-              authResponse.data!.refreshExpiresAt! * 1000,
+              authResponse.data!.refreshTokenExpiry! * 1000,
             ),
           );
         }
@@ -122,12 +121,12 @@ class AuthService implements AuthRepository {
           );
           await _secureStorage.saveAccessTokenExpiry(
             DateTime.fromMillisecondsSinceEpoch(
-              authResponse.data!.accessExpiresAt! * 1000,
+              authResponse.data!.isActiveExpiry! * 1000,
             ),
           );
           await _secureStorage.saveRefreshTokenExpiry(
             DateTime.fromMillisecondsSinceEpoch(
-              authResponse.data!.refreshExpiresAt! * 1000,
+              authResponse.data!.refreshTokenExpiry! * 1000,
             ),
           );
         }
@@ -189,12 +188,12 @@ class AuthService implements AuthRepository {
           );
           await _secureStorage.saveAccessTokenExpiry(
             DateTime.fromMillisecondsSinceEpoch(
-              authResponse.data!.accessExpiresAt! * 1000,
+              authResponse.data!.isActiveExpiry! * 1000,
             ),
           );
           await _secureStorage.saveRefreshTokenExpiry(
             DateTime.fromMillisecondsSinceEpoch(
-              authResponse.data!.refreshExpiresAt! * 1000,
+              authResponse.data!.refreshTokenExpiry! * 1000,
             ),
           );
         }
@@ -280,12 +279,12 @@ class AuthService implements AuthRepository {
       await _secureStorage.saveRefreshToken(authResponse.data!.refreshToken!);
       await _secureStorage.saveAccessTokenExpiry(
         DateTime.fromMillisecondsSinceEpoch(
-          authResponse.data!.accessExpiresAt! * 1000,
+          authResponse.data!.isActiveExpiry! * 1000,
         ),
       );
       await _secureStorage.saveRefreshTokenExpiry(
         DateTime.fromMillisecondsSinceEpoch(
-          authResponse.data!.refreshExpiresAt! * 1000,
+          authResponse.data!.refreshTokenExpiry! * 1000,
         ),
       );
       return authResponse;
@@ -328,12 +327,12 @@ class AuthService implements AuthRepository {
       await _secureStorage.saveRefreshToken(authResponse.data!.refreshToken!);
       await _secureStorage.saveAccessTokenExpiry(
         DateTime.fromMillisecondsSinceEpoch(
-          authResponse.data!.accessExpiresAt! * 1000,
+          authResponse.data!.isActiveExpiry! * 1000,
         ),
       );
       await _secureStorage.saveRefreshTokenExpiry(
         DateTime.fromMillisecondsSinceEpoch(
-          authResponse.data!.refreshExpiresAt! * 1000,
+          authResponse.data!.refreshTokenExpiry! * 1000,
         ),
       );
       return authResponse;
