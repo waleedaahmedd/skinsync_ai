@@ -9,7 +9,7 @@ class GetDoctorResponse extends BaseResponseModel {
     if (json['data'] != null) {
       data = <Doctor>[];
       json['data'].forEach((v) {
-        data!.add(new Doctor.fromJson(v));
+        data!.add(Doctor.fromJson(v));
       });
     }
     isSuccess = json['is_success'];

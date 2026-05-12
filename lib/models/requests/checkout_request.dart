@@ -39,17 +39,17 @@ class CheckoutRequest {
     startTime = json['start_time'];
     endTime = json['end_time'];
     treatment = json['treatment'] != null
-        ? new Treatment.fromJson(json['treatment'])
+        ? Treatment.fromJson(json['treatment'])
         : null;
     if (json['treatment_subsection'] != null) {
       treatmentSubsection = <TreatmentSubsection>[];
       json['treatment_subsection'].forEach((v) {
-        treatmentSubsection!.add(new TreatmentSubsection.fromJson(v));
+        treatmentSubsection!.add(TreatmentSubsection.fromJson(v));
       });
     }
     treatmentTotal = json['treatment_total'];
     paymentType = json['payment_type'] != null
-        ? new PaymentType.fromJson(json['payment_type'])
+        ? PaymentType.fromJson(json['payment_type'])
         : null;
     discountType = json['discount_type'];
     loyalityPoints = json['loyality_points'];
@@ -60,29 +60,29 @@ class CheckoutRequest {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['clinic_id'] = this.clinicId;
-    data['doctor_id'] = this.doctorId;
-    data['date'] = this.date;
-    data['start_time'] = this.startTime;
-    data['end_time'] = this.endTime;
-    if (this.treatment != null) {
-      data['treatment'] = this.treatment!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['clinic_id'] = clinicId;
+    data['doctor_id'] = doctorId;
+    data['date'] = date;
+    data['start_time'] = startTime;
+    data['end_time'] = endTime;
+    if (treatment != null) {
+      data['treatment'] = treatment!.toJson();
     }
-    if (this.treatmentSubsection != null) {
+    if (treatmentSubsection != null) {
       data['treatment_subsection'] =
-          this.treatmentSubsection!.map((v) => v.toJson()).toList();
+          treatmentSubsection!.map((v) => v.toJson()).toList();
     }
-    data['treatment_total'] = this.treatmentTotal;
-    if (this.paymentType != null) {
-      data['payment_type'] = this.paymentType!.toJson();
+    data['treatment_total'] = treatmentTotal;
+    if (paymentType != null) {
+      data['payment_type'] = paymentType!.toJson();
     }
-    data['discount_type'] = this.discountType;
-    data['loyality_points'] = this.loyalityPoints;
-    data['discount'] = this.discount;
-    data['actual_amount'] = this.actualAmount;
-    data['amount_paid'] = this.amountPaid;
-    data['amount_payable'] = this.amountPayable;
+    data['discount_type'] = discountType;
+    data['loyality_points'] = loyalityPoints;
+    data['discount'] = discount;
+    data['actual_amount'] = actualAmount;
+    data['amount_paid'] = amountPaid;
+    data['amount_payable'] = amountPayable;
     return data;
   }
 }
@@ -110,12 +110,12 @@ class Treatment {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['treatment_id'] = this.treatmentId;
-    data['treatment_price'] = this.treatmentPrice;
-    data['treatment_quantity'] = this.treatmentQuantity;
-    data['before_image'] = this.beforeImage;
-    data['after_image'] = this.afterImage;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['treatment_id'] = treatmentId;
+    data['treatment_price'] = treatmentPrice;
+    data['treatment_quantity'] = treatmentQuantity;
+    data['before_image'] = beforeImage;
+    data['after_image'] = afterImage;
     return data;
   }
 }
@@ -135,10 +135,10 @@ class TreatmentSubsection {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['section_id'] = this.sectionId;
-    data['syringes_quantity'] = this.syringesQuantity;
-    data['per_syringe_price'] = this.perSyringePrice;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['section_id'] = sectionId;
+    data['syringes_quantity'] = syringesQuantity;
+    data['per_syringe_price'] = perSyringePrice;
     return data;
   }
 }
@@ -155,9 +155,9 @@ class PaymentType {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['amount'] = this.amount;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['amount'] = amount;
     return data;
   }
 }

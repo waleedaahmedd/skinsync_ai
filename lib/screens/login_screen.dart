@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -107,7 +106,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         builder: (context) {
           return AnimatedBuilder(
             animation: _controller,
-            builder: (_, __) {
+            builder: (_, _) {
               return Positioned(
                 top: _topAnim.value.toDouble(),
                 left: _leftAnim.value.toDouble(),

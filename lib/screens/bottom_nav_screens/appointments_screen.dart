@@ -124,7 +124,7 @@ class _ApppointmentsScreenState extends ConsumerState<ApppointmentsScreen> {
                             ),
                           );
                         },
-                        itemBuilder: (_, Appointment appointment, __) {
+                        itemBuilder: (_, Appointment appointment, _) {
                           return Padding(
                             padding: EdgeInsets.symmetric(vertical: 10.h),
                             child: Row(

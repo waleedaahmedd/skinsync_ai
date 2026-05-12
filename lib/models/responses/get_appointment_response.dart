@@ -22,7 +22,7 @@ class GetAppointmentResponse extends BaseResponseModel {
     if (json['data'] != null) {
       data = <Appointment>[];
       json['data'].forEach((v) {
-        data!.add(new Appointment.fromJson(v));
+        data!.add(Appointment.fromJson(v));
       });
     }
     isSuccess = json['is_success'];
@@ -75,26 +75,26 @@ class Appointment {
   Appointment.fromJson(Map<String, dynamic> json) {
     appointmentId = json['appointment_id'];
     clinic = json['clinic'] != null
-        ? new Clinic.fromJson(json['clinic'])
+        ? Clinic.fromJson(json['clinic'])
         : null;
     doctor = json['doctor'] != null
-        ? new Clinic.fromJson(json['doctor'])
+        ? Clinic.fromJson(json['doctor'])
         : null;
     date = json['date'];
     startTime =  DateTime.fromMillisecondsSinceEpoch(json["start_time"] * 1000);
     endTime = DateTime.fromMillisecondsSinceEpoch(json["end_time"] * 1000);
     treatment = json['treatment'] != null
-        ? new Treatment.fromJson(json['treatment'])
+        ? Treatment.fromJson(json['treatment'])
         : null;
     if (json['treatment_subsection'] != null) {
       treatmentSubsection = <TreatmentSubsection>[];
       json['treatment_subsection'].forEach((v) {
-        treatmentSubsection!.add(new TreatmentSubsection.fromJson(v));
+        treatmentSubsection!.add(TreatmentSubsection.fromJson(v));
       });
     }
     treatmentTotal = json['treatment_total'];
     paymentType = json['payment_type'] != null
-        ? new PaymentType.fromJson(json['payment_type'])
+        ? PaymentType.fromJson(json['payment_type'])
         : null;
     discount = json['discount'];
     discountType = json['discount_type'];

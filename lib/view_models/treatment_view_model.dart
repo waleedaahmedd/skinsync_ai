@@ -429,7 +429,7 @@ class TreatmentsState extends BaseStateModel {
       selectedTreatment: selectedTreatment ?? this.selectedTreatment,
       selectTreatmentArea: clearSelectSectionId
           ? null
-          : (selectedTreatmentArea ?? this.selectTreatmentArea),
+          : (selectedTreatmentArea ?? selectTreatmentArea),
       selectedSubAreasList: clearSubSectionIds
           ? const []
           : (selectedSubAreasList ?? this.selectedSubAreasList),
