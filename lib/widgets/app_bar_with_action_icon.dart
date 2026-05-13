@@ -52,7 +52,7 @@ class AppBarWithActionIcon extends StatelessWidget
                   ),
                 ),
                 SizedBox(width: 40.w),
-                if (action != null) action!,
+                ?action,
               ],
             ),
             Spacer(),

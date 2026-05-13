@@ -11,7 +11,6 @@ import 'package:skinsync_ai/utills/enums.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
 import '../screens/face_scan_screen.dart';
-import '../screens/signup_onboarding.dart';
 
 void loginBottomSheet(BuildContext context) {
   showModalBottomSheet(
