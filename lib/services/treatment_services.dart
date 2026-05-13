@@ -36,13 +36,13 @@ class TreatmentService implements TreatmentRepository {
   }
 
   @override
-  Future<TreatmentAreaResponse> getSelectSectionApi({
-    required int sectionId,
+  Future<TreatmentAreaResponse> getAreasByTreatmentId({
+    required int treatmentId,
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.treatments,
       requestType: 'GET',
-      params: '/$sectionId/areas',
+      params: '/$treatmentId/areas',
     );
     // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {

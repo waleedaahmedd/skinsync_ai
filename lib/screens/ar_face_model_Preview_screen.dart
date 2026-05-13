@@ -5,20 +5,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:glow_container/glow_container.dart';
-import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/bottom_sheets/syringe_level_sheet.dart';
-import 'package:skinsync_ai/widgets/service_type_button.dart';
 
+import '../models/responses/simulation_history_response.dart';
 import '../models/responses/treatment_sub_area_response.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_view_model.dart';
+import '../widgets/bottom_sheets/syringe_level_sheet.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/service_type_button.dart';
+import 'explore_clinics_screen.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
-  const ArFaceModelPreviewScreen({super.key});
+  final SimulationData? simulationData;
+  const ArFaceModelPreviewScreen({super.key, this.simulationData});
 
   static const String routeName = '/ArFaceModelPreviewScreen';
 
@@ -30,6 +32,19 @@ class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
 class _ArFaceModelPreviewScreenState
     extends ConsumerState<ArFaceModelPreviewScreen> {
   bool _hasInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.simulationData == null) {
+        return;
+      }
+      ref
+          .read(treatmentViewModel.notifier)
+          .initializeSimulation(widget.simulationData!);
+    });
+  }
 
   void _maybeShowSyringeBottomSheet(
     BuildContext context,
@@ -86,16 +101,6 @@ class _ArFaceModelPreviewScreenState
   }
 
   @override
-  void initState() {
-    super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   if(ref.watch(treatmentViewModel).treatmentId != null){
-    //     ref.read(treatmentViewModel.notifier).callPredictAPI();
-    //   }
-    // });
-  }
-
-  @override
   Widget build(BuildContext context) {
     if (!_hasInitialized) {
       _hasInitialized = true;
@@ -122,41 +127,6 @@ class _ArFaceModelPreviewScreenState
           child: AbsorbPointer(
             absorbing: isLoading,
             child: Scaffold(
-              // appBar: AppBar(
-              //   leadingWidth: 80.w,
-              //   centerTitle: false,
-              //   leading: Padding(
-              //     padding: EdgeInsets.only(left: 10.w),
-              //     child: InkWell(
-              //       onTap: () => Navigator.pop(context),
-              //       child: GreyContainer(
-              //         icon: Icons.arrow_back,
-              //         shape: BoxShape.circle,
-              //         onTap: () => Navigator.pop(context),
-              //       ),
-              //     ),
-              //   ),
-              //   title: Text(
-              //     "AR Face Model Preview",
-              //     style: CustomFonts.black26w600,
-              //   ),
-              //   actions: [
-              //     Padding(
-              //       padding: EdgeInsets.only(right: 13.w),
-              //       child: InkWell(
-              //         onTap: () {
-              //           ref
-              //               .read(treatmentViewModel.notifier)
-              //               .clearAllSelectedTreatments();
-              //         },
-              //         child: Text(
-              //           "Reset",
-              //           style: CustomFonts.pinkunderlined20w600,
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
               appBar: CustomAppBar(
                 showTitle: true,
                 title: "AR Face Model Preview",
@@ -228,8 +198,7 @@ class _ArFaceModelPreviewScreenState
                                   );
                                   final treatments = ref.watch(
                                     treatmentViewModel.select(
-                                      (state) =>
-                                          state.treatmentResponse?.data ?? [],
+                                      (state) => state.treatments,
                                     ),
                                   );
                                   final selectedTreatment = ref.watch(
@@ -237,20 +206,6 @@ class _ArFaceModelPreviewScreenState
                                       (state) => state.selectedTreatment,
                                     ),
                                   );
-                                  final treatmentResponse = ref.watch(
-                                    treatmentViewModel.select(
-                                      (state) => state.treatmentResponse,
-                                    ),
-                                  );
-
-                                  if (!isLoading && treatmentResponse == null) {
-                                    WidgetsBinding.instance
-                                        .addPostFrameCallback((_) {
-                                          ref
-                                              .read(treatmentViewModel.notifier)
-                                              .getTreatments();
-                                        });
-                                  }
 
                                   if (isLoading) {
                                     return SizedBox(
@@ -495,8 +450,7 @@ class _ArFaceModelPreviewScreenState
                                                                   .notifier,
                                                             )
                                                             .onTapTreatmentSubArea(
-                                                              treatmentSubArea:
-                                                                  subArea,
+                                                              subArea: subArea,
                                                             );
 
                                                         int initialLevel = 0;

@@ -22,15 +22,21 @@ class SaveHistoryRequest {
 }
 
 class SubSectionRequest {
+  final int areaId;
   final int sectionId;
   final int syringesQuantity;
 
   const SubSectionRequest({
+    required this.areaId,
     required this.sectionId,
     required this.syringesQuantity,
   });
 
   Map<String, dynamic> toJson() {
-    return {'section_id': sectionId, 'syringes_quantity': syringesQuantity};
+    return {
+      'area_id': areaId,
+      'section_id': sectionId,
+      'syringes_quantity': syringesQuantity,
+    };
   }
 }

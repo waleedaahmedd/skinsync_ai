@@ -141,7 +141,7 @@ class ApiBaseHelper {
     log('REQUEST: $request');
     final json = await http.post(
       uri,
-      //  headers: {'Authorization': 'Bearer $token'},
+      headers: {'Authorization': 'Bearer $token'},
       body: jsonEncode(request),
     );
     log('RESPONSE: ${json.body}');
