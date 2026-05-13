@@ -14,6 +14,8 @@ import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
 import '../widgets/bottom_sheets/before_you_bookbottomsheet.dart';
+import '../widgets/bottom_sheets/pre_booking_bottom_sheet.dart';
+import '../widgets/bottom_sheets/wallet_confirmation_bottom_sheet.dart';
 import '../widgets/dialogs/appointment_success_dialog.dart';
 import 'bottom_nav_page.dart';
 import 'clinic_service_screen.dart';
@@ -531,16 +533,26 @@ class ClinicsDetailScreen extends ConsumerWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       if (clinic?.place != null) {
-                        BeforeYouBookBottomSheet.show(
+                        PreBookingBottomSheet.show(
                           context,
                           onConfirm: () {
-                            showAppointmentSuccessDialog(
-                              context: context,
-                              onDone: () {
-                                Navigator.pushNamedAndRemoveUntil(
+                            WalletConfirmationBottomSheet.show(
+                              context,
+                              onConfirm: () {
+                                BeforeYouBookBottomSheet.show(
                                   context,
-                                  BottomNavPage.routeName,
-                                  (_) => false,
+                                  onConfirm: () {
+                                    showAppointmentSuccessDialog(
+                                      context: context,
+                                      onDone: () {
+                                        Navigator.pushNamedAndRemoveUntil(
+                                          context,
+                                          BottomNavPage.routeName,
+                                          (_) => false,
+                                        );
+                                      },
+                                    );
+                                  },
                                 );
                               },
                             );
