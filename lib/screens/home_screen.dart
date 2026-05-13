@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import 'package:skinsync_ai/models/dummy_list_model.dart';
+import 'package:skinsync_ai/screens/doctors_listing_screen.dart';
+import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
+import 'package:skinsync_ai/view_models/bottom_nav_view_model.dart';
+import 'package:skinsync_ai/widgets/home_horizontal_sections.dart';
+
 import '../utills/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
 import '../widgets/app_bar_with_action_icon.dart';
@@ -20,6 +26,7 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade50,
       appBar: AppBarWithActionIcon(
         action: GreyContainer(
           icon: Icons.notifications_none_outlined,
@@ -33,46 +40,47 @@ class HomeScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: 22.h),
-            Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30.w),
-                  child: Column(
-                    children: [
-                      PointsEarnCard(),
-                      /*SizedBox(height: 30.h),
-                      HeadingWithRightArrow(
-                        title: "Your Next Appointment",
-                        onTap: () {},
-                      ),
-                      SizedBox(height: 18.h),
-                      AppointmentCard(),*/
-                      SizedBox(height: 30.h),
-                      HeadingWithRightArrow(
-                        title: "Suggested Treatments",
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            SuggestedTreatmentScreen.routeName,
-                          );
-                        },
-                      ),
-                      SizedBox(height: 18.h),
-                    ],
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.w),
+              child: Column(
+                children: [
+                  PointsEarnCard(),
+                  SizedBox(height: 30.h),
+                  HeadingWithRightArrow(
+                    title: "Upcoming Appointments",
+                    onTap: () {
+                      ref.read(bottomNavViewModel.notifier).changePage(2);
+                    },
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
+            SizedBox(height: 18.h),
+            SizedBox(
+              height: 110.h,
+              child: ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: 30.w),
+                scrollDirection: Axis.horizontal,
+                itemCount: dummyAppointments.take(5).length,
+                itemBuilder: (context, index) => UpcomingAppointmentHomeCard(appointment: dummyAppointments[index]),
+              ),
+            ),
+            SizedBox(height: 30.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.w),
+              child: HeadingWithRightArrow(
+                title: "Suggested Treatments",
+                onTap: () {
+                  Navigator.pushNamed(context, SuggestedTreatmentScreen.routeName);
+                },
+              ),
+            ),
+            SizedBox(height: 18.h),
             SizedBox(
               height: 270.w,
-
               child: Consumer(
                 builder: (context, ref, _) {
-                  final treatment = ref
-                      .watch(authViewModel)
-                      .authResponse
-                      ?.data
-                      ?.treatment;
+                  final treatment = ref.watch(authViewModel).authResponse?.data?.treatment;
                   return ListView.builder(
                     shrinkWrap: true,
                     itemCount: treatment?.length ?? 0,
@@ -81,12 +89,12 @@ class HomeScreen extends ConsumerWidget {
                       return Padding(
                         padding: EdgeInsets.only(
                           left: index == 0 ? 30.w : 17.w,
-                          right: index == treatment!.length - 1 ? 30.w : 0.w,
+                          right: index == (treatment?.length ?? 0) - 1 ? 30.w : 0.w,
                         ),
                         child: TreatmentContainer(
                           imageHeight: 150.h,
                           width: 313.w,
-                          treatments: treatment[index],
+                          treatments: treatment![index],
                         ),
                       );
                     },
@@ -94,13 +102,50 @@ class HomeScreen extends ConsumerWidget {
                 },
               ),
             ),
-            SizedBox(height: 18.h),
+            SizedBox(height: 30.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30.w),
-              child: Text(
-                "Promotions & Discounts",
-                style: CustomFonts.black22w600,
+              child: HeadingWithRightArrow(
+                title: "Top Doctors",
+                onTap: () {
+                  Navigator.pushNamed(context, DoctorsListingScreen.routeName);
+                },
               ),
+            ),
+            SizedBox(height: 18.h),
+            SizedBox(
+              height: 200.h,
+              child: ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: 30.w),
+                scrollDirection: Axis.horizontal,
+                itemCount: dummyDoctors.length,
+                itemBuilder: (context, index) => DoctorHomeCard(doctor: dummyDoctors[index]),
+              ),
+            ),
+            SizedBox(height: 30.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.w),
+              child: HeadingWithRightArrow(
+                title: "Top Clinics",
+                onTap: () {
+                  Navigator.pushNamed(context, ExploreClinicsScreen.routeName);
+                },
+              ),
+            ),
+            SizedBox(height: 18.h),
+            SizedBox(
+              height: 190.h,
+              child: ListView.builder(
+                padding: EdgeInsets.symmetric(horizontal: 30.w),
+                scrollDirection: Axis.horizontal,
+                itemCount: topClinics.length,
+                itemBuilder: (context, index) => ClinicHomeCard(clinic: topClinics[index]),
+              ),
+            ),
+            SizedBox(height: 30.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.w),
+              child: Text("Promotions & Discounts", style: CustomFonts.black22w600),
             ),
             SizedBox(height: 18.h),
             SizedBox(
@@ -117,10 +162,11 @@ class HomeScreen extends ConsumerWidget {
                 },
               ),
             ),
-            SizedBox(height: 185.h),
+            SizedBox(height: 120.h),
           ],
         ),
       ),
     );
   }
 }
+

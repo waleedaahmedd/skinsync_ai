@@ -32,6 +32,7 @@ import 'screens/ar_face_model_Preview_screen.dart';
 import 'screens/bottom_nav_screens/face_detection_screen.dart';
 import 'screens/bottom_nav_screens/my_profile_screen.dart';
 import 'screens/bottom_nav_screens/treatments_screen.dart';
+import 'screens/doctors_listing_screen.dart';
 import 'screens/explore_clinics_screen.dart';
 import 'screens/notification_screen.dart';
 import 'screens/simulation_history_screen.dart';
@@ -256,6 +257,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: SimulationHistoryScreen.routeName),
           builder: (_) => SimulationHistoryScreen(),
+        );
+      case DoctorsListingScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: DoctorsListingScreen.routeName),
+          builder: (_) => const DoctorsListingScreen(),
         );
       default:
         return _errorRoute();

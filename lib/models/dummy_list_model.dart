@@ -75,7 +75,106 @@ class DummyAppointment {
   });
 }
 
+class DummyDoctor {
+  final String id;
+  final String name;
+  final String image;
+  final String specialization;
+  final String clinicName;
+  final double rating;
+
+  DummyDoctor({
+    required this.id,
+    required this.name,
+    required this.image,
+    required this.specialization,
+    required this.clinicName,
+    required this.rating,
+  });
+}
+
+class DummyClinic {
+  final String id;
+  final String name;
+  final String image;
+  final String address;
+  final int treatmentCount;
+  final int doctorCount;
+
+  DummyClinic({
+    required this.id,
+    required this.name,
+    required this.image,
+    required this.address,
+    required this.treatmentCount,
+    required this.doctorCount,
+  });
+}
+
+final List<DummyDoctor> dummyDoctors = [
+  DummyDoctor(
+    id: "1",
+    name: "Dr. Sarah Smith",
+    image: "https://t4.ftcdn.net/jpg/03/20/52/31/360_F_320523164_cc7at9W77BRD96qLYpSPlSdrofD8oM0S.jpg",
+    specialization: "Dermatologist",
+    clinicName: "Glow Skin Clinic",
+    rating: 4.8,
+  ),
+  DummyDoctor(
+    id: "2",
+    name: "Dr. John Doe",
+    image: "https://t3.ftcdn.net/jpg/02/60/04/08/360_F_260040863_7y7D6shY6K75YI0yS2666OAXm0C46RRT.jpg",
+    specialization: "Cosmetic Surgeon",
+    clinicName: "Radiance Care",
+    rating: 4.9,
+  ),
+  DummyDoctor(
+    id: "3",
+    name: "Dr. Emily Brown",
+    image: "https://t4.ftcdn.net/jpg/03/17/85/49/360_F_317854905_2idSd8Kps97L9p85nL8k8uK07NMTQ3mF.jpg",
+    specialization: "Aesthetic Physician",
+    clinicName: "Skin Sync Center",
+    rating: 4.7,
+  ),
+  DummyDoctor(
+    id: "4",
+    name: "Dr. Michael Wilson",
+    image: "https://t3.ftcdn.net/jpg/02/95/51/80/360_F_295518052_NmSFeE1VPVCu499rkcyYpL6x6686K856.jpg",
+    specialization: "Laser Specialist",
+    clinicName: "Elite Dermatology",
+    rating: 4.6,
+  ),
+];
+
+final List<DummyClinic> topClinics = [
+  DummyClinic(
+    id: "1",
+    name: "Glow Skin Clinic",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl-cyJqFlcZav1TlRMEuajtrg2RJlWY3rTQA&s",
+    address: "Bedford-Stuyvesant, Brooklyn, NY",
+    treatmentCount: 25,
+    doctorCount: 8,
+  ),
+  DummyClinic(
+    id: "2",
+    name: "Radiance Care",
+    image: "https://images.squarespace-cdn.com/content/v1/5b3a6e9f1aef1db0d7a0c7e2/1531149791485-Y86L86E8N8V8M8N8Y8N8/Radiance-Care-Logo.png",
+    address: "Manhattan, New York, NY",
+    treatmentCount: 40,
+    doctorCount: 12,
+  ),
+  DummyClinic(
+    id: "3",
+    name: "Skin Sync Center",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0_7K8G9C8g_9n9k_y_x_w_v_z_y_x_w_v_z_y_x_w_v_z_y_x_w_v_z&s",
+    address: "Queens, New York, NY",
+    treatmentCount: 30,
+    doctorCount: 10,
+  ),
+];
+
 final List<DummySession> _botoxCheeksHistory = [
+
   DummySession(
     date: DateTime(2024, 1, 10),
     doctorName: "Dr. Sarah Smith",
