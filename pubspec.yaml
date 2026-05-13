@@ -63,7 +63,7 @@ dependencies:
   google_maps_flutter: ^2.17.0
   location: ^8.0.1
   infinite_scroll_pagination: ^5.1.1
-  firebase_storage: ^13.3.0
+  firebase_storage: ^13.4.0
   device_info_plus: ^12.4.0
   crypto: ^3.0.7
   firebase_auth: ^6.4.0

@@ -14,15 +14,15 @@ import 'package:skinsync_ai/widgets/scheduled_appointment_tile.dart';
 import '../../utills/custom_fonts.dart';
 import '../../widgets/app_bar_with_action_icon.dart';
 
-class ApppointmentsScreen extends ConsumerStatefulWidget {
-  const ApppointmentsScreen({super.key});
+class AppointmentsScreen extends ConsumerStatefulWidget {
+  const AppointmentsScreen({super.key});
 
   @override
-  ConsumerState<ApppointmentsScreen> createState() =>
+  ConsumerState<AppointmentsScreen> createState() =>
       _ApppointmentsScreenState();
 }
 
-class _ApppointmentsScreenState extends ConsumerState<ApppointmentsScreen> {
+class _ApppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
   late final _pagingController = PagingController<int, Appointment>(
     getNextPageKey: (state) {
       final keys = state.keys;

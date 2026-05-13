@@ -19,7 +19,7 @@ class BottomNavPage extends ConsumerStatefulWidget {
   static final List<Widget> _children = [
     HomeScreen(),
     TreatmentsScreen(),
-    ApppointmentsScreen(),
+    AppointmentsScreen(),
     ProgressScreen(),
     MyProfileScreen(),
     // HomeScreen(),

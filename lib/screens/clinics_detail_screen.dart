@@ -530,7 +530,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      if (isDeploymentMode) {
+                      if (clinic?.place != null) {
                         BeforeYouBookBottomSheet.show(
                           context,
                           onConfirm: () {
@@ -555,7 +555,8 @@ class ClinicsDetailScreen extends ConsumerWidget {
                       }
                     },
                     child: Text(
-                      clinic?.place != null && isDeploymentMode
+                      clinic?.place != null
+                          // && isDeploymentMode
                           ? "Invite this Medical Spa"
                           : 'Book an Appointment',
                     ),
