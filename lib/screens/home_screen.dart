@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../utills/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
 import '../widgets/app_bar_with_action_icon.dart';
+import '../widgets/discount_card.dart';
 import '../widgets/grey_container.dart';
 import '../widgets/heading_with_right_arrow.dart';
 import '../widgets/points_earn_card.dart';
@@ -92,29 +94,29 @@ class HomeScreen extends ConsumerWidget {
                 },
               ),
             ),
-            // SizedBox(height: 18.h),
-            // Padding(
-            //   padding: EdgeInsets.symmetric(horizontal: 30.w),
-            //   child: Text(
-            //     "promotions & discounts",
-            //     style: CustomFonts.black22w600,
-            //   ),
-            // ),
-            // SizedBox(height: 18.h),
-            // SizedBox(
-            //   height: 144.h,
-            //   child: ListView.builder(
-            //     shrinkWrap: true,
-            //     itemCount: 4,
-            //     scrollDirection: Axis.horizontal,
-            //     itemBuilder: (context, index) {
-            //       return Padding(
-            //         padding: EdgeInsets.only(left: index == 0 ? 30.w : 17.w),
-            //         child: DiscountCard(),
-            //       );
-            //     },
-            //   ),
-            // ),
+            SizedBox(height: 18.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.w),
+              child: Text(
+                "Promotions & Discounts",
+                style: CustomFonts.black22w600,
+              ),
+            ),
+            SizedBox(height: 18.h),
+            SizedBox(
+              height: 144.h,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: 4,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(left: index == 0 ? 30.w : 17.w),
+                    child: DiscountCard(),
+                  );
+                },
+              ),
+            ),
             SizedBox(height: 185.h),
           ],
         ),
