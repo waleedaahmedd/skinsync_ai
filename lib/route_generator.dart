@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
+import 'package:skinsync_ai/models/responses/simulation_history_response.dart';
 import 'package:skinsync_ai/screens/additional_info_screen.dart';
 import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
 import 'package:skinsync_ai/screens/biometric_screen.dart';
@@ -127,7 +128,8 @@ class RouteGenerator {
       case ArFaceModelPreviewScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: ArFaceModelPreviewScreen.routeName),
-          builder: (_) => ArFaceModelPreviewScreen(),
+          builder: (_) =>
+              ArFaceModelPreviewScreen(simulationData: args as SimulationData?),
         );
       case SuggestedTreatmentScreen.routeName:
         return MaterialPageRoute(

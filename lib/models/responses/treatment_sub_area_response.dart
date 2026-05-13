@@ -36,6 +36,7 @@ class TreatmentSubAreaModel {
   int? maxSyringe;
   List<int>? syringeOptions;
   final int currentSyringe;
+  final int? areaId;
 
   TreatmentSubAreaModel({
     this.id,
@@ -46,6 +47,7 @@ class TreatmentSubAreaModel {
     this.maxSyringe,
     this.syringeOptions,
     required this.currentSyringe,
+    this.areaId,
   });
 
   factory TreatmentSubAreaModel.fromJson(Map<String, dynamic> json) {
@@ -58,6 +60,7 @@ class TreatmentSubAreaModel {
       maxSyringe: json['max_syringe'],
       syringeOptions: json['syringe_options'].cast<int>(),
       currentSyringe: json['min_syringe'] ?? 0,
+      areaId: json['area_id'],
     );
   }
 
@@ -82,6 +85,7 @@ class TreatmentSubAreaModel {
     int? maxSyringe,
     List<int>? syringeOptions,
     int? currentSyringe,
+    int? areaId,
   }) {
     return TreatmentSubAreaModel(
       id: id ?? this.id,
@@ -92,6 +96,7 @@ class TreatmentSubAreaModel {
       maxSyringe: maxSyringe ?? this.maxSyringe,
       syringeOptions: syringeOptions ?? this.syringeOptions,
       currentSyringe: currentSyringe ?? this.currentSyringe,
+      areaId: areaId ?? this.areaId,
     );
   }
 }

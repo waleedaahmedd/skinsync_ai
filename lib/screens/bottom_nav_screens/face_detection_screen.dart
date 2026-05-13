@@ -420,7 +420,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                       child: ElevatedButton(
                         onPressed: () async {
                           // Store captured image in view model
-                          await ref
+                          ref
                               .read(treatmentViewModel.notifier)
                               .setCapturedImage(capturedImage);
                           ref

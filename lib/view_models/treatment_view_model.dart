@@ -6,6 +6,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:skinsync_ai/models/requests/save_history_request.dart';
+import 'package:skinsync_ai/models/responses/simulation_history_response.dart';
 import 'package:skinsync_ai/models/responses/treatment_area_response.dart';
 import 'package:skinsync_ai/models/responses/treatment_sub_area_response.dart';
 import 'package:skinsync_ai/services/api_base_helper.dart';
@@ -16,6 +17,7 @@ import '../repositories/treatment_repository.dart';
 import '../services/media_service.dart';
 import '../services/treatment_services.dart';
 import '../utills/image_utills.dart';
+import '../utills/list_utils.dart';
 import 'auth_view_model.dart';
 import 'base_view_model.dart';
 
@@ -31,6 +33,62 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       super(initialState: TreatmentsState());
 
   final TreatmentRepository _repo;
+
+  Future<void> initializeSimulation(SimulationData simulation) async {
+    state = state.copyWith(isAiImageGenerated: false);
+    clearAiImage();
+    if (state.treatments.isEmpty) {
+      await getTreatments();
+    }
+    final treatment = state.treatments.firstWhereOrNull(
+      (treatment) => treatment.id == simulation.treatmentId,
+    );
+    if (treatment != null) {
+      await onTapTreatment(treatmentModel: treatment, isCallPredictAPI: true);
+    }
+    final area = state.treatmentAreaResponse?.data?.firstWhereOrNull((area) {
+      final found = simulation.subsections?.any(
+        (subSection) => subSection.areaId == area.id,
+      );
+      return found ?? false;
+    });
+    if (area != null) {
+      await onTapTreatmentArea(treatmentArea: area, isCallPredictAPI: true);
+    }
+    final subAreas =
+        state.treatmentsSubAreaResponse?.data ?? <TreatmentSubAreaModel>[];
+    for (final subArea in subAreas) {
+      final selectedSubArea = simulation.subsections?.firstWhereOrNull(
+        (subSection) => subSection.sectionId == subArea.id,
+      );
+      if (selectedSubArea != null) {
+        onTapTreatmentSubArea(
+          subArea: subArea.copyWith(
+            currentSyringe: selectedSubArea.syringesQuantity,
+          ),
+        );
+      }
+    }
+    EasyLoading.show(status: 'Downloading images...');
+    final beforeImage = await MediaService().downloadSimulationImage(
+      simId: simulation.id!,
+      isBefore: true,
+      imageUrl: simulation.beforeImage,
+    );
+    setCapturedImage(beforeImage);
+    final afterImage = await MediaService().downloadSimulationImage(
+      simId: simulation.id!,
+      isBefore: false,
+      imageUrl: simulation.afterImage,
+    );
+    setAiImage(afterImage);
+    EasyLoading.dismiss();
+    state = state.copyWith(
+      loading: false,
+      isAiImageGenerated: true,
+      isBefore: false,
+    );
+  }
 
   void updateSyringeLevel({required TreatmentSubAreaModel subArea}) {
     state = state.copyWith(
@@ -54,10 +112,10 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
   void toggleIsBefore() => state = state.copyWith(isBefore: !state.isBefore);
 
-  Future<void> setCapturedImage(XFile image) async =>
-      runSafely(() async => state = state.copyWith(capturedImage: image));
+  void setCapturedImage(XFile? image) =>
+      state = state.copyWith(capturedImage: image);
 
-  void setAiImage(XFile image) => state = state.copyWith(aiImage: image);
+  void setAiImage(XFile? image) => state = state.copyWith(aiImage: image);
 
   void clearAiImage() => state = state.copyWith(clearAiImage: true);
 
@@ -84,22 +142,22 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     if (state.treatmentsSubAreaResponse != null) _clearSubSectionSelection();
     state = state.copyWith(isBefore: true);
     if (treatmentModel.isArea == true) {
-      getSelectSectionApi(sectionId: treatmentModel.id ?? 0);
+      await getAreasByTreatmentId(treatmentId: treatmentModel.id ?? 0);
     } else if (isCallPredictAPI) {
       // callPredictAPI();
     }
   }
 
-  void onTapTreatmentArea({
+  Future<void> onTapTreatmentArea({
     required TreatmentAreaModel treatmentArea,
     required bool isCallPredictAPI,
-  }) {
+  }) async {
     state = state.copyWith(selectedTreatmentArea: treatmentArea);
     //if (state.treatmentsSubAreaResponse != null) _clearSubSectionSelection();
     if (treatmentArea.isSidearea == true) {
       final treatment = state.selectedTreatment;
       if (treatment != null) {
-        getSubSectionApi(
+        await getSubSectionApi(
           sectionId: treatment.id ?? 0,
           subSectionId: treatmentArea.id ?? 0,
         );
@@ -110,9 +168,10 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     }
   }
 
-  void onTapTreatmentSubArea({
-    required TreatmentSubAreaModel treatmentSubArea,
-  }) {
+  void onTapTreatmentSubArea({required TreatmentSubAreaModel subArea}) {
+    final treatmentSubArea = subArea.copyWith(
+      areaId: state.selectTreatmentArea!.id!,
+    );
     final id = treatmentSubArea.id;
     final alreadySelected =
         id != null && state.selectedSubAreasList.any((e) => e.id == id);
@@ -132,7 +191,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     state = TreatmentsState(
       loading: state.loading,
       errorMessage: state.errorMessage,
-      treatmentResponse: state.treatmentResponse,
+      treatments: state.treatments,
       treatmentAreaResponse: null,
       treatmentsSubAreaResponse: null,
       treatmentsLoading: state.treatmentsLoading,
@@ -150,11 +209,11 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
   Future<bool?> getTreatments() async {
     state = state.copyWith(treatmentsLoading: true);
-    return runSafely(() async {
+    return await runSafely(() async {
       final response = await _repo.getTreatmentsApi();
       state = state.copyWith(
         treatmentsLoading: false,
-        treatmentResponse: response,
+        treatments: response.data,
       );
       return response.isSuccess == true;
     });
@@ -265,13 +324,15 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     return jsonDecode(body) as Map<String, dynamic>;
   }
 
-  Future<bool?> getSelectSectionApi({required int sectionId}) async {
-    state = state.copyWith(treatmentAreaLoading: true);
-    return runSafely(() async {
-      final response = await _repo.getSelectSectionApi(sectionId: sectionId);
+  Future<bool?> getAreasByTreatmentId({required int treatmentId}) async {
+    return await runSafely(() async {
+      state = state.copyWith(treatmentAreaLoading: true);
+      final response = await _repo.getAreasByTreatmentId(
+        treatmentId: treatmentId,
+      );
       state = state.copyWith(
         treatmentAreaLoading: false,
-        selectSelectionResponse: response,
+        treatmentAreaResponse: response,
       );
       return response.isSuccess == true;
     });
@@ -282,7 +343,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     required int subSectionId,
   }) async {
     state = state.copyWith(treatmentSubAreaLoading: true);
-    return runSafely(() async {
+    return await runSafely(() async {
       final response = await _repo.getSubSectionApi(
         sectionId: sectionId,
         subSectionId: subSectionId,
@@ -303,10 +364,16 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         EasyLoading.showError('No treatment selected');
         return;
       }
+      final areaId = state.selectTreatmentArea?.id;
+      if (areaId == null) {
+        EasyLoading.showError('No treatment area selected');
+        return;
+      }
       final beforeImage = state.capturedImage?.path;
       final afterImage = state.aiImage?.path;
       final subSections = state.selectedSubAreasList.map((subArea) {
         return SubSectionRequest(
+          areaId: subArea.areaId!,
           sectionId: subArea.id!,
           syringesQuantity: subArea.currentSyringe,
         );
@@ -358,7 +425,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
 @immutable
 class TreatmentsState extends BaseStateModel {
-  final TreatmentResponse? treatmentResponse;
+  final List<TreatmentsModel> treatments;
   final TreatmentSubAreaResponse? treatmentsSubAreaResponse;
   final TreatmentAreaResponse? treatmentAreaResponse;
   final bool treatmentsLoading;
@@ -377,7 +444,7 @@ class TreatmentsState extends BaseStateModel {
   const TreatmentsState({
     super.loading = false,
     super.errorMessage,
-    this.treatmentResponse,
+    this.treatments = const [],
     this.treatmentAreaResponse,
     this.treatmentsSubAreaResponse,
     this.treatmentsLoading = false,
@@ -396,9 +463,9 @@ class TreatmentsState extends BaseStateModel {
   TreatmentsState copyWith({
     bool? loading,
     String? errorMessage,
-    TreatmentResponse? treatmentResponse,
+    List<TreatmentsModel>? treatments,
     TreatmentSubAreaResponse? subSelectionResponse,
-    TreatmentAreaResponse? selectSelectionResponse,
+    TreatmentAreaResponse? treatmentAreaResponse,
     bool? treatmentsLoading,
     bool? treatmentAreaLoading,
     bool? treatmentSubAreaLoading,
@@ -418,8 +485,9 @@ class TreatmentsState extends BaseStateModel {
     return TreatmentsState(
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
-      treatmentResponse: treatmentResponse ?? this.treatmentResponse,
-      treatmentAreaResponse: selectSelectionResponse ?? treatmentAreaResponse,
+      treatments: treatments ?? this.treatments,
+      treatmentAreaResponse:
+          treatmentAreaResponse ?? this.treatmentAreaResponse,
       treatmentsSubAreaResponse:
           subSelectionResponse ?? treatmentsSubAreaResponse,
       treatmentsLoading: treatmentsLoading ?? this.treatmentsLoading,

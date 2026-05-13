@@ -35,6 +35,12 @@ class AppointmentViewModel extends BaseViewModel<AppointmentState> {
       state = state.copyWith(loading: false, simulations: data);
     });
   }
+
+  @override
+  void onError(String message) {
+    state = state.copyWith(loading: false);
+    super.onError(message);
+  }
 }
 
 class AppointmentState extends BaseStateModel {

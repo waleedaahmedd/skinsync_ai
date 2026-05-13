@@ -49,18 +49,28 @@ class SimulationData {
           ),
     createdAt: json["created_at"] == null
         ? null
-        : DateTime.parse(json["created_at"]),
+        : DateTime.parse(json["created_at"]).toLocal(),
   );
 }
 
 class Subsection {
+  final int? areaId;
+  final String? areaName;
   final int? sectionId;
   final String? sectionName;
   final int? syringesQuantity;
 
-  const Subsection({this.sectionId, this.sectionName, this.syringesQuantity});
+  const Subsection({
+    this.areaId,
+    this.areaName,
+    this.sectionId,
+    this.sectionName,
+    this.syringesQuantity,
+  });
 
   factory Subsection.fromJson(Map<String, dynamic> json) => Subsection(
+    areaId: json['area_id'],
+    areaName: json['area_name'],
     sectionId: json["section_id"],
     sectionName: json["section_name"],
     syringesQuantity: json["syringes_quantity"],

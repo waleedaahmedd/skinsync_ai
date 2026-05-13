@@ -257,12 +257,10 @@ class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
               child: Consumer(
                 builder: (context, ref, _) {
                   final state = ref.watch(treatmentViewModel);
-                  final isLoading = state
-                      .treatmentsLoading; // Use separate loading for treatments
-                  final treatments = state.treatmentResponse?.data ?? [];
+                  final isLoading = state.treatmentsLoading;
+                  final treatments = state.treatments;
 
-                  // Fetch treatments if not already loaded and not currently loading
-                  if (!isLoading && state.treatmentResponse == null) {
+                  if (!isLoading && treatments.isEmpty) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       ref.read(treatmentViewModel.notifier).getTreatments();
                     });

@@ -5,8 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:skinsync_ai/models/responses/simulation_history_response.dart';
+import 'package:skinsync_ai/screens/ar_face_model_Preview_screen.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/utills/date_time_utills.dart';
 import 'package:skinsync_ai/view_models/appointment_view_model.dart';
 import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
@@ -116,7 +118,7 @@ class _SimulationHistoryScreenState
               ),
               if (sim.createdAt != null)
                 Text(
-                  DateFormat('hh:mm a').format(sim.createdAt!),
+                  sim.createdAt!.formattedTime,
                   style: CustomFonts.grey13w400,
                 ),
             ],
@@ -170,6 +172,18 @@ class _SimulationHistoryScreenState
               }).toList(),
             ),
           ],
+          SizedBox(height: 10.h),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => Navigator.pushReplacementNamed(
+                context,
+                ArFaceModelPreviewScreen.routeName,
+                arguments: sim,
+              ),
+              child: Text('Use this simulation'),
+            ),
+          ),
         ],
       ),
     );

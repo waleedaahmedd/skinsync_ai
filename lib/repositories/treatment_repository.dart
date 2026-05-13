@@ -5,7 +5,9 @@ import 'package:skinsync_ai/models/responses/treatment_sub_area_response.dart';
 
 abstract class TreatmentRepository {
   Future<TreatmentResponse> getTreatmentsApi();
-  Future<TreatmentAreaResponse> getSelectSectionApi({required int sectionId});
+  Future<TreatmentAreaResponse> getAreasByTreatmentId({
+    required int treatmentId,
+  });
   Future<TreatmentSubAreaResponse> getSubSectionApi({
     required int sectionId,
     required int subSectionId,
