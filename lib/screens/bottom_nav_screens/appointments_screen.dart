@@ -185,7 +185,18 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                       itemBuilder: (context, index) {
                         String key = groupedAppointments.keys.elementAt(index);
                         List<DummyAppointment> appointments = groupedAppointments[key]!;
-                        return _buildGroupSection(key, appointments);
+                        return Container(
+                            padding: EdgeInsets.all(14.w),
+                            margin: EdgeInsets.only(bottom: 14.w),
+                            decoration: BoxDecoration(
+                              color: CustomColors.blueColor,
+                              borderRadius: BorderRadius.circular(18.r),
+                            ),
+                            child: Column(
+                              children: [
+                                _buildGroupSection(key, appointments),
+                              ],
+                            ));
                       },
                     ),
             ),
@@ -246,11 +257,10 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
           padding: EdgeInsets.only(left: 4.w, bottom: 15.h),
           child: Text(
             title,
-            style: CustomFonts.black18w600,
+            style: CustomFonts.white18w600,
           ),
         ),
         ...appointments.map((appointment) => _buildAppointmentCard(appointment)),
-        SizedBox(height: 15.h),
       ],
     );
   }
@@ -271,16 +281,15 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
       child: Container(
         margin: EdgeInsets.only(bottom: 15.h),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: CustomColors.whiteColor,
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
-          border: Border.all(color: typeColor.withValues(alpha: 0.3), width: 1.5),
         ),
         child: IntrinsicHeight(
           child: Row(
@@ -289,10 +298,10 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
               Container(
                 width: 90.w,
                 decoration: BoxDecoration(
-                  color: typeColor.withValues(alpha: 0.05),
+                  color: typeColor,
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(14.r),
-                    bottomLeft: Radius.circular(14.r),
+                    topLeft: Radius.circular(16.r),
+                    bottomLeft: Radius.circular(16.r),
                   ),
                 ),
                 child: Padding(
@@ -303,7 +312,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                       textAlign: TextAlign.center,
                       style: CustomFonts.black12w600.copyWith(
                         height: 1.4,
-                        color: typeColor.withValues(alpha: 0.8),
+                        color: Colors.black87,
                       ),
                     ),
                   ),
@@ -321,7 +330,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                           Expanded(
                             child: Text(
                               "${appointment.treatmentName} – ${appointment.area}",
-                              style: CustomFonts.black18w600.copyWith(fontSize: 16.sp),
+                              style: CustomFonts.black18w600.copyWith(fontSize: 16.sp, color: Colors.black),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -329,29 +338,29 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                         ],
                       ),
                       SizedBox(height: 10.h),
-                      _buildInfoRow(Icons.business_outlined, appointment.clinicName),
+                      _buildInfoRow(Icons.business_outlined, appointment.clinicName, isSolid: true),
                       if (appointment.doctorName != "Pending")
                         Padding(
                           padding: EdgeInsets.only(top: 6.h),
-                          child: _buildInfoRow(Icons.person_outline, appointment.doctorName),
+                          child: _buildInfoRow(Icons.person_outline, appointment.doctorName, isSolid: true),
                         ),
                       if (isProvisional)
                         Container(
                           margin: EdgeInsets.only(top: 12.h),
                           padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
                           decoration: BoxDecoration(
-                            color: Colors.orange.shade50,
+                            color: Colors.black.withValues(alpha: 0.05),
                             borderRadius: BorderRadius.circular(6.r),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.info_outline, size: 12.sp, color: Colors.orange.shade900),
+                              Icon(Icons.info_outline, size: 12.sp, color: Colors.black87),
                               SizedBox(width: 6.w),
                               Text(
                                 "Awaiting clinic onboarding",
                                 style: CustomFonts.black10w600.copyWith(
-                                  color: Colors.orange.shade900,
+                                  color: Colors.black87,
                                   fontSize: 10.sp,
                                 ),
                               ),
@@ -371,23 +380,23 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
 
   Color _getTypeColor(String type) {
     switch (type) {
-      case "Consultation": return Colors.blue;
-      case "Sessions": return Colors.green;
-      case "Follow-Up / Touch-Up": return Colors.purple;
-      case "Provisional Booking": return Colors.orange;
-      default: return Colors.grey;
+      case "Consultation": return CustomColors.lightBlueColor;
+      case "Sessions": return CustomColors.purpleColor;
+      case "Follow-Up / Touch-Up": return CustomColors.lightPurpleColor;
+      case "Provisional Booking": return CustomColors.yellow;
+      default: return Colors.white;
     }
   }
 
-  Widget _buildInfoRow(IconData icon, String text) {
+  Widget _buildInfoRow(IconData icon, String text, {bool isSolid = false}) {
     return Row(
       children: [
-        Icon(icon, size: 16.sp, color: Colors.grey.shade400),
+        Icon(icon, size: 16.sp, color: isSolid ? Colors.black.withValues(alpha: 0.4) : Colors.grey.shade400),
         SizedBox(width: 8.w),
         Expanded(
           child: Text(
             text,
-            style: CustomFonts.black14w400.copyWith(color: Colors.grey.shade600),
+            style: CustomFonts.black14w400.copyWith(color: isSolid ? Colors.black87 : Colors.grey.shade600),
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -399,14 +408,13 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color,
         borderRadius: BorderRadius.circular(6.r),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Text(
         type,
         style: TextStyle(
-          color: color,
+          color: Colors.black87,
           fontSize: 10.sp,
           fontWeight: FontWeight.bold,
         ),

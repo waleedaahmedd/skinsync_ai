@@ -57,12 +57,22 @@ class HomeScreen extends ConsumerWidget {
             ),
             SizedBox(height: 18.h),
             SizedBox(
-              height: 110.h,
+              height: 185.h,
               child: ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 30.w),
                 scrollDirection: Axis.horizontal,
-                itemCount: dummyAppointments.take(5).length,
-                itemBuilder: (context, index) => UpcomingAppointmentHomeCard(appointment: dummyAppointments[index]),
+                itemCount: 3, // 3 Date Sections
+                itemBuilder: (context, dateIndex) {
+                  // Mock grouping logic for the demo
+                  final dates = ["12 May 2026", "15 May 2026", "20 May 2026"];
+                  final startIndex = dateIndex * 2;
+                  final dateAppointments = dummyAppointments.skip(startIndex).take(2).toList();
+
+                  return UpcomingAppointmentDateSection(
+                    dateTitle: dates[dateIndex],
+                    appointments: dateAppointments,
+                  );
+                },
               ),
             ),
             SizedBox(height: 30.h),

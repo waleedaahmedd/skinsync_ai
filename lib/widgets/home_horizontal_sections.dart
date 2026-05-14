@@ -164,17 +164,58 @@ class ClinicHomeCard extends StatelessWidget {
   }
 }
 
+class UpcomingAppointmentDateSection extends StatelessWidget {
+  final String dateTitle;
+  final List<DummyAppointment> appointments;
+  const UpcomingAppointmentDateSection({super.key, required this.dateTitle, required this.appointments});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(right: 15.w),
+      padding: EdgeInsets.fromLTRB(14.w, 10.h, 4.w, 10.h),
+      decoration: BoxDecoration(
+        color: CustomColors.blueColor,
+        borderRadius: BorderRadius.circular(18.r),
+        border: Border.all(color: CustomColors.lightPurpleColor.withValues(alpha: 0.15)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: 2.w),
+            child: Text(
+              dateTitle,
+              style: CustomFonts.black14w600.copyWith(
+                color: CustomColors.whiteColor,
+                letterSpacing: 0.3,
+                fontSize: 13.sp,
+              ),
+            ),
+          ),
+          SizedBox(height: 8.h),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: appointments.map((appointment) => UpcomingAppointmentHomeCard(appointment: appointment)).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class UpcomingAppointmentHomeCard extends StatelessWidget {
   final DummyAppointment appointment;
   const UpcomingAppointmentHomeCard({super.key, required this.appointment});
 
   Color _getTypeColor(String type) {
     switch (type) {
-      case "Consultation": return Colors.blue;
-      case "Sessions": return Colors.green;
-      case "Follow-Up / Touch-Up": return Colors.purple;
-      case "Provisional Booking": return Colors.orange;
-      default: return Colors.grey;
+      case "Consultation": return CustomColors.lightBlueColor;
+      case "Sessions": return CustomColors.purpleColor;
+      case "Follow-Up / Touch-Up": return CustomColors.lightPurpleColor;
+      case "Provisional Booking": return CustomColors.yellow;
+      default: return Colors.white;
     }
   }
 
@@ -191,76 +232,58 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: 280.w,
-        margin: EdgeInsets.only(right: 15.w),
-        padding: EdgeInsets.all(15.w),
+        width: 230.w,
+        margin: EdgeInsets.only(right: 10.w),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12.r),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-          border: Border.all(color: typeColor.withValues(alpha: 0.2), width: 1),
+          color: typeColor,
+          borderRadius: BorderRadius.circular(14.r),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    "${appointment.treatmentName} – ${appointment.area}",
-                    style: CustomFonts.black14w600,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+              child: Text(
+                appointment.type,
+                style: CustomFonts.black14w400,
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.fromLTRB(6.w, 0, 6.w, 6.h),
+              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "${appointment.treatmentName} - ${appointment.area}",
+                    style: CustomFonts.black14w600.copyWith(fontSize: 13.sp),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                ),
-                _buildTypeBadge(appointment.type, typeColor),
-              ],
-            ),
-            SizedBox(height: 10.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.access_time, size: 14.sp, color: Colors.grey),
-                    SizedBox(width: 6.w),
-                    Text(appointment.time, style: CustomFonts.grey14w400.copyWith(fontSize: 11.sp)),
-                  ],
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                  decoration: BoxDecoration(
-                    color: CustomColors.darkPurple.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(6.r),
+                  SizedBox(height: 6.h),
+                  _buildIconLabel(Icons.business_outlined, appointment.clinicName),
+                  SizedBox(height: 4.h),
+                  _buildIconLabel(Icons.person_outline, appointment.doctorName),
+                  SizedBox(height: 8.h),
+                  const Divider(height: 1),
+                  SizedBox(height: 6.h),
+                  Row(
+                    children: [
+                      Icon(Icons.access_time, size: 12.sp, color: CustomColors.blueColor),
+                      SizedBox(width: 6.w),
+                      Text(
+                        appointment.time,
+                        style: CustomFonts.black12w600.copyWith(fontSize: 10.sp, color: CustomColors.blueColor),
+                      ),
+                    ],
                   ),
-                  child: Text(
-                    DateFormat('dd MMM').format(appointment.date),
-                    style: CustomFonts.black10w600.copyWith(color: CustomColors.darkPurple),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 6.h),
-            Row(
-              children: [
-                Icon(Icons.business_outlined, size: 14.sp, color: Colors.grey),
-                SizedBox(width: 6.w),
-                Expanded(
-                  child: Text(
-                    appointment.clinicName,
-                    style: CustomFonts.grey14w400.copyWith(fontSize: 11.sp),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -268,22 +291,20 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTypeBadge(String type, Color color) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(4.r),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
-      ),
-      child: Text(
-        type,
-        style: TextStyle(
-          color: color,
-          fontSize: 7.sp,
-          fontWeight: FontWeight.bold,
+  Widget _buildIconLabel(IconData icon, String label) {
+    return Row(
+      children: [
+        Icon(icon, size: 12.sp, color: Colors.grey.shade600),
+        SizedBox(width: 6.w),
+        Expanded(
+          child: Text(
+            label,
+            style: CustomFonts.grey14w400.copyWith(fontSize: 11.sp),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
-      ),
+      ],
     );
   }
 }
