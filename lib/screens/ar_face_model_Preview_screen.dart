@@ -36,7 +36,8 @@ class _ArFaceModelPreviewScreenState
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.read(treatmentViewModel.notifier).getTreatments();
       if (widget.simulationData == null) {
         return;
       }
