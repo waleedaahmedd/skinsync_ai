@@ -63,6 +63,7 @@ class Clinic {
       location: json['location'] != null
           ? LatLng(json['location']['lat'], json['location']['lng'])
           : null,
+      place: json['place'] != null ? Place.fromJson(json['place']) : null,
     );
   }
 }

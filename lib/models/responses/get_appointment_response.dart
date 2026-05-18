@@ -5,7 +5,7 @@ class GetAppointmentResponse extends BaseResponseModel {
   List<Appointment>? data;
 
   int? limit;
- 
+
   int? page;
   int? totalPages;
 
@@ -35,8 +35,8 @@ class GetAppointmentResponse extends BaseResponseModel {
 
 class Appointment {
   int? appointmentId;
-  Clinic? clinic;
-  Clinic? doctor;
+  AppointmentClinic? clinic;
+  AppointmentClinic? doctor;
   int? date;
   DateTime? startTime;
   DateTime? endTime;
@@ -75,13 +75,13 @@ class Appointment {
   Appointment.fromJson(Map<String, dynamic> json) {
     appointmentId = json['appointment_id'];
     clinic = json['clinic'] != null
-        ? Clinic.fromJson(json['clinic'])
+        ? AppointmentClinic.fromJson(json['clinic'])
         : null;
     doctor = json['doctor'] != null
-        ? Clinic.fromJson(json['doctor'])
+        ? AppointmentClinic.fromJson(json['doctor'])
         : null;
     date = json['date'];
-    startTime =  DateTime.fromMillisecondsSinceEpoch(json["start_time"] * 1000);
+    startTime = DateTime.fromMillisecondsSinceEpoch(json["start_time"] * 1000);
     endTime = DateTime.fromMillisecondsSinceEpoch(json["end_time"] * 1000);
     treatment = json['treatment'] != null
         ? Treatment.fromJson(json['treatment'])
@@ -104,24 +104,23 @@ class Appointment {
     amountPayable = json['amount_payable'];
     status = json['status'];
   }
-   String get startTimeFormattedTime { 
+  String get startTimeFormattedTime {
     return '${startTime?.formattedTime}';
   }
-   String get endTimeFormattedTime { 
+
+  String get endTimeFormattedTime {
     return '${endTime?.formattedTime}';
   }
 }
 
-
-
-class Clinic {
+class AppointmentClinic {
   int? id;
   String? name;
   String? image;
 
-  Clinic({this.id, this.name, this.image});
+  AppointmentClinic({this.id, this.name, this.image});
 
-  Clinic.fromJson(Map<String, dynamic> json) {
+  AppointmentClinic.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     image = json['image'];

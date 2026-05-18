@@ -7,7 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/main.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
@@ -535,6 +534,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                       if (clinic?.place != null) {
                         PreBookingBottomSheet.show(
                           context,
+                          clinic: clinic!,
                           onConfirm: () {
                             WalletConfirmationBottomSheet.show(
                               context,
