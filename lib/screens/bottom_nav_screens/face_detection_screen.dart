@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:skinsync_ai/utills/image_utills.dart';
 import 'package:skinsync_ai/utills/secure_storage_service.dart';
 import 'package:skinsync_ai/widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
@@ -14,7 +13,6 @@ import 'package:skinsync_ai/widgets/bottom_sheets/medical_disclaimer_bottomsheet
 import '../../utills/assets.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
-import '../../utills/ml_kit_utills.dart';
 import '../../view_models/checkout_view_model.dart';
 import '../../view_models/treatment_view_model.dart';
 import '../ar_face_model_Preview_screen.dart';
@@ -31,13 +29,9 @@ class FaceDetectionScreen extends ConsumerStatefulWidget {
 
 class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   CameraController? _cameraController;
-  late FaceDetector _faceDetector;
-  bool _isDetecting = false;
   XFile? _capturedImage;
 
   bool _isCapturing = false;
-
-  // CustomPaint? _faceBoundingBoxPaint;
 
   // Store ref for use in callbacks
   WidgetRef? _storedRef;
@@ -45,9 +39,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   @override
   void initState() {
     super.initState();
-    _faceDetector = FaceDetector(
-      options: FaceDetectorOptions(enableClassification: true),
-    );
     _storedRef = ref;
     _initCamera(ref);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -86,17 +77,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
       if (!mounted) return;
 
-      _cameraController!.startImageStream((image) {
-        if (_isDetecting || !mounted) return;
-        _isDetecting = true;
-
-        _process(ref, image).whenComplete(() {
-          if (mounted) {
-            _isDetecting = false;
-          }
-        });
-      });
-
       if (mounted) {
         setState(() {});
       }
@@ -119,190 +99,12 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     });
   }
 
-  Future<void> _process(WidgetRef ref, CameraImage image) async {
-    // Don't process if we're already capturing
-    if (_isCapturing) {
-      return;
-    }
-
-    // Use full image for detection (cropping might have issues)
-    // We'll check if face is centered and within the circular guide area
-    final inputImage = inputImageFromCameraImage(
-      image,
-      _cameraController!.description,
-    );
-
-    // Detect faces in the full image
-    final faces = await _faceDetector.processImage(inputImage);
-
-    // Update face bounding box painter
-    // Use the actual camera preview size for accurate coordinate mapping
-    // final previewSize = _cameraController!.value.previewSize;
-    // if (mounted) {
-    //   setState(() {
-    //     if (faces.isNotEmpty &&
-    //         inputImage.metadata?.size != null &&
-    //         inputImage.metadata?.rotation != null &&
-    //         previewSize != null) {
-    //       // Create bounding box paint when face is detected and metadata is available
-    //       _faceBoundingBoxPaint = CustomPaint(
-    //         painter: FaceDetectorPainter(
-    //           faces: faces,
-    //           imageSize: inputImage.metadata!.size,
-    //           rotation: inputImage.metadata!.rotation,
-    //           cameraLensDirection: _cameraController!.description.lensDirection,
-    //           previewSize: Size(
-    //             previewSize.width.toDouble(),
-    //             previewSize.height.toDouble(),
-    //           ),
-    //         ),
-    //         child: const SizedBox.expand(),
-    //       );
-    //     } else {
-    //       // Clear bounding box paint when no faces or metadata unavailable
-    //       _faceBoundingBoxPaint = null;
-    //     }
-    //   });
-    // }
-
-    if (faces.isEmpty) {
-      return;
-    }
-
-    final face = faces.first;
-
-    // Get face bounding box - coordinates are in the InputImage coordinate system
-    final faceBox = face.boundingBox;
-    final faceCenter = faceBox.center;
-    final faceWidth = faceBox.width;
-    final faceHeight = faceBox.height;
-
-    // Get the input image size (accounts for rotation)
-    final inputImageSize =
-        inputImage.metadata?.size ??
-        Size(image.width.toDouble(), image.height.toDouble());
-
-    // IMPORTANT: The camera preview uses AspectRatio which may letterbox the image
-    // Face detection coordinates are relative to the full InputImage, not the visible preview
-    // The center calculation should use the actual image center
-
-    // Calculate the square area (lens square) in image coordinates
-    // Square is 50% of circle diameter, centered at circle center
-    // Circle center: 50% width, 29% height from top
-    // Circle radius: 42% of canvas width
-    // Square size: 50% of circle diameter = 42% of canvas width
-    // For simplicity, use image dimensions directly (42% of image width)
-    final squareCenterX = inputImageSize.width / 2.0; // 50% width
-    final squareCenterY = inputImageSize.height * 0.42; // 29% from top
-    final squareSize = inputImageSize.width * 0.42; // 42% of image width
-    final squareHalfSize = squareSize / 2.0;
-
-    // Square bounds in image coordinates
-    final squareLeft = squareCenterX - squareHalfSize;
-    final squareRight = squareCenterX + squareHalfSize;
-    final squareTop = squareCenterY - squareHalfSize;
-    final squareBottom = squareCenterY + squareHalfSize;
-
-    // Check if face bounding box aligns with the square (lens area)
-    // Use very lenient tolerance for alignment - face should be mostly within square
-    final tolerance =
-        squareSize * 0.40; // 40% tolerance for alignment (very lenient)
-
-    // Check if face center is within the square area (with tolerance)
-    final faceCenterInSquare =
-        faceCenter.dx >= (squareLeft - tolerance) &&
-        faceCenter.dx <= (squareRight + tolerance) &&
-        faceCenter.dy >= (squareTop - tolerance) &&
-        faceCenter.dy <= (squareBottom + tolerance);
-
-    // Check if face bounding box overlaps with square (simpler check)
-    // Face is considered aligned if center is in square AND bounding box intersects with square
-    final faceBoxIntersectsSquare =
-        faceBox.right >= (squareLeft - tolerance) &&
-        faceBox.left <= (squareRight + tolerance) &&
-        faceBox.bottom >= (squareTop - tolerance) &&
-        faceBox.top <= (squareBottom + tolerance);
-
-    // Face is aligned if center is in square OR bounding box intersects (more lenient)
-    final isFaceInSquare = faceCenterInSquare || faceBoxIntersectsSquare;
-
-    // Calculate the center of the INPUT IMAGE (where face detection happens)
-    final imageCenter = Offset(
-      inputImageSize.width / 2,
-      inputImageSize.height / 2,
-    );
-
-    // Calculate distance from center (circular check)
-    final dx = faceCenter.dx - imageCenter.dx;
-    final dy = faceCenter.dy - imageCenter.dy;
-    final distanceFromCenter = (dx * dx + dy * dy);
-
-    // Use a circular radius - 30% of smaller dimension (stricter for better centering)
-    final smallerDimension = inputImageSize.width < inputImageSize.height
-        ? inputImageSize.width
-        : inputImageSize.height;
-    final circleRadius = smallerDimension * 0.30; // Reduced from 35% to 30%
-    final allowedRadiusSquared = circleRadius * circleRadius;
-
-    // Also use rectangular check as fallback (more lenient)
-    final horizontalDistance = (faceCenter.dx - imageCenter.dx).abs();
-    final verticalDistance = (faceCenter.dy - imageCenter.dy).abs();
-    final allowedHorizontalOffset =
-        inputImageSize.width * 0.25; // Reduced from 30% to 25%
-    final allowedVerticalOffset =
-        inputImageSize.height * 0.25; // Reduced from 30% to 25%
-    final isWithinRect =
-        horizontalDistance <= allowedHorizontalOffset &&
-        verticalDistance <= allowedVerticalOffset;
-
-    // Check if face center is within the circle OR rectangle (whichever is more lenient)
-    final isWithinCircle = distanceFromCenter <= allowedRadiusSquared;
-    final isCentered = isWithinCircle || isWithinRect;
-
-    // Face is aligned with lens square if face overlaps with square and center is in square
-    final isAlignedWithSquare = isFaceInSquare;
-
-    // Check if face is fully visible (not cut off at edges)
-    // Face should be at least 3% away from all edges to ensure full face is visible
-    final edgeMargin =
-        smallerDimension * 0.03; // Increased from 1% to 3% for stricter check
-    final isFullyVisible =
-        faceBox.left >= edgeMargin &&
-        faceBox.top >= edgeMargin &&
-        faceBox.right <= (inputImageSize.width - edgeMargin) &&
-        faceBox.bottom <= (inputImageSize.height - edgeMargin);
-
-    // Check if face size is reasonable (not too small or too large)
-    // Face should be between 8% and 50% of the smaller dimension
-    final minFaceSize = smallerDimension * 0.08; // Increased from 5% to 8%
-    final maxFaceSize = smallerDimension * 0.50; // Reduced from 65% to 50%
-    final isReasonableSize =
-        (faceWidth >= minFaceSize && faceWidth <= maxFaceSize) &&
-        (faceHeight >= minFaceSize && faceHeight <= maxFaceSize);
-
-    // Check face aspect ratio - ensure it's a normal face (not too stretched)
-    final faceAspectRatio = faceWidth / faceHeight;
-    final isNormalAspectRatio =
-        faceAspectRatio >= 0.6 && faceAspectRatio <= 1.4; // Stricter range
-
-    // Face is valid ONLY if: aligned with square AND fully visible AND reasonable size AND normal aspect ratio
-    // ALL conditions must be met - this ensures full face is detected and aligned with lens square
-    final isValidFace =
-        isAlignedWithSquare && // Face must be aligned with lens square
-        isFullyVisible && // Must be fully visible (not cut off)
-        isReasonableSize && // Must have reasonable size
-        isNormalAspectRatio; // Must have normal proportions
-  }
-
   Future<void> _captureAndNavigate(WidgetRef ref) async {
     if (_cameraController == null || _isCapturing) return;
 
     setState(() {
       _isCapturing = true;
     });
-
-    // Stop the image stream first
-    await _cameraController!.stopImageStream();
 
     // Capture the image
     final image = await _cameraController!.takePicture();
@@ -389,12 +191,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                             _capturedImage = null;
                             _isCapturing = false;
                           });
-                          // Restart image stream
-                          _cameraController?.startImageStream((image) {
-                            if (_storedRef != null) {
-                              _process(_storedRef!, image);
-                            }
-                          });
                         },
                         style: OutlinedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 16.h),
@@ -457,7 +253,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   @override
   void dispose() {
     _cameraController?.dispose();
-    _faceDetector.close();
     super.dispose();
   }
 
