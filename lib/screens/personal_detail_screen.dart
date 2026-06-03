@@ -34,13 +34,13 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final user = ref.read(authViewModel).authResponse?.data?.userDetails;
-      if (user != null) {
-        _nameController.text = user.name ?? "";
-        _phoneController.text = user.phoneNumber ?? "";
-        _emailController.text = user.emailAddress ?? "";
-        _locationController.text = user.location ?? "";
-        _bioController.text = user.bio ?? "";
+      final data = ref.read(authViewModel).authResponse?.data;
+      if (data != null) {
+        _nameController.text = data.userDetails?.name ?? "";
+        _phoneController.text = data.userDetails?.phoneNumber ?? "";
+        _emailController.text = data.user?.primaryEmail ?? "";
+        _locationController.text = data.userDetails?.location ?? "";
+        _bioController.text = data.userDetails?.bio ?? "";
         // TODO: CC Not provided in AuthResponse, uncomment when response is
         // TODO: fixed
         // if (user.cc != null) {

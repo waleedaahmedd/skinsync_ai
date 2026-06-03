@@ -1,6 +1,5 @@
-import 'package:skinsync_ai/models/responses/treatment_response_model.dart';
-
 import 'base_response_model.dart';
+import 'treatment_response_model.dart';
 
 class AuthResponse extends BaseResponseModel {
   final Data? data;
@@ -63,20 +62,20 @@ class User {
   final String? status;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-  final List<String> authProviders;
-  final List<String> authTokens;
-  final List<String> roles;
+  final dynamic authProviders;
+  final dynamic authTokens;
+  final dynamic roles;
 
-  const User({
+  User({
     this.id,
     this.primaryEmail,
     this.primaryPhone,
     this.status,
     this.createdAt,
     this.updatedAt,
-    this.authProviders = const [],
-    this.authTokens = const [],
-    this.roles = const [],
+    this.authProviders,
+    this.authTokens,
+    this.roles,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -90,9 +89,9 @@ class User {
     updatedAt: json["updated_at"] == null
         ? null
         : DateTime.parse(json["updated_at"]),
-    authProviders: json["AuthProviders"] ?? <String>[],
-    authTokens: json["AuthTokens"] ?? <String>[],
-    roles: json["Roles"] ?? <String>[],
+    authProviders: json["AuthProviders"],
+    authTokens: json["AuthTokens"],
+    roles: json["Roles"],
   );
 }
 
@@ -108,7 +107,7 @@ class UserDetails {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  const UserDetails({
+  UserDetails({
     this.userProfileId,
     this.userId,
     this.name,

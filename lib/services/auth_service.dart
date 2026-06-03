@@ -171,7 +171,7 @@ class AuthService implements AuthRepository {
       AuthResponse authResponse = AuthResponse.fromJson(parsed);
       if (authResponse.isSuccess == true) {
         final savedEmail = await _secureStorage.getUserEmail();
-        if (savedEmail != authResponse.data?.userDetails?.emailAddress) {
+        if (savedEmail != authResponse.data?.user?.primaryEmail) {
           try {
             await biometricUnregister();
           } catch (e) {
@@ -180,7 +180,7 @@ class AuthService implements AuthRepository {
         }
         if (authResponse.data != null) {
           await _secureStorage.saveUserEmail(
-            authResponse.data!.userDetails?.emailAddress,
+            authResponse.data!.user?.primaryEmail,
           );
           await _secureStorage.saveToken(authResponse.data!.accessToken!);
           await _secureStorage.saveRefreshToken(
@@ -265,16 +265,14 @@ class AuthService implements AuthRepository {
         throw AppException(authResponse.message ?? 'Something went wrong!');
       }
       final savedEmail = await _secureStorage.getUserEmail();
-      if (savedEmail != authResponse.data?.userDetails?.emailAddress) {
+      if (savedEmail != authResponse.data?.user?.primaryEmail) {
         try {
           await biometricUnregister();
         } catch (e) {
           log('$e Failed to unregister biometric, Not important');
         }
       }
-      await _secureStorage.saveUserEmail(
-        authResponse.data!.userDetails?.emailAddress,
-      );
+      await _secureStorage.saveUserEmail(authResponse.data!.user?.primaryEmail);
       await _secureStorage.saveToken(authResponse.data!.accessToken!);
       await _secureStorage.saveRefreshToken(authResponse.data!.refreshToken!);
       await _secureStorage.saveAccessTokenExpiry(
@@ -313,16 +311,14 @@ class AuthService implements AuthRepository {
         throw AppException(authResponse.message ?? 'Something went wrong!');
       }
       final savedEmail = await _secureStorage.getUserEmail();
-      if (savedEmail != authResponse.data?.userDetails?.emailAddress) {
+      if (savedEmail != authResponse.data?.user?.primaryEmail) {
         try {
           await biometricUnregister();
         } catch (e) {
           log('$e Failed to unregister biometric, Not important');
         }
       }
-      await _secureStorage.saveUserEmail(
-        authResponse.data!.userDetails?.emailAddress,
-      );
+      await _secureStorage.saveUserEmail(authResponse.data!.user?.primaryEmail);
       await _secureStorage.saveToken(authResponse.data!.accessToken!);
       await _secureStorage.saveRefreshToken(authResponse.data!.refreshToken!);
       await _secureStorage.saveAccessTokenExpiry(
