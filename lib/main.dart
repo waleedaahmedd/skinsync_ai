@@ -10,7 +10,7 @@ import 'services/storage_service.dart';
 import 'utills/secure_storage_service.dart';
 import 'utills/shared_pref.dart';
 
-bool isDeploymentMode = false;
+bool isDeploymentMode = true;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

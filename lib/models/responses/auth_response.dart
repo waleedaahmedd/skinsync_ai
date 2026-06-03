@@ -16,8 +16,8 @@ class AuthResponse extends BaseResponseModel {
 class Data {
   final String? accessToken;
   final String? refreshToken;
-  final int? isActiveExpiry;
-  final int? refreshTokenExpiry;
+  final int? accessExpiresAt;
+  final int? refreshExpiresAt;
   final bool? isFirstLogin;
   final bool? isActive;
   final User? user;
@@ -27,8 +27,8 @@ class Data {
   const Data({
     this.accessToken,
     this.refreshToken,
-    this.isActiveExpiry,
-    this.refreshTokenExpiry,
+    this.accessExpiresAt,
+    this.refreshExpiresAt,
     this.isFirstLogin,
     this.isActive,
     this.user,
@@ -39,8 +39,8 @@ class Data {
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     accessToken: json["access_token"],
     refreshToken: json["refresh_token"],
-    isActiveExpiry: json["is_active_expiry"],
-    refreshTokenExpiry: json["refresh_token_expiry"],
+    accessExpiresAt: json["access_expires_at"],
+    refreshExpiresAt: json["refresh_expires_at"],
     isFirstLogin: json["is_first_login"],
     isActive: json["is_active"],
     user: json["user"] == null ? null : User.fromJson(json["user"]),
