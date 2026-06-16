@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:skinsync_ai/models/dummy_list_model.dart';
-import 'package:skinsync_ai/screens/doctors_listing_screen.dart';
-import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
-import 'package:skinsync_ai/view_models/bottom_nav_view_model.dart';
-import 'package:skinsync_ai/widgets/home_horizontal_sections.dart';
+import '../models/dummy_list_model.dart';
+import 'doctors_listing_screen.dart';
+import 'explore_clinics_screen.dart';
+import '../view_models/bottom_nav_view_model.dart';
+import '../widgets/home_horizontal_sections.dart';
 
 import '../utills/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
@@ -44,7 +44,7 @@ class HomeScreen extends ConsumerWidget {
               padding: EdgeInsets.symmetric(horizontal: 30.w),
               child: Column(
                 children: [
-                  PointsEarnCard(),
+                  const PointsEarnCard(),
                   SizedBox(height: 30.h),
                   HeadingWithRightArrow(
                     title: "Upcoming Appointments",
@@ -167,7 +167,7 @@ class HomeScreen extends ConsumerWidget {
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: EdgeInsets.only(left: index == 0 ? 30.w : 17.w),
-                    child: DiscountCard(),
+                    child: const DiscountCard(),
                   );
                 },
               ),

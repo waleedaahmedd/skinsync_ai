@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../../utills/color_constant.dart';
+import '../../utills/custom_fonts.dart';
 
 void showAppointmentSuccessDialog({
   required BuildContext context,
@@ -32,7 +32,7 @@ void showAppointmentSuccessDialog({
                 width: 100.w,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: CustomColors.lightBlueColor.withOpacity(0.2),
+                  color: CustomColors.lightBlueColor.withValues(alpha: 0.2),
                 ),
                 child: Icon(
                   Iconsax.verify5, // Consistent with your icon style

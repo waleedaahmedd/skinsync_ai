@@ -27,12 +27,12 @@ abstract final class CustomColors {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xff88E3FB).withValues(alpha: 0.05),
-      Color(0xffFFFFFF),
-      Color(0xffE7C6E8),
+      const Color(0xff88E3FB).withValues(alpha: 0.05),
+      const Color(0xffFFFFFF),
+      const Color(0xffE7C6E8),
     ],
   );
-  static LinearGradient whitePurpleGradient = LinearGradient(
+  static LinearGradient whitePurpleGradient = const LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [Color(0xffFFF0FF), Color(0xffE7C6E8)],
@@ -56,13 +56,13 @@ abstract final class CustomColors {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xffFFFFFF).withOpacity(0.0), // fully transparent
-      Color(0xffFFFFFF).withOpacity(0.8),
-      Color(0xff88E3FB).withOpacity(0.3),
-      Color(0xff88E3FB).withOpacity(0.5),
-      Color(0xff88E3FB).withOpacity(0.5),
-      Color(0xffFFFFFF).withOpacity(0.6),
-      Color(0xffFFFFFF).withOpacity(1.0),
+      const Color(0xffFFFFFF).withValues(alpha: 0.0), // fully transparent
+      const Color(0xffFFFFFF).withValues(alpha: 0.8),
+      const Color(0xff88E3FB).withValues(alpha: 0.3),
+      const Color(0xff88E3FB).withValues(alpha: 0.5),
+      const Color(0xff88E3FB).withValues(alpha: 0.5),
+      const Color(0xffFFFFFF).withValues(alpha: 0.6),
+      const Color(0xffFFFFFF).withValues(alpha: 1.0),
     ],
   );
 }

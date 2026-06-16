@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 
 class HeadingWithRightArrow extends StatelessWidget {
   final String title;
@@ -23,7 +23,7 @@ class HeadingWithRightArrow extends StatelessWidget {
           onTap: onTap,
           child: Container(
             padding: EdgeInsets.all(7.w),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
               color: CustomColors.greyColor,
             ),

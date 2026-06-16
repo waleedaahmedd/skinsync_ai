@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:skinsync_ai/screens/bottom_nav_screens/face_detection_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/checkout_view_model.dart';
-import 'package:skinsync_ai/view_models/treatment_view_model.dart';
+import '../screens/bottom_nav_screens/face_detection_screen.dart';
+import '../utills/assets.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/checkout_view_model.dart';
+import '../view_models/treatment_view_model.dart';
 
 import '../utills/color_constant.dart';
 
@@ -35,13 +35,13 @@ class ScanFaceButton extends ConsumerWidget {
           boxShadow: [
             // Outer glow
             BoxShadow(
-              color: Colors.black.withOpacity(0.5),
+              color: Colors.black.withValues(alpha: 0.5),
               blurRadius: 30,
               spreadRadius: 10,
             ),
             // Soft white diffuse glow
             BoxShadow(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               blurRadius: 40,
               spreadRadius: 20,
             ),

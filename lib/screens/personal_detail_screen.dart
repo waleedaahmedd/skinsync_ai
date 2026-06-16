@@ -7,10 +7,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
-import 'package:skinsync_ai/widgets/custom_app_bar.dart';
-import 'package:skinsync_ai/widgets/phone_widget.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/auth_view_model.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/phone_widget.dart';
 
 class PersonalDetailScreen extends ConsumerStatefulWidget {
   const PersonalDetailScreen({super.key});
@@ -36,11 +36,11 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final data = ref.read(authViewModel).authResponse?.data;
       if (data != null) {
-        _nameController.text = data.userDetails?.name ?? "";
-        _phoneController.text = data.userDetails?.phoneNumber ?? "";
+        _nameController.text = data.user?.name ?? "";
+        _phoneController.text = data.user?.phoneNumber ?? "";
         _emailController.text = data.user?.primaryEmail ?? "";
-        _locationController.text = data.userDetails?.location ?? "";
-        _bioController.text = data.userDetails?.bio ?? "";
+        _locationController.text = data.user?.location ?? "";
+        _bioController.text = data.user?.bio ?? "";
         // TODO: CC Not provided in AuthResponse, uncomment when response is
         // TODO: fixed
         // if (user.cc != null) {
@@ -92,8 +92,8 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
           child: Wrap(
             children: [
               ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Choose from Gallery'),
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Choose from Gallery'),
                 onTap: () {
                   Navigator.pop(context);
                   ref
@@ -102,8 +102,8 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.photo_camera),
-                title: Text('Take a Photo'),
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Take a Photo'),
                 onTap: () {
                   Navigator.pop(context);
                   ref
@@ -122,7 +122,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
   Widget build(BuildContext context) {
     final profileImage = ref.watch(authViewModel).profileImage;
     return Scaffold(
-      appBar: CustomAppBar(showTitle: true, title: "Personal Details"),
+      appBar: const CustomAppBar(showTitle: true, title: "Personal Details"),
       body: SafeArea(
         top: false,
         child: Padding(
@@ -152,7 +152,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                                         .read(authViewModel)
                                         .authResponse
                                         ?.data
-                                        ?.userDetails
+                                        ?.user
                                         ?.profileImageUrl ??
                                     "",
                                 fit: BoxFit.cover,
@@ -204,7 +204,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                   TextFormField(
                     controller: _nameController,
                     style: CustomFonts.black18w400,
-                    decoration: InputDecoration(hintText: "Lizzy Johnson"),
+                    decoration: const InputDecoration(hintText: "Lizzy Johnson"),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Please enter your name';
@@ -230,7 +230,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                     controller: _emailController,
                     style: CustomFonts.black18w400,
                     enabled: false,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: "lizzyjhonson@gmail.com",
                     ),
                     validator: (value) {
@@ -250,7 +250,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                   TextField(
                     controller: _locationController,
                     style: CustomFonts.black18w400,
-                    decoration: InputDecoration(hintText: "New York"),
+                    decoration: const InputDecoration(hintText: "New York"),
                   ),
                   SizedBox(height: 20.h),
                   Row(
@@ -258,14 +258,14 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                       Expanded(
                         child: TextField(
                           style: CustomFonts.black18w400,
-                          decoration: InputDecoration(hintText: "Skin Type +2"),
+                          decoration: const InputDecoration(hintText: "Skin Type +2"),
                         ),
                       ),
                       SizedBox(width: 12.39.h),
                       Expanded(
                         child: TextField(
                           style: CustomFonts.black18w400,
-                          decoration: InputDecoration(hintText: "Skin Goal +4"),
+                          decoration: const InputDecoration(hintText: "Skin Goal +4"),
                         ),
                       ),
                     ],
@@ -273,7 +273,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                   SizedBox(height: 20.h),
                   TextField(
                     style: CustomFonts.black18w400,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: "Primary Concerns  +3",
                     ),
                   ),
@@ -282,7 +282,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                     controller: _bioController,
                     maxLines: 4,
                     style: CustomFonts.black18w400,
-                    decoration: InputDecoration(hintText: "Bio"),
+                    decoration: const InputDecoration(hintText: "Bio"),
                   ),
                   SizedBox(height: 35.h),
                   Consumer(
@@ -295,8 +295,8 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                         child: ElevatedButton(
                           onPressed: loading ? null : _onSavePressed,
                           child: loading
-                              ? CircularProgressIndicator()
-                              : Text("Save"),
+                              ? const CircularProgressIndicator()
+                              : const Text("Save"),
                         ),
                       );
                     },

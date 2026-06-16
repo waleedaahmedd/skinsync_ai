@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:skinsync_ai/models/requests/save_history_request.dart';
-import 'package:skinsync_ai/models/responses/base_response_model.dart';
-import 'package:skinsync_ai/models/responses/treatment_area_response.dart';
-import 'package:skinsync_ai/models/responses/treatment_sub_area_response.dart';
-import 'package:skinsync_ai/repositories/treatment_repository.dart';
+import '../models/requests/save_history_request.dart';
+import '../models/responses/base_response_model.dart';
+import '../models/responses/treatment_area_response.dart';
+import '../models/responses/treatment_sub_area_response.dart';
+import '../repositories/treatment_repository.dart';
 
 import '../exceptions/app_exception.dart';
 import '../models/responses/auth_response.dart';

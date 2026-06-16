@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:skinsync_ai/exceptions/app_exception.dart';
-import 'package:skinsync_ai/models/responses/get_appointment_response.dart';
-import 'package:skinsync_ai/repositories/appointment_repository.dart';
-import 'package:skinsync_ai/services/api_base_helper.dart';
-import 'package:skinsync_ai/utills/enums.dart';
+import '../exceptions/app_exception.dart';
+import '../models/responses/get_appointment_response.dart';
+import '../repositories/appointment_repository.dart';
+import 'api_base_helper.dart';
+import '../utills/enums.dart';
 
 import '../models/responses/simulation_history_response.dart';
 

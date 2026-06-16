@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../utills/custom_fonts.dart';
 
 import '../widgets/custom_app_bar.dart';
 
@@ -12,7 +12,7 @@ class NotificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(showTitle: true, title: "Notification"),
+      appBar: const CustomAppBar(showTitle: true, title: "Notification"),
       body: Padding(
         padding: EdgeInsets.only(
           left: 30.w,

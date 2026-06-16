@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
+import '../../utills/color_constant.dart';
 
 void showDeleteAccountDialog({
   required BuildContext screenContext,

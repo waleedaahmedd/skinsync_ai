@@ -3,10 +3,10 @@ import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:skinsync_ai/models/bottom_nav.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/view_models/bottom_nav_view_model.dart';
+import '../models/bottom_nav.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../view_models/bottom_nav_view_model.dart';
 
 import '../view_models/checkout_view_model.dart';
 

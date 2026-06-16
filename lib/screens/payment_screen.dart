@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
-import 'package:skinsync_ai/models/responses/payment_options_response.dart';
-import 'package:skinsync_ai/screens/notes_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
-import 'package:skinsync_ai/widgets/custom_app_bar.dart';
+import '../models/responses/get_clinic_response.dart';
+import '../models/responses/payment_options_response.dart';
+import 'notes_screen.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/clinlic_doctor_view_model.dart';
+import '../widgets/custom_app_bar.dart';
 
 import '../models/responses/availability_response.dart';
 import '../models/responses/get_doctor_response.dart';
@@ -50,7 +50,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(showTitle: false),
+      appBar: const CustomAppBar(showTitle: false),
       body: Padding(
         padding: EdgeInsetsGeometry.symmetric(horizontal: 30.w),
         child: _buildBody(),
@@ -80,7 +80,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                 },
               );
             },
-            child: Text("Pay Now"),
+            child: const Text("Pay Now"),
           ),
         ),
       ),
@@ -94,7 +94,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
           clinicDoctorProvider.select((s) => (s.paymentOptions, s.loading)),
         );
         if (state.$2) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(color: CustomColors.pinkColor),
           );
         }

@@ -310,7 +310,7 @@ abstract final class CustomFonts {
     height: 0,
     fontSize: 13.sp,
     fontWeight: FontWeight.w500,
-    color: Color(0xFFFE3A30),
+    color: const Color(0xFFFE3A30),
     fontFamily: 'Degular',
   );
   static TextStyle black20w600 = TextStyle(

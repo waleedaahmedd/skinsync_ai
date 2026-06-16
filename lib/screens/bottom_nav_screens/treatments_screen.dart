@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/treatment_view_model.dart';
-import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
-import 'package:skinsync_ai/widgets/app_loader.dart';
-import 'package:skinsync_ai/widgets/treatment_container.dart';
+import '../../utills/custom_fonts.dart';
+import '../../view_models/treatment_view_model.dart';
+import '../../widgets/app_bar_with_action_icon.dart';
+import '../../widgets/app_loader.dart';
+import '../../widgets/treatment_container.dart';
 
 import '../../widgets/grey_container.dart';
 
@@ -34,7 +34,7 @@ class TreatmentsScreen extends ConsumerWidget {
                 SizedBox(height: 15.h),
                 TextField(
                   style: CustomFonts.black18w400,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.search),
                     hintText: "Search Appointments",
                   ),
@@ -49,7 +49,7 @@ class TreatmentsScreen extends ConsumerWidget {
                 return
                 // ref.watch(treatmentViewModel)
                 //   ?
-                TreatmentMainScreen()
+                const TreatmentMainScreen()
                 // : SelectSectionScreen()
                 ;
               },
@@ -268,7 +268,7 @@ class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
 
                   // Show loading indicator
                   if (isLoading) {
-                    return AppLoader();
+                    return const AppLoader();
                   }
 
                   return AnimationLimiter(

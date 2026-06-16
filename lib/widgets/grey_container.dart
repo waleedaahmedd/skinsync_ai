@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
+import '../utills/color_constant.dart';
 
 class GreyContainer extends StatelessWidget {
   const GreyContainer({

@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/models/responses/payment_options_response.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
-import 'package:skinsync_ai/widgets/custom_app_bar.dart';
+import '../models/responses/payment_options_response.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/clinlic_doctor_view_model.dart';
+import '../widgets/custom_app_bar.dart';
 
 import '../models/responses/availability_response.dart';
 import '../models/responses/get_clinic_response.dart';
@@ -53,7 +53,7 @@ class NotesScreen extends ConsumerWidget {
       (prev, next) => _listener(ref, prev, next),
     );
     return Scaffold(
-      appBar: CustomAppBar(showTitle: true, title: "Notes"),
+      appBar: const CustomAppBar(showTitle: true, title: "Notes"),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 30.0.w),
         child: Column(
@@ -81,7 +81,7 @@ class NotesScreen extends ConsumerWidget {
             _buildNotes(
               note: "Mild redness may occur—follow aftercare and avoid sun.",
             ),
-            Spacer(),
+            const Spacer(),
             Row(
               children: [
                 Consumer(
@@ -126,7 +126,7 @@ class NotesScreen extends ConsumerWidget {
                   );
                   final agreed = ref.watch(notesAgreementProvider);
                   if (loading) {
-                    return Center(
+                    return const Center(
                       child: CircularProgressIndicator(
                         color: CustomColors.pinkColor,
                       ),
@@ -143,7 +143,7 @@ class NotesScreen extends ConsumerWidget {
                                 paymentOption: paymentOption,
                               )
                         : null,
-                    child: Text("Confirm Appointment"),
+                    child: const Text("Confirm Appointment"),
                   );
                 },
               ),

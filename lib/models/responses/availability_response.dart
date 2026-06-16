@@ -1,14 +1,14 @@
-import 'package:skinsync_ai/models/responses/base_response_model.dart';
-import 'package:skinsync_ai/utills/date_time_utills.dart';
+import 'base_response_model.dart';
+import '../../utills/date_time_utills.dart';
 
 class AvailabilityResponse extends BaseResponseModel {
   final List<Slot> slots;
 
-  AvailabilityResponse({super.isSuccess, super.message, required this.slots});
+  AvailabilityResponse({super.status, super.message, required this.slots});
 
   factory AvailabilityResponse.fromJson(Map<String, dynamic> json) =>
       AvailabilityResponse(
-        isSuccess: json["is_success"],
+        status: json["is_success"],
         message: json["message"],
         slots: json["slots"] == null
             ? []

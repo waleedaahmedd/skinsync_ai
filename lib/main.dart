@@ -10,7 +10,7 @@ import 'services/storage_service.dart';
 import 'utills/secure_storage_service.dart';
 import 'utills/shared_pref.dart';
 
-bool isDeploymentMode = true;
+bool isDeploymentMode = false;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,5 +20,5 @@ Future<void> main() async {
   await SharedPref.init();
   await SecureStorage().init();
   await StorageService.instance.init();
-  runApp(ProviderScope(child: AppInit()));
+  runApp(const ProviderScope(child: AppInit()));
 }

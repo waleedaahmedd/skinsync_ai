@@ -3,18 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
-import 'package:skinsync_ai/screens/get_started_screen.dart';
-import 'package:skinsync_ai/screens/personal_detail_screen.dart';
-import 'package:skinsync_ai/screens/saved_treatment_screen.dart';
-import 'package:skinsync_ai/screens/setting_screen.dart';
-import 'package:skinsync_ai/screens/webview_page.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/utills/secure_storage_service.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
-import 'package:skinsync_ai/widgets/logout_dialog_box.dart';
+import '../allergy_and_medical_history.dart';
+import '../get_started_screen.dart';
+import '../personal_detail_screen.dart';
+import '../saved_treatment_screen.dart';
+import '../setting_screen.dart';
+import '../webview_page.dart';
+import '../../utills/assets.dart';
+import '../../utills/color_constant.dart';
+import '../../utills/custom_fonts.dart';
+import '../../utills/secure_storage_service.dart';
+import '../../view_models/auth_view_model.dart';
+import '../../widgets/logout_dialog_box.dart';
 
 import '../../main.dart';
 import '../../widgets/dialogs/delete_account_dialog.dart';
@@ -78,7 +78,7 @@ class MyProfileScreen extends StatelessWidget {
                           .watch(authViewModel)
                           .authResponse
                           ?.data
-                          ?.userDetails
+                          ?.user
                           ?.profileImageUrl;
                       return ClipOval(
                         child: Center(
@@ -109,7 +109,7 @@ class MyProfileScreen extends StatelessWidget {
                         .watch(authViewModel)
                         .authResponse
                         ?.data
-                        ?.userDetails
+                        ?.user
                         ?.name;
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,7 +133,7 @@ class MyProfileScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 26.h),
-          Divider(color: CustomColors.greyColor),
+          const Divider(color: CustomColors.greyColor),
           SizedBox(height: 31.h),
           Expanded(
             child: Padding(

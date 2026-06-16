@@ -1,17 +1,15 @@
 import 'dart:convert';
 
-import 'package:skinsync_ai/exceptions/app_exception.dart';
-import 'package:skinsync_ai/models/requests/save_answer_request.dart';
-import 'package:skinsync_ai/models/responses/base_response_model.dart';
-import 'package:skinsync_ai/models/responses/on_boarding_question_response.dart';
-import 'package:skinsync_ai/repositories/on_boarding_repository.dart';
-import 'package:skinsync_ai/services/api_base_helper.dart';
-import 'package:skinsync_ai/utills/enums.dart';
-import 'package:skinsync_ai/utills/secure_storage_service.dart';
+import '../exceptions/app_exception.dart';
+import '../models/requests/save_answer_request.dart';
+import '../models/responses/base_response_model.dart';
+import '../models/responses/on_boarding_question_response.dart';
+import '../repositories/on_boarding_repository.dart';
+import 'api_base_helper.dart';
+import '../utills/enums.dart';
 
 class OnBoardingService implements OnBoardingRepository {
   final ApiBaseHelper _apiClient;
-  final SecureStorage _secureStorage = SecureStorage();
   OnBoardingService({required ApiBaseHelper apiClient})
     : _apiClient = apiClient;
   @override

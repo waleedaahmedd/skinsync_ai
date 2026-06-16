@@ -5,12 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:skinsync_ai/main.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
-import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
-import 'package:skinsync_ai/widgets/app_loader.dart';
-import 'package:skinsync_ai/widgets/custom_app_bar.dart';
-import 'package:skinsync_ai/widgets/custom_clinic_grid_view_title.dart';
+import '../main.dart';
+import '../view_models/auth_view_model.dart';
+import '../view_models/clinlic_doctor_view_model.dart';
+import '../widgets/app_loader.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_clinic_grid_view_title.dart';
 
 import '../models/responses/get_clinic_response.dart';
 import '../utills/assets.dart';
@@ -53,7 +53,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(clinicDoctorProvider);
     return Scaffold(
-      appBar: CustomAppBar(showTitle: true, title: "Explore clinics"),
+      appBar: const CustomAppBar(showTitle: true, title: "Explore clinics"),
 
       body: Stack(
         children: [
@@ -66,7 +66,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 30.w),
                   child: TextField(
                     style: CustomFonts.black18w400,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.search),
                       hintText: "Search clinics",
                     ),
@@ -93,8 +93,8 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                       }
                     },
                     tabs: [
-                      if (!isDeploymentMode) Tab(child: Text('Clinics')),
-                      Tab(child: Text('Invite Clinics')),
+                      if (!isDeploymentMode) const Tab(child: Text('Clinics')),
+                      const Tab(child: Text('Invite Clinics')),
                     ],
                   ),
                 SizedBox(height: 20.h),
@@ -104,7 +104,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                 else
                   Expanded(
                     child: TabBarView(
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       children: [
                         // Center(
                         //   child: Text(
@@ -210,7 +210,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
             authViewModel.select((s) => s.addressData),
           );
           final position = CameraPosition(
-            target: addressData?.latLng ?? LatLng(24.9211313, 67.0708059),
+            target: addressData?.latLng ?? const LatLng(24.9211313, 67.0708059),
             zoom: 13,
           );
           log('ADDRESS: ${addressData?.address}');

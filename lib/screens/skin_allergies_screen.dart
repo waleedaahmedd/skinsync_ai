@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
-import 'package:skinsync_ai/widgets/question_title.dart';
-import 'package:skinsync_ai/widgets/radio_button_widget.dart';
+import '../utills/assets.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/sign_up_onboarding_view_model.dart';
+import '../widgets/question_title.dart';
+import '../widgets/radio_button_widget.dart';
 
 class SkinAllergiesScreen extends StatelessWidget {
   const SkinAllergiesScreen({super.key});
@@ -18,7 +18,7 @@ class SkinAllergiesScreen extends StatelessWidget {
         children: [
           Expanded(
             child: ListView(
-              padding: EdgeInsets.all(0),
+              padding: const EdgeInsets.all(0),
               shrinkWrap: true,
               children: [
                 Column(
@@ -47,7 +47,7 @@ class SkinAllergiesScreen extends StatelessWidget {
 
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15.r),
-                                    image: DecorationImage(
+                                    image: const DecorationImage(
                                       fit: BoxFit.cover,
                                       image: AssetImage(DummyAssets.acen),
                                     ),
@@ -80,7 +80,7 @@ class SkinAllergiesScreen extends StatelessWidget {
 
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15.r),
-                                    image: DecorationImage(
+                                    image: const DecorationImage(
                                       fit: BoxFit.cover,
                                       image: AssetImage(DummyAssets.acen),
                                     ),
@@ -117,7 +117,7 @@ class SkinAllergiesScreen extends StatelessWidget {
 
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15.r),
-                                    image: DecorationImage(
+                                    image: const DecorationImage(
                                       fit: BoxFit.cover,
                                       image: AssetImage(DummyAssets.acen),
                                     ),
@@ -150,7 +150,7 @@ class SkinAllergiesScreen extends StatelessWidget {
 
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15.r),
-                                    image: DecorationImage(
+                                    image: const DecorationImage(
                                       fit: BoxFit.cover,
                                       image: AssetImage(DummyAssets.acen),
                                     ),
@@ -212,7 +212,7 @@ class SkinAllergiesScreen extends StatelessWidget {
                         .read(onBoardingViewModel.notifier)
                         .onNextButton(context);
                   },
-                  child: Text("Next"),
+                  child: const Text("Next"),
                 );
               },
             ),

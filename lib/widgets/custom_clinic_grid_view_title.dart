@@ -2,10 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/frosted_container.dart';
+import '../models/responses/get_clinic_response.dart';
+import '../utills/assets.dart';
+import '../utills/custom_fonts.dart';
+import 'frosted_container.dart';
 
 class CustomClinicGridViewTile extends StatelessWidget {
   final Clinic? clinicData;
@@ -77,7 +77,7 @@ class CustomClinicGridViewTile extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.star, color: Color(0XFFF68712), size: 16.sp),
+                        Icon(Icons.star, color: const Color(0XFFF68712), size: 16.sp),
                         SizedBox(width: 4.w),
                         Text(
                           '${clinicData?.place?.rating ?? 0}',

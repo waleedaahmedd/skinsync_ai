@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
-import 'package:skinsync_ai/widgets/login_bottom_sheet.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/auth_view_model.dart';
+import '../widgets/login_bottom_sheet.dart';
 
 class GetStartedScreen extends StatelessWidget {
   const GetStartedScreen({super.key});
@@ -41,7 +41,7 @@ class GetStartedScreen extends StatelessWidget {
                   PngAssets.vector,
                   height: 376.h,
                   fit: BoxFit.fill,
-                  color: Color(0xff88E3FB).withOpacity(0.7),
+                  color: const Color(0xff88E3FB).withValues(alpha: 0.7),
                 ),
               ),
 
@@ -88,7 +88,7 @@ class GetStartedScreen extends StatelessWidget {
                       children: [
                         Text('to ', style: CustomFonts.black50w600),
                         ShaderMask(
-                          shaderCallback: (bounds) => LinearGradient(
+                          shaderCallback: (bounds) => const LinearGradient(
                             colors: [
                               CustomColors.lightBlueColor, // Light blue
                               CustomColors.lightPurpleColor, // Light pink
@@ -124,7 +124,7 @@ class GetStartedScreen extends StatelessWidget {
                                 .checkBiometricAvailability();
                             loginBottomSheet(context);
                           },
-                          child: Text("Get Started"),
+                          child: const Text("Get Started"),
                         ),
                       ),
                     ),

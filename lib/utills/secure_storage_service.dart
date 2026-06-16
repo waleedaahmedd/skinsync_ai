@@ -22,7 +22,7 @@ class SecureStorage {
 
   /// Load token once at app startup
   Future<void> init() async {
-    _storage = FlutterSecureStorage(
+    _storage = const FlutterSecureStorage(
       aOptions: AndroidOptions(),
       iOptions: IOSOptions(
         accessibility: KeychainAccessibility.first_unlock_this_device,
@@ -80,7 +80,7 @@ class SecureStorage {
   Future<void> saveAccessTokenExpiry(DateTime expiryDate) async {
     await _storage?.write(
       key: _accessTokenExpiryKey,
-      value: expiryDate.subtract(Duration(minutes: 1)).toIso8601String(),
+      value: expiryDate.subtract(const Duration(minutes: 1)).toIso8601String(),
     );
   }
 
@@ -95,7 +95,7 @@ class SecureStorage {
   Future<void> saveRefreshTokenExpiry(DateTime date) async {
     await _storage?.write(
       key: _refreshTokenExpiryKey,
-      value: date.subtract(Duration(minutes: 1)).toIso8601String(),
+      value: date.subtract(const Duration(minutes: 1)).toIso8601String(),
     );
   }
 

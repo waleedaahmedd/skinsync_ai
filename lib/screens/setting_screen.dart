@@ -6,10 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/utills/secure_storage_service.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../utills/secure_storage_service.dart';
 
 import '../utills/biometric_helper.dart';
 import '../utills/enums.dart';
@@ -87,11 +87,11 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(showTitle: true, title: "Settings"),
+      appBar: const CustomAppBar(showTitle: true, title: "Settings"),
 
       body: Column(
         children: [
-          Divider(color: CustomColors.greyColor),
+          const Divider(color: CustomColors.greyColor),
           SizedBox(height: 32.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 30.w),
@@ -109,7 +109,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                       "Push Notifications Off",
                       style: CustomFonts.black22w500,
                     ),
-                    Spacer(),
+                    const Spacer(),
                     CustomSizedSwitch(),
                   ],
                 ),
@@ -145,7 +145,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                       "Biometric Authentication",
                       style: CustomFonts.black22w500,
                     ),
-                    Spacer(),
+                    const Spacer(),
                     FutureBuilder<bool>(
                       key: UniqueKey(),
                       future: BiometricHelper().isBiometricAvailable(),

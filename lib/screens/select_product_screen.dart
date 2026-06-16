@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/screens/additional_info_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/custom_app_bar.dart';
+import 'additional_info_screen.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../widgets/custom_app_bar.dart';
 
 final selectedProductProvider = StateProvider<int?>((ref) => null);
 
@@ -17,7 +17,7 @@ class SelectProductScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: CustomAppBar(showTitle: false),
+      appBar: const CustomAppBar(showTitle: false),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 30.w),
         child: Column(
@@ -140,7 +140,7 @@ class SelectProductScreen extends ConsumerWidget {
               ],
             ),
             SizedBox(height: 14.h),
-            Divider(height: 0,),
+            const Divider(height: 0,),
              SizedBox(height: 14.h),
              Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

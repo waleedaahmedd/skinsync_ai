@@ -1,5 +1,5 @@
-import 'package:skinsync_ai/models/responses/base_response_model.dart';
-import 'package:skinsync_ai/utills/date_time_utills.dart';
+import 'base_response_model.dart';
+import '../../utills/date_time_utills.dart';
 
 class GetAppointmentResponse extends BaseResponseModel {
   List<Appointment>? data;
@@ -11,7 +11,7 @@ class GetAppointmentResponse extends BaseResponseModel {
 
   GetAppointmentResponse({
     this.data,
-    super.isSuccess,
+    super.status,
     this.limit,
     super.message,
     this.page,
@@ -25,7 +25,7 @@ class GetAppointmentResponse extends BaseResponseModel {
         data!.add(Appointment.fromJson(v));
       });
     }
-    isSuccess = json['is_success'];
+    status = json['is_success'];
     limit = json['limit'];
     message = json['message'];
     page = json['page'];

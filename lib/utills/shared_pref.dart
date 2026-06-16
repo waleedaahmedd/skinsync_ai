@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:skinsync_ai/utills/colored_print.dart';
+import 'colored_print.dart';
 
 class SharedPref {
   static SharedPref? _instance;
