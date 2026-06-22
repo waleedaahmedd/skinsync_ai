@@ -7,13 +7,32 @@
 	<key>NSFaceIDUsageDescription</key>
 	<string>This app authenticate using face id?</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Location is used to find nearby clinics.</string>
+	<string>Your location helps us show clinics closest to you for faster access to care.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>Your location helps us show clinics closest to you for faster access to care.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>keychain-access-groups</key>
     <array/>
 	<key>CFBundleDisplayName</key>
 	<string>Skinsync Ai</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This permission is used to save AI images in gallery.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This permission is used to save AI images in gallery.</string>
+	<key>GIDClientID</key>
+	<string>55541632083-1ck0pteg4gso7kbjrm1e1hsq74qp9jsm.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+    <array>
+    	<dict>
+    		<key>CFBundleTypeRole</key>
+    		<string>Editor</string>
+    		<key>CFBundleURLSchemes</key>
+    		<array>
+    			<string>com.googleusercontent.apps.55541632083-1ck0pteg4gso7kbjrm1e1hsq74qp9jsm</string>
+    		</array>
+    	</dict>
+    </array>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

@@ -1,14 +1,18 @@
-import 'dart:io';
+import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
 import 'package:skinsync_ai/models/responses/address_data.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
+import 'package:skinsync_ai/services/apple_auth_service.dart';
+import 'package:skinsync_ai/services/google_auth_service.dart';
 import 'package:skinsync_ai/services/location_service.dart';
-import 'package:skinsync_ai/utills/shared_pref.dart';
+import 'package:skinsync_ai/services/media_service.dart';
+import 'package:skinsync_ai/utills/biometric_helper.dart';
 
 import '../models/base_state_model.dart';
 import '../models/requests/sign_in_request.dart';
@@ -16,6 +20,8 @@ import '../models/responses/auth_response.dart';
 import '../repositories/auth_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/auth_service.dart';
+import '../utills/enums.dart';
+import '../utills/secure_storage_service.dart';
 import 'base_view_model.dart';
 
 final authViewModel = NotifierProvider(() {
@@ -40,6 +46,27 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 
   TextEditingController get passwordController => _passwordController;
 
+  @override
+  void init() {
+    super.init();
+    checkBiometricAvailability();
+  }
+
+  Future<void> checkBiometricAvailability() async {
+    final result = await SecureStorage().getSecureString(
+      key: SharedPreferencesKeys.biometricAuthKey.keyText,
+    );
+    final isAvailable = result != null;
+    IconData? icon;
+    if (isAvailable) {
+      icon = await BiometricHelper().getBiometricIcon();
+    }
+    state = state.copyWith(
+      isBiometricAvailable: isAvailable,
+      biometricIcon: icon,
+    );
+  }
+
   void setAuthResponse(AuthResponse response) {
     state = state.copyWith(authResponse: response);
   }
@@ -53,7 +80,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         maxHeight: 512,
       );
       if (image != null) {
-        state = state.copyWith(profileImage: File(image.path));
+        state = state.copyWith(profileImage: image);
       }
     } catch (e) {
       onError('Error picking image: $e');
@@ -76,13 +103,11 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     }
 
     if (errorMessage != null) {
-      state = state.copyWith(
-        otpError: errorMessage,
-      ); // Update the error in the state
+      state = state.copyWith(otpError: errorMessage);
       return false;
     }
 
-    state = state.copyWith(clearOtpError: true); // Clear any existing errors
+    state = state.copyWith(clearOtpError: true);
     return true;
   }
 
@@ -97,6 +122,54 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     });
   }
 
+  Future<bool?> callBiometricRegisterApi() async {
+    return await runSafely(() async {
+      EasyLoading.show(status: "Please wait");
+      final BaseResponseModel response = await _authRepository
+          .biometricRegisterApi();
+      EasyLoading.showSuccess(response.message.toString());
+      if (response.isSuccess == true) {
+        await checkBiometricAvailability();
+      }
+      return response.isSuccess == true;
+    });
+  }
+
+  Future<bool?> callBiometricUnregisterApi({required bool showLoader}) async {
+    return await runSafely(() async {
+      state = state.copyWith(loading: true);
+      if (showLoader) {
+        EasyLoading.show(status: 'Please wait...');
+      }
+      final BaseResponseModel response = await _authRepository
+          .biometricUnregister();
+      state = state.copyWith(loading: false);
+      if (response.isSuccess == true) {
+        state = state.copyWith(
+          isBiometricAvailable: false,
+          biometricIcon: null,
+        );
+      }
+      EasyLoading.dismiss();
+      return response.isSuccess == true;
+    });
+  }
+
+  Future<bool?> callBiometricLoginApi() async {
+    return await runSafely<bool>(() async {
+      state = state.copyWith(loading: true);
+      final AuthResponse response = await _authRepository.biometricLoginApi();
+      if (response.isSuccess == true) {
+        state = state.copyWith(authResponse: response);
+        //  _fetchLocationInBackground();
+        state = state.copyWith(loading: false);
+        return true;
+      }
+      state = state.copyWith(loading: false);
+      return false;
+    });
+  }
+
   Future<bool?> callVerifyOtpApi() async {
     final request = OtpRequest(
       email: emailController.text,
@@ -107,27 +180,59 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       final AuthResponse response = await _authRepository.verifyOTP(
         otpRequest: request,
       );
-        final addressData = await LocationService().fetchAddress();
-      state = state.copyWith(loading: false, authResponse: response,
-        addressData: addressData,);
+
+      state = state.copyWith(loading: false, authResponse: response);
+
       if (response.isSuccess == true) {
         otpController.clear();
-        print(response.data?.accessToken ?? "");
+        await callBiometricUnregisterApi(showLoader: false);
+        _fetchLocationInBackground();
       }
       return response.isSuccess == true;
     });
   }
 
   Future<bool?> callOnboardingProfileApi({
-    required OnBoardingProfileRequest request,
+    required String name,
+    required String phoneNumber,
+    required String emailAddress,
+    required String location,
+    required String bio,
+    String? cc,
+    String? country,
   }) async {
     return await runSafely(() async {
       state = state.copyWith(loading: true);
+
+      String? imageUrl;
+      if (state.profileImage != null) {
+        imageUrl = await MediaService().uploadImage(
+          state.authResponse?.data?.user?.primaryEmail ?? '',
+          state.profileImage!,
+        );
+      }
+
+      final request = OnBoardingProfileRequest(
+        name: name,
+        phoneNumber: phoneNumber,
+        emailAddress: emailAddress,
+        location: location,
+        bio: bio,
+        cc: cc,
+        country: country,
+        profileImageUrl:
+            imageUrl ??
+            state.authResponse?.data?.userDetails?.profileImageUrl ??
+            '',
+      );
+
       final BaseResponseModel response = await _authRepository
           .onboardingProfile(onBoardingProfileRequest: request);
+
       state = state.copyWith(loading: false);
       if (response.isSuccess == true) {
-        callGetMe();
+        await callGetMe();
+        clearProfileImage();
       }
       return response.isSuccess == true;
     });
@@ -136,15 +241,70 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   Future<bool?> callGetMe() async {
     return await runSafely(() async {
       final AuthResponse response = await _authRepository.getMe();
-      if (response.isSuccess!) {
-        final addressData = await LocationService().fetchAddress();
-        state = state.copyWith(
-          authResponse: response,
-          addressData: addressData,
-        );
+      if (response.isSuccess == true) {
+        state = state.copyWith(authResponse: response);
+        log('get me call successful,');
+        // Location is fetched in background to avoid blocking the UI thread during splash/init
+        _fetchLocationInBackground();
       }
-
       return response.isSuccess == true;
+    });
+  }
+
+  void _fetchLocationInBackground() {
+    Future.delayed(const Duration(seconds: 2), () async {
+      try {
+        final addressData = await LocationService().fetchAddress();
+        state = state.copyWith(addressData: addressData);
+      } catch (e) {
+        log('Background location fetch skipped or failed: $e');
+      }
+    });
+  }
+
+  Future<bool?> callGoogleSignInApi() async {
+    return await runSafely<bool>(() async {
+      state = state.copyWith(loading: true);
+      final user = await GoogleAuthService().signIn();
+      final AuthResponse response = await _authRepository.googleSignInApi(
+        request: SignInWithGoogleRequest(
+          email: user.email!,
+          googleUid: user.uid,
+          provider: LoginProviders.google,
+          deviceInfo: '',
+          ipAddress: '',
+          userName: user.displayName ?? '',
+        ),
+      );
+      if (response.isSuccess ?? false) {
+        await callBiometricUnregisterApi(showLoader: false);
+        await callGetMe();
+      }
+      state = state.copyWith(loading: false);
+      return response.isSuccess ?? false;
+    });
+  }
+
+  Future<bool?> callAppleSignInApi() async {
+    return await runSafely<bool>(() async {
+      state = state.copyWith(loading: true);
+      final user = await AppleAuthService().signIn();
+      final response = await _authRepository.appleSignInApi(
+        request: SignInWithAppleRequest(
+          email: user.email ?? '',
+          appleUid: user.uid,
+          provider: LoginProviders.apple,
+          deviceInfo: '',
+          ipAddress: '',
+          userName: user.displayName ?? '',
+        ),
+      );
+      if (response.isSuccess ?? false) {
+        await callBiometricUnregisterApi(showLoader: false);
+        await callGetMe();
+      }
+      state = state.copyWith(loading: false);
+      return response.isSuccess ?? false;
     });
   }
 
@@ -157,11 +317,13 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   @override
   void onError(String message) {
     super.onError(message);
+
     state = state.copyWith(
       loading: false,
       errorMessage: message,
       authResponse: AuthResponse(isSuccess: false, message: message),
     );
+    EasyLoading.dismiss();
   }
 
   @override
@@ -178,8 +340,10 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 class AuthState extends BaseStateModel {
   final AuthResponse? authResponse;
   final String? otpError;
-  final File? profileImage;
+  final XFile? profileImage;
   final AddressData? addressData;
+  final bool isBiometricAvailable;
+  final IconData? biometricIcon;
 
   const AuthState({
     super.loading = false,
@@ -188,6 +352,8 @@ class AuthState extends BaseStateModel {
     this.otpError,
     this.profileImage,
     this.addressData,
+    this.isBiometricAvailable = false,
+    this.biometricIcon,
   });
 
   @override
@@ -196,12 +362,17 @@ class AuthState extends BaseStateModel {
     String? errorMessage,
     bool? loginWithEmail,
     bool? loginWithPhone,
+    String? build,
+    String? device,
+    String? version,
     AuthResponse? authResponse,
     String? otpError,
     bool clearOtpError = false,
-    File? profileImage,
+    XFile? profileImage,
     bool clearProfileImage = false,
     AddressData? addressData,
+    bool? isBiometricAvailable,
+    IconData? biometricIcon,
   }) {
     return AuthState(
       loading: loading ?? this.loading,
@@ -212,6 +383,8 @@ class AuthState extends BaseStateModel {
           ? null
           : (profileImage ?? this.profileImage),
       addressData: addressData ?? this.addressData,
+      isBiometricAvailable: isBiometricAvailable ?? this.isBiometricAvailable,
+      biometricIcon: biometricIcon ?? this.biometricIcon,
     );
   }
 }

@@ -9,6 +9,7 @@ import 'package:skinsync_ai/exceptions/app_exception.dart';
 import 'package:skinsync_ai/screens/get_started_screen.dart';
 
 import '../app_init.dart';
+import '../main.dart';
 import '../models/responses/refresh_token_response.dart';
 import '../utills/enums.dart';
 import '../utills/secure_storage_service.dart';
@@ -21,53 +22,55 @@ class ApiBaseHelper {
     required EndPoints endPoint,
     required String requestType,
     var requestBody,
-    required String params,
+    String? params,
     String? imagePath,
   }) async {
-    authToken = _secureStorage.cachedAuthToken;
+    authToken = await _secureStorage.getToken();
 
     try {
-      log('URL: ${BaseUrls.api.url + endPoint.path + params}');
+      final baseUrl = isDeploymentMode ? BaseUrls.api.url : BaseUrls.apiQa.url;
+      final url = '$baseUrl${endPoint.path}${params ?? ''}';
+      log('URL: $url');
+      log('BODY: $requestBody');
       await _refreshToken();
       switch (requestType) {
         case 'GET':
           final responseJson = await http.get(
-            Uri.parse(BaseUrls.api.url + endPoint.path + params),
+            Uri.parse(url),
             headers: getHeaders(),
           );
           log('RESPONSE: ${responseJson.body}');
           return responseJson;
         case 'POST':
           final responseJson = await http.post(
-            Uri.parse(BaseUrls.api.url + endPoint.path),
+            Uri.parse(url),
             headers: getHeaders(),
             body: jsonEncode(requestBody),
           );
+          log('RESPONSE: ${responseJson.body}');
           return responseJson;
         case 'PUT':
-          final responseJson = await http.put(
-            Uri.parse(BaseUrls.api.url + endPoint.path + params),
+          return await http.put(
+            Uri.parse(url),
             headers: getHeaders(),
             body: requestBody != '' ? jsonEncode(requestBody) : null,
           );
         case 'PATCH':
           final responseJson = await http.patch(
-            Uri.parse(BaseUrls.api.url + endPoint.path + params),
+            Uri.parse(url),
             headers: getHeaders(),
             body: requestBody != '' ? jsonEncode(requestBody) : null,
           );
           return responseJson;
-        case 'DEL':
+        case 'DELETE':
           final responseJson = await http.delete(
-            Uri.parse(BaseUrls.api.url + endPoint.path + params),
+            Uri.parse(url),
             headers: getHeaders(),
+            body: requestBody != '' ? jsonEncode(requestBody) : null,
           );
           return responseJson;
         case 'MULTIPART':
-          final request = http.MultipartRequest(
-            'POST',
-            Uri.parse(BaseUrls.api.url + endPoint.path),
-          );
+          final request = http.MultipartRequest('POST', Uri.parse(url));
           request.fields.addAll(requestBody!.toJson());
           request.files.add(
             await http.MultipartFile.fromPath('image', imagePath!),
@@ -97,7 +100,6 @@ class ApiBaseHelper {
       }
       throw e.toString();
     }
-    return http.Response('404', 404);
   }
 
   Map<String, String> getHeaders() {
@@ -110,7 +112,7 @@ class ApiBaseHelper {
   }
 
   Future<void> _refreshToken() async {
-    final token = _secureStorage.cachedAuthToken;
+    final token = await _secureStorage.getToken();
     if (token == null) {
       log('TOKEN IS NULL');
       return;
@@ -139,7 +141,7 @@ class ApiBaseHelper {
     log('REQUEST: $request');
     final json = await http.post(
       uri,
-      headers: {'Authorization': 'Bearer $authToken'},
+      headers: {'Authorization': 'Bearer $token'},
       body: jsonEncode(request),
     );
     log('RESPONSE: ${json.body}');

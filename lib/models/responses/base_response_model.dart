@@ -8,5 +8,4 @@ class BaseResponseModel {
     isSuccess = json['is_success'];
     message = json['message'];
   }
-
 }

@@ -4,21 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
-import 'package:skinsync_ai/widgets/bottom_sheets/syringe_level_sheet.dart';
-import 'package:skinsync_ai/widgets/service_type_button.dart';
+import 'package:glow_container/glow_container.dart';
 
+import '../models/responses/simulation_history_response.dart';
 import '../models/responses/treatment_sub_area_response.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_view_model.dart';
+import '../widgets/bottom_sheets/syringe_level_sheet.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/service_type_button.dart';
+import 'explore_clinics_screen.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
-  const ArFaceModelPreviewScreen({super.key});
+  final SimulationData? simulationData;
+  const ArFaceModelPreviewScreen({super.key, this.simulationData});
 
   static const String routeName = '/ArFaceModelPreviewScreen';
 
@@ -30,6 +32,20 @@ class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
 class _ArFaceModelPreviewScreenState
     extends ConsumerState<ArFaceModelPreviewScreen> {
   bool _hasInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.read(treatmentViewModel.notifier).getTreatments();
+      if (widget.simulationData == null) {
+        return;
+      }
+      ref
+          .read(treatmentViewModel.notifier)
+          .initializeSimulation(widget.simulationData!);
+    });
+  }
 
   void _maybeShowSyringeBottomSheet(
     BuildContext context,
@@ -62,35 +78,27 @@ class _ArFaceModelPreviewScreenState
       context: context,
       builder: (context) {
         return AlertDialog(
-          title:  Text('Remove Sub Area',style: CustomFonts.black16w400),
-          content: Text('Do you want to remove $name?',style: CustomFonts.black16w400),
+          title: Text('Remove Sub Area', style: CustomFonts.black16w400),
+          content: Text(
+            'Do you want to remove $name?',
+            style: CustomFonts.black16w400,
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text('No',style: CustomFonts.black16w400,),
-
+              child: Text('No', style: CustomFonts.black16w400),
             ),
             TextButton(
               onPressed: () {
                 ref.read(treatmentViewModel.notifier).removeSubArea(id);
                 Navigator.pop(context);
               },
-              child: Text('Yes',style: CustomFonts.black16w400),
+              child: Text('Yes', style: CustomFonts.black16w400),
             ),
           ],
         );
       },
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   if(ref.watch(treatmentViewModel).treatmentId != null){
-    //     ref.read(treatmentViewModel.notifier).callPredictAPI();
-    //   }
-    // });
   }
 
   @override
@@ -120,41 +128,6 @@ class _ArFaceModelPreviewScreenState
           child: AbsorbPointer(
             absorbing: isLoading,
             child: Scaffold(
-              // appBar: AppBar(
-              //   leadingWidth: 80.w,
-              //   centerTitle: false,
-              //   leading: Padding(
-              //     padding: EdgeInsets.only(left: 10.w),
-              //     child: InkWell(
-              //       onTap: () => Navigator.pop(context),
-              //       child: GreyContainer(
-              //         icon: Icons.arrow_back,
-              //         shape: BoxShape.circle,
-              //         onTap: () => Navigator.pop(context),
-              //       ),
-              //     ),
-              //   ),
-              //   title: Text(
-              //     "AR Face Model Preview",
-              //     style: CustomFonts.black26w600,
-              //   ),
-              //   actions: [
-              //     Padding(
-              //       padding: EdgeInsets.only(right: 13.w),
-              //       child: InkWell(
-              //         onTap: () {
-              //           ref
-              //               .read(treatmentViewModel.notifier)
-              //               .clearAllSelectedTreatments();
-              //         },
-              //         child: Text(
-              //           "Reset",
-              //           style: CustomFonts.pinkunderlined20w600,
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
               appBar: CustomAppBar(
                 showTitle: true,
                 title: "AR Face Model Preview",
@@ -165,7 +138,25 @@ class _ArFaceModelPreviewScreenState
                   children: [
                     SizedBox(height: 20.h),
                     _facePreview(),
-                    // SizedBox(height: 18.h),
+
+                    SizedBox(height: 10.h),
+                    Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.symmetric(horizontal: 20.w),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 30.w,
+                        vertical: 12.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.7),
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Text(
+                        "This is an AI-generated Simulation for  Visualization Purpose only, Actual Result will vary.",
+                        style: CustomFonts.white14w500,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                     // _accuracyRate(),
                     Expanded(
                       child: SingleChildScrollView(
@@ -174,24 +165,28 @@ class _ArFaceModelPreviewScreenState
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(height: 36.h),
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: InkWell(
-                                  onTap: () {
-                                    ref
-                                        .read(treatmentViewModel.notifier)
-                                        .clearAllSelectedTreatments();
-                                  },
-                                  child: Text(
-                                    "Reset",
-                                    style: CustomFonts.pinkunderlined20w600,
+                              SizedBox(height: 30.h),
+
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Treatment Selection',
+                                    style: CustomFonts.black18w600,
                                   ),
-                                ),
-                              ),
-                              Text(
-                                'Treatment Selection',
-                                style: CustomFonts.black18w600,
+                                  InkWell(
+                                    onTap: () {
+                                      ref
+                                          .read(treatmentViewModel.notifier)
+                                          .clearAllSelectedTreatments();
+                                    },
+                                    child: Text(
+                                      "Reset",
+                                      style: CustomFonts.pinkunderlined20w600,
+                                    ),
+                                  ),
+                                ],
                               ),
                               SizedBox(height: 8.h),
                               Consumer(
@@ -204,8 +199,7 @@ class _ArFaceModelPreviewScreenState
                                   );
                                   final treatments = ref.watch(
                                     treatmentViewModel.select(
-                                      (state) =>
-                                          state.treatmentResponse?.data ?? [],
+                                      (state) => state.treatments,
                                     ),
                                   );
                                   final selectedTreatment = ref.watch(
@@ -213,20 +207,6 @@ class _ArFaceModelPreviewScreenState
                                       (state) => state.selectedTreatment,
                                     ),
                                   );
-                                  final treatmentResponse = ref.watch(
-                                    treatmentViewModel.select(
-                                      (state) => state.treatmentResponse,
-                                    ),
-                                  );
-
-                                  if (!isLoading && treatmentResponse == null) {
-                                    WidgetsBinding.instance
-                                        .addPostFrameCallback((_) {
-                                          ref
-                                              .read(treatmentViewModel.notifier)
-                                              .getTreatments();
-                                        });
-                                  }
 
                                   if (isLoading) {
                                     return SizedBox(
@@ -471,8 +451,7 @@ class _ArFaceModelPreviewScreenState
                                                                   .notifier,
                                                             )
                                                             .onTapTreatmentSubArea(
-                                                              treatmentSubArea:
-                                                                  subArea,
+                                                              subArea: subArea,
                                                             );
 
                                                         int initialLevel = 0;
@@ -600,9 +579,7 @@ class _ArFaceModelPreviewScreenState
                                                     ),
                                                 border: Border.all(
                                                   color: Colors.black
-                                                      .withValues(
-                                                        alpha: 0.08,
-                                                      ),
+                                                      .withValues(alpha: 0.08),
                                                 ),
                                               ),
                                               child: Row(
@@ -612,8 +589,8 @@ class _ArFaceModelPreviewScreenState
                                                     children: [
                                                       Text(
                                                         name,
-                                                        style:
-                                                            CustomFonts.black14w500,
+                                                        style: CustomFonts
+                                                            .black14w500,
                                                       ),
                                                       if (syringes != 0)
                                                         Text(
@@ -623,10 +600,9 @@ class _ArFaceModelPreviewScreenState
                                                         ),
                                                     ],
                                                   ),
-                                                  SizedBox(width: 5.w,),
+                                                  SizedBox(width: 5.w),
                                                   GestureDetector(
-                                                    onTap:
-                                                        () =>
+                                                    onTap: () =>
                                                         _showRemoveConfirmation(
                                                           context,
                                                           ref,
@@ -638,7 +614,7 @@ class _ArFaceModelPreviewScreenState
                                                       size: 20,
                                                       color: Colors.grey,
                                                     ),
-                                                  )
+                                                  ),
                                                 ],
                                               ),
                                             );
@@ -798,14 +774,33 @@ class _ArFaceModelPreviewScreenState
               right: 10.w,
               child: Consumer(
                 builder: (context, ref, _) {
-                  return GestureDetector(
-                    onTap: () {
-                      ref.read(treatmentViewModel.notifier).toggleIsBefore();
-                    },
-                    child: CircleAvatar(
-                      backgroundColor: CustomColors.greyColor,
-                      child: Image.asset(PngAssets.beforeAfter, width: 18.w),
-                    ),
+                  return Row(
+                    spacing: 10.w,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          ref.read(treatmentViewModel.notifier).saveAiImage();
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: CustomColors.greyColor,
+                          child: Icon(Icons.download_outlined),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          ref
+                              .read(treatmentViewModel.notifier)
+                              .toggleIsBefore();
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: CustomColors.greyColor,
+                          child: Image.asset(
+                            PngAssets.beforeAfter,
+                            width: 18.w,
+                          ),
+                        ),
+                      ),
+                    ],
                   );
                 },
               ),
@@ -856,6 +851,9 @@ class _ArFaceModelPreviewScreenState
   Widget _bottomButtons(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
+        final isAiImageGenerated = ref.watch(
+          treatmentViewModel.select((s) => s.isAiImageGenerated),
+        );
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.paddingOf(context).bottom + 20.0.h,
@@ -863,21 +861,72 @@ class _ArFaceModelPreviewScreenState
           child: Row(
             children: [
               Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    ref.read(treatmentViewModel.notifier).callPredictAPI();
-                  },
-                  style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 19.h),
-                  ),
-                  child: Text(
-                    'Generate Ai Image',
-                    style: CustomFonts.black22w600,
-                  ),
-                ),
+                child: isAiImageGenerated
+                    ? OutlinedButton(
+                        onPressed: () {
+                          ref
+                              .read(treatmentViewModel.notifier)
+                              .callPredictAPI();
+                        },
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.r),
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 19.h),
+                        ),
+                        child: Text(
+                          'Generate Ai Image',
+                          style: CustomFonts.black22w600,
+                        ),
+                      )
+                    : GlowContainer(
+                        gradientColors: [
+                          CustomColors.pinkColor,
+                          CustomColors.purpleColor,
+                        ],
+                        containerOptions: ContainerOptions(
+                          borderRadius: 30.r,
+                          width: 2.r,
+                        ),
+                        child: OutlinedButton(
+                          onPressed: () {
+                            ref
+                                .read(treatmentViewModel.notifier)
+                                .callPredictAPI();
+                          },
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide.none,
+                            padding: EdgeInsets.symmetric(vertical: 19.h),
+                          ),
+                          child: Text(
+                            'Generate Ai Image',
+                            style: CustomFonts.black22w600.copyWith(
+                              color: CustomColors.pinkColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                // : AnimatedLoadingBorder(
+                //     cornerRadius: 30.r,
+                //     isTrailingTransparent: true,
+                //     borderWidth: 2,
+                //     borderColor: CustomColors.pinkColor,
+                //     child: OutlinedButton(
+                //       onPressed: () {
+                //         ref
+                //             .read(treatmentViewModel.notifier)
+                //             .callPredictAPI();
+                //       },
+                //       style: OutlinedButton.styleFrom(
+                //         side: BorderSide.none,
+                //         padding: EdgeInsets.symmetric(vertical: 19.h),
+                //       ),
+                //       child: Text(
+                //         'Generate Ai Image',
+                //         style: CustomFonts.black22w600,
+                //       ),
+                //     ),
+                //   ),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -916,20 +965,18 @@ class _ArFaceModelPreviewScreenState
                         .read(checkoutViewModel.notifier)
                         .updateState(treatmentSubAreaId: subAreaIds);
                     ref
-                        .read(clincDoctorProvider.notifier)
-                        .getClinic(
-                          treatmentId: treatmentId ?? 0,
-                          sideAreaIds: subAreaIds,
-                        );
-                    ref
                         .read(checkoutViewModel.notifier)
-                        .setSelectedTreamtment(
+                        .setSelectedTreatment(
                           treatment: treatment!,
                           selectedSubAreasList: subAreas,
                         );
                     Navigator.pushNamed(
                       context,
                       ExploreClinicsScreen.routeName,
+                      arguments: {
+                        'treatmentId': treatmentId,
+                        'sideAreaIds': subAreaIds,
+                      },
                     );
                   },
                   style: ElevatedButton.styleFrom(

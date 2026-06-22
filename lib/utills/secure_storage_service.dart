@@ -1,15 +1,18 @@
+import 'dart:developer';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import 'enums.dart';
 
 class SecureStorage {
   static SecureStorage? _instance;
   static FlutterSecureStorage? _storage;
-
-  String? _cachedToken; // <--- in-memory cache
-
   static const String _accessTokenKey = 'auth-token';
   static const String _refreshTokenKey = 'refresh-token';
   static const String _accessTokenExpiryKey = 'access-token-expiry';
   static const String _refreshTokenExpiryKey = 'refresh-token-expiry';
+  static const String _medicalDisclaimerKey = 'medical-disclaimer';
+  static const String _userEmailKey = 'user-data';
 
   SecureStorage._();
 
@@ -20,16 +23,12 @@ class SecureStorage {
   /// Load token once at app startup
   Future<void> init() async {
     _storage = FlutterSecureStorage(
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
+      aOptions: AndroidOptions(),
       iOptions: IOSOptions(
         accessibility: KeychainAccessibility.first_unlock_this_device,
       ),
     );
-    _cachedToken = await _storage!.read(key: _accessTokenKey);
   }
-
-  /// Get token from cache (fast, no decryption)
-  String? get cachedAuthToken => _cachedToken;
 
   /// Save token to storage + update cache
   Future<void> saveSecureString({
@@ -37,27 +36,37 @@ class SecureStorage {
     required String value,
   }) async {
     await _storage!.write(key: key, value: value);
-    _cachedToken = value;
+  }
+
+  Future<String?> getSecureString({required String key}) async {
+    return await _storage!.read(key: key);
   }
 
   /// Remove token from storage + cache
   Future<void> deleteSecureString({required String key}) async {
     await _storage!.delete(key: key);
-    _cachedToken = null;
   }
 
   Future<void> clearAllSecureStrings() async {
+    final value = await getSecureString(
+      key: SharedPreferencesKeys.biometricAuthKey.keyText,
+    );
+    final email = await getUserEmail();
+    log('BIOMETRIC KEY: $value $email');
     await _storage!.deleteAll();
-    _cachedToken = null;
+    await _storage!.write(
+      key: SharedPreferencesKeys.biometricAuthKey.keyText,
+      value: value,
+    );
+    await saveUserEmail(email);
   }
 
   Future<void> saveToken(String token) async {
-    _cachedToken = token;
     await _storage?.write(key: _accessTokenKey, value: token);
   }
 
   Future<String?> getToken() async {
-    return _cachedToken ?? await _storage?.read(key: _accessTokenKey);
+    return await _storage?.read(key: _accessTokenKey);
   }
 
   Future<void> saveRefreshToken(String refreshToken) async {
@@ -96,5 +105,22 @@ class SecureStorage {
       return null;
     }
     return DateTime.tryParse(expiryDate);
+  }
+
+  Future<void> saveMedicalDisclaimer() async {
+    await _storage?.write(key: _medicalDisclaimerKey, value: 'true');
+  }
+
+  Future<bool> getMedicalDisclaimer() async {
+    final disclaimer = await _storage?.read(key: _medicalDisclaimerKey);
+    return disclaimer == null;
+  }
+
+  Future<void> saveUserEmail(String? email) async {
+    await _storage?.write(key: _userEmailKey, value: email);
+  }
+
+  Future<String?> getUserEmail() async {
+    return await _storage?.read(key: _userEmailKey);
   }
 }

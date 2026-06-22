@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
+import 'package:skinsync_ai/widgets/scan_face_dialog.dart';
 
+import '../main.dart';
 import '../models/responses/treatment_response_model.dart';
 import '../view_models/checkout_view_model.dart';
 
@@ -14,7 +15,12 @@ class TreatmentContainer extends StatelessWidget {
   final double? imageHeight;
   final double? width;
   final TreatmentsModel treatments;
-  const TreatmentContainer({super.key, required this.treatments,this.imageHeight,this.width});
+  const TreatmentContainer({
+    super.key,
+    required this.treatments,
+    this.imageHeight,
+    this.width,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,18 +44,19 @@ class TreatmentContainer extends StatelessWidget {
                   );
               // TreatmentAreaScreen.show(context);
             }
+            showMScanFaceDialog(context);
             //else {
-            Navigator.pushNamed(
-              context,
-              ref.read(checkoutViewModel.notifier).navigateTo(),
-            );
+            // Navigator.pushNamed(
+            //   context,
+            //   ref.read(checkoutViewModel.notifier).navigateTo(),
+            // );
             // }
           },
           child: Container(
             width: width ?? MediaQuery.sizeOf(context).width,
             margin: EdgeInsets.only(bottom: 16.h),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: CustomColors.whiteColor,
               borderRadius: BorderRadius.circular(20.r),
               border: Border.all(
                 color: CustomColors.lightPurpleColor.withValues(alpha: 0.3),
@@ -72,57 +79,56 @@ class TreatmentContainer extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20.r),
               child: Column(
+                mainAxisSize: .min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Stack(
-                    children: [
-                      Container(
-                        height:imageHeight ??  180.h,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          // image: DecorationImage(
-                          //   image: treatments.imageUrl == null
-                          //       ? AssetImage(PngAssets.image) as ImageProvider
-                          //       : NetworkImage(treatments.imageUrl.toString()),
-                          //   fit: BoxFit.cover,
-                          //   onError: (exception, stackTrace) {},
-                          // ),
-                        ),
-                        child: Image.network(
-                          treatments.imageUrl ?? '',
-                          fit: BoxFit.cover,
+                  SizedBox(
+                    height: imageHeight ?? 180.h,
+                    width: double.infinity,
+                    child: Stack(
+                      children: [
+                        Image.network(
+                          treatments.name == "Botox"
+                              ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl-cyJqFlcZav1TlRMEuajtrg2RJlWY3rTQA&s"
+                              : "https://movelmedspa.com/storage/2024/05/Cheek-Filler-Treatment-at-Movel-Med-Spa.webp",
+                          fit: BoxFit.fill,
+                          height: imageHeight ?? 180.h,
+                          width: double.infinity,
                           errorBuilder: (context, error, stackTrace) {
                             return Icon(Icons.broken_image);
                           },
                         ),
-                      ),
-                      Positioned(
-                        top: 12.h,
-                        right: 12.w,
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              TreatmentDetailScreen.routeName,
-                              arguments: treatments,
-                            );
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: Container(
-                            padding: EdgeInsets.all(8.w),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.5),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.info_outline,
-                              color: Colors.white,
-                              size: 20.sp,
+                        Visibility(
+                          visible: !isDeploymentMode,
+                          child: Positioned(
+                            top: 12.h,
+                            right: 12.w,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  TreatmentDetailScreen.routeName,
+                                  arguments: treatments,
+                                );
+                              },
+                              behavior: HitTestBehavior.opaque,
+                              child: Container(
+                                padding: EdgeInsets.all(8.w),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withValues(alpha: 0.5),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.info_outline,
+                                  color: Colors.white,
+                                  size: 20.sp,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.all(16.w),
@@ -137,7 +143,6 @@ class TreatmentContainer extends StatelessWidget {
                         ),
                         if (treatments.description != null &&
                             treatments.description!.isNotEmpty) ...[
-                          SizedBox(height: 8.h),
                           Text(
                             treatments.description!,
                             style: CustomFonts.grey14w400,

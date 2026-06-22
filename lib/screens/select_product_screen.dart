@@ -41,7 +41,7 @@ class SelectProductScreen extends ConsumerWidget {
             SizedBox(height: 11.h),
 
             Text(
-              "Lorem ipsum dolor sit amet consectetur. Cursus iaculis est cras viverra vitae sit pellentesq",
+              "Choose the product best suited for your treatment.\nEach option is selected to enhance your results.",
               style: CustomFonts.black16w400,
             ),
 

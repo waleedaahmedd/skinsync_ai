@@ -10,6 +10,8 @@ import 'services/storage_service.dart';
 import 'utills/secure_storage_service.dart';
 import 'utills/shared_pref.dart';
 
+bool isDeploymentMode = true;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -19,15 +21,4 @@ Future<void> main() async {
   await SecureStorage().init();
   await StorageService.instance.init();
   runApp(ProviderScope(child: AppInit()));
-  // runApp(
-  //   MultiProvider(
-  //     providers: [
-  //       ChangeNotifierProvider(create: (context) => ThemeViewModel()),
-  //       ChangeNotifierProvider(
-  //         create: (context) => AuthViewModel(authRepository: authService),
-  //       ),
-  //     ],
-  //     child: AppInit(),
-  //   ),
-  // );
 }

@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
 
 import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/models/requests/otp_request.dart';
@@ -9,6 +11,7 @@ import '../exceptions/app_exception.dart';
 import '../models/requests/sign_in_request.dart';
 import '../models/responses/auth_response.dart';
 import '../repositories/auth_repository.dart';
+import '../utills/biometric_helper.dart';
 import '../utills/enums.dart';
 import '../utills/secure_storage_service.dart';
 import 'api_base_helper.dart';
@@ -65,6 +68,97 @@ class AuthService implements AuthRepository {
   }
 
   @override
+  Future<BaseResponseModel> biometricRegisterApi() async {
+    final req = await BiometricHelper.getDeviceSignature();
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.biometricRegister,
+      requestType: 'POST',
+      requestBody: req.toJson(),
+      params: '',
+    );
+
+    // Check HTTP status code
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      AuthResponse authResponse = AuthResponse.fromJson(parsed);
+      if (authResponse.isSuccess == true) {}
+      return authResponse;
+    } else {
+      // Handle HTTP error status codes
+      final parsed = json.decode(response.body);
+      throw AppException(BaseResponseModel.fromJson(parsed).message as String);
+    }
+  }
+
+  @override
+  Future<AuthResponse> biometricLoginApi() async {
+    final key = await _secureStorage.getSecureString(
+      key: SharedPreferencesKeys.biometricAuthKey.keyText,
+    );
+    if (key == null) {
+      throw AppException('Biometrics not registered');
+    }
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.biometricLogin,
+      requestType: 'POST',
+      requestBody: {"biometric_key": key},
+      params: '',
+    );
+
+    // Check HTTP status code
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      AuthResponse authResponse = AuthResponse.fromJson(parsed);
+      if (authResponse.isSuccess == true) {
+        // _secureStorage.saveSecureString(
+        //   key: SharedPreferencesKeys.accessTokenKey.name,
+        //   value: authResponse.data!.accessToken ?? '',
+        // );
+        if (authResponse.data != null) {
+          await _secureStorage.saveToken(authResponse.data!.accessToken!);
+          await _secureStorage.saveRefreshToken(
+            authResponse.data!.refreshToken!,
+          );
+          await _secureStorage.saveAccessTokenExpiry(
+            DateTime.fromMillisecondsSinceEpoch(
+              authResponse.data!.accessExpiresAt! * 1000,
+            ),
+          );
+          await _secureStorage.saveRefreshTokenExpiry(
+            DateTime.fromMillisecondsSinceEpoch(
+              authResponse.data!.refreshExpiresAt! * 1000,
+            ),
+          );
+        }
+      }
+      return authResponse;
+    } else {
+      // Handle HTTP error status codes
+      final parsed = json.decode(response.body);
+      throw AppException(BaseResponseModel.fromJson(parsed).message as String);
+    }
+  }
+
+  @override
+  Future<BaseResponseModel> biometricUnregister() async {
+    final key = await BiometricHelper.getDeviceSignature();
+    await BiometricHelper.clearSignature();
+
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.biometricUnregister,
+      requestBody: {'biometric_key': key.deviceHash},
+      requestType: 'DELETE',
+    );
+    final parsed = json.decode(response.body);
+    final model = BaseResponseModel.fromJson(parsed);
+    if (model.isSuccess ?? false) {
+      return model;
+    } else {
+      throw Exception(model.message ?? 'Something went wrong!');
+    }
+  }
+
+  @override
   Future<AuthResponse> verifyOTP({required OtpRequest otpRequest}) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.verifyOtp,
@@ -76,7 +170,18 @@ class AuthService implements AuthRepository {
       final parsed = json.decode(response.body);
       AuthResponse authResponse = AuthResponse.fromJson(parsed);
       if (authResponse.isSuccess == true) {
+        final savedEmail = await _secureStorage.getUserEmail();
+        if (savedEmail != authResponse.data?.user?.primaryEmail) {
+          try {
+            await biometricUnregister();
+          } catch (e) {
+            log('$e Failed to unregister biometric, Not important');
+          }
+        }
         if (authResponse.data != null) {
+          await _secureStorage.saveUserEmail(
+            authResponse.data!.user?.primaryEmail,
+          );
           await _secureStorage.saveToken(authResponse.data!.accessToken!);
           await _secureStorage.saveRefreshToken(
             authResponse.data!.refreshToken!,
@@ -107,7 +212,7 @@ class AuthService implements AuthRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.onBoardingProfile,
-      requestType: 'POST',
+      requestType: 'PATCH',
       requestBody: onBoardingProfileRequest,
       params: '',
     );
@@ -125,14 +230,107 @@ class AuthService implements AuthRepository {
 
   @override
   Future<AuthResponse> getMe() async {
+    String type = Platform.isIOS ? 'ios' : 'android';
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.getMe,
       requestType: 'GET',
-      params: '',
+      params: '?type=$type',
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
       AuthResponse authResponse = AuthResponse.fromJson(parsed);
+      return authResponse;
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(BaseResponseModel.fromJson(parsed).message as String);
+    }
+  }
+
+  @override
+  Future<AuthResponse> googleSignInApi({
+    required SignInWithGoogleRequest request,
+  }) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.signIn,
+      requestType: 'POST',
+      requestBody: request,
+      params: '',
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      AuthResponse authResponse = AuthResponse.fromJson(parsed);
+      if (!(authResponse.isSuccess ?? false) ||
+          authResponse.data?.accessToken == null) {
+        throw AppException(authResponse.message ?? 'Something went wrong!');
+      }
+      final savedEmail = await _secureStorage.getUserEmail();
+      if (savedEmail != authResponse.data?.user?.primaryEmail) {
+        try {
+          await biometricUnregister();
+        } catch (e) {
+          log('$e Failed to unregister biometric, Not important');
+        }
+      }
+      await _secureStorage.saveUserEmail(authResponse.data!.user?.primaryEmail);
+      await _secureStorage.saveToken(authResponse.data!.accessToken!);
+      await _secureStorage.saveRefreshToken(authResponse.data!.refreshToken!);
+      await _secureStorage.saveAccessTokenExpiry(
+        DateTime.fromMillisecondsSinceEpoch(
+          authResponse.data!.accessExpiresAt! * 1000,
+        ),
+      );
+      await _secureStorage.saveRefreshTokenExpiry(
+        DateTime.fromMillisecondsSinceEpoch(
+          authResponse.data!.refreshExpiresAt! * 1000,
+        ),
+      );
+      return authResponse;
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(BaseResponseModel.fromJson(parsed).message as String);
+    }
+  }
+
+  @override
+  Future<AuthResponse> appleSignInApi({
+    required SignInWithAppleRequest request,
+  }) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.signIn,
+      requestType: 'POST',
+      requestBody: request,
+      params: '',
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      AuthResponse authResponse = AuthResponse.fromJson(parsed);
+      if (!(authResponse.isSuccess ?? false) ||
+          authResponse.data?.accessToken == null) {
+        throw AppException(authResponse.message ?? 'Something went wrong!');
+      }
+      final savedEmail = await _secureStorage.getUserEmail();
+      if (savedEmail != authResponse.data?.user?.primaryEmail) {
+        try {
+          await biometricUnregister();
+        } catch (e) {
+          log('$e Failed to unregister biometric, Not important');
+        }
+      }
+      await _secureStorage.saveUserEmail(authResponse.data!.user?.primaryEmail);
+      await _secureStorage.saveToken(authResponse.data!.accessToken!);
+      await _secureStorage.saveRefreshToken(authResponse.data!.refreshToken!);
+      await _secureStorage.saveAccessTokenExpiry(
+        DateTime.fromMillisecondsSinceEpoch(
+          authResponse.data!.accessExpiresAt! * 1000,
+        ),
+      );
+      await _secureStorage.saveRefreshTokenExpiry(
+        DateTime.fromMillisecondsSinceEpoch(
+          authResponse.data!.refreshExpiresAt! * 1000,
+        ),
+      );
       return authResponse;
     } else {
       final parsed = json.decode(response.body);

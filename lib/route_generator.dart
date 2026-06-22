@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
+import 'package:skinsync_ai/models/responses/simulation_history_response.dart';
 import 'package:skinsync_ai/screens/additional_info_screen.dart';
 import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
+import 'package:skinsync_ai/screens/biometric_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/face_scanning_complete_screen.dart';
 import 'package:skinsync_ai/screens/clinic_service_screen.dart';
@@ -31,7 +33,10 @@ import 'screens/ar_face_model_Preview_screen.dart';
 import 'screens/bottom_nav_screens/face_detection_screen.dart';
 import 'screens/bottom_nav_screens/my_profile_screen.dart';
 import 'screens/bottom_nav_screens/treatments_screen.dart';
+import 'screens/doctors_listing_screen.dart';
 import 'screens/explore_clinics_screen.dart';
+import 'screens/notification_screen.dart';
+import 'screens/simulation_history_screen.dart';
 import 'utills/colored_print.dart';
 
 // const String getStartedScreen = '/get_started_screen';
@@ -123,7 +128,8 @@ class RouteGenerator {
       case ArFaceModelPreviewScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: ArFaceModelPreviewScreen.routeName),
-          builder: (_) => ArFaceModelPreviewScreen(),
+          builder: (_) =>
+              ArFaceModelPreviewScreen(simulationData: args as SimulationData?),
         );
       case SuggestedTreatmentScreen.routeName:
         return MaterialPageRoute(
@@ -138,7 +144,13 @@ class RouteGenerator {
       case ExploreClinicsScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: ExploreClinicsScreen.routeName),
-          builder: (_) => ExploreClinicsScreen(),
+          builder: (_) {
+            final arguments = args as Map<String, dynamic>?;
+            return ExploreClinicsScreen(
+              sideAreaIds: arguments?['sideAreaIds'] ?? [],
+              treatmentId: arguments?['treatmentId'] ?? 0,
+            );
+          },
         );
       case TreatmentDetailScreen.routeName:
         final treatments = settings.arguments as TreatmentsModel;
@@ -159,7 +171,6 @@ class RouteGenerator {
       //     builder: (_) => SelectSubSectionsScreen(),
       //   );
       case ClinicsDetailScreen.routeName:
-        final clinic = settings.arguments as Clinic;
         return MaterialPageRoute(
           settings: RouteSettings(name: ClinicsDetailScreen.routeName),
           builder: (_) => ClinicsDetailScreen(clinic: args as Clinic?),
@@ -227,10 +238,32 @@ class RouteGenerator {
             );
           },
         );
+      case NotificationScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: NotificationScreen.routeName),
+          builder: (_) {
+            return NotificationScreen();
+          },
+        );
       case ProgressDetailScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: ProgressDetailScreen.routeName),
           builder: (_) => ProgressDetailScreen(),
+        );
+      case BiometricScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: BiometricScreen.routeName),
+          builder: (_) => BiometricScreen(),
+        );
+      case SimulationHistoryScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: SimulationHistoryScreen.routeName),
+          builder: (_) => SimulationHistoryScreen(),
+        );
+      case DoctorsListingScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: DoctorsListingScreen.routeName),
+          builder: (_) => const DoctorsListingScreen(),
         );
       default:
         return _errorRoute();

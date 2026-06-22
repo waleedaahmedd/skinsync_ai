@@ -21,8 +21,8 @@ class ClinicDoctorService implements ClinicDoctorRepository {
 
   @override
   Future<GetClinicResponse> getClinic({
-    required int treatmentId,
-    required String sideAreaIdsList,
+    int? treatmentId,
+    String? sideAreaIdsList,
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.getClinic,
@@ -78,7 +78,7 @@ class ClinicDoctorService implements ClinicDoctorRepository {
           '?doctor_id=$doctorId&clinic_id=$clinicId&date=${date.millisecondsSinceEpoch ~/ 1000}',
     );
     final data = AvailabilityResponse.fromJson(jsonDecode(response.body));
-    if (response.statusCode < 200 && response.statusCode >= 300) {
+    if (data.isSuccess == false) {
       throw Exception(data.message ?? 'Something went wrong!');
     }
     return data.slots;

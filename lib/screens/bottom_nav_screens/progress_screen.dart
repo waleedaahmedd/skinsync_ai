@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
-import 'package:skinsync_ai/widgets/progress_card.dart';
-import 'package:skinsync_ai/widgets/progress_filtter_button.dart';
 
 import '../../widgets/grey_container.dart';
 
@@ -24,17 +19,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWithActionIcon(
-        title: Row(
-          children: [
-           // Icon(Iconsax.location, size: 20.sp, color: Colors.black),
-            //SizedBox(width: 6.w),
-           // Text("Hello, Burak!", style: CustomFonts.black30w600),
-          ],
-        ),
-        subTitle: Text(
-          "Your journey to radiant skin starts now.",
-          style: CustomFonts.grey18w400,
-        ),
         action: GreyContainer(
           icon: Icons.notifications_none_outlined,
           onTap: () {},
@@ -60,7 +44,12 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 SizedBox(height: 15.h),
                 Text("Progress", style: CustomFonts.black24w600),
                 SizedBox(height: 200.h),
-                Center(child: Text('No treatment progress recorded',  style: CustomFonts.grey16w400))
+                Center(
+                  child: Text(
+                    'No treatment progress recorded',
+                    style: CustomFonts.grey16w400,
+                  ),
+                ),
 
                 /* Row(
                   children: [
@@ -91,7 +80,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               ],
             ),
           ),
-         /* Expanded(
+          /* Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 30.0.w),
               child: ListView.builder(

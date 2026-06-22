@@ -1,10 +1,16 @@
+import 'package:skinsync_ai/models/requests/save_history_request.dart';
 import 'package:skinsync_ai/models/responses/treatment_area_response.dart';
-import 'package:skinsync_ai/models/responses/treatment_sub_area_response.dart';
 import 'package:skinsync_ai/models/responses/treatment_response_model.dart';
+import 'package:skinsync_ai/models/responses/treatment_sub_area_response.dart';
 
 abstract class TreatmentRepository {
   Future<TreatmentResponse> getTreatmentsApi();
-  Future<TreatmentAreaResponse> getSelectSectionApi({required int sectionId});
-  Future<TreatmentSubAreaResponse> getSubSectionApi({required int sectionId,required int subSectionId});
-
+  Future<TreatmentAreaResponse> getAreasByTreatmentId({
+    required int treatmentId,
+  });
+  Future<TreatmentSubAreaResponse> getSubSectionApi({
+    required int sectionId,
+    required int subSectionId,
+  });
+  Future<void> saveAiHistory(SaveHistoryRequest request);
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
@@ -7,6 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
 import 'package:skinsync_ai/models/responses/get_doctor_response.dart';
 import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
+import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/time_container.dart';
 import 'package:skinsync_ai/widgets/treatment_price_container.dart';
@@ -31,11 +34,13 @@ class ClinicServiceScreen extends ConsumerStatefulWidget {
 
 class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
   DateTime selectedDate = DateTime.now();
+  int? selectedFilterIndex;
+  int? selectedTime;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final treatment = ref.read(
         treatmentViewModel.select((state) => state.selectedTreatment),
       );
@@ -47,18 +52,26 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
 
       if (widget.clinic?.clinicId != null) {
         ref
-            .read(clincDoctorProvider.notifier)
+            .read(clinicDoctorProvider.notifier)
             .setClinicId(widget.clinic!.clinicId!);
       }
 
-      ref
-          .read(clincDoctorProvider.notifier)
+      await ref
+          .read(clinicDoctorProvider.notifier)
           .getDoctors(
             treatmentId: treatment?.id ?? 0,
             sideAreaIds: subAreaIds,
             date: selectedDate,
             clinicId: widget.clinic?.clinicId,
           );
+      if (widget.clinic?.clinicId != null) {
+        await ref
+            .read(clinicDoctorProvider.notifier)
+            .fetchAvailability(
+              date: selectedDate,
+              clinicId: widget.clinic!.clinicId!,
+            );
+      }
     });
   }
 
@@ -71,10 +84,11 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
     );
 
     if (picked != null) {
-      selecteTime = null;
+      selectedTime = null;
+      log('CLINIC ID: ${widget.clinic?.clinicId}');
       if (widget.clinic?.clinicId != null) {
         ref
-            .read(clincDoctorProvider.notifier)
+            .read(clinicDoctorProvider.notifier)
             .fetchAvailability(
               date: picked,
               clinicId: widget.clinic!.clinicId!,
@@ -86,8 +100,6 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
     }
   }
 
-  int? selectedFilterIndex;
-  int? selecteTime;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,16 +123,12 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
 
               Consumer(
                 builder: (context, ref, _) {
-                  final state = ref.watch(clincDoctorProvider);
+                  final state = ref.watch(clinicDoctorProvider);
                   final doctors = state.doctorResponse?.data;
                   if (state.doctorLoading) {
                     return SizedBox(
                       height: 150.h, // same height as doctor list
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: CustomColors.lightPurpleColor,
-                        ),
-                      ),
+                      child: AppLoader(),
                     );
                   } else if (doctors?.isEmpty ?? true) {
                     return SizedBox(
@@ -163,7 +171,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                     Text("Selected Services", style: CustomFonts.black22w600),
                     SizedBox(height: 17.h),
                     Text(
-                      "Lorem ipsum dolor sit amet consectetur. Cursus iaculis est cras viverra vitae sit pellentesq",
+                      "Review your selected treatments and details.\nEverything is tailored for your personalized care.",
                       style: CustomFonts.grey13w400,
                     ),
                     SizedBox(height: 10.h),
@@ -174,9 +182,11 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                           selectedTreatment: ref
                               .watch(checkoutViewModel)
                               .selectedTreatment,
-                          selectedSubAreasList: ref
-                              .watch(checkoutViewModel)
-                              .selectedSubAreasList!,
+                          selectedSubAreasList:
+                              ref
+                                  .watch(checkoutViewModel)
+                                  .selectedSubAreasList ??
+                              [],
 
                           image: DummyAssets.treatmentimage,
                         );
@@ -265,7 +275,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                     Consumer(
                       builder: (_, ref, _) {
                         final state = ref.watch(
-                          clincDoctorProvider.select(
+                          clinicDoctorProvider.select(
                             (s) => (s.slots, s.loading),
                           ),
                         );
@@ -295,13 +305,13 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                             return TimeContainer(
                               onTap: () {
                                 setState(() {
-                                  selecteTime = index;
+                                  selectedTime = index;
                                 });
                               },
                               time: slot.formattedTime,
                               isAvailable: !slot.isBooked,
                               isBooked: slot.isBooked,
-                              isSelected: selecteTime == index,
+                              isSelected: selectedTime == index,
                             );
                           }),
                         );
@@ -389,12 +399,12 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                       SizedBox(width: 47.h),
                       GestureDetector(
                         onTap: () {
-                          final state = ref.read(clincDoctorProvider);
+                          final state = ref.read(clinicDoctorProvider);
                           if (state.selectedDoctor == null) {
                             EasyLoading.showError('Select a doctor first!');
                             return;
                           }
-                          if (selecteTime == null) {
+                          if (selectedTime == null) {
                             EasyLoading.showError('Select a slot first!');
                             return;
                           }
@@ -404,7 +414,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                             arguments: {
                               'clinic': widget.clinic!,
                               'doctor': state.selectedDoctor!,
-                              'slot': state.slots[selecteTime!],
+                              'slot': state.slots[selectedTime!],
                             },
                           );
                         },
@@ -439,15 +449,17 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
   Widget _buildDoctorCard(Doctor doctor, int index, bool isSelected) {
     return GestureDetector(
       onTap: () {
-        ref.read(clincDoctorProvider.notifier).setSelectedDoctor(doctor);
+        ref.read(clinicDoctorProvider.notifier).setSelectedDoctor(doctor);
         if (widget.clinic?.clinicId != null) {
-          ref.read(clincDoctorProvider.notifier).fetchAvailability(
-            date: selectedDate,
-            clinicId: widget.clinic!.clinicId!,
-          );
+          ref
+              .read(clinicDoctorProvider.notifier)
+              .fetchAvailability(
+                date: selectedDate,
+                clinicId: widget.clinic!.clinicId!,
+              );
         }
         setState(() {
-          selecteTime = null;
+          selectedTime = null;
         });
       },
       child: Padding(

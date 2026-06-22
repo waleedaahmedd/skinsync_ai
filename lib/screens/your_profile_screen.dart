@@ -1,14 +1,16 @@
+import 'dart:io';
 
+import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
 import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
+import 'package:skinsync_ai/widgets/app_loader.dart';
+import 'package:skinsync_ai/widgets/phone_widget.dart';
 
 import 'get_notified_screen.dart';
 
@@ -27,6 +29,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
+  Country? _selectedCountry;
 
   @override
   void dispose() {
@@ -38,12 +41,27 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
     super.dispose();
   }
 
- 
-@override
-  void initState(){
-  super.initState();
-  _emailController.text =  ref.read(authViewModel).authResponse?.data?.user?.primaryEmail ?? '';
-}
+  @override
+  void initState() {
+    super.initState();
+    final authState = ref.read(authViewModel);
+    _emailController.text =
+        authState.authResponse?.data?.user?.primaryEmail ?? '';
+
+    // Initialize country if user data exists
+    // TODO: CC Not provided in AuthResponse, uncomment when response is
+    // TODO: fixed
+    // final user = authState.authResponse?.data?.userDetails;
+    // if (user?.cc != null) {
+    //   try {
+    //     _selectedCountry = Country.parse(user!.cc!);
+    //   } catch (e) {
+    //     _selectedCountry = Country.parse('US');
+    //   }
+    // } else {
+    //   _selectedCountry = Country.parse('US');
+    // }
+  }
 
   void _showImageSourceDialog() {
     showModalBottomSheet(
@@ -105,7 +123,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                         clipBehavior: Clip.antiAliasWithSaveLayer,
                         child: profileImage != null
                             ? Image.file(
-                                profileImage,
+                                File(profileImage.path),
                                 fit: BoxFit.cover,
                                 height: 75.w,
                                 width: 75.w,
@@ -146,7 +164,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   Text("Your Profile", style: CustomFonts.black30w600),
                   SizedBox(height: 4.h),
                   Text(
-                    "Introduce yourself to others in your events.",
+                    "Create your profile to personalize your SkinSync experience.",
                     style: CustomFonts.black18w400,
                   ),
                   SizedBox(height: 22.h),
@@ -165,43 +183,34 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                     },
                   ),
                   SizedBox(height: 20.h),
-                  TextFormField(
+                  PhoneWidget(
                     controller: _phoneController,
-                    style: CustomFonts.black18w400,
-                    decoration: InputDecoration(hintText: "Phone Number"),
-                    keyboardType: TextInputType.phone,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(15),
-                    ],
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your phone number';
-                      }
-                      if (value.trim().length < 10) {
-                        return 'Phone number must be at least 10 digits';
-                      }
-                      return null;
+                    initialCountryCode: _selectedCountry?.countryCode,
+                    onCountryChanged: (country) {
+                      setState(() {
+                        _selectedCountry = country;
+                      });
                     },
                   ),
                   SizedBox(height: 20.h),
                   TextFormField(
                     readOnly: true,
-                    controller : _emailController,
+                    controller: _emailController,
                     style: CustomFonts.black18w400,
                     decoration: InputDecoration(hintText: "Email Address"),
                     keyboardType: TextInputType.emailAddress,
-                    // validator: (value) {
-                    //   if (value == null || value.trim().isEmpty) {
-                    //     return 'Please enter your email';
-                    //   }
-                    //   final emailRegExp = RegExp(
-                    //       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-                    //   if (!emailRegExp.hasMatch(value.trim())) {
-                    //     return 'Enter a valid email address';
-                    //   }
-                    //   return null;
-                    // },
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter your email';
+                      }
+                      final emailRegExp = RegExp(
+                        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                      );
+                      if (!emailRegExp.hasMatch(value.trim())) {
+                        return 'Enter a valid email address';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(height: 20.h),
                   TextFormField(
@@ -231,35 +240,38 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   SizedBox(height: 35.h),
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                      
-                        if (_formKey.currentState?.validate() ?? false) {
-                          ref
-                              .read(authViewModel.notifier)
-                              .callOnboardingProfileApi(
-                                request: OnBoardingProfileRequest(
-                                  name: _nameController.text,
-                                  phoneNumber: _phoneController.text.trim(),
-                                  emailAddress:_emailController.text.trim(),
-                                  location: _locationController.text.trim(),
-                                  bio: _bioController.text.trim(),
-                                ),
-                              )
-                              .then((value) {
-                                if (value == true) {
-                                  Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    GetNotifiedScreen.routeName,
-                                    (Route<dynamic> route) => false,
-                                  );
-                                }
-                              });
-                        }
-                      },
-                      child: ref.watch(authViewModel).loading
-                  ? CircularProgressIndicator(): Text("Next"),
-                    ),
+                    child: ref.watch(authViewModel).loading
+                        ? AppLoader()
+                        : ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState?.validate() ?? false) {
+                                ref
+                                    .read(authViewModel.notifier)
+                                    .callOnboardingProfileApi(
+                                      name: _nameController.text,
+                                      phoneNumber: _phoneController.text.trim(),
+                                      emailAddress: _emailController.text
+                                          .trim(),
+                                      location: _locationController.text.trim(),
+                                      bio: _bioController.text.trim(),
+                                      cc: _selectedCountry?.countryCode,
+                                      country: _selectedCountry?.name,
+                                    )
+                                    .then((value) {
+                                      if (value == true) {
+                                        Navigator.pushNamedAndRemoveUntil(
+                                          context,
+                                          GetNotifiedScreen.routeName,
+                                          (Route<dynamic> route) => false,
+                                        );
+                                      }
+                                    });
+                              }
+                            },
+                            child: ref.watch(authViewModel).loading
+                                ? CircularProgressIndicator()
+                                : Text("Next"),
+                          ),
                   ),
                 ],
               ),

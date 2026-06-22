@@ -2,7 +2,6 @@ import 'package:skinsync_ai/models/responses/base_response_model.dart';
 
 class GetDoctorResponse extends BaseResponseModel {
   List<Doctor>? data;
- 
 
   GetDoctorResponse({this.data, super.isSuccess, super.message});
 
@@ -10,14 +9,12 @@ class GetDoctorResponse extends BaseResponseModel {
     if (json['data'] != null) {
       data = <Doctor>[];
       json['data'].forEach((v) {
-        data!.add(new Doctor.fromJson(v));
+        data!.add(Doctor.fromJson(v));
       });
     }
     isSuccess = json['is_success'];
     message = json['message'];
   }
-
- 
 }
 
 class Doctor {
@@ -29,16 +26,21 @@ class Doctor {
   String? image;
   String? specialization;
   String? phone;
+  String? cc;
+  String? country;
 
-  Doctor(
-      {this.id,
-      this.name,
-      this.email,
-      this.role,
-      this.status,
-      this.image,
-      this.specialization,
-      this.phone});
+  Doctor({
+    this.id,
+    this.name,
+    this.email,
+    this.role,
+    this.status,
+    this.image,
+    this.specialization,
+    this.phone,
+    this.cc,
+    this.country,
+  });
 
   Doctor.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -49,7 +51,22 @@ class Doctor {
     image = json['image'];
     specialization = json['specialization'];
     phone = json['phone'];
+    cc = json['cc'];
+    country = json['country'];
   }
 
-
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'role': role,
+      'status': status,
+      'image': image,
+      'specialization': specialization,
+      'phone': phone,
+      'cc': cc,
+      'country': country,
+    };
+  }
 }

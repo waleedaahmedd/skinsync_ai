@@ -10,6 +10,57 @@ class PointsEarnCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.all(24.w),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15.r),
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            CustomColors.purpleColor.withValues(alpha: 0.6),
+            CustomColors.lightBlueColor.withValues(alpha: 0.6),
+          ],
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: .start,
+        children: [
+          Row(
+            mainAxisAlignment: .start,
+            spacing: 15.w,
+            children: [
+              Container(
+                width: 48.w,
+                height: 48.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: CustomColors.whiteColor,
+                  border: Border.all(
+                    color: CustomColors.purpleColor,
+                    width: 8.r,
+                  ),
+                ),
+                child: Icon(Icons.star, color: CustomColors.yellow),
+              ),
+              Column(
+                crossAxisAlignment: .start,
+                children: [
+                  Text('Current Points', style: CustomFonts.black14w700),
+                  Text('0 pts', style: CustomFonts.purple30w700),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: 24.h),
+          Text('Reward Points', style: CustomFonts.black20w600),
+          Text(
+            'Every \$1 spent earns 10 points: \$1 = 10 points,eg: \$10 = 100 points.',
+            style: CustomFonts.grey14w400,
+          ),
+        ],
+      ),
+    );
+    return Container(
       padding: EdgeInsets.symmetric(vertical: 21.h, horizontal: 31.w),
 
       decoration: BoxDecoration(

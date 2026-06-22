@@ -8,17 +8,10 @@ import '../utills/color_constant.dart';
 
 class AppBarWithActionIcon extends StatelessWidget
     implements PreferredSizeWidget {
-  const AppBarWithActionIcon({
-    super.key,
-    required this.title,
-    required this.subTitle,
-    this.action,
-  });
+  const AppBarWithActionIcon({super.key, this.action});
   @override
   Size get preferredSize => Size.fromHeight(110.h);
 
-  final Widget title;
-  final Widget subTitle;
   final Widget? action;
   @override
   Widget build(BuildContext context) {
@@ -37,20 +30,29 @@ class AppBarWithActionIcon extends StatelessWidget
                     builder: (context, ref, _) {
                       final state = ref.watch(authViewModel);
                       final name = state.authResponse?.data?.userDetails?.name;
-                      final address = state.addressData?.address;
+                      // final address = state.addressData?.address;
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(name ?? 'N/A', style: CustomFonts.black30w600),
+                          Text(
+                            'Hello, ${name ?? ''}!',
+                            style: CustomFonts.black30w600,
+                          ),
                           SizedBox(height: 4),
-                          Text(address ?? 'N/A', style: CustomFonts.grey18w400,overflow: TextOverflow.ellipsis,maxLines: 1,),
+                          Text(
+                            'Your journey to radiant skin starts now.',
+                            style: CustomFonts.grey18w400,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                          // Text(address ?? 'N/A', style: CustomFonts.grey18w400,overflow: TextOverflow.ellipsis,maxLines: 1,),
                         ],
                       );
                     },
                   ),
                 ),
-                 SizedBox(width: 40.w),
-                if (action != null) action!,
+                SizedBox(width: 40.w),
+                ?action,
               ],
             ),
             Spacer(),
