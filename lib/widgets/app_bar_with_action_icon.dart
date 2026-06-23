@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,22 +8,22 @@ import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
 import '../utills/color_constant.dart';
 
-class AppBarWithActionIcon extends StatelessWidget
-    implements PreferredSizeWidget {
+class AppBarWithActionIcon extends StatelessWidget implements PreferredSizeWidget {
   const AppBarWithActionIcon({super.key, this.action});
+
   @override
-  Size get preferredSize => Size.fromHeight(110.h);
+  Size get preferredSize => Size.fromHeight(100.h);
 
   final Widget? action;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
         child: Column(
           children: [
-            SizedBox(height: 17.h),
+            SizedBox(height: 12.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -29,34 +31,69 @@ class AppBarWithActionIcon extends StatelessWidget
                   child: Consumer(
                     builder: (context, ref, _) {
                       final state = ref.watch(authViewModel);
-                      final name = state.authResponse?.data?.userDetails?.name;
-                      // final address = state.addressData?.address;
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      final userDetails = state.authResponse?.data?.userDetails;
+                      final name = userDetails?.name;
+
+                      return Row(
                         children: [
-                          Text(
-                            'Hello, ${name ?? ''}!',
-                            style: CustomFonts.black30w600,
+                          // Optional Profile Image Avatar
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: CustomColors.purpleColor.withValues(alpha: 0.5),
+                                width: 2.w,
+                              ),
+                            ),
+                            child: ClipOval(
+                              child: CachedNetworkImage(
+                                imageUrl: userDetails?.profileImageUrl ?? "",
+                                height: 48.w,
+                                width: 48.w,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => const CupertinoActivityIndicator(),
+                                errorWidget: (context, url, error) => Container(
+                                  height: 48.w,
+                                  width: 48.w,
+                                  color: Colors.grey.shade100,
+                                  child: Icon(Icons.person_outline_rounded, size: 24.sp, color: Colors.grey),
+                                ),
+                              ),
+                            ),
                           ),
-                          SizedBox(height: 4),
-                          Text(
-                            'Your journey to radiant skin starts now.',
-                            style: CustomFonts.grey18w400,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Hello, ${name ?? "Guest"}!',
+                                  style: CustomFonts.black30w600.copyWith(fontSize: 22.sp),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                                SizedBox(height: 2.h),
+                                Text(
+                                  'Your skin health journey starts here.',
+                                  style: CustomFonts.grey14w400.copyWith(fontSize: 12.sp),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ],
+                            ),
                           ),
-                          // Text(address ?? 'N/A', style: CustomFonts.grey18w400,overflow: TextOverflow.ellipsis,maxLines: 1,),
                         ],
                       );
                     },
                   ),
                 ),
-                SizedBox(width: 40.w),
-                ?action,
+                SizedBox(width: 12.w),
+                if (action != null) action!,
               ],
             ),
-            Spacer(),
-            Divider(color: CustomColors.greyColor),
+            const Spacer(),
+            Divider(color: CustomColors.greyColor.withValues(alpha: 0.5), height: 1.h),
           ],
         ),
       ),

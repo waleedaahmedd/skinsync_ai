@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 import 'package:skinsync_ai/models/dummy_list_model.dart';
 import 'package:skinsync_ai/screens/appointment_detail_screen.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
@@ -14,30 +14,38 @@ class DoctorHomeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 160.w,
-      margin: EdgeInsets.only(right: 15.w),
+      width: 165.w,
+      margin: EdgeInsets.only(right: 16.w, bottom: 8.h, top: 4.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: Colors.grey.shade100),
+        border: Border.all(color: CustomColors.greyColor.withValues(alpha: 0.6)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
             child: CachedNetworkImage(
               imageUrl: doctor.image,
               height: 100.h,
               width: double.infinity,
               fit: BoxFit.cover,
+              placeholder: (context, url) => Container(
+                color: Colors.grey.shade100,
+                child: const Center(child: CupertinoActivityIndicator()),
+              ),
+              errorWidget: (context, url, error) => Container(
+                color: Colors.grey.shade100,
+                child: const Icon(Icons.person_outline_rounded, size: 30, color: Colors.grey),
+              ),
             ),
           ),
           Padding(
@@ -58,24 +66,33 @@ class DoctorHomeCard extends StatelessWidget {
                     ),
                     Row(
                       children: [
-                        const Icon(Icons.star, color: Colors.amber, size: 10),
+                        const Icon(Icons.star_rounded, color: Colors.amber, size: 14),
                         SizedBox(width: 2.w),
-                        Text(doctor.rating.toString(), style: CustomFonts.black10w600.copyWith(fontSize: 9.sp)),
+                        Text(
+                          doctor.rating.toString(),
+                          style: CustomFonts.black10w600.copyWith(fontSize: 9.sp),
+                        ),
                       ],
                     ),
                   ],
                 ),
-                SizedBox(height: 2.h),
+                SizedBox(height: 4.h),
                 Text(
                   doctor.specialization,
                   style: CustomFonts.grey14w400.copyWith(fontSize: 10.sp),
                   maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 4.h),
+                SizedBox(height: 6.h),
                 Text(
                   doctor.clinicName,
-                  style: CustomFonts.black10w600.copyWith(color: CustomColors.darkPurple, fontSize: 9.sp),
+                  style: CustomFonts.black10w600.copyWith(
+                    color: CustomColors.darkPurple,
+                    fontSize: 9.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                   maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -93,30 +110,38 @@ class ClinicHomeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 240.w,
-      margin: EdgeInsets.only(right: 15.w),
+      width: 245.w,
+      margin: EdgeInsets.only(right: 16.w, bottom: 8.h, top: 4.h),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: Colors.grey.shade100),
+        border: Border.all(color: CustomColors.greyColor.withValues(alpha: 0.6)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
             child: CachedNetworkImage(
               imageUrl: clinic.image,
               height: 110.h,
               width: double.infinity,
               fit: BoxFit.cover,
+              placeholder: (context, url) => Container(
+                color: Colors.grey.shade100,
+                child: const Center(child: CupertinoActivityIndicator()),
+              ),
+              errorWidget: (context, url, error) => Container(
+                color: Colors.grey.shade100,
+                child: const Icon(Icons.storefront_rounded, size: 30, color: Colors.grey),
+              ),
             ),
           ),
           Padding(
@@ -132,15 +157,27 @@ class ClinicHomeCard extends StatelessWidget {
                         clinic.name,
                         style: CustomFonts.black14w600,
                         maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Text(
-                      "${clinic.doctorCount} Doctors",
-                      style: CustomFonts.black10w600.copyWith(color: CustomColors.darkPurple, fontSize: 9.sp),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                      decoration: BoxDecoration(
+                        color: CustomColors.purpleColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Text(
+                        "${clinic.doctorCount} Doctors",
+                        style: CustomFonts.black10w600.copyWith(
+                          color: CustomColors.darkPurple,
+                          fontSize: 9.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-                SizedBox(height: 4.h),
+                SizedBox(height: 6.h),
                 Row(
                   children: [
                     Icon(Icons.location_on_outlined, size: 12.sp, color: Colors.grey),
@@ -172,29 +209,47 @@ class UpcomingAppointmentDateSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(right: 15.w),
-      padding: EdgeInsets.fromLTRB(14.w, 8.h, 4.w, 8.h),
+      margin: EdgeInsets.only(right: 16.w),
+      padding: EdgeInsets.fromLTRB(16.w, 10.h, 10.w, 10.h),
       decoration: BoxDecoration(
-        color: CustomColors.blueColor,
-        borderRadius: BorderRadius.circular(18.r),
-        border: Border.all(color: CustomColors.lightPurpleColor.withValues(alpha: 0.15)),
+        borderRadius: BorderRadius.circular(20.r),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF2E1C38), // Deep luxury purple (Loyalty rewards consistency)
+            Color(0xFF140F26), // Midnight black
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: CustomColors.purpleColor.withValues(alpha: 0.15),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: EdgeInsets.only(left: 2.w),
-            child: Text(
-              dateTitle,
-              style: CustomFonts.black14w600.copyWith(
-                color: CustomColors.whiteColor,
-                letterSpacing: 0.3,
-                fontSize: 13.sp,
+          Row(
+            children: [
+              const Icon(Icons.calendar_today_rounded, color: CustomColors.purpleColor, size: 14),
+              SizedBox(width: 6.w),
+              Text(
+                dateTitle,
+                style: CustomFonts.black14w600.copyWith(
+                  color: Colors.white,
+                  letterSpacing: 0.2,
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
+            ],
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 10.h),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: appointments.map((appointment) => UpcomingAppointmentHomeCard(appointment: appointment)).toList(),
@@ -209,19 +264,32 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
   final DummyAppointment appointment;
   const UpcomingAppointmentHomeCard({super.key, required this.appointment});
 
-  Color _getTypeColor(String type) {
+  // Vertical Left Accent Color & Badge Styling based on type
+  Color _getTypeAccentColor(String type) {
     switch (type) {
-      case "Consultation": return CustomColors.lightBlueColor;
-      case "Sessions": return CustomColors.purpleColor;
-      case "Follow-Up / Touch-Up": return CustomColors.lightPurpleColor;
+      case "Consultation": return CustomColors.blueColor;
+      case "Sessions": return CustomColors.pinkColor;
+      case "Follow-Up / Touch-Up": return CustomColors.darkPurple;
       case "Provisional Booking": return CustomColors.yellow;
-      default: return Colors.white;
+      default: return CustomColors.purpleColor;
+    }
+  }
+
+  Color _getTypeBgColor(String type) {
+    switch (type) {
+      case "Consultation": return CustomColors.blueColor.withValues(alpha: 0.08);
+      case "Sessions": return CustomColors.pinkColor.withValues(alpha: 0.08);
+      case "Follow-Up / Touch-Up": return CustomColors.darkPurple.withValues(alpha: 0.08);
+      case "Provisional Booking": return CustomColors.yellow.withValues(alpha: 0.12);
+      default: return CustomColors.purpleColor.withValues(alpha: 0.08);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    Color typeColor = _getTypeColor(appointment.type);
+    final accentColor = _getTypeAccentColor(appointment.type);
+    final badgeBgColor = _getTypeBgColor(appointment.type);
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -232,79 +300,160 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: 230.w,
-        margin: EdgeInsets.only(right: 10.w),
+        width: 245.w,
+        height: 135.h,
+        margin: EdgeInsets.only(right: 8.w),
         decoration: BoxDecoration(
-          color: typeColor,
-          borderRadius: BorderRadius.circular(14.r),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
-              child: Text(
-                appointment.type,
-                style: CustomFonts.black14w400,
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.fromLTRB(6.w, 0, 6.w, 6.h),
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10.r),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "${appointment.treatmentName} - ${appointment.area}",
-                    style: CustomFonts.black14w600.copyWith(fontSize: 13.sp),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 6.h),
-                  _buildIconLabel(Icons.business_outlined, appointment.clinicName),
-                  SizedBox(height: 4.h),
-                  _buildIconLabel(Icons.person_outline, appointment.doctorName),
-                  SizedBox(height: 8.h),
-                  const Divider(height: 1),
-                  SizedBox(height: 6.h),
-                  Row(
-                    children: [
-                      Icon(Icons.access_time, size: 12.sp, color: CustomColors.blueColor),
-                      SizedBox(width: 6.w),
-                      Text(
-                        appointment.time,
-                        style: CustomFonts.black12w600.copyWith(fontSize: 10.sp, color: CustomColors.blueColor),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
-      ),
-    );
-  }
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16.r),
+          child: Stack(
+            children: [
+              // 1. Vertical Accent Left Indicator Bar
+              Positioned(
+                left: 0,
+                top: 0,
+                bottom: 0,
+                width: 4.w,
+                child: Container(color: accentColor),
+              ),
 
-  Widget _buildIconLabel(IconData icon, String label) {
-    return Row(
-      children: [
-        Icon(icon, size: 12.sp, color: Colors.grey.shade600),
-        SizedBox(width: 6.w),
-        Expanded(
-          child: Text(
-            label,
-            style: CustomFonts.grey14w400.copyWith(fontSize: 11.sp),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+              // 2. Card Content Layout
+              Positioned.fill(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(14.w, 10.h, 10.w, 10.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Header Row: Treatment Title & Type Badge
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  appointment.treatmentName,
+                                  style: CustomFonts.black14w600.copyWith(
+                                    fontSize: 13.sp,
+                                    height: 1.1,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(height: 1.h),
+                                Text(
+                                  appointment.area,
+                                  style: CustomFonts.grey14w400.copyWith(
+                                    fontSize: 10.sp,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 6.w),
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                            decoration: BoxDecoration(
+                              color: badgeBgColor,
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            child: Text(
+                              appointment.type,
+                              style: TextStyle(
+                                color: accentColor,
+                                fontSize: 8.sp,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'Degular',
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // Middle Section: Clinic & Doctor Info
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.business_rounded, size: 12.sp, color: Colors.grey.shade500),
+                              SizedBox(width: 4.w),
+                              Expanded(
+                                child: Text(
+                                  appointment.clinicName,
+                                  style: CustomFonts.grey14w400.copyWith(fontSize: 10.sp, color: Colors.grey.shade700),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 2.h),
+                          Row(
+                            children: [
+                              Icon(Icons.person_rounded, size: 12.sp, color: Colors.grey.shade500),
+                              SizedBox(width: 4.w),
+                              Expanded(
+                                child: Text(
+                                  appointment.doctorName,
+                                  style: CustomFonts.grey14w400.copyWith(fontSize: 10.sp, color: Colors.grey.shade700),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      // Bottom Section: Clock Time Badge
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                        decoration: BoxDecoration(
+                          color: CustomColors.blueColor.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.access_time_filled_rounded, size: 10.sp, color: CustomColors.blueColor),
+                            SizedBox(width: 4.w),
+                            Text(
+                              appointment.time,
+                              style: CustomFonts.black12w600.copyWith(
+                                fontSize: 9.sp,
+                                color: CustomColors.blueColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }
