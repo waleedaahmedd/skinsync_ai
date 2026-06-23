@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:country_picker/country_picker.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +12,7 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/phone_widget.dart';
+import 'package:skinsync_ai/widgets/custom_button.dart';
 
 class PersonalDetailScreen extends ConsumerStatefulWidget {
   const PersonalDetailScreen({super.key});
@@ -476,30 +476,16 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                 ),
                 SizedBox(height: 24.h),
 
-                // Save Button
+                // Reusable Custom Button
                 Consumer(
                   builder: (_, ref, _) {
                     final loading = ref.watch(
                       authViewModel.select((s) => s.loading),
                     );
-                    return SizedBox(
-                      width: double.infinity,
-                      height: 52.h,
-                      child: ElevatedButton(
-                        onPressed: loading ? null : _onSavePressed,
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          textStyle: CustomFonts.white16w600,
-                          backgroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25.r),
-                          ),
-                          elevation: 2,
-                        ),
-                        child: loading
-                            ? const CupertinoActivityIndicator(color: Colors.white)
-                            : const Text("Save Changes"),
-                      ),
+                    return CustomButton(
+                      text: "Save Changes",
+                      isLoading: loading,
+                      onPressed: _onSavePressed,
                     );
                   },
                 ),

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
+import 'package:skinsync_ai/widgets/custom_button.dart';
 
 class AllergyAndMedicalHistory extends StatefulWidget {
   const AllergyAndMedicalHistory({super.key});
@@ -146,25 +147,12 @@ class _AllergyAndMedicalHistoryState extends State<AllergyAndMedicalHistory> {
             ),
             SizedBox(height: 32.h),
 
-            // Save Button CTA
-            SizedBox(
-              width: double.infinity,
-              height: 52.h,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  textStyle: CustomFonts.white16w600,
-                  backgroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25.r),
-                  ),
-                  elevation: 2,
-                ),
-                child: const Text("Save & Update"),
-              ),
+            // Reusable Custom Button
+            CustomButton(
+              text: "Save & Update",
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
             SizedBox(height: 40.h),
           ],

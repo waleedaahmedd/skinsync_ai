@@ -17,6 +17,8 @@ import '../view_models/treatment_view_model.dart';
 import '../widgets/bottom_sheets/syringe_level_sheet.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/service_type_button.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/custom_bordered_button.dart';
 import 'explore_clinics_screen.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
@@ -31,13 +33,28 @@ class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
 }
 
 class _ArFaceModelPreviewScreenState
-    extends ConsumerState<ArFaceModelPreviewScreen> {
+    extends ConsumerState<ArFaceModelPreviewScreen>
+    with SingleTickerProviderStateMixin {
   bool _hasInitialized = false;
   double _sliderValue = 0.5;
+  late final AnimationController _pulseController;
+  late final Animation<double> _pulseAnimation;
 
   @override
   void initState() {
     super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..repeat(reverse: true);
+
+    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.04).animate(
+      CurvedAnimation(
+        parent: _pulseController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await ref.read(treatmentViewModel.notifier).getTreatments();
       if (widget.simulationData == null) {
@@ -47,6 +64,12 @@ class _ArFaceModelPreviewScreenState
           .read(treatmentViewModel.notifier)
           .initializeSimulation(widget.simulationData!);
     });
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
   }
 
   void _maybeShowSyringeBottomSheet(
@@ -146,17 +169,36 @@ class _ArFaceModelPreviewScreenState
                       width: double.infinity,
                       margin: EdgeInsets.symmetric(horizontal: 20.w),
                       padding: EdgeInsets.symmetric(
-                        horizontal: 30.w,
+                        horizontal: 16.w,
                         vertical: 12.h,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.7),
+                        color: CustomColors.purpleColor.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(20.r),
+                        border: Border.all(
+                          color: CustomColors.purpleColor.withValues(alpha: 0.4),
+                          width: 1,
+                        ),
                       ),
-                      child: Text(
-                        "This is an AI-generated Simulation for  Visualization Purpose only, Actual Result will vary.",
-                        style: CustomFonts.white14w500,
-                        textAlign: TextAlign.center,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.info_outline_rounded,
+                            color: CustomColors.darkPurple,
+                            size: 20.sp,
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Text(
+                              "This is an AI-generated Simulation for Visualization Purpose only. Actual results may vary.",
+                              style: CustomFonts.black12w600.copyWith(
+                                color: CustomColors.darkPurple,
+                                fontSize: 11.sp,
+                                height: 1.3,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     // _accuracyRate(),
@@ -530,18 +572,22 @@ class _ArFaceModelPreviewScreenState
 
                                   return Container(
                                     width: double.infinity,
-                                    padding: EdgeInsets.all(14.w),
+                                    padding: EdgeInsets.all(18.w),
                                     margin: EdgeInsets.only(bottom: 16.h),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.85,
-                                      ),
-                                      borderRadius: BorderRadius.circular(16.r),
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(24.r),
                                       border: Border.all(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.06,
-                                        ),
+                                        color: Colors.black.withValues(alpha: 0.12),
+                                        width: 1.5,
                                       ),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: 0.015),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
                                     ),
                                     child: Column(
                                       crossAxisAlignment:
@@ -549,19 +595,19 @@ class _ArFaceModelPreviewScreenState
                                       children: [
                                         Text(
                                           'Selected Treatment',
-                                          style: CustomFonts.black14w500,
+                                          style: CustomFonts.black14w700,
                                         ),
-                                        SizedBox(height: 4.h),
+                                        SizedBox(height: 6.h),
                                         Text(
                                           treatment?.name ?? '-',
                                           style: CustomFonts.black18w600,
                                         ),
-                                        SizedBox(height: 12.h),
+                                        SizedBox(height: 16.h),
                                         Text(
                                           'Selected Sub Areas',
-                                          style: CustomFonts.black14w500,
+                                          style: CustomFonts.black14w700,
                                         ),
-                                        SizedBox(height: 8.h),
+                                        SizedBox(height: 10.h),
                                         Wrap(
                                           spacing: 8.w,
                                           runSpacing: 8.h,
@@ -569,55 +615,86 @@ class _ArFaceModelPreviewScreenState
                                             final name = e.name ?? '-';
                                             final syringes = e.currentSyringe;
                                             return Container(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 12.w,
-                                                vertical: 8.h,
-                                              ),
                                               decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                      999.r,
-                                                    ),
-                                                border: Border.all(
-                                                  color: Colors.black
-                                                      .withValues(alpha: 0.08),
-                                                ),
-                                              ),
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Column(
-                                                    children: [
-                                                      Text(
-                                                        name,
-                                                        style: CustomFonts
-                                                            .black14w500,
-                                                      ),
-                                                      if (syringes != 0)
-                                                        Text(
-                                                          ' Syringe${syringes > 1 ? 's' : ''} $syringes',
-                                                          style: CustomFonts
-                                                              .black14w500,
-                                                        ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(width: 5.w),
-                                                  GestureDetector(
-                                                    onTap: () =>
-                                                        _showRemoveConfirmation(
-                                                          context,
-                                                          ref,
-                                                          e.id!,
-                                                          name,
-                                                        ),
-                                                    child: const Icon(
-                                                      Icons.cancel,
-                                                      size: 20,
-                                                      color: Colors.grey,
-                                                    ),
+                                                borderRadius: BorderRadius.circular(16.r),
+                                                gradient: CustomColors.purpleBlueGradient,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: CustomColors.purpleColor.withValues(alpha: 0.25),
+                                                    blurRadius: 6,
+                                                    offset: const Offset(0, 3),
                                                   ),
                                                 ],
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius: BorderRadius.circular(16.r),
+                                                child: Stack(
+                                                  children: [
+                                                    // 1. Dark Tint Mask Overlay (Consistent with cards)
+                                                    Positioned.fill(
+                                                      child: Container(
+                                                        color: Colors.black.withValues(alpha: 0.45),
+                                                      ),
+                                                    ),
+
+                                                    // 2. High-Contrast Content
+                                                    Padding(
+                                                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                                                      child: Row(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          Icon(
+                                                            Icons.insights_rounded,
+                                                            color: Colors.white,
+                                                            size: 14.sp,
+                                                          ),
+                                                          SizedBox(width: 6.w),
+                                                          Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            mainAxisSize: MainAxisSize.min,
+                                                            children: [
+                                                              Text(
+                                                                name,
+                                                                style: CustomFonts.white10w600.copyWith(fontSize: 11.sp),
+                                                              ),
+                                                              if (syringes != 0) ...[
+                                                                SizedBox(height: 2.h),
+                                                                Text(
+                                                                  'Syringe: $syringes',
+                                                                  style: CustomFonts.white10w600.copyWith(
+                                                                    color: Colors.white.withValues(alpha: 0.8),
+                                                                    fontSize: 8.sp,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ],
+                                                          ),
+                                                          SizedBox(width: 10.w),
+                                                          Container(
+                                                            width: 1.w,
+                                                            height: 18.h,
+                                                            color: Colors.white.withValues(alpha: 0.3),
+                                                          ),
+                                                          SizedBox(width: 10.w),
+                                                          GestureDetector(
+                                                            onTap: () =>
+                                                                _showRemoveConfirmation(
+                                                                  context,
+                                                                  ref,
+                                                                  e.id!,
+                                                                  name,
+                                                                ),
+                                                            child: const Icon(
+                                                              Icons.cancel_rounded,
+                                                              size: 16,
+                                                              color: Colors.white,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             );
                                           }).toList(),
@@ -695,9 +772,7 @@ class _ArFaceModelPreviewScreenState
                             SizedBox(height: 16.h),
                             Text(
                               'Error',
-                              style: CustomFonts.black20w600.copyWith(
-                                color: Colors.red,
-                              ),
+                              style: CustomFonts.red20w600,
                             ),
                             SizedBox(height: 8.h),
                             Padding(
@@ -705,9 +780,7 @@ class _ArFaceModelPreviewScreenState
                               child: Text(
                                 errorMessage,
                                 textAlign: TextAlign.center,
-                                style: CustomFonts.black16w400.copyWith(
-                                  color: Colors.red.shade700,
-                                ),
+                                style: CustomFonts.red16w400,
                               ),
                             ),
                           ],
@@ -879,76 +952,51 @@ class _ArFaceModelPreviewScreenState
           child: Row(
             children: [
               Expanded(
-                child: isAiImageGenerated
-                    ? OutlinedButton(
-                        onPressed: () {
-                          ref
-                              .read(treatmentViewModel.notifier)
-                              .callPredictAPI();
-                        },
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.r),
-                          ),
-                          padding: EdgeInsets.symmetric(vertical: 19.h),
-                        ),
-                        child: Text(
-                          'Generate Ai Image',
-                          style: CustomFonts.black22w600,
-                        ),
-                      )
-                    : GlowContainer(
-                        gradientColors: [
-                          CustomColors.pinkColor,
-                          CustomColors.purpleColor,
-                        ],
-                        containerOptions: ContainerOptions(
+                child: ScaleTransition(
+                  scale: _pulseAnimation,
+                  child: isAiImageGenerated
+                      ? CustomBorderedButton(
+                          text: "Generate Ai Image",
+                          borderColor: Colors.black,
+                          textColor: Colors.black,
                           borderRadius: 30.r,
-                          width: 2.r,
-                        ),
-                        child: OutlinedButton(
+                          height: 58.h,
                           onPressed: () {
                             ref
                                 .read(treatmentViewModel.notifier)
                                 .callPredictAPI();
                           },
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide.none,
-                            padding: EdgeInsets.symmetric(vertical: 19.h),
+                        )
+                      : GlowContainer(
+                          gradientColors: const [
+                            CustomColors.pinkColor,
+                            CustomColors.darkPurple,
+                          ],
+                          containerOptions: ContainerOptions(
+                            borderRadius: 30.r,
+                            width: 2.r,
                           ),
-                          child: Text(
-                            'Generate Ai Image',
-                            style: CustomFonts.black22w600.copyWith(
-                              color: CustomColors.pinkColor,
-                            ),
+                          child: CustomButton(
+                            text: "Generate Ai Image",
+                            backgroundColor: Colors.transparent,
+                            textColor: CustomColors.darkPurple,
+                            borderRadius: 30.r,
+                            height: 54.h,
+                            onPressed: () {
+                              ref
+                                  .read(treatmentViewModel.notifier)
+                                  .callPredictAPI();
+                            },
                           ),
                         ),
-                      ),
-                // : AnimatedLoadingBorder(
-                //     cornerRadius: 30.r,
-                //     isTrailingTransparent: true,
-                //     borderWidth: 2,
-                //     borderColor: CustomColors.pinkColor,
-                //     child: OutlinedButton(
-                //       onPressed: () {
-                //         ref
-                //             .read(treatmentViewModel.notifier)
-                //             .callPredictAPI();
-                //       },
-                //       style: OutlinedButton.styleFrom(
-                //         side: BorderSide.none,
-                //         padding: EdgeInsets.symmetric(vertical: 19.h),
-                //       ),
-                //       child: Text(
-                //         'Generate Ai Image',
-                //         style: CustomFonts.black22w600,
-                //       ),
-                //     ),
-                //   ),
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: ElevatedButton(
+                child: CustomButton(
+                  text: 'Explore Clinics',
+                  borderRadius: 30.r,
+                  height: 58.h,
                   onPressed: () {
                     final treatment = ref.read(
                       treatmentViewModel.select(
@@ -997,17 +1045,6 @@ class _ArFaceModelPreviewScreenState
                       },
                     );
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.r),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 19.h),
-                  ),
-                  child: Text(
-                    'Explore Clinics',
-                    style: CustomFonts.white22w600,
-                  ),
                 ),
               ),
             ],

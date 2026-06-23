@@ -594,4 +594,25 @@ abstract final class CustomFonts {
     color: CustomColors.whiteColor,
     fontFamily: 'Degular',
   );
+
+  static TextStyle red20w600 = TextStyle(
+    fontSize: 20.sp,
+    fontWeight: FontWeight.w600,
+    color: const Color(0xFFF44336),
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle red16w400 = TextStyle(
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w400,
+    color: const Color(0xFFD32F2F), // red.shade700
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle pink22w600 = TextStyle(
+    fontSize: 22.sp,
+    fontWeight: FontWeight.w600,
+    color: CustomColors.pinkColor,
+    fontFamily: 'Degular',
+  );
 }
