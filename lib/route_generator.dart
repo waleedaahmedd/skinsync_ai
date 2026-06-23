@@ -33,6 +33,7 @@ import 'screens/ar_face_model_Preview_screen.dart';
 import 'screens/bottom_nav_screens/face_detection_screen.dart';
 import 'screens/bottom_nav_screens/my_profile_screen.dart';
 import 'screens/bottom_nav_screens/treatments_screen.dart';
+import 'screens/treatment_selection_screen.dart';
 import 'screens/doctors_listing_screen.dart';
 import 'screens/explore_clinics_screen.dart';
 import 'screens/notification_screen.dart';
@@ -209,6 +210,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: TreatmentsScreen.routeName),
           builder: (_) => TreatmentsScreen(),
+        );
+      case TreatmentSelectionScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: TreatmentSelectionScreen.routeName),
+          builder: (_) => TreatmentSelectionScreen(),
         );
       case SelectProductScreen.routeName:
         return MaterialPageRoute(

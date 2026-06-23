@@ -6,6 +6,7 @@ import 'package:skinsync_ai/screens/bottom_nav_screens/appointments_screen.dart'
 import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/progress_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
+import 'package:skinsync_ai/screens/treatment_selection_screen.dart';
 import 'package:skinsync_ai/screens/home_screen.dart';
 
 import '../view_models/bottom_nav_view_model.dart';
@@ -18,7 +19,7 @@ class BottomNavPage extends ConsumerStatefulWidget {
 
   static final List<Widget> _children = [
     HomeScreen(),
-    TreatmentsScreen(),
+    TreatmentSelectionScreen(),
     AppointmentsScreen(),
     ProgressScreen(),
     MyProfileScreen(),

@@ -173,7 +173,7 @@ class UpcomingAppointmentDateSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(right: 15.w),
-      padding: EdgeInsets.fromLTRB(14.w, 10.h, 4.w, 10.h),
+      padding: EdgeInsets.fromLTRB(14.w, 8.h, 4.w, 8.h),
       decoration: BoxDecoration(
         color: CustomColors.blueColor,
         borderRadius: BorderRadius.circular(18.r),
