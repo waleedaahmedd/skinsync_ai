@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../utills/assets.dart';
+import '../utills/custom_fonts.dart';
 
 class HomeTreamentCard extends StatelessWidget {
 
@@ -25,7 +25,7 @@ class HomeTreamentCard extends StatelessWidget {
           Row(
             children: [
               Text("Botox Treatment", style: CustomFonts.black18w600),
-              Spacer(),
+              const Spacer(),
               SvgPicture.asset(SvgAssets.mappin, height: 12.h, width: 12.w),
               SizedBox(width: 4.w),
               Text("Glow Skin Clinic", style: CustomFonts.grey14w400),

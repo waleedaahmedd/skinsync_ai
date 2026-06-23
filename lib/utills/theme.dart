@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'custom_fonts.dart';
 
 import 'color_constant.dart';
 
@@ -14,8 +14,8 @@ class AppTheme {
       ),
     ).copyWith(
       brightness: Brightness.light,
-      bannerTheme: MaterialBannerThemeData(),
-      tabBarTheme: TabBarThemeData(
+      bannerTheme: const MaterialBannerThemeData(),
+      tabBarTheme: const TabBarThemeData(
         indicatorColor: CustomColors.blackColor,
         labelColor: CustomColors.blackColor,
       ),
@@ -33,7 +33,7 @@ class AppTheme {
       ),
       textTheme: const TextTheme().apply(fontFamily: 'Degular'),
       // Text Selection Theme for cursor color
-      textSelectionTheme: TextSelectionThemeData(
+      textSelectionTheme: const TextSelectionThemeData(
         cursorColor: CustomColors.lightPurpleColor, // Cursor color
       ),
       progressIndicatorTheme: const ProgressIndicatorThemeData(
@@ -44,7 +44,7 @@ class AppTheme {
       checkboxTheme: CheckboxThemeData(
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         visualDensity: VisualDensity.compact,
-        checkColor: WidgetStatePropertyAll(Colors.white),
+        checkColor: const WidgetStatePropertyAll(Colors.white),
         fillColor: WidgetStateProperty.resolveWith<Color?>((
           Set<WidgetState> states,
         ) {
@@ -74,15 +74,15 @@ class AppTheme {
         hintStyle: CustomFonts.grey18w400,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14.r),
-          borderSide: BorderSide(color: Color(0xffB5B5B5)),
+          borderSide: const BorderSide(color: Color(0xffB5B5B5)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14.r),
-          borderSide: BorderSide(color: Color(0xffB5B5B5)),
+          borderSide: const BorderSide(color: Color(0xffB5B5B5)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14.r),
-          borderSide: BorderSide(color: Color(0xffB5B5B5)),
+          borderSide: const BorderSide(color: Color(0xffB5B5B5)),
         ),
       ),
     );
@@ -96,12 +96,12 @@ class AppTheme {
       primarySwatch: Colors.blue,
       primaryColor: Colors.blue[400],
       scaffoldBackgroundColor: const Color(0xFF121212),
-      appBarTheme: AppBarTheme(
-        backgroundColor: const Color(0xFF1E1E1E),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFF1E1E1E),
         foregroundColor: Colors.white,
         elevation: 1,
         centerTitle: true,
-        titleTextStyle: const TextStyle(
+        titleTextStyle: TextStyle(
           fontFamily: 'Degular',
           color: Colors.white,
         ),

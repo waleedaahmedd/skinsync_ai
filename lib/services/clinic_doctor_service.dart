@@ -1,11 +1,11 @@
 import 'dart:convert';
 
-import 'package:skinsync_ai/exceptions/app_exception.dart';
-import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
-import 'package:skinsync_ai/models/responses/get_doctor_response.dart';
-import 'package:skinsync_ai/repositories/clinic_doctor_repository.dart';
-import 'package:skinsync_ai/services/api_base_helper.dart';
-import 'package:skinsync_ai/utills/enums.dart';
+import '../exceptions/app_exception.dart';
+import '../models/responses/get_clinic_response.dart';
+import '../models/responses/get_doctor_response.dart';
+import '../repositories/clinic_doctor_repository.dart';
+import 'api_base_helper.dart';
+import '../utills/enums.dart';
 
 import '../models/requests/appointment_request.dart';
 import '../models/responses/appointment_response.dart';
@@ -78,7 +78,7 @@ class ClinicDoctorService implements ClinicDoctorRepository {
           '?doctor_id=$doctorId&clinic_id=$clinicId&date=${date.millisecondsSinceEpoch ~/ 1000}',
     );
     final data = AvailabilityResponse.fromJson(jsonDecode(response.body));
-    if (data.isSuccess == false) {
+    if (data.status == false) {
       throw Exception(data.message ?? 'Something went wrong!');
     }
     return data.slots;
@@ -133,7 +133,7 @@ class ClinicDoctorService implements ClinicDoctorRepository {
       params: '',
     );
     final data = AppointmentResponse.fromJson(jsonDecode(response.body));
-    if (!(data.isSuccess ?? false)) {
+    if (!(data.status ?? false)) {
       throw AppException(data.message ?? 'Something went wrong!');
     }
     return data.data!;

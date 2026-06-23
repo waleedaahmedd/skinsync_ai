@@ -1,7 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:skinsync_ai/models/responses/treatment_response_model.dart';
-import 'package:skinsync_ai/models/responses/treatment_sub_area_response.dart';
+import '../models/responses/treatment_response_model.dart';
+import '../models/responses/treatment_sub_area_response.dart';
 
 import 'base_view_model.dart';
 
@@ -44,7 +44,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
 
   void clearState() {
     print("state Cleared");
-    state = CheckoutState(
+    state = const CheckoutState(
       treatmentId: null,
       treatmentAreaId: null,
       treatmentSubAreaId: null,

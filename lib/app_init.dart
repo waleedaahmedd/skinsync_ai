@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/view_models/theme_view_model.dart';
+import 'utills/assets.dart';
+import 'view_models/theme_view_model.dart';
 
 import 'route_generator.dart';
 import 'utills/color_constant.dart';
@@ -35,7 +35,7 @@ void configLoading() {
           SizedBox(
             height: 60.w,
             width: 60.w,
-            child: CircularProgressIndicator(),
+            child: const CircularProgressIndicator(),
           ),
         ],
       ),

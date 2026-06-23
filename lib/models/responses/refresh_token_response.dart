@@ -1,14 +1,14 @@
-import 'package:skinsync_ai/models/responses/auth_response.dart';
-import 'package:skinsync_ai/models/responses/base_response_model.dart';
+import 'auth_response.dart';
+import 'base_response_model.dart';
 
 class RefreshTokenResponse extends BaseResponseModel {
   final RefreshTokenData? data;
 
-  RefreshTokenResponse({super.isSuccess, super.message, this.data});
+  RefreshTokenResponse({super.status, super.message, this.data});
 
   factory RefreshTokenResponse.fromJson(Map<String, dynamic> json) =>
       RefreshTokenResponse(
-        isSuccess: json["is_success"],
+        status: json["is_success"],
         message: json["message"],
         data: json["data"] == null
             ? null

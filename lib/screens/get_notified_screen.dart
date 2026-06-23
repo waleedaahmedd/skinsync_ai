@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/screens/biometric_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'biometric_screen.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 
 class GetNotifiedScreen extends StatelessWidget {
   const GetNotifiedScreen({super.key});
@@ -22,7 +22,7 @@ class GetNotifiedScreen extends StatelessWidget {
             Container(
               height: 79.h,
               width: 79.w,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
               ),
@@ -54,7 +54,7 @@ class GetNotifiedScreen extends StatelessWidget {
                   (Route<dynamic> route) => false,
                 );
                 },
-                child: Text("Turn On Notifications"),
+                child: const Text("Turn On Notifications"),
               ),
             ),
             SizedBox(height: 19.h),

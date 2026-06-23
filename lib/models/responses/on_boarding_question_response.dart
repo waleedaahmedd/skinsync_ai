@@ -1,20 +1,19 @@
-import 'package:skinsync_ai/models/responses/base_response_model.dart';
+import 'base_response_model.dart';
 
 class OnBoardingQuestionResponse extends BaseResponseModel {
-  
   Data? data;
 
-  OnBoardingQuestionResponse({super.isSuccess, super.message, this.data});
+  OnBoardingQuestionResponse({super.status, super.message, this.data});
 
   OnBoardingQuestionResponse.fromJson(Map<String, dynamic> json) {
-    isSuccess = json['is_success'];
+    status = json['is_success'];
     message = json['message'];
     data = json['data'] != null ? Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['is_success'] = isSuccess;
+    data['is_success'] = status;
     data['message'] = message;
     if (this.data != null) {
       data['data'] = this.data!.toJson();

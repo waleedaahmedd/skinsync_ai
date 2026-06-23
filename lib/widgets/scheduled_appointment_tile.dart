@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/models/responses/get_appointment_response.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../models/responses/get_appointment_response.dart';
+import '../utills/assets.dart';
+import '../utills/custom_fonts.dart';
 
 class ScheduledAppointmentTile extends StatelessWidget {
   final Appointment appointment;

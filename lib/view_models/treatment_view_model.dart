@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:skinsync_ai/models/requests/save_history_request.dart';
-import 'package:skinsync_ai/models/responses/simulation_history_response.dart';
-import 'package:skinsync_ai/models/responses/treatment_area_response.dart';
-import 'package:skinsync_ai/models/responses/treatment_sub_area_response.dart';
-import 'package:skinsync_ai/services/api_base_helper.dart';
+import '../models/requests/save_history_request.dart';
+import '../models/responses/simulation_history_response.dart';
+import '../models/responses/treatment_area_response.dart';
+import '../models/responses/treatment_sub_area_response.dart';
+import '../services/api_base_helper.dart';
 
 import '../models/base_state_model.dart';
 import '../models/responses/treatment_response_model.dart';
@@ -30,7 +30,7 @@ final treatmentViewModel = NotifierProvider(
 class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   TreatmentViewModel._({required TreatmentRepository treatmentRepository})
     : _repo = treatmentRepository,
-      super(initialState: TreatmentsState());
+      super(initialState: const TreatmentsState());
 
   final TreatmentRepository _repo;
 
@@ -215,7 +215,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         treatmentsLoading: false,
         treatments: response.data,
       );
-      return response.isSuccess == true;
+      return response.status == true;
     });
   }
 
@@ -334,7 +334,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         treatmentAreaLoading: false,
         treatmentAreaResponse: response,
       );
-      return response.isSuccess == true;
+      return response.status == true;
     });
   }
 
@@ -352,7 +352,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         treatmentSubAreaLoading: false,
         subSelectionResponse: response,
       );
-      return response.isSuccess == true;
+      return response.status == true;
     });
   }
 

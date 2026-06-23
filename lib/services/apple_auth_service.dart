@@ -5,7 +5,7 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import 'package:skinsync_ai/exceptions/app_exception.dart';
+import '../exceptions/app_exception.dart';
 
 import 'base_auth_service.dart';
 
@@ -33,7 +33,7 @@ class AppleAuthService extends BaseAuthService {
   @override
   Future<User> signIn() async {
     if (!Platform.isIOS) {
-      throw AppException('Apple Sign In is only supported on iOS');
+      throw const AppException('Apple Sign In is only supported on iOS');
     }
 
     final rawNonce = generateNonce(); // ✅ now truly random
@@ -49,7 +49,7 @@ class AppleAuthService extends BaseAuthService {
 
     // ✅ Check identity token before proceeding
     if (appleCredential.identityToken == null) {
-      throw AppException('Apple identity token is null');
+      throw const AppException('Apple identity token is null');
     }
 
     final OAuthCredential credential = OAuthProvider('apple.com').credential(
@@ -63,7 +63,7 @@ class AppleAuthService extends BaseAuthService {
     final firebaseUser = userCredential.user;
 
     if (firebaseUser == null) {
-      throw AppException('Could not login to Apple');
+      throw const AppException('Could not login to Apple');
     }
 
     return firebaseUser;

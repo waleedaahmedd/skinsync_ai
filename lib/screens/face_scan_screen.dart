@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/screens/bottom_nav_page.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'bottom_nav_page.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 
 import 'bottom_nav_screens/face_detection_screen.dart';
 
@@ -41,7 +41,7 @@ class FaceScanScreen extends StatelessWidget {
                   PngAssets.vector,
                   height: 376.h,
                   fit: BoxFit.fill,
-                  color: Color(0xff88E3FB).withOpacity(0.7),
+                  color: const Color(0xff88E3FB).withValues(alpha: 0.7),
                 ),
               ),
 
@@ -96,7 +96,7 @@ class FaceScanScreen extends StatelessWidget {
                             context,
                           ).pushNamed(FaceDetectionScreen.routeName);
                         },
-                        child: Text("Scan Your Face"),
+                        child: const Text("Scan Your Face"),
                       ),
                     ),
                     SizedBox(height: 20.h),

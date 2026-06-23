@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/screens/skin_type.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
+import 'skin_type.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/sign_up_onboarding_view_model.dart';
 
 class SignupOnboarding extends ConsumerStatefulWidget {
   const SignupOnboarding({super.key});
@@ -32,14 +32,14 @@ class _SignupOnboardingState extends ConsumerState<SignupOnboarding> {
     super.initState();
     _pageController = PageController();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-       final signupViewModel = ref.read(onBoardingViewModel.notifier);
-       final response = await signupViewModel.callOnBoardingQuestionApi();
+      final signupViewModel = ref.read(onBoardingViewModel.notifier);
+      await signupViewModel.callOnBoardingQuestionApi();
       if (mounted) {
         signupViewModel.setPageController(_pageController);
         final questions =
             ref.read(onBoardingViewModel).onBoardingQues?.data?.questions ?? [];
 
-        _pages = List.generate(questions.length, (index) => SkinType());
+        _pages = List.generate(questions.length, (index) => const SkinType());
 
         setState(() {});
       }
@@ -103,7 +103,7 @@ class _SignupOnboardingState extends ConsumerState<SignupOnboarding> {
                                 value: notifier.progressValue(),
                                 minHeight: 10.h,
                                 backgroundColor: Colors.white,
-                                valueColor: AlwaysStoppedAnimation<Color>(
+                                valueColor: const AlwaysStoppedAnimation<Color>(
                                   CustomColors.lightBlueColor,
                                 ),
                               ),
@@ -127,7 +127,7 @@ class _SignupOnboardingState extends ConsumerState<SignupOnboarding> {
                                       horizontal: 8.w,
                                       vertical: 10.h,
                                     ),
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: CustomColors.purpleColor,
                                     ),
@@ -138,7 +138,7 @@ class _SignupOnboardingState extends ConsumerState<SignupOnboarding> {
                                     ),
                                   ),
                                 )
-                              : SizedBox(),
+                              : const SizedBox(),
                           GestureDetector(
                             onTap: () {
                               notifier.onSkipThis(context);
@@ -155,7 +155,7 @@ class _SignupOnboardingState extends ConsumerState<SignupOnboarding> {
                                     horizontal: 8.w,
                                     vertical: 10.h,
                                   ),
-                                  decoration: BoxDecoration(
+                                  decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: CustomColors.purpleColor,
                                   ),
@@ -175,7 +175,7 @@ class _SignupOnboardingState extends ConsumerState<SignupOnboarding> {
                 ),
                 Expanded(
                   child: _pages.isEmpty
-                      ? Center(
+                      ? const Center(
                           child: CircularProgressIndicator(
                             color: CustomColors.purpleColor,
                           ),

@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:skinsync_ai/models/base_state_model.dart';
-import 'package:skinsync_ai/models/responses/appointment_response.dart';
-import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
-import 'package:skinsync_ai/models/responses/get_doctor_response.dart';
-import 'package:skinsync_ai/repositories/clinic_doctor_repository.dart';
-import 'package:skinsync_ai/services/api_base_helper.dart';
-import 'package:skinsync_ai/services/clinic_doctor_service.dart';
-import 'package:skinsync_ai/services/location_service.dart';
-import 'package:skinsync_ai/services/media_service.dart';
-import 'package:skinsync_ai/utills/enums.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
-import 'package:skinsync_ai/view_models/base_view_model.dart';
-import 'package:skinsync_ai/view_models/treatment_view_model.dart';
+import '../models/base_state_model.dart';
+import '../models/responses/appointment_response.dart';
+import '../models/responses/get_clinic_response.dart';
+import '../models/responses/get_doctor_response.dart';
+import '../repositories/clinic_doctor_repository.dart';
+import '../services/api_base_helper.dart';
+import '../services/clinic_doctor_service.dart';
+import '../services/location_service.dart';
+import '../services/media_service.dart';
+import '../utills/enums.dart';
+import 'auth_view_model.dart';
+import 'base_view_model.dart';
+import 'treatment_view_model.dart';
 
 import '../models/requests/appointment_request.dart';
 import '../models/responses/availability_response.dart';
@@ -31,7 +31,7 @@ final clinicDoctorProvider = NotifierProvider(() {
 class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
   ClinicDoctorViewModel({required ClinicDoctorRepository clinicRepository})
     : _clinicRepository = clinicRepository,
-      super(initialState: ClinicDoctorState());
+      super(initialState: const ClinicDoctorState());
   final List<Clinic> _allClinics = <Clinic>[];
 
   final ClinicDoctorRepository _clinicRepository;
@@ -55,7 +55,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
         sideAreaIdsList: sideAreas,
       );
       state = state.copyWith(clinicLoading: false, clinics: response.data);
-      return response.isSuccess == true;
+      return response.status == true;
     });
   }
 
@@ -119,7 +119,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
         selectedDoctor: response.data?.firstOrNull,
         slots: availability,
       );
-      return response.isSuccess == true;
+      return response.status == true;
     });
   }
 
@@ -271,7 +271,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
   }
 
   void clearState() {
-    state = ClinicDoctorState();
+    state = const ClinicDoctorState();
   }
 
   void onSearchChanged(String search) {

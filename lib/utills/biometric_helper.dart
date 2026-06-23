@@ -6,8 +6,8 @@ import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
-import 'package:skinsync_ai/utills/enums.dart';
-import 'package:skinsync_ai/utills/secure_storage_service.dart';
+import 'enums.dart';
+import 'secure_storage_service.dart';
 
 import '../models/requests/register_biometric_req_model.dart';
 

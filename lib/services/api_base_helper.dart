@@ -5,8 +5,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:skinsync_ai/exceptions/app_exception.dart';
-import 'package:skinsync_ai/screens/get_started_screen.dart';
+import '../exceptions/app_exception.dart';
+import '../screens/get_started_screen.dart';
 
 import '../app_init.dart';
 import '../main.dart';
@@ -82,9 +82,9 @@ class ApiBaseHelper {
           throw Exception('Unsupported request type: $requestType');
       }
     } on SocketException {
-      throw AppException('No Internet Connection');
+      throw const AppException('No Internet Connection');
     } on HttpException {
-      throw AppException('No Internet Connection');
+      throw const AppException('No Internet Connection');
     } on FormatException {
       throw 'Invalid Format';
     } on TimeoutException {
@@ -146,7 +146,7 @@ class ApiBaseHelper {
     );
     log('RESPONSE: ${json.body}');
     final response = RefreshTokenResponse.fromJson(jsonDecode(json.body));
-    if (!(response.isSuccess ?? false)) {
+    if (!(response.status ?? false)) {
       throw Exception('Unauthorized');
     }
     await _secureStorage.saveToken(response.data!.accessToken!);

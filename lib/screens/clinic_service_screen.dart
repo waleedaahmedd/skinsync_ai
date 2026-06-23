@@ -6,13 +6,13 @@ import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
-import 'package:skinsync_ai/models/responses/get_doctor_response.dart';
-import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
-import 'package:skinsync_ai/widgets/app_loader.dart';
-import 'package:skinsync_ai/widgets/custom_app_bar.dart';
-import 'package:skinsync_ai/widgets/time_container.dart';
-import 'package:skinsync_ai/widgets/treatment_price_container.dart';
+import '../models/responses/get_clinic_response.dart';
+import '../models/responses/get_doctor_response.dart';
+import '../view_models/clinlic_doctor_view_model.dart';
+import '../widgets/app_loader.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/time_container.dart';
+import '../widgets/treatment_price_container.dart';
 
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
@@ -104,9 +104,9 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      appBar: CustomAppBar(showTitle: false),
+      appBar: const CustomAppBar(showTitle: false),
       body: Container(
-        decoration: BoxDecoration(gradient: CustomColors.whiteBlueGradient),
+        decoration: const BoxDecoration(gradient: CustomColors.whiteBlueGradient),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,7 +128,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                   if (state.doctorLoading) {
                     return SizedBox(
                       height: 150.h, // same height as doctor list
-                      child: AppLoader(),
+                      child: const AppLoader(),
                     );
                   } else if (doctors?.isEmpty ?? true) {
                     return SizedBox(
@@ -161,7 +161,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                 },
               ),
               SizedBox(height: 21.h),
-              Divider(height: 0, color: CustomColors.greyColor),
+              const Divider(height: 0, color: CustomColors.greyColor),
               SizedBox(height: 25.h),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 30.w),
@@ -196,7 +196,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                 ),
               ),
               SizedBox(height: 25.h),
-              Divider(height: 0, color: CustomColors.greyColor),
+              const Divider(height: 0, color: CustomColors.greyColor),
               SizedBox(height: 25.h),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30.0),
@@ -214,7 +214,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                     ),
                     SizedBox(height: 11.h),
                     Container(
-                      padding: EdgeInsets.all(14),
+                      padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12.r),
                         color: CustomColors.lightBlueColor.withValues(
@@ -243,7 +243,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                               _pickDate();
                             },
                             child: Container(
-                              padding: EdgeInsets.all(10),
+                              padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10.r),
                                 color: Colors.lightBlue.withValues(alpha: 0.5),
@@ -290,7 +290,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                         if (state.$2) {
                           return SizedBox(
                             height: 60.h,
-                            child: Center(
+                            child: const Center(
                               child: CircularProgressIndicator(
                                 color: CustomColors.pinkColor,
                               ),

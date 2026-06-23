@@ -1,6 +1,6 @@
-import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
-import 'package:skinsync_ai/models/requests/otp_request.dart';
-import 'package:skinsync_ai/models/responses/base_response_model.dart';
+import '../models/requests/onboarding_profile_request.dart';
+import '../models/requests/otp_request.dart';
+import '../models/responses/base_response_model.dart';
 
 import '../models/requests/sign_in_request.dart';
 import '../models/responses/auth_response.dart';
@@ -20,10 +20,10 @@ abstract class AuthRepository {
   Future<AuthResponse> getMe();
 
   Future<AuthResponse> googleSignInApi({
-    required SignInWithGoogleRequest request,
+    required SocialLoginRequest request,
   });
 
   Future<AuthResponse> appleSignInApi({
-    required SignInWithAppleRequest request,
+    required SocialLoginRequest request,
   });
 }

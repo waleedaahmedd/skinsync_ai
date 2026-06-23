@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/utills/date_time_utills.dart';
-import 'package:skinsync_ai/widgets/time_container.dart';
+import '../../utills/color_constant.dart';
+import '../../utills/custom_fonts.dart';
+import '../../utills/date_time_utills.dart';
+import '../time_container.dart';
 
 import '../../models/responses/get_clinic_response.dart';
 import '../../models/responses/map_clinics_response.dart';

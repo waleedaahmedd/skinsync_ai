@@ -20,5 +20,5 @@ Future<void> main() async {
   await SharedPref.init();
   await SecureStorage().init();
   await StorageService.instance.init();
-  runApp(ProviderScope(child: AppInit()));
+  runApp(const ProviderScope(child: AppInit()));
 }

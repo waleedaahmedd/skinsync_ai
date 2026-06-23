@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:skinsync_ai/screens/progress_detail_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../screens/progress_detail_screen.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 
 class ProgressCard extends StatelessWidget {
   const ProgressCard({super.key});
@@ -22,7 +22,7 @@ class ProgressCard extends StatelessWidget {
             height: 248.h,
             width: 379.w,
             decoration: BoxDecoration(
-              image: DecorationImage(
+              image: const DecorationImage(
                 image: AssetImage(DummyAssets.treatmentimage),
                 fit: BoxFit.cover,
               ),
@@ -40,7 +40,7 @@ class ProgressCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(50.r),
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withValues(alpha: 0.3),
                     ),
                     child: Text(
                       "Next Appointment In 4hrs",
