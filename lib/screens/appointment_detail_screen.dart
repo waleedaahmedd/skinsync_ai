@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -17,23 +18,25 @@ class AppointmentDetailScreen extends StatelessWidget {
     return DefaultTabController(
       length: hasHistory ? 2 : 1,
       child: Scaffold(
-        backgroundColor: Colors.grey.shade50,
+        backgroundColor: CustomColors.whiteColor,
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
           centerTitle: false,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black, size: 20),
+            icon: const Icon(CupertinoIcons.arrow_left, color: Colors.black, size: 22),
             onPressed: () => Navigator.pop(context),
           ),
-          title: Text("Appointment Detail", style: CustomFonts.black22w600),
+          title: Text("Appointment Detail", style: CustomFonts.black24w600),
           bottom: hasHistory
               ? TabBar(
-                  labelColor: CustomColors.darkPurple,
-                  unselectedLabelColor: Colors.grey,
                   indicatorColor: CustomColors.darkPurple,
                   indicatorSize: TabBarIndicatorSize.label,
-                  labelStyle: CustomFonts.black14w600,
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.grey.shade500,
+                  labelStyle: CustomFonts.black13w600,
+                  unselectedLabelStyle: CustomFonts.grey700_10w400,
+                  dividerColor: Colors.transparent,
                   tabs: const [
                     Tab(text: "Details"),
                     Tab(text: "Treatment History"),
@@ -42,6 +45,7 @@ class AppointmentDetailScreen extends StatelessWidget {
               : null,
         ),
         body: TabBarView(
+          physics: const BouncingScrollPhysics(),
           children: [
             _buildDetailsTab(),
             if (hasHistory) _buildHistoryTab(),
@@ -53,7 +57,8 @@ class AppointmentDetailScreen extends StatelessWidget {
 
   Widget _buildDetailsTab() {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(20.w),
+      physics: const BouncingScrollPhysics(),
+      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -66,7 +71,7 @@ class AppointmentDetailScreen extends StatelessWidget {
               _buildDetailRow("Status", appointment.status, isStatus: true),
             ],
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: 16.h),
           _buildInfoSection(
             title: "Treatment Details",
             children: [
@@ -74,7 +79,7 @@ class AppointmentDetailScreen extends StatelessWidget {
               _buildDetailRow("Target Area", appointment.area),
             ],
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: 16.h),
           _buildInfoSection(
             title: "Clinic & Provider",
             children: [
@@ -82,19 +87,20 @@ class AppointmentDetailScreen extends StatelessWidget {
               _buildDetailRow("Doctor", appointment.doctorName, icon: Icons.person_outline),
             ],
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: 16.h),
           _buildInfoSection(
             title: "Notes & Remarks",
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 child: Text(
-                  appointment.notes,
-                  style: CustomFonts.black14w400.copyWith(height: 1.5, color: Colors.grey.shade700),
+                  appointment.notes.isNotEmpty ? appointment.notes : "No special instructions or comments noted.",
+                  style: CustomFonts.textGrey14w400,
                 ),
               ),
             ],
           ),
+          SizedBox(height: 40.h),
         ],
       ),
     );
@@ -103,13 +109,29 @@ class AppointmentDetailScreen extends StatelessWidget {
   Widget _buildHistoryTab() {
     if (appointment.pastSessions.isEmpty) {
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.history_toggle_off_rounded, size: 64.sp, color: Colors.grey.shade300),
-            SizedBox(height: 16.h),
-            Text("No past treatment history found", style: CustomFonts.grey16w400),
-          ],
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 40.w),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.history_toggle_off_rounded,
+                size: 64.sp,
+                color: Colors.grey.shade300,
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                "No past treatment history found",
+                style: CustomFonts.grey800_20w600,
+              ),
+              SizedBox(height: 6.h),
+              Text(
+                "Completed treatment sessions or clinical records will appear on this timeline.",
+                textAlign: TextAlign.center,
+                style: CustomFonts.textGrey14w400,
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -119,30 +141,50 @@ class AppointmentDetailScreen extends StatelessWidget {
     int totalFollowups = appointment.pastSessions.where((s) => s.type == "Follow-up").length;
 
     return SingleChildScrollView(
-      padding: EdgeInsets.all(20.w),
+      physics: const BouncingScrollPhysics(),
+      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(16.w),
+            padding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 16.w),
             decoration: BoxDecoration(
-              color: CustomColors.darkPurple.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(color: CustomColors.darkPurple.withValues(alpha: 0.1)),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20.r),
+              border: Border.all(
+                color: CustomColors.lightPurpleColor.withValues(alpha: 0.4),
+                width: 1,
+              ),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  CustomColors.lightPurpleColor.withValues(alpha: 0.15),
+                  CustomColors.lightBlueColor.withValues(alpha: 0.08),
+                ],
+              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildSummaryStat("Sessions", totalSessions.toString()),
-                Container(width: 1, height: 30.h, color: CustomColors.darkPurple.withValues(alpha: 0.2)),
+                Container(
+                  width: 1.w,
+                  height: 32.h,
+                  color: CustomColors.lightPurpleColor.withValues(alpha: 0.5),
+                ),
                 _buildSummaryStat("Follow-ups", totalFollowups.toString()),
               ],
             ),
           ),
-          SizedBox(height: 25.h),
-          Text("Timeline", style: CustomFonts.black18w600),
-          SizedBox(height: 15.h),
+          SizedBox(height: 24.h),
+          Text(
+            "Timeline History",
+            style: CustomFonts.grey800_20w600,
+          ),
+          SizedBox(height: 16.h),
           ...appointment.pastSessions.map((session) => _buildHistoryTimelineEntry(session)),
+          SizedBox(height: 40.h),
         ],
       ),
     );
@@ -151,54 +193,112 @@ class AppointmentDetailScreen extends StatelessWidget {
   Widget _buildSummaryStat(String label, String value) {
     return Column(
       children: [
-        Text(value, style: CustomFonts.black20w600.copyWith(color: CustomColors.darkPurple)),
-        Text(label, style: CustomFonts.grey14w400.copyWith(fontSize: 12.sp)),
+        Text(
+          value,
+          style: CustomFonts.black24w600,
+        ),
+        SizedBox(height: 2.h),
+        Text(
+          label,
+          style: CustomFonts.grey700_11w700,
+        ),
       ],
     );
   }
 
   Widget _buildHistoryTimelineEntry(DummySession session) {
     bool isSession = session.type == "Session";
+    final accentColor = isSession ? CustomColors.darkPurple : Colors.orange.shade700;
+    final textStyle = isSession ? CustomFonts.darkPurple10w700 : CustomFonts.amber10w700;
 
     return Container(
-      margin: EdgeInsets.only(bottom: 20.h),
-      padding: EdgeInsets.only(left: 15.w),
+      margin: EdgeInsets.only(bottom: 16.h),
       decoration: BoxDecoration(
-        border: Border(left: BorderSide(color: isSession ? CustomColors.darkPurple : Colors.orange, width: 3)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                DateFormat('dd MMM yyyy').format(session.date),
-                style: CustomFonts.black16w600,
-              ),
-              _buildSmallBadge(session.type, isSession ? CustomColors.darkPurple : Colors.orange),
-            ],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: CustomColors.greyColor.withValues(alpha: 0.5),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-          SizedBox(height: 8.h),
-          _buildHistoryInfoRow(Icons.business_outlined, session.clinicName),
-          _buildHistoryInfoRow(Icons.person_outline, session.doctorName),
-          SizedBox(height: 12.h),
-          Text("Outcome:", style: CustomFonts.black14w600.copyWith(fontSize: 12.sp)),
-          Text(session.outcome, style: CustomFonts.black14w400.copyWith(color: Colors.grey.shade700, fontSize: 13.sp)),
-          if (isSession) ...[
-            SizedBox(height: 12.h),
-            Row(
-              children: [
-                _buildProductDetail("Products", session.products.join(", ")),
-                SizedBox(width: 20.w),
-                _buildProductDetail("Materials", session.materials),
-              ],
-            ),
-            SizedBox(height: 12.h),
-            Text("Post-Care Instructions:", style: CustomFonts.black14w600.copyWith(fontSize: 12.sp)),
-            Text(session.postCare, style: CustomFonts.black14w400.copyWith(color: Colors.grey.shade700, fontSize: 13.sp)),
-          ],
         ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20.r),
+        child: Stack(
+          children: [
+            // Vertical Left Colored Accent Bar matching home style
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              width: 4.w,
+              child: Container(color: accentColor),
+            ),
+
+            // Content
+            Padding(
+              padding: EdgeInsets.fromLTRB(18.w, 14.h, 14.w, 14.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        DateFormat('dd MMM yyyy').format(session.date),
+                        style: CustomFonts.black13w600,
+                      ),
+                      _buildSmallBadge(session.type, accentColor, textStyle),
+                    ],
+                  ),
+                  SizedBox(height: 12.h),
+                  _buildHistoryInfoRow(Icons.business_rounded, session.clinicName),
+                  SizedBox(height: 4.h),
+                  _buildHistoryInfoRow(Icons.person_rounded, session.doctorName),
+                  SizedBox(height: 12.h),
+                  Divider(color: Colors.grey.shade100, height: 1.h),
+                  SizedBox(height: 12.h),
+                  Text(
+                    "Outcome:",
+                    style: CustomFonts.grey700_11w700,
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    session.outcome,
+                    style: CustomFonts.textGrey13w400,
+                  ),
+                  if (isSession) ...[
+                    SizedBox(height: 12.h),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildProductDetail("Products Used", session.products.join(", ")),
+                        SizedBox(width: 16.w),
+                        _buildProductDetail("Materials", session.materials),
+                      ],
+                    ),
+                    SizedBox(height: 12.h),
+                    Text(
+                      "Post-Care Instructions:",
+                      style: CustomFonts.grey700_11w700,
+                    ),
+                    SizedBox(height: 2.h),
+                    Text(
+                      session.postCare,
+                      style: CustomFonts.textGrey13w400,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -208,8 +308,15 @@ class AppointmentDetailScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: CustomFonts.black14w600.copyWith(fontSize: 12.sp)),
-          Text(value, style: CustomFonts.black14w400.copyWith(color: Colors.grey.shade600, fontSize: 13.sp)),
+          Text(
+            label,
+            style: CustomFonts.grey700_11w700,
+          ),
+          SizedBox(height: 2.h),
+          Text(
+            value,
+            style: CustomFonts.textGrey13w400,
+          ),
         ],
       ),
     );
@@ -220,9 +327,16 @@ class AppointmentDetailScreen extends StatelessWidget {
       padding: EdgeInsets.only(top: 4.h),
       child: Row(
         children: [
-          Icon(icon, size: 14.sp, color: Colors.grey),
+          Icon(icon, size: 14.sp, color: Colors.grey.shade500),
           SizedBox(width: 8.w),
-          Text(text, style: CustomFonts.black14w400.copyWith(color: Colors.grey.shade600, fontSize: 13.sp)),
+          Expanded(
+            child: Text(
+              text,
+              style: CustomFonts.grey700_10w400,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
         ],
       ),
     );
@@ -231,10 +345,14 @@ class AppointmentDetailScreen extends StatelessWidget {
   Widget _buildInfoSection({required String title, required List<Widget> children}) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.all(18.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: CustomColors.greyColor.withValues(alpha: 0.5),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.02),
@@ -246,10 +364,13 @@ class AppointmentDetailScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: CustomFonts.black16w600.copyWith(color: CustomColors.darkPurple)),
+          Text(
+            title,
+            style: CustomFonts.darkPurple12w600,
+          ),
           SizedBox(height: 10.h),
-          const Divider(height: 1),
-          SizedBox(height: 5.h),
+          Divider(color: Colors.grey.shade100, height: 1.h),
+          SizedBox(height: 6.h),
           ...children,
         ],
       ),
@@ -257,54 +378,102 @@ class AppointmentDetailScreen extends StatelessWidget {
   }
 
   Widget _buildDetailRow(String label, String value, {bool isType = false, bool isStatus = false, IconData? icon}) {
-    Color? textColor;
+    Color? accentColor;
+    Color? badgeBgColor;
+    TextStyle badgeStyle = CustomFonts.darkPurple10w700;
+
     if (isType) {
       switch (value) {
-        case "Consultation": textColor = Colors.blue; break;
-        case "Sessions": textColor = Colors.green; break;
-        case "Follow-Up / Touch-Up": textColor = Colors.purple; break;
-        case "Provisional Booking": textColor = Colors.orange; break;
+        case "Consultation":
+          accentColor = CustomColors.blueColor;
+          badgeBgColor = CustomColors.blueColor.withValues(alpha: 0.08);
+          badgeStyle = CustomFonts.blue10w700;
+          break;
+        case "Sessions":
+          accentColor = CustomColors.pinkColor;
+          badgeBgColor = CustomColors.pinkColor.withValues(alpha: 0.08);
+          badgeStyle = CustomFonts.pink10w700;
+          break;
+        case "Follow-Up / Touch-Up":
+          accentColor = CustomColors.darkPurple;
+          badgeBgColor = CustomColors.darkPurple.withValues(alpha: 0.08);
+          badgeStyle = CustomFonts.darkPurple10w700;
+          break;
+        case "Provisional Booking":
+          accentColor = CustomColors.yellow;
+          badgeBgColor = CustomColors.yellow.withValues(alpha: 0.12);
+          badgeStyle = CustomFonts.amber10w700;
+          break;
+        default:
+          accentColor = CustomColors.purpleColor;
+          badgeBgColor = CustomColors.purpleColor.withValues(alpha: 0.08);
+          badgeStyle = CustomFonts.darkPurple10w700;
       }
     }
-    if (isStatus) textColor = Colors.green;
+
+    if (isStatus) {
+      accentColor = Colors.green.shade700;
+      badgeBgColor = Colors.green.shade50;
+      badgeStyle = CustomFonts.darkPurple10w700; // fallback
+    }
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h),
+      padding: EdgeInsets.symmetric(vertical: 8.h),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 18.sp, color: Colors.grey.shade400),
-            SizedBox(width: 10.w),
+            Icon(icon, size: 16.sp, color: Colors.grey.shade400),
+            SizedBox(width: 8.w),
           ],
-          Text("$label:", style: CustomFonts.grey15w400.copyWith(fontWeight: FontWeight.w600)),
+          Text(
+            "$label:",
+            style: CustomFonts.grey700_10w400,
+          ),
           const Spacer(),
-          Expanded(
-            flex: 2,
-            child: Text(
-              value,
-              textAlign: TextAlign.right,
-              style: CustomFonts.black16w600.copyWith(
-                color: textColor ?? Colors.black87,
-                fontSize: 15.sp,
+          if (isType || isStatus)
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+              decoration: BoxDecoration(
+                color: badgeBgColor,
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              child: Text(
+                value,
+                style: isStatus
+                    ? TextStyle(
+                        color: accentColor,
+                        fontSize: 8.sp,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Degular',
+                      )
+                    : badgeStyle.copyWith(fontSize: 8.sp),
+              ),
+            )
+          else
+            Expanded(
+              flex: 2,
+              child: Text(
+                value,
+                textAlign: TextAlign.right,
+                style: CustomFonts.black13w600,
               ),
             ),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildSmallBadge(String text, Color color) {
+  Widget _buildSmallBadge(String text, Color color, TextStyle style) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(6.r),
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(20.r),
       ),
       child: Text(
         text,
-        style: TextStyle(color: color, fontSize: 10.sp, fontWeight: FontWeight.bold),
+        style: style.copyWith(fontSize: 8.sp),
       ),
     );
   }

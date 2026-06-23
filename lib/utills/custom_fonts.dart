@@ -143,7 +143,8 @@ abstract final class CustomFonts {
     fontWeight: FontWeight.w400,
     color: CustomColors.blackColor,
     decoration: TextDecoration.underline,
-    decorationColor: CustomColors.blackColor, // optional
+    decorationColor: CustomColors.blackColor,
+    // optional
     decorationThickness: 1.0,
     fontFamily: 'Degular',
   );
@@ -153,7 +154,8 @@ abstract final class CustomFonts {
     fontWeight: FontWeight.w400,
     color: CustomColors.blueColor,
     decoration: TextDecoration.underline,
-    decorationColor: CustomColors.blueColor, // optional
+    decorationColor: CustomColors.blueColor,
+    // optional
     decorationThickness: 1.0,
     fontFamily: 'Degular',
   );
@@ -163,7 +165,8 @@ abstract final class CustomFonts {
     fontWeight: FontWeight.w500,
     color: CustomColors.blackColor,
     decoration: TextDecoration.underline,
-    decorationColor: CustomColors.blackColor, // optional
+    decorationColor: CustomColors.blackColor,
+    // optional
     decorationThickness: 1.0,
     fontFamily: 'Degular',
   );
@@ -173,7 +176,8 @@ abstract final class CustomFonts {
     fontWeight: FontWeight.w600,
     color: CustomColors.blackColor,
     decoration: TextDecoration.underline,
-    decorationColor: CustomColors.blackColor, // optional
+    decorationColor: CustomColors.blackColor,
+    // optional
     decorationThickness: 1.0,
     fontFamily: 'Degular',
   );
@@ -219,7 +223,8 @@ abstract final class CustomFonts {
     color: CustomColors.textGreyColor,
     fontFamily: 'Degular',
     decoration: TextDecoration.lineThrough,
-    decorationColor: CustomColors.textGreyColor, // optional
+    decorationColor: CustomColors.textGreyColor,
+    // optional
     decorationThickness: 1.0,
   );
   static TextStyle grey16w400 = TextStyle(
@@ -409,5 +414,184 @@ abstract final class CustomFonts {
   static TextStyle purple30w700 = black30w600.copyWith(
     color: CustomColors.darkPurple,
     fontWeight: FontWeight.w700,
+  );
+
+  // Reusable Premium Static Font Styles
+  static TextStyle darkPurple12w600 = TextStyle(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w600,
+    color: CustomColors.darkPurple,
+    letterSpacing: 1.2,
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle pink10w600 = TextStyle(
+    fontSize: 10.sp,
+    fontWeight: FontWeight.w600,
+    color: CustomColors.pinkColor,
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle pink13w500 = TextStyle(
+    fontSize: 13.sp,
+    fontWeight: FontWeight.w500,
+    color: CustomColors.pinkColor,
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle black17w600 = TextStyle(
+    fontSize: 17.sp,
+    fontWeight: FontWeight.w600,
+    color: CustomColors.blackColor,
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle black87_15w400 = TextStyle(
+    fontSize: 15.sp,
+    fontWeight: FontWeight.w400,
+    color: const Color(0xDD000000),
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle grey12w500Underline = TextStyle(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w500,
+    color: const Color(0xff757575),
+    decoration: TextDecoration.underline,
+    decorationColor: const Color(0xff757575),
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle white16w600 = TextStyle(
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w600,
+    color: CustomColors.whiteColor,
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle textGrey15w400 = TextStyle(
+    fontSize: 15.sp,
+    fontWeight: FontWeight.w400,
+    color: CustomColors.textGreyColor,
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle textGrey16w400 = TextStyle(
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w400,
+    color: CustomColors.textGreyColor,
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle textGrey13w400 = TextStyle(
+    fontSize: 13.sp,
+    fontWeight: FontWeight.w400,
+    color: CustomColors.textGreyColor,
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle textGrey14w400 = TextStyle(
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w400,
+    color: CustomColors.textGreyColor,
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle grey700_11w700 = TextStyle(
+    fontSize: 11.sp,
+    fontWeight: FontWeight.w700,
+    color: const Color(0xFF616161),
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle black13w600 = TextStyle(
+    fontSize: 13.sp,
+    fontWeight: FontWeight.w600,
+    color: CustomColors.blackColor,
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle white14w700 = TextStyle(
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w700,
+    color: CustomColors.whiteColor,
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle blue10w700 = TextStyle(
+    fontSize: 10.sp,
+    fontWeight: FontWeight.w700,
+    color: CustomColors.blueColor,
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle pink10w700 = TextStyle(
+    fontSize: 10.sp,
+    fontWeight: FontWeight.w700,
+    color: CustomColors.pinkColor,
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle darkPurple10w700 = TextStyle(
+    fontSize: 10.sp,
+    fontWeight: FontWeight.w700,
+    color: CustomColors.darkPurple,
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle amber10w700 = TextStyle(
+    fontSize: 10.sp,
+    fontWeight: FontWeight.w700,
+    color: const Color(0xFFFFB300),
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle grey700_10w400 = TextStyle(
+    fontSize: 10.sp,
+    fontWeight: FontWeight.w400,
+    color: const Color(0xFF616161),
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle grey800_20w600 = TextStyle(
+    fontSize: 20.sp,
+    fontWeight: FontWeight.w600,
+    color: const Color(0xFF424242),
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle white70_12w500 = TextStyle(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w500,
+    color: const Color(0xB2FFFFFF),
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle white24w700 = TextStyle(
+    fontSize: 24.sp,
+    fontWeight: FontWeight.w700,
+    color: CustomColors.whiteColor,
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle white80_11w400 = TextStyle(
+    fontSize: 11.sp,
+    fontWeight: FontWeight.w400,
+    color: const Color(0xCCFFFFFF),
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle grey12w400 = TextStyle(
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w400,
+    color: CustomColors.textGreyColor,
+    fontFamily: 'Degular',
+  );
+
+  static TextStyle white10w600 = TextStyle(
+    fontSize: 10.sp,
+    fontWeight: FontWeight.w600,
+    color: CustomColors.whiteColor,
+    fontFamily: 'Degular',
   );
 }

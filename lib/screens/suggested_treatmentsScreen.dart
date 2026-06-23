@@ -6,6 +6,7 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
+import 'package:skinsync_ai/widgets/custom_search_field.dart';
 
 import '../../utills/color_constant.dart';
 
@@ -26,13 +27,8 @@ class SuggestedTreatmentScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 15.h),
-                TextField(
-                  style: CustomFonts.black18w400,
-
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    hintText: "Search treatment",
-                  ),
+                const CustomSearchField(
+                  hintText: "Search Treatment...",
                 ),
               ],
             ),

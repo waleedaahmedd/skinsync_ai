@@ -69,14 +69,14 @@ class AppBarWithActionIcon extends StatelessWidget implements PreferredSizeWidge
                               children: [
                                 Text(
                                   'Hello, ${name ?? "Guest"}!',
-                                  style: CustomFonts.black30w600.copyWith(fontSize: 22.sp),
+                                  style: CustomFonts.black22w600,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                 ),
                                 SizedBox(height: 2.h),
                                 Text(
                                   'Your skin health journey starts here.',
-                                  style: CustomFonts.grey14w400.copyWith(fontSize: 12.sp),
+                                  style: CustomFonts.grey12w400,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                 ),
@@ -89,7 +89,7 @@ class AppBarWithActionIcon extends StatelessWidget implements PreferredSizeWidge
                   ),
                 ),
                 SizedBox(width: 12.w),
-                if (action != null) action!,
+                action ?? const SizedBox.shrink(),
               ],
             ),
             const Spacer(),

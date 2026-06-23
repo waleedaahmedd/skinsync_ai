@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
+import 'package:skinsync_ai/widgets/custom_search_field.dart';
 
 import '../../widgets/grey_container.dart';
 
@@ -34,12 +35,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(
-                  style: CustomFonts.black18w400,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    hintText: "Search Progress",
-                  ),
+                const CustomSearchField(
+                  hintText: "Search Progress",
                 ),
                 SizedBox(height: 15.h),
                 Text("Progress", style: CustomFonts.black24w600),

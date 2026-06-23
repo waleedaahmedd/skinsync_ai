@@ -55,18 +55,11 @@ class PointsEarnCard extends StatelessWidget {
                     children: [
                       Text(
                         'Loyalty Rewards',
-                        style: CustomFonts.white14w500.copyWith(
-                          color: Colors.white70,
-                          fontSize: 12.sp,
-                        ),
+                        style: CustomFonts.white70_12w500,
                       ),
                       Text(
                         '0 pts',
-                        style: CustomFonts.white22w600.copyWith(
-                          color: Colors.white,
-                          fontSize: 24.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: CustomFonts.white24w700,
                       ),
                     ],
                   ),
@@ -81,10 +74,7 @@ class PointsEarnCard extends StatelessWidget {
                 ),
                 child: Text(
                   "Redeem",
-                  style: CustomFonts.black12w600.copyWith(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: CustomFonts.black12w600,
                 ),
               ),
             ],
@@ -107,11 +97,7 @@ class PointsEarnCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'Every \$1 spent earns 10 points. Accumulate points to unlock free clinical treatments!',
-                    style: CustomFonts.white15w400.copyWith(
-                      color: Colors.white.withValues(alpha: 0.8),
-                      fontSize: 11.sp,
-                      height: 1.3,
-                    ),
+                    style: CustomFonts.white80_11w400,
                   ),
                 ),
               ],

@@ -171,10 +171,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                       Expanded(
                         child: Text(
                           clinic?.clinicName ?? 'N/A',
-                          style: CustomFonts.black30w600.copyWith(
-                            fontSize: 28.sp,
-                            height: 1.15,
-                          ),
+                          style: CustomFonts.black28w600,
                         ),
                       ),
                       SizedBox(width: 12.w),
@@ -204,10 +201,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                             SizedBox(width: 4.w),
                             Text(
                               "Top Choice",
-                              style: CustomFonts.black10w600.copyWith(
-                                color: CustomColors.pinkColor,
-                                fontSize: 10.sp,
-                              ),
+                              style: CustomFonts.pink10w700,
                             ),
                           ],
                         ),
@@ -226,7 +220,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                       SizedBox(width: 8.w),
                       Text(
                         "(${clinic?.place?.userRatingCount ?? 0} Reviews) • 1M+ Booked",
-                        style: CustomFonts.grey14w400,
+                        style: CustomFonts.textGrey14w400,
                       ),
                     ],
                   ),
@@ -234,10 +228,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                   Text(
                     clinic?.place?.primaryTypeDisplayName?.text ??
                         "Achieve a youthful appearance with our aesthetic treatments to highlight your features. Whether adding volume, smoothing lines, or redefining contours, our solutions help you look and feel your best.",
-                    style: CustomFonts.black16w400.copyWith(
-                      color: CustomColors.textGreyColor,
-                      height: 1.4,
-                    ),
+                    style: CustomFonts.textGrey16w400,
                   ),
                 ],
               ),
@@ -271,17 +262,14 @@ class ClinicsDetailScreen extends ConsumerWidget {
                         SizedBox(width: 8.w),
                         Text(
                           "What Are Off-Peak Hours?",
-                          style: CustomFonts.black22w600.copyWith(fontSize: 18.sp),
+                          style: CustomFonts.black18w600,
                         ),
                       ],
                     ),
                     SizedBox(height: 10.h),
                     Text(
                       "Book your appointment during quieter times and enjoy exclusive discounts.",
-                      style: CustomFonts.grey15w400.copyWith(
-                        color: Colors.black87,
-                        height: 1.35,
-                      ),
+                      style: CustomFonts.black87_15w400,
                     ),
                   ],
                 ),
@@ -344,10 +332,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                         ),
                         Text(
                           clinic?.place?.currentOpeningHours?.todayOpeningHours ?? '',
-                          style: CustomFonts.grey14w400.copyWith(
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey.shade700,
-                          ),
+                          style: CustomFonts.textGrey14w400,
                         ),
                       ],
                     ),
@@ -425,10 +410,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                   child: Center(
                     child: Text(
                       "Complete The Appointment Timing Slot To View Full Price",
-                      style: CustomFonts.black12w600.copyWith(
-                        color: CustomColors.darkPurple,
-                        letterSpacing: 0.3,
-                      ),
+                      style: CustomFonts.darkPurple12w600,
                     ),
                   ),
                 ),
@@ -479,7 +461,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                         },
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.zero,
-                          textStyle: CustomFonts.white18w600.copyWith(fontSize: 16.sp),
+                          textStyle: CustomFonts.white16w600,
                           backgroundColor: Colors.black,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25.r),

@@ -107,7 +107,7 @@ class DoctorsListingScreen extends StatelessWidget {
                           SizedBox(width: 2.w),
                           Text(
                             doctor.rating.toString(),
-                            style: CustomFonts.white12w600.copyWith(fontSize: 10.sp),
+                            style: CustomFonts.white10w600,
                           ),
                         ],
                       ),
@@ -124,25 +124,21 @@ class DoctorsListingScreen extends StatelessWidget {
               children: [
                 Text(
                   doctor.name,
-                  style: CustomFonts.black14w600.copyWith(fontSize: 13.sp),
+                  style: CustomFonts.black13w600,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: 4.h),
                 Text(
                   doctor.specialization,
-                  style: CustomFonts.grey14w400.copyWith(fontSize: 10.sp),
+                  style: CustomFonts.grey700_10w400,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: 6.h),
                 Text(
                   doctor.clinicName,
-                  style: CustomFonts.black10w600.copyWith(
-                    color: CustomColors.darkPurple,
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: CustomFonts.darkPurple12w600,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

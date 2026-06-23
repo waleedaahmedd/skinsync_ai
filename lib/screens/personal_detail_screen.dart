@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:country_picker/country_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
@@ -41,17 +43,6 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
         _emailController.text = data.user?.primaryEmail ?? "";
         _locationController.text = data.userDetails?.location ?? "";
         _bioController.text = data.userDetails?.bio ?? "";
-        // TODO: CC Not provided in AuthResponse, uncomment when response is
-        // TODO: fixed
-        // if (user.cc != null) {
-        //   try {
-        //     setState(() {
-        //       _selectedCountry = Country.parse(user.cc!);
-        //     });
-        //   } catch (e) {
-        //     _selectedCountry = Country.parse('US');
-        //   }
-        // }
       }
     });
   }
@@ -87,29 +78,40 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
   void _showImageSourceDialog() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
       builder: (BuildContext context) {
         return SafeArea(
           child: Wrap(
             children: [
-              ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Choose from Gallery'),
-                onTap: () {
-                  Navigator.pop(context);
-                  ref
-                      .read(authViewModel.notifier)
-                      .pickProfileImage(ImageSource.gallery);
-                },
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.h),
+                child: ListTile(
+                  leading: const Icon(Icons.photo_library_outlined, color: CustomColors.darkPurple),
+                  title: Text('Choose from Gallery', style: CustomFonts.black14w600),
+                  onTap: () {
+                    Navigator.pop(context);
+                    ref
+                        .read(authViewModel.notifier)
+                        .pickProfileImage(ImageSource.gallery);
+                  },
+                ),
               ),
-              ListTile(
-                leading: Icon(Icons.photo_camera),
-                title: Text('Take a Photo'),
-                onTap: () {
-                  Navigator.pop(context);
-                  ref
-                      .read(authViewModel.notifier)
-                      .pickProfileImage(ImageSource.camera);
-                },
+              Divider(color: Colors.grey.shade100, height: 1.h),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 8.h),
+                child: ListTile(
+                  leading: const Icon(Icons.photo_camera_outlined, color: CustomColors.darkPurple),
+                  title: Text('Take a Photo', style: CustomFonts.black14w600),
+                  onTap: () {
+                    Navigator.pop(context);
+                    ref
+                        .read(authViewModel.notifier)
+                        .pickProfileImage(ImageSource.camera);
+                  },
+                ),
               ),
             ],
           ),
@@ -122,187 +124,387 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
   Widget build(BuildContext context) {
     final profileImage = ref.watch(authViewModel).profileImage;
     return Scaffold(
-      appBar: CustomAppBar(showTitle: true, title: "Personal Details"),
+      backgroundColor: Colors.white,
+      appBar: const CustomAppBar(showTitle: true, title: "Personal Details"),
       body: SafeArea(
-        top: false,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30.w),
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: 28.h),
-                  Stack(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 10.h),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 10.h),
+                // Premium Styled Avatar Stack
+                Center(
+                  child: Stack(
                     alignment: Alignment.center,
                     clipBehavior: Clip.none,
                     children: [
-                      ClipOval(
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        child: profileImage != null
-                            ? Image.file(
-                                File(profileImage.path),
-                                fit: BoxFit.cover,
-                                height: 75.w,
-                                width: 75.w,
-                              )
-                            : Image.network(
-                                ref
-                                        .read(authViewModel)
-                                        .authResponse
-                                        ?.data
-                                        ?.userDetails
-                                        ?.profileImageUrl ??
-                                    "",
-                                fit: BoxFit.cover,
-                                height: 91.w,
-                                width: 91.w,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return SizedBox(
-                                    height: 91.w,
-                                    width: 91.w,
-                                    child: Center(
-                                      child: Icon(
-                                        Icons.broken_image,
-                                        size: 40.sp,
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: CustomColors.purpleColor.withValues(alpha: 0.4),
+                            width: 4.w,
+                          ),
+                        ),
+                        child: ClipOval(
+                          child: profileImage != null
+                              ? Image.file(
+                                  File(profileImage.path),
+                                  fit: BoxFit.cover,
+                                  height: 90.w,
+                                  width: 90.w,
+                                )
+                              : Image.network(
+                                  ref
+                                          .read(authViewModel)
+                                          .authResponse
+                                          ?.data
+                                          ?.userDetails
+                                          ?.profileImageUrl ??
+                                      "",
+                                  fit: BoxFit.cover,
+                                  height: 90.w,
+                                  width: 90.w,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      height: 90.w,
+                                      width: 90.w,
+                                      color: Colors.grey.shade100,
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.person_outline_rounded,
+                                          size: 40.sp,
+                                          color: Colors.grey.shade400,
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
-                              ),
+                                    );
+                                  },
+                                ),
+                        ),
                       ),
                       Positioned(
-                        bottom: -5,
-                        right: -5,
-                        child: Container(
-                          height: 35.w,
-                          width: 35.w,
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            onPressed: _showImageSourceDialog,
-                            icon: Icon(
+                        bottom: -2,
+                        right: -2,
+                        child: GestureDetector(
+                          onTap: _showImageSourceDialog,
+                          child: Container(
+                            height: 32.w,
+                            width: 32.w,
+                            decoration: BoxDecoration(
+                              color: CustomColors.darkPurple,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 2,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.1),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Icon(
                               Iconsax.camera,
-                              size: 20.w,
-                              color: Colors.black,
+                              size: 15.w,
+                              color: Colors.white,
                             ),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 7.h),
-                  Text("Your Profile", style: CustomFonts.black30w600),
-                  Text(
-                    "Create your profile to personalize your SkinSync experience",
-                    style: CustomFonts.grey18w400,
-                  ),
-                  SizedBox(height: 22.h),
-                  TextFormField(
-                    controller: _nameController,
-                    style: CustomFonts.black18w400,
-                    decoration: InputDecoration(hintText: "Lizzy Johnson"),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your name';
-                      }
-                      if (value.trim().length < 2) {
-                        return 'Name must be at least 2 characters';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20.h),
-                  PhoneWidget(
-                    controller: _phoneController,
-                    initialCountryCode: _selectedCountry?.countryCode,
-                    onCountryChanged: (country) {
-                      setState(() {
-                        _selectedCountry = country;
-                      });
-                    },
-                  ),
-                  SizedBox(height: 20.h),
-                  TextFormField(
-                    controller: _emailController,
-                    style: CustomFonts.black18w400,
-                    enabled: false,
-                    decoration: InputDecoration(
-                      hintText: "lizzyjhonson@gmail.com",
+                ),
+                SizedBox(height: 24.h),
+
+                // Greeting Headers
+                Text("Your Profile", style: CustomFonts.black26w600),
+                SizedBox(height: 4.h),
+                Text(
+                  "Create your profile to personalize your SkinSync experience",
+                  style: CustomFonts.grey12w400,
+                ),
+                SizedBox(height: 24.h),
+
+                // Form Field Group Card
+                Container(
+                  padding: EdgeInsets.all(20.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24.r),
+                    border: Border.all(
+                      color: CustomColors.greyColor.withValues(alpha: 0.5),
+                      width: 1,
                     ),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      final emailRegExp = RegExp(
-                        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                      );
-                      if (!emailRegExp.hasMatch(value.trim())) {
-                        return 'Enter a valid email address';
-                      }
-                      return null;
-                    },
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.015),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 20.h),
-                  TextField(
-                    controller: _locationController,
-                    style: CustomFonts.black18w400,
-                    decoration: InputDecoration(hintText: "New York"),
-                  ),
-                  SizedBox(height: 20.h),
-                  Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: TextField(
-                          style: CustomFonts.black18w400,
-                          decoration: InputDecoration(hintText: "Skin Type +2"),
+                      // Name
+                      Text("Full Name", style: CustomFonts.grey700_11w700),
+                      SizedBox(height: 6.h),
+                      TextFormField(
+                        controller: _nameController,
+                        style: CustomFonts.black13w600,
+                        decoration: InputDecoration(
+                          hintText: "Lizzy Johnson",
+                          contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: const BorderSide(color: CustomColors.greyColor),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: const BorderSide(color: CustomColors.purpleColor),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Please enter your name';
+                          }
+                          if (value.trim().length < 2) {
+                            return 'Name must be at least 2 characters';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 16.h),
+
+                      // Phone Number
+                      Text("Phone Number", style: CustomFonts.grey700_11w700),
+                      SizedBox(height: 6.h),
+                      PhoneWidget(
+                        controller: _phoneController,
+                        initialCountryCode: _selectedCountry?.countryCode,
+                        onCountryChanged: (country) {
+                          setState(() {
+                            _selectedCountry = country;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 16.h),
+
+                      // Email Address
+                      Text("Email Address (Primary)", style: CustomFonts.grey700_11w700),
+                      SizedBox(height: 6.h),
+                      TextFormField(
+                        controller: _emailController,
+                        style: CustomFonts.black13w600,
+                        enabled: false,
+                        decoration: InputDecoration(
+                          hintText: "lizzyjhonson@gmail.com",
+                          contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: const BorderSide(color: CustomColors.greyColor),
+                          ),
+                          disabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: BorderSide(color: Colors.grey.shade100),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Please enter your email';
+                          }
+                          final emailRegExp = RegExp(
+                            r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                          );
+                          if (!emailRegExp.hasMatch(value.trim())) {
+                            return 'Enter a valid email address';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 16.h),
+
+                      // Location
+                      Text("Location", style: CustomFonts.grey700_11w700),
+                      SizedBox(height: 6.h),
+                      TextField(
+                        controller: _locationController,
+                        style: CustomFonts.black13w600,
+                        decoration: InputDecoration(
+                          hintText: "New York",
+                          contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: const BorderSide(color: CustomColors.greyColor),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: const BorderSide(color: CustomColors.purpleColor),
+                          ),
                         ),
                       ),
-                      SizedBox(width: 12.39.h),
-                      Expanded(
-                        child: TextField(
-                          style: CustomFonts.black18w400,
-                          decoration: InputDecoration(hintText: "Skin Goal +4"),
+                      SizedBox(height: 16.h),
+
+                      // Skin Goals Row
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Skin Type", style: CustomFonts.grey700_11w700),
+                                SizedBox(height: 6.h),
+                                TextField(
+                                  style: CustomFonts.black13w600,
+                                  decoration: InputDecoration(
+                                    hintText: "Skin Type +2",
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(14.r),
+                                      borderSide: const BorderSide(color: CustomColors.greyColor),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(14.r),
+                                      borderSide: BorderSide(color: Colors.grey.shade300),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(14.r),
+                                      borderSide: const BorderSide(color: CustomColors.purpleColor),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Skin Goal", style: CustomFonts.grey700_11w700),
+                                SizedBox(height: 6.h),
+                                TextField(
+                                  style: CustomFonts.black13w600,
+                                  decoration: InputDecoration(
+                                    hintText: "Skin Goal +4",
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(14.r),
+                                      borderSide: const BorderSide(color: CustomColors.greyColor),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(14.r),
+                                      borderSide: BorderSide(color: Colors.grey.shade300),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(14.r),
+                                      borderSide: const BorderSide(color: CustomColors.purpleColor),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16.h),
+
+                      // Primary Concerns
+                      Text("Primary Concerns", style: CustomFonts.grey700_11w700),
+                      SizedBox(height: 6.h),
+                      TextField(
+                        style: CustomFonts.black13w600,
+                        decoration: InputDecoration(
+                          hintText: "Primary Concerns +3",
+                          contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: const BorderSide(color: CustomColors.greyColor),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: const BorderSide(color: CustomColors.purpleColor),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 16.h),
+
+                      // Bio
+                      Text("Bio / Description", style: CustomFonts.grey700_11w700),
+                      SizedBox(height: 6.h),
+                      TextField(
+                        controller: _bioController,
+                        maxLines: 4,
+                        style: CustomFonts.black13w600,
+                        decoration: InputDecoration(
+                          hintText: "Introduce yourself...",
+                          contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: const BorderSide(color: CustomColors.greyColor),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14.r),
+                            borderSide: const BorderSide(color: CustomColors.purpleColor),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20.h),
-                  TextField(
-                    style: CustomFonts.black18w400,
-                    decoration: InputDecoration(
-                      hintText: "Primary Concerns  +3",
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
-                  TextField(
-                    controller: _bioController,
-                    maxLines: 4,
-                    style: CustomFonts.black18w400,
-                    decoration: InputDecoration(hintText: "Bio"),
-                  ),
-                  SizedBox(height: 35.h),
-                  Consumer(
-                    builder: (_, ref, _) {
-                      final loading = ref.watch(
-                        authViewModel.select((s) => s.loading),
-                      );
-                      return SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: loading ? null : _onSavePressed,
-                          child: loading
-                              ? CircularProgressIndicator()
-                              : Text("Save"),
+                ),
+                SizedBox(height: 24.h),
+
+                // Save Button
+                Consumer(
+                  builder: (_, ref, _) {
+                    final loading = ref.watch(
+                      authViewModel.select((s) => s.loading),
+                    );
+                    return SizedBox(
+                      width: double.infinity,
+                      height: 52.h,
+                      child: ElevatedButton(
+                        onPressed: loading ? null : _onSavePressed,
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          textStyle: CustomFonts.white16w600,
+                          backgroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25.r),
+                          ),
+                          elevation: 2,
                         ),
-                      );
-                    },
-                  ),
-                ],
-              ),
+                        child: loading
+                            ? const CupertinoActivityIndicator(color: Colors.white)
+                            : const Text("Save Changes"),
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(height: 40.h),
+              ],
             ),
           ),
         ),

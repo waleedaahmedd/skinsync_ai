@@ -2,6 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
+import 'package:skinsync_ai/utills/custom_fonts.dart';
+
+class DeleteAccountDialog extends StatelessWidget {
+  const DeleteAccountDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SizedBox.shrink(); // Placeholder if imported somewhere as widget
+  }
+}
 
 void showDeleteAccountDialog({
   required BuildContext screenContext,
@@ -13,100 +23,91 @@ void showDeleteAccountDialog({
     builder: (BuildContext context) {
       return Dialog(
         backgroundColor: Colors.white,
-        insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.r),
-        ),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: 0.8.sh),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 23.w),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(height: 40.h),
-                  Icon(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Beautiful Red Warning Badge Icon
+              Container(
+                height: 72.w,
+                width: 72.w,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.red.shade50,
+                ),
+                child: Center(
+                  child: Icon(
                     Iconsax.user_remove,
-                    size: 100.sp,
+                    size: 32.sp,
                     color: const Color(0xffD72547),
                   ),
-                  SizedBox(height: 30.h),
-                  Text(
-                    "Delete Account?",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w600,
-                      color: CustomColors.blackColor,
-                    ),
-                  ),
-                  SizedBox(height: 18.h),
-                  Text(
-                    "Your account will be deleted within 7 days if you don't use this app. Are you sure?",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w400,
-                      color: CustomColors.blackColor,
-                    ),
-                  ),
-                  SizedBox(height: 30.h),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        onSuccess();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xffD72547),
-                        padding: EdgeInsets.symmetric(vertical: 16.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                      ),
-                      child: Text(
-                        "Delete",
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 15.h),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(vertical: 16.h),
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: CustomColors.greyColor,
-                        borderRadius: BorderRadius.circular(10.r),
-                        border: Border.all(
-                          width: 1.w,
-                          color: Colors.grey[200]!,
-                        ),
-                      ),
-                      child: Text(
-                        "Cancel",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w600,
-                          color: CustomColors.blackColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 30.h),
-                ],
+                ),
               ),
-            ),
+              SizedBox(height: 24.h),
+
+              // Title
+              Text(
+                "Delete Account?",
+                textAlign: TextAlign.center,
+                style: CustomFonts.black20w600,
+              ),
+              SizedBox(height: 12.h),
+
+              // Subtitle
+              Text(
+                "Your account will be deleted within 7 days if you don't use this app. Are you sure you want to proceed?",
+                textAlign: TextAlign.center,
+                style: CustomFonts.textGrey14w400,
+              ),
+              SizedBox(height: 28.h),
+
+              // Delete Action Button
+              SizedBox(
+                width: double.infinity,
+                height: 50.h,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    onSuccess();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xffD72547),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25.r),
+                    ),
+                    elevation: 1,
+                  ),
+                  child: Text(
+                    "Delete",
+                    style: CustomFonts.white14w600,
+                  ),
+                ),
+              ),
+              SizedBox(height: 12.h),
+
+              // Cancel Button
+              SizedBox(
+                width: double.infinity,
+                height: 50.h,
+                child: OutlinedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.grey.shade300),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25.r),
+                    ),
+                  ),
+                  child: Text(
+                    "Cancel",
+                    style: CustomFonts.black14w600.copyWith(color: Colors.black54),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       );

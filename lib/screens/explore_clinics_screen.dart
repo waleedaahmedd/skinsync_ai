@@ -12,6 +12,7 @@ import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
 import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/custom_clinic_grid_view_title.dart';
+import 'package:skinsync_ai/widgets/custom_search_field.dart';
 
 import '../models/responses/get_clinic_response.dart';
 import '../utills/assets.dart';
@@ -80,39 +81,12 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
             child: Column(
               children: [
                 SizedBox(height: 20.h),
-                // Premium Styled Search Bar
+                // Premium Reusable Search Bar
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: TextField(
+                  child: CustomSearchField(
                     controller: _searchController,
-                    style: CustomFonts.black18w400,
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                      suffixIcon: _searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear, color: Colors.grey),
-                              onPressed: () {
-                                _searchController.clear();
-                              },
-                            )
-                          : null,
-                      hintText: "Search Clinics...",
-                      contentPadding: EdgeInsets.symmetric(vertical: 12.h),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30.r),
-                        borderSide: BorderSide(color: CustomColors.greyColor),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30.r),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30.r),
-                        borderSide: BorderSide(color: CustomColors.purpleColor),
-                      ),
-                      fillColor: Colors.white,
-                      filled: true,
-                    ),
+                    hintText: "Search Clinics...",
                   ),
                 ),
                 SizedBox(height: 16.h),
@@ -217,7 +191,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                         ViewType.grid => "Map View",
                         ViewType.map => 'Grid View',
                       },
-                      style: CustomFonts.white18w600.copyWith(fontSize: 15.sp),
+                      style: CustomFonts.white16w600,
                     ),
                   ),
                 ),
@@ -249,15 +223,13 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
               SizedBox(height: 16.h),
               Text(
                 "No Clinics Found",
-                style: CustomFonts.black20w600.copyWith(
-                  color: Colors.grey.shade800,
-                ),
+                style: CustomFonts.grey800_20w600,
               ),
               SizedBox(height: 6.h),
               Text(
                 "Try searching for a different keyword or check back later.",
                 textAlign: TextAlign.center,
-                style: CustomFonts.grey14w400.copyWith(height: 1.3),
+                style: CustomFonts.textGrey14w400,
               ),
             ],
           ),

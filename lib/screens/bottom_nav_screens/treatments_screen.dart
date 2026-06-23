@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
+import 'package:skinsync_ai/widgets/custom_search_field.dart';
 
 import '../../widgets/custom_app_bar.dart';
 
@@ -55,41 +55,14 @@ class _TreatmentsScreenState extends ConsumerState<TreatmentsScreen> {
                   SizedBox(height: 8.h),
                   Text(
                     "Explore and select from our complete clinical suite of advanced aesthetic therapies.",
-                    style: CustomFonts.grey14w400.copyWith(height: 1.3),
+                    style: CustomFonts.textGrey14w400,
                   ),
                   SizedBox(height: 20.h),
 
                   // Search Field with Premium Design matching TreatmentSelectionScreen
-                  TextField(
+                  CustomSearchField(
                     controller: _searchController,
-                    style: CustomFonts.black18w400,
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                      suffixIcon: _searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear, color: Colors.grey),
-                              onPressed: () {
-                                _searchController.clear();
-                              },
-                            )
-                          : null,
-                      hintText: "Search Treatments...",
-                      contentPadding: EdgeInsets.symmetric(vertical: 12.h),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30.r),
-                        borderSide: BorderSide(color: CustomColors.greyColor),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30.r),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30.r),
-                        borderSide: BorderSide(color: CustomColors.purpleColor),
-                      ),
-                      fillColor: Colors.white,
-                      filled: true,
-                    ),
+                    hintText: "Search Treatments...",
                   ),
                 ],
               ),
@@ -153,13 +126,13 @@ class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
                   SizedBox(height: 15.h),
                   Text(
                     "No Treatments Found",
-                    style: CustomFonts.black20w600.copyWith(color: Colors.grey.shade700),
+                    style: CustomFonts.grey800_20w600,
                   ),
                   SizedBox(height: 5.h),
                   Text(
                     "Try refining your search keyword or checking back later.",
                     textAlign: TextAlign.center,
-                    style: CustomFonts.grey14w400,
+                    style: CustomFonts.textGrey14w400,
                   ),
                 ],
               ),

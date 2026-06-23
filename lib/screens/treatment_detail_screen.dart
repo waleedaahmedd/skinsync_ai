@@ -180,10 +180,7 @@ class TreatmentDetailScreen extends StatelessWidget {
                     ),
                     child: Text(
                       "CLINICAL TREATMENT",
-                      style: CustomFonts.black12w600.copyWith(
-                        color: CustomColors.darkPurple,
-                        letterSpacing: 1.2,
-                      ),
+                      style: CustomFonts.darkPurple12w600,
                     ),
                   ),
                   SizedBox(height: 12.h),
@@ -191,10 +188,7 @@ class TreatmentDetailScreen extends StatelessWidget {
                   // Treatment Name
                   Text(
                     treatments.name ?? "Derma Fillers",
-                    style: CustomFonts.black30w600.copyWith(
-                      fontSize: 28.sp,
-                      height: 1.15,
-                    ),
+                    style: CustomFonts.black28w600,
                   ),
                   SizedBox(height: 8.h),
 
@@ -272,7 +266,7 @@ class TreatmentDetailScreen extends StatelessWidget {
                           children: [
                             Text(
                               "Glow Skin Clinic",
-                              style: CustomFonts.black18w600.copyWith(fontSize: 17.sp),
+                              style: CustomFonts.black17w600,
                             ),
                             SizedBox(height: 4.h),
                             Row(
@@ -289,10 +283,7 @@ class TreatmentDetailScreen extends StatelessWidget {
                                 SizedBox(width: 4.w),
                                 Text(
                                   "Top Rated Aesthetic Clinic",
-                                  style: CustomFonts.grey13w400.copyWith(
-                                    color: CustomColors.pinkColor,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                                  style: CustomFonts.pink13w500,
                                 ),
                               ],
                             ),
@@ -321,16 +312,13 @@ class TreatmentDetailScreen extends StatelessWidget {
                   Text(
                     treatments.description ??
                         "Achieve a youthful appearance with our aesthetic treatments to highlight your features. Whether adding volume, smoothing lines, or redefining contours, our solutions help you look and feel your best.",
-                    style: CustomFonts.black16w400.copyWith(
-                      color: CustomColors.textGreyColor,
-                      height: 1.45,
-                    ),
+                    style: CustomFonts.textGrey16w400,
                   ),
                   SizedBox(height: 24.h),
 
                   Text(
                     "Key Treatment Benefits",
-                    style: CustomFonts.black20w600.copyWith(fontSize: 18.sp),
+                    style: CustomFonts.black18w600,
                   ),
                   SizedBox(height: 16.h),
 
@@ -399,17 +387,14 @@ class TreatmentDetailScreen extends StatelessWidget {
                         SizedBox(width: 12.w),
                         Text(
                           "Proof Of Expertise",
-                          style: CustomFonts.black22w600.copyWith(fontSize: 20.sp),
+                          style: CustomFonts.black20w600,
                         ),
                       ],
                     ),
                     SizedBox(height: 12.h),
                     Text(
                       "Our certified clinical experts leverage advanced state-of-the-art technology and state-licensed medical professionals to deliver incredibly natural-looking and clinically precise results tailored exclusively for you.",
-                      style: CustomFonts.grey15w400.copyWith(
-                        color: Colors.black87,
-                        height: 1.4,
-                      ),
+                      style: CustomFonts.black87_15w400,
                     ),
                   ],
                 ),
@@ -449,10 +434,7 @@ class TreatmentDetailScreen extends StatelessWidget {
                   child: Center(
                     child: Text(
                       "Complete booking steps to confirm total price",
-                      style: CustomFonts.black12w600.copyWith(
-                        color: CustomColors.darkPurple,
-                        letterSpacing: 0.3,
-                      ),
+                      style: CustomFonts.darkPurple12w600,
                     ),
                   ),
                 ),
@@ -471,18 +453,12 @@ class TreatmentDetailScreen extends StatelessWidget {
                           children: [
                             Text(
                               "\$650",
-                              style: CustomFonts.black28w600.copyWith(
-                                fontSize: 26.sp,
-                                height: 1.1,
-                              ),
+                              style: CustomFonts.black26w600,
                             ),
                             SizedBox(height: 2.h),
                             Text(
                               "View Pricing Policy",
-                              style: CustomFonts.black14w500Underline.copyWith(
-                                color: Colors.grey.shade600,
-                                fontSize: 12.sp,
-                              ),
+                              style: CustomFonts.grey12w500Underline,
                             ),
                           ],
                         ),
@@ -500,7 +476,7 @@ class TreatmentDetailScreen extends StatelessWidget {
                             },
                             style: ElevatedButton.styleFrom(
                               padding: EdgeInsets.zero,
-                              textStyle: CustomFonts.white18w600.copyWith(fontSize: 16.sp),
+                              textStyle: CustomFonts.white16w600,
                               backgroundColor: Colors.black,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(25.r),
@@ -550,16 +526,11 @@ class TreatmentDetailScreen extends StatelessWidget {
               children: [
                 TextSpan(
                   text: "$title ",
-                  style: CustomFonts.black16w600.copyWith(
-                    color: Colors.black,
-                  ),
+                  style: CustomFonts.black16w600,
                 ),
                 TextSpan(
                   text: description,
-                  style: CustomFonts.grey15w400.copyWith(
-                    color: CustomColors.textGreyColor,
-                    height: 1.35,
-                  ),
+                  style: CustomFonts.textGrey15w400,
                 ),
               ],
             ),

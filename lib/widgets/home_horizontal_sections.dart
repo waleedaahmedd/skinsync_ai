@@ -59,7 +59,7 @@ class DoctorHomeCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         doctor.name,
-                        style: CustomFonts.black12w600.copyWith(fontSize: 12.sp),
+                        style: CustomFonts.black12w600,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -70,7 +70,7 @@ class DoctorHomeCard extends StatelessWidget {
                         SizedBox(width: 2.w),
                         Text(
                           doctor.rating.toString(),
-                          style: CustomFonts.black10w600.copyWith(fontSize: 9.sp),
+                          style: CustomFonts.black10w600,
                         ),
                       ],
                     ),
@@ -79,18 +79,14 @@ class DoctorHomeCard extends StatelessWidget {
                 SizedBox(height: 4.h),
                 Text(
                   doctor.specialization,
-                  style: CustomFonts.grey14w400.copyWith(fontSize: 10.sp),
+                  style: CustomFonts.grey700_10w400,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 SizedBox(height: 6.h),
                 Text(
                   doctor.clinicName,
-                  style: CustomFonts.black10w600.copyWith(
-                    color: CustomColors.darkPurple,
-                    fontSize: 9.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: CustomFonts.darkPurple12w600,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -131,7 +127,7 @@ class ClinicHomeCard extends StatelessWidget {
             borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
             child: CachedNetworkImage(
               imageUrl: clinic.image,
-              height: 110.h,
+              height: 100.h,
               width: double.infinity,
               fit: BoxFit.cover,
               placeholder: (context, url) => Container(
@@ -145,7 +141,7 @@ class ClinicHomeCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -168,11 +164,7 @@ class ClinicHomeCard extends StatelessWidget {
                       ),
                       child: Text(
                         "${clinic.doctorCount} Doctors",
-                        style: CustomFonts.black10w600.copyWith(
-                          color: CustomColors.darkPurple,
-                          fontSize: 9.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: CustomFonts.darkPurple12w600,
                       ),
                     ),
                   ],
@@ -185,7 +177,7 @@ class ClinicHomeCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         clinic.address,
-                        style: CustomFonts.grey14w400.copyWith(fontSize: 10.sp),
+                        style: CustomFonts.grey700_10w400,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -240,12 +232,7 @@ class UpcomingAppointmentDateSection extends StatelessWidget {
               SizedBox(width: 6.w),
               Text(
                 dateTitle,
-                style: CustomFonts.black14w600.copyWith(
-                  color: Colors.white,
-                  letterSpacing: 0.2,
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: CustomFonts.white14w700,
               ),
             ],
           ),
@@ -285,10 +272,21 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
     }
   }
 
+  TextStyle _getTimeStyle(String type) {
+    switch (type) {
+      case "Consultation": return CustomFonts.blue10w700;
+      case "Sessions": return CustomFonts.pink10w700;
+      case "Follow-Up / Touch-Up": return CustomFonts.darkPurple10w700;
+      case "Provisional Booking": return CustomFonts.amber10w700;
+      default: return CustomFonts.blue10w700;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final accentColor = _getTypeAccentColor(appointment.type);
     final badgeBgColor = _getTypeBgColor(appointment.type);
+    final timeStyle = _getTimeStyle(appointment.type);
 
     return GestureDetector(
       onTap: () {
@@ -346,21 +344,14 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                               children: [
                                 Text(
                                   appointment.treatmentName,
-                                  style: CustomFonts.black14w600.copyWith(
-                                    fontSize: 13.sp,
-                                    height: 1.1,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  style: CustomFonts.black13w600,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 SizedBox(height: 1.h),
                                 Text(
                                   appointment.area,
-                                  style: CustomFonts.grey14w400.copyWith(
-                                    fontSize: 10.sp,
-                                    color: Colors.grey.shade600,
-                                  ),
+                                  style: CustomFonts.grey700_10w400,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -376,12 +367,7 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                             ),
                             child: Text(
                               appointment.type,
-                              style: TextStyle(
-                                color: accentColor,
-                                fontSize: 8.sp,
-                                fontWeight: FontWeight.w700,
-                                fontFamily: 'Degular',
-                              ),
+                              style: timeStyle.copyWith(fontSize: 8.sp), // permitted copyWith for dynamic auto font size only
                             ),
                           ),
                         ],
@@ -398,7 +384,7 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   appointment.clinicName,
-                                  style: CustomFonts.grey14w400.copyWith(fontSize: 10.sp, color: Colors.grey.shade700),
+                                  style: CustomFonts.grey700_10w400,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -413,7 +399,7 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   appointment.doctorName,
-                                  style: CustomFonts.grey14w400.copyWith(fontSize: 10.sp, color: Colors.grey.shade700),
+                                  style: CustomFonts.grey700_10w400,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -437,11 +423,7 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                             SizedBox(width: 4.w),
                             Text(
                               appointment.time,
-                              style: CustomFonts.black12w600.copyWith(
-                                fontSize: 9.sp,
-                                color: CustomColors.blueColor,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: CustomFonts.blue10w700,
                             ),
                           ],
                         ),
