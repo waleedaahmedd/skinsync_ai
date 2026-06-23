@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
 import 'package:skinsync_ai/models/responses/simulation_history_response.dart';
+import 'package:skinsync_ai/models/dummy_list_model.dart';
 import 'package:skinsync_ai/screens/additional_info_screen.dart';
 import 'package:skinsync_ai/screens/allergy_and_medical_history.dart';
 import 'package:skinsync_ai/screens/biometric_screen.dart';
@@ -34,6 +35,7 @@ import 'screens/bottom_nav_screens/face_detection_screen.dart';
 import 'screens/bottom_nav_screens/my_profile_screen.dart';
 import 'screens/bottom_nav_screens/treatments_screen.dart';
 import 'screens/treatment_selection_screen.dart';
+import 'screens/treatment_category_screen.dart';
 import 'screens/doctors_listing_screen.dart';
 import 'screens/explore_clinics_screen.dart';
 import 'screens/notification_screen.dart';
@@ -215,6 +217,18 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: TreatmentSelectionScreen.routeName),
           builder: (_) => TreatmentSelectionScreen(),
+        );
+      case TreatmentCategoryScreen.routeName:
+        // By default uses the top-level dummyCategories, but supports passing custom categories through arguments
+        final argsMap = args as Map<String, dynamic>? ?? {};
+        final list = argsMap['categories'] as List<CategoryModel>? ?? dummyCategories;
+        final screenTitle = argsMap['title'] as String? ?? "By Category";
+        return MaterialPageRoute(
+          settings: RouteSettings(name: TreatmentCategoryScreen.routeName),
+          builder: (_) => TreatmentCategoryScreen(
+            categories: list,
+            title: screenTitle,
+          ),
         );
       case SelectProductScreen.routeName:
         return MaterialPageRoute(

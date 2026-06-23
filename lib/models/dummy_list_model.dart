@@ -408,3 +408,192 @@ final List<DummyAppointment> dummyAppointments = [
     type: "Sessions",
   ),
 ];
+
+class CategoryModel {
+  final int id;
+  final String name;
+  final String? icon;
+  final String? image;
+  final String? shortDescription;
+  final int? parentId;
+  final List<CategoryModel> subCategories;
+
+  CategoryModel({
+    required this.id,
+    required this.name,
+    this.icon,
+    this.image,
+    this.shortDescription,
+    this.parentId,
+    this.subCategories = const [],
+  });
+
+  factory CategoryModel.fromJson(Map<String, dynamic> json) {
+    var subList = json['sub_categories'] as List? ?? [];
+    List<CategoryModel> subs = subList.map((e) => CategoryModel.fromJson(e)).toList();
+    return CategoryModel(
+      id: json['id'],
+      name: json['name'],
+      icon: json['icon'],
+      image: json['image'],
+      shortDescription: json['short_description'],
+      parentId: json['parent_id'],
+      subCategories: subs,
+    );
+  }
+}
+
+final List<CategoryModel> dummyCategories = [
+  CategoryModel(
+    id: 1,
+    name: "Aesthetics",
+    icon: "face",
+    image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+    shortDescription: "Advanced facials, medical skin peels, and glow therapies.",
+    parentId: null,
+    subCategories: [
+      CategoryModel(
+        id: 10,
+        name: "Facial Aesthetics",
+        icon: "face",
+        image: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Signature dermaplaning, laser, and microdermabrasion.",
+        parentId: 1,
+        subCategories: [
+          CategoryModel(
+            id: 101,
+            name: "Chemical Peels",
+            icon: "peel",
+            image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Target hyperpigmentation and skin texture flaws.",
+            parentId: 10,
+            subCategories: [],
+          ),
+          CategoryModel(
+            id: 102,
+            name: "Hydrafacials",
+            icon: "water",
+            image: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Intense hydration and deep pore vortex cleansing.",
+            parentId: 10,
+            subCategories: [],
+          ),
+        ],
+      ),
+      CategoryModel(
+        id: 11,
+        name: "Body Aesthetics",
+        icon: "accessibility",
+        image: "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Non-surgical skin tightening and cellulite contouring.",
+        parentId: 1,
+        subCategories: [
+          CategoryModel(
+            id: 111,
+            name: "CoolSculpting",
+            icon: "ac_unit",
+            image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Freeze stubborn fat cells safely and permanently.",
+            parentId: 11,
+            subCategories: [],
+          ),
+        ],
+      ),
+    ],
+  ),
+  CategoryModel(
+    id: 2,
+    name: "Injectables",
+    icon: "syringe",
+    image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=800",
+    shortDescription: "High-end dermal fillers, collagen boosters, and anti-aging injections.",
+    parentId: null,
+    subCategories: [
+      CategoryModel(
+        id: 20,
+        name: "Dermal Fillers",
+        icon: "medical_services",
+        image: "https://images.unsplash.com/photo-15122909023902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Hyaluronic acid-based structural volumization.",
+        parentId: 2,
+        subCategories: [
+          CategoryModel(
+            id: 201,
+            name: "Lip Fillers",
+            icon: "lips",
+            image: "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Plump, hydrate, and define your lip contour.",
+            parentId: 20,
+            subCategories: [],
+          ),
+          CategoryModel(
+            id: 202,
+            name: "Cheek Fillers",
+            icon: "face",
+            image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Lift cheekbones and restore youthful mid-face volume.",
+            parentId: 20,
+            subCategories: [],
+          ),
+        ],
+      ),
+      CategoryModel(
+        id: 21,
+        name: "Mesotherapy",
+        icon: "spa",
+        image: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Micro-injections of custom medical vitamin cocktails.",
+        parentId: 2,
+        subCategories: [],
+      ),
+    ],
+  ),
+  CategoryModel(
+    id: 3,
+    name: "Neurotoxins",
+    icon: "health_and_safety",
+    image: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?auto=format&fit=crop&q=80&w=800",
+    shortDescription: "Wrinkle relaxers, frown line injections, and botulinum therapies.",
+    parentId: null,
+    subCategories: [
+      CategoryModel(
+        id: 30,
+        name: "Botox Cosmetics",
+        icon: "science",
+        image: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Frown lines, forehead wrinkles, and crow's feet relaxation.",
+        parentId: 3,
+        subCategories: [
+          CategoryModel(
+            id: 301,
+            name: "Forehead Botox",
+            icon: "spa",
+            image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Smooth persistent horizontal forehead expression lines.",
+            parentId: 30,
+            subCategories: [],
+          ),
+          CategoryModel(
+            id: 302,
+            name: "Crow's Feet Botox",
+            icon: "remove_red_eye",
+            image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Soften fine laughter lines around your eye zone.",
+            parentId: 30,
+            subCategories: [],
+          ),
+        ],
+      ),
+      CategoryModel(
+        id: 31,
+        name: "Dysport Injections",
+        icon: "vaccines",
+        image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Fast-acting frown line smoothing with natural finish.",
+        parentId: 3,
+        subCategories: [],
+      ),
+    ],
+  ),
+];
+

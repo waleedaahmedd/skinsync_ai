@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
+import 'package:skinsync_ai/screens/treatment_category_screen.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 
@@ -54,8 +55,7 @@ class TreatmentSelectionScreen extends StatelessWidget {
                 customOnTap: () {
                   Navigator.pushNamed(
                     context,
-                    TreatmentsScreen.routeName,
-                    arguments: 'categories',
+                    TreatmentCategoryScreen.routeName,
                   );
                 },
               ),
