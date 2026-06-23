@@ -136,7 +136,21 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   }
 
   Future<bool?> callBiometricUnregisterApi({required bool showLoader}) async {
-    return await runSafely(() async {
+    // 1. If biometric key is not saved locally, there is nothing to unregister on the server.
+    // Return early silently to prevent making unnecessary API calls that throw "no biometric key found".
+    final localKey = await SecureStorage().getSecureString(
+      key: SharedPreferencesKeys.biometricAuthKey.keyText,
+    );
+    if (localKey == null) {
+      state = state.copyWith(
+        isBiometricAvailable: false,
+        biometricIcon: null,
+      );
+      return true;
+    }
+
+    // 2. Perform the unregister but catch any API errors silently so it doesn't disturb the login flow
+    try {
       state = state.copyWith(loading: true);
       if (showLoader) {
         EasyLoading.show(status: 'Please wait...');
@@ -152,7 +166,16 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       }
       EasyLoading.dismiss();
       return response.isSuccess == true;
-    });
+    } catch (e) {
+      log("Silent biometric unregister failed: $e. This is expected if the key does not exist on the server database.");
+      state = state.copyWith(
+        loading: false,
+        isBiometricAvailable: false,
+        biometricIcon: null,
+      );
+      EasyLoading.dismiss();
+      return true; // Return true as a fallback so login flow continues undisturbed
+    }
   }
 
   Future<bool?> callBiometricLoginApi() async {
