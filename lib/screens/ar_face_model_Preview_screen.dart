@@ -826,34 +826,17 @@ class _ArFaceModelPreviewScreenState
                   final afterImage = ref.watch(
                     treatmentViewModel.select((state) => state.aiImage),
                   );
-                  return Row(
-                    spacing: 10.w,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          ref.read(treatmentViewModel.notifier).saveAiImage();
-                        },
-                        child: CircleAvatar(
-                          backgroundColor: CustomColors.greyColor,
-                          child: const Icon(Icons.download_outlined),
-                        ),
-                      ),
-                      if (afterImage == null) // Show toggle only if slider is not active
-                        GestureDetector(
-                          onTap: () {
-                            ref
-                                .read(treatmentViewModel.notifier)
-                                .toggleIsBefore();
-                          },
-                          child: CircleAvatar(
-                            backgroundColor: CustomColors.greyColor,
-                            child: Image.asset(
-                              PngAssets.beforeAfter,
-                              width: 18.w,
-                            ),
-                          ),
-                        ),
-                    ],
+                  if (afterImage == null) {
+                    return const SizedBox.shrink();
+                  }
+                  return GestureDetector(
+                    onTap: () {
+                      ref.read(treatmentViewModel.notifier).saveAiImage();
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: CustomColors.greyColor,
+                      child: const Icon(Icons.download_outlined),
+                    ),
                   );
                 },
               ),
