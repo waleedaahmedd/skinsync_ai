@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +9,7 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 
 import 'package:skinsync_ai/screens/appointment_detail_screen.dart';
 import 'package:skinsync_ai/widgets/custom_search_field.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 enum AppointmentGrouping { dayWise, treatmentWise, clinicWise, doctorWise }
 
@@ -276,6 +278,10 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
     Color typeColor = _getTypeColor(appointment.type);
     TextStyle timeStyle = _getTimeStyle(appointment.type);
 
+    final bgImage = appointment.treatmentName.toLowerCase().contains("botox")
+        ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl-cyJqFlcZav1TlRMEuajtrg2RJlWY3rTQA&s"
+        : "https://movelmedspa.com/storage/2024/05/Cheek-Filler-Treatment-at-Movel-Med-Spa.webp";
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -288,105 +294,140 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
       child: Container(
         margin: EdgeInsets.only(bottom: 12.h),
         decoration: BoxDecoration(
-          color: CustomColors.whiteColor,
           borderRadius: BorderRadius.circular(18.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(18.r),
+          child: Stack(
             children: [
-              // Left Time Block with custom background styling
-              Container(
-                width: 85.w,
-                decoration: BoxDecoration(
-                  color: typeColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(18.r),
-                    bottomLeft: Radius.circular(18.r),
+              // 1. Cover Image Background
+              Positioned.fill(
+                child: CachedNetworkImage(
+                  imageUrl: bgImage,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey.shade100,
+                    child: const Center(child: CupertinoActivityIndicator()),
                   ),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w),
-                  child: Center(
-                    child: Text(
-                      appointment.time.replaceAll(" - ", "\n-\n"),
-                      textAlign: TextAlign.center,
-                      style: timeStyle,
-                    ),
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.grey.shade100,
+                    child: const Icon(Icons.broken_image_rounded, color: Colors.grey),
                   ),
                 ),
               ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(14.w),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  appointment.treatmentName,
-                                  style: CustomFonts.black13w600,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                SizedBox(height: 1.h),
-                                Text(
-                                  appointment.area,
-                                  style: CustomFonts.grey700_10w400,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
+
+              // 2. Translucent Premium Dark Mask Overlay
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.65),
+                ),
+              ),
+
+              // 3. Card Content Layout (IntrinsicHeight Row)
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Left Time Block with custom translucent background styling
+                    Container(
+                      width: 85.w,
+                      decoration: BoxDecoration(
+                        color: typeColor.withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(18.r),
+                          bottomLeft: Radius.circular(18.r),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                        child: Center(
+                          child: Text(
+                            appointment.time.replaceAll(" - ", "\n-\n"),
+                            textAlign: TextAlign.center,
+                            style: CustomFonts.white10w600.copyWith(
+                              height: 1.3,
+                              color: typeColor == CustomColors.yellow ? Colors.amber.shade200 : Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10.sp,
                             ),
                           ),
-                          SizedBox(width: 4.w),
-                          _buildTypeBadge(appointment.type, typeColor, timeStyle),
-                        ],
+                        ),
                       ),
-                      SizedBox(height: 8.h),
-                      _buildInfoRow(Icons.business_rounded, appointment.clinicName),
-                      if (appointment.doctorName != "Pending")
-                        Padding(
-                          padding: EdgeInsets.only(top: 3.h),
-                          child: _buildInfoRow(Icons.person_rounded, appointment.doctorName),
-                        ),
-                      if (isProvisional)
-                        Container(
-                          margin: EdgeInsets.only(top: 8.h),
-                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.04),
-                            borderRadius: BorderRadius.circular(6.r),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.info_outline_rounded, size: 10, color: Colors.black54),
-                              SizedBox(width: 4.w),
-                              Text(
-                                "Awaiting clinic onboarding",
-                                style: CustomFonts.grey700_10w400,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.all(14.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        appointment.treatmentName,
+                                        style: CustomFonts.white14w700,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      SizedBox(height: 1.h),
+                                      Text(
+                                        appointment.area,
+                                        style: CustomFonts.white80_11w400,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(width: 4.w),
+                                _buildTypeBadge(appointment.type, typeColor, timeStyle),
+                              ],
+                            ),
+                            SizedBox(height: 8.h),
+                            _buildInfoRow(Icons.business_rounded, appointment.clinicName),
+                            if (appointment.doctorName != "Pending")
+                              Padding(
+                                padding: EdgeInsets.only(top: 3.h),
+                                child: _buildInfoRow(Icons.person_rounded, appointment.doctorName),
                               ),
-                            ],
-                          ),
+                            if (isProvisional)
+                              Container(
+                                margin: EdgeInsets.only(top: 8.h),
+                                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(6.r),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(Icons.info_outline_rounded, size: 10, color: Colors.white70),
+                                    SizedBox(width: 4.w),
+                                    Text(
+                                      "Awaiting clinic onboarding",
+                                      style: CustomFonts.white80_11w400,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                          ],
                         ),
-                    ],
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -419,12 +460,12 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
   Widget _buildInfoRow(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, size: 13.sp, color: Colors.grey.shade500),
+        Icon(icon, size: 13.sp, color: Colors.white70),
         SizedBox(width: 6.w),
         Expanded(
           child: Text(
             text,
-            style: CustomFonts.grey700_10w400,
+            style: CustomFonts.white80_11w400,
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -436,7 +477,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Text(

@@ -245,7 +245,6 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  // Beautiful Reusable Horizontal Empty State Card for Home Screen sections
   Widget _buildHorizontalEmptyState({
     required double height,
     required IconData icon,
@@ -257,59 +256,84 @@ class HomeScreen extends ConsumerWidget {
       child: Container(
         height: height,
         width: double.infinity,
-        padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20.r),
+          borderRadius: BorderRadius.circular(24.r),
+          gradient: CustomColors.purpleBlueGradient, // Solid brand gradient background
           border: Border.all(
-            color: CustomColors.greyColor.withValues(alpha: 0.5),
-            width: 1,
+            color: CustomColors.lightPurpleColor.withValues(alpha: 0.4),
+            width: 1.5,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.015),
-              blurRadius: 8,
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(10.w),
-              decoration: BoxDecoration(
-                color: CustomColors.purpleColor.withValues(alpha: 0.08),
-                shape: BoxShape.circle,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(22.r),
+          child: Stack(
+            children: [
+              // 1. Translucent Dark Mask Tint Overlay
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.55), // Translucent premium dark mask
+                ),
               ),
-              child: Icon(
-                icon,
-                color: CustomColors.darkPurple,
-                size: 22.sp,
+
+              // 2. High-Contrast Content Layer (Sizes the parent container)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                child: Row(
+                  children: [
+                    // Glowing semi-transparent white circular badge icon
+                    Container(
+                      height: 48.w,
+                      width: 48.w,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          width: 1.w,
+                        ),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          icon,
+                          color: Colors.white,
+                          size: 22.sp,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 14.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            title,
+                            style: CustomFonts.white14w700,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            subtitle,
+                            style: CustomFonts.white80_11w400,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(width: 14.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    title,
-                    style: CustomFonts.black13w600,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    subtitle,
-                    style: CustomFonts.grey700_10w400,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

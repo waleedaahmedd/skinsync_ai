@@ -264,11 +264,11 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
 
   Color _getTypeBgColor(String type) {
     switch (type) {
-      case "Consultation": return CustomColors.blueColor.withValues(alpha: 0.08);
-      case "Sessions": return CustomColors.pinkColor.withValues(alpha: 0.08);
-      case "Follow-Up / Touch-Up": return CustomColors.darkPurple.withValues(alpha: 0.08);
-      case "Provisional Booking": return CustomColors.yellow.withValues(alpha: 0.12);
-      default: return CustomColors.purpleColor.withValues(alpha: 0.08);
+      case "Consultation": return CustomColors.blueColor.withValues(alpha: 0.18);
+      case "Sessions": return CustomColors.pinkColor.withValues(alpha: 0.18);
+      case "Follow-Up / Touch-Up": return CustomColors.darkPurple.withValues(alpha: 0.18);
+      case "Provisional Booking": return CustomColors.yellow.withValues(alpha: 0.22);
+      default: return CustomColors.purpleColor.withValues(alpha: 0.18);
     }
   }
 
@@ -288,6 +288,11 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
     final badgeBgColor = _getTypeBgColor(appointment.type);
     final timeStyle = _getTimeStyle(appointment.type);
 
+    // Dynamic background image matching TreatmentContainer falling back logic
+    final bgImage = appointment.treatmentName.toLowerCase().contains("botox")
+        ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl-cyJqFlcZav1TlRMEuajtrg2RJlWY3rTQA&s"
+        : "https://movelmedspa.com/storage/2024/05/Cheek-Filler-Treatment-at-Movel-Med-Spa.webp";
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -306,9 +311,9 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -316,7 +321,30 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
           child: Stack(
             children: [
-              // 1. Vertical Accent Left Indicator Bar
+              // 1. Cover Image Background
+              Positioned.fill(
+                child: CachedNetworkImage(
+                  imageUrl: bgImage,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey.shade100,
+                    child: const Center(child: CupertinoActivityIndicator()),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.grey.shade100,
+                    child: const Icon(Icons.broken_image_rounded, color: Colors.grey),
+                  ),
+                ),
+              ),
+
+              // 2. Translucent Premium Dark Mask Overlay (Guarantees absolute legibility)
+              Positioned.fill(
+                child: Container(
+                  color: Colors.black.withValues(alpha: 0.65),
+                ),
+              ),
+
+              // 3. Vertical Accent Left Indicator Bar
               Positioned(
                 left: 0,
                 top: 0,
@@ -325,7 +353,7 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                 child: Container(color: accentColor),
               ),
 
-              // 2. Card Content Layout
+              // 4. Card Content Layout
               Positioned.fill(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(14.w, 10.h, 10.w, 10.h),
@@ -344,14 +372,14 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                               children: [
                                 Text(
                                   appointment.treatmentName,
-                                  style: CustomFonts.black13w600,
+                                  style: CustomFonts.white14w700,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 SizedBox(height: 1.h),
                                 Text(
                                   appointment.area,
-                                  style: CustomFonts.grey700_10w400,
+                                  style: CustomFonts.white80_11w400,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -362,7 +390,7 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                           Container(
                             padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                             decoration: BoxDecoration(
-                              color: badgeBgColor,
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(20.r),
                             ),
                             child: Text(
@@ -379,12 +407,12 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.business_rounded, size: 12.sp, color: Colors.grey.shade500),
-                              SizedBox(width: 4.w),
+                              const Icon(Icons.business_rounded, size: 12, color: Colors.white70),
+                              SizedBox(width: 6.w),
                               Expanded(
                                 child: Text(
                                   appointment.clinicName,
-                                  style: CustomFonts.grey700_10w400,
+                                  style: CustomFonts.white80_11w400,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -394,12 +422,12 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                           SizedBox(height: 2.h),
                           Row(
                             children: [
-                              Icon(Icons.person_rounded, size: 12.sp, color: Colors.grey.shade500),
-                              SizedBox(width: 4.w),
+                              const Icon(Icons.person_rounded, size: 12, color: Colors.white70),
+                              SizedBox(width: 6.w),
                               Expanded(
                                 child: Text(
                                   appointment.doctorName,
-                                  style: CustomFonts.grey700_10w400,
+                                  style: CustomFonts.white80_11w400,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -413,17 +441,17 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                         decoration: BoxDecoration(
-                          color: CustomColors.blueColor.withValues(alpha: 0.08),
+                          color: Colors.white.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(20.r),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.access_time_filled_rounded, size: 10.sp, color: CustomColors.blueColor),
+                            const Icon(Icons.access_time_filled_rounded, size: 10, color: Colors.white70),
                             SizedBox(width: 4.w),
                             Text(
                               appointment.time,
-                              style: CustomFonts.blue10w700,
+                              style: CustomFonts.white10w600,
                             ),
                           ],
                         ),
