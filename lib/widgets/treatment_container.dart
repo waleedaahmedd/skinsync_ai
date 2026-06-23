@@ -64,7 +64,7 @@ class TreatmentContainer extends StatelessWidget {
             showMScanFaceDialog(context);
           },
           child: Container(
-            height: imageHeight ?? 200.h,
+            height: imageHeight ?? 300.h,
             width: width ?? MediaQuery.sizeOf(context).width,
             margin: EdgeInsets.only(bottom: 16.h),
             decoration: BoxDecoration(
@@ -113,8 +113,8 @@ class TreatmentContainer extends StatelessWidget {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            Colors.white.withValues(alpha: 0.40),
-                            Colors.white.withValues(alpha: 0.95),
+                            Colors.white.withValues(alpha: 0.20),
+                            Colors.white
                           ],
                         ),
                       ),
@@ -143,17 +143,18 @@ class TreatmentContainer extends StatelessWidget {
                   ),
 */
 
-                  // 4. Elegant Content Layer (Title, Description, and Chevron)
+                  // 4. Elegant Content Layer (Title, Description, and Chevron aligned to bottom)
                   Positioned.fill(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 12.h),
+                      padding: EdgeInsets.fromLTRB(22.w, 12.h, 22.w, 16.h),
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           // Left side column containing text
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
                                   titleText,

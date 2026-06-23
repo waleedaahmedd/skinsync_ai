@@ -55,7 +55,7 @@ void showMScanFaceDialog(BuildContext context) {
               // Button 1: Scan Face (Primary Black Button)
               SizedBox(
                 width: double.infinity,
-                height: 50.h,
+                height: 52.h,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context); // close dialog
@@ -63,12 +63,17 @@ void showMScanFaceDialog(BuildContext context) {
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
+                    padding: EdgeInsets.zero, // Zero padding prevents vertical text clipping
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.r),
+                      borderRadius: BorderRadius.circular(26.r),
                     ),
                     elevation: 1,
                   ),
-                  child: Text("Scan Your Face", style: CustomFonts.white16w600),
+                  child: Text(
+                    "Scan Your Face",
+                    style: CustomFonts.white16w600,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
               SizedBox(height: 12.h),

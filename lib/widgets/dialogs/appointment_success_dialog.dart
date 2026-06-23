@@ -50,7 +50,7 @@ void showAppointmentSuccessDialog({
               // Consistent Black Button
               SizedBox(
                 width: double.infinity,
-                height: 50.h,
+                height: 52.h,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
@@ -58,12 +58,17 @@ void showAppointmentSuccessDialog({
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
+                    padding: EdgeInsets.zero, // Zero padding prevents vertical text clipping
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.r),
+                      borderRadius: BorderRadius.circular(26.r),
                     ),
                     elevation: 1,
                   ),
-                  child: Text("Great!", style: CustomFonts.white16w600),
+                  child: Text(
+                    "Great!",
+                    style: CustomFonts.white16w600,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
             ],

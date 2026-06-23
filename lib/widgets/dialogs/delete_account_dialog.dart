@@ -66,7 +66,7 @@ void showDeleteAccountDialog({
               // Delete Action Button
               SizedBox(
                 width: double.infinity,
-                height: 50.h,
+                height: 52.h,
                 child: ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
@@ -74,14 +74,16 @@ void showDeleteAccountDialog({
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xffD72547),
+                    padding: EdgeInsets.zero, // Zero padding prevents vertical text clipping
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.r),
+                      borderRadius: BorderRadius.circular(26.r),
                     ),
                     elevation: 1,
                   ),
                   child: Text(
                     "Delete",
                     style: CustomFonts.white14w600,
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
@@ -90,20 +92,22 @@ void showDeleteAccountDialog({
               // Cancel Button
               SizedBox(
                 width: double.infinity,
-                height: 50.h,
+                height: 52.h,
                 child: OutlinedButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
                   style: OutlinedButton.styleFrom(
+                    padding: EdgeInsets.zero, // Zero padding prevents vertical text clipping
                     side: BorderSide(color: Colors.grey.shade300),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.r),
+                      borderRadius: BorderRadius.circular(26.r),
                     ),
                   ),
                   child: Text(
                     "Cancel",
                     style: CustomFonts.black14w600.copyWith(color: Colors.black54),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
