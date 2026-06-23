@@ -162,15 +162,18 @@ class _AllergyAndMedicalHistoryState extends State<AllergyAndMedicalHistory> {
   }
 
   // Unified reusable Dropdown component
+  // Unified reusable Dropdown component
   Widget _buildDropdownSection({
     required String? value,
     required List<String> items,
     required ValueChanged<String?> onChanged,
   }) {
+    final valueListenable = ValueNotifier<String?>(value);
+
     return SizedBox(
       height: 52.h,
       child: DropdownButtonFormField2<String>(
-        value: value,
+        valueListenable: valueListenable,
         style: CustomFonts.black13w600,
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
@@ -188,19 +191,21 @@ class _AllergyAndMedicalHistoryState extends State<AllergyAndMedicalHistory> {
           ),
         ),
         items: items.map((String item) {
-          return DropdownMenuItem<String>(
+          return DropdownItem<String>(
             value: item,
+            height: 48.h, // Item height set per-item in v3.x
             child: Text(item, style: CustomFonts.black13w600),
           );
         }).toList(),
-        onChanged: onChanged,
-        buttonStyleData: ButtonStyleData(
-          height: 52.h,
-          width: double.infinity,
+        onChanged: (val) {
+          valueListenable.value = val;
+          onChanged(val);
+        },
+        buttonStyleData: const FormFieldButtonStyleData(
+          padding: EdgeInsets.zero,
         ),
-        menuItemStyleData: MenuItemStyleData(
-          height: 48.h,
-          padding: EdgeInsets.symmetric(horizontal: 12.w),
+        menuItemStyleData: const MenuItemStyleData(
+          useDecorationHorizontalPadding: true,
         ),
         dropdownStyleData: DropdownStyleData(
           decoration: BoxDecoration(
