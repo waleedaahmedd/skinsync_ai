@@ -323,7 +323,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       errorMessage: message,
       authResponse: AuthResponse(isSuccess: false, message: message),
     );
-    EasyLoading.dismiss();
   }
 
   @override
