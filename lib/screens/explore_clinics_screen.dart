@@ -9,6 +9,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:skinsync_ai/main.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
+import 'package:skinsync_ai/view_models/checkout_view_model.dart';
+import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/custom_clinic_grid_view_title.dart';
@@ -88,6 +90,121 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                     controller: _searchController,
                     hintText: "Search Clinics...",
                   ),
+                ),
+
+                // Selected Treatment & Sub-Areas Horizontal Scrollable Chips Row
+                Consumer(
+                  builder: (context, ref, _) {
+                    final checkoutState = ref.watch(checkoutViewModel);
+                    final treatment = checkoutState.selectedTreatment;
+                    final subAreas = checkoutState.selectedSubAreasList;
+
+                    if (treatment == null || subAreas == null || subAreas.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return Container(
+                      height: 38.h,
+                      margin: EdgeInsets.only(top: 12.h),
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        itemCount: subAreas.length,
+                        itemBuilder: (context, index) {
+                          final subArea = subAreas[index];
+                          final chipText = "${treatment.name ?? ''} - ${subArea.name ?? ''}";
+
+                          return Container(
+                            margin: EdgeInsets.only(right: 8.w),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16.r),
+                              gradient: CustomColors.purpleBlueGradient,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: CustomColors.purpleColor.withValues(alpha: 0.25),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16.r),
+                              child: Stack(
+                                children: [
+                                  // 1. Dark Tint Mask Overlay (Consistent with preview screen chips)
+                                  Positioned.fill(
+                                    child: Container(
+                                      color: Colors.black.withValues(alpha: 0.45),
+                                    ),
+                                  ),
+
+                                  // 2. High-Contrast Content
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.insights_rounded,
+                                          color: Colors.white,
+                                          size: 13.sp,
+                                        ),
+                                        SizedBox(width: 8.w),
+                                        Text(
+                                          chipText,
+                                          style: CustomFonts.white10w600.copyWith(fontSize: 11.sp),
+                                        ),
+                                        SizedBox(width: 8.w),
+                                        // Visual thin line divider
+                                        Container(
+                                          width: 1.w,
+                                          height: 14.h,
+                                          color: Colors.white.withValues(alpha: 0.3),
+                                        ),
+                                        SizedBox(width: 8.w),
+                                        // Clickable Cancel Cross Button
+                                        GestureDetector(
+                                          onTap: () {
+                                            final subAreaId = subArea.id!;
+                                            // 1. Remove from treatmentViewModel
+                                            ref.read(treatmentViewModel.notifier).removeSubArea(subAreaId);
+
+                                            // 2. Sync and update checkoutViewModel (Do not clear entire state, keep parent treatment intact)
+                                            final updatedSubAreas = subAreas.where((e) => e.id != subAreaId).toList();
+                                            final updatedSubAreaIds = updatedSubAreas.map((e) => e.id!).toList();
+
+                                            ref.read(checkoutViewModel.notifier).setSelectedTreatment(
+                                              treatment: treatment,
+                                              selectedSubAreasList: updatedSubAreas,
+                                            );
+                                            ref.read(checkoutViewModel.notifier).updateState(
+                                              treatmentSubAreaId: updatedSubAreaIds,
+                                            );
+
+                                            // 3. Re-fetch clinics with updated sub-area filters
+                                            ref.read(clinicDoctorProvider.notifier).getClinic(
+                                              treatmentId: treatment.id,
+                                              sideAreaIds: updatedSubAreaIds,
+                                            );
+                                          },
+                                          child: Icon(
+                                            Icons.cancel_rounded,
+                                            size: 14.sp,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
                 ),
                 SizedBox(height: 16.h),
 
