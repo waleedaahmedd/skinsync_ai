@@ -36,6 +36,7 @@ import 'screens/bottom_nav_screens/my_profile_screen.dart';
 import 'screens/bottom_nav_screens/treatments_screen.dart';
 import 'screens/treatment_selection_screen.dart';
 import 'screens/treatment_category_screen.dart';
+import 'screens/treatment_area_screen.dart';
 import 'screens/doctors_listing_screen.dart';
 import 'screens/explore_clinics_screen.dart';
 import 'screens/notification_screen.dart';
@@ -223,11 +224,26 @@ class RouteGenerator {
         final argsMap = args as Map<String, dynamic>? ?? {};
         final list = argsMap['categories'] as List<CategoryModel>? ?? dummyCategories;
         final screenTitle = argsMap['title'] as String? ?? "By Category";
+        final path = argsMap['selectionPath'] as String? ?? "Categories";
         return MaterialPageRoute(
           settings: RouteSettings(name: TreatmentCategoryScreen.routeName),
           builder: (_) => TreatmentCategoryScreen(
             categories: list,
             title: screenTitle,
+            selectionPath: path,
+          ),
+        );
+      case TreatmentAreaScreen.routeName:
+        final argsMap = args as Map<String, dynamic>? ?? {};
+        final list = argsMap['areas'] as List<DummyAreaModel>? ?? dummyAreas;
+        final screenTitle = argsMap['title'] as String? ?? "Focus Areas";
+        final path = argsMap['selectionPath'] as String? ?? "Focus Areas";
+        return MaterialPageRoute(
+          settings: RouteSettings(name: TreatmentAreaScreen.routeName),
+          builder: (_) => TreatmentAreaScreen(
+            areas: list,
+            title: screenTitle,
+            selectionPath: path,
           ),
         );
       case SelectProductScreen.routeName:

@@ -7,51 +7,22 @@ import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 
-class TreatmentCategoryScreen extends StatefulWidget {
+class TreatmentCategoryScreen extends StatelessWidget {
   final List<CategoryModel> categories;
   final String title;
+  final String selectionPath; // Path of selected categories
 
   const TreatmentCategoryScreen({
     super.key,
     required this.categories,
     required this.title,
+    this.selectionPath = "Categories", // Defaults to root path
   });
 
   static const String routeName = '/TreatmentCategoryScreen';
 
   @override
-  State<TreatmentCategoryScreen> createState() => _TreatmentCategoryScreenState();
-}
-
-class _TreatmentCategoryScreenState extends State<TreatmentCategoryScreen> {
-  final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = "";
-
-  @override
-  void initState() {
-    super.initState();
-    _searchController.addListener(() {
-      setState(() {
-        _searchQuery = _searchController.text.trim().toLowerCase();
-      });
-    });
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    // Filter categories based on search query
-    final filteredCategories = widget.categories.where((category) {
-      final name = category.name.toLowerCase();
-      final desc = (category.shortDescription ?? "").toLowerCase();
-      return name.contains(_searchQuery) || desc.contains(_searchQuery);
-    }).toList();
-
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       body: SafeArea(
@@ -85,7 +56,7 @@ class _TreatmentCategoryScreenState extends State<TreatmentCategoryScreen> {
                       SizedBox(width: 15.w),
                       Expanded(
                         child: Text(
-                          widget.title,
+                          title,
                           style: CustomFonts.black24w600,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -93,38 +64,50 @@ class _TreatmentCategoryScreenState extends State<TreatmentCategoryScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 15.h),
 
-                  // Search Field with Matching MedSpa Premium Design
-                  TextField(
-                    controller: _searchController,
-                    style: CustomFonts.black18w400,
-                    decoration: InputDecoration(
-                      prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                      suffixIcon: _searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear, color: Colors.grey),
-                              onPressed: () {
-                                _searchController.clear();
-                              },
-                            )
-                          : null,
-                      hintText: "Search categories...",
-                      contentPadding: EdgeInsets.symmetric(vertical: 12.h),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30.r),
-                        borderSide: BorderSide(color: CustomColors.greyColor),
+                  // Premium Breadcrumb Selection Path Container
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15.r),
+                      border: Border.all(
+                        color: CustomColors.lightPurpleColor.withValues(alpha: 0.3),
+                        width: 1,
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30.r),
-                        borderSide: BorderSide(color: Colors.grey.shade300),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30.r),
-                        borderSide: BorderSide(color: CustomColors.purpleColor),
-                      ),
-                      fillColor: Colors.white,
-                      filled: true,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.02),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.insights_rounded,
+                          size: 14.sp,
+                          color: CustomColors.purpleColor,
+                        ),
+                        SizedBox(width: 8.w),
+                        Expanded(
+                          child: Text(
+                            selectionPath,
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w500,
+                              color: CustomColors.textGreyColor,
+                              fontFamily: 'Degular',
+                              letterSpacing: 0.3,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -133,21 +116,21 @@ class _TreatmentCategoryScreenState extends State<TreatmentCategoryScreen> {
 
             // Category Listing using Reusable Adaptive TreatmentContainer
             Expanded(
-              child: filteredCategories.isEmpty
+              child: categories.isEmpty
                   ? _buildEmptyResultsPlaceholder()
                   : AnimationLimiter(
-                      key: ValueKey('category_list_${widget.title}'),
+                      key: ValueKey('category_list_$title'),
                       child: ListView.builder(
                         scrollDirection: Axis.vertical,
                         padding: EdgeInsets.symmetric(horizontal: 30.w),
                         physics: const BouncingScrollPhysics(),
-                        itemCount: filteredCategories.length + 1,
+                        itemCount: categories.length + 1,
                         itemBuilder: (context, index) {
-                          if (index == filteredCategories.length) {
+                          if (index == categories.length) {
                             return SizedBox(height: 110.h); // Provide padding for floating items
                           }
 
-                          final category = filteredCategories[index];
+                          final category = categories[index];
 
                           return AnimationConfiguration.staggeredList(
                             position: index,
@@ -163,13 +146,14 @@ class _TreatmentCategoryScreenState extends State<TreatmentCategoryScreen> {
                                     customImageUrl: category.image ?? "",
                                     customOnTap: () {
                                       if (category.subCategories.isNotEmpty) {
-                                        // Recursively open another category screen if has children
+                                        // Recursively open another category screen with appended path
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) => TreatmentCategoryScreen(
                                               categories: category.subCategories,
                                               title: category.name,
+                                              selectionPath: "$selectionPath  ▸  ${category.name}",
                                             ),
                                           ),
                                         );
@@ -212,7 +196,7 @@ class _TreatmentCategoryScreenState extends State<TreatmentCategoryScreen> {
             ),
             SizedBox(height: 5.h),
             Text(
-              "We couldn't find any categories matching your search criteria.",
+              "We couldn't find any categories under this section.",
               textAlign: TextAlign.center,
               style: CustomFonts.grey14w400,
             ),

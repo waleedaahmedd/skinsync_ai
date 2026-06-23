@@ -41,7 +41,7 @@ class _TreatmentsScreenState extends ConsumerState<TreatmentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(showTitle: true, title: "All Treatments"),
+      appBar: CustomAppBar(showTitle: true, title: "Select Treatments"),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,12 +52,6 @@ class _TreatmentsScreenState extends ConsumerState<TreatmentsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Skinsync AI", style: CustomFonts.grey20w500),
-                  SizedBox(height: 6.h),
-                  Text(
-                    "Our Treatments",
-                    style: CustomFonts.black30w600.copyWith(fontSize: 28.sp),
-                  ),
                   SizedBox(height: 8.h),
                   Text(
                     "Explore and select from our complete clinical suite of advanced aesthetic therapies.",
