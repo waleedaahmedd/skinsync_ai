@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:glow_container/glow_container.dart';
+import 'package:before_after/before_after.dart';
 
 import '../models/responses/simulation_history_response.dart';
 import '../models/responses/treatment_sub_area_response.dart';
@@ -32,6 +33,7 @@ class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
 class _ArFaceModelPreviewScreenState
     extends ConsumerState<ArFaceModelPreviewScreen> {
   bool _hasInitialized = false;
+  double _sliderValue = 0.5;
 
   @override
   void initState() {
@@ -661,18 +663,18 @@ class _ArFaceModelPreviewScreenState
               borderRadius: BorderRadius.circular(cardRadius.r),
               child: Consumer(
                 builder: (context, ref, _) {
-                  final image = ref.watch(
-                    treatmentViewModel.select(
-                      (state) =>
-                          state.isBefore ? state.capturedImage : state.aiImage,
-                    ),
+                  final beforeImage = ref.watch(
+                    treatmentViewModel.select((state) => state.capturedImage),
+                  );
+                  final afterImage = ref.watch(
+                    treatmentViewModel.select((state) => state.aiImage),
                   );
 
                   final errorMessage = ref.watch(
                     treatmentViewModel.select((state) => state.errorMessage),
                   );
 
-                  if (errorMessage != null && image == null) {
+                  if (errorMessage != null && beforeImage == null) {
                     return Container(
                       width: double.infinity,
                       height: 326.h,
@@ -714,9 +716,34 @@ class _ArFaceModelPreviewScreenState
                     );
                   }
 
-                  if (image != null) {
+                  // If both images are available, show the interactive sliding slider!
+                  if (beforeImage != null && afterImage != null) {
+                    return BeforeAfter(
+                      value: _sliderValue,
+                      onValueChanged: (value) {
+                        setState(() {
+                          _sliderValue = value;
+                        });
+                      },
+                      before: Image.file(
+                        File(beforeImage.path),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 326.h,
+                      ),
+                      after: Image.file(
+                        File(afterImage.path),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 326.h,
+                      ),
+                    );
+                  }
+
+                  // Fallback: If only before image is available, show it alone
+                  if (beforeImage != null) {
                     return Image.file(
-                      File(image.path),
+                      File(beforeImage.path),
                       fit: BoxFit.cover,
                       width: double.infinity,
                       height: 326.h,
@@ -742,9 +769,31 @@ class _ArFaceModelPreviewScreenState
               left: 10.w,
               child: Consumer(
                 builder: (context, ref, _) {
+                  final afterImage = ref.watch(
+                    treatmentViewModel.select((state) => state.aiImage),
+                  );
                   final isBefore = ref.watch(
                     treatmentViewModel.select((state) => state.isBefore),
                   );
+
+                  // Show stylish merged "Before | After" indicator if slider is active
+                  if (afterImage != null) {
+                    return Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 14.w,
+                        vertical: 4.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.65),
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Text(
+                        'Before ❘ After',
+                        style: CustomFonts.white14w600,
+                      ),
+                    );
+                  }
+
                   return Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: 14.w,
@@ -774,6 +823,9 @@ class _ArFaceModelPreviewScreenState
               right: 10.w,
               child: Consumer(
                 builder: (context, ref, _) {
+                  final afterImage = ref.watch(
+                    treatmentViewModel.select((state) => state.aiImage),
+                  );
                   return Row(
                     spacing: 10.w,
                     children: [
@@ -783,46 +835,29 @@ class _ArFaceModelPreviewScreenState
                         },
                         child: CircleAvatar(
                           backgroundColor: CustomColors.greyColor,
-                          child: Icon(Icons.download_outlined),
+                          child: const Icon(Icons.download_outlined),
                         ),
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          ref
-                              .read(treatmentViewModel.notifier)
-                              .toggleIsBefore();
-                        },
-                        child: CircleAvatar(
-                          backgroundColor: CustomColors.greyColor,
-                          child: Image.asset(
-                            PngAssets.beforeAfter,
-                            width: 18.w,
+                      if (afterImage == null) // Show toggle only if slider is not active
+                        GestureDetector(
+                          onTap: () {
+                            ref
+                                .read(treatmentViewModel.notifier)
+                                .toggleIsBefore();
+                          },
+                          child: CircleAvatar(
+                            backgroundColor: CustomColors.greyColor,
+                            child: Image.asset(
+                              PngAssets.beforeAfter,
+                              width: 18.w,
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   );
                 },
               ),
             ),
-
-            // Positioned(
-            //   bottom: 16.h,
-            //   left: 16.w,
-            //   right: 16.w,
-            //   child: Container(
-            //     padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 8.w),
-            //     decoration: BoxDecoration(
-            //       color: CustomColors.blackColor,
-            //       borderRadius: BorderRadius.circular(20),
-            //     ),
-            //     child: Text(
-            //       'See How 2 Syringes Will Look On Your Under Eyes',
-            //       textAlign: TextAlign.center,
-            //       style: CustomFonts.white14w600,
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),
