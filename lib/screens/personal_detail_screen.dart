@@ -38,11 +38,11 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final data = ref.read(authViewModel).authResponse?.data;
       if (data != null) {
-        _nameController.text = data.userDetails?.name ?? "";
-        _phoneController.text = data.userDetails?.phoneNumber ?? "";
+        _nameController.text = data.user?.name ?? "";
+        _phoneController.text = data.user?.phoneNumber ?? "";
         _emailController.text = data.user?.primaryEmail ?? "";
-        _locationController.text = data.userDetails?.location ?? "";
-        _bioController.text = data.userDetails?.bio ?? "";
+        _locationController.text = data.user?.location ?? "";
+        _bioController.text = data.user?.bio ?? "";
       }
     });
   }
@@ -163,7 +163,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                                           .read(authViewModel)
                                           .authResponse
                                           ?.data
-                                          ?.userDetails
+                                          ?.user
                                           ?.profileImageUrl ??
                                       "",
                                   fit: BoxFit.cover,

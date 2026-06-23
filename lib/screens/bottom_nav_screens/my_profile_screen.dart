@@ -89,7 +89,7 @@ class MyProfileScreen extends StatelessWidget {
                             .watch(authViewModel)
                             .authResponse
                             ?.data
-                            ?.userDetails
+                            ?.user
                             ?.profileImageUrl;
                         return ClipOval(
                           child: CachedNetworkImage(
@@ -126,7 +126,7 @@ class MyProfileScreen extends StatelessWidget {
                             .watch(authViewModel)
                             .authResponse
                             ?.data
-                            ?.userDetails
+                            ?.user
                             ?.name;
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

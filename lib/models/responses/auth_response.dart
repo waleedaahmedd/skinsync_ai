@@ -4,10 +4,10 @@ import 'treatment_response_model.dart';
 class AuthResponse extends BaseResponseModel {
   final Data? data;
 
-  AuthResponse({super.status, super.message, this.data});
+  AuthResponse({super.isSuccess, super.message, this.data});
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) => AuthResponse(
-    status: json["status"],
+    isSuccess: json["is_success"],
     message: json["message"],
     data: json["data"] == null ? null : Data.fromJson(json["data"]),
   );
@@ -23,6 +23,8 @@ class Data {
   final List<TreatmentsModel>? treatment;
   final User? user;
   final String? dashboard;
+
+  User? get userDetails => user;
 
   Data({
     this.isFirstLogin,

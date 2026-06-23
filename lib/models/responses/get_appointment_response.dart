@@ -11,7 +11,7 @@ class GetAppointmentResponse extends BaseResponseModel {
 
   GetAppointmentResponse({
     this.data,
-    super.status,
+    super.isSuccess,
     this.limit,
     super.message,
     this.page,
@@ -25,7 +25,7 @@ class GetAppointmentResponse extends BaseResponseModel {
         data!.add(Appointment.fromJson(v));
       });
     }
-    status = json['is_success'];
+    isSuccess = json['is_success'];
     limit = json['limit'];
     message = json['message'];
     page = json['page'];

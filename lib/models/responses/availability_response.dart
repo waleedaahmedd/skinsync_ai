@@ -4,11 +4,11 @@ import '../../utills/date_time_utills.dart';
 class AvailabilityResponse extends BaseResponseModel {
   final List<Slot> slots;
 
-  AvailabilityResponse({super.status, super.message, required this.slots});
+  AvailabilityResponse({super.isSuccess, super.message, required this.slots});
 
   factory AvailabilityResponse.fromJson(Map<String, dynamic> json) =>
       AvailabilityResponse(
-        status: json["is_success"],
+        isSuccess: json["is_success"],
         message: json["message"],
         slots: json["slots"] == null
             ? []

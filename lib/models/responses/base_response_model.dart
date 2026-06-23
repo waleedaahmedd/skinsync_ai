@@ -1,11 +1,15 @@
 class BaseResponseModel {
-  bool? status;
+  bool? isSuccess;
   String? message;
 
-  BaseResponseModel({this.status, this.message});
+  // Backward compatibility getter/setter for any existing .status accesses
+  bool? get status => isSuccess;
+  set status(bool? value) => isSuccess = value;
+
+  BaseResponseModel({this.isSuccess, this.message});
 
   BaseResponseModel.fromJson(Map<String, dynamic> json) {
-    status = json['status'];
+    isSuccess = json['is_success'];
     message = json['message'];
   }
 }

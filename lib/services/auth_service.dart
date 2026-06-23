@@ -241,10 +241,10 @@ class AuthService implements AuthRepository {
 
   @override
   Future<AuthResponse> googleSignInApi({
-    required SocialLoginRequest request,
+    required SignInWithGoogleRequest request,
   }) async {
     final response = await _apiClient.httpRequest(
-      endPoint: EndPoints.socialLogin,
+      endPoint: EndPoints.signIn,
       requestType: 'POST',
       requestBody: request,
       params: '',
@@ -265,17 +265,17 @@ class AuthService implements AuthRepository {
           log('$e Failed to unregister biometric, Not important');
         }
       }
-      await _secureStorage.saveUserEmail(authResponse.data!.user?.primaryEmail);
-      await _secureStorage.saveToken(authResponse.data!.accessToken!);
-      await _secureStorage.saveRefreshToken(authResponse.data!.refreshToken!);
+      await _secureStorage.saveUserEmail(authResponse.data?.user?.primaryEmail);
+      await _secureStorage.saveToken(authResponse.data?.accessToken ?? '');
+      await _secureStorage.saveRefreshToken(authResponse.data?.refreshToken ?? '');
       await _secureStorage.saveAccessTokenExpiry(
         DateTime.fromMillisecondsSinceEpoch(
-          authResponse.data!.isActiveExpiry! * 1000,
+          (authResponse.data?.isActiveExpiry ?? 0) * 1000,
         ),
       );
       await _secureStorage.saveRefreshTokenExpiry(
         DateTime.fromMillisecondsSinceEpoch(
-          authResponse.data!.refreshTokenExpiry! * 1000,
+          (authResponse.data?.refreshTokenExpiry ?? 0) * 1000,
         ),
       );
       return authResponse;
@@ -287,10 +287,10 @@ class AuthService implements AuthRepository {
 
   @override
   Future<AuthResponse> appleSignInApi({
-    required SocialLoginRequest request,
+    required SignInWithAppleRequest request,
   }) async {
     final response = await _apiClient.httpRequest(
-      endPoint: EndPoints.socialLogin,
+      endPoint: EndPoints.signIn,
       requestType: 'POST',
       requestBody: request,
       params: '',
@@ -311,17 +311,17 @@ class AuthService implements AuthRepository {
           log('$e Failed to unregister biometric, Not important');
         }
       }
-      await _secureStorage.saveUserEmail(authResponse.data!.user?.primaryEmail);
-      await _secureStorage.saveToken(authResponse.data!.accessToken!);
-      await _secureStorage.saveRefreshToken(authResponse.data!.refreshToken!);
+      await _secureStorage.saveUserEmail(authResponse.data?.user?.primaryEmail);
+      await _secureStorage.saveToken(authResponse.data?.accessToken ?? '');
+      await _secureStorage.saveRefreshToken(authResponse.data?.refreshToken ?? '');
       await _secureStorage.saveAccessTokenExpiry(
         DateTime.fromMillisecondsSinceEpoch(
-          authResponse.data!.isActiveExpiry! * 1000,
+          (authResponse.data?.isActiveExpiry ?? 0) * 1000,
         ),
       );
       await _secureStorage.saveRefreshTokenExpiry(
         DateTime.fromMillisecondsSinceEpoch(
-          authResponse.data!.refreshTokenExpiry! * 1000,
+          (authResponse.data?.refreshTokenExpiry ?? 0) * 1000,
         ),
       );
       return authResponse;

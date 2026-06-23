@@ -31,7 +31,7 @@ class AppBarWithActionIcon extends StatelessWidget implements PreferredSizeWidge
                   child: Consumer(
                     builder: (context, ref, _) {
                       final state = ref.watch(authViewModel);
-                      final userDetails = state.authResponse?.data?.userDetails;
+                      final userDetails = state.authResponse?.data?.user;
                       final name = userDetails?.name;
 
                       return Row(

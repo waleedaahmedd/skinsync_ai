@@ -3,7 +3,7 @@ import 'base_response_model.dart';
 class GetDoctorResponse extends BaseResponseModel {
   List<Doctor>? data;
 
-  GetDoctorResponse({this.data, super.status, super.message});
+  GetDoctorResponse({this.data, super.isSuccess, super.message});
 
   GetDoctorResponse.fromJson(Map<String, dynamic> json) {
     if (json['data'] != null) {
@@ -12,7 +12,7 @@ class GetDoctorResponse extends BaseResponseModel {
         data!.add(Doctor.fromJson(v));
       });
     }
-    status = json['is_success'];
+    isSuccess = json['is_success'];
     message = json['message'];
   }
 }

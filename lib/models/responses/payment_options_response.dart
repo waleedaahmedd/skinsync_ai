@@ -3,7 +3,7 @@ import 'base_response_model.dart';
 class PaymentOptionsResponse extends BaseResponseModel {
   final List<PaymentOption>? data;
 
-  PaymentOptionsResponse({this.data, super.status, super.message});
+  PaymentOptionsResponse({this.data, super.isSuccess, super.message});
 
   factory PaymentOptionsResponse.fromJson(Map<String, dynamic> json) =>
       PaymentOptionsResponse(
@@ -12,7 +12,7 @@ class PaymentOptionsResponse extends BaseResponseModel {
             : List<PaymentOption>.from(
                 json["data"]!.map((x) => PaymentOption.fromJson(x)),
               ),
-        status: json["is_success"],
+        isSuccess: json["is_success"],
         message: json["message"],
       );
 }
