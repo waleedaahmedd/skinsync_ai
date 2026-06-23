@@ -64,7 +64,7 @@ class TreatmentContainer extends StatelessWidget {
             showMScanFaceDialog(context);
           },
           child: Container(
-            height: imageHeight ?? 145.h,
+            height: imageHeight ?? 200.h,
             width: width ?? MediaQuery.sizeOf(context).width,
             margin: EdgeInsets.only(bottom: 16.h),
             decoration: BoxDecoration(
@@ -109,12 +109,12 @@ class TreatmentContainer extends StatelessWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
                           colors: [
-                            Colors.white.withValues(alpha: 0.85),
-                            Colors.white.withValues(alpha: 0.55),
                             Colors.transparent,
+                            Colors.white.withValues(alpha: 0.40),
+                            Colors.white.withValues(alpha: 0.95),
                           ],
                         ),
                       ),
@@ -122,6 +122,7 @@ class TreatmentContainer extends StatelessWidget {
                   ),
 
                   // 3. MedSpa Elegant Glow Layer on Left
+/*
                   Positioned(
                     left: 0,
                     top: 0,
@@ -140,6 +141,7 @@ class TreatmentContainer extends StatelessWidget {
                       ),
                     ),
                   ),
+*/
 
                   // 4. Elegant Content Layer (Title, Description, and Chevron)
                   Positioned.fill(
@@ -155,10 +157,7 @@ class TreatmentContainer extends StatelessWidget {
                               children: [
                                 Text(
                                   titleText,
-                                  style: CustomFonts.black22w600.copyWith(
-                                    letterSpacing: 0.5,
-                                    fontSize: 21.sp,
-                                  ),
+                                  style: CustomFonts.black22w600,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -166,13 +165,7 @@ class TreatmentContainer extends StatelessWidget {
                                   SizedBox(height: 6.h),
                                   Text(
                                     subtitleText,
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w400,
-                                      color: CustomColors.textGreyColor,
-                                      fontFamily: 'Degular',
-                                      height: 1.25,
-                                    ),
+                                    style: CustomFonts.grey12w400,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),

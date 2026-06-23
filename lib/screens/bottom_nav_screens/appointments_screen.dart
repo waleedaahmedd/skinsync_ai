@@ -172,14 +172,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                           padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 8.h),
                           margin: EdgeInsets.only(bottom: 16.h),
                           decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Color(0xFF2E1C38), // Deep luxury purple
-                                Color(0xFF140F26), // Midnight black
-                              ],
-                            ),
+                            gradient: CustomColors.purpleBlueGradient,
                             borderRadius: BorderRadius.circular(24.r),
                             boxShadow: [
                               BoxShadow(
@@ -255,7 +248,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
           padding: EdgeInsets.only(left: 4.w, bottom: 15.h),
           child: Row(
             children: [
-              const Icon(Icons.stars_rounded, color: CustomColors.purpleColor, size: 16),
+              const Icon(Icons.stars_rounded, color: CustomColors.yellow, size: 16),
               SizedBox(width: 8.w),
               Expanded(
                 child: Text(

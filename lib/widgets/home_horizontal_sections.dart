@@ -204,10 +204,10 @@ class UpcomingAppointmentDateSection extends StatelessWidget {
       margin: EdgeInsets.only(right: 16.w),
       padding: EdgeInsets.fromLTRB(16.w, 10.h, 10.w, 10.h),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA), // Soft luxury off-white / cool grey (Apple style)
+        gradient: CustomColors.purpleBlueGradient,
         borderRadius: BorderRadius.circular(22.r),
         border: Border.all(
-          color: const Color(0xFFE9ECEF), // Ultra-delicate cool-grey border
+          color: CustomColors.greyColor.withValues(alpha: 0.6), // Delicate border
           width: 1.2,
         ),
         boxShadow: [
@@ -225,13 +225,11 @@ class UpcomingAppointmentDateSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.calendar_today_rounded, color: CustomColors.darkPurple, size: 13),
+              const Icon(Icons.calendar_today_rounded, color: CustomColors.blackColor, size: 13),
               SizedBox(width: 6.w),
               Text(
                 dateTitle,
-                style: CustomFonts.black13w600.copyWith(
-                  color: const Color(0xFF495057), // Luxury slate charcoal for soft contrast
-                ),
+                style: CustomFonts.black13w600
               ),
             ],
           ),

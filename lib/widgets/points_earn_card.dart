@@ -12,19 +12,16 @@ class PointsEarnCard extends StatelessWidget {
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24.r),
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF2E1C38), // Deep purple night
-            Color(0xFF140F26), // Deep midnight
-          ],
+        gradient: CustomColors.purpleBlueGradient,
+        border: Border.all(
+          color: CustomColors.greyColor.withValues(alpha: 0.6),
+          width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: CustomColors.purpleColor.withValues(alpha: 0.2),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -41,7 +38,7 @@ class PointsEarnCard extends StatelessWidget {
                     height: 44.w,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white.withValues(alpha: 0.1),
+                      color: CustomColors.purpleColor.withValues(alpha: 0.1),
                     ),
                     child: const Icon(
                       Icons.stars_rounded,
@@ -55,11 +52,11 @@ class PointsEarnCard extends StatelessWidget {
                     children: [
                       Text(
                         'Loyalty Rewards',
-                        style: CustomFonts.white70_12w500,
+                        style: CustomFonts.textGrey13w400,
                       ),
                       Text(
                         '0 pts',
-                        style: CustomFonts.white24w700,
+                        style: CustomFonts.black24w600,
                       ),
                     ],
                   ),
@@ -83,21 +80,21 @@ class PointsEarnCard extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05),
+              color: CustomColors.purpleColor.withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(16.r),
             ),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.info_outline_rounded,
-                  color: CustomColors.lightBlueColor,
-                  size: 16.sp,
+                  color: CustomColors.blueColor,
+                  size: 16,
                 ),
                 SizedBox(width: 8.w),
                 Expanded(
                   child: Text(
                     'Every \$1 spent earns 10 points. Accumulate points to unlock free clinical treatments!',
-                    style: CustomFonts.white80_11w400,
+                    style: CustomFonts.textGrey13w400,
                   ),
                 ),
               ],
