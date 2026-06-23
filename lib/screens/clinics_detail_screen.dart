@@ -7,10 +7,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../models/responses/get_clinic_response.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 
 import '../widgets/bottom_sheets/before_you_bookbottomsheet.dart';
 import '../widgets/bottom_sheets/pre_booking_bottom_sheet.dart';
@@ -53,7 +53,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                     InkWell(
                       onTap: () => Navigator.pop(context),
                       child: Container(
-                        padding: EdgeInsets.all(11),
+                        padding: const EdgeInsets.all(11),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.grey.withValues(alpha: 0.7),
@@ -67,7 +67,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                     ),
 
                     Container(
-                      padding: EdgeInsets.all(11),
+                      padding: const EdgeInsets.all(11),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.grey.withValues(alpha: 0.7),
@@ -183,7 +183,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
               ),
             ),
             SizedBox(height: 22.h),
-            Divider(color: CustomColors.greyColor),
+            const Divider(color: CustomColors.greyColor),
             SizedBox(height: 20.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30.w),

@@ -1,8 +1,8 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/custom_app_bar.dart';
+import '../utills/custom_fonts.dart';
+import '../widgets/custom_app_bar.dart';
 
 class AllergyAndMedicalHistory extends StatefulWidget {
   const AllergyAndMedicalHistory({super.key});
@@ -49,233 +49,231 @@ class _AllergyAndMedicalHistoryState extends State<AllergyAndMedicalHistory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(showTitle: true, title: "Allergy & Medical History"),
-      body: Container(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Share any past or current medical conditions",
+      appBar: const CustomAppBar(showTitle: true, title: "Allergy & Medical History"),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 30.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Share any past or current medical conditions",
+              style: CustomFonts.black16w400,
+            ),
+            SizedBox(height: 25.h),
+            Text("Allergy", style: CustomFonts.black18w500),
+            SizedBox(height: 10.h),
+            Text(
+              "Please choose your allergy from the list below.",
+              style: CustomFonts.grey16w400,
+            ),
+            SizedBox(height: 15.h),
+            SizedBox(
+              height: 55.h,
+              child: DropdownButtonFormField2<String>(
+                value: selectedAllergy,
                 style: CustomFonts.black16w400,
-              ),
-              SizedBox(height: 25.h),
-              Text("Allergy", style: CustomFonts.black18w500),
-              SizedBox(height: 10.h),
-              Text(
-                "Please choose your allergy from the list below.",
-                style: CustomFonts.grey16w400,
-              ),
-              SizedBox(height: 15.h),
-              SizedBox(
-                height: 55.h,
-                child: DropdownButtonFormField2<String>(
-                  value: selectedAllergy,
-                  style: CustomFonts.black16w400,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 15.h,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14.r),
-                      borderSide: BorderSide(color: Color(0xff848484)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14.r),
-                      borderSide: BorderSide(color: Color(0xff848484)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14.r),
-                      borderSide: BorderSide(color: Color(0xff848484)),
-                    ),
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 15.h,
                   ),
-                  hint: Text(
-                    'Select your allergy',
-                    style: CustomFonts.black16w400,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14.r),
+                    borderSide: const BorderSide(color: Color(0xff848484)),
                   ),
-                  items: allergyItems.map((String item) {
-                    return DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(item, style: CustomFonts.black18w400),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {
-                      selectedAllergy = value;
-                    });
-                  },
-                  buttonStyleData: ButtonStyleData(
-                    height: 55.h,
-                    width: double.infinity,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14.r),
+                    borderSide: const BorderSide(color: Color(0xff848484)),
                   ),
-                  menuItemStyleData: MenuItemStyleData(
-                    height: 48.h,
-                    padding: EdgeInsets.symmetric(horizontal: 12.w),
-                  ),
-                  dropdownStyleData: DropdownStyleData(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(14.r),
-                      color: Colors.white,
-                    ),
-                    maxHeight: 300.h,
-                  ),
-                  iconStyleData: IconStyleData(
-                    icon: Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Color(0xff494949),
-                    ),
-                    iconSize: 24.sp,
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14.r),
+                    borderSide: const BorderSide(color: Color(0xff848484)),
                   ),
                 ),
-              ),
-              SizedBox(height: 23.h),
-              Text("Medical Conditions", style: CustomFonts.black18w500),
-              SizedBox(height: 10.h),
-              Text(
-                "Share any past or current medical conditions",
-                style: CustomFonts.grey16w400,
-              ),
-              SizedBox(height: 15.h),
-              SizedBox(
-                height: 55.h,
-                child: DropdownButtonFormField2<String>(
-                  value: selectedMedicalConditions,
+                hint: Text(
+                  'Select your allergy',
                   style: CustomFonts.black16w400,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 15.h,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14.r),
-                      borderSide: BorderSide(color: Color(0xff848484)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14.r),
-                      borderSide: BorderSide(color: Color(0xff848484)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14.r),
-                      borderSide: BorderSide(color: Color(0xff848484)),
-                    ),
+                ),
+                items: allergyItems.map((String item) {
+                  return DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(item, style: CustomFonts.black18w400),
+                  );
+                }).toList(),
+                onChanged: (String? value) {
+                  setState(() {
+                    selectedAllergy = value;
+                  });
+                },
+                buttonStyleData: ButtonStyleData(
+                  height: 55.h,
+                  width: double.infinity,
+                ),
+                menuItemStyleData: MenuItemStyleData(
+                  height: 48.h,
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14.r),
+                    color: Colors.white,
                   ),
-        
-                  items: medicalConditions.map((String item) {
-                    return DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(item, style: CustomFonts.black18w400),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {
-                      selectedMedicalConditions = value;
-                    });
-                  },
-                  buttonStyleData: ButtonStyleData(
-                    height: 55.h,
-                    width: double.infinity,
+                  maxHeight: 300.h,
+                ),
+                iconStyleData: IconStyleData(
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Color(0xff494949),
                   ),
-                  menuItemStyleData: MenuItemStyleData(
-                    height: 48.h,
-                    padding: EdgeInsets.symmetric(horizontal: 12.w),
-                  ),
-                  dropdownStyleData: DropdownStyleData(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(14.r),
-                      color: Colors.white,
-                    ),
-                    maxHeight: 300.h,
-                  ),
-                  iconStyleData: IconStyleData(
-                    icon: Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Color(0xff494949),
-                    ),
-                    iconSize: 24.sp,
-                  ),
+                  iconSize: 24.sp,
                 ),
               ),
-              SizedBox(height: 23.h),
-              Text("Current Medications", style: CustomFonts.black18w500),
-              SizedBox(height: 10.h),
-              Text(
-                "List any medications you are currently taking",
-                style: CustomFonts.grey16w400,
-              ),
-              SizedBox(height: 15.h),
-              SizedBox(
-                height: 55.h,
-                child: DropdownButtonFormField2<String>(
-                  value: selectedCurrentMedications,
-                  style: CustomFonts.black16w400,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 15.h,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14.r),
-                      borderSide: BorderSide(color: Color(0xff848484)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14.r),
-                      borderSide: BorderSide(color: Color(0xff848484)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(14.r),
-                      borderSide: BorderSide(color: Color(0xff848484)),
-                    ),
+            ),
+            SizedBox(height: 23.h),
+            Text("Medical Conditions", style: CustomFonts.black18w500),
+            SizedBox(height: 10.h),
+            Text(
+              "Share any past or current medical conditions",
+              style: CustomFonts.grey16w400,
+            ),
+            SizedBox(height: 15.h),
+            SizedBox(
+              height: 55.h,
+              child: DropdownButtonFormField2<String>(
+                value: selectedMedicalConditions,
+                style: CustomFonts.black16w400,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 15.h,
                   ),
-                  hint: Text(
-                    'Select your allergy',
-                    style: CustomFonts.black16w400,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14.r),
+                    borderSide: const BorderSide(color: Color(0xff848484)),
                   ),
-                  items: currentMedications.map((String item) {
-                    return DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(item, style: CustomFonts.black18w400),
-                    );
-                  }).toList(),
-                  onChanged: (String? value) {
-                    setState(() {
-                      selectedCurrentMedications = value;
-                    });
-                  },
-                  buttonStyleData: ButtonStyleData(
-                    height: 55.h,
-                    width: double.infinity,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14.r),
+                    borderSide: const BorderSide(color: Color(0xff848484)),
                   ),
-                  menuItemStyleData: MenuItemStyleData(
-                    height: 48.h,
-                    padding: EdgeInsets.symmetric(horizontal: 12.w),
-                  ),
-                  dropdownStyleData: DropdownStyleData(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(14.r),
-                      color: Colors.white,
-                    ),
-                    maxHeight: 300.h,
-                  ),
-                  iconStyleData: IconStyleData(
-                    icon: Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Color(0xff494949),
-                    ),
-                    iconSize: 24.sp,
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14.r),
+                    borderSide: const BorderSide(color: Color(0xff848484)),
                   ),
                 ),
+      
+                items: medicalConditions.map((String item) {
+                  return DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(item, style: CustomFonts.black18w400),
+                  );
+                }).toList(),
+                onChanged: (String? value) {
+                  setState(() {
+                    selectedMedicalConditions = value;
+                  });
+                },
+                buttonStyleData: ButtonStyleData(
+                  height: 55.h,
+                  width: double.infinity,
+                ),
+                menuItemStyleData: MenuItemStyleData(
+                  height: 48.h,
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14.r),
+                    color: Colors.white,
+                  ),
+                  maxHeight: 300.h,
+                ),
+                iconStyleData: IconStyleData(
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Color(0xff494949),
+                  ),
+                  iconSize: 24.sp,
+                ),
               ),
-              SizedBox(height: 40.h),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(onPressed: (){
-                  Navigator.pop(context);
-                }, child: Text("Save")),
-              )
-            ],
-          ),
+            ),
+            SizedBox(height: 23.h),
+            Text("Current Medications", style: CustomFonts.black18w500),
+            SizedBox(height: 10.h),
+            Text(
+              "List any medications you are currently taking",
+              style: CustomFonts.grey16w400,
+            ),
+            SizedBox(height: 15.h),
+            SizedBox(
+              height: 55.h,
+              child: DropdownButtonFormField2<String>(
+                value: selectedCurrentMedications,
+                style: CustomFonts.black16w400,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 15.h,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14.r),
+                    borderSide: const BorderSide(color: Color(0xff848484)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14.r),
+                    borderSide: const BorderSide(color: Color(0xff848484)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14.r),
+                    borderSide: const BorderSide(color: Color(0xff848484)),
+                  ),
+                ),
+                hint: Text(
+                  'Select your allergy',
+                  style: CustomFonts.black16w400,
+                ),
+                items: currentMedications.map((String item) {
+                  return DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(item, style: CustomFonts.black18w400),
+                  );
+                }).toList(),
+                onChanged: (String? value) {
+                  setState(() {
+                    selectedCurrentMedications = value;
+                  });
+                },
+                buttonStyleData: ButtonStyleData(
+                  height: 55.h,
+                  width: double.infinity,
+                ),
+                menuItemStyleData: MenuItemStyleData(
+                  height: 48.h,
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                ),
+                dropdownStyleData: DropdownStyleData(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14.r),
+                    color: Colors.white,
+                  ),
+                  maxHeight: 300.h,
+                ),
+                iconStyleData: IconStyleData(
+                  icon: const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Color(0xff494949),
+                  ),
+                  iconSize: 24.sp,
+                ),
+              ),
+            ),
+            SizedBox(height: 40.h),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(onPressed: (){
+                Navigator.pop(context);
+              }, child: const Text("Save")),
+            )
+          ],
         ),
       ),
     );

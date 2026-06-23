@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/screens/payment_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/radio_button_widget.dart';
+import 'payment_screen.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../widgets/radio_button_widget.dart';
 
 class AdditionalInfoScreen extends StatelessWidget {
   const AdditionalInfoScreen({super.key});
@@ -42,7 +42,7 @@ class AdditionalInfoScreen extends StatelessWidget {
                       style: CustomFonts.black28w600,
                     ),
                     SizedBox(height: 28.h),
-                    Divider(color: CustomColors.greyColor, height: 0),
+                    const Divider(color: CustomColors.greyColor, height: 0),
                     SizedBox(height: 24.h),
                     Text("Do you smoke ?", style: CustomFonts.black26w600),
                     SizedBox(height: 18.h),
@@ -106,7 +106,7 @@ class AdditionalInfoScreen extends StatelessWidget {
 
                           TextField(
                             style: CustomFonts.black18w400,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               contentPadding: EdgeInsets.all(0),
                               border: OutlineInputBorder(
                                 borderSide: BorderSide(
@@ -171,7 +171,7 @@ class AdditionalInfoScreen extends StatelessWidget {
 
                           TextField(
                             style: CustomFonts.black18w400,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               contentPadding: EdgeInsets.all(0),
                               border: OutlineInputBorder(
                                 borderSide: BorderSide(
@@ -203,7 +203,7 @@ class AdditionalInfoScreen extends StatelessWidget {
                             PaymentScreen.routeName,
                           );
                         },
-                        child: Text("Submit Now"),
+                        child: const Text("Submit Now"),
                       ),
                     ),
                     SizedBox(height: 19.h),

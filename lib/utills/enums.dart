@@ -24,6 +24,7 @@ enum EndPoints {
   treatments("treatments"),
 
   signIn('login'),
+  socialLogin("social-login"),
   biometricRegister('v1/biometric/register'),
   biometricLogin('biometric/login'),
   biometricUnregister('biometric/unregister'),

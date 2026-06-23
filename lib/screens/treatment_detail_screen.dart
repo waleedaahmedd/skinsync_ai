@@ -4,10 +4,10 @@ import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/screens/clinics_detail_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'clinics_detail_screen.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 
 import '../models/responses/treatment_response_model.dart';
 
@@ -32,7 +32,7 @@ class TreatmentDetailScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: treatments.imageUrl == null
-                      ? AssetImage(PngAssets.image) as ImageProvider
+                      ? const AssetImage(PngAssets.image) as ImageProvider
                       : NetworkImage(treatments.imageUrl.toString()),
                   fit: BoxFit.cover,
                   onError: (exception, stackTrace) {},
@@ -46,7 +46,7 @@ class TreatmentDetailScreen extends StatelessWidget {
                     InkWell(
                       onTap: () => Navigator.pop(context),
                       child: Container(
-                        padding: EdgeInsets.all(11),
+                        padding: const EdgeInsets.all(11),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.grey.withValues(alpha: 0.7),
@@ -59,7 +59,7 @@ class TreatmentDetailScreen extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.all(11),
+                      padding: const EdgeInsets.all(11),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.grey.withValues(alpha: 0.7),
@@ -97,7 +97,7 @@ class TreatmentDetailScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Divider(color: CustomColors.greyColor),
+            const Divider(color: CustomColors.greyColor),
             SizedBox(height: 15.h),
             GestureDetector(
               onTap: () {
@@ -139,7 +139,7 @@ class TreatmentDetailScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Spacer(),
+                    const Spacer(),
                     Icon(Icons.more_vert, color: Colors.black, size: 18.sp),
                   ],
                 ),
@@ -176,7 +176,7 @@ class TreatmentDetailScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 15.h),
-            Divider(color: CustomColors.greyColor),
+            const Divider(color: CustomColors.greyColor),
             SizedBox(height: 15.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30.w),

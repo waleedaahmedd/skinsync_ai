@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 
 class DiscountCard extends StatelessWidget {
   const DiscountCard({super.key});
@@ -38,7 +38,7 @@ class DiscountCard extends StatelessWidget {
                     style: CustomFonts.black14w400,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Container(
                   padding: EdgeInsets.only(right: 5.w, left: 27.w),
                   decoration: BoxDecoration(
@@ -66,7 +66,7 @@ class DiscountCard extends StatelessWidget {
             children: [
               Container(
                 width: 199.w,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   image: DecorationImage(
                     image: AssetImage(DummyAssets.treatmentimage),
                     fit: BoxFit.fill,
@@ -77,8 +77,8 @@ class DiscountCard extends StatelessWidget {
                 top: 16.h,
                 right: 14.w,
                 child: Container(
-                  padding: EdgeInsets.all(11),
-                  decoration: BoxDecoration(
+                  padding: const EdgeInsets.all(11),
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: Color(0xffFF2F82),
                   ),

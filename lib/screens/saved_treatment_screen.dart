@@ -2,11 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/custom_app_bar.dart';
-import 'package:skinsync_ai/widgets/heading_with_right_arrow.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/heading_with_right_arrow.dart';
 
 class SavedTreatmentScreen extends StatelessWidget {
   const SavedTreatmentScreen({super.key});
@@ -22,7 +22,7 @@ class SavedTreatmentScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Divider(color: CustomColors.greyColor),
+          const Divider(color: CustomColors.greyColor),
 
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 30.w),
@@ -41,7 +41,7 @@ class SavedTreatmentScreen extends StatelessWidget {
                     ),
                     Container(
                       padding: EdgeInsets.all(7.w),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         color: CustomColors.greyColor,
                       ),
@@ -109,7 +109,7 @@ class SavedTreatmentScreen extends StatelessWidget {
           ),
           SizedBox(height: 30.h),
 
-          Divider(height: 0, color: CustomColors.greyColor),
+          const Divider(height: 0, color: CustomColors.greyColor),
           SizedBox(height: 30.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 30.w),
@@ -160,7 +160,7 @@ class SavedTreatmentScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            Spacer(),
+                            const Spacer(),
                             SvgPicture.asset(
                               SvgAssets.mappin,
                               height: 12.h,

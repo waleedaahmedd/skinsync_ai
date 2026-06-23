@@ -1,11 +1,11 @@
 class BaseResponseModel {
-  bool? isSuccess;
+  bool? status;
   String? message;
 
-  BaseResponseModel({this.isSuccess, this.message});
+  BaseResponseModel({this.status, this.message});
 
   BaseResponseModel.fromJson(Map<String, dynamic> json) {
-    isSuccess = json['is_success'];
+    status = json['status'];
     message = json['message'];
   }
 }

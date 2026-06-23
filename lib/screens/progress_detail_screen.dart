@@ -4,10 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:skinsync_ai/screens/bottom_nav_page.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'bottom_nav_page.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 
 
 final selectedFilterProvider = StateProvider<int?>((ref) => 0);
@@ -32,7 +32,7 @@ class ProgressDetailScreen extends ConsumerWidget {
             Container(
               alignment: Alignment.topLeft,
               height: 293.h,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(DummyAssets.treatmentimage),
                   fit: BoxFit.cover,
@@ -43,7 +43,7 @@ class ProgressDetailScreen extends ConsumerWidget {
                 child: InkWell(
                   onTap: () => Navigator.pop(context),
                   child: Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.grey.withValues(alpha: 0.7),
@@ -93,7 +93,7 @@ class ProgressDetailScreen extends ConsumerWidget {
                             percent: 0.72,
                             center: Text("72%", style: CustomFonts.black16w600),
                             circularStrokeCap: CircularStrokeCap.round,
-                            progressColor: Color(0xffEEA1F0),
+                            progressColor: const Color(0xffEEA1F0),
                             backgroundColor: Colors.white,
                           ),
                         ),
@@ -135,7 +135,7 @@ class ProgressDetailScreen extends ConsumerWidget {
                                 index;
                           },
                           child: Chip(
-                            side: BorderSide(color: Colors.transparent),
+                            side: const BorderSide(color: Colors.transparent),
                             backgroundColor: isSelected
                                 ? Colors.black
                                 : Colors.grey.shade100,
@@ -149,7 +149,7 @@ class ProgressDetailScreen extends ConsumerWidget {
                                       ? Colors.white
                                       : Colors.black,
                                 ),
-                                SizedBox(width: 7),
+                                const SizedBox(width: 7),
                                 Text(
                                   filter[index].name,
                                   style: isSelected
@@ -197,7 +197,7 @@ class ProgressDetailScreen extends ConsumerWidget {
                       (_) => false,
                     );
                   },
-                  child: Text("Post a Review"),
+                  child: const Text("Post a Review"),
                 ),
               ),
             ),
@@ -274,7 +274,7 @@ class TreatmentJourneyStepper extends StatelessWidget {
       children: [
         ListView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           itemCount: steps.length,
           itemBuilder: (context, index) {
             final isLast = index == steps.length - 1;
@@ -332,7 +332,7 @@ class TreatmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xffDEF8FF),
+        color: const Color(0xffDEF8FF),
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Row(

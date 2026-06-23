@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/screens/bottom_nav_page.dart';
-import 'package:skinsync_ai/screens/login_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/biometric_helper.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/utills/enums.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
+import '../screens/bottom_nav_page.dart';
+import '../screens/login_screen.dart';
+import '../utills/assets.dart';
+import '../utills/biometric_helper.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../utills/enums.dart';
+import '../view_models/auth_view_model.dart';
 
 import '../screens/face_scan_screen.dart';
 
 void loginBottomSheet(BuildContext context) {
   showModalBottomSheet(
     backgroundColor: Colors.transparent,
-    constraints: BoxConstraints(minWidth: double.infinity),
+    constraints: const BoxConstraints(minWidth: double.infinity),
     context: context,
     isScrollControlled: true,
 
@@ -66,7 +66,7 @@ void loginBottomSheet(BuildContext context) {
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w400,
-                          color: Color(0xff494949),
+                          color: const Color(0xff494949),
                         ),
                       ),
                       SizedBox(height: 18.h),
@@ -129,7 +129,7 @@ void loginBottomSheet(BuildContext context) {
                             authViewModel.select((s) => s.loading),
                           );
                           if (loading) {
-                            return Center(
+                            return const Center(
                               child: CircularProgressIndicator(
                                 color: CustomColors.pinkColor,
                               ),
@@ -235,7 +235,7 @@ Row _buildSocialSignIns(WidgetRef ref) {
           ),
         ),
       ),
-      SizedBox(width: 8),
+      const SizedBox(width: 8),
       Expanded(
         child: GestureDetector(
           onTap: () async {

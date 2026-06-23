@@ -1,4 +1,4 @@
-import 'package:skinsync_ai/utills/enums.dart';
+import '../../utills/enums.dart';
 
 abstract class BaseSignInRequest {
   final LoginProviders provider;
@@ -61,7 +61,6 @@ class SignInWithGoogleRequest extends BaseSignInRequest {
   final String googleUid;
   final String userName;
 
-
   const SignInWithGoogleRequest({
     required this.email,
     required this.googleUid,
@@ -89,8 +88,6 @@ class SignInWithAppleRequest extends BaseSignInRequest {
   final String appleUid;
   final String userName;
 
-
-
   const SignInWithAppleRequest({
     required this.email,
     required this.appleUid,
@@ -109,6 +106,26 @@ class SignInWithAppleRequest extends BaseSignInRequest {
       'provider': provider.name,
       'device_info': deviceInfo,
       'ip_address': ipAddress,
+    };
+  }
+}
+
+class SocialLoginRequest {
+  final String deviceType;
+  final String idToken;
+  final String fcmToken;
+
+  const SocialLoginRequest({
+    required this.deviceType,
+    required this.idToken,
+    required this.fcmToken,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'device_type': deviceType,
+      'id_token': idToken,
+      'fcm_token': fcmToken,
     };
   }
 }

@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:skinsync_ai/exceptions/app_exception.dart';
+import '../exceptions/app_exception.dart';
 
 import 'base_auth_service.dart';
 
@@ -43,7 +43,7 @@ class GoogleAuthService extends BaseAuthService {
     final firebaseUser = credentials.user;
     log('EMAIL FROM GOOGLE: ${firebaseUser?.email}');
     if (firebaseUser == null) {
-      throw AppException('Could not login to Google');
+      throw const AppException('Could not login to Google');
     }
     return firebaseUser;
   }

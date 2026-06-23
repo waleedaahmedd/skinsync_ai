@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:skinsync_ai/utills/image_utills.dart';
-import 'package:skinsync_ai/utills/secure_storage_service.dart';
-import 'package:skinsync_ai/widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
+import '../../utills/image_utills.dart';
+import '../../utills/secure_storage_service.dart';
+import '../../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
 
 import '../../utills/assets.dart';
 import '../../utills/color_constant.dart';
@@ -194,7 +194,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                         },
                         style: OutlinedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 16.h),
-                          side: BorderSide(
+                          side: const BorderSide(
                             color: CustomColors.purpleColor,
                             width: 2,
                           ),
@@ -263,7 +263,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: _cameraController != null ? _buildCameraView() : SizedBox.shrink(),
+      body: _cameraController != null ? _buildCameraView() : const SizedBox.shrink(),
     );
   }
 
@@ -277,8 +277,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
     final previewSize = _cameraController!.value.previewSize!;
     final aspectRatio = previewSize.height / previewSize.width;
-    final circleRadiusPercent = 0.42;
-    final circleCenterYPercent = 0.42;
+    const circleRadiusPercent = 0.42;
+    const circleCenterYPercent = 0.42;
 
     return SizedBox.expand(
       child: Stack(
@@ -318,7 +318,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
             top: 40.h,
             left: 15.w,
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -429,7 +429,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                                   ? SizedBox(
                                       height: 20.h,
                                       width: 20.w,
-                                      child: CircularProgressIndicator(
+                                      child: const CircularProgressIndicator(
                                         strokeWidth: 2,
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(

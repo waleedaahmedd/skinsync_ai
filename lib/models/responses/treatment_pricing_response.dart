@@ -3,12 +3,12 @@ import 'base_response_model.dart';
 class TreatmentPricingResponse extends BaseResponseModel {
   final PricingData? data;
 
-  TreatmentPricingResponse({this.data, super.isSuccess, super.message});
+  TreatmentPricingResponse({this.data, super.status, super.message});
 
   factory TreatmentPricingResponse.fromJson(Map<String, dynamic> json) =>
       TreatmentPricingResponse(
         data: json["data"] == null ? null : PricingData.fromJson(json["data"]),
-        isSuccess: json["is_success"],
+        status: json["is_success"],
         message: json["message"],
       );
 }

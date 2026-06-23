@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:skinsync_ai/models/dummy_list_model.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../../models/dummy_list_model.dart';
+import '../../utills/color_constant.dart';
+import '../../utills/custom_fonts.dart';
 
-import 'package:skinsync_ai/screens/appointment_detail_screen.dart';
+import '../appointment_detail_screen.dart';
 
 enum AppointmentGrouping { dayWise, treatmentWise, clinicWise, doctorWise }
 

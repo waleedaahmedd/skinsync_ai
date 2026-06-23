@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/models/requests/sign_in_request.dart';
-import 'package:skinsync_ai/screens/otp_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/utills/enums.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
-import 'package:skinsync_ai/widgets/app_loader.dart';
-import 'package:skinsync_ai/widgets/phone_widget.dart';
+import '../models/requests/sign_in_request.dart';
+import 'otp_screen.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../utills/enums.dart';
+import '../view_models/auth_view_model.dart';
+import '../widgets/app_loader.dart';
+import '../widgets/phone_widget.dart';
 
 import '../widgets/custom_app_bar.dart';
 
@@ -44,7 +44,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
 
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 700),
+      duration: const Duration(milliseconds: 700),
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) => _startAnimation());
@@ -150,7 +150,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final loginWithEmail = widget.loginWith == LoginProviders.email;
 
     return Scaffold(
-      appBar: CustomAppBar(showTitle: false),
+      appBar: const CustomAppBar(showTitle: false),
       body: Padding(
         padding: EdgeInsets.only(left: 30.w, right: 30.w),
         child: Form(
@@ -186,7 +186,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           .read(authViewModel.notifier)
                           .emailController,
                       style: CustomFonts.black18w400,
-                      decoration: InputDecoration(hintText: "Email Address"),
+                      decoration: const InputDecoration(hintText: "Email Address"),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your email';
@@ -217,7 +217,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             key: _buttonKey, // Required for animation target
             width: double.infinity,
             child: ref.watch(authViewModel).loading
-                ? AppLoader()
+                ? const AppLoader()
                 : ElevatedButton(
               onPressed: () async {
                 if (_formKey.currentState?.validate() ?? false) {
@@ -245,7 +245,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   }
                 }
               },
-              child: Text("Next"),
+              child: const Text("Next"),
             ),
           ),
         ),

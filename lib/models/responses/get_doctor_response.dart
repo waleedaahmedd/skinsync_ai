@@ -1,9 +1,9 @@
-import 'package:skinsync_ai/models/responses/base_response_model.dart';
+import 'base_response_model.dart';
 
 class GetDoctorResponse extends BaseResponseModel {
   List<Doctor>? data;
 
-  GetDoctorResponse({this.data, super.isSuccess, super.message});
+  GetDoctorResponse({this.data, super.status, super.message});
 
   GetDoctorResponse.fromJson(Map<String, dynamic> json) {
     if (json['data'] != null) {
@@ -12,7 +12,7 @@ class GetDoctorResponse extends BaseResponseModel {
         data!.add(Doctor.fromJson(v));
       });
     }
-    isSuccess = json['is_success'];
+    status = json['is_success'];
     message = json['message'];
   }
 }

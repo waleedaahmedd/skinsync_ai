@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 
 class AppointmentCard extends StatelessWidget {
   const AppointmentCard({super.key});
@@ -77,8 +77,8 @@ class AppointmentCard extends StatelessWidget {
                                     "Monday,july25",
                                     style: CustomFonts.black12w400,
                                   ),
-                                  Spacer(),
-                                  Icon(
+                                  const Spacer(),
+                                  const Icon(
                                     Iconsax.clock,
                                     size: 11,
                                     color: Colors.black,

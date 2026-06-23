@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/radio_button_widget.dart';
+import '../utills/custom_fonts.dart';
+import 'radio_button_widget.dart';
 
 class QuestionTitle extends StatelessWidget {
   bool isSelected;

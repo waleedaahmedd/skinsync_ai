@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
+import '../utills/color_constant.dart';
 
 import '../utills/assets.dart';
 
@@ -25,7 +25,7 @@ class AppLoader extends StatelessWidget {
             SizedBox(
               height: 60.w,
               width: 60.w,
-              child: CircularProgressIndicator(
+              child: const CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation(
                   CustomColors.lightPurpleColor,
                 ),

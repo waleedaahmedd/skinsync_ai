@@ -1,12 +1,12 @@
-import 'package:skinsync_ai/models/responses/base_response_model.dart';
+import 'base_response_model.dart';
 
 class TreatmentSubAreaResponse extends BaseResponseModel {
   List<TreatmentSubAreaModel>? data;
 
-  TreatmentSubAreaResponse({super.isSuccess, super.message, this.data});
+  TreatmentSubAreaResponse({super.status, super.message, this.data});
 
   TreatmentSubAreaResponse.fromJson(Map<String, dynamic> json) {
-    isSuccess = json['is_success'];
+    status = json['is_success'];
     message = json['message'];
     if (json['data'] != null) {
       data = <TreatmentSubAreaModel>[];
@@ -18,7 +18,7 @@ class TreatmentSubAreaResponse extends BaseResponseModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['is_success'] = isSuccess;
+    data['is_success'] = status;
     data['message'] = message;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();

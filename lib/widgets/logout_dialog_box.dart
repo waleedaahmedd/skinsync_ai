@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/services/google_auth_service.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
+import '../services/google_auth_service.dart';
+import '../utills/color_constant.dart';
 
 void showLogoutDialog({
   required BuildContext screenContext,
@@ -35,7 +35,7 @@ void showLogoutDialog({
                   child: Icon(
                     Iconsax.logout,
                     size: 120.sp,
-                    color: Color(0xffD72547),
+                    color: const Color(0xffD72547),
                   ),
                 ),
                 SizedBox(height: 30.h),
@@ -68,7 +68,7 @@ void showLogoutDialog({
                       onSuccess();
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xffD72547),
+                      backgroundColor: const Color(0xffD72547),
 
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.r),

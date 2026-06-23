@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../utills/assets.dart';
+import '../utills/custom_fonts.dart';
 
 import '../utills/color_constant.dart';
 
@@ -31,13 +31,13 @@ class CustomGridViewTile extends StatelessWidget {
             BoxShadow(
               color: CustomColors.purpleColor.withValues(alpha: 0.15),
               blurRadius: 20,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
               spreadRadius: 2,
             ),
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 10,
-              offset: Offset(0, 2),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -45,7 +45,7 @@ class CustomGridViewTile extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Spacer(),
+            const Spacer(),
             Stack(
               children: [
                 ClipRRect(
@@ -103,7 +103,7 @@ class CustomGridViewTile extends StatelessWidget {
                 // ),
               ],
             ),
-            Spacer(),
+            const Spacer(),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.w),
               child: Center(
@@ -118,7 +118,7 @@ class CustomGridViewTile extends StatelessWidget {
                 ),
               ),
             ),
-            Spacer(),
+            const Spacer(),
           ],
         ),
       ),

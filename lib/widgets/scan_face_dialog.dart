@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/screens/bottom_nav_screens/face_detection_screen.dart';
-import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../screens/bottom_nav_screens/face_detection_screen.dart';
+import '../screens/explore_clinics_screen.dart';
+import '../utills/custom_fonts.dart';
 
 import '../view_models/treatment_view_model.dart';
 
@@ -33,7 +33,7 @@ void showMScanFaceDialog(BuildContext context) {
                 style: CustomFonts.grey14w400,
               ),
 
-              SizedBox(height: 25),
+              const SizedBox(height: 25),
               // Button 1
               SizedBox(
                 width: double.infinity,
@@ -44,7 +44,7 @@ void showMScanFaceDialog(BuildContext context) {
                       context,
                     ).pushNamed(FaceDetectionScreen.routeName);
                   },
-                  child: Text("Scan Your Face"),
+                  child: const Text("Scan Your Face"),
                 ),
               ),
 
@@ -72,7 +72,7 @@ void showMScanFaceDialog(BuildContext context) {
                     },
                     child: Container(
                       width: double.infinity,
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: 20,
                         vertical: 15,
                       ),

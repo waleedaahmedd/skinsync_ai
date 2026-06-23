@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/models/requests/save_answer_request.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/sign_up_onboarding_view_model.dart';
-import 'package:skinsync_ai/widgets/app_loader.dart';
-import 'package:skinsync_ai/widgets/question_title.dart';
+import '../models/requests/save_answer_request.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/sign_up_onboarding_view_model.dart';
+import '../widgets/app_loader.dart';
+import '../widgets/question_title.dart';
 
 class SkinType extends StatelessWidget {
   const SkinType({super.key});
@@ -20,7 +20,7 @@ class SkinType extends StatelessWidget {
        final question = ref.watch(onBoardingViewModel).onBoardingQues?.data!.questions![ref.read(onBoardingViewModel).currentPage];
        
         if(ref.watch(onBoardingViewModel).loading){
-          return Center(child: CircularProgressIndicator(color: CustomColors.purpleColor,));
+          return const Center(child: CircularProgressIndicator(color: CustomColors.purpleColor,));
         }
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: 30.w),
@@ -57,7 +57,7 @@ class SkinType extends StatelessWidget {
                 child: Consumer(
                   builder: (_, ref, _) {
                     return ref.watch(onBoardingViewModel).isSaveAnswerLoding
-                        ? AppLoader()
+                        ? const AppLoader()
                         : ElevatedButton(
                       onPressed: () {
                         final onBoardingVM =    ref
@@ -77,7 +77,7 @@ class SkinType extends StatelessWidget {
                          }
                       
                       },
-                      child: Text("Next"),
+                      child: const Text("Next"),
                      
                     );
                   },

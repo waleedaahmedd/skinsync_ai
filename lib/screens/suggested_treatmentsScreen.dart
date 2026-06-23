@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/treatment_view_model.dart';
-import 'package:skinsync_ai/widgets/custom_app_bar.dart';
-import 'package:skinsync_ai/widgets/treatment_container.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/treatment_view_model.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/treatment_container.dart';
 
 import '../../utills/color_constant.dart';
 
@@ -16,7 +16,7 @@ class SuggestedTreatmentScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, ref) {
     return Scaffold(
-      appBar: CustomAppBar(showTitle: true, title: "Suggested Treatments"),
+      appBar: const CustomAppBar(showTitle: true, title: "Suggested Treatments"),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -29,7 +29,7 @@ class SuggestedTreatmentScreen extends ConsumerWidget {
                 TextField(
                   style: CustomFonts.black18w400,
 
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.search),
                     hintText: "Search treatment",
                   ),
@@ -40,7 +40,7 @@ class SuggestedTreatmentScreen extends ConsumerWidget {
           Expanded(
             child: Consumer(
               builder: (context, ref, _) {
-                return TreatmentMainScreen();
+                return const TreatmentMainScreen();
               },
             ),
           ),

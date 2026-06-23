@@ -128,7 +128,7 @@ class _ArFaceModelPreviewScreenState
           child: AbsorbPointer(
             absorbing: isLoading,
             child: Scaffold(
-              appBar: CustomAppBar(
+              appBar: const CustomAppBar(
                 showTitle: true,
                 title: "AR Face Model Preview",
               ),
@@ -209,9 +209,9 @@ class _ArFaceModelPreviewScreenState
                                   );
 
                                   if (isLoading) {
-                                    return SizedBox(
+                                    return const SizedBox(
                                       height: 200,
-                                      child: const Center(
+                                      child: Center(
                                         child: CircularProgressIndicator(
                                           color: CustomColors.purpleColor,
                                         ),
@@ -285,9 +285,9 @@ class _ArFaceModelPreviewScreenState
                                   );
 
                                   if (isLoading) {
-                                    return SizedBox(
+                                    return const SizedBox(
                                       height: 200,
-                                      child: const Center(
+                                      child: Center(
                                         child: CircularProgressIndicator(
                                           color: CustomColors.purpleColor,
                                         ),
@@ -355,7 +355,7 @@ class _ArFaceModelPreviewScreenState
                                       ],
                                     );
                                   }
-                                  return SizedBox();
+                                  return const SizedBox();
                                 },
                               ),
                               Consumer(
@@ -381,9 +381,9 @@ class _ArFaceModelPreviewScreenState
                                   );
 
                                   if (isLoading) {
-                                    return SizedBox(
+                                    return const SizedBox(
                                       height: 200,
-                                      child: const Center(
+                                      child: Center(
                                         child: CircularProgressIndicator(
                                           color: CustomColors.purpleColor,
                                         ),
@@ -454,19 +454,19 @@ class _ArFaceModelPreviewScreenState
                                                               subArea: subArea,
                                                             );
 
-                                                        int initialLevel = 0;
-                                                        if (minSyringe == 0 &&
-                                                            maxSyringe == 0) {
-                                                          initialLevel = 0;
-                                                        } else if (options
-                                                                .length ==
-                                                            1) {
-                                                          initialLevel =
-                                                              options.first;
-                                                        } else {
-                                                          initialLevel =
-                                                              minSyringe;
-                                                        }
+                                                        // int initialLevel = 0;
+                                                        // if (minSyringe == 0 &&
+                                                        //     maxSyringe == 0) {
+                                                        //   initialLevel = 0;
+                                                        // } else if (options
+                                                        //         .length ==
+                                                        //     1) {
+                                                        //   initialLevel =
+                                                        //       options.first;
+                                                        // } else {
+                                                        //   initialLevel =
+                                                        //       minSyringe;
+                                                        // }
 
                                                         // ref
                                                         //     .read(
@@ -506,7 +506,7 @@ class _ArFaceModelPreviewScreenState
                                       ],
                                     );
                                   }
-                                  return SizedBox();
+                                  return const SizedBox();
                                 },
                               ),
                               Consumer(
@@ -781,7 +781,7 @@ class _ArFaceModelPreviewScreenState
                         onTap: () {
                           ref.read(treatmentViewModel.notifier).saveAiImage();
                         },
-                        child: CircleAvatar(
+                        child: const CircleAvatar(
                           backgroundColor: CustomColors.greyColor,
                           child: Icon(Icons.download_outlined),
                         ),
@@ -880,7 +880,7 @@ class _ArFaceModelPreviewScreenState
                         ),
                       )
                     : GlowContainer(
-                        gradientColors: [
+                        gradientColors: const [
                           CustomColors.pinkColor,
                           CustomColors.purpleColor,
                         ],

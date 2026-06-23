@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:skinsync_ai/models/base_state_model.dart';
-import 'package:skinsync_ai/models/responses/get_appointment_response.dart';
-import 'package:skinsync_ai/models/responses/simulation_history_response.dart';
-import 'package:skinsync_ai/repositories/appointment_repository.dart';
-import 'package:skinsync_ai/services/api_base_helper.dart';
-import 'package:skinsync_ai/services/appointment_service.dart';
-import 'package:skinsync_ai/view_models/base_view_model.dart';
+import '../models/base_state_model.dart';
+import '../models/responses/get_appointment_response.dart';
+import '../models/responses/simulation_history_response.dart';
+import '../repositories/appointment_repository.dart';
+import '../services/api_base_helper.dart';
+import '../services/appointment_service.dart';
+import 'base_view_model.dart';
 
 final appointmentProvider = NotifierProvider(
   () => AppointmentViewModel(
@@ -16,7 +16,7 @@ final appointmentProvider = NotifierProvider(
 class AppointmentViewModel extends BaseViewModel<AppointmentState> {
   AppointmentViewModel({required AppointmentRepository appointmentRepository})
     : _repo = appointmentRepository,
-      super(initialState: AppointmentState());
+      super(initialState: const AppointmentState());
   final AppointmentRepository _repo;
 
   Future<List<Appointment>?> getAppointment({required int page}) async {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/models/responses/treatment_response_model.dart';
-import 'package:skinsync_ai/models/responses/treatment_sub_area_response.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../models/responses/treatment_response_model.dart';
+import '../models/responses/treatment_sub_area_response.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 
 class TreatmentPriceContainer extends StatelessWidget {
   final List<TreatmentSubAreaModel> selectedSubAreasList;
@@ -25,7 +25,7 @@ class TreatmentPriceContainer extends StatelessWidget {
     return GestureDetector(
       onTap: () {},
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(15.r),

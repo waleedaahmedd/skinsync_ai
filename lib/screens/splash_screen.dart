@@ -1,12 +1,13 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/screens/bottom_nav_page.dart';
-import 'package:skinsync_ai/screens/get_started_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/secure_storage_service.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
+import 'bottom_nav_page.dart';
+import 'get_started_screen.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/secure_storage_service.dart';
+import '../view_models/auth_view_model.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -146,14 +147,14 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       body: Stack(
         children: [
           Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: CustomColors.purpleBlueGradient,
             ),
           ),
 
           AnimatedOpacity(
             opacity: _animate ? 0.0 : 1.0,
-            duration: Duration(milliseconds: 400),
+            duration: const Duration(milliseconds: 400),
             curve: Curves.easeInOut,
             child: Center(
               child: Image.asset(

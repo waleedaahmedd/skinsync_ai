@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
-import 'package:skinsync_ai/models/requests/otp_request.dart';
-import 'package:skinsync_ai/models/responses/base_response_model.dart';
+import '../models/requests/onboarding_profile_request.dart';
+import '../models/requests/otp_request.dart';
+import '../models/responses/base_response_model.dart';
 
 import '../exceptions/app_exception.dart';
 import '../models/requests/sign_in_request.dart';
@@ -37,7 +37,7 @@ class AuthService implements AuthRepository {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
       AuthResponse authResponse = AuthResponse.fromJson(parsed);
-      if (authResponse.isSuccess == true) {
+      if (authResponse.status == true) {
         // _secureStorage.saveSecureString(
         //   key: SharedPreferencesKeys.accessTokenKey.name,
         //   value: authResponse.data!.accessToken ?? '',
@@ -49,12 +49,12 @@ class AuthService implements AuthRepository {
           );
           await _secureStorage.saveAccessTokenExpiry(
             DateTime.fromMillisecondsSinceEpoch(
-              authResponse.data!.accessExpiresAt! * 1000,
+              authResponse.data!.isActiveExpiry! * 1000,
             ),
           );
           await _secureStorage.saveRefreshTokenExpiry(
             DateTime.fromMillisecondsSinceEpoch(
-              authResponse.data!.refreshExpiresAt! * 1000,
+              authResponse.data!.refreshTokenExpiry! * 1000,
             ),
           );
         }
@@ -73,7 +73,7 @@ class AuthService implements AuthRepository {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.biometricRegister,
       requestType: 'POST',
-      requestBody: req.toJson(),
+      requestBody: {"biometric_key": req.deviceHash},
       params: '',
     );
 
@@ -81,7 +81,7 @@ class AuthService implements AuthRepository {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
       AuthResponse authResponse = AuthResponse.fromJson(parsed);
-      if (authResponse.isSuccess == true) {}
+      if (authResponse.status == true) {}
       return authResponse;
     } else {
       // Handle HTTP error status codes
@@ -96,24 +96,18 @@ class AuthService implements AuthRepository {
       key: SharedPreferencesKeys.biometricAuthKey.keyText,
     );
     if (key == null) {
-      throw AppException('Biometrics not registered');
+      throw const AppException('Biometrics not registered');
     }
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.biometricLogin,
       requestType: 'POST',
-      requestBody: {"biometric_key": key},
+      requestBody: {"biometric_token": key},
       params: '',
     );
-
-    // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
       AuthResponse authResponse = AuthResponse.fromJson(parsed);
-      if (authResponse.isSuccess == true) {
-        // _secureStorage.saveSecureString(
-        //   key: SharedPreferencesKeys.accessTokenKey.name,
-        //   value: authResponse.data!.accessToken ?? '',
-        // );
+      if (authResponse.status == true) {
         if (authResponse.data != null) {
           await _secureStorage.saveToken(authResponse.data!.accessToken!);
           await _secureStorage.saveRefreshToken(
@@ -121,19 +115,18 @@ class AuthService implements AuthRepository {
           );
           await _secureStorage.saveAccessTokenExpiry(
             DateTime.fromMillisecondsSinceEpoch(
-              authResponse.data!.accessExpiresAt! * 1000,
+              authResponse.data!.isActiveExpiry! * 1000,
             ),
           );
           await _secureStorage.saveRefreshTokenExpiry(
             DateTime.fromMillisecondsSinceEpoch(
-              authResponse.data!.refreshExpiresAt! * 1000,
+              authResponse.data!.refreshTokenExpiry! * 1000,
             ),
           );
         }
       }
       return authResponse;
     } else {
-      // Handle HTTP error status codes
       final parsed = json.decode(response.body);
       throw AppException(BaseResponseModel.fromJson(parsed).message as String);
     }
@@ -151,7 +144,7 @@ class AuthService implements AuthRepository {
     );
     final parsed = json.decode(response.body);
     final model = BaseResponseModel.fromJson(parsed);
-    if (model.isSuccess ?? false) {
+    if (model.status ?? false) {
       return model;
     } else {
       throw Exception(model.message ?? 'Something went wrong!');
@@ -169,7 +162,7 @@ class AuthService implements AuthRepository {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
       AuthResponse authResponse = AuthResponse.fromJson(parsed);
-      if (authResponse.isSuccess == true) {
+      if (authResponse.status == true) {
         final savedEmail = await _secureStorage.getUserEmail();
         if (savedEmail != authResponse.data?.user?.primaryEmail) {
           try {
@@ -188,12 +181,12 @@ class AuthService implements AuthRepository {
           );
           await _secureStorage.saveAccessTokenExpiry(
             DateTime.fromMillisecondsSinceEpoch(
-              authResponse.data!.accessExpiresAt! * 1000,
+              authResponse.data!.isActiveExpiry! * 1000,
             ),
           );
           await _secureStorage.saveRefreshTokenExpiry(
             DateTime.fromMillisecondsSinceEpoch(
-              authResponse.data!.refreshExpiresAt! * 1000,
+              authResponse.data!.refreshTokenExpiry! * 1000,
             ),
           );
         }
@@ -248,10 +241,10 @@ class AuthService implements AuthRepository {
 
   @override
   Future<AuthResponse> googleSignInApi({
-    required SignInWithGoogleRequest request,
+    required SocialLoginRequest request,
   }) async {
     final response = await _apiClient.httpRequest(
-      endPoint: EndPoints.signIn,
+      endPoint: EndPoints.socialLogin,
       requestType: 'POST',
       requestBody: request,
       params: '',
@@ -260,7 +253,7 @@ class AuthService implements AuthRepository {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
       AuthResponse authResponse = AuthResponse.fromJson(parsed);
-      if (!(authResponse.isSuccess ?? false) ||
+      if (!(authResponse.status ?? false) ||
           authResponse.data?.accessToken == null) {
         throw AppException(authResponse.message ?? 'Something went wrong!');
       }
@@ -277,12 +270,12 @@ class AuthService implements AuthRepository {
       await _secureStorage.saveRefreshToken(authResponse.data!.refreshToken!);
       await _secureStorage.saveAccessTokenExpiry(
         DateTime.fromMillisecondsSinceEpoch(
-          authResponse.data!.accessExpiresAt! * 1000,
+          authResponse.data!.isActiveExpiry! * 1000,
         ),
       );
       await _secureStorage.saveRefreshTokenExpiry(
         DateTime.fromMillisecondsSinceEpoch(
-          authResponse.data!.refreshExpiresAt! * 1000,
+          authResponse.data!.refreshTokenExpiry! * 1000,
         ),
       );
       return authResponse;
@@ -294,10 +287,10 @@ class AuthService implements AuthRepository {
 
   @override
   Future<AuthResponse> appleSignInApi({
-    required SignInWithAppleRequest request,
+    required SocialLoginRequest request,
   }) async {
     final response = await _apiClient.httpRequest(
-      endPoint: EndPoints.signIn,
+      endPoint: EndPoints.socialLogin,
       requestType: 'POST',
       requestBody: request,
       params: '',
@@ -306,7 +299,7 @@ class AuthService implements AuthRepository {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
       AuthResponse authResponse = AuthResponse.fromJson(parsed);
-      if (!(authResponse.isSuccess ?? false) ||
+      if (!(authResponse.status ?? false) ||
           authResponse.data?.accessToken == null) {
         throw AppException(authResponse.message ?? 'Something went wrong!');
       }
@@ -323,12 +316,12 @@ class AuthService implements AuthRepository {
       await _secureStorage.saveRefreshToken(authResponse.data!.refreshToken!);
       await _secureStorage.saveAccessTokenExpiry(
         DateTime.fromMillisecondsSinceEpoch(
-          authResponse.data!.accessExpiresAt! * 1000,
+          authResponse.data!.isActiveExpiry! * 1000,
         ),
       );
       await _secureStorage.saveRefreshTokenExpiry(
         DateTime.fromMillisecondsSinceEpoch(
-          authResponse.data!.refreshExpiresAt! * 1000,
+          authResponse.data!.refreshTokenExpiry! * 1000,
         ),
       );
       return authResponse;

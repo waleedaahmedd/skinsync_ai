@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/treatment_view_model.dart';
-import 'package:skinsync_ai/widgets/scan_face_dialog.dart';
+import '../screens/treatment_detail_screen.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/treatment_view_model.dart';
+import 'scan_face_dialog.dart';
 
 import '../main.dart';
 import '../models/responses/treatment_response_model.dart';
@@ -66,13 +66,13 @@ class TreatmentContainer extends StatelessWidget {
                 BoxShadow(
                   color: CustomColors.purpleColor.withValues(alpha: 0.15),
                   blurRadius: 20,
-                  offset: Offset(0, 4),
+                  offset: const Offset(0, 4),
                   spreadRadius: 2,
                 ),
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.08),
                   blurRadius: 10,
-                  offset: Offset(0, 2),
+                  offset: const Offset(0, 2),
                 ),
               ],
             ),
@@ -95,7 +95,7 @@ class TreatmentContainer extends StatelessWidget {
                           height: imageHeight ?? 180.h,
                           width: double.infinity,
                           errorBuilder: (context, error, stackTrace) {
-                            return Icon(Icons.broken_image);
+                            return const Icon(Icons.broken_image);
                           },
                         ),
                         Visibility(

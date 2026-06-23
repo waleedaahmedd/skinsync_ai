@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 
 class PointsEarnCard extends StatelessWidget {
   const PointsEarnCard({super.key});
@@ -40,7 +40,7 @@ class PointsEarnCard extends StatelessWidget {
                     width: 8.r,
                   ),
                 ),
-                child: Icon(Icons.star, color: CustomColors.yellow),
+                child: const Icon(Icons.star, color: CustomColors.yellow),
               ),
               Column(
                 crossAxisAlignment: .start,
@@ -84,7 +84,7 @@ class PointsEarnCard extends StatelessWidget {
             ),
 
             circularStrokeCap: CircularStrokeCap.round,
-            progressColor: Color(0xffEEA1F0),
+            progressColor: const Color(0xffEEA1F0),
             backgroundColor: Colors.white,
           ),
 
@@ -105,7 +105,7 @@ class PointsEarnCard extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(Icons.star, color: Colors.white, size: 11.sp),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     Text("Redeem Points", style: CustomFonts.white12w600),
                   ],
                 ),

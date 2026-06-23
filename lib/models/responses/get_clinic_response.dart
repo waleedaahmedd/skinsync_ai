@@ -1,11 +1,11 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:skinsync_ai/models/responses/base_response_model.dart';
-import 'package:skinsync_ai/models/responses/map_clinics_response.dart';
+import 'base_response_model.dart';
+import 'map_clinics_response.dart';
 
 class GetClinicResponse extends BaseResponseModel {
   List<Clinic>? data;
 
-  GetClinicResponse({this.data, super.isSuccess, super.message});
+  GetClinicResponse({this.data, super.status, super.message});
 
   GetClinicResponse.fromJson(Map<String, dynamic> json) {
     if (json['data'] != null) {
@@ -14,7 +14,7 @@ class GetClinicResponse extends BaseResponseModel {
         data!.add(Clinic.fromJson(v));
       });
     }
-    isSuccess = json['is_success'];
+    status = json['is_success'];
     message = json['message'];
   }
 }

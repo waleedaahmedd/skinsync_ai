@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/screens/face_scan_screen.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/biometric_helper.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/utills/enums.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
+import 'face_scan_screen.dart';
+import '../utills/assets.dart';
+import '../utills/biometric_helper.dart';
+import '../utills/custom_fonts.dart';
+import '../utills/enums.dart';
+import '../view_models/auth_view_model.dart';
 
 import '../utills/secure_storage_service.dart';
 
@@ -46,9 +46,9 @@ class _BiometricScreenState extends State<BiometricScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Spacer(),
+            const Spacer(),
             Image.asset(PngAssets.biometricImage, height: 400.h),
-            Spacer(),
+            const Spacer(),
             Text("Biometric Authentication", style: CustomFonts.black30w600),
             SizedBox(height: 2.h),
             Center(
@@ -131,7 +131,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
 
                             setState(() => isLoading = false);
                           },
-                          child: Text("I understand and Agree"),
+                          child: const Text("I understand and Agree"),
                         ),
                       );
                     } else {

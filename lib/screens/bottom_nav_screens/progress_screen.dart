@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
+import '../../utills/custom_fonts.dart';
+import '../../widgets/app_bar_with_action_icon.dart';
 
 import '../../widgets/grey_container.dart';
 
@@ -36,7 +36,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               children: [
                 TextField(
                   style: CustomFonts.black18w400,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     prefixIcon: Icon(Icons.search),
                     hintText: "Search Progress",
                   ),

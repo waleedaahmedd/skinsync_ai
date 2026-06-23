@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
-import 'package:skinsync_ai/widgets/app_loader.dart';
-import 'package:skinsync_ai/widgets/phone_widget.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/auth_view_model.dart';
+import '../widgets/app_loader.dart';
+import '../widgets/phone_widget.dart';
 
 import 'get_notified_screen.dart';
 
@@ -71,8 +71,8 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
           child: Wrap(
             children: [
               ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Choose from Gallery'),
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Choose from Gallery'),
                 onTap: () {
                   Navigator.pop(context);
                   ref
@@ -81,8 +81,8 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.photo_camera),
-                title: Text('Take a Photo'),
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Take a Photo'),
                 onTap: () {
                   Navigator.pop(context);
                   ref
@@ -104,7 +104,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
     return Scaffold(
       body: Container(
         constraints: BoxConstraints(minHeight: MediaQuery.heightOf(context)),
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: CustomColors.purpleWhiteBlueGradient,
         ),
         child: Padding(
@@ -141,7 +141,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                         child: Container(
                           height: 35.w,
                           width: 35.w,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
                           ),
@@ -171,7 +171,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   TextFormField(
                     controller: _nameController,
                     style: CustomFonts.black18w400,
-                    decoration: InputDecoration(hintText: "Your Name"),
+                    decoration: const InputDecoration(hintText: "Your Name"),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Please enter your name';
@@ -197,7 +197,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                     readOnly: true,
                     controller: _emailController,
                     style: CustomFonts.black18w400,
-                    decoration: InputDecoration(hintText: "Email Address"),
+                    decoration: const InputDecoration(hintText: "Email Address"),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
@@ -216,7 +216,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   TextFormField(
                     controller: _locationController,
                     style: CustomFonts.black18w400,
-                    decoration: InputDecoration(hintText: "Location"),
+                    decoration: const InputDecoration(hintText: "Location"),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Please enter your location';
@@ -229,7 +229,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                     controller: _bioController,
                     style: CustomFonts.black18w400,
                     maxLines: 4,
-                    decoration: InputDecoration(hintText: "Bio"),
+                    decoration: const InputDecoration(hintText: "Bio"),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Please enter your Bio';
@@ -241,7 +241,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ref.watch(authViewModel).loading
-                        ? AppLoader()
+                        ? const AppLoader()
                         : ElevatedButton(
                             onPressed: () {
                               if (_formKey.currentState?.validate() ?? false) {
@@ -269,8 +269,8 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                               }
                             },
                             child: ref.watch(authViewModel).loading
-                                ? CircularProgressIndicator()
-                                : Text("Next"),
+                                ? const CircularProgressIndicator()
+                                : const Text("Next"),
                           ),
                   ),
                 ],

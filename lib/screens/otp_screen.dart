@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pinput/pinput.dart';
-import 'package:skinsync_ai/screens/face_scan_screen.dart';
-import 'package:skinsync_ai/screens/login_screen.dart';
-import 'package:skinsync_ai/screens/signup_onboarding.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
-import 'package:skinsync_ai/widgets/app_loader.dart';
+import 'face_scan_screen.dart';
+import 'login_screen.dart';
+import 'signup_onboarding.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/auth_view_model.dart';
+import '../widgets/app_loader.dart';
 
 import '../widgets/custom_app_bar.dart';
 
@@ -20,7 +20,7 @@ class OtpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(showTitle: false),
+      appBar: const CustomAppBar(showTitle: false),
       body: Padding(
         padding: EdgeInsets.only(
           left: 30.w,
@@ -35,7 +35,7 @@ class OtpScreen extends StatelessWidget {
               padding: EdgeInsets.all(14.w),
               height: 79.h,
               width: 79.w,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: CustomColors.lightBlueColor,
               ),
@@ -134,12 +134,12 @@ class OtpScreen extends StatelessWidget {
                 );
               },
             ),
-            Spacer(),
+            const Spacer(),
             Consumer(
               builder: (context, ref, child) => SizedBox(
                 width: double.infinity,
                 child: ref.watch(authViewModel).loading
-                    ? AppLoader()
+                    ? const AppLoader()
                     : ElevatedButton(
                         onPressed: () async {
                           if (ref.read(authViewModel.notifier).validateOtp()) {
@@ -148,13 +148,11 @@ class OtpScreen extends StatelessWidget {
                                 .callVerifyOtpApi()
                                 .then((value) async {
                                   if (value == true) {
-                                    bool? isLoggedIn =
-                                        ref
-                                            .read(authViewModel)
-                                            .authResponse
-                                            ?.data
-                                            ?.isFirstLogin ??
-                                        false;
+                                    final isLoggedIn = ref
+                                        .read(authViewModel)
+                                        .authResponse
+                                        ?.data?.isFirstLogin ?? false;
+
                                     isLoggedIn
                                         ? Navigator.pushNamedAndRemoveUntil(
                                             context,
@@ -172,7 +170,7 @@ class OtpScreen extends StatelessWidget {
                                 });
                           }
                         },
-                        child: Text("Next"),
+                        child: const Text("Next"),
                       ),
               ),
             ),

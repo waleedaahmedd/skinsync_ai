@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 
 class FillterContainer extends StatelessWidget {
   final String title;
@@ -41,8 +41,8 @@ class FillterContainer extends StatelessWidget {
                           BlendMode.srcIn,
                         ),
                       )
-                    : SizedBox(),
-                svgImage != null ? SizedBox(width: 7.w) : SizedBox(),
+                    : const SizedBox(),
+                svgImage != null ? SizedBox(width: 7.w) : const SizedBox(),
                 Text(
                   title,
                   style: isSelected
