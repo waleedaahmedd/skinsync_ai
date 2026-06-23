@@ -104,7 +104,7 @@ class TreatmentContainer extends StatelessWidget {
                     ),
                   ),
 
-                  // 2. Translucent Premium Dark Mask Overlay
+                  // 2. Translucent Premium White Mask Overlay
                   Positioned.fill(
                     child: Container(
                       decoration: BoxDecoration(
@@ -112,8 +112,8 @@ class TreatmentContainer extends StatelessWidget {
                           begin: Alignment.centerLeft,
                           end: Alignment.centerRight,
                           colors: [
-                            Colors.black.withValues(alpha: 0.75),
-                            Colors.black.withValues(alpha: 0.45),
+                            Colors.white.withValues(alpha: 0.85),
+                            Colors.white.withValues(alpha: 0.55),
                             Colors.transparent,
                           ],
                         ),
@@ -155,7 +155,7 @@ class TreatmentContainer extends StatelessWidget {
                               children: [
                                 Text(
                                   titleText,
-                                  style: CustomFonts.white22w600.copyWith(
+                                  style: CustomFonts.black22w600.copyWith(
                                     letterSpacing: 0.5,
                                     fontSize: 21.sp,
                                   ),
@@ -169,7 +169,7 @@ class TreatmentContainer extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 12.sp,
                                       fontWeight: FontWeight.w400,
-                                      color: Colors.white.withValues(alpha: 0.85),
+                                      color: CustomColors.textGreyColor,
                                       fontFamily: 'Degular',
                                       height: 1.25,
                                     ),
@@ -186,15 +186,15 @@ class TreatmentContainer extends StatelessWidget {
                           Container(
                             padding: EdgeInsets.all(10.w),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
+                              color: Colors.black.withValues(alpha: 0.05),
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.3),
+                                color: Colors.black12,
                                 width: 1.5,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.1),
+                                  color: Colors.black.withValues(alpha: 0.02),
                                   blurRadius: 4,
                                   offset: const Offset(0, 2),
                                 ),
@@ -202,7 +202,7 @@ class TreatmentContainer extends StatelessWidget {
                             ),
                             child: Icon(
                               Icons.chevron_right_rounded,
-                              color: Colors.white,
+                              color: Colors.black87,
                               size: 22.sp,
                             ),
                           ),

@@ -323,10 +323,10 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                 ),
               ),
 
-              // 2. Translucent Premium Dark Mask Overlay
+              // 2. Translucent Premium White Mask Overlay
               Positioned.fill(
                 child: Container(
-                  color: Colors.black.withValues(alpha: 0.65),
+                  color: Colors.white.withValues(alpha: 0.75),
                 ),
               ),
 
@@ -351,9 +351,9 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                           child: Text(
                             appointment.time.replaceAll(" - ", "\n-\n"),
                             textAlign: TextAlign.center,
-                            style: CustomFonts.white10w600.copyWith(
+                            style: CustomFonts.black10w600.copyWith(
                               height: 1.3,
-                              color: typeColor == CustomColors.yellow ? Colors.amber.shade200 : Colors.white,
+                              color: Colors.black87,
                               fontWeight: FontWeight.bold,
                               fontSize: 10.sp,
                             ),
@@ -378,14 +378,14 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                                     children: [
                                       Text(
                                         appointment.treatmentName,
-                                        style: CustomFonts.white14w700,
+                                        style: CustomFonts.black13w600,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       SizedBox(height: 1.h),
                                       Text(
                                         appointment.area,
-                                        style: CustomFonts.white80_11w400,
+                                        style: CustomFonts.grey700_10w400,
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -408,17 +408,17 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                                 margin: EdgeInsets.only(top: 8.h),
                                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.15),
+                                  color: Colors.black.withValues(alpha: 0.05),
                                   borderRadius: BorderRadius.circular(6.r),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    const Icon(Icons.info_outline_rounded, size: 10, color: Colors.white70),
+                                    const Icon(Icons.info_outline_rounded, size: 10, color: Colors.black54),
                                     SizedBox(width: 4.w),
                                     Text(
                                       "Awaiting clinic onboarding",
-                                      style: CustomFonts.white80_11w400,
+                                      style: CustomFonts.grey700_10w400,
                                     ),
                                   ],
                                 ),
@@ -460,12 +460,12 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
   Widget _buildInfoRow(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, size: 13.sp, color: Colors.white70),
+        Icon(icon, size: 13.sp, color: Colors.grey.shade500),
         SizedBox(width: 6.w),
         Expanded(
           child: Text(
             text,
-            style: CustomFonts.white80_11w400,
+            style: CustomFonts.grey700_10w400,
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -479,6 +479,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(color: Colors.black12, width: 0.5),
       ),
       child: Text(
         type,

@@ -336,10 +336,10 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                 ),
               ),
 
-              // 2. Translucent Premium Dark Mask Overlay (Guarantees absolute legibility)
+              // 2. Translucent Premium White Mask Overlay (Guarantees absolute legibility)
               Positioned.fill(
                 child: Container(
-                  color: Colors.black.withValues(alpha: 0.65),
+                  color: Colors.white.withValues(alpha: 0.75),
                 ),
               ),
 
@@ -371,14 +371,14 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                               children: [
                                 Text(
                                   appointment.treatmentName,
-                                  style: CustomFonts.white14w700,
+                                  style: CustomFonts.black13w600,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 SizedBox(height: 1.h),
                                 Text(
                                   appointment.area,
-                                  style: CustomFonts.white80_11w400,
+                                  style: CustomFonts.grey700_10w400,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -391,6 +391,7 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20.r),
+                              border: Border.all(color: Colors.black12, width: 0.5),
                             ),
                             child: Text(
                               appointment.type,
@@ -406,12 +407,12 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              const Icon(Icons.business_rounded, size: 12, color: Colors.white70),
+                              Icon(Icons.business_rounded, size: 12, color: Colors.grey.shade600),
                               SizedBox(width: 6.w),
                               Expanded(
                                 child: Text(
                                   appointment.clinicName,
-                                  style: CustomFonts.white80_11w400,
+                                  style: CustomFonts.textGrey13w400,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -421,12 +422,12 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                           SizedBox(height: 2.h),
                           Row(
                             children: [
-                              const Icon(Icons.person_rounded, size: 12, color: Colors.white70),
+                              Icon(Icons.person_rounded, size: 12, color: Colors.grey.shade600),
                               SizedBox(width: 6.w),
                               Expanded(
                                 child: Text(
                                   appointment.doctorName,
-                                  style: CustomFonts.white80_11w400,
+                                  style: CustomFonts.textGrey13w400,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -440,17 +441,17 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.15),
+                          color: Colors.black.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(20.r),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.access_time_filled_rounded, size: 10, color: Colors.white70),
+                            Icon(Icons.access_time_filled_rounded, size: 10, color: Colors.grey.shade600),
                             SizedBox(width: 4.w),
                             Text(
                               appointment.time,
-                              style: CustomFonts.white10w600,
+                              style: CustomFonts.black10w600,
                             ),
                           ],
                         ),

@@ -251,6 +251,12 @@ class HomeScreen extends ConsumerWidget {
     required String title,
     required String subtitle,
   }) {
+    final myLocalGradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [CustomColors.lightPurpleColor, CustomColors.purpleColor],
+    );
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Container(
@@ -258,7 +264,7 @@ class HomeScreen extends ConsumerWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24.r),
-          gradient: CustomColors.purpleBlueGradient, // Solid brand gradient background
+          gradient: myLocalGradient, // Solid brand gradient background
           border: Border.all(
             color: CustomColors.lightPurpleColor.withValues(alpha: 0.4),
             width: 1.5,
@@ -275,10 +281,10 @@ class HomeScreen extends ConsumerWidget {
           borderRadius: BorderRadius.circular(22.r),
           child: Stack(
             children: [
-              // 1. Translucent Dark Mask Tint Overlay
+              // 1. Translucent White Mask Tint Overlay
               Positioned.fill(
                 child: Container(
-                  color: Colors.black.withValues(alpha: 0.55), // Translucent premium dark mask
+                  color: Colors.white.withValues(alpha: 0.85), // Translucent premium white mask
                 ),
               ),
 
@@ -292,17 +298,17 @@ class HomeScreen extends ConsumerWidget {
                       height: 48.w,
                       width: 48.w,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
+                        color: CustomColors.purpleColor.withValues(alpha: 0.12),
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.2),
+                          color: CustomColors.purpleColor.withValues(alpha: 0.15),
                           width: 1.w,
                         ),
                       ),
                       child: Center(
                         child: Icon(
                           icon,
-                          color: Colors.white,
+                          color: CustomColors.purpleColor,
                           size: 22.sp,
                         ),
                       ),
@@ -315,14 +321,14 @@ class HomeScreen extends ConsumerWidget {
                         children: [
                           Text(
                             title,
-                            style: CustomFonts.white14w700,
+                            style: CustomFonts.black14w700,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           SizedBox(height: 4.h),
                           Text(
                             subtitle,
-                            style: CustomFonts.white80_11w400,
+                            style: CustomFonts.textGrey13w400,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),

@@ -617,10 +617,14 @@ class _ArFaceModelPreviewScreenState
                                             return Container(
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.circular(16.r),
-                                                gradient: CustomColors.purpleBlueGradient,
+                                                gradient: const LinearGradient(
+                                                  begin: Alignment.topCenter,
+                                                  end: Alignment.bottomCenter,
+                                                  colors: [CustomColors.lightPurpleColor, CustomColors.purpleColor],
+                                                ),
                                                 boxShadow: [
                                                   BoxShadow(
-                                                    color: CustomColors.purpleColor.withValues(alpha: 0.25),
+                                                    color: CustomColors.purpleColor.withValues(alpha: 0.15),
                                                     blurRadius: 6,
                                                     offset: const Offset(0, 3),
                                                   ),
@@ -630,10 +634,10 @@ class _ArFaceModelPreviewScreenState
                                                 borderRadius: BorderRadius.circular(16.r),
                                                 child: Stack(
                                                   children: [
-                                                    // 1. Dark Tint Mask Overlay (Consistent with cards)
+                                                    // 1. White Tint Mask Overlay (Consistent with light theme)
                                                     Positioned.fill(
                                                       child: Container(
-                                                        color: Colors.black.withValues(alpha: 0.45),
+                                                        color: Colors.white.withValues(alpha: 0.85),
                                                       ),
                                                     ),
 
@@ -645,7 +649,7 @@ class _ArFaceModelPreviewScreenState
                                                         children: [
                                                           Icon(
                                                             Icons.insights_rounded,
-                                                            color: Colors.white,
+                                                            color: CustomColors.purpleColor,
                                                             size: 14.sp,
                                                           ),
                                                           SizedBox(width: 6.w),
@@ -655,14 +659,14 @@ class _ArFaceModelPreviewScreenState
                                                             children: [
                                                               Text(
                                                                 name,
-                                                                style: CustomFonts.white10w600.copyWith(fontSize: 11.sp),
+                                                                style: CustomFonts.black10w600.copyWith(fontSize: 11.sp),
                                                               ),
                                                               if (syringes != 0) ...[
                                                                 SizedBox(height: 2.h),
                                                                 Text(
                                                                   'Syringe: $syringes',
-                                                                  style: CustomFonts.white10w600.copyWith(
-                                                                    color: Colors.white.withValues(alpha: 0.8),
+                                                                  style: CustomFonts.grey700_10w400.copyWith(
+                                                                    color: Colors.black54,
                                                                     fontSize: 8.sp,
                                                                   ),
                                                                 ),
@@ -673,7 +677,7 @@ class _ArFaceModelPreviewScreenState
                                                           Container(
                                                             width: 1.w,
                                                             height: 18.h,
-                                                            color: Colors.white.withValues(alpha: 0.3),
+                                                            color: Colors.black12,
                                                           ),
                                                           SizedBox(width: 10.w),
                                                           GestureDetector(
@@ -684,10 +688,10 @@ class _ArFaceModelPreviewScreenState
                                                                   e.id!,
                                                                   name,
                                                                 ),
-                                                            child: const Icon(
+                                                            child: Icon(
                                                               Icons.cancel_rounded,
                                                               size: 16,
-                                                              color: Colors.white,
+                                                              color: Colors.grey.shade600,
                                                             ),
                                                           ),
                                                         ],

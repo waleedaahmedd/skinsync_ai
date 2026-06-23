@@ -132,10 +132,10 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                               borderRadius: BorderRadius.circular(16.r),
                               child: Stack(
                                 children: [
-                                  // 1. Dark Tint Mask Overlay (Consistent with preview screen chips)
+                                  // 1. White Tint Mask Overlay (Consistent with preview screen chips)
                                   Positioned.fill(
                                     child: Container(
-                                      color: Colors.black.withValues(alpha: 0.45),
+                                      color: Colors.white.withValues(alpha: 0.85),
                                     ),
                                   ),
 
@@ -147,20 +147,20 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                                       children: [
                                         Icon(
                                           Icons.insights_rounded,
-                                          color: Colors.white,
+                                          color: CustomColors.purpleColor,
                                           size: 13.sp,
                                         ),
                                         SizedBox(width: 8.w),
                                         Text(
                                           chipText,
-                                          style: CustomFonts.white10w600.copyWith(fontSize: 11.sp),
+                                          style: CustomFonts.black10w600.copyWith(fontSize: 11.sp),
                                         ),
                                         SizedBox(width: 8.w),
                                         // Visual thin line divider
                                         Container(
                                           width: 1.w,
                                           height: 14.h,
-                                          color: Colors.white.withValues(alpha: 0.3),
+                                          color: Colors.black12,
                                         ),
                                         SizedBox(width: 8.w),
                                         // Clickable Cancel Cross Button
@@ -191,7 +191,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                                           child: Icon(
                                             Icons.cancel_rounded,
                                             size: 14.sp,
-                                            color: Colors.white,
+                                            color: Colors.grey.shade600,
                                           ),
                                         ),
                                       ],
