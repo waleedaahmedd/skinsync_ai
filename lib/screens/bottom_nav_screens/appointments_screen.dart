@@ -162,7 +162,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
               child: groupedAppointments.isEmpty
                   ? _buildEmptyState()
                   : ListView.builder(
-                      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 15.h),
+                      padding: EdgeInsets.only(left: 24.w, right: 24.w, top: 20.h,bottom: 70),
                       physics: const BouncingScrollPhysics(),
                       itemCount: groupedAppointments.length,
                       itemBuilder: (context, index) {
@@ -253,7 +253,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
               Expanded(
                 child: Text(
                   title,
-                  style: CustomFonts.white14w700,
+                  style: CustomFonts.black14w700,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

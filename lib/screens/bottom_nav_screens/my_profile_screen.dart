@@ -160,7 +160,7 @@ class MyProfileScreen extends StatelessWidget {
             Expanded(
               child: ListView(
                 physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 40.h),
+                padding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 100.h),
                 children: [
                   // CARD 1: Clinical Portal Section
                   _buildOptionCard([
