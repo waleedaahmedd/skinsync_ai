@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'bottom_nav_bar.dart';
-import 'bottom_nav_screens/appointments_screen.dart';
-import 'bottom_nav_screens/my_profile_screen.dart';
-import 'bottom_nav_screens/progress_screen.dart';
-import 'bottom_nav_screens/treatments_screen.dart';
-import 'home_screen.dart';
+import 'package:skinsync_ai/screens/bottom_nav_bar.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/appointments_screen.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/my_profile_screen.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/progress_screen.dart';
+import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
+import 'package:skinsync_ai/screens/treatment_selection_screen.dart';
+import 'package:skinsync_ai/screens/home_screen.dart';
 
 import '../view_models/bottom_nav_view_model.dart';
 import '../view_models/treatment_view_model.dart';
@@ -17,11 +18,11 @@ class BottomNavPage extends ConsumerStatefulWidget {
   static const String routeName = '/BottomNavPage';
 
   static final List<Widget> _children = [
-    const HomeScreen(),
-    const TreatmentsScreen(),
-    const AppointmentsScreen(),
-    const ProgressScreen(),
-    const MyProfileScreen(),
+    HomeScreen(),
+    TreatmentSelectionScreen(),
+    AppointmentsScreen(),
+    ProgressScreen(),
+    MyProfileScreen(),
     // HomeScreen(),
     // ChangeNotifierProvider(
     //   lazy: true,
@@ -62,7 +63,7 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage> {
               BottomNavPage._children[ref.watch(bottomNavViewModel)],
               Positioned(
                 bottom: 110.h + MediaQuery.paddingOf(context).bottom,
-                child: const ScanFaceButton(),
+                child: ScanFaceButton(),
               ),
             ],
           ),
@@ -88,7 +89,7 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage> {
           //     ),
           //   ),
           // ),
-          bottomNavigationBar: const BottomNavBar(),
+          bottomNavigationBar: BottomNavBar(),
         );
       },
     );

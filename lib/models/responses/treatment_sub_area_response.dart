@@ -3,10 +3,10 @@ import 'base_response_model.dart';
 class TreatmentSubAreaResponse extends BaseResponseModel {
   List<TreatmentSubAreaModel>? data;
 
-  TreatmentSubAreaResponse({super.status, super.message, this.data});
+  TreatmentSubAreaResponse({super.isSuccess, super.message, this.data});
 
   TreatmentSubAreaResponse.fromJson(Map<String, dynamic> json) {
-    status = json['is_success'];
+    isSuccess = json['is_success'];
     message = json['message'];
     if (json['data'] != null) {
       data = <TreatmentSubAreaModel>[];

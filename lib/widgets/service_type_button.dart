@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
+import 'package:skinsync_ai/utills/color_constant.dart';
+import 'package:skinsync_ai/utills/custom_fonts.dart';
 
 class ServiceTypeButton extends StatelessWidget {
   final String? icon;
   final String text;
   final bool selected;
-
-  //final bool frosted; // new: enable frosted glass effect
   final VoidCallback? onPressed;
 
   const ServiceTypeButton({
@@ -16,61 +14,74 @@ class ServiceTypeButton extends StatelessWidget {
     this.icon,
     this.text = "",
     this.selected = false,
-    // this.frosted = false,
     this.onPressed,
   });
 
-  Color get _backgroundColor {
-    if (selected) {
-      return CustomColors.purpleColor;
-    } else {
-      return CustomColors.blackColor.withValues(alpha: 0.1);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    Widget child = InkWell(
+    return GestureDetector(
       onTap: onPressed,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
         decoration: BoxDecoration(
-          color: _backgroundColor,
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null)
-              Image.asset(
-                icon!,
-                width: 21.w,
-                color: selected
-                    ? CustomColors.whiteColor
-                    : CustomColors.blackColor,
-              ),
-            if (icon != null) SizedBox(width: 8.w),
-            Text(
-              text,
-              style: selected
-                  ? CustomFonts.white17w500
-                  : CustomFonts.black17w500,
+          borderRadius: BorderRadius.circular(16.r),
+          gradient: selected ? CustomColors.purpleBlueGradient : null,
+          color: selected ? null : Colors.white,
+          border: Border.all(
+            color: selected
+                ? Colors.transparent
+                : Colors.black, // Clean, bold black border when unselected
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: selected
+                  ? CustomColors.purpleColor.withValues(alpha: 0.25)
+                  : Colors.black.withValues(alpha: 0.015),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14.r),
+          child: Stack(
+            children: [
+              // 1. Translucent Premium Dark Mask Overlay (Tints the background gradient)
+              if (selected)
+                Positioned.fill(
+                  child: Container(
+                    color: Colors.black.withValues(alpha: 0.45), // Translucent dark mask
+                  ),
+                ),
+
+              // 2. High-Contrast Content Layer (Determines the natural size of the card)
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (icon != null) ...[
+                      Image.asset(
+                        icon!,
+                        width: 16.w,
+                        height: 16.w,
+                        color: selected ? Colors.white : Colors.black, // Pure black icon when unselected
+                      ),
+                      SizedBox(width: 8.w),
+                    ],
+                    Text(
+                      text,
+                      style: selected
+                          ? CustomFonts.white12w600
+                          : CustomFonts.black13w600, // Bold black font when unselected
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
-
-    // if (frosted) {
-    //   child = ClipRRect(
-    //     borderRadius: BorderRadius.circular(12.r),
-    //     child: BackdropFilter(
-    //       filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-    //       child: child,
-    //     ),
-    //   );
-    // }
-
-    return child;
   }
 }

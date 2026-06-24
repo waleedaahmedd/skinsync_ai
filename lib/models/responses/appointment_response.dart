@@ -3,14 +3,14 @@ import 'base_response_model.dart';
 class AppointmentResponse extends BaseResponseModel {
   final AppointmentData? data;
 
-  AppointmentResponse({this.data, super.status, super.message});
+  AppointmentResponse({this.data, super.isSuccess, super.message});
 
   factory AppointmentResponse.fromJson(Map<String, dynamic> json) =>
       AppointmentResponse(
         data: json["data"] == null
             ? null
             : AppointmentData.fromJson(json["data"]),
-        status: json["is_success"],
+        isSuccess: json["is_success"],
         message: json["message"],
       );
 }

@@ -5,7 +5,7 @@ import 'map_clinics_response.dart';
 class GetClinicResponse extends BaseResponseModel {
   List<Clinic>? data;
 
-  GetClinicResponse({this.data, super.status, super.message});
+  GetClinicResponse({this.data, super.isSuccess, super.message});
 
   GetClinicResponse.fromJson(Map<String, dynamic> json) {
     if (json['data'] != null) {
@@ -14,7 +14,7 @@ class GetClinicResponse extends BaseResponseModel {
         data!.add(Clinic.fromJson(v));
       });
     }
-    status = json['is_success'];
+    isSuccess = json['is_success'];
     message = json['message'];
   }
 }

@@ -3,11 +3,11 @@ import 'base_response_model.dart';
 class SimulationHistoryResponse extends BaseResponseModel {
   final List<SimulationData>? data;
 
-  SimulationHistoryResponse({super.status, super.message, this.data});
+  SimulationHistoryResponse({super.isSuccess, super.message, this.data});
 
   factory SimulationHistoryResponse.fromJson(Map<String, dynamic> json) =>
       SimulationHistoryResponse(
-        status: json["is_success"],
+        isSuccess: json["is_success"],
         message: json["message"],
         data: json["data"] == null
             ? []

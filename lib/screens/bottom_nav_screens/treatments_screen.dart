@@ -2,309 +2,172 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import '../../utills/custom_fonts.dart';
-import '../../view_models/treatment_view_model.dart';
-import '../../widgets/app_bar_with_action_icon.dart';
-import '../../widgets/app_loader.dart';
-import '../../widgets/treatment_container.dart';
+import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/view_models/treatment_view_model.dart';
+import 'package:skinsync_ai/widgets/app_loader.dart';
+import 'package:skinsync_ai/widgets/treatment_container.dart';
+import 'package:skinsync_ai/widgets/custom_search_field.dart';
 
-import '../../widgets/grey_container.dart';
+import '../../widgets/custom_app_bar.dart';
 
-class TreatmentsScreen extends ConsumerWidget {
+class TreatmentsScreen extends ConsumerStatefulWidget {
   const TreatmentsScreen({super.key});
   static const routeName = "TreatmentsScreen";
 
   @override
-  Widget build(BuildContext context, ref) {
+  ConsumerState<TreatmentsScreen> createState() => _TreatmentsScreenState();
+}
+
+class _TreatmentsScreenState extends ConsumerState<TreatmentsScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text.trim().toLowerCase();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBarWithActionIcon(
-        action: GreyContainer(
-          icon: Icons.notifications_none_outlined,
-          onTap: () {},
-        ),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 30.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 15.h),
-                TextField(
-                  style: CustomFonts.black18w400,
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    hintText: "Search Appointments",
+      appBar: CustomAppBar(showTitle: true, title: "Select Treatments"),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Premium MedSpa Header
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 20.h),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 8.h),
+                  Text(
+                    "Explore and select from our complete clinical suite of advanced aesthetic therapies.",
+                    style: CustomFonts.textGrey14w400,
                   ),
-                ),
-              ],
+                  SizedBox(height: 20.h),
+
+                  // Search Field with Premium Design matching TreatmentSelectionScreen
+                  CustomSearchField(
+                    controller: _searchController,
+                    hintText: "Search Treatments...",
+                  ),
+                ],
+              ),
             ),
-          ),
-          // SizedBox(height: 15.h),
-          Expanded(
-            child: Consumer(
-              builder: (context, ref, _) {
-                return
-                // ref.watch(treatmentViewModel)
-                //   ?
-                const TreatmentMainScreen()
-                // : SelectSectionScreen()
-                ;
-              },
+
+            // Dynamic Treatments List
+            Expanded(
+              child: TreatmentMainScreen(searchQuery: _searchQuery),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 }
 
 class TreatmentMainScreen extends StatefulWidget {
-  const TreatmentMainScreen({super.key});
+  final String searchQuery;
+  const TreatmentMainScreen({super.key, required this.searchQuery});
 
   @override
   State<TreatmentMainScreen> createState() => _TreatmentMainScreenState();
 }
 
-// int selectedFilterIndex = 0;
-// List<Fillter> fillter = [
-//   Fillter(title: "All Treatment"),
-//   Fillter(title: "Injectables & Fillers ", svg: SvgAssets.treatment),
-//   Fillter(title: "Laser Treatments", svg: SvgAssets.treatment),
-//   Fillter(title: "Sculpting & Contouring", svg: SvgAssets.treatment),
-// ];
-
 class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer(
-      builder: (_, ref, _) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            //  SizedBox(
-            //  height: 0.h,
-            // child: ListView.builder(
-            //   scrollDirection: Axis.horizontal,
-            //   itemCount: fillter.length,
-            //   itemBuilder: (context, index) {
-            //     return Padding(
-            //       padding: EdgeInsets.only(
-            //         left: index == 0 ? 30.w : 0,
-            //         right: 10.w,
-            //       ),
-            //       child: FillterContainer(
-            //         isSelected: selectedFilterIndex == index,
-            //         title: fillter[index].title,
-            //         svgImage: fillter[index].svg,
-            //         onTap: () {
-            //           setState(() {
-            //             selectedFilterIndex = index;
-            //           });
-            //         },
-            //       ),
-            //     );
-            //   },
-            // ),
-            // ),
-            SizedBox(height: 32.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.0.w),
-              child: Text("Select Treatment", style: CustomFonts.black24w600),
-            ),
-            // SizedBox(
-            //   height: 352.h,
-            //   child: ListView.builder(
-            //     scrollDirection: Axis.horizontal,
-            //     //itemCount: fillter.length,
-            //     itemBuilder: (context, index) {
-            //       return Padding(
-            //         padding: EdgeInsets.only(
-            //           left: index == 0 ? 30.w : 0,
-            //           right: 20.w,
-            //           top: 28.h,
-            //           bottom: 25.h,
-            //         ),
-            //         child: RecommendedTreatmentContainer(
-            //           treatmentImage: PngAssets.laserTreatment,
-            //           treatmentName: "Laser Treatment",
-            //         ),
-            //       );
-            //     },
-            //   ),
-            // ),
-            // SizedBox(height: 25.h),
-            // Padding(
-            //   padding: EdgeInsets.symmetric(horizontal: 30.w),
-            //   child: HeadingWithRightArrow(
-            //     title: "Skincare & Facial Treatments",
-            //     onTap: () {
-            //       ref
-            //           .read(treatmentViewModel.notifier)
-            //           .setTreatmentMainScreen(value: false);
-            //     },
-            //   ),
-            // ),
-            // SizedBox(height: 13.h),
-            // SizedBox(
-            //   height: 221.h,
-            //
-            //   child: ListView.builder(
-            //     scrollDirection: Axis.horizontal,
-            //     itemCount: 4,
-            //     itemBuilder: (context, index) {
-            //       return Padding(
-            //         padding: EdgeInsets.only(
-            //           left: index == 0 ? 30.w : 0,
-            //           right: 12.w,
-            //         ),
-            //         child: TreatmentContainer(
-            //           treatmentName: "Botox Treatment",
-            //           clinicName: "Glow Skin Clinic",
-            //           dateTime: "October 20, 3:00 PM",
-            //           treatmentimage: DummyAssets.treatmentimage,
-            //         ),
-            //       );
-            //     },
-            //   ),
-            // ),
-            // SizedBox(height: 25.h),
-            // Padding(
-            //   padding: EdgeInsets.symmetric(horizontal: 30.w),
-            //   child: HeadingWithRightArrow(
-            //     title: "Injectables & Fillers ",
-            //     onTap: () {
-            //       ref
-            //           .read(treatmentViewModel.notifier)
-            //           .setTreatmentMainScreen(value: false);
-            //     },
-            //   ),
-            // ),
-            // SizedBox(height: 13.h),
-            // SizedBox(
-            //   height: 221.h,
-            //
-            //   child: ListView.builder(
-            //     scrollDirection: Axis.horizontal,
-            //     itemCount: 4,
-            //     itemBuilder: (context, index) {
-            //       return Padding(
-            //         padding: EdgeInsets.only(
-            //           left: index == 0 ? 30.w : 0,
-            //           right: 12.w,
-            //         ),
-            //         child: TreatmentContainer(
-            //           treatmentName: "Botox Treatment",
-            //           clinicName: "Glow Skin Clinic",
-            //           dateTime: "October 20, 3:00 PM",
-            //           treatmentimage: DummyAssets.treatmentimage,
-            //         ),
-            //       );
-            //     },
-            //   ),
-            // ),
-            // SizedBox(height: 25.h),
-            // Padding(
-            //   padding: EdgeInsets.symmetric(horizontal: 30.w),
-            //   child: HeadingWithRightArrow(
-            //     title: "Laser Treatments",
-            //     onTap: () {
-            //       ref
-            //           .read(treatmentViewModel.notifier)
-            //           .setTreatmentMainScreen(value: false);
-            //     },
-            //   ),
-            // ),
-            // SizedBox(height: 13.h),
-            // SizedBox(
-            //   height: 221.h,
-            //
-            //   child: ListView.builder(
-            //     scrollDirection: Axis.horizontal,
-            //     itemCount: 4,
-            //     itemBuilder: (context, index) {
-            //       return Padding(
-            //         padding: EdgeInsets.only(
-            //           left: index == 0 ? 30.w : 0,
-            //           right: 12.w,
-            //         ),
-            //         child: TreatmentContainer(
-            //           treatmentName: "Botox Treatment",
-            //           clinicName: "Glow Skin Clinic",
-            //           dateTime: "October 20, 3:00 PM",
-            //           treatmentimage: DummyAssets.treatmentimage,
-            //         ),
-            //       );
-            //     },
-            //   ),
-            // ),
-            // SizedBox(height: 25.h),
-            // Padding(
-            //   padding: EdgeInsets.symmetric(horizontal: 30.w),
-            //   child: HeadingWithRightArrow(
-            //     title: "Sculpting & Contouring",
-            //     onTap: () {
-            //       ref
-            //           .read(treatmentViewModel.notifier)
-            //           .setTreatmentMainScreen(value: false);
-            //     },
-            //   ),
-            // ),
-            SizedBox(height: 25.h),
-            Expanded(
-              child: Consumer(
-                builder: (context, ref, _) {
-                  final state = ref.watch(treatmentViewModel);
-                  final isLoading = state.treatmentsLoading;
-                  final treatments = state.treatments;
+      builder: (_, ref, __) {
+        final state = ref.watch(treatmentViewModel);
+        final isLoading = state.treatmentsLoading;
+        final treatments = state.treatments;
 
-                  if (!isLoading && treatments.isEmpty) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      ref.read(treatmentViewModel.notifier).getTreatments();
-                    });
-                  }
+        if (!isLoading && treatments.isEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ref.read(treatmentViewModel.notifier).getTreatments();
+          });
+        }
 
-                  // Show loading indicator
-                  if (isLoading) {
-                    return const AppLoader();
-                  }
+        // Show loading indicator
+        if (isLoading) {
+          return const Center(child: AppLoader());
+        }
 
-                  return AnimationLimiter(
-                    key: const ValueKey('treatments_list'),
-                    child: ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: treatments.length + 1,
-                      itemBuilder: (context, index) {
-                        if (index == treatments.length) {
-                          return SizedBox(height: 60.h);
-                        }
-                        return AnimationConfiguration.staggeredList(
-                          position: index,
-                          duration: const Duration(milliseconds: 800),
-                          child: SlideAnimation(
-                            horizontalOffset: 100.0,
-                            child: FadeInAnimation(
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                  left: 12.w,
-                                  right: 12.w,
-                                ),
-                                child: TreatmentContainer(
-                                  treatments: treatments[index],
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
+        // Apply real-time search filtering
+        final filteredTreatments = treatments.where((treatment) {
+          final name = (treatment.name ?? "").toLowerCase();
+          final desc = (treatment.description ?? "").toLowerCase();
+          return name.contains(widget.searchQuery) || desc.contains(widget.searchQuery);
+        }).toList();
+
+        // Empty Search Results Placeholder
+        if (filteredTreatments.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 40.w),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.search_off_rounded, size: 70.sp, color: Colors.grey.shade400),
+                  SizedBox(height: 15.h),
+                  Text(
+                    "No Treatments Found",
+                    style: CustomFonts.grey800_20w600,
+                  ),
+                  SizedBox(height: 5.h),
+                  Text(
+                    "Try refining your search keyword or checking back later.",
+                    textAlign: TextAlign.center,
+                    style: CustomFonts.textGrey14w400,
+                  ),
+                ],
               ),
             ),
-          ],
+          );
+        }
+
+        return AnimationLimiter(
+          key: const ValueKey('treatments_list_main'),
+          child: ListView.builder(
+            scrollDirection: Axis.vertical,
+            padding: EdgeInsets.symmetric(horizontal: 30.w),
+            physics: const BouncingScrollPhysics(),
+            itemCount: filteredTreatments.length + 1,
+            itemBuilder: (context, index) {
+              if (index == filteredTreatments.length) {
+                return SizedBox(height: 120.h); // Provide padding for floating scan button
+              }
+              return AnimationConfiguration.staggeredList(
+                position: index,
+                duration: const Duration(milliseconds: 600),
+                child: SlideAnimation(
+                  verticalOffset: 50.0,
+                  child: FadeInAnimation(
+                    child: Padding(
+                      padding: EdgeInsets.only(bottom: 16.h),
+                      child: TreatmentContainer(
+                        treatments: filteredTreatments[index],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
         );
       },
     );

@@ -37,6 +37,8 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       appointmentDate: appointmentDate ?? state.appointmentDate,
       appointmentTime: appointmentTime ?? state.appointmentTime,
       capturedImage: capturedImage ?? state.capturedImage,
+      selectedSubAreasList: state.selectedSubAreasList,
+      selectedTreatment: state.selectedTreatment,
     );
   }
 

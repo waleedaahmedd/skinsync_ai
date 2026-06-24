@@ -1,19 +1,24 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../main.dart';
-import '../view_models/auth_view_model.dart';
-import '../view_models/clinlic_doctor_view_model.dart';
-import '../widgets/app_loader.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/custom_clinic_grid_view_title.dart';
+import 'package:skinsync_ai/main.dart';
+import 'package:skinsync_ai/view_models/auth_view_model.dart';
+import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
+import 'package:skinsync_ai/view_models/checkout_view_model.dart';
+import 'package:skinsync_ai/view_models/treatment_view_model.dart';
+import 'package:skinsync_ai/widgets/app_loader.dart';
+import 'package:skinsync_ai/widgets/custom_app_bar.dart';
+import 'package:skinsync_ai/widgets/custom_clinic_grid_view_title.dart';
+import 'package:skinsync_ai/widgets/custom_search_field.dart';
 
 import '../models/responses/get_clinic_response.dart';
 import '../utills/assets.dart';
+import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/enums.dart';
 import 'clinics_detail_screen.dart';
@@ -32,9 +37,19 @@ class ExploreClinicsScreen extends ConsumerStatefulWidget {
 }
 
 class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = "";
+
   @override
   void initState() {
     super.initState();
+    _searchController.addListener(() {
+      setState(() {
+        _searchQuery = _searchController.text.trim();
+      });
+      ref.read(clinicDoctorProvider.notifier).onSearchChanged(_searchController.text);
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (isDeploymentMode) {
         ref.read(clinicDoctorProvider.notifier).fetchClinicsFromMap();
@@ -50,54 +65,182 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final state = ref.watch(clinicDoctorProvider);
     return Scaffold(
-      appBar: const CustomAppBar(showTitle: true, title: "Explore clinics"),
-
+      backgroundColor: CustomColors.whiteColor,
+      appBar: const CustomAppBar(showTitle: true, title: "Explore Clinics"),
       body: Stack(
         children: [
           DefaultTabController(
             length: isDeploymentMode ? 1 : 2,
             child: Column(
               children: [
-                SizedBox(height: 28.h),
+                SizedBox(height: 20.h),
+                // Premium Reusable Search Bar
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30.w),
-                  child: TextField(
-                    style: CustomFonts.black18w400,
-                    decoration: const InputDecoration(
-                      prefixIcon: Icon(Icons.search),
-                      hintText: "Search clinics",
-                    ),
-                    onChanged: ref
-                        .read(clinicDoctorProvider.notifier)
-                        .onSearchChanged,
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: CustomSearchField(
+                    controller: _searchController,
+                    hintText: "Search Clinics...",
                   ),
                 ),
-                SizedBox(height: 15.h),
+
+                // Selected Treatment & Sub-Areas Horizontal Scrollable Chips Row
+                Consumer(
+                  builder: (context, ref, _) {
+                    final checkoutState = ref.watch(checkoutViewModel);
+                    final treatment = checkoutState.selectedTreatment;
+                    final subAreas = checkoutState.selectedSubAreasList;
+
+                    if (treatment == null || subAreas == null || subAreas.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return Container(
+                      height: 38.h,
+                      margin: EdgeInsets.only(top: 12.h),
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        itemCount: subAreas.length,
+                        itemBuilder: (context, index) {
+                          final subArea = subAreas[index];
+                          final chipText = "${treatment.name ?? ''} - ${subArea.name ?? ''}";
+
+                          return Container(
+                            margin: EdgeInsets.only(right: 8.w),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16.r),
+                              gradient: CustomColors.purpleBlueGradient,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: CustomColors.purpleColor.withValues(alpha: 0.25),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16.r),
+                              child: Stack(
+                                children: [
+                                  // 1. White Tint Mask Overlay (Consistent with preview screen chips)
+                                  Positioned.fill(
+                                    child: Container(
+                                      color: Colors.white.withValues(alpha: 0.85),
+                                    ),
+                                  ),
+
+                                  // 2. High-Contrast Content
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.insights_rounded,
+                                          color: CustomColors.purpleColor,
+                                          size: 13.sp,
+                                        ),
+                                        SizedBox(width: 8.w),
+                                        Text(
+                                          chipText,
+                                          style: CustomFonts.black10w600.copyWith(fontSize: 11.sp),
+                                        ),
+                                        SizedBox(width: 8.w),
+                                        // Visual thin line divider
+                                        Container(
+                                          width: 1.w,
+                                          height: 14.h,
+                                          color: Colors.black12,
+                                        ),
+                                        SizedBox(width: 8.w),
+                                        // Clickable Cancel Cross Button
+                                        GestureDetector(
+                                          onTap: () {
+                                            final subAreaId = subArea.id!;
+                                            // 1. Remove from treatmentViewModel
+                                            ref.read(treatmentViewModel.notifier).removeSubArea(subAreaId);
+
+                                            // 2. Sync and update checkoutViewModel (Do not clear entire state, keep parent treatment intact)
+                                            final updatedSubAreas = subAreas.where((e) => e.id != subAreaId).toList();
+                                            final updatedSubAreaIds = updatedSubAreas.map((e) => e.id!).toList();
+
+                                            ref.read(checkoutViewModel.notifier).setSelectedTreatment(
+                                              treatment: treatment,
+                                              selectedSubAreasList: updatedSubAreas,
+                                            );
+                                            ref.read(checkoutViewModel.notifier).updateState(
+                                              treatmentSubAreaId: updatedSubAreaIds,
+                                            );
+
+                                            // 3. Re-fetch clinics with updated sub-area filters
+                                            ref.read(clinicDoctorProvider.notifier).getClinic(
+                                              treatmentId: treatment.id,
+                                              sideAreaIds: updatedSubAreaIds,
+                                            );
+                                          },
+                                          child: Icon(
+                                            Icons.cancel_rounded,
+                                            size: 14.sp,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(height: 16.h),
+
+                // Premium Styled TabBar
                 if (!isDeploymentMode)
-                  TabBar(
-                    onTap: (index) {
-                      if (index == 0) {
-                        ref
-                            .read(clinicDoctorProvider.notifier)
-                            .getClinic(
-                              treatmentId: widget.treatmentId,
-                              sideAreaIds: widget.sideAreaIds,
-                            );
-                      } else {
-                        ref
-                            .read(clinicDoctorProvider.notifier)
-                            .fetchClinicsFromMap();
-                      }
-                    },
-                    tabs: [
-                      if (!isDeploymentMode) const Tab(child: Text('Clinics')),
-                      const Tab(child: Text('Invite Clinics')),
-                    ],
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child: TabBar(
+                      indicatorColor: CustomColors.darkPurple,
+                      indicatorSize: TabBarIndicatorSize.label,
+                      labelColor: Colors.black,
+                      unselectedLabelColor: Colors.grey.shade500,
+                      labelStyle: CustomFonts.black16w600,
+                      unselectedLabelStyle: CustomFonts.grey16w500,
+                      dividerColor: Colors.transparent,
+                      onTap: (index) {
+                        if (index == 0) {
+                          ref
+                              .read(clinicDoctorProvider.notifier)
+                              .getClinic(
+                                treatmentId: widget.treatmentId,
+                                sideAreaIds: widget.sideAreaIds,
+                              );
+                        } else {
+                          ref
+                              .read(clinicDoctorProvider.notifier)
+                              .fetchClinicsFromMap();
+                        }
+                      },
+                      tabs: const [
+                        Tab(text: 'Clinics'),
+                        Tab(text: 'Invite Clinics'),
+                      ],
+                    ),
                   ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 16.h),
 
                 if (state.clinicLoading)
                   const Expanded(child: AppLoader())
@@ -106,12 +249,6 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                     child: TabBarView(
                       physics: const NeverScrollableScrollPhysics(),
                       children: [
-                        // Center(
-                        //   child: Text(
-                        //     "No Clinic Found",
-                        //     style: CustomFonts.black18w600,
-                        //   ),
-                        // ),
                         if (!isDeploymentMode)
                           _buildViewType(
                             ref: ref,
@@ -129,38 +266,51 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
               ],
             ),
           ),
+
+          // Floating Action Button for Map/Grid View Toggle
           if (state.clinicsToInvite.isNotEmpty)
             Positioned(
               left: 0,
               right: 0,
-              bottom: MediaQuery.paddingOf(context).bottom + 10.h,
+              bottom: MediaQuery.paddingOf(context).bottom + 20.h,
               child: Center(
-                child: FloatingActionButton.extended(
-                  onPressed: ref
-                      .read(clinicDoctorProvider.notifier)
-                      .toggleViewType,
-
-                  backgroundColor: Colors.black,
-                  elevation: 6,
-
-                  shape: RoundedRectangleBorder(
+                child: Container(
+                  decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(50.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.15),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-
-                  icon: Image.asset(
-                    switch (state.viewType) {
-                      ViewType.grid => PngAssets.mapIcon,
-                      ViewType.map => PngAssets.syringe,
-                    },
-                    height: 22.h,
-                    width: 22.w,
-                    color: Colors.white, // optional if icon is black
+                  child: FloatingActionButton.extended(
+                    onPressed: ref
+                        .read(clinicDoctorProvider.notifier)
+                        .toggleViewType,
+                    backgroundColor: Colors.black,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50.r),
+                    ),
+                    icon: Image.asset(
+                      switch (state.viewType) {
+                        ViewType.grid => PngAssets.mapIcon,
+                        ViewType.map => PngAssets.syringe,
+                      },
+                      height: 20.h,
+                      width: 20.w,
+                      color: Colors.white,
+                    ),
+                    label: Text(
+                      switch (state.viewType) {
+                        ViewType.grid => "Map View",
+                        ViewType.map => 'Grid View',
+                      },
+                      style: CustomFonts.white16w600,
+                    ),
                   ),
-
-                  label: Text(switch (state.viewType) {
-                    ViewType.grid => "Map View",
-                    ViewType.map => 'Grid View',
-                  }, style: CustomFonts.white18w600),
                 ),
               ),
             ),
@@ -174,19 +324,45 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
     required ViewType viewType,
     required List<Clinic> clinics,
   }) {
+    // Beautiful Empty State Design
     if (clinics.isEmpty) {
       return Center(
-        child: Text("No Clinic Found", style: CustomFonts.black18w600),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 40.w),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.storefront_rounded,
+                size: 64.sp,
+                color: Colors.grey.shade300,
+              ),
+              SizedBox(height: 16.h),
+              Text(
+                "No Clinics Found",
+                style: CustomFonts.grey800_20w600,
+              ),
+              SizedBox(height: 6.h),
+              Text(
+                "Try searching for a different keyword or check back later.",
+                textAlign: TextAlign.center,
+                style: CustomFonts.textGrey14w400,
+              ),
+            ],
+          ),
+        ),
       );
     }
+
     return switch (viewType) {
       ViewType.grid => Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30.w),
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
         child: MasonryGridView.count(
           crossAxisCount: 2,
           itemCount: clinics.length,
-          crossAxisSpacing: 18.w,
-          mainAxisSpacing: 18.h,
+          crossAxisSpacing: 14.w,
+          mainAxisSpacing: 14.h,
+          physics: const BouncingScrollPhysics(),
           itemBuilder: (context, index) {
             return CustomClinicGridViewTile(
               clinicData: clinics[index],

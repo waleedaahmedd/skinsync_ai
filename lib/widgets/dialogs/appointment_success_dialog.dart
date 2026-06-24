@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
-import '../../utills/color_constant.dart';
-import '../../utills/custom_fonts.dart';
+import 'package:skinsync_ai/utills/color_constant.dart';
+import 'package:skinsync_ai/utills/custom_fonts.dart';
 
 void showAppointmentSuccessDialog({
   required BuildContext context,
@@ -15,55 +15,60 @@ void showAppointmentSuccessDialog({
       return Dialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30.r),
+          borderRadius: BorderRadius.circular(24.r),
         ),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(30.r),
-          ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // Beautiful Success Icon with Gradient-like background
               Container(
-                height: 100.h,
-                width: 100.w,
+                height: 72.w,
+                width: 72.w,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: CustomColors.lightBlueColor.withValues(alpha: 0.2),
+                  color: CustomColors.lightBlueColor.withValues(alpha: 0.15),
                 ),
-                child: Icon(
-                  Iconsax.verify5, // Consistent with your icon style
-                  size: 60.sp,
-                  color: CustomColors.blueColor,
+                child: Center(
+                  child: Icon(
+                    Iconsax.verify5, // Consistent with your icon style
+                    size: 40.sp,
+                    color: CustomColors.blueColor,
+                  ),
                 ),
               ),
-              SizedBox(height: 30.h),
-              Text("Success!", style: CustomFonts.black28w600),
+              SizedBox(height: 24.h),
+              Text("Success!", style: CustomFonts.black24w600),
               SizedBox(height: 12.h),
               Text(
-                "Appointment has been created. The clinic will coordinate with you soon!",
+                "Your appointment has been successfully created. The clinic will coordinate with you soon!",
                 textAlign: TextAlign.center,
-                style: CustomFonts.grey18w400,
+                style: CustomFonts.textGrey14w400,
               ),
-              SizedBox(height: 40.h),
+              SizedBox(height: 28.h),
               // Consistent Black Button
               SizedBox(
                 width: double.infinity,
-                height: 60.h,
+                height: 52.h,
                 child: ElevatedButton(
                   onPressed: () {
+                    Navigator.pop(context);
                     if (onDone != null) onDone();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
+                    padding: EdgeInsets.zero, // Zero padding prevents vertical text clipping
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50.r),
+                      borderRadius: BorderRadius.circular(26.r),
                     ),
+                    elevation: 1,
                   ),
-                  child: Text("Great!", style: CustomFonts.white18w600),
+                  child: Text(
+                    "Great!",
+                    style: CustomFonts.white16w600,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
             ],

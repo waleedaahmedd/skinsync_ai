@@ -37,42 +37,42 @@ dependencies:
   flutter_screenutil: ^5.9.3
   shared_preferences: ^2.5.5
   flutter_easyloading: ^3.0.5
-  flutter_secure_storage: ^10.0.0
+  flutter_secure_storage: ^10.3.1
   iconsax: ^0.0.8
-  flutter_svg: ^2.2.4
+  flutter_svg: ^2.3.0
   pinput: ^6.0.2
-  country_picker: ^2.0.27
+  country_picker: ^2.0.28
   camera: ^0.12.0+1
   flutter_glass_morphism: 1.0.2
   local_auth: ^3.0.1
-  image: ^4.8.0
-  dropdown_button2: 2.3.9
+  image: ^4.9.1
+  dropdown_button2: ^3.1.0
   http: ^1.6.0
-  flutter_riverpod: ^3.3.1
+  flutter_riverpod: ^3.3.2
   flutter_staggered_animations: ^1.1.1
-  image_picker: ^1.2.1
+  image_picker: ^1.2.2
   percent_indicator: ^4.2.5
   path_provider: any
   cross_file: any
   intl: ^0.20.2
-  firebase_core: ^4.9.0
+  firebase_core: ^4.11.0
   flutter_staggered_grid_view: ^0.7.0
-  webview_flutter: ^4.13.1
-  permission_handler: ^12.0.2
+  webview_flutter: ^4.14.0
+  permission_handler: ^12.0.3
   google_maps_flutter: ^2.17.1
   location: ^8.0.1
   infinite_scroll_pagination: ^5.1.1
-  firebase_storage: ^13.4.1
+  firebase_storage: ^13.4.3
   device_info_plus: ^13.1.0
   crypto: ^3.0.7
-  firebase_auth: ^6.5.1
+  firebase_auth: ^6.5.4
   google_sign_in: ^7.2.0
-  sign_in_with_apple: ^8.0.0
-  image_gallery_saver_plus: ^4.0.1
+  sign_in_with_apple: ^8.1.0
+  image_gallery_saver_plus: ^5.0.0
   cached_network_image: ^3.4.1
   package_info_plus: ^10.1.0
   glow_container: ^1.0.1
-  firebase_messaging: ^16.3.0
+  before_after: any
 
 dependency_overrides:
   http: ^1.6.0

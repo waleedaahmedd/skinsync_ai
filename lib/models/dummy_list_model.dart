@@ -408,3 +408,391 @@ final List<DummyAppointment> dummyAppointments = [
     type: "Sessions",
   ),
 ];
+
+class CategoryModel {
+  final int id;
+  final String name;
+  final String? icon;
+  final String? image;
+  final String? shortDescription;
+  final int? parentId;
+  final List<CategoryModel> subCategories;
+
+  CategoryModel({
+    required this.id,
+    required this.name,
+    this.icon,
+    this.image,
+    this.shortDescription,
+    this.parentId,
+    this.subCategories = const [],
+  });
+
+  factory CategoryModel.fromJson(Map<String, dynamic> json) {
+    var subList = json['sub_categories'] as List? ?? [];
+    List<CategoryModel> subs = subList.map((e) => CategoryModel.fromJson(e)).toList();
+    return CategoryModel(
+      id: json['id'],
+      name: json['name'],
+      icon: json['icon'],
+      image: json['image'],
+      shortDescription: json['short_description'],
+      parentId: json['parent_id'],
+      subCategories: subs,
+    );
+  }
+}
+
+final List<CategoryModel> dummyCategories = [
+  CategoryModel(
+    id: 1,
+    name: "Aesthetics",
+    icon: "face",
+    image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+    shortDescription: "Advanced facials, medical skin peels, and glow therapies.",
+    parentId: null,
+    subCategories: [
+      CategoryModel(
+        id: 10,
+        name: "Facial Aesthetics",
+        icon: "face",
+        image: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Signature dermaplaning, laser, and microdermabrasion.",
+        parentId: 1,
+        subCategories: [
+          CategoryModel(
+            id: 101,
+            name: "Chemical Peels",
+            icon: "peel",
+            image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Target hyperpigmentation and skin texture flaws.",
+            parentId: 10,
+            subCategories: [],
+          ),
+          CategoryModel(
+            id: 102,
+            name: "Hydrafacials",
+            icon: "water",
+            image: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Intense hydration and deep pore vortex cleansing.",
+            parentId: 10,
+            subCategories: [],
+          ),
+        ],
+      ),
+      CategoryModel(
+        id: 11,
+        name: "Body Aesthetics",
+        icon: "accessibility",
+        image: "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Non-surgical skin tightening and cellulite contouring.",
+        parentId: 1,
+        subCategories: [
+          CategoryModel(
+            id: 111,
+            name: "CoolSculpting",
+            icon: "ac_unit",
+            image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Freeze stubborn fat cells safely and permanently.",
+            parentId: 11,
+            subCategories: [],
+          ),
+        ],
+      ),
+    ],
+  ),
+  CategoryModel(
+    id: 2,
+    name: "Injectables",
+    icon: "syringe",
+    image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=800",
+    shortDescription: "High-end dermal fillers, collagen boosters, and anti-aging injections.",
+    parentId: null,
+    subCategories: [
+      CategoryModel(
+        id: 20,
+        name: "Dermal Fillers",
+        icon: "medical_services",
+        image: "https://images.unsplash.com/photo-15122909023902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Hyaluronic acid-based structural volumization.",
+        parentId: 2,
+        subCategories: [
+          CategoryModel(
+            id: 201,
+            name: "Lip Fillers",
+            icon: "lips",
+            image: "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Plump, hydrate, and define your lip contour.",
+            parentId: 20,
+            subCategories: [],
+          ),
+          CategoryModel(
+            id: 202,
+            name: "Cheek Fillers",
+            icon: "face",
+            image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Lift cheekbones and restore youthful mid-face volume.",
+            parentId: 20,
+            subCategories: [],
+          ),
+        ],
+      ),
+      CategoryModel(
+        id: 21,
+        name: "Mesotherapy",
+        icon: "spa",
+        image: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Micro-injections of custom medical vitamin cocktails.",
+        parentId: 2,
+        subCategories: [],
+      ),
+    ],
+  ),
+  CategoryModel(
+    id: 3,
+    name: "Neurotoxins",
+    icon: "health_and_safety",
+    image: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?auto=format&fit=crop&q=80&w=800",
+    shortDescription: "Wrinkle relaxers, frown line injections, and botulinum therapies.",
+    parentId: null,
+    subCategories: [
+      CategoryModel(
+        id: 30,
+        name: "Botox Cosmetics",
+        icon: "science",
+        image: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Frown lines, forehead wrinkles, and crow's feet relaxation.",
+        parentId: 3,
+        subCategories: [
+          CategoryModel(
+            id: 301,
+            name: "Forehead Botox",
+            icon: "spa",
+            image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Smooth persistent horizontal forehead expression lines.",
+            parentId: 30,
+            subCategories: [],
+          ),
+          CategoryModel(
+            id: 302,
+            name: "Crow's Feet Botox",
+            icon: "remove_red_eye",
+            image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Soften fine laughter lines around your eye zone.",
+            parentId: 30,
+            subCategories: [],
+          ),
+        ],
+      ),
+      CategoryModel(
+        id: 31,
+        name: "Dysport Injections",
+        icon: "vaccines",
+        image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Fast-acting frown line smoothing with natural finish.",
+        parentId: 3,
+        subCategories: [],
+      ),
+    ],
+  ),
+];
+
+class DummyAreaModel {
+  final int id;
+  final String name;
+  final String? image;
+  final String? shortDescription;
+  final int? parentId;
+  final List<DummyAreaModel> subAreas;
+
+  DummyAreaModel({
+    required this.id,
+    required this.name,
+    this.image,
+    this.shortDescription,
+    this.parentId,
+    this.subAreas = const [],
+  });
+}
+
+final List<DummyAreaModel> dummyAreas = [
+  DummyAreaModel(
+    id: 1,
+    name: "Face",
+    image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+    shortDescription: "Explore treatments targeting specific facial muscles and zones.",
+    parentId: null,
+    subAreas: [
+      DummyAreaModel(
+        id: 11,
+        name: "Upper Face",
+        image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Forehead, frown lines, temples, and brow lifts.",
+        parentId: 1,
+        subAreas: [
+          DummyAreaModel(
+            id: 111,
+            name: "Forehead",
+            image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Horizontal lines and forehead skin rejuvenation.",
+            parentId: 11,
+          ),
+          DummyAreaModel(
+            id: 112,
+            name: "Frown Lines",
+            image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Relax persistence eleven lines between the eyebrows.",
+            parentId: 11,
+          ),
+          DummyAreaModel(
+            id: 113,
+            name: "Temples",
+            image: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Restore lost volume in temporal hollows.",
+            parentId: 11,
+          ),
+        ],
+      ),
+      DummyAreaModel(
+        id: 12,
+        name: "Middle Face",
+        image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Under-eye area, cheeks, and nasolabial folds.",
+        parentId: 1,
+        subAreas: [
+          DummyAreaModel(
+            id: 121,
+            name: "Cheeks",
+            image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Lift and volume restoration for structural definition.",
+            parentId: 12,
+          ),
+          DummyAreaModel(
+            id: 122,
+            name: "Tear Troughs",
+            image: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Treat tired under-eye bags and hollows.",
+            parentId: 12,
+          ),
+          DummyAreaModel(
+            id: 123,
+            name: "Nasolabial Folds",
+            image: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Soften laugh lines extending from nose to mouth.",
+            parentId: 12,
+          ),
+        ],
+      ),
+      DummyAreaModel(
+        id: 13,
+        name: "Lower Face",
+        image: "https://movelmedspa.com/storage/2024/05/Cheek-Filler-Treatment-at-Movel-Med-Spa.webp",
+        shortDescription: "Lips, chin, jawline definition, and mouth corners.",
+        parentId: 1,
+        subAreas: [
+          DummyAreaModel(
+            id: 131,
+            name: "Lips",
+            image: "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Volumize, hydrate, and contour lips.",
+            parentId: 13,
+          ),
+          DummyAreaModel(
+            id: 132,
+            name: "Jawline",
+            image: "https://movelmedspa.com/storage/2024/05/Cheek-Filler-Treatment-at-Movel-Med-Spa.webp",
+            shortDescription: "Sharpen jawline angle and tighten jowls.",
+            parentId: 13,
+          ),
+          DummyAreaModel(
+            id: 133,
+            name: "Chin",
+            image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Elongate chin projection and balance facial symmetry.",
+            parentId: 13,
+          ),
+        ],
+      ),
+    ],
+  ),
+  DummyAreaModel(
+    id: 2,
+    name: "Body",
+    image: "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
+    shortDescription: "Treatments covering arms, neck, chest, abdomen, and legs.",
+    parentId: null,
+    subAreas: [
+      DummyAreaModel(
+        id: 21,
+        name: "Upper Body",
+        image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Neck bands, shoulders, decolletage, and chest.",
+        parentId: 2,
+        subAreas: [
+          DummyAreaModel(
+            id: 211,
+            name: "Neck",
+            image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Tighten horizontal neck rings and skin sag.",
+            parentId: 21,
+          ),
+          DummyAreaModel(
+            id: 212,
+            name: "Shoulders",
+            image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Laser treatment and sculpting on the shoulder zone.",
+            parentId: 21,
+          ),
+        ],
+      ),
+      DummyAreaModel(
+        id: 22,
+        name: "Middle Body",
+        image: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Abdomen contouring, flank fat freezing, and upper arms.",
+        parentId: 2,
+        subAreas: [
+          DummyAreaModel(
+            id: 221,
+            name: "Abdomen",
+            image: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Fat reduction and muscle toning for stomach area.",
+            parentId: 22,
+          ),
+          DummyAreaModel(
+            id: 222,
+            name: "Upper Arms",
+            image: "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Tighten batwing arms and contour upper arm fat.",
+            parentId: 22,
+          ),
+        ],
+      ),
+      DummyAreaModel(
+        id: 23,
+        name: "Lower Body",
+        image: "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
+        shortDescription: "Thighs tightening, buttocks contouring, and lower legs.",
+        parentId: 2,
+        subAreas: [
+          DummyAreaModel(
+            id: 231,
+            name: "Thighs",
+            image: "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Cellulite reduction and inner/outer thigh tightening.",
+            parentId: 23,
+          ),
+          DummyAreaModel(
+            id: 232,
+            name: "Lower Legs",
+            image: "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
+            shortDescription: "Laser hair removal and capillary vein therapies.",
+            parentId: 23,
+          ),
+        ],
+      ),
+    ],
+  ),
+];
+
+

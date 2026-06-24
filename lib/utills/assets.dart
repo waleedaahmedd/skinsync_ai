@@ -24,6 +24,9 @@ class PngAssets {
   static const String mapIcon = '${_assets}map_icon.png';
   static const String customMarker = '${_assets}custom_marker.png';
   static const String biometricImage = '${_assets}biometric_image.png';
+  static const String treatmentAll = '${_assets}treatment_all.png';
+  static const String treatmentCategories = '${_assets}treatment_categories.png';
+  static const String treatmentAreas = '${_assets}treatment_areas.png';
 }
 
 class SvgAssets {
