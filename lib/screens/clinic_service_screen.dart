@@ -10,6 +10,7 @@ import '../models/responses/get_clinic_response.dart';
 import '../models/responses/get_doctor_response.dart';
 import '../view_models/clinlic_doctor_view_model.dart';
 import '../widgets/app_loader.dart';
+import 'package:skinsync_ai/widgets/app_network_image.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/time_container.dart';
 import '../widgets/treatment_price_container.dart';
@@ -485,14 +486,12 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
             children: [
               ClipOval(
                 clipBehavior: Clip.antiAliasWithSaveLayer,
-                child: Image.network(
-                  doctor.image ?? "",
+                child: AppNetworkImage(
+                  imageUrl: doctor.image ?? "",
                   fit: BoxFit.cover,
                   height: 57.67.w,
                   width: 58.39.w,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Icon(Icons.broken_image, size: 57.sp);
-                  },
+                  errorIconSize: 57.sp,
                 ),
               ),
               SizedBox(height: 6.23.h),

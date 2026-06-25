@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:skinsync_ai/models/dummy_list_model.dart';
+import 'package:skinsync_ai/models/responses/treatment_category_list_response.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/view_models/treatment_category_view_model.dart';
+import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 
-class TreatmentCategoryScreen extends StatelessWidget {
-  final List<CategoryModel> categories;
+  class TreatmentCategoryScreen extends ConsumerStatefulWidget {
+  final List<TreatmentCategoryModel>? categories;
   final String title;
   final String selectionPath; // Path of selected categories
 
   const TreatmentCategoryScreen({
     super.key,
-    required this.categories,
+    this.categories,
     required this.title,
     this.selectionPath = "Categories", // Defaults to root path
   });
@@ -22,7 +25,28 @@ class TreatmentCategoryScreen extends StatelessWidget {
   static const String routeName = '/TreatmentCategoryScreen';
 
   @override
+  ConsumerState<TreatmentCategoryScreen> createState() => _TreatmentCategoryScreenState();
+}
+
+class _TreatmentCategoryScreenState extends ConsumerState<TreatmentCategoryScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Only fetch if we are at the root level / no categories were passed
+    if (widget.categories == null || widget.categories!.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(treatmentCategoryProvider.notifier).fetchCategories();
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final viewModel = ref.watch(treatmentCategoryProvider);
+    final displayedCategories = (widget.categories != null && widget.categories!.isNotEmpty)
+        ? widget.categories!
+        : viewModel.categories;
+
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       body: SafeArea(
@@ -56,7 +80,7 @@ class TreatmentCategoryScreen extends StatelessWidget {
                       SizedBox(width: 15.w),
                       Expanded(
                         child: Text(
-                          title,
+                          widget.title,
                           style: CustomFonts.black24w600,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -95,7 +119,7 @@ class TreatmentCategoryScreen extends StatelessWidget {
                         SizedBox(width: 8.w),
                         Expanded(
                           child: Text(
-                            selectionPath,
+                            widget.selectionPath,
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w500,
@@ -116,64 +140,67 @@ class TreatmentCategoryScreen extends StatelessWidget {
 
             // Category Listing using Reusable Adaptive TreatmentContainer
             Expanded(
-              child: categories.isEmpty
-                  ? _buildEmptyResultsPlaceholder()
-                  : AnimationLimiter(
-                      key: ValueKey('category_list_$title'),
-                      child: ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        padding: EdgeInsets.symmetric(horizontal: 30.w),
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: categories.length + 1,
-                        itemBuilder: (context, index) {
-                          if (index == categories.length) {
-                            return SizedBox(height: 110.h); // Provide padding for floating items
-                          }
+              child: viewModel.loading && displayedCategories.isEmpty
+                  ? const AppLoader()
+                  : displayedCategories.isEmpty
+                      ? _buildEmptyResultsPlaceholder()
+                      : AnimationLimiter(
+                          key: ValueKey('category_list_${widget.title}'),
+                          child: ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            padding: EdgeInsets.symmetric(horizontal: 30.w),
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: displayedCategories.length + 1,
+                            itemBuilder: (context, index) {
+                              if (index == displayedCategories.length) {
+                                return SizedBox(height: 110.h); // Provide padding for floating items
+                              }
 
-                          final category = categories[index];
+                              final category = displayedCategories[index];
 
-                          return AnimationConfiguration.staggeredList(
-                            position: index,
-                            duration: const Duration(milliseconds: 600),
-                            child: SlideAnimation(
-                              verticalOffset: 50.0,
-                              child: FadeInAnimation(
-                                child: Padding(
-                                  padding: EdgeInsets.only(bottom: 16.h),
-                                  child: TreatmentContainer(
-                                    customTitle: category.name,
-                                    customSubtitle: category.shortDescription ?? "",
-                                    customImageUrl: category.image ?? "",
-                                    customOnTap: () {
-                                      if (category.subCategories.isNotEmpty) {
-                                        // Recursively open another category screen with appended path
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => TreatmentCategoryScreen(
-                                              categories: category.subCategories,
-                                              title: category.name,
-                                              selectionPath: "$selectionPath  ▸  ${category.name}",
-                                            ),
-                                          ),
-                                        );
-                                      } else {
-                                        // If no children (leaf node), open the Treatment Screen!
-                                        Navigator.pushNamed(
-                                          context,
-                                          TreatmentsScreen.routeName,
-                                          arguments: 'all',
-                                        );
-                                      }
-                                    },
+                              return AnimationConfiguration.staggeredList(
+                                position: index,
+                                duration: const Duration(milliseconds: 600),
+                                child: SlideAnimation(
+                                  verticalOffset: 50.0,
+                                  child: FadeInAnimation(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(bottom: 16.h),
+                                      child: TreatmentContainer(
+                                        customTitle: category.name,
+                                        customSubtitle: category.shortDescription ?? "",
+                                        customImageUrl: category.image ?? "",
+                                        customIcon: category.icon ?? "",
+                                        customOnTap: () {
+                                          if (category.subCategories != null && category.subCategories!.isNotEmpty) {
+                                            // Recursively open another category screen with appended path
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => TreatmentCategoryScreen(
+                                                  categories: category.subCategories,
+                                                  title: category.name ?? "",
+                                                  selectionPath: "${widget.selectionPath}  ▸  ${category.name}",
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            // If no children (leaf node), open the Treatment Screen!
+                                            Navigator.pushNamed(
+                                              context,
+                                              TreatmentsScreen.routeName,
+                                              arguments: 'all',
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                              );
+                            },
+                          ),
+                        ),
             ),
           ],
         ),

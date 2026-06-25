@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
+import 'package:skinsync_ai/widgets/app_network_image.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/phone_widget.dart';
 import 'package:skinsync_ai/widgets/custom_button.dart';
@@ -158,8 +159,8 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                                   height: 90.w,
                                   width: 90.w,
                                 )
-                              : Image.network(
-                                  ref
+                              : AppNetworkImage(
+                                  imageUrl: ref
                                           .read(authViewModel)
                                           .authResponse
                                           ?.data
@@ -169,20 +170,9 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                                   fit: BoxFit.cover,
                                   height: 90.w,
                                   width: 90.w,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      height: 90.w,
-                                      width: 90.w,
-                                      color: Colors.grey.shade100,
-                                      child: Center(
-                                        child: Icon(
-                                          Icons.person_outline_rounded,
-                                          size: 40.sp,
-                                          color: Colors.grey.shade400,
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                  errorIcon: Icons.person_outline_rounded,
+                                  errorIconSize: 40.sp,
+                                  errorIconColor: Colors.grey.shade400,
                                 ),
                         ),
                       ),

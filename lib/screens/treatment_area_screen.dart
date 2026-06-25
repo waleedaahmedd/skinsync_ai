@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:skinsync_ai/models/dummy_list_model.dart';
+import 'package:skinsync_ai/models/responses/treatment_area_list_response.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/view_models/treatment_area_view_model.dart';
+import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 
-class TreatmentAreaScreen extends StatelessWidget {
-  final List<DummyAreaModel> areas;
+class TreatmentAreaScreen extends ConsumerStatefulWidget {
+  final List<TreatmentAreaModel>? areas;
   final String title;
   final String selectionPath; // Path of selected focus areas
 
   const TreatmentAreaScreen({
     super.key,
-    required this.areas,
+    this.areas,
     required this.title,
     this.selectionPath = "Focus Areas", // Defaults to root path
   });
@@ -22,7 +25,28 @@ class TreatmentAreaScreen extends StatelessWidget {
   static const String routeName = '/TreatmentAreaScreen';
 
   @override
+  ConsumerState<TreatmentAreaScreen> createState() => _TreatmentAreaScreenState();
+}
+
+class _TreatmentAreaScreenState extends ConsumerState<TreatmentAreaScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Only fetch if we are at the root level / no areas were passed
+    if (widget.areas == null || widget.areas!.isEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(treatmentAreaProvider.notifier).fetchAreas();
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final viewModel = ref.watch(treatmentAreaProvider);
+    final displayedAreas = (widget.areas != null && widget.areas!.isNotEmpty)
+        ? widget.areas!
+        : viewModel.areas;
+
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       body: SafeArea(
@@ -56,7 +80,7 @@ class TreatmentAreaScreen extends StatelessWidget {
                       SizedBox(width: 15.w),
                       Expanded(
                         child: Text(
-                          title,
+                          widget.title,
                           style: CustomFonts.black24w600,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -95,7 +119,7 @@ class TreatmentAreaScreen extends StatelessWidget {
                         SizedBox(width: 8.w),
                         Expanded(
                           child: Text(
-                            selectionPath,
+                            widget.selectionPath,
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w500,
@@ -116,64 +140,67 @@ class TreatmentAreaScreen extends StatelessWidget {
 
             // Focus Area Listing using Reusable Adaptive TreatmentContainer
             Expanded(
-              child: areas.isEmpty
-                  ? _buildEmptyResultsPlaceholder()
-                  : AnimationLimiter(
-                      key: ValueKey('area_list_$title'),
-                      child: ListView.builder(
-                        scrollDirection: Axis.vertical,
-                        padding: EdgeInsets.symmetric(horizontal: 30.w),
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: areas.length + 1,
-                        itemBuilder: (context, index) {
-                          if (index == areas.length) {
-                            return SizedBox(height: 110.h); // Provide padding for floating items
-                          }
+              child: viewModel.loading && displayedAreas.isEmpty
+                  ? const AppLoader()
+                  : displayedAreas.isEmpty
+                      ? _buildEmptyResultsPlaceholder()
+                      : AnimationLimiter(
+                          key: ValueKey('area_list_${widget.title}'),
+                          child: ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            padding: EdgeInsets.symmetric(horizontal: 30.w),
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: displayedAreas.length + 1,
+                            itemBuilder: (context, index) {
+                              if (index == displayedAreas.length) {
+                                return SizedBox(height: 110.h); // Provide padding for floating items
+                              }
 
-                          final area = areas[index];
+                              final area = displayedAreas[index];
 
-                          return AnimationConfiguration.staggeredList(
-                            position: index,
-                            duration: const Duration(milliseconds: 600),
-                            child: SlideAnimation(
-                              verticalOffset: 50.0,
-                              child: FadeInAnimation(
-                                child: Padding(
-                                  padding: EdgeInsets.only(bottom: 16.h),
-                                  child: TreatmentContainer(
-                                    customTitle: area.name,
-                                    customSubtitle: area.shortDescription ?? "",
-                                    customImageUrl: area.image ?? "",
-                                    customOnTap: () {
-                                      if (area.subAreas.isNotEmpty) {
-                                        // Recursively open another area screen with appended path
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => TreatmentAreaScreen(
-                                              areas: area.subAreas,
-                                              title: area.name,
-                                              selectionPath: "$selectionPath  ▸  ${area.name}",
-                                            ),
-                                          ),
-                                        );
-                                      } else {
-                                        // If no children (leaf node), open the Treatments Screen!
-                                        Navigator.pushNamed(
-                                          context,
-                                          TreatmentsScreen.routeName,
-                                          arguments: 'all',
-                                        );
-                                      }
-                                    },
+                              return AnimationConfiguration.staggeredList(
+                                position: index,
+                                duration: const Duration(milliseconds: 600),
+                                child: SlideAnimation(
+                                  verticalOffset: 50.0,
+                                  child: FadeInAnimation(
+                                    child: Padding(
+                                      padding: EdgeInsets.only(bottom: 16.h),
+                                      child: TreatmentContainer(
+                                        customTitle: area.name,
+                                        customSubtitle: area.globalSku ?? "",
+                                        customImageUrl: area.image ?? "",
+                                        customIcon: area.icon ?? "",
+                                        customOnTap: () {
+                                          if (area.subAreas != null && area.subAreas!.isNotEmpty) {
+                                            // Recursively open another area screen with appended path
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) => TreatmentAreaScreen(
+                                                  areas: area.subAreas,
+                                                  title: area.name ?? "",
+                                                  selectionPath: "${widget.selectionPath}  ▸  ${area.name}",
+                                                ),
+                                              ),
+                                            );
+                                          } else {
+                                            // If no children (leaf node), open the Treatments Screen!
+                                            Navigator.pushNamed(
+                                              context,
+                                              TreatmentsScreen.routeName,
+                                              arguments: 'all',
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                              );
+                            },
+                          ),
+                        ),
             ),
           ],
         ),
