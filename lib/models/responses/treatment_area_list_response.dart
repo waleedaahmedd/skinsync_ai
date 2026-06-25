@@ -1,6 +1,8 @@
 import 'base_response_model.dart';
 
 typedef BaseApiResponseModel = BaseResponseModel;
+typedef AreaListResponse = TreatmentAreaListResponse;
+typedef AreaData = TreatmentAreaModel;
 
 class TreatmentAreaListResponse extends BaseApiResponseModel {
   List<TreatmentAreaModel>? data;

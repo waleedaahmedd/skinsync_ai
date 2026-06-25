@@ -11,6 +11,8 @@ import '../models/requests/save_history_request.dart';
 import '../models/responses/simulation_history_response.dart';
 import '../models/responses/treatment_area_response.dart';
 import '../models/responses/treatment_response_model.dart';
+import 'dart:async';
+import '../models/responses/treatment_list_response.dart';
 import '../models/responses/treatment_sub_area_response.dart';
 import '../repositories/treatment_repository.dart';
 import '../services/api_base_helper.dart';
@@ -207,16 +209,113 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     );
   }
 
-  Future<bool?> getTreatments() async {
-    state = state.copyWith(treatmentsLoading: true);
-    return await runSafely(() async {
-      final response = await _repo.getTreatmentsApi();
-      state = state.copyWith(
-        treatmentsLoading: false,
-        treatments: response.data,
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  Future<void> loadTreatments({
+    int? categoryId,
+    int? areaId,
+    bool clearSearch = false,
+    bool? isSimulator,
+  }) async {
+    state = state.copyWith(
+      isLoading: true,
+      treatmentsLoading: true,
+      errorMessage: null,
+      currentPage: 1,
+      categoryId: categoryId,
+      areaId: areaId,
+      isSimulator: isSimulator,
+      searchQuery: clearSearch ? "" : state.searchQuery,
+      treatments: [],
+    );
+
+    await runSafely(() async {
+      final response = await _repo.getTreatments(
+        search: state.searchQuery.isEmpty ? null : state.searchQuery,
+        categoryId: state.categoryId,
+        areaId: state.areaId,
+        page: 1,
+        limit: 10,
+        isSimulator: state.isSimulator,
       );
-      return response.status == true;
+
+      final hasMore = (response.page ?? 1) < (response.totalPages ?? 1);
+      state = state.copyWith(
+        isLoading: false,
+        treatmentsLoading: false,
+        treatments: response.data ?? [],
+        currentPage: response.page ?? 1,
+        totalPages: response.totalPages ?? 1,
+        hasMoreData: hasMore,
+      );
     });
+  }
+
+  Future<void> loadMoreTreatments() async {
+    if (state.isLoadingMore || !state.hasMoreData) return;
+
+    state = state.copyWith(isLoadingMore: true);
+
+    await runSafely(() async {
+      final nextPage = state.currentPage + 1;
+      final response = await _repo.getTreatments(
+        search: state.searchQuery.isEmpty ? null : state.searchQuery,
+        categoryId: state.categoryId,
+        areaId: state.areaId,
+        page: nextPage,
+        limit: 10,
+        isSimulator: state.isSimulator,
+      );
+
+      final hasMore = (response.page ?? nextPage) < (response.totalPages ?? 1);
+      final List<TreatmentData> updatedTreatments = [
+        ...state.treatments,
+        ...(response.data ?? []),
+      ];
+
+      state = state.copyWith(
+        isLoadingMore: false,
+        treatments: updatedTreatments,
+        currentPage: response.page ?? nextPage,
+        totalPages: response.totalPages ?? 1,
+        hasMoreData: hasMore,
+      );
+    });
+  }
+
+  Future<void> refreshTreatments() async {
+    await loadTreatments(
+      categoryId: state.categoryId,
+      areaId: state.areaId,
+      isSimulator: state.isSimulator,
+    );
+  }
+
+  void searchTreatments(String query) {
+    state = state.copyWith(searchQuery: query);
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      loadTreatments(
+        categoryId: state.categoryId,
+        areaId: state.areaId,
+        isSimulator: state.isSimulator,
+      );
+    });
+  }
+
+  Future<bool?> getTreatments({bool? isSimulator}) async {
+    await loadTreatments(
+      categoryId: state.categoryId,
+      areaId: state.areaId,
+      isSimulator: isSimulator,
+    );
+    return !state.isLoading;
   }
 
   XFile? get _imageForPredict => //state.aiImage ??
@@ -425,7 +524,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
 @immutable
 class TreatmentsState extends BaseStateModel {
-  final List<TreatmentsModel> treatments;
+  final List<TreatmentData> treatments;
   final TreatmentSubAreaResponse? treatmentsSubAreaResponse;
   final TreatmentAreaResponse? treatmentAreaResponse;
   final bool treatmentsLoading;
@@ -440,6 +539,17 @@ class TreatmentsState extends BaseStateModel {
   final XFile? capturedImage;
   final XFile? aiImage;
   final bool isAiImageGenerated;
+
+  // New fields for Treatment Listing API migration
+  final bool isLoading;
+  final bool isLoadingMore;
+  final bool hasMoreData;
+  final int currentPage;
+  final int totalPages;
+  final String searchQuery;
+  final int? categoryId;
+  final int? areaId;
+  final bool? isSimulator;
 
   const TreatmentsState({
     super.loading = false,
@@ -457,13 +567,22 @@ class TreatmentsState extends BaseStateModel {
     this.capturedImage,
     this.aiImage,
     this.isAiImageGenerated = false,
+    this.isLoading = false,
+    this.isLoadingMore = false,
+    this.hasMoreData = false,
+    this.currentPage = 1,
+    this.totalPages = 1,
+    this.searchQuery = "",
+    this.categoryId,
+    this.areaId,
+    this.isSimulator,
   });
 
   @override
   TreatmentsState copyWith({
     bool? loading,
     String? errorMessage,
-    List<TreatmentsModel>? treatments,
+    List<TreatmentData>? treatments,
     TreatmentSubAreaResponse? subSelectionResponse,
     TreatmentAreaResponse? treatmentAreaResponse,
     bool? treatmentsLoading,
@@ -481,6 +600,17 @@ class TreatmentsState extends BaseStateModel {
     bool clearSubSectionIds = false,
     bool clearAiImage = false,
     bool? isAiImageGenerated,
+    bool? isLoading,
+    bool? isLoadingMore,
+    bool? hasMoreData,
+    int? currentPage,
+    int? totalPages,
+    String? searchQuery,
+    int? categoryId,
+    int? areaId,
+    bool clearCategoryId = false,
+    bool clearAreaId = false,
+    bool? isSimulator,
   }) {
     return TreatmentsState(
       loading: loading ?? this.loading,
@@ -505,6 +635,15 @@ class TreatmentsState extends BaseStateModel {
       capturedImage: capturedImage ?? this.capturedImage,
       aiImage: clearAiImage ? null : (aiImage ?? this.aiImage),
       isAiImageGenerated: isAiImageGenerated ?? this.isAiImageGenerated,
+      isLoading: isLoading ?? this.isLoading,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      hasMoreData: hasMoreData ?? this.hasMoreData,
+      currentPage: currentPage ?? this.currentPage,
+      totalPages: totalPages ?? this.totalPages,
+      searchQuery: searchQuery ?? this.searchQuery,
+      categoryId: clearCategoryId ? null : (categoryId ?? this.categoryId),
+      areaId: clearAreaId ? null : (areaId ?? this.areaId),
+      isSimulator: isSimulator ?? this.isSimulator,
     );
   }
 }

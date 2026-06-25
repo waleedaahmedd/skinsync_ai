@@ -212,9 +212,18 @@ class RouteGenerator {
           builder: (_) => AdditionalInfoScreen(),
         );
       case TreatmentsScreen.routeName:
+        int? categoryId;
+        int? areaId;
+        if (args is Map<String, dynamic>) {
+          categoryId = args['categoryId'] as int?;
+          areaId = args['areaId'] as int?;
+        }
         return MaterialPageRoute(
           settings: RouteSettings(name: TreatmentsScreen.routeName),
-          builder: (_) => TreatmentsScreen(),
+          builder: (_) => TreatmentsScreen(
+            categoryId: categoryId,
+            areaId: areaId,
+          ),
         );
       case TreatmentSelectionScreen.routeName:
         return MaterialPageRoute(

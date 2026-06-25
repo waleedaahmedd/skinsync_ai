@@ -189,7 +189,9 @@ class _TreatmentCategoryScreenState extends ConsumerState<TreatmentCategoryScree
                                             Navigator.pushNamed(
                                               context,
                                               TreatmentsScreen.routeName,
-                                              arguments: 'all',
+                                              arguments: {
+                                                'categoryId': category.id,
+                                              },
                                             );
                                           }
                                         },

@@ -189,7 +189,9 @@ class _TreatmentAreaScreenState extends ConsumerState<TreatmentAreaScreen> {
                                             Navigator.pushNamed(
                                               context,
                                               TreatmentsScreen.routeName,
-                                              arguments: 'all',
+                                              arguments: {
+                                                'areaId': area.id,
+                                              },
                                             );
                                           }
                                         },

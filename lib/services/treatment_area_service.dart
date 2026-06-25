@@ -26,4 +26,22 @@ class TreatmentAreaService implements TreatmentAreaRepository {
       );
     }
   }
+
+  @override
+  Future<AreaListResponse> getAreasByTreatment(int treatmentId) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.areas,
+      requestType: 'GET',
+      params: '?treatment_id=$treatmentId',
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      return AreaListResponse.fromJson(parsed);
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(
+        AreaListResponse.fromJson(parsed).message ?? "Failed to fetch target areas",
+      );
+    }
+  }
 }

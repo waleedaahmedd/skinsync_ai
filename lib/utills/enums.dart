@@ -20,7 +20,7 @@ enum LoginProviders {
 }
 
 enum EndPoints {
-  getTreatments('treatments/masters'),
+  treatmentList('treatments/list'),
   treatments("treatments"),
 
   signIn('login'),

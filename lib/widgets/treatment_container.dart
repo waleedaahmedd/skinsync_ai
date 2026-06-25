@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
+import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
@@ -10,6 +11,7 @@ import 'package:skinsync_ai/widgets/scan_face_dialog.dart';
 
 import '../main.dart';
 import '../models/responses/treatment_response_model.dart';
+import '../models/responses/treatment_list_response.dart';
 import '../view_models/checkout_view_model.dart';
 
 class TreatmentContainer extends StatelessWidget {
@@ -37,8 +39,6 @@ class TreatmentContainer extends StatelessWidget {
   });
 
   Widget? _buildLeftIcon(String? iconKey) {
-    if (iconKey == null || iconKey.isEmpty) return null;
-
     // 1. If it's a network image URL, render it cleanly via AppNetworkImage
       return Container(
         margin: EdgeInsets.only(bottom: 4.h),
@@ -53,11 +53,12 @@ class TreatmentContainer extends StatelessWidget {
           ],
         ),
         child: AppNetworkImage(
-          imageUrl: iconKey,
+          imageUrl: iconKey ?? '',
           width: 38.w,
           height: 38.w,
           fit: BoxFit.cover,
           borderRadius: BorderRadius.circular(10.r),
+          errorIcon: Icons.broken_image,
         ),
       );
   }
@@ -66,11 +67,16 @@ class TreatmentContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
+        final isTreatmentData = treatments is TreatmentData;
+        final treatmentData = isTreatmentData ? treatments as TreatmentData : null;
+
         final titleText = customTitle ?? treatments?.name ?? "";
-        final subtitleText = customSubtitle ?? treatments?.description ?? "";
-        final bgImage = customImageUrl??'';
+        final subtitleText = customSubtitle ?? treatmentData?.shortDescription ?? treatments?.description ?? "";
+        final bgImage = customImageUrl ?? treatmentData?.image ?? treatments?.imageUrl ?? "";
         final iconKey = customIcon ?? treatments?.icon ?? "";
         final iconWidget = _buildLeftIcon(iconKey);
+        final globalSku = treatmentData?.globalSku ?? "";
+        final useInAiSimulator = treatmentData?.useInAiSimulator ?? false;
 
         return GestureDetector(
           onTap: customOnTap ?? () {
@@ -89,7 +95,18 @@ class TreatmentContainer extends StatelessWidget {
                     isCallPredictAPI: false,
                   );
             }
-            showMScanFaceDialog(context);
+            if (useInAiSimulator) {
+              showMScanFaceDialog(context);
+            } else {
+              Navigator.pushNamed(
+                context,
+                ExploreClinicsScreen.routeName,
+                arguments: {
+                  'treatmentId': treatments!.id,
+                  'sideAreaIds': <int>[],
+                },
+              );
+            }
           },
           child: Container(
             height: imageHeight ?? 300.h,
@@ -191,6 +208,19 @@ class TreatmentContainer extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
+                                if (globalSku.isNotEmpty) ...[
+                                  SizedBox(height: 6.h),
+                                  Text(
+                                    "SKU: $globalSku",
+                                    style: CustomFonts.grey12w400.copyWith(
+                                      fontSize: 10.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ],
                             ),
                           ),
@@ -231,6 +261,47 @@ class TreatmentContainer extends StatelessWidget {
                       top: 12.h,
                       left: 12.w,
                       child: iconWidget,
+                    ),
+
+                  // AI Compatible Badge
+                  if (useInAiSimulator)
+                    Positioned(
+                      top: 12.h,
+                      right: (treatments != null && !isDeploymentMode) ? 44.w : 12.w,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+                        decoration: BoxDecoration(
+                          color: CustomColors.purpleColor.withValues(alpha: 0.9),
+                          borderRadius: BorderRadius.circular(12.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: CustomColors.purpleColor.withValues(alpha: 0.3),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.auto_awesome,
+                              color: Colors.white,
+                              size: 10.sp,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              "AI Compatible",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 9.sp,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Degular',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
 
                   // 6. Info Button on Top Right (if not in deployment mode and real treatment is present)

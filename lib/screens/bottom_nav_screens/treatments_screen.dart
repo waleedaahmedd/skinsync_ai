@@ -11,7 +11,10 @@ import 'package:skinsync_ai/widgets/custom_search_field.dart';
 import '../../widgets/custom_app_bar.dart';
 
 class TreatmentsScreen extends ConsumerStatefulWidget {
-  const TreatmentsScreen({super.key});
+  final int? categoryId;
+  final int? areaId;
+
+  const TreatmentsScreen({super.key, this.categoryId, this.areaId});
   static const routeName = "TreatmentsScreen";
 
   @override
@@ -20,15 +23,20 @@ class TreatmentsScreen extends ConsumerStatefulWidget {
 
 class _TreatmentsScreenState extends ConsumerState<TreatmentsScreen> {
   final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = "";
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(treatmentViewModel.notifier).loadTreatments(
+        categoryId: widget.categoryId,
+        areaId: widget.areaId,
+        clearSearch: true,
+      );
+    });
     _searchController.addListener(() {
-      setState(() {
-        _searchQuery = _searchController.text.trim().toLowerCase();
-      });
+      final query = _searchController.text.trim();
+      ref.read(treatmentViewModel.notifier).searchTreatments(query);
     });
   }
 
@@ -70,7 +78,10 @@ class _TreatmentsScreenState extends ConsumerState<TreatmentsScreen> {
 
             // Dynamic Treatments List
             Expanded(
-              child: TreatmentMainScreen(searchQuery: _searchQuery),
+              child: TreatmentMainScreen(
+                categoryId: widget.categoryId,
+                areaId: widget.areaId,
+              ),
             ),
           ],
         ),
@@ -79,97 +90,119 @@ class _TreatmentsScreenState extends ConsumerState<TreatmentsScreen> {
   }
 }
 
-class TreatmentMainScreen extends StatefulWidget {
-  final String searchQuery;
-  const TreatmentMainScreen({super.key, required this.searchQuery});
+class TreatmentMainScreen extends ConsumerStatefulWidget {
+  final int? categoryId;
+  final int? areaId;
+  const TreatmentMainScreen({
+    super.key,
+    this.categoryId,
+    this.areaId,
+  });
 
   @override
-  State<TreatmentMainScreen> createState() => _TreatmentMainScreenState();
+  ConsumerState<TreatmentMainScreen> createState() => _TreatmentMainScreenState();
 }
 
-class _TreatmentMainScreenState extends State<TreatmentMainScreen> {
+class _TreatmentMainScreenState extends ConsumerState<TreatmentMainScreen> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200.h) {
+      ref.read(treatmentViewModel.notifier).loadMoreTreatments();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (_, ref, __) {
-        final state = ref.watch(treatmentViewModel);
-        final isLoading = state.treatmentsLoading;
-        final treatments = state.treatments;
+    final state = ref.watch(treatmentViewModel);
+    final isLoading = state.isLoading;
+    final isLoadingMore = state.isLoadingMore;
+    final treatments = state.treatments;
 
-        if (!isLoading && treatments.isEmpty) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            ref.read(treatmentViewModel.notifier).getTreatments();
-          });
-        }
+    // Show loading indicator on initial load
+    if (isLoading && treatments.isEmpty) {
+      return const Center(child: AppLoader());
+    }
 
-        // Show loading indicator
-        if (isLoading) {
-          return const Center(child: AppLoader());
-        }
-
-        // Apply real-time search filtering
-        final filteredTreatments = treatments.where((treatment) {
-          final name = (treatment.name ?? "").toLowerCase();
-          final desc = (treatment.description ?? "").toLowerCase();
-          return name.contains(widget.searchQuery) || desc.contains(widget.searchQuery);
-        }).toList();
-
-        // Empty Search Results Placeholder
-        if (filteredTreatments.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40.w),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.search_off_rounded, size: 70.sp, color: Colors.grey.shade400),
-                  SizedBox(height: 15.h),
-                  Text(
-                    "No Treatments Found",
-                    style: CustomFonts.grey800_20w600,
-                  ),
-                  SizedBox(height: 5.h),
-                  Text(
-                    "Try refining your search keyword or checking back later.",
-                    textAlign: TextAlign.center,
-                    style: CustomFonts.textGrey14w400,
-                  ),
-                ],
+    // Empty State Placeholder
+    if (treatments.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 40.w),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.search_off_rounded, size: 70.sp, color: Colors.grey.shade400),
+              SizedBox(height: 15.h),
+              Text(
+                "No treatments found.",
+                style: CustomFonts.grey800_20w600,
               ),
-            ),
-          );
-        }
+              SizedBox(height: 5.h),
+              Text(
+                "Try refining your search keyword or checking back later.",
+                textAlign: TextAlign.center,
+                style: CustomFonts.textGrey14w400,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
-        return AnimationLimiter(
-          key: const ValueKey('treatments_list_main'),
-          child: ListView.builder(
-            scrollDirection: Axis.vertical,
-            padding: EdgeInsets.symmetric(horizontal: 30.w),
-            physics: const BouncingScrollPhysics(),
-            itemCount: filteredTreatments.length + 1,
-            itemBuilder: (context, index) {
-              if (index == filteredTreatments.length) {
-                return SizedBox(height: 120.h); // Provide padding for floating scan button
+    return RefreshIndicator(
+      onRefresh: () => ref.read(treatmentViewModel.notifier).refreshTreatments(),
+      child: AnimationLimiter(
+        key: const ValueKey('treatments_list_main'),
+        child: ListView.builder(
+          controller: _scrollController,
+          scrollDirection: Axis.vertical,
+          padding: EdgeInsets.symmetric(horizontal: 30.w),
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
+          itemCount: treatments.length + 1,
+          itemBuilder: (context, index) {
+            if (index == treatments.length) {
+              if (isLoadingMore) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20.h),
+                  child: const Center(child: AppLoader()),
+                );
               }
-              return AnimationConfiguration.staggeredList(
-                position: index,
-                duration: const Duration(milliseconds: 600),
-                child: SlideAnimation(
-                  verticalOffset: 50.0,
-                  child: FadeInAnimation(
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: 16.h),
-                      child: TreatmentContainer(
-                        treatments: filteredTreatments[index],
-                      ),
+              return SizedBox(height: 120.h); // Provide padding for floating scan button
+            }
+            return AnimationConfiguration.staggeredList(
+              position: index,
+              duration: const Duration(milliseconds: 600),
+              child: SlideAnimation(
+                verticalOffset: 50.0,
+                child: FadeInAnimation(
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 16.h),
+                    child: TreatmentContainer(
+                      treatments: treatments[index],
                     ),
                   ),
                 ),
-              );
-            },
-          ),
-        );
-      },
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }
