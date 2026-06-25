@@ -50,6 +50,7 @@ class _ArFaceModelPreviewScreenState
   late final AnimationController _pulseController;
   late final Animation<double> _pulseAnimation;
   final Set<int> _selectedAreaIds = {};
+  late final ScrollController _treatmentScrollController;
 
   List<AreaData> _getSelectedAreasList(List<AreaData> rootAreas) {
     final List<AreaData> selected = [];
@@ -131,6 +132,14 @@ class _ArFaceModelPreviewScreenState
   @override
   void initState() {
     super.initState();
+    _treatmentScrollController = ScrollController();
+    _treatmentScrollController.addListener(() {
+      if (_treatmentScrollController.position.pixels >=
+          _treatmentScrollController.position.maxScrollExtent - 100.w) {
+        ref.read(treatmentViewModel.notifier).loadMoreTreatments();
+      }
+    });
+
     if (widget.selectedAreaIds != null) {
       _selectedAreaIds.addAll(widget.selectedAreaIds!);
     }
@@ -148,9 +157,24 @@ class _ArFaceModelPreviewScreenState
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ref.read(treatmentViewModel.notifier).getTreatments(isSimulator: true);
+      final lastCategoryId = ref.read(treatmentViewModel).categoryId;
 
-      final selectedTreatment = ref.read(treatmentViewModel).selectedTreatment;
+      await ref.read(treatmentViewModel.notifier).loadTreatments(
+        isSimulator: true,
+        categoryId: lastCategoryId,
+        clearSearch: true,
+      );
+
+      var selectedTreatment = ref.read(treatmentViewModel).selectedTreatment;
+      final loadedTreatments = ref.read(treatmentViewModel).treatments;
+      if (selectedTreatment == null && loadedTreatments.isNotEmpty) {
+        selectedTreatment = loadedTreatments.first;
+        await ref.read(treatmentViewModel.notifier).onTapTreatment(
+          treatmentModel: selectedTreatment,
+          isCallPredictAPI: false,
+        );
+      }
+
       final treatmentId = widget.treatmentId ?? selectedTreatment?.id;
       if (treatmentId != null) {
         await ref.read(treatmentAreaProvider.notifier).fetchAreasByTreatment(treatmentId);
@@ -176,6 +200,7 @@ class _ArFaceModelPreviewScreenState
 
   @override
   void dispose() {
+    _treatmentScrollController.dispose();
     _pulseController.dispose();
     super.dispose();
   }
@@ -345,26 +370,15 @@ class _ArFaceModelPreviewScreenState
                               SizedBox(height: 8.h),
                               Consumer(
                                 builder: (context, ref, _) {
-                                  // Use select to watch only specific parts of the state
-                                  final isLoading = ref.watch(
-                                    treatmentViewModel.select(
-                                      (state) => state.treatmentsLoading,
-                                    ),
-                                  );
-                                  final treatments = ref.watch(
-                                    treatmentViewModel.select(
-                                      (state) => state.treatments,
-                                    ),
-                                  );
-                                  final selectedTreatment = ref.watch(
-                                    treatmentViewModel.select(
-                                      (state) => state.selectedTreatment,
-                                    ),
-                                  );
+                                  final state = ref.watch(treatmentViewModel);
+                                  final isLoading = state.isLoading;
+                                  final isLoadingMore = state.isLoadingMore;
+                                  final treatments = state.treatments;
+                                  final selectedTreatment = state.selectedTreatment;
 
-                                  if (isLoading) {
+                                  if (isLoading && treatments.isEmpty) {
                                     return SizedBox(
-                                      height: 200,
+                                      height: 60.h,
                                       child: const Center(
                                         child: CircularProgressIndicator(
                                           color: CustomColors.purpleColor,
@@ -373,46 +387,77 @@ class _ArFaceModelPreviewScreenState
                                     );
                                   }
 
-                                  return AnimationLimiter(
-                                    key: const ValueKey('treatments_list'),
-                                    child: Wrap(
-                                      direction: Axis.horizontal,
-                                      spacing: 12.w,
-                                      runSpacing: 12.h,
-                                      children: List.generate(treatments.length, (
-                                        index,
-                                      ) {
-                                        return AnimationConfiguration.staggeredList(
-                                          position: index,
-                                          duration: const Duration(
-                                            milliseconds: 800,
-                                          ),
-                                          child: SlideAnimation(
-                                            horizontalOffset: 100.0,
-                                            child: FadeInAnimation(
-                                              child: ServiceTypeButton(
-                                                icon: PngAssets.syringe,
-                                                text: treatments[index].name!,
-                                                selected:
-                                                    selectedTreatment?.id ==
-                                                    treatments[index].id,
-                                                onPressed: () {
-                                                  ref
-                                                      .read(
-                                                        treatmentViewModel
-                                                            .notifier,
-                                                      )
-                                                      .onTapTreatment(
-                                                        treatmentModel:
-                                                            treatments[index],
-                                                        isCallPredictAPI: true,
-                                                      );
-                                                },
+                                  if (treatments.isEmpty) {
+                                    return SizedBox(
+                                      height: 50.h,
+                                      child: Center(
+                                        child: Text(
+                                          "No treatments available.",
+                                          style: CustomFonts.grey14w400,
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  return SizedBox(
+                                    height: 50.h,
+                                    child: AnimationLimiter(
+                                      key: const ValueKey('treatments_list_horizontal'),
+                                      child: ListView.builder(
+                                        controller: _treatmentScrollController,
+                                        scrollDirection: Axis.horizontal,
+                                        physics: const BouncingScrollPhysics(),
+                                        itemCount: treatments.length + (isLoadingMore ? 1 : 0),
+                                        itemBuilder: (context, index) {
+                                          if (index == treatments.length) {
+                                            return Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                              child: const Center(
+                                                child: SizedBox(
+                                                  width: 20,
+                                                  height: 20,
+                                                  child: CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    color: CustomColors.purpleColor,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }
+
+                                          final treatment = treatments[index];
+                                          final isSelected = selectedTreatment?.id == treatment.id;
+
+                                          return AnimationConfiguration.staggeredList(
+                                            position: index,
+                                            duration: const Duration(milliseconds: 600),
+                                            child: SlideAnimation(
+                                              horizontalOffset: 50.0,
+                                              child: FadeInAnimation(
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(right: 12.w),
+                                                  child: ServiceTypeButton(
+                                                    icon: PngAssets.syringe,
+                                                    text: treatment.name ?? '-',
+                                                    selected: isSelected,
+                                                    onPressed: () async {
+                                                      ref
+                                                          .read(treatmentViewModel.notifier)
+                                                          .onTapTreatment(
+                                                            treatmentModel: treatment,
+                                                            isCallPredictAPI: true,
+                                                          );
+                                                      await ref
+                                                          .read(treatmentAreaProvider.notifier)
+                                                          .fetchAreasByTreatment(treatment.id ?? 0);
+                                                    },
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        );
-                                      }),
+                                          );
+                                        },
+                                      ),
                                     ),
                                   );
                                 },
@@ -420,6 +465,11 @@ class _ArFaceModelPreviewScreenState
                               SizedBox(height: 30.h),
                               Consumer(
                                 builder: (context, ref, _) {
+                                  final selectedTreatment = ref.watch(treatmentViewModel).selectedTreatment;
+                                  if (selectedTreatment == null) {
+                                    return const SizedBox.shrink();
+                                  }
+
                                   final areaState = ref.watch(treatmentAreaProvider);
                                   final isLoading = areaState.loading;
                                   final treatmentsArea = areaState.areas;
@@ -436,23 +486,7 @@ class _ArFaceModelPreviewScreenState
                                   }
 
                                   if (treatmentsArea.isEmpty) {
-                                    return Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 20.h),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'Area Selection',
-                                            style: CustomFonts.black18w600,
-                                          ),
-                                          SizedBox(height: 8.h),
-                                          Text(
-                                            "No areas available for this treatment.",
-                                            style: CustomFonts.grey14w400,
-                                          ),
-                                        ],
-                                      ),
-                                    );
+                                    return const SizedBox.shrink();
                                   }
 
                                   return _buildAreasRecursively(treatmentsArea);
