@@ -117,6 +117,7 @@ class SecureStorage {
   }
 
   Future<void> saveUserEmail(String? email) async {
+    log('SAVING EMAIL: $email');
     await _storage?.write(key: _userEmailKey, value: email);
   }
 

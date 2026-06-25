@@ -12,8 +12,8 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
 import 'package:skinsync_ai/widgets/app_network_image.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
-import 'package:skinsync_ai/widgets/phone_widget.dart';
 import 'package:skinsync_ai/widgets/custom_button.dart';
+import 'package:skinsync_ai/widgets/phone_widget.dart';
 
 class PersonalDetailScreen extends ConsumerStatefulWidget {
   const PersonalDetailScreen({super.key});
@@ -37,7 +37,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final data = ref.read(authViewModel).authResponse?.data;
+      final data = ref.read(authViewModel).authData;
       if (data != null) {
         _nameController.text = data.user?.name ?? "";
         _phoneController.text = data.user?.phoneNumber ?? "";
@@ -90,8 +90,14 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 child: ListTile(
-                  leading: const Icon(Icons.photo_library_outlined, color: CustomColors.darkPurple),
-                  title: Text('Choose from Gallery', style: CustomFonts.black14w600),
+                  leading: const Icon(
+                    Icons.photo_library_outlined,
+                    color: CustomColors.darkPurple,
+                  ),
+                  title: Text(
+                    'Choose from Gallery',
+                    style: CustomFonts.black14w600,
+                  ),
                   onTap: () {
                     Navigator.pop(context);
                     ref
@@ -104,7 +110,10 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 child: ListTile(
-                  leading: const Icon(Icons.photo_camera_outlined, color: CustomColors.darkPurple),
+                  leading: const Icon(
+                    Icons.photo_camera_outlined,
+                    color: CustomColors.darkPurple,
+                  ),
                   title: Text('Take a Photo', style: CustomFonts.black14w600),
                   onTap: () {
                     Navigator.pop(context);
@@ -147,7 +156,9 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: CustomColors.purpleColor.withValues(alpha: 0.4),
+                            color: CustomColors.purpleColor.withValues(
+                              alpha: 0.4,
+                            ),
                             width: 4.w,
                           ),
                         ),
@@ -160,10 +171,10 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                                   width: 90.w,
                                 )
                               : AppNetworkImage(
-                                  imageUrl: ref
+                                  imageUrl:
+                                      ref
                                           .read(authViewModel)
-                                          .authResponse
-                                          ?.data
+                                          .authData
                                           ?.user
                                           ?.profileImageUrl ??
                                       "",
@@ -187,10 +198,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                             decoration: BoxDecoration(
                               color: CustomColors.darkPurple,
                               shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 2,
-                              ),
+                              border: Border.all(color: Colors.white, width: 2),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withValues(alpha: 0.1),
@@ -250,10 +258,15 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                         style: CustomFonts.black13w600,
                         decoration: InputDecoration(
                           hintText: "Lizzy Johnson",
-                          contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 14.w,
+                            vertical: 12.h,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14.r),
-                            borderSide: const BorderSide(color: CustomColors.greyColor),
+                            borderSide: const BorderSide(
+                              color: CustomColors.greyColor,
+                            ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14.r),
@@ -261,7 +274,9 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14.r),
-                            borderSide: const BorderSide(color: CustomColors.purpleColor),
+                            borderSide: const BorderSide(
+                              color: CustomColors.purpleColor,
+                            ),
                           ),
                         ),
                         validator: (value) {
@@ -291,7 +306,10 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                       SizedBox(height: 16.h),
 
                       // Email Address
-                      Text("Email Address (Primary)", style: CustomFonts.grey700_11w700),
+                      Text(
+                        "Email Address (Primary)",
+                        style: CustomFonts.grey700_11w700,
+                      ),
                       SizedBox(height: 6.h),
                       TextFormField(
                         controller: _emailController,
@@ -299,10 +317,15 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                         enabled: false,
                         decoration: InputDecoration(
                           hintText: "lizzyjhonson@gmail.com",
-                          contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 14.w,
+                            vertical: 12.h,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14.r),
-                            borderSide: const BorderSide(color: CustomColors.greyColor),
+                            borderSide: const BorderSide(
+                              color: CustomColors.greyColor,
+                            ),
                           ),
                           disabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14.r),
@@ -332,10 +355,15 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                         style: CustomFonts.black13w600,
                         decoration: InputDecoration(
                           hintText: "New York",
-                          contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 14.w,
+                            vertical: 12.h,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14.r),
-                            borderSide: const BorderSide(color: CustomColors.greyColor),
+                            borderSide: const BorderSide(
+                              color: CustomColors.greyColor,
+                            ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14.r),
@@ -343,7 +371,9 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14.r),
-                            borderSide: const BorderSide(color: CustomColors.purpleColor),
+                            borderSide: const BorderSide(
+                              color: CustomColors.purpleColor,
+                            ),
                           ),
                         ),
                       ),
@@ -356,24 +386,36 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Skin Type", style: CustomFonts.grey700_11w700),
+                                Text(
+                                  "Skin Type",
+                                  style: CustomFonts.grey700_11w700,
+                                ),
                                 SizedBox(height: 6.h),
                                 TextField(
                                   style: CustomFonts.black13w600,
                                   decoration: InputDecoration(
                                     hintText: "Skin Type +2",
-                                    contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 14.w,
+                                      vertical: 12.h,
+                                    ),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(14.r),
-                                      borderSide: const BorderSide(color: CustomColors.greyColor),
+                                      borderSide: const BorderSide(
+                                        color: CustomColors.greyColor,
+                                      ),
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(14.r),
-                                      borderSide: BorderSide(color: Colors.grey.shade300),
+                                      borderSide: BorderSide(
+                                        color: Colors.grey.shade300,
+                                      ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(14.r),
-                                      borderSide: const BorderSide(color: CustomColors.purpleColor),
+                                      borderSide: const BorderSide(
+                                        color: CustomColors.purpleColor,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -385,24 +427,36 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Skin Goal", style: CustomFonts.grey700_11w700),
+                                Text(
+                                  "Skin Goal",
+                                  style: CustomFonts.grey700_11w700,
+                                ),
                                 SizedBox(height: 6.h),
                                 TextField(
                                   style: CustomFonts.black13w600,
                                   decoration: InputDecoration(
                                     hintText: "Skin Goal +4",
-                                    contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 14.w,
+                                      vertical: 12.h,
+                                    ),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(14.r),
-                                      borderSide: const BorderSide(color: CustomColors.greyColor),
+                                      borderSide: const BorderSide(
+                                        color: CustomColors.greyColor,
+                                      ),
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(14.r),
-                                      borderSide: BorderSide(color: Colors.grey.shade300),
+                                      borderSide: BorderSide(
+                                        color: Colors.grey.shade300,
+                                      ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(14.r),
-                                      borderSide: const BorderSide(color: CustomColors.purpleColor),
+                                      borderSide: const BorderSide(
+                                        color: CustomColors.purpleColor,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -414,16 +468,24 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                       SizedBox(height: 16.h),
 
                       // Primary Concerns
-                      Text("Primary Concerns", style: CustomFonts.grey700_11w700),
+                      Text(
+                        "Primary Concerns",
+                        style: CustomFonts.grey700_11w700,
+                      ),
                       SizedBox(height: 6.h),
                       TextField(
                         style: CustomFonts.black13w600,
                         decoration: InputDecoration(
                           hintText: "Primary Concerns +3",
-                          contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 14.w,
+                            vertical: 12.h,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14.r),
-                            borderSide: const BorderSide(color: CustomColors.greyColor),
+                            borderSide: const BorderSide(
+                              color: CustomColors.greyColor,
+                            ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14.r),
@@ -431,14 +493,19 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14.r),
-                            borderSide: const BorderSide(color: CustomColors.purpleColor),
+                            borderSide: const BorderSide(
+                              color: CustomColors.purpleColor,
+                            ),
                           ),
                         ),
                       ),
                       SizedBox(height: 16.h),
 
                       // Bio
-                      Text("Bio / Description", style: CustomFonts.grey700_11w700),
+                      Text(
+                        "Bio / Description",
+                        style: CustomFonts.grey700_11w700,
+                      ),
                       SizedBox(height: 6.h),
                       TextField(
                         controller: _bioController,
@@ -446,10 +513,15 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                         style: CustomFonts.black13w600,
                         decoration: InputDecoration(
                           hintText: "Introduce yourself...",
-                          contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 14.w,
+                            vertical: 12.h,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14.r),
-                            borderSide: const BorderSide(color: CustomColors.greyColor),
+                            borderSide: const BorderSide(
+                              color: CustomColors.greyColor,
+                            ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14.r),
@@ -457,7 +529,9 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14.r),
-                            borderSide: const BorderSide(color: CustomColors.purpleColor),
+                            borderSide: const BorderSide(
+                              color: CustomColors.purpleColor,
+                            ),
                           ),
                         ),
                       ),

@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+
+import '../models/base_state_model.dart';
 import '../models/requests/save_history_request.dart';
 import '../models/responses/simulation_history_response.dart';
 import '../models/responses/treatment_area_response.dart';
-import '../models/responses/treatment_sub_area_response.dart';
-import '../services/api_base_helper.dart';
-
-import '../models/base_state_model.dart';
 import '../models/responses/treatment_response_model.dart';
+import '../models/responses/treatment_sub_area_response.dart';
 import '../repositories/treatment_repository.dart';
+import '../services/api_base_helper.dart';
 import '../services/media_service.dart';
 import '../services/treatment_services.dart';
 import '../utills/image_utills.dart';
@@ -383,7 +383,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         return;
       }
       final mediaService = MediaService();
-      final userId = ref.read(authViewModel).authResponse!.data!.user!.id!;
+      final userId = ref.read(authViewModel).authData!.user!.id!;
       final beforeUrl = await mediaService.uploadImage(
         '$userId/appointments/before/',
         XFile(beforeImage),

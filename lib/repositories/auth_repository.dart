@@ -1,9 +1,8 @@
 import '../models/requests/onboarding_profile_request.dart';
 import '../models/requests/otp_request.dart';
-import '../models/responses/base_response_model.dart';
-
 import '../models/requests/sign_in_request.dart';
 import '../models/responses/auth_response.dart';
+import '../models/responses/base_response_model.dart';
 
 abstract class AuthRepository {
   Future<BaseResponseModel> signInApi({
@@ -17,7 +16,7 @@ abstract class AuthRepository {
   Future<BaseResponseModel> onboardingProfile({
     required OnBoardingProfileRequest onBoardingProfileRequest,
   });
-  Future<AuthResponse> getMe();
+  Future<AuthData> getMe();
 
   Future<AuthResponse> googleSignInApi({
     required SignInWithGoogleRequest request,

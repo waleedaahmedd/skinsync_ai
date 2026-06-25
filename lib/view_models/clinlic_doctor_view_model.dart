@@ -2,25 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 import '../models/base_state_model.dart';
+import '../models/requests/appointment_request.dart';
 import '../models/responses/appointment_response.dart';
+import '../models/responses/availability_response.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../models/responses/get_doctor_response.dart';
+import '../models/responses/payment_options_response.dart';
+import '../models/responses/treatment_pricing_response.dart' hide Treatment;
 import '../repositories/clinic_doctor_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/clinic_doctor_service.dart';
 import '../services/location_service.dart';
 import '../services/media_service.dart';
+import '../utills/date_time_utills.dart';
 import '../utills/enums.dart';
 import 'auth_view_model.dart';
 import 'base_view_model.dart';
 import 'treatment_view_model.dart';
-
-import '../models/requests/appointment_request.dart';
-import '../models/responses/availability_response.dart';
-import '../models/responses/payment_options_response.dart';
-import '../models/responses/treatment_pricing_response.dart' hide Treatment;
-import '../utills/date_time_utills.dart';
 
 final clinicDoctorProvider = NotifierProvider(() {
   final apiBaseHelper = ApiBaseHelper();
@@ -208,7 +208,7 @@ class ClinicDoctorViewModel extends BaseViewModel<ClinicDoctorState> {
           subAreas.fold(0, (prev, next) {
             return prev + next.currentSyringe + 1;
           });
-      final userId = ref.read(authViewModel).authResponse!.data!.user!.id!;
+      final userId = ref.read(authViewModel).authData!.user!.id!;
       final uploadedBefore = await _mediaService.uploadImage(
         '$userId/appointments/before/',
         beforeImage,

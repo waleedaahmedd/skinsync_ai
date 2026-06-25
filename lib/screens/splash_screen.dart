@@ -1,13 +1,13 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'bottom_nav_page.dart';
-import 'get_started_screen.dart';
+
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/secure_storage_service.dart';
 import '../view_models/auth_view_model.dart';
+import 'bottom_nav_page.dart';
+import 'get_started_screen.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -66,11 +66,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         if (token != null) {
           ref.read(authViewModel.notifier).callGetMe().then((value) {
             if (value == true) {
-              final islogin = ref
-                  .read(authViewModel)
-                  .authResponse
-                  ?.data
-                  ?.isFirstLogin;
+              final islogin = ref.read(authViewModel).authData?.isFirstLogin;
               if (islogin == false) {
                 Navigator.pushNamedAndRemoveUntil(
                   context,

@@ -1,15 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
+import '../exceptions/app_exception.dart';
 import '../models/requests/onboarding_profile_request.dart';
 import '../models/requests/otp_request.dart';
-import '../models/responses/base_response_model.dart';
-
-import '../exceptions/app_exception.dart';
 import '../models/requests/sign_in_request.dart';
 import '../models/responses/auth_response.dart';
+import '../models/responses/base_response_model.dart';
 import '../repositories/auth_repository.dart';
 import '../utills/biometric_helper.dart';
 import '../utills/enums.dart';
@@ -163,14 +161,6 @@ class AuthService implements AuthRepository {
       final parsed = json.decode(response.body);
       AuthResponse authResponse = AuthResponse.fromJson(parsed);
       if (authResponse.status == true) {
-        final savedEmail = await _secureStorage.getUserEmail();
-        if (savedEmail != authResponse.data?.user?.primaryEmail) {
-          try {
-            await biometricUnregister();
-          } catch (e) {
-            log('$e Failed to unregister biometric, Not important');
-          }
-        }
         if (authResponse.data != null) {
           await _secureStorage.saveUserEmail(
             authResponse.data!.user?.primaryEmail,
@@ -222,7 +212,7 @@ class AuthService implements AuthRepository {
   }
 
   @override
-  Future<AuthResponse> getMe() async {
+  Future<AuthData> getMe() async {
     String type = Platform.isIOS ? 'ios' : 'android';
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.getMe,
@@ -232,11 +222,12 @@ class AuthService implements AuthRepository {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
       AuthResponse authResponse = AuthResponse.fromJson(parsed);
-      return authResponse;
-    } else {
-      final parsed = json.decode(response.body);
-      throw AppException(BaseResponseModel.fromJson(parsed).message as String);
+      if (authResponse.isSuccess ?? false) {
+        return authResponse.data!;
+      }
     }
+    final parsed = json.decode(response.body);
+    throw AppException(BaseResponseModel.fromJson(parsed).message as String);
   }
 
   @override
@@ -257,17 +248,11 @@ class AuthService implements AuthRepository {
           authResponse.data?.accessToken == null) {
         throw AppException(authResponse.message ?? 'Something went wrong!');
       }
-      final savedEmail = await _secureStorage.getUserEmail();
-      if (savedEmail != authResponse.data?.user?.primaryEmail) {
-        try {
-          await biometricUnregister();
-        } catch (e) {
-          log('$e Failed to unregister biometric, Not important');
-        }
-      }
       await _secureStorage.saveUserEmail(authResponse.data?.user?.primaryEmail);
       await _secureStorage.saveToken(authResponse.data?.accessToken ?? '');
-      await _secureStorage.saveRefreshToken(authResponse.data?.refreshToken ?? '');
+      await _secureStorage.saveRefreshToken(
+        authResponse.data?.refreshToken ?? '',
+      );
       await _secureStorage.saveAccessTokenExpiry(
         DateTime.fromMillisecondsSinceEpoch(
           (authResponse.data?.isActiveExpiry ?? 0) * 1000,
@@ -303,17 +288,11 @@ class AuthService implements AuthRepository {
           authResponse.data?.accessToken == null) {
         throw AppException(authResponse.message ?? 'Something went wrong!');
       }
-      final savedEmail = await _secureStorage.getUserEmail();
-      if (savedEmail != authResponse.data?.user?.primaryEmail) {
-        try {
-          await biometricUnregister();
-        } catch (e) {
-          log('$e Failed to unregister biometric, Not important');
-        }
-      }
       await _secureStorage.saveUserEmail(authResponse.data?.user?.primaryEmail);
       await _secureStorage.saveToken(authResponse.data?.accessToken ?? '');
-      await _secureStorage.saveRefreshToken(authResponse.data?.refreshToken ?? '');
+      await _secureStorage.saveRefreshToken(
+        authResponse.data?.refreshToken ?? '',
+      );
       await _secureStorage.saveAccessTokenExpiry(
         DateTime.fromMillisecondsSinceEpoch(
           (authResponse.data?.isActiveExpiry ?? 0) * 1000,

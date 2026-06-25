@@ -8,7 +8,8 @@ import 'package:skinsync_ai/view_models/auth_view_model.dart';
 
 import '../utills/color_constant.dart';
 
-class AppBarWithActionIcon extends StatelessWidget implements PreferredSizeWidget {
+class AppBarWithActionIcon extends StatelessWidget
+    implements PreferredSizeWidget {
   const AppBarWithActionIcon({super.key, this.action});
 
   @override
@@ -31,7 +32,7 @@ class AppBarWithActionIcon extends StatelessWidget implements PreferredSizeWidge
                   child: Consumer(
                     builder: (context, ref, _) {
                       final state = ref.watch(authViewModel);
-                      final userDetails = state.authResponse?.data?.user;
+                      final userDetails = state.authData?.user;
                       final name = userDetails?.name;
 
                       return Row(
@@ -41,7 +42,9 @@ class AppBarWithActionIcon extends StatelessWidget implements PreferredSizeWidge
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: CustomColors.purpleColor.withValues(alpha: 0.5),
+                                color: CustomColors.purpleColor.withValues(
+                                  alpha: 0.5,
+                                ),
                                 width: 2.w,
                               ),
                             ),
@@ -51,12 +54,17 @@ class AppBarWithActionIcon extends StatelessWidget implements PreferredSizeWidge
                                 height: 48.w,
                                 width: 48.w,
                                 fit: BoxFit.cover,
-                                placeholder: (context, url) => const CupertinoActivityIndicator(),
+                                placeholder: (context, url) =>
+                                    const CupertinoActivityIndicator(),
                                 errorWidget: (context, url, error) => Container(
                                   height: 48.w,
                                   width: 48.w,
                                   color: Colors.grey.shade100,
-                                  child: Icon(Icons.person_outline_rounded, size: 24.sp, color: Colors.grey),
+                                  child: Icon(
+                                    Icons.person_outline_rounded,
+                                    size: 24.sp,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                               ),
                             ),
@@ -93,7 +101,10 @@ class AppBarWithActionIcon extends StatelessWidget implements PreferredSizeWidge
               ],
             ),
             const Spacer(),
-            Divider(color: CustomColors.greyColor.withValues(alpha: 0.5), height: 1.h),
+            Divider(
+              color: CustomColors.greyColor.withValues(alpha: 0.5),
+              height: 1.h,
+            ),
           ],
         ),
       ),

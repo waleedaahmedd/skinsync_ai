@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:skinsync_ai/models/dummy_list_model.dart';
 import 'package:skinsync_ai/screens/doctors_listing_screen.dart';
 import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
@@ -69,7 +68,8 @@ class HomeScreen extends ConsumerWidget {
                       height: 100.h,
                       icon: Icons.calendar_today_rounded,
                       title: "No Upcoming Appointments",
-                      subtitle: "Your scheduled clinical treatments and session details will appear here.",
+                      subtitle:
+                          "Your scheduled clinical treatments and session details will appear here.",
                     )
                   : SizedBox(
                       height: 195.h,
@@ -79,9 +79,16 @@ class HomeScreen extends ConsumerWidget {
                         scrollDirection: Axis.horizontal,
                         itemCount: 3, // 3 Date Sections
                         itemBuilder: (context, dateIndex) {
-                          final dates = ["12 May 2026", "15 May 2026", "20 May 2026"];
+                          final dates = [
+                            "12 May 2026",
+                            "15 May 2026",
+                            "20 May 2026",
+                          ];
                           final startIndex = dateIndex * 2;
-                          final dateAppointments = dummyAppointments.skip(startIndex).take(2).toList();
+                          final dateAppointments = dummyAppointments
+                              .skip(startIndex)
+                              .take(2)
+                              .toList();
 
                           return UpcomingAppointmentDateSection(
                             dateTitle: dates[dateIndex],
@@ -98,7 +105,10 @@ class HomeScreen extends ConsumerWidget {
                 child: HeadingWithRightArrow(
                   title: "Suggested Treatments",
                   onTap: () {
-                    Navigator.pushNamed(context, SuggestedTreatmentScreen.routeName);
+                    Navigator.pushNamed(
+                      context,
+                      SuggestedTreatmentScreen.routeName,
+                    );
                   },
                 ),
               ),
@@ -107,14 +117,18 @@ class HomeScreen extends ConsumerWidget {
                 height: 180.h,
                 child: Consumer(
                   builder: (context, ref, _) {
-                    final treatment = ref.watch(authViewModel).authResponse?.data?.treatment;
+                    final treatment = ref
+                        .watch(authViewModel)
+                        .authData
+                        ?.treatment;
 
                     if (treatment == null || treatment.isEmpty) {
                       return _buildHorizontalEmptyState(
                         height: 100.h,
                         icon: Icons.auto_awesome_rounded,
                         title: "No Suggested Treatments",
-                        subtitle: "Complete your facial AI scan to receive personalized clinical suggestions.",
+                        subtitle:
+                            "Complete your facial AI scan to receive personalized clinical suggestions.",
                       );
                     }
 
@@ -148,7 +162,10 @@ class HomeScreen extends ConsumerWidget {
                 child: HeadingWithRightArrow(
                   title: "Top Doctors",
                   onTap: () {
-                    Navigator.pushNamed(context, DoctorsListingScreen.routeName);
+                    Navigator.pushNamed(
+                      context,
+                      DoctorsListingScreen.routeName,
+                    );
                   },
                 ),
               ),
@@ -160,7 +177,8 @@ class HomeScreen extends ConsumerWidget {
                       height: 100.h,
                       icon: Icons.badge_outlined,
                       title: "No Specialists Available",
-                      subtitle: "Specialist dermatologists and clinical practitioners will be listed here soon.",
+                      subtitle:
+                          "Specialist dermatologists and clinical practitioners will be listed here soon.",
                     )
                   : SizedBox(
                       height: 190.h,
@@ -169,7 +187,8 @@ class HomeScreen extends ConsumerWidget {
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
                         scrollDirection: Axis.horizontal,
                         itemCount: dummyDoctors.length,
-                        itemBuilder: (context, index) => DoctorHomeCard(doctor: dummyDoctors[index]),
+                        itemBuilder: (context, index) =>
+                            DoctorHomeCard(doctor: dummyDoctors[index]),
                       ),
                     ),
               SizedBox(height: 28.h),
@@ -180,7 +199,10 @@ class HomeScreen extends ConsumerWidget {
                 child: HeadingWithRightArrow(
                   title: "Top Clinics",
                   onTap: () {
-                    Navigator.pushNamed(context, ExploreClinicsScreen.routeName);
+                    Navigator.pushNamed(
+                      context,
+                      ExploreClinicsScreen.routeName,
+                    );
                   },
                 ),
               ),
@@ -192,7 +214,8 @@ class HomeScreen extends ConsumerWidget {
                       height: 100.h,
                       icon: Icons.storefront_rounded,
                       title: "No Clinics Available",
-                      subtitle: "Top-rated aesthetic clinics and wellness spas will be listed here soon.",
+                      subtitle:
+                          "Top-rated aesthetic clinics and wellness spas will be listed here soon.",
                     )
                   : SizedBox(
                       height: 180.h,
@@ -201,7 +224,8 @@ class HomeScreen extends ConsumerWidget {
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
                         scrollDirection: Axis.horizontal,
                         itemCount: topClinics.length,
-                        itemBuilder: (context, index) => ClinicHomeCard(clinic: topClinics[index]),
+                        itemBuilder: (context, index) =>
+                            ClinicHomeCard(clinic: topClinics[index]),
                       ),
                     ),
               SizedBox(height: 28.h),
@@ -209,7 +233,10 @@ class HomeScreen extends ConsumerWidget {
               // Promotions & Discounts Section
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: Text("Promotions & Discounts", style: CustomFonts.black22w600),
+                child: Text(
+                  "Promotions & Discounts",
+                  style: CustomFonts.black22w600,
+                ),
               ),
               SizedBox(height: 16.h),
 
@@ -219,7 +246,8 @@ class HomeScreen extends ConsumerWidget {
                       height: 100.h,
                       icon: Icons.local_offer_outlined,
                       title: "No Promotions Available",
-                      subtitle: "Exclusive clinical deals, seasonal discounts, and special offers are on their way.",
+                      subtitle:
+                          "Exclusive clinical deals, seasonal discounts, and special offers are on their way.",
                     )
                   : SizedBox(
                       height: 144.h,
@@ -286,7 +314,9 @@ class HomeScreen extends ConsumerWidget {
               // 1. Translucent White Mask Tint Overlay
               Positioned.fill(
                 child: Container(
-                  color: Colors.white.withValues(alpha: 0.85), // Translucent premium white mask
+                  color: Colors.white.withValues(
+                    alpha: 0.85,
+                  ), // Translucent premium white mask
                 ),
               ),
 
@@ -303,7 +333,9 @@ class HomeScreen extends ConsumerWidget {
                         color: CustomColors.purpleColor.withValues(alpha: 0.12),
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: CustomColors.purpleColor.withValues(alpha: 0.15),
+                          color: CustomColors.purpleColor.withValues(
+                            alpha: 0.15,
+                          ),
                           width: 1.w,
                         ),
                       ),

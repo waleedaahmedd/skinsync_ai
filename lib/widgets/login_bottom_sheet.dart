@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../screens/bottom_nav_page.dart';
+import '../screens/face_scan_screen.dart';
 import '../screens/login_screen.dart';
 import '../utills/assets.dart';
 import '../utills/biometric_helper.dart';
@@ -9,8 +11,6 @@ import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/enums.dart';
 import '../view_models/auth_view_model.dart';
-
-import '../screens/face_scan_screen.dart';
 
 void loginBottomSheet(BuildContext context) {
   showModalBottomSheet(
@@ -200,22 +200,11 @@ Row _buildSocialSignIns(WidgetRef ref) {
                 .read(authViewModel.notifier)
                 .callGoogleSignInApi();
             if (success ?? false) {
-              /* bool? isLoggedIn =
-                  ref.read(authViewModel).authResponse?.data?.isFirstLogin ??
-                  false;
-              isLoggedIn
-                  ? Navigator.pushNamedAndRemoveUntil(
-                      ref.context,
-                      SignupOnboarding.routeName,
-                      (Route<dynamic> route) =>
-                          route.settings.name == LoginScreen.routeName,
-                    )
-                  : */
               Navigator.pushNamedAndRemoveUntil(
-                      ref.context,
-                      FaceScanScreen.routeName,
-                      (Route<dynamic> route) => false,
-                    );
+                ref.context,
+                FaceScanScreen.routeName,
+                (Route<dynamic> route) => false,
+              );
             }
           },
           child: Container(
@@ -243,7 +232,7 @@ Row _buildSocialSignIns(WidgetRef ref) {
                 .read(authViewModel.notifier)
                 .callAppleSignInApi();
             if (success ?? false) {
-             /* bool? isLoggedIn =
+              /* bool? isLoggedIn =
                   ref.read(authViewModel).authResponse?.data?.isFirstLogin ??
                   false;
               isLoggedIn
@@ -254,11 +243,11 @@ Row _buildSocialSignIns(WidgetRef ref) {
                           route.settings.name == LoginScreen.routeName,
                     )
                   : */
-                  Navigator.pushNamedAndRemoveUntil(
-                      ref.context,
-                      FaceScanScreen.routeName,
-                      (Route<dynamic> route) => false,
-                    );
+              Navigator.pushNamedAndRemoveUntil(
+                ref.context,
+                FaceScanScreen.routeName,
+                (Route<dynamic> route) => false,
+              );
             }
           },
           child: Container(

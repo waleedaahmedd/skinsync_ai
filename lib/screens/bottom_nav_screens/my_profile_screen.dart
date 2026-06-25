@@ -87,8 +87,7 @@ class MyProfileScreen extends StatelessWidget {
                       builder: (context, ref, _) {
                         final image = ref
                             .watch(authViewModel)
-                            .authResponse
-                            ?.data
+                            .authData
                             ?.user
                             ?.profileImageUrl;
                         return ClipOval(
@@ -101,7 +100,9 @@ class MyProfileScreen extends StatelessWidget {
                               height: 80.w,
                               width: 80.w,
                               color: Colors.grey.shade100,
-                              child: const Center(child: CupertinoActivityIndicator()),
+                              child: const Center(
+                                child: CupertinoActivityIndicator(),
+                              ),
                             ),
                             errorWidget: (context, url, error) => Container(
                               height: 80.w,
@@ -124,8 +125,7 @@ class MyProfileScreen extends StatelessWidget {
                       builder: (context, ref, _) {
                         final name = ref
                             .watch(authViewModel)
-                            .authResponse
-                            ?.data
+                            .authData
                             ?.user
                             ?.name;
                         return Column(
@@ -153,7 +153,10 @@ class MyProfileScreen extends StatelessWidget {
             SizedBox(height: 20.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Divider(color: CustomColors.greyColor.withValues(alpha: 0.6), height: 1.h),
+              child: Divider(
+                color: CustomColors.greyColor.withValues(alpha: 0.6),
+                height: 1.h,
+              ),
             ),
 
             // Profile Options organized in Premium Cards with Unified Icon Colors
@@ -320,9 +323,7 @@ class MyProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 
@@ -357,21 +358,15 @@ class MyProfileScreen extends StatelessWidget {
                           icon,
                           height: 18.w,
                           width: 18.w,
-                          colorFilter: const ColorFilter.mode(unifiedColor, BlendMode.srcIn),
+                          colorFilter: const ColorFilter.mode(
+                            unifiedColor,
+                            BlendMode.srcIn,
+                          ),
                         )
-                      : Icon(
-                          icon as IconData,
-                          size: 18.w,
-                          color: unifiedColor,
-                        ),
+                      : Icon(icon as IconData, size: 18.w, color: unifiedColor),
                 ),
                 SizedBox(width: 14.w),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: CustomFonts.black16w500,
-                  ),
-                ),
+                Expanded(child: Text(title, style: CustomFonts.black16w500)),
                 Icon(
                   Icons.chevron_right_rounded,
                   color: Colors.grey.shade400,
@@ -384,10 +379,7 @@ class MyProfileScreen extends StatelessWidget {
         if (!isLast)
           Padding(
             padding: EdgeInsets.only(left: 54.w, right: 16.w),
-            child: Divider(
-              color: Colors.grey.shade100,
-              height: 1.h,
-            ),
+            child: Divider(color: Colors.grey.shade100, height: 1.h),
           ),
       ],
     );

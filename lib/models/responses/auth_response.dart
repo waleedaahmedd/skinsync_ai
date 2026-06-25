@@ -2,18 +2,18 @@ import 'base_response_model.dart';
 import 'treatment_response_model.dart';
 
 class AuthResponse extends BaseResponseModel {
-  final Data? data;
+  final AuthData? data;
 
   AuthResponse({super.isSuccess, super.message, this.data});
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) => AuthResponse(
     isSuccess: json["is_success"],
     message: json["message"],
-    data: json["data"] == null ? null : Data.fromJson(json["data"]),
+    data: json["data"] == null ? null : AuthData.fromJson(json["data"]),
   );
 }
 
-class Data {
+class AuthData {
   final bool? isFirstLogin;
   final bool? isActive;
   final String? accessToken;
@@ -24,9 +24,7 @@ class Data {
   final User? user;
   final String? dashboard;
 
-  User? get userDetails => user;
-
-  Data({
+  AuthData({
     this.isFirstLogin,
     this.isActive,
     this.accessToken,
@@ -38,7 +36,7 @@ class Data {
     this.treatment,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory AuthData.fromJson(Map<String, dynamic> json) => AuthData(
     isFirstLogin: json["is_first_login"],
     isActive: json["is_active"],
     accessToken: json["access_token"],

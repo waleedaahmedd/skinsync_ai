@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/phone_widget.dart';
-
 import 'get_notified_screen.dart';
 
 class YourProfileScreen extends ConsumerStatefulWidget {
@@ -45,8 +45,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
   void initState() {
     super.initState();
     final authState = ref.read(authViewModel);
-    _emailController.text =
-        authState.authResponse?.data?.user?.primaryEmail ?? '';
+    _emailController.text = authState.authData?.user?.primaryEmail ?? '';
 
     // Initialize country if user data exists
     // TODO: CC Not provided in AuthResponse, uncomment when response is
@@ -197,7 +196,9 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                     readOnly: true,
                     controller: _emailController,
                     style: CustomFonts.black18w400,
-                    decoration: const InputDecoration(hintText: "Email Address"),
+                    decoration: const InputDecoration(
+                      hintText: "Email Address",
+                    ),
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {

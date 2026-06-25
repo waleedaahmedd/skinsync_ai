@@ -10,7 +10,6 @@ import 'package:skinsync_ai/models/responses/address_data.dart';
 import 'package:skinsync_ai/models/responses/base_response_model.dart';
 import 'package:skinsync_ai/services/apple_auth_service.dart';
 import 'package:skinsync_ai/services/google_auth_service.dart';
-import 'package:skinsync_ai/services/location_service.dart';
 import 'package:skinsync_ai/services/media_service.dart';
 import 'package:skinsync_ai/utills/biometric_helper.dart';
 
@@ -65,10 +64,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       isBiometricAvailable: isAvailable,
       biometricIcon: icon,
     );
-  }
-
-  void setAuthResponse(AuthResponse response) {
-    state = state.copyWith(authResponse: response);
   }
 
   Future<void> pickProfileImage(ImageSource source) async {
@@ -135,17 +130,28 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     });
   }
 
-  Future<bool?> callBiometricUnregisterApi({required bool showLoader}) async {
+  Future<bool?> callBiometricUnregisterApi({
+    required bool showLoader,
+    String? savedEmail,
+    String? currentEmail,
+  }) async {
     // 1. If biometric key is not saved locally, there is nothing to unregister on the server.
     // Return early silently to prevent making unnecessary API calls that throw "no biometric key found".
     final localKey = await SecureStorage().getSecureString(
       key: SharedPreferencesKeys.biometricAuthKey.keyText,
     );
     if (localKey == null) {
-      state = state.copyWith(
-        isBiometricAvailable: false,
-        biometricIcon: null,
-      );
+      state = state.copyWith(isBiometricAvailable: false, biometricIcon: null);
+      return true;
+    }
+    // 1.1. If the logged in user has the same email as the email from storage,
+    //      then we don't unregister the user.
+    log('CURRENT: $currentEmail');
+    log('SAVED: $savedEmail');
+    if (savedEmail != null &&
+        currentEmail != null &&
+        savedEmail == currentEmail) {
+      log('CURRENT AND SAVED EMAIL SAME, NOT UNREGISTERING BIOMETRIC');
       return true;
     }
 
@@ -167,7 +173,9 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       EasyLoading.dismiss();
       return response.isSuccess == true;
     } catch (e) {
-      log("Silent biometric unregister failed: $e. This is expected if the key does not exist on the server database.");
+      log(
+        "Silent biometric unregister failed: $e. This is expected if the key does not exist on the server database.",
+      );
       state = state.copyWith(
         loading: false,
         isBiometricAvailable: false,
@@ -183,12 +191,12 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       state = state.copyWith(loading: true);
       final AuthResponse response = await _authRepository.biometricLoginApi();
       if (response.isSuccess == true) {
-        state = state.copyWith(authResponse: response);
+        state = state.copyWith(authData: response.data);
         //  _fetchLocationInBackground();
         state = state.copyWith(loading: false);
         return true;
       }
-      state = state.copyWith(loading: false);
+      state = state.copyWith(loading: false, authData: response.data);
       return false;
     });
   }
@@ -199,17 +207,23 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       otp: otpController.text,
     );
     return await runSafely(() async {
+      final savedEmail = await SecureStorage().getUserEmail();
       state = state.copyWith(loading: true);
       final AuthResponse response = await _authRepository.verifyOTP(
         otpRequest: request,
       );
 
-      state = state.copyWith(loading: false, authResponse: response);
+      state = state.copyWith(loading: false, authData: response.data);
 
       if (response.isSuccess == true) {
         otpController.clear();
-        await callBiometricUnregisterApi(showLoader: false);
-        _fetchLocationInBackground();
+        await callBiometricUnregisterApi(
+          showLoader: false,
+          currentEmail: response.data?.user?.primaryEmail,
+          savedEmail: savedEmail,
+        );
+        // TODO: Research if this is needed
+        // _fetchLocationInBackground();
       }
       return response.isSuccess == true;
     });
@@ -230,7 +244,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       String? imageUrl;
       if (state.profileImage != null) {
         imageUrl = await MediaService().uploadImage(
-          state.authResponse?.data?.user?.primaryEmail ?? '',
+          state.authData?.user?.primaryEmail ?? '',
           state.profileImage!,
         );
       }
@@ -244,9 +258,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         cc: cc,
         country: country,
         profileImageUrl:
-            imageUrl ??
-            state.authResponse?.data?.userDetails?.profileImageUrl ??
-            '',
+            imageUrl ?? state.authData?.user?.profileImageUrl ?? '',
       );
 
       final BaseResponseModel response = await _authRepository
@@ -254,7 +266,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 
       state = state.copyWith(loading: false);
       if (response.isSuccess == true) {
-        await callGetMe();
         clearProfileImage();
       }
       return response.isSuccess == true;
@@ -263,31 +274,30 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 
   Future<bool?> callGetMe() async {
     return await runSafely(() async {
-      final AuthResponse response = await _authRepository.getMe();
-      if (response.isSuccess == true) {
-        state = state.copyWith(authResponse: response);
-        log('get me call successful,');
-        // Location is fetched in background to avoid blocking the UI thread during splash/init
-        _fetchLocationInBackground();
-      }
-      return response.isSuccess == true;
+      final authData = await _authRepository.getMe();
+      state = state.copyWith(authData: authData);
+      log('get me call successful,');
+      // Location is fetched in background to avoid blocking the UI thread during splash/init
+      // _fetchLocationInBackground();
+      return true;
     });
   }
-
-  void _fetchLocationInBackground() {
-    Future.delayed(const Duration(seconds: 2), () async {
-      try {
-        final addressData = await LocationService().fetchAddress();
-        state = state.copyWith(addressData: addressData);
-      } catch (e) {
-        log('Background location fetch skipped or failed: $e');
-      }
-    });
-  }
+  //
+  // void _fetchLocationInBackground() {
+  //   Future.delayed(const Duration(seconds: 2), () async {
+  //     try {
+  //       final addressData = await LocationService().fetchAddress();
+  //       state = state.copyWith(addressData: addressData);
+  //     } catch (e) {
+  //       log('Background location fetch skipped or failed: $e');
+  //     }
+  //   });
+  // }
 
   Future<bool?> callGoogleSignInApi() async {
     return await runSafely<bool>(() async {
       state = state.copyWith(loading: true);
+      final savedEmail = await SecureStorage().getUserEmail();
       final user = await GoogleAuthService().signIn();
       final AuthResponse response = await _authRepository.googleSignInApi(
         request: SignInWithGoogleRequest(
@@ -300,10 +310,13 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         ),
       );
       if (response.isSuccess ?? false) {
-        await callBiometricUnregisterApi(showLoader: false);
-        await callGetMe();
+        await callBiometricUnregisterApi(
+          showLoader: false,
+          currentEmail: response.data?.user?.primaryEmail,
+          savedEmail: savedEmail,
+        );
       }
-      state = state.copyWith(loading: false);
+      state = state.copyWith(loading: false, authData: response.data);
       return response.isSuccess ?? false;
     });
   }
@@ -311,6 +324,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   Future<bool?> callAppleSignInApi() async {
     return await runSafely<bool>(() async {
       state = state.copyWith(loading: true);
+      final savedEmail = await SecureStorage().getUserEmail();
       final user = await AppleAuthService().signIn();
       final response = await _authRepository.appleSignInApi(
         request: SignInWithAppleRequest(
@@ -323,10 +337,13 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         ),
       );
       if (response.isSuccess ?? false) {
-        await callBiometricUnregisterApi(showLoader: false);
-        await callGetMe();
+        await callBiometricUnregisterApi(
+          showLoader: false,
+          currentEmail: response.data?.user?.primaryEmail,
+          savedEmail: savedEmail,
+        );
       }
-      state = state.copyWith(loading: false);
+      state = state.copyWith(loading: false, authData: response.data);
       return response.isSuccess ?? false;
     });
   }
@@ -341,11 +358,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   void onError(String message) {
     super.onError(message);
 
-    state = state.copyWith(
-      loading: false,
-      errorMessage: message,
-      authResponse: AuthResponse(isSuccess: false, message: message),
-    );
+    state = state.copyWith(loading: false, errorMessage: message);
   }
 
   @override
@@ -360,7 +373,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 
 @immutable
 class AuthState extends BaseStateModel {
-  final AuthResponse? authResponse;
+  final AuthData? authData;
   final String? otpError;
   final XFile? profileImage;
   final AddressData? addressData;
@@ -370,7 +383,7 @@ class AuthState extends BaseStateModel {
   const AuthState({
     super.loading = false,
     super.errorMessage,
-    this.authResponse,
+    this.authData,
     this.otpError,
     this.profileImage,
     this.addressData,
@@ -387,7 +400,7 @@ class AuthState extends BaseStateModel {
     String? build,
     String? device,
     String? version,
-    AuthResponse? authResponse,
+    AuthData? authData,
     String? otpError,
     bool clearOtpError = false,
     XFile? profileImage,
@@ -399,7 +412,7 @@ class AuthState extends BaseStateModel {
     return AuthState(
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
-      authResponse: authResponse ?? this.authResponse,
+      authData: authData ?? this.authData,
       otpError: clearOtpError ? null : (otpError ?? this.otpError),
       profileImage: clearProfileImage
           ? null
