@@ -7,6 +7,7 @@ import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 import 'package:skinsync_ai/widgets/custom_search_field.dart';
+import '../../view_models/checkout_view_model.dart';
 
 import '../../widgets/custom_app_bar.dart';
 
@@ -28,9 +29,11 @@ class _TreatmentsScreenState extends ConsumerState<TreatmentsScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final selectedCategory = ref.read(checkoutViewModel).selectedCategories?.lastOrNull;
+      final selectedArea = ref.read(checkoutViewModel).selectedAreas?.lastOrNull;
       ref.read(treatmentViewModel.notifier).loadTreatments(
-        categoryId: widget.categoryId,
-        areaId: widget.areaId,
+        categoryId: widget.categoryId ?? selectedCategory?.id,
+        areaId: widget.areaId ?? selectedArea?.id,
         clearSearch: true,
       );
     });
@@ -79,8 +82,8 @@ class _TreatmentsScreenState extends ConsumerState<TreatmentsScreen> {
             // Dynamic Treatments List
             Expanded(
               child: TreatmentMainScreen(
-                categoryId: widget.categoryId,
-                areaId: widget.areaId,
+                categoryId: widget.categoryId ?? ref.read(checkoutViewModel).selectedCategories?.lastOrNull?.id,
+                areaId: widget.areaId ?? ref.read(checkoutViewModel).selectedAreas?.lastOrNull?.id,
               ),
             ),
           ],

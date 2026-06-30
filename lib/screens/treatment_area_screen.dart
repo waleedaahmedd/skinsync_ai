@@ -7,6 +7,7 @@ import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_area_view_model.dart';
+import 'package:skinsync_ai/view_models/checkout_view_model.dart';
 import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 
@@ -185,13 +186,12 @@ class _TreatmentAreaScreenState extends ConsumerState<TreatmentAreaScreen> {
                                               ),
                                             );
                                           } else {
+                                            // Add selected area in checkoutViewModel list
+                                            ref.read(checkoutViewModel.notifier).addSelectedArea(area);
                                             // If no children (leaf node), open the Treatments Screen!
                                             Navigator.pushNamed(
                                               context,
                                               TreatmentsScreen.routeName,
-                                              arguments: {
-                                                'areaId': area.id,
-                                              },
                                             );
                                           }
                                         },

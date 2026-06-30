@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
 import 'package:skinsync_ai/screens/treatment_category_screen.dart';
 import 'package:skinsync_ai/screens/treatment_area_screen.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/view_models/checkout_view_model.dart';
+import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 
-class TreatmentSelectionScreen extends StatelessWidget {
+class TreatmentSelectionScreen extends ConsumerWidget {
   const TreatmentSelectionScreen({super.key});
   static const String routeName = '/TreatmentSelectionScreen';
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -39,6 +42,9 @@ class TreatmentSelectionScreen extends StatelessWidget {
                 customSubtitle: "Browse our complete catalog of professional aesthetic solutions.",
                 customImageUrl: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=600",
                 customOnTap: () {
+                  ref.read(checkoutViewModel.notifier).clearState();
+                  ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+                  ref.read(treatmentViewModel.notifier).clearAiImage();
                   Navigator.pushNamed(
                     context,
                     TreatmentsScreen.routeName,
@@ -54,6 +60,9 @@ class TreatmentSelectionScreen extends StatelessWidget {
                 customSubtitle: "Explore injectables, laser resurfacing, body contouring & facials.",
                 customImageUrl: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=600",
                 customOnTap: () {
+                  ref.read(checkoutViewModel.notifier).clearState();
+                  ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+                  ref.read(treatmentViewModel.notifier).clearAiImage();
                   Navigator.pushNamed(
                     context,
                     TreatmentCategoryScreen.routeName,
@@ -68,6 +77,9 @@ class TreatmentSelectionScreen extends StatelessWidget {
                 customSubtitle: "Target forehead, eyes, cheeks, lips, neck or body zones.",
                 customImageUrl: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=600",
                 customOnTap: () {
+                  ref.read(checkoutViewModel.notifier).clearState();
+                  ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+                  ref.read(treatmentViewModel.notifier).clearAiImage();
                   Navigator.pushNamed(
                     context,
                     TreatmentAreaScreen.routeName,

@@ -11,10 +11,10 @@ import 'package:skinsync_ai/utills/assets.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
-import '../models/responses/treatment_response_model.dart';
+import '../models/responses/treatment_list_response.dart';
 
 class TreatmentDetailScreen extends StatelessWidget {
-  final TreatmentsModel treatments;
+  final TreatmentData treatments;
 
   const TreatmentDetailScreen({super.key, required this.treatments});
 

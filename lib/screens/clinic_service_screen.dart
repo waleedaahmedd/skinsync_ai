@@ -182,7 +182,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                           isSelected: true,
                           selectedTreatment: ref
                               .watch(checkoutViewModel)
-                              .selectedTreatment,
+                              .selectedTreatments?.lastOrNull,
                           selectedSubAreasList:
                               ref
                                   .watch(checkoutViewModel)

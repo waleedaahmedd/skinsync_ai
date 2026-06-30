@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../models/responses/treatment_sub_area_response.dart';
+import '../../models/responses/treatment_area_list_response.dart';
 
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
 import '../../view_models/treatment_view_model.dart';
 
 class SyringeLevelSheet extends StatefulWidget {
-  final TreatmentSubAreaModel subArea;
+  final TreatmentAreaModel subArea;
   const SyringeLevelSheet({super.key, required this.subArea});
 
   @override
@@ -47,8 +47,8 @@ class _SyringeLevelSheetState extends State<SyringeLevelSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final minSyringe = widget.subArea.minSyringe ?? 0;
-    final maxSyringe = widget.subArea.maxSyringe ?? 0;
+    final minSyringe = 1; // Dummy min syringe
+    final maxSyringe = 10; // Dummy max syringe
 
     final minValue = minSyringe.toDouble();
     final maxValue = maxSyringe.toDouble();
@@ -68,7 +68,7 @@ class _SyringeLevelSheetState extends State<SyringeLevelSheet> {
               }),
             );
             final level =
-                subArea?.currentSyringe ?? widget.subArea.currentSyringe;
+                (subArea?.currentSyringe ?? widget.subArea.currentSyringe).clamp(1, 10);
             log('MIN: $minValue MAX: $maxValue CURRENT: $level');
             return Column(
               mainAxisSize: MainAxisSize.min,

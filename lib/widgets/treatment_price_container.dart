@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../models/responses/treatment_response_model.dart';
-import '../models/responses/treatment_sub_area_response.dart';
+import '../models/responses/treatment_list_response.dart';
+import '../models/responses/treatment_area_list_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 
 class TreatmentPriceContainer extends StatelessWidget {
-  final List<TreatmentSubAreaModel> selectedSubAreasList;
-  final TreatmentsModel? selectedTreatment;
+  final List<TreatmentAreaModel> selectedSubAreasList;
+  final TreatmentData? selectedTreatment;
   final String image;
 
   final bool isSelected;
@@ -37,7 +37,7 @@ class TreatmentPriceContainer extends StatelessWidget {
           ),
         ),
         child: Column(
-          crossAxisAlignment: .start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
@@ -58,7 +58,7 @@ class TreatmentPriceContainer extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        mainAxisAlignment: .spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             selectedTreatment?.name ?? "N/A",

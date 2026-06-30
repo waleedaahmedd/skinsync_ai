@@ -7,6 +7,7 @@ import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 
 import '../view_models/treatment_view_model.dart';
+import '../models/responses/treatment_area_list_response.dart';
 
 void showMScanFaceDialog(BuildContext context) {
   showDialog(

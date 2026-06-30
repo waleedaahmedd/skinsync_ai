@@ -8,7 +8,7 @@ import 'package:glow_container/glow_container.dart';
 import 'package:before_after/before_after.dart';
 
 import '../models/responses/simulation_history_response.dart';
-import '../models/responses/treatment_sub_area_response.dart';
+import '../models/responses/treatment_area_list_response.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -207,10 +207,10 @@ class _ArFaceModelPreviewScreenState
 
   void _maybeShowSyringeBottomSheet(
     BuildContext context,
-    TreatmentSubAreaModel subArea,
+    TreatmentAreaModel subArea,
   ) {
-    final minSyringe = subArea.minSyringe ?? 0;
-    final maxSyringe = subArea.maxSyringe ?? 0;
+    final minSyringe = 1; // Dummy min syringe
+    final maxSyringe = 10; // Dummy max syringe
     final divisions = (maxSyringe - minSyringe);
     if (divisions <= 0) return;
 

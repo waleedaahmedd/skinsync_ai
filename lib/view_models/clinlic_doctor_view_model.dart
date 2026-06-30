@@ -11,6 +11,7 @@ import '../models/responses/get_clinic_response.dart';
 import '../models/responses/get_doctor_response.dart';
 import '../models/responses/payment_options_response.dart';
 import '../models/responses/treatment_pricing_response.dart' hide Treatment;
+import '../models/responses/treatment_area_list_response.dart';
 import '../repositories/clinic_doctor_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/clinic_doctor_service.dart';

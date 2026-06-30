@@ -31,7 +31,7 @@ import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
 import 'package:skinsync_ai/screens/your_profile_screen.dart';
 import 'package:skinsync_ai/utills/enums.dart';
 
-import 'models/responses/treatment_response_model.dart';
+import 'models/responses/treatment_list_response.dart';
 import 'screens/ar_face_model_Preview_screen.dart';
 import 'screens/bottom_nav_screens/face_detection_screen.dart';
 import 'screens/bottom_nav_screens/my_profile_screen.dart';
@@ -159,7 +159,7 @@ class RouteGenerator {
           },
         );
       case TreatmentDetailScreen.routeName:
-        final treatments = settings.arguments as TreatmentsModel;
+        final treatments = settings.arguments as TreatmentData;
         return MaterialPageRoute(
           settings: RouteSettings(name: TreatmentDetailScreen.routeName),
           builder: (_) => TreatmentDetailScreen(treatments: treatments),

@@ -17,6 +17,7 @@ import 'package:skinsync_ai/widgets/custom_clinic_grid_view_title.dart';
 import 'package:skinsync_ai/widgets/custom_search_field.dart';
 
 import '../models/responses/get_clinic_response.dart';
+import 'package:skinsync_ai/models/responses/treatment_area_list_response.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -96,7 +97,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                 Consumer(
                   builder: (context, ref, _) {
                     final checkoutState = ref.watch(checkoutViewModel);
-                    final treatment = checkoutState.selectedTreatment;
+                    final treatment = checkoutState.selectedTreatments?.lastOrNull;
                     final subAreas = checkoutState.selectedSubAreasList;
 
                     if (treatment == null || subAreas == null || subAreas.isEmpty) {
@@ -174,10 +175,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                                             final updatedSubAreas = subAreas.where((e) => e.id != subAreaId).toList();
                                             final updatedSubAreaIds = updatedSubAreas.map((e) => e.id!).toList();
 
-                                            ref.read(checkoutViewModel.notifier).setSelectedTreatment(
-                                              treatment: treatment,
-                                              selectedSubAreasList: updatedSubAreas,
-                                            );
+                                            ref.read(checkoutViewModel.notifier).setSelectedSubAreasList(updatedSubAreas);
                                             ref.read(checkoutViewModel.notifier).updateState(
                                               treatmentSubAreaId: updatedSubAreaIds,
                                             );

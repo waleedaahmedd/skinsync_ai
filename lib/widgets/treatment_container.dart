@@ -10,14 +10,13 @@ import 'package:skinsync_ai/widgets/app_network_image.dart';
 import 'package:skinsync_ai/widgets/scan_face_dialog.dart';
 
 import '../main.dart';
-import '../models/responses/treatment_response_model.dart';
 import '../models/responses/treatment_list_response.dart';
 import '../view_models/checkout_view_model.dart';
 
 class TreatmentContainer extends StatelessWidget {
   final double? imageHeight;
   final double? width;
-  final TreatmentsModel? treatments;
+  final TreatmentData? treatments;
   
   // Custom Adaptive Fields for Selection Screen Reusability
   final String? customTitle;
@@ -87,6 +86,7 @@ class TreatmentContainer extends StatelessWidget {
             ref
                 .read(checkoutViewModel.notifier)
                 .updateState(treatmentId: treatments!.id);
+            ref.read(checkoutViewModel.notifier).addSelectedTreatment(treatments!);
             if (treatments!.isArea == true) {
               ref
                   .read(treatmentViewModel.notifier)

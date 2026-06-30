@@ -9,11 +9,10 @@ import 'package:http/http.dart' as http;
 import '../models/base_state_model.dart';
 import '../models/requests/save_history_request.dart';
 import '../models/responses/simulation_history_response.dart';
-import '../models/responses/treatment_area_response.dart';
 import '../models/responses/treatment_response_model.dart';
 import 'dart:async';
 import '../models/responses/treatment_list_response.dart';
-import '../models/responses/treatment_sub_area_response.dart';
+import '../models/responses/treatment_area_list_response.dart';
 import '../repositories/treatment_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/media_service.dart';
@@ -58,7 +57,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       await onTapTreatmentArea(treatmentArea: area, isCallPredictAPI: true);
     }
     final subAreas =
-        state.treatmentsSubAreaResponse?.data ?? <TreatmentSubAreaModel>[];
+        state.treatmentsSubAreaResponse?.data ?? <TreatmentAreaModel>[];
     for (final subArea in subAreas) {
       final selectedSubArea = simulation.subsections?.firstWhereOrNull(
         (subSection) => subSection.sectionId == subArea.id,
@@ -92,7 +91,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     );
   }
 
-  void updateSyringeLevel({required TreatmentSubAreaModel subArea}) {
+  void updateSyringeLevel({required TreatmentAreaModel subArea}) {
     state = state.copyWith(
       selectedSubAreasList: state.selectedSubAreasList.map((s) {
         if (s.id == subArea.id) {
@@ -132,7 +131,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   }
 
   Future<void> onTapTreatment({
-    required TreatmentsModel treatmentModel,
+    required TreatmentData treatmentModel,
     required bool isCallPredictAPI,
   }) async {
     state = state.copyWith(
@@ -170,7 +169,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     }
   }
 
-  void onTapTreatmentSubArea({required TreatmentSubAreaModel subArea}) {
+  void onTapTreatmentSubArea({required TreatmentAreaModel subArea}) {
     final treatmentSubArea = subArea.copyWith(
       areaId: state.selectTreatmentArea!.id!,
     );
@@ -525,15 +524,15 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 @immutable
 class TreatmentsState extends BaseStateModel {
   final List<TreatmentData> treatments;
-  final TreatmentSubAreaResponse? treatmentsSubAreaResponse;
-  final TreatmentAreaResponse? treatmentAreaResponse;
+  final TreatmentAreaListResponse? treatmentsSubAreaResponse;
+  final TreatmentAreaListResponse? treatmentAreaResponse;
   final bool treatmentsLoading;
   final bool treatmentAreaLoading;
   final bool treatmentSubAreaLoading;
 
-  final TreatmentsModel? selectedTreatment;
+  final TreatmentData? selectedTreatment;
   final TreatmentAreaModel? selectTreatmentArea;
-  final List<TreatmentSubAreaModel> selectedSubAreasList;
+  final List<TreatmentAreaModel> selectedSubAreasList;
 
   final bool isBefore;
   final XFile? capturedImage;
@@ -583,15 +582,15 @@ class TreatmentsState extends BaseStateModel {
     bool? loading,
     String? errorMessage,
     List<TreatmentData>? treatments,
-    TreatmentSubAreaResponse? subSelectionResponse,
-    TreatmentAreaResponse? treatmentAreaResponse,
+    TreatmentAreaListResponse? subSelectionResponse,
+    TreatmentAreaListResponse? treatmentAreaResponse,
     bool? treatmentsLoading,
     bool? treatmentAreaLoading,
     bool? treatmentSubAreaLoading,
-    TreatmentsModel? selectedTreatment,
+    TreatmentData? selectedTreatment,
     TreatmentAreaModel? selectedTreatmentArea,
-    TreatmentSubAreaModel? selectedTreatmentSubArea,
-    List<TreatmentSubAreaModel>? selectedSubAreasList,
+    TreatmentAreaModel? selectedTreatmentSubArea,
+    List<TreatmentAreaModel>? selectedSubAreasList,
     bool? isBefore,
     XFile? capturedImage,
     XFile? aiImage,
