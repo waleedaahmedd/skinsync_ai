@@ -72,8 +72,8 @@ class TreatmentContainer extends StatelessWidget {
         final titleText = customTitle ?? treatments?.name ?? "";
         final subtitleText = customSubtitle ?? treatmentData?.shortDescription ?? treatments?.description ?? "";
         final bgImage = customImageUrl ?? treatmentData?.image ?? treatments?.imageUrl ?? "";
-        final iconKey = customIcon ?? treatments?.icon ?? "";
-        final iconWidget = _buildLeftIcon(iconKey);
+        final iconKey = customIcon ?? treatments?.icon;
+        final iconWidget = iconKey!= null?_buildLeftIcon(iconKey): null;
         final globalSku = treatmentData?.globalSku ?? "";
         final useInAiSimulator = treatmentData?.useInAiSimulator ?? false;
 

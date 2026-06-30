@@ -12,10 +12,9 @@ import '../../view_models/checkout_view_model.dart';
 import '../../widgets/custom_app_bar.dart';
 
 class TreatmentsScreen extends ConsumerStatefulWidget {
-  final int? categoryId;
-  final int? areaId;
 
-  const TreatmentsScreen({super.key, this.categoryId, this.areaId});
+
+  const TreatmentsScreen({super.key});
   static const routeName = "TreatmentsScreen";
 
   @override
@@ -32,8 +31,8 @@ class _TreatmentsScreenState extends ConsumerState<TreatmentsScreen> {
       final selectedCategory = ref.read(checkoutViewModel).selectedCategories?.lastOrNull;
       final selectedArea = ref.read(checkoutViewModel).selectedAreas?.lastOrNull;
       ref.read(treatmentViewModel.notifier).loadTreatments(
-        categoryId: widget.categoryId ?? selectedCategory?.id,
-        areaId: widget.areaId ?? selectedArea?.id,
+        categoryId:  selectedCategory?.id,
+        areaId:  selectedArea?.id,
         clearSearch: true,
       );
     });
@@ -82,8 +81,8 @@ class _TreatmentsScreenState extends ConsumerState<TreatmentsScreen> {
             // Dynamic Treatments List
             Expanded(
               child: TreatmentMainScreen(
-                categoryId: widget.categoryId ?? ref.read(checkoutViewModel).selectedCategories?.lastOrNull?.id,
-                areaId: widget.areaId ?? ref.read(checkoutViewModel).selectedAreas?.lastOrNull?.id,
+                categoryId:  ref.read(checkoutViewModel).selectedCategories?.lastOrNull?.id,
+                areaId: ref.read(checkoutViewModel).selectedAreas?.lastOrNull?.id,
               ),
             ),
           ],

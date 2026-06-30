@@ -220,10 +220,7 @@ class RouteGenerator {
         }
         return MaterialPageRoute(
           settings: RouteSettings(name: TreatmentsScreen.routeName),
-          builder: (_) => TreatmentsScreen(
-            categoryId: categoryId,
-            areaId: areaId,
-          ),
+          builder: (_) => TreatmentsScreen(),
         );
       case TreatmentExploreScreen.routeName:
         return MaterialPageRoute(

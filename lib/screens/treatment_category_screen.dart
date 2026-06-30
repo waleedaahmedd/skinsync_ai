@@ -11,7 +11,7 @@ import 'package:skinsync_ai/view_models/checkout_view_model.dart';
 import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 
-  class TreatmentCategoryScreen extends ConsumerStatefulWidget {
+class TreatmentCategoryScreen extends ConsumerStatefulWidget {
   final List<TreatmentCategoryModel>? categories;
   final String title;
   final String selectionPath; // Path of selected categories
@@ -26,10 +26,12 @@ import 'package:skinsync_ai/widgets/treatment_container.dart';
   static const String routeName = '/TreatmentCategoryScreen';
 
   @override
-  ConsumerState<TreatmentCategoryScreen> createState() => _TreatmentCategoryScreenState();
+  ConsumerState<TreatmentCategoryScreen> createState() =>
+      _TreatmentCategoryScreenState();
 }
 
-class _TreatmentCategoryScreenState extends ConsumerState<TreatmentCategoryScreen> {
+class _TreatmentCategoryScreenState
+    extends ConsumerState<TreatmentCategoryScreen> {
   @override
   void initState() {
     super.initState();
@@ -44,7 +46,8 @@ class _TreatmentCategoryScreenState extends ConsumerState<TreatmentCategoryScree
   @override
   Widget build(BuildContext context) {
     final viewModel = ref.watch(treatmentCategoryProvider);
-    final displayedCategories = (widget.categories != null && widget.categories!.isNotEmpty)
+    final displayedCategories =
+        (widget.categories != null && widget.categories!.isNotEmpty)
         ? widget.categories!
         : viewModel.categories;
 
@@ -69,7 +72,10 @@ class _TreatmentCategoryScreenState extends ConsumerState<TreatmentCategoryScree
                           decoration: BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.grey.shade300, width: 1),
+                            border: Border.all(
+                              color: Colors.grey.shade300,
+                              width: 1,
+                            ),
                           ),
                           child: Icon(
                             Icons.arrow_back_ios_new_rounded,
@@ -94,12 +100,17 @@ class _TreatmentCategoryScreenState extends ConsumerState<TreatmentCategoryScree
                   // Premium Breadcrumb Selection Path Container
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(15.r),
                       border: Border.all(
-                        color: CustomColors.lightPurpleColor.withValues(alpha: 0.3),
+                        color: CustomColors.lightPurpleColor.withValues(
+                          alpha: 0.3,
+                        ),
                         width: 1,
                       ),
                       boxShadow: [
@@ -144,65 +155,75 @@ class _TreatmentCategoryScreenState extends ConsumerState<TreatmentCategoryScree
               child: viewModel.loading && displayedCategories.isEmpty
                   ? const AppLoader()
                   : displayedCategories.isEmpty
-                      ? _buildEmptyResultsPlaceholder()
-                      : AnimationLimiter(
-                          key: ValueKey('category_list_${widget.title}'),
-                          child: ListView.builder(
-                            scrollDirection: Axis.vertical,
-                            padding: EdgeInsets.symmetric(horizontal: 30.w),
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: displayedCategories.length + 1,
-                            itemBuilder: (context, index) {
-                              if (index == displayedCategories.length) {
-                                return SizedBox(height: 110.h); // Provide padding for floating items
-                              }
+                  ? _buildEmptyResultsPlaceholder()
+                  : AnimationLimiter(
+                      key: ValueKey('category_list_${widget.title}'),
+                      child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        padding: EdgeInsets.symmetric(horizontal: 30.w),
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: displayedCategories.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index == displayedCategories.length) {
+                            return SizedBox(
+                              height: 110.h,
+                            ); // Provide padding for floating items
+                          }
 
-                              final category = displayedCategories[index];
+                          final category = displayedCategories[index];
 
-                              return AnimationConfiguration.staggeredList(
-                                position: index,
-                                duration: const Duration(milliseconds: 600),
-                                child: SlideAnimation(
-                                  verticalOffset: 50.0,
-                                  child: FadeInAnimation(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(bottom: 16.h),
-                                      child: TreatmentContainer(
-                                        customTitle: category.name,
-                                        customSubtitle: category.shortDescription ?? "",
-                                        customImageUrl: category.image ?? "",
-                                        customIcon: category.icon ?? "",
-                                        customOnTap: () {
-                                          if (category.subCategories != null && category.subCategories!.isNotEmpty) {
-                                            // Recursively open another category screen with appended path
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => TreatmentCategoryScreen(
-                                                  categories: category.subCategories,
+                          return AnimationConfiguration.staggeredList(
+                            position: index,
+                            duration: const Duration(milliseconds: 600),
+                            child: SlideAnimation(
+                              verticalOffset: 50.0,
+                              child: FadeInAnimation(
+                                child: Padding(
+                                  padding: EdgeInsets.only(bottom: 16.h),
+                                  child: TreatmentContainer(
+                                    customTitle: category.name,
+                                    customSubtitle:
+                                        category.shortDescription ?? "",
+                                    customImageUrl: category.image ?? "",
+                                    customIcon: category.icon ?? "",
+                                    customOnTap: () {
+                                      ref
+                                          .read(checkoutViewModel.notifier)
+                                          .addSelectedCategory(category);
+
+                                      if (category.subCategories != null &&
+                                          category.subCategories!.isNotEmpty) {
+                                        // Recursively open another category screen with appended path
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                TreatmentCategoryScreen(
+                                                  categories:
+                                                      category.subCategories,
                                                   title: category.name ?? "",
-                                                  selectionPath: "${widget.selectionPath}  ▸  ${category.name}",
+                                                  selectionPath:
+                                                      "${widget.selectionPath}  ▸  ${category.name}",
                                                 ),
-                                              ),
-                                            );
-                                          } else {
-                                            // Add selected category in checkoutViewModel list
-                                            ref.read(checkoutViewModel.notifier).addSelectedCategory(category);
-                                            // If no children (leaf node), open the Treatment Screen!
-                                            Navigator.pushNamed(
-                                              context,
-                                              TreatmentsScreen.routeName,
-                                            );
-                                          }
-                                        },
-                                      ),
-                                    ),
+                                          ),
+                                        );
+                                      } else {
+                                        // Add selected category in checkoutViewModel list
+                                        // If no children (leaf node), open the Treatment Screen!
+                                        Navigator.pushNamed(
+                                          context,
+                                          TreatmentsScreen.routeName,
+                                        );
+                                      }
+                                    },
                                   ),
                                 ),
-                              );
-                            },
-                          ),
-                        ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
             ),
           ],
         ),
@@ -217,11 +238,17 @@ class _TreatmentCategoryScreenState extends ConsumerState<TreatmentCategoryScree
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.category_outlined, size: 70.sp, color: Colors.grey.shade400),
+            Icon(
+              Icons.category_outlined,
+              size: 70.sp,
+              color: Colors.grey.shade400,
+            ),
             SizedBox(height: 15.h),
             Text(
               "No Categories Found",
-              style: CustomFonts.black20w600.copyWith(color: Colors.grey.shade700),
+              style: CustomFonts.black20w600.copyWith(
+                color: Colors.grey.shade700,
+              ),
             ),
             SizedBox(height: 5.h),
             Text(
