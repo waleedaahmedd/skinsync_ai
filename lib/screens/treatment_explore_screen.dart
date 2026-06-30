@@ -9,8 +9,8 @@ import 'package:skinsync_ai/view_models/checkout_view_model.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 
-class TreatmentSelectionScreen extends ConsumerWidget {
-  const TreatmentSelectionScreen({super.key});
+class TreatmentExploreScreen extends ConsumerWidget {
+  const TreatmentExploreScreen({super.key});
   static const String routeName = '/TreatmentSelectionScreen';
 
   @override

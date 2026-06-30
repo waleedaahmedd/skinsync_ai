@@ -36,7 +36,7 @@ import 'screens/ar_face_model_Preview_screen.dart';
 import 'screens/bottom_nav_screens/face_detection_screen.dart';
 import 'screens/bottom_nav_screens/my_profile_screen.dart';
 import 'screens/bottom_nav_screens/treatments_screen.dart';
-import 'screens/treatment_selection_screen.dart';
+import 'screens/treatment_explore_screen.dart';
 import 'screens/treatment_category_screen.dart';
 import 'screens/treatment_area_screen.dart';
 import 'screens/doctors_listing_screen.dart';
@@ -225,10 +225,10 @@ class RouteGenerator {
             areaId: areaId,
           ),
         );
-      case TreatmentSelectionScreen.routeName:
+      case TreatmentExploreScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: TreatmentSelectionScreen.routeName),
-          builder: (_) => TreatmentSelectionScreen(),
+          settings: RouteSettings(name: TreatmentExploreScreen.routeName),
+          builder: (_) => TreatmentExploreScreen(),
         );
       case TreatmentCategoryScreen.routeName:
         final argsMap = args as Map<String, dynamic>? ?? {};
