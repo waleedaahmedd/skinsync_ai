@@ -134,8 +134,7 @@ class RouteGenerator {
       case ArFaceModelPreviewScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: ArFaceModelPreviewScreen.routeName),
-          builder: (_) =>
-              ArFaceModelPreviewScreen(simulationData: args as SimulationData?),
+          builder: (_) => const ArFaceModelPreviewScreen(),
         );
       case SuggestedTreatmentScreen.routeName:
         return MaterialPageRoute(

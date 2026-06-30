@@ -24,15 +24,8 @@ import '../view_models/treatment_area_view_model.dart';
 import 'explore_clinics_screen.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
-  final SimulationData? simulationData;
-  final int? treatmentId;
-  final List<int>? selectedAreaIds;
-
   const ArFaceModelPreviewScreen({
     super.key,
-    this.simulationData,
-    this.treatmentId,
-    this.selectedAreaIds,
   });
 
   static const String routeName = '/ArFaceModelPreviewScreen';
@@ -140,9 +133,11 @@ class _ArFaceModelPreviewScreenState
       }
     });
 
-    if (widget.selectedAreaIds != null) {
-      _selectedAreaIds.addAll(widget.selectedAreaIds!);
-    }
+    final checkoutState = ref.read(checkoutViewModel);
+    final selectedAreas = checkoutState.selectedAreas ?? [];
+    final selectedSubAreas = checkoutState.selectedSubAreasList ?? [];
+    _selectedAreaIds.addAll(selectedAreas.map((e) => e.id).whereType<int>());
+    _selectedAreaIds.addAll(selectedSubAreas.map((e) => e.id).whereType<int>());
 
     _pulseController = AnimationController(
       vsync: this,
@@ -165,36 +160,25 @@ class _ArFaceModelPreviewScreenState
         clearSearch: true,
       );
 
-      var selectedTreatment = ref.read(treatmentViewModel).selectedTreatment;
-      final loadedTreatments = ref.read(treatmentViewModel).treatments;
-      if (selectedTreatment == null && loadedTreatments.isNotEmpty) {
-        selectedTreatment = loadedTreatments.first;
+      var selectedTreatment = ref.read(checkoutViewModel).selectedTreatments?.lastOrNull;
+      if (selectedTreatment == null) {
+        final loadedTreatments = ref.read(treatmentViewModel).treatments;
+        if (loadedTreatments.isNotEmpty) {
+          selectedTreatment = loadedTreatments.first;
+        }
+      }
+
+      if (selectedTreatment != null) {
         await ref.read(treatmentViewModel.notifier).onTapTreatment(
           treatmentModel: selectedTreatment,
           isCallPredictAPI: false,
         );
       }
 
-      final treatmentId = widget.treatmentId ?? selectedTreatment?.id;
+      final treatmentId = selectedTreatment?.id;
       if (treatmentId != null) {
         await ref.read(treatmentAreaProvider.notifier).fetchAreasByTreatment(treatmentId);
       }
-
-      if (widget.simulationData != null && widget.simulationData!.subsections != null) {
-        setState(() {
-          for (final sub in widget.simulationData!.subsections!) {
-            if (sub.areaId != null) _selectedAreaIds.add(sub.areaId!);
-            if (sub.sectionId != null) _selectedAreaIds.add(sub.sectionId!);
-          }
-        });
-      }
-
-      if (widget.simulationData == null) {
-        return;
-      }
-      ref
-          .read(treatmentViewModel.notifier)
-          .initializeSimulation(widget.simulationData!);
     });
   }
 
