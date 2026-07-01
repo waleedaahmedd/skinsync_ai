@@ -98,7 +98,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                   builder: (context, ref, _) {
                     final checkoutState = ref.watch(checkoutViewModel);
                     final treatment = checkoutState.selectedTreatments?.lastOrNull;
-                    final subAreas = checkoutState.selectedSubAreasList;
+                    final subAreas = checkoutState.selectedAreas;
 
                     if (treatment == null || subAreas == null || subAreas.isEmpty) {
                       return const SizedBox.shrink();
@@ -175,10 +175,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                                             final updatedSubAreas = subAreas.where((e) => e.id != subAreaId).toList();
                                             final updatedSubAreaIds = updatedSubAreas.map((e) => e.id!).toList();
 
-                                            ref.read(checkoutViewModel.notifier).setSelectedSubAreasList(updatedSubAreas);
-                                            ref.read(checkoutViewModel.notifier).updateState(
-                                              treatmentSubAreaId: updatedSubAreaIds,
-                                            );
+                                            ref.read(checkoutViewModel.notifier).setSelectedAreas(updatedSubAreas);
 
                                             // 3. Re-fetch clinics with updated sub-area filters
                                             ref.read(clinicDoctorProvider.notifier).getClinic(

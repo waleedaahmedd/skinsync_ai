@@ -173,7 +173,6 @@ class _TreatmentAreaScreenState extends ConsumerState<TreatmentAreaScreen> {
                                         customImageUrl: area.image ?? "",
                                         customIcon: area.icon ?? "",
                                         customOnTap: () {
-                                          ref.read(checkoutViewModel.notifier).addSelectedArea(area);
 
                                           if (area.subAreas != null && area.subAreas!.isNotEmpty) {
                                             // Recursively open another area screen with appended path
@@ -188,8 +187,8 @@ class _TreatmentAreaScreenState extends ConsumerState<TreatmentAreaScreen> {
                                               ),
                                             );
                                           } else {
-                                            // Add selected area in checkoutViewModel list
-                                            // If no children (leaf node), open the Treatments Screen!
+                                            ref.read(checkoutViewModel.notifier).addSelectedArea(area);
+
                                             Navigator.pushNamed(
                                               context,
                                               TreatmentsScreen.routeName,

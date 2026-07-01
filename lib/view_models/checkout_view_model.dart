@@ -19,9 +19,6 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   }
 
   void updateState({
-    int? treatmentId,
-    int? treatmentAreaId,
-    List<int>? treatmentSubAreaId,
     String? clinicId,
     String? drId,
     String? appointmentDate,
@@ -30,15 +27,11 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   }) {
     print("state updated");
     state = CheckoutState(
-      treatmentId: treatmentId ?? state.treatmentId,
-      treatmentAreaId: treatmentAreaId ?? state.treatmentAreaId,
-      treatmentSubAreaId: treatmentSubAreaId ?? state.treatmentSubAreaId,
       clinicId: clinicId ?? state.clinicId,
       drId: drId ?? state.drId,
       appointmentDate: appointmentDate ?? state.appointmentDate,
       appointmentTime: appointmentTime ?? state.appointmentTime,
       capturedImage: capturedImage ?? state.capturedImage,
-      selectedSubAreasList: state.selectedSubAreasList,
       selectedTreatments: state.selectedTreatments,
       selectedCategories: state.selectedCategories,
       selectedAreas: state.selectedAreas,
@@ -48,9 +41,6 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   void clearState() {
     print("state Cleared");
     state = const CheckoutState(
-      treatmentId: null,
-      treatmentAreaId: null,
-      treatmentSubAreaId: null,
       clinicId: null,
       drId: null,
       appointmentDate: null,
@@ -59,7 +49,6 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       selectedCategories: [],
       selectedTreatments: [],
       selectedAreas: [],
-      selectedSubAreasList: [],
     );
   }
 
@@ -95,20 +84,12 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       state = state.copyWith(selectedAreas: [...currentList, area]);
     }
   }
-
-  void setSelectedSubAreasList(List<TreatmentAreaModel> subAreas) {
-    state = state.copyWith(selectedSubAreasList: subAreas);
-  }
 }
 
 class CheckoutState {
-  final List<TreatmentAreaModel>? selectedSubAreasList;
   final List<TreatmentData>? selectedTreatments;
   final List<TreatmentCategoryModel>? selectedCategories;
   final List<TreatmentAreaModel>? selectedAreas;
-  final int? treatmentId;
-  final int? treatmentAreaId;
-  final List<int>? treatmentSubAreaId;
   final String? clinicId;
   final String? drId;
   final String? appointmentDate;
@@ -116,44 +97,32 @@ class CheckoutState {
   final XFile? capturedImage;
 
   const CheckoutState({
-    this.treatmentId,
-    this.treatmentAreaId,
-    this.treatmentSubAreaId,
     this.clinicId,
     this.drId,
     this.appointmentDate,
     this.appointmentTime,
     this.capturedImage,
-    this.selectedSubAreasList = const [],
     this.selectedTreatments = const [],
     this.selectedCategories = const [],
     this.selectedAreas = const [],
   });
 
   CheckoutState copyWith({
-    int? treatmentId,
-    int? treatmentAreaId,
-    List<int>? treatmentSubAreaId,
     String? clinicId,
     String? drId,
     String? appointmentDate,
     String? appointmentTime,
     XFile? capturedImage,
-    List<TreatmentAreaModel>? selectedSubAreasList,
     List<TreatmentData>? selectedTreatments,
     List<TreatmentCategoryModel>? selectedCategories,
     List<TreatmentAreaModel>? selectedAreas,
   }) {
     return CheckoutState(
-      treatmentId: treatmentId ?? this.treatmentId,
-      treatmentAreaId: treatmentAreaId ?? this.treatmentAreaId,
-      treatmentSubAreaId: treatmentSubAreaId ?? this.treatmentSubAreaId,
       clinicId: clinicId ?? this.clinicId,
       drId: drId ?? this.drId,
       appointmentDate: appointmentDate ?? this.appointmentDate,
       appointmentTime: appointmentTime ?? this.appointmentTime,
       capturedImage: capturedImage ?? this.capturedImage,
-      selectedSubAreasList: selectedSubAreasList ?? this.selectedSubAreasList,
       selectedTreatments: selectedTreatments ?? this.selectedTreatments,
       selectedCategories: selectedCategories ?? this.selectedCategories,
       selectedAreas: selectedAreas ?? this.selectedAreas,

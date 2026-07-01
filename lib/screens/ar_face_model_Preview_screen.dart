@@ -135,9 +135,7 @@ class _ArFaceModelPreviewScreenState
 
     final checkoutState = ref.read(checkoutViewModel);
     final selectedAreas = checkoutState.selectedAreas ?? [];
-    final selectedSubAreas = checkoutState.selectedSubAreasList ?? [];
     _selectedAreaIds.addAll(selectedAreas.map((e) => e.id).whereType<int>());
-    _selectedAreaIds.addAll(selectedSubAreas.map((e) => e.id).whereType<int>());
 
     _pulseController = AnimationController(
       vsync: this,
@@ -923,13 +921,6 @@ class _ArFaceModelPreviewScreenState
                         .map((e) => e.id)
                         .whereType<int>()
                         .toList();
-
-                    ref
-                        .read(checkoutViewModel.notifier)
-                        .updateState(treatmentId: treatmentId);
-                    ref
-                        .read(checkoutViewModel.notifier)
-                        .updateState(treatmentSubAreaId: subAreaIds);
 
                     Navigator.pushNamed(
                       context,

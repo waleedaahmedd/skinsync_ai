@@ -83,9 +83,6 @@ class TreatmentContainer extends StatelessWidget {
             ref.read(checkoutViewModel.notifier).clearState();
             ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
             ref.read(treatmentViewModel.notifier).clearAiImage();
-            ref
-                .read(checkoutViewModel.notifier)
-                .updateState(treatmentId: treatments!.id);
             ref.read(checkoutViewModel.notifier).addSelectedTreatment(treatments!);
             if (treatments!.isArea == true) {
               ref
