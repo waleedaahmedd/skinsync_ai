@@ -168,6 +168,39 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     _printSelectedTreatmentsAndAreas();
   }
 
+  void removeTreatment(int treatmentId) {
+    final currentList =
+        List<SelectedTreatmentAndAreasModel>.from(state.selectedTreatmentsAndAreas);
+    currentList.removeWhere((item) => item.treatment.id == treatmentId);
+
+    final activeTreatment = state.selectedTreatments;
+    final updatedActiveTreatment =
+        activeTreatment?.id == treatmentId ? null : activeTreatment;
+
+    state = state.copyWith(
+      selectedTreatmentsAndAreas: currentList,
+      selectedTreatments: updatedActiveTreatment,
+    );
+    _printSelectedTreatmentsAndAreas();
+  }
+
+  void removeArea(int areaId) {
+    final currentList = state.selectedTreatmentsAndAreas.map((item) {
+      final updatedAreas =
+          item.selectedAreas.where((a) => a.id != areaId).toList();
+      return item.copyWith(selectedAreas: updatedAreas);
+    }).toList();
+
+    final activeArea = state.selectedAreas;
+    final updatedActiveArea = activeArea?.id == areaId ? null : activeArea;
+
+    state = state.copyWith(
+      selectedAreas: updatedActiveArea,
+      selectedTreatmentsAndAreas: currentList,
+    );
+    _printSelectedTreatmentsAndAreas();
+  }
+
   void _printSelectedTreatmentsAndAreas() {
     print("--- Selected Treatments and Areas ---");
     for (final item in state.selectedTreatmentsAndAreas) {

@@ -63,14 +63,7 @@ class _ArFaceModelPreviewScreenState
     return selected;
   }
 
-  void _deselectSubAreasRecursively(AreaData area) {
-    if (area.subAreas != null) {
-      for (final sub in area.subAreas!) {
-        _selectedAreaIds.remove(sub.id);
-        _deselectSubAreasRecursively(sub);
-      }
-    }
-  }
+
 
   Widget _buildAreasRecursively(List<AreaData> areas, {String title = "Area Selection"}) {
     if (areas.isEmpty) return const SizedBox.shrink();
@@ -96,14 +89,14 @@ class _ArFaceModelPreviewScreenState
               text: area.name ?? '-',
               selected: isSelected,
               onPressed: () {
-                setState(() {
-                  if (isSelected) {
-                    _selectedAreaIds.remove(area.id);
-                    _deselectSubAreasRecursively(area);
-                  } else {
+                if (!isSelected) {
+                  setState(() {
                     _selectedAreaIds.add(area.id!);
-                  }
-                });
+                    if (area.subAreas == null || area.subAreas!.isEmpty) {
+                      ref.read(checkoutViewModel.notifier).addSelectedArea(area);
+                    }
+                  });
+                }
               },
             );
           }).toList(),
@@ -169,6 +162,7 @@ class _ArFaceModelPreviewScreenState
       }
 
       if (selectedTreatment != null) {
+        ref.read(checkoutViewModel.notifier).addSelectedTreatment(selectedTreatment);
         await ref.read(treatmentViewModel.notifier).onTapTreatment(
           treatmentModel: selectedTreatment,
           isCallPredictAPI: false,
@@ -210,40 +204,7 @@ class _ArFaceModelPreviewScreenState
     );
   }
 
-  void _showRemoveConfirmation(
-    BuildContext context,
-    WidgetRef ref,
-    int id,
-    String name,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Remove Sub Area', style: CustomFonts.black16w400),
-          content: Text(
-            'Do you want to remove $name?',
-            style: CustomFonts.black16w400,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text('No', style: CustomFonts.black16w400),
-            ),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _selectedAreaIds.remove(id);
-                });
-                Navigator.pop(context);
-              },
-              child: Text('Yes', style: CustomFonts.black16w400),
-            ),
-          ],
-        );
-      },
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -358,7 +319,6 @@ class _ArFaceModelPreviewScreenState
                                   final isLoading = state.isLoading;
                                   final isLoadingMore = state.isLoadingMore;
                                   final treatments = state.treatments;
-                                  final selectedTreatment = state.selectedTreatment;
 
                                   if (isLoading && treatments.isEmpty) {
                                     return SizedBox(
@@ -410,7 +370,7 @@ class _ArFaceModelPreviewScreenState
                                           }
 
                                           final treatment = treatments[index];
-                                          final isSelected = selectedTreatment?.id == treatment.id;
+                                          final isSelected = ref.watch(checkoutViewModel).selectedTreatmentsAndAreas.any((item) => item.treatment.id == treatment.id);
 
                                           return AnimationConfiguration.staggeredList(
                                             position: index,
@@ -431,6 +391,9 @@ class _ArFaceModelPreviewScreenState
                                                             treatmentModel: treatment,
                                                             isCallPredictAPI: true,
                                                           );
+                                                      ref
+                                                          .read(checkoutViewModel.notifier)
+                                                          .addSelectedTreatment(treatment);
                                                       await ref
                                                           .read(treatmentAreaProvider.notifier)
                                                           .fetchAreasByTreatment(treatment.id ?? 0);
@@ -479,144 +442,124 @@ class _ArFaceModelPreviewScreenState
                               SizedBox(height: 20.h),
                               Consumer(
                                 builder: (context, ref, _) {
-                                  final treatment = ref.watch(
-                                    treatmentViewModel.select(
-                                      (s) => s.selectedTreatment,
-                                    ),
-                                  );
-                                  final rootAreas = ref.watch(treatmentAreaProvider).areas;
-                                  final selectedAreas = _getSelectedAreasList(rootAreas)
-                                      .where((e) => e.subAreas == null || e.subAreas!.isEmpty)
-                                      .toList();
+                                  final selectedTreatmentsAndAreas = ref.watch(checkoutViewModel).selectedTreatmentsAndAreas;
 
-                                  if (selectedAreas.isEmpty) {
+                                  if (selectedTreatmentsAndAreas.isEmpty) {
                                     return const SizedBox.shrink();
                                   }
 
-                                  return Container(
-                                    width: double.infinity,
-                                    padding: EdgeInsets.all(18.w),
-                                    margin: EdgeInsets.only(bottom: 16.h),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(24.r),
-                                      border: Border.all(
-                                        color: Colors.black.withValues(alpha: 0.12),
-                                        width: 1.5,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withValues(alpha: 0.015),
-                                          blurRadius: 10,
-                                          offset: const Offset(0, 4),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Selected Treatment',
-                                          style: CustomFonts.black14w700,
-                                        ),
-                                        SizedBox(height: 6.h),
-                                        Text(
-                                          treatment?.name ?? '-',
-                                          style: CustomFonts.black18w600,
-                                        ),
-                                        SizedBox(height: 16.h),
-                                        Text(
-                                          'Selected Sub Areas',
-                                          style: CustomFonts.black14w700,
-                                        ),
-                                        SizedBox(height: 10.h),
-                                        Wrap(
-                                          spacing: 8.w,
-                                          runSpacing: 8.h,
-                                          children: selectedAreas.map((e) {
-                                            final name = e.name ?? '-';
-                                            return Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(16.r),
-                                                gradient: const LinearGradient(
-                                                  begin: Alignment.topCenter,
-                                                  end: Alignment.bottomCenter,
-                                                  colors: [CustomColors.lightPurpleColor, CustomColors.purpleColor],
-                                                ),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: CustomColors.purpleColor.withValues(alpha: 0.15),
-                                                    blurRadius: 6,
-                                                    offset: const Offset(0, 3),
+                                  return SizedBox(
+                                    height: 180.h,
+                                    child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      physics: const BouncingScrollPhysics(),
+                                      itemCount: selectedTreatmentsAndAreas.length,
+                                      itemBuilder: (context, index) {
+                                        final item = selectedTreatmentsAndAreas[index];
+                                        final treatment = item.treatment;
+                                        final areas = item.selectedAreas;
+
+                                        return Container(
+                                          width: 260.w,
+                                          margin: EdgeInsets.only(right: 16.w, bottom: 16.h),
+                                          padding: EdgeInsets.all(16.w),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(24.r),
+                                            border: Border.all(
+                                              color: Colors.black.withValues(alpha: 0.12),
+                                              width: 1.5,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withValues(alpha: 0.015),
+                                                blurRadius: 10,
+                                                offset: const Offset(0, 4),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text(
+                                                          'Selected Treatment',
+                                                          style: CustomFonts.black10w600.copyWith(color: Colors.grey.shade500),
+                                                        ),
+                                                        SizedBox(height: 2.h),
+                                                        Text(
+                                                          treatment.name ?? '-',
+                                                          style: CustomFonts.black16w600,
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow.ellipsis,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        for (final a in areas) {
+                                                          _selectedAreaIds.remove(a.id);
+                                                        }
+                                                        ref.read(checkoutViewModel.notifier).removeTreatment(treatment.id ?? 0);
+                                                      });
+                                                    },
+                                                    child: Icon(
+                                                      Icons.cancel_rounded,
+                                                      size: 20,
+                                                      color: Colors.red.shade400,
+                                                    ),
                                                   ),
                                                 ],
                                               ),
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.circular(16.r),
-                                                child: Stack(
-                                                  children: [
-                                                    // 1. White Tint Mask Overlay (Consistent with light theme)
-                                                    Positioned.fill(
-                                                      child: Container(
-                                                        color: Colors.white.withValues(alpha: 0.85),
-                                                      ),
-                                                    ),
-
-                                                    // 2. High-Contrast Content
-                                                    Padding(
-                                                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                                                      child: Row(
-                                                        mainAxisSize: MainAxisSize.min,
-                                                        children: [
-                                                          Icon(
-                                                            Icons.insights_rounded,
-                                                            color: CustomColors.purpleColor,
-                                                            size: 14.sp,
-                                                          ),
-                                                          SizedBox(width: 6.w),
-                                                          Column(
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            mainAxisSize: MainAxisSize.min,
-                                                            children: [
-                                                              Text(
-                                                                name,
-                                                                style: CustomFonts.black10w600.copyWith(fontSize: 11.sp),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          SizedBox(width: 10.w),
-                                                          Container(
-                                                            width: 1.w,
-                                                            height: 18.h,
-                                                            color: Colors.black12,
-                                                          ),
-                                                          SizedBox(width: 10.w),
-                                                          GestureDetector(
-                                                            onTap: () {
-                                                              _showRemoveConfirmation(
-                                                                context,
-                                                                ref,
-                                                                e.id!,
-                                                                name,
-                                                              );
-                                                            },
-                                                            child: Icon(
-                                                              Icons.cancel_rounded,
-                                                              size: 16,
-                                                              color: Colors.grey.shade600,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                              const Divider(height: 16, color: Colors.black12),
+                                              Text(
+                                                'Selected Areas',
+                                                style: CustomFonts.black10w600.copyWith(color: Colors.grey.shade500),
                                               ),
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ],
+                                              SizedBox(height: 6.h),
+                                              Expanded(
+                                                child: areas.isEmpty
+                                                    ? Center(
+                                                        child: Text(
+                                                          "No areas selected",
+                                                          style: CustomFonts.grey12w400,
+                                                        ),
+                                                      )
+                                                    : SingleChildScrollView(
+                                                        child: Wrap(
+                                                          spacing: 6.w,
+                                                          runSpacing: 6.h,
+                                                          children: areas.map((area) {
+                                                            return Chip(
+                                                              visualDensity: VisualDensity.compact,
+                                                              label: Text(
+                                                                area.name ?? '-',
+                                                                style: CustomFonts.black10w600,
+                                                              ),
+                                                              onDeleted: () {
+                                                                setState(() {
+                                                                  _selectedAreaIds.remove(area.id);
+                                                                  ref.read(checkoutViewModel.notifier).removeArea(area.id ?? 0);
+                                                                });
+                                                              },
+                                                              deleteIconColor: Colors.red.shade300,
+                                                            );
+                                                          }).toList(),
+                                                        ),
+                                                      ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
                                     ),
                                   );
                                 },
