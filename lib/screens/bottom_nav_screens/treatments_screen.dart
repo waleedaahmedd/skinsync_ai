@@ -29,7 +29,7 @@ class _TreatmentsScreenState extends ConsumerState<TreatmentsScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final selectedCategory = ref.read(checkoutViewModel).selectedCategories?.lastOrNull;
-      final selectedArea = ref.read(checkoutViewModel).selectedAreas?.lastOrNull;
+      final selectedArea = ref.read(checkoutViewModel).selectedAreas;
       ref.read(treatmentViewModel.notifier).loadTreatments(
         categoryId:  selectedCategory?.id,
         areaId:  selectedArea?.id,
@@ -82,7 +82,7 @@ class _TreatmentsScreenState extends ConsumerState<TreatmentsScreen> {
             Expanded(
               child: TreatmentMainScreen(
                 categoryId:  ref.read(checkoutViewModel).selectedCategories?.lastOrNull?.id,
-                areaId: ref.read(checkoutViewModel).selectedAreas?.lastOrNull?.id,
+                areaId: ref.read(checkoutViewModel).selectedAreas?.id,
               ),
             ),
           ],

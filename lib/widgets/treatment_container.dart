@@ -80,9 +80,6 @@ class TreatmentContainer extends StatelessWidget {
         return GestureDetector(
           onTap: customOnTap ?? () {
             if (treatments == null) return;
-            ref.read(checkoutViewModel.notifier).clearState();
-            ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
-            ref.read(treatmentViewModel.notifier).clearAiImage();
             ref.read(checkoutViewModel.notifier).addSelectedTreatment(treatments!);
             if (treatments!.isArea == true) {
               ref

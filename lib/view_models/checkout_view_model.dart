@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/responses/treatment_list_response.dart';
 import '../models/responses/treatment_category_list_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
+import '../models/selected_treatment_and_areas_model.dart';
 
 import 'base_view_model.dart';
 
@@ -32,8 +33,9 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       appointmentDate: appointmentDate ?? state.appointmentDate,
       appointmentTime: appointmentTime ?? state.appointmentTime,
       capturedImage: capturedImage ?? state.capturedImage,
-      selectedTreatments: state.selectedTreatments,
+      selectedTreatmentsAndAreas: state.selectedTreatmentsAndAreas,
       selectedCategories: state.selectedCategories,
+      selectedTreatments: state.selectedTreatments,
       selectedAreas: state.selectedAreas,
     );
   }
@@ -47,24 +49,60 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       appointmentTime: null,
       capturedImage: null,
       selectedCategories: [],
-      selectedTreatments: [],
-      selectedAreas: [],
+      selectedTreatments: null,
+      selectedAreas: null,
+      selectedTreatmentsAndAreas: [],
     );
   }
 
-  void setSelectedTreatments(List<TreatmentData> treatments) {
-    state = state.copyWith(selectedTreatments: treatments);
+  void setSelectedTreatments(TreatmentData? treatment) {
+    state = state.copyWith(selectedTreatments: treatment);
   }
 
   void addSelectedTreatment(TreatmentData treatment) {
-    final currentList = state.selectedTreatments ?? [];
-    if (!currentList.any((t) => t.id == treatment.id)) {
-      state = state.copyWith(selectedTreatments: [...currentList, treatment]);
-    }
-  }
+    // 1. Set currently selected treatment
+    final activeTreatment = treatment;
 
-  void setSelectedCategories(List<TreatmentCategoryModel> categories) {
-    state = state.copyWith(selectedCategories: categories);
+    // 2. Build the SelectedTreatmentAndAreasModel
+    final currentTreatmentsAndAreas =
+        List<SelectedTreatmentAndAreasModel>.from(state.selectedTreatmentsAndAreas);
+
+    final existingIndex = currentTreatmentsAndAreas
+        .indexWhere((item) => item.treatment.id == treatment.id);
+
+    if (state.selectedAreas != null) {
+      final area = state.selectedAreas!;
+      if (existingIndex != -1) {
+        final existingItem = currentTreatmentsAndAreas[existingIndex];
+        if (!existingItem.selectedAreas.any((a) => a.id == area.id)) {
+          currentTreatmentsAndAreas[existingIndex] = existingItem.copyWith(
+            selectedAreas: [...existingItem.selectedAreas, area],
+          );
+        }
+      } else {
+        currentTreatmentsAndAreas.add(
+          SelectedTreatmentAndAreasModel(
+            treatment: treatment,
+            selectedAreas: [area],
+          ),
+        );
+      }
+    } else {
+      if (existingIndex == -1) {
+        currentTreatmentsAndAreas.add(
+          SelectedTreatmentAndAreasModel(
+            treatment: treatment,
+            selectedAreas: const [],
+          ),
+        );
+      }
+    }
+
+    state = state.copyWith(
+      selectedTreatments: activeTreatment,
+      selectedTreatmentsAndAreas: currentTreatmentsAndAreas,
+    );
+    _printSelectedTreatmentsAndAreas();
   }
 
   void addSelectedCategory(TreatmentCategoryModel category) {
@@ -74,22 +112,77 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     }
   }
 
-  void setSelectedAreas(List<TreatmentAreaModel> areas) {
-    state = state.copyWith(selectedAreas: areas);
+  void setSelectedAreas(TreatmentAreaModel? area) {
+    final currentTreatmentsAndAreas =
+        List<SelectedTreatmentAndAreasModel>.from(state.selectedTreatmentsAndAreas);
+    if (area != null && currentTreatmentsAndAreas.isNotEmpty) {
+      final lastIndex = currentTreatmentsAndAreas.length - 1;
+      currentTreatmentsAndAreas[lastIndex] =
+          currentTreatmentsAndAreas[lastIndex].copyWith(selectedAreas: [area]);
+    }
+
+    state = state.copyWith(
+      selectedAreas: area,
+      selectedTreatmentsAndAreas: currentTreatmentsAndAreas,
+    );
+    _printSelectedTreatmentsAndAreas();
   }
 
   void addSelectedArea(TreatmentAreaModel area) {
-    final currentList = state.selectedAreas ?? [];
-    if (!currentList.any((a) => a.id == area.id)) {
-      state = state.copyWith(selectedAreas: [...currentList, area]);
+    // 1. Save area in selectedAreas
+    final activeArea = area;
+
+    // 2. Sync with selectedTreatmentsAndAreas
+    final currentTreatmentsAndAreas =
+        List<SelectedTreatmentAndAreasModel>.from(state.selectedTreatmentsAndAreas);
+
+    if (state.selectedTreatments != null) {
+      final activeTreatment = state.selectedTreatments!;
+      final existingIndex = currentTreatmentsAndAreas
+          .indexWhere((item) => item.treatment.id == activeTreatment.id);
+
+      if (existingIndex != -1) {
+        final existingItem = currentTreatmentsAndAreas[existingIndex];
+        if (!existingItem.selectedAreas.any((a) => a.id == area.id)) {
+          currentTreatmentsAndAreas[existingIndex] = existingItem.copyWith(
+            selectedAreas: [...existingItem.selectedAreas, area],
+          );
+        }
+      } else {
+        currentTreatmentsAndAreas.add(
+          SelectedTreatmentAndAreasModel(
+            treatment: activeTreatment,
+            selectedAreas: [area],
+          ),
+        );
+      }
+    } else {
+      print(
+          "No active selectedTreatments found in state. Area not added to SelectedTreatmentAndAreasModel.");
     }
+
+    state = state.copyWith(
+      selectedAreas: activeArea,
+      selectedTreatmentsAndAreas: currentTreatmentsAndAreas,
+    );
+    _printSelectedTreatmentsAndAreas();
+  }
+
+  void _printSelectedTreatmentsAndAreas() {
+    print("--- Selected Treatments and Areas ---");
+    for (final item in state.selectedTreatmentsAndAreas) {
+      print("Treatment: ${item.treatment.name} (ID: ${item.treatment.id})");
+      print("  Areas: ${item.selectedAreas.map((e) => '${e.name} (ID: ${e.id})').toList()}");
+    }
+    print("-------------------------------------");
   }
 }
 
 class CheckoutState {
-  final List<TreatmentData>? selectedTreatments;
+  final List<SelectedTreatmentAndAreasModel> selectedTreatmentsAndAreas;
   final List<TreatmentCategoryModel>? selectedCategories;
-  final List<TreatmentAreaModel>? selectedAreas;
+  final TreatmentData? selectedTreatments;
+  final TreatmentAreaModel? selectedAreas;
   final String? clinicId;
   final String? drId;
   final String? appointmentDate;
@@ -102,9 +195,10 @@ class CheckoutState {
     this.appointmentDate,
     this.appointmentTime,
     this.capturedImage,
-    this.selectedTreatments = const [],
+    this.selectedTreatmentsAndAreas = const [],
     this.selectedCategories = const [],
-    this.selectedAreas = const [],
+    this.selectedTreatments,
+    this.selectedAreas,
   });
 
   CheckoutState copyWith({
@@ -113,9 +207,10 @@ class CheckoutState {
     String? appointmentDate,
     String? appointmentTime,
     XFile? capturedImage,
-    List<TreatmentData>? selectedTreatments,
+    List<SelectedTreatmentAndAreasModel>? selectedTreatmentsAndAreas,
     List<TreatmentCategoryModel>? selectedCategories,
-    List<TreatmentAreaModel>? selectedAreas,
+    TreatmentData? selectedTreatments,
+    TreatmentAreaModel? selectedAreas,
   }) {
     return CheckoutState(
       clinicId: clinicId ?? this.clinicId,
@@ -123,8 +218,10 @@ class CheckoutState {
       appointmentDate: appointmentDate ?? this.appointmentDate,
       appointmentTime: appointmentTime ?? this.appointmentTime,
       capturedImage: capturedImage ?? this.capturedImage,
-      selectedTreatments: selectedTreatments ?? this.selectedTreatments,
+      selectedTreatmentsAndAreas:
+          selectedTreatmentsAndAreas ?? this.selectedTreatmentsAndAreas,
       selectedCategories: selectedCategories ?? this.selectedCategories,
+      selectedTreatments: selectedTreatments ?? this.selectedTreatments,
       selectedAreas: selectedAreas ?? this.selectedAreas,
     );
   }

@@ -134,8 +134,10 @@ class _ArFaceModelPreviewScreenState
     });
 
     final checkoutState = ref.read(checkoutViewModel);
-    final selectedAreas = checkoutState.selectedAreas ?? [];
-    _selectedAreaIds.addAll(selectedAreas.map((e) => e.id).whereType<int>());
+    final selectedArea = checkoutState.selectedAreas;
+    if (selectedArea?.id != null) {
+      _selectedAreaIds.add(selectedArea!.id!);
+    }
 
     _pulseController = AnimationController(
       vsync: this,
@@ -158,7 +160,7 @@ class _ArFaceModelPreviewScreenState
         clearSearch: true,
       );
 
-      var selectedTreatment = ref.read(checkoutViewModel).selectedTreatments?.lastOrNull;
+      var selectedTreatment = ref.read(checkoutViewModel).selectedTreatments;
       if (selectedTreatment == null) {
         final loadedTreatments = ref.read(treatmentViewModel).treatments;
         if (loadedTreatments.isNotEmpty) {
