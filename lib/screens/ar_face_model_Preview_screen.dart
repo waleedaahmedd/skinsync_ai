@@ -485,7 +485,9 @@ class _ArFaceModelPreviewScreenState
                                     ),
                                   );
                                   final rootAreas = ref.watch(treatmentAreaProvider).areas;
-                                  final selectedAreas = _getSelectedAreasList(rootAreas);
+                                  final selectedAreas = _getSelectedAreasList(rootAreas)
+                                      .where((e) => e.subAreas == null || e.subAreas!.isEmpty)
+                                      .toList();
 
                                   if (selectedAreas.isEmpty) {
                                     return const SizedBox.shrink();

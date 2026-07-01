@@ -9,7 +9,6 @@ import 'package:http/http.dart' as http;
 import '../models/base_state_model.dart';
 import '../models/requests/save_history_request.dart';
 import '../models/responses/simulation_history_response.dart';
-import '../models/responses/treatment_response_model.dart';
 import 'dart:async';
 import '../models/responses/treatment_list_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
@@ -54,10 +53,9 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       return found ?? false;
     });
     if (area != null) {
-      await onTapTreatmentArea(treatmentArea: area, isCallPredictAPI: true);
+      onTapTreatmentArea(area);
     }
-    final subAreas =
-        state.treatmentsSubAreaResponse?.data ?? <TreatmentAreaModel>[];
+    final subAreas = state.selectTreatmentArea?.subAreas ?? <TreatmentAreaModel>[];
     for (final subArea in subAreas) {
       final selectedSubArea = simulation.subsections?.firstWhereOrNull(
         (subSection) => subSection.sectionId == subArea.id,
@@ -125,11 +123,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     state = state.copyWith(clearSelectSectionId: true);
   }
 
-  void _clearSubSectionSelection() {
-    state.treatmentsSubAreaResponse?.data = null;
-    state = state.copyWith(clearSubSectionId: true);
-  }
-
   Future<void> onTapTreatment({
     required TreatmentData treatmentModel,
     required bool isCallPredictAPI,
@@ -137,10 +130,10 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     state = state.copyWith(
       selectedTreatment: treatmentModel,
       clearSubSectionIds: true,
+      areaNavigationStack: const [],
     );
     clearAiImage();
     if (state.treatmentAreaResponse != null) _clearAreaSelection();
-    if (state.treatmentsSubAreaResponse != null) _clearSubSectionSelection();
     state = state.copyWith(isBefore: true);
     if (treatmentModel.isArea == true) {
       await getAreasByTreatmentId(treatmentId: treatmentModel.id ?? 0);
@@ -149,24 +142,30 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     }
   }
 
-  Future<void> onTapTreatmentArea({
-    required TreatmentAreaModel treatmentArea,
-    required bool isCallPredictAPI,
-  }) async {
-    state = state.copyWith(selectedTreatmentArea: treatmentArea);
-    //if (state.treatmentsSubAreaResponse != null) _clearSubSectionSelection();
-    if (treatmentArea.isSidearea == true) {
-      final treatment = state.selectedTreatment;
-      if (treatment != null) {
-        await getSubSectionApi(
-          sectionId: treatment.id ?? 0,
-          subSectionId: treatmentArea.id ?? 0,
-        );
-      }
-    } else if (isCallPredictAPI) {
-      _clearSubSectionSelection();
-      // callPredictAPI();
+  void onTapTreatmentArea(TreatmentAreaModel treatmentArea) {
+    final updatedStack = [...state.areaNavigationStack, treatmentArea];
+    state = state.copyWith(
+      selectedTreatmentArea: treatmentArea,
+      areaNavigationStack: updatedStack,
+    );
+  }
+
+  void popAreaNavigationStack() {
+    if (state.areaNavigationStack.isNotEmpty) {
+      final updatedStack = List<TreatmentAreaModel>.from(state.areaNavigationStack)..removeLast();
+      final previousArea = updatedStack.isNotEmpty ? updatedStack.last : null;
+      state = state.copyWith(
+        selectedTreatmentArea: previousArea,
+        areaNavigationStack: updatedStack,
+      );
     }
+  }
+
+  void resetAreaNavigationStack() {
+    state = state.copyWith(
+      selectedTreatmentArea: null,
+      areaNavigationStack: const [],
+    );
   }
 
   void onTapTreatmentSubArea({required TreatmentAreaModel subArea}) {
@@ -194,13 +193,12 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       errorMessage: state.errorMessage,
       treatments: state.treatments,
       treatmentAreaResponse: null,
-      treatmentsSubAreaResponse: null,
       treatmentsLoading: state.treatmentsLoading,
       treatmentAreaLoading: state.treatmentAreaLoading,
-      treatmentSubAreaLoading: state.treatmentSubAreaLoading,
       selectedTreatment: null,
       selectTreatmentArea: null,
       selectedSubAreasList: const [],
+      areaNavigationStack: const [],
       isBefore: true,
       capturedImage: state.capturedImage,
       aiImage: null,
@@ -436,24 +434,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     });
   }
 
-  Future<bool?> getSubSectionApi({
-    required int sectionId,
-    required int subSectionId,
-  }) async {
-    state = state.copyWith(treatmentSubAreaLoading: true);
-    return await runSafely(() async {
-      final response = await _repo.getSubSectionApi(
-        sectionId: sectionId,
-        subSectionId: subSectionId,
-      );
-      state = state.copyWith(
-        treatmentSubAreaLoading: false,
-        subSelectionResponse: response,
-      );
-      return response.status == true;
-    });
-  }
-
   Future<void> saveAiImage() async {
     return await runSafely(() async {
       EasyLoading.show(status: 'Please wait...');
@@ -514,7 +494,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     state = state.copyWith(
       treatmentAreaLoading: false,
       treatmentsLoading: false,
-      treatmentSubAreaLoading: false,
     );
     super.onError(message);
     EasyLoading.showError(message);
@@ -524,15 +503,14 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 @immutable
 class TreatmentsState extends BaseStateModel {
   final List<TreatmentData> treatments;
-  final TreatmentAreaListResponse? treatmentsSubAreaResponse;
   final TreatmentAreaListResponse? treatmentAreaResponse;
   final bool treatmentsLoading;
   final bool treatmentAreaLoading;
-  final bool treatmentSubAreaLoading;
 
   final TreatmentData? selectedTreatment;
   final TreatmentAreaModel? selectTreatmentArea;
   final List<TreatmentAreaModel> selectedSubAreasList;
+  final List<TreatmentAreaModel> areaNavigationStack;
 
   final bool isBefore;
   final XFile? capturedImage;
@@ -555,13 +533,12 @@ class TreatmentsState extends BaseStateModel {
     super.errorMessage,
     this.treatments = const [],
     this.treatmentAreaResponse,
-    this.treatmentsSubAreaResponse,
     this.treatmentsLoading = false,
     this.treatmentAreaLoading = false,
-    this.treatmentSubAreaLoading = false,
     this.selectedTreatment,
     this.selectTreatmentArea,
     this.selectedSubAreasList = const [],
+    this.areaNavigationStack = const [],
     this.isBefore = false,
     this.capturedImage,
     this.aiImage,
@@ -582,15 +559,14 @@ class TreatmentsState extends BaseStateModel {
     bool? loading,
     String? errorMessage,
     List<TreatmentData>? treatments,
-    TreatmentAreaListResponse? subSelectionResponse,
     TreatmentAreaListResponse? treatmentAreaResponse,
     bool? treatmentsLoading,
     bool? treatmentAreaLoading,
-    bool? treatmentSubAreaLoading,
     TreatmentData? selectedTreatment,
     TreatmentAreaModel? selectedTreatmentArea,
     TreatmentAreaModel? selectedTreatmentSubArea,
     List<TreatmentAreaModel>? selectedSubAreasList,
+    List<TreatmentAreaModel>? areaNavigationStack,
     bool? isBefore,
     XFile? capturedImage,
     XFile? aiImage,
@@ -617,12 +593,8 @@ class TreatmentsState extends BaseStateModel {
       treatments: treatments ?? this.treatments,
       treatmentAreaResponse:
           treatmentAreaResponse ?? this.treatmentAreaResponse,
-      treatmentsSubAreaResponse:
-          subSelectionResponse ?? treatmentsSubAreaResponse,
       treatmentsLoading: treatmentsLoading ?? this.treatmentsLoading,
       treatmentAreaLoading: treatmentAreaLoading ?? this.treatmentAreaLoading,
-      treatmentSubAreaLoading:
-          treatmentSubAreaLoading ?? this.treatmentSubAreaLoading,
       selectedTreatment: selectedTreatment ?? this.selectedTreatment,
       selectTreatmentArea: clearSelectSectionId
           ? null
@@ -630,6 +602,7 @@ class TreatmentsState extends BaseStateModel {
       selectedSubAreasList: clearSubSectionIds
           ? const []
           : (selectedSubAreasList ?? this.selectedSubAreasList),
+      areaNavigationStack: areaNavigationStack ?? this.areaNavigationStack,
       isBefore: isBefore ?? this.isBefore,
       capturedImage: capturedImage ?? this.capturedImage,
       aiImage: clearAiImage ? null : (aiImage ?? this.aiImage),
