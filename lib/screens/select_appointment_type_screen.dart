@@ -63,19 +63,10 @@ class SelectAppointmentTypeScreen extends ConsumerWidget {
                         // Save selection in CheckoutState
                         ref.read(checkoutViewModel.notifier).setSelectedAppointmentType(appointmentType.type);
 
-                        if (appointmentType.type == AppointmentType.consultation) {
-                          Navigator.pushNamed(
-                            context,
-                            DoctorsScreen.routeName,
-                            arguments: clinic,
-                          );
-                        } else {
-                          Navigator.pushNamed(
-                            context,
-                            ClinicServiceScreen.routeName,
-                            arguments: clinic,
-                          );
-                        }
+                        Navigator.pushNamed(
+                          context,
+                          DoctorsScreen.routeName,
+                        );
                       },
                     );
                   },

@@ -194,7 +194,7 @@ class RouteGenerator {
       case DoctorsScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: DoctorsScreen.routeName),
-          builder: (_) => DoctorsScreen(clinic: args as Clinic),
+          builder: (_) => const DoctorsScreen(),
         );
       case DoctorDetailScreen.routeName:
         return MaterialPageRoute(

@@ -174,7 +174,109 @@ class ReviewScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 32.h),
+                    SizedBox(height: 24.h),
+
+                    // Selected Treatments & Areas Section
+                    if (checkoutState.selectedTreatmentsAndAreas.isNotEmpty) ...[
+                      Text("Selected Treatments & Areas", style: CustomFonts.black18w600),
+                      SizedBox(height: 16.h),
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20.r),
+                          border: Border.all(color: Colors.grey.shade100),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.02),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: checkoutState.selectedTreatmentsAndAreas.map((item) {
+                            final isLast = item == checkoutState.selectedTreatmentsAndAreas.last;
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: isLast ? 0 : 12.h),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: EdgeInsets.all(6.w),
+                                        decoration: BoxDecoration(
+                                          color: CustomColors.pinkColor.withValues(alpha: 0.1),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(Icons.spa_rounded, color: CustomColors.pinkColor, size: 16),
+                                      ),
+                                      SizedBox(width: 10.w),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              item.treatment.name ?? "Treatment",
+                                              style: CustomFonts.black14w600,
+                                            ),
+                                            if (item.selectedAreas.isNotEmpty) ...[
+                                              SizedBox(height: 4.h),
+                                              Text(
+                                                "Target Areas: ${item.selectedAreas.map((area) => area.name ?? '').join(', ')}",
+                                                style: CustomFonts.grey12w400.copyWith(
+                                                  color: CustomColors.purpleColor,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  if (item.selectedAreas.isNotEmpty) ...[
+                                    SizedBox(height: 10.h),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 32.w),
+                                      child: Wrap(
+                                        spacing: 8.w,
+                                        runSpacing: 4.h,
+                                        children: item.selectedAreas.map((area) {
+                                          return Container(
+                                            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                                            decoration: BoxDecoration(
+                                              color: CustomColors.lightPurpleColor.withValues(alpha: 0.12),
+                                              borderRadius: BorderRadius.circular(12.r),
+                                            ),
+                                            child: Text(
+                                              area.name ?? "Area",
+                                              style: CustomFonts.black12w600.copyWith(
+                                                color: CustomColors.purpleColor,
+                                                fontSize: 10.sp,
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ],
+                                  if (!isLast) ...[
+                                    SizedBox(height: 12.h),
+                                    const Divider(height: 1, color: Colors.grey),
+                                    SizedBox(height: 12.h),
+                                  ],
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      SizedBox(height: 24.h),
+                    ],
 
                     // 4. Pricing Details Section
                     Text("Payment Summary", style: CustomFonts.black18w600),

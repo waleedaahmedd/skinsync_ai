@@ -10,17 +10,13 @@ import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/doctor_card.dart';
 import 'package:skinsync_ai/widgets/custom_search_field.dart';
 import 'package:skinsync_ai/view_models/checkout_view_model.dart';
-import 'clinic_service_screen.dart';
+import 'package:skinsync_ai/utills/enums.dart';
 import 'doctor_detail_screen.dart';
 
 class DoctorsScreen extends ConsumerStatefulWidget {
   static const routeName = '/doctors_screen';
-  final Clinic clinic;
 
-  const DoctorsScreen({
-    super.key,
-    required this.clinic,
-  });
+  const DoctorsScreen({super.key});
 
   @override
   ConsumerState<DoctorsScreen> createState() => _DoctorsScreenState();
@@ -139,6 +135,8 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen> with SingleTicker
 
   @override
   Widget build(BuildContext context) {
+    final checkoutState = ref.watch(checkoutViewModel);
+    final isTreatment = checkoutState.selectedAppointmentType == AppointmentType.treatment;
     final hasActiveFilters = _selectedDate != null || _selectedSlot != null || _searchQuery.isNotEmpty;
 
     return Scaffold(
@@ -302,35 +300,42 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen> with SingleTicker
             ),
             SizedBox(height: 16.h),
 
-            // Tabs Header: In-Person vs Virtual
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: TabBar(
-                controller: _tabController,
-                indicatorColor: CustomColors.pinkColor,
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.grey.shade400,
-                labelStyle: CustomFonts.black16w600,
-                unselectedLabelStyle: CustomFonts.grey16w500,
-                dividerColor: Colors.transparent,
-                tabs: const [
-                  Tab(text: "In-Person"),
-                  Tab(text: "Virtual Consultation"),
-                ],
+            // Treatment restriction logic - hide tab bar if direct Treatment is booked
+            if (isTreatment) ...[
+              Expanded(
+                child: _buildDoctorGrid(isVirtual: false),
               ),
-            ),
-            SizedBox(height: 12.h),
+            ] else ...[
+              // Tabs Header: In-Person vs Virtual
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: TabBar(
+                  controller: _tabController,
+                  indicatorColor: CustomColors.pinkColor,
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.grey.shade400,
+                  labelStyle: CustomFonts.black16w600,
+                  unselectedLabelStyle: CustomFonts.grey16w500,
+                  dividerColor: Colors.transparent,
+                  tabs: const [
+                    Tab(text: "In-Person"),
+                    Tab(text: "Virtual Consultation"),
+                  ],
+                ),
+              ),
+              SizedBox(height: 12.h),
 
-            // Tab Views Grid List
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildDoctorGrid(isVirtual: false),
-                  _buildDoctorGrid(isVirtual: true),
-                ],
+              // Tab Views Grid List
+              Expanded(
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildDoctorGrid(isVirtual: false),
+                    _buildDoctorGrid(isVirtual: true),
+                  ],
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),
