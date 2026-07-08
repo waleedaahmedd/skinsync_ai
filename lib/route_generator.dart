@@ -12,6 +12,10 @@ import 'package:skinsync_ai/screens/bottom_nav_screens/face_scanning_complete_sc
 import 'package:skinsync_ai/screens/clinic_service_screen.dart';
 import 'package:skinsync_ai/screens/select_appointment_type_screen.dart';
 import 'package:skinsync_ai/screens/select_consultation_doctor_screen.dart';
+import 'package:skinsync_ai/screens/consultation_doctor_detail_screen.dart';
+import 'package:skinsync_ai/screens/select_date_time_screen.dart';
+import 'package:skinsync_ai/screens/consultation_review_screen.dart';
+import 'package:skinsync_ai/screens/consultation_payment_screen.dart';
 import 'package:skinsync_ai/screens/clinics_detail_screen.dart';
 import 'package:skinsync_ai/screens/face_scan_screen.dart';
 import 'package:skinsync_ai/screens/get_notified_screen.dart';
@@ -191,6 +195,26 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: SelectConsultationDoctorScreen.routeName),
           builder: (_) => SelectConsultationDoctorScreen(clinic: args as Clinic),
+        );
+      case ConsultationDoctorDetailScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: ConsultationDoctorDetailScreen.routeName),
+          builder: (_) => ConsultationDoctorDetailScreen(doctor: args as DummyDoctor),
+        );
+      case SelectDateTimeScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: SelectDateTimeScreen.routeName),
+          builder: (_) => const SelectDateTimeScreen(),
+        );
+      case ConsultationReviewScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: ConsultationReviewScreen.routeName),
+          builder: (_) => const ConsultationReviewScreen(),
+        );
+      case ConsultationPaymentScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: ConsultationPaymentScreen.routeName),
+          builder: (_) => const ConsultationPaymentScreen(),
         );
       case ClinicServiceScreen.routeName:
         return MaterialPageRoute(

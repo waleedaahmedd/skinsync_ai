@@ -11,6 +11,7 @@ import 'package:skinsync_ai/widgets/doctor_card.dart';
 import 'package:skinsync_ai/widgets/custom_search_field.dart';
 import 'package:skinsync_ai/view_models/checkout_view_model.dart';
 import 'clinic_service_screen.dart';
+import 'consultation_doctor_detail_screen.dart';
 
 class SelectConsultationDoctorScreen extends ConsumerStatefulWidget {
   static const routeName = '/select_consultation_doctor_screen';
@@ -400,8 +401,8 @@ class _SelectConsultationDoctorScreenState
 
             Navigator.pushNamed(
               context,
-              ClinicServiceScreen.routeName,
-              arguments: widget.clinic,
+              ConsultationDoctorDetailScreen.routeName,
+              arguments: doctor,
             );
           },
         );
