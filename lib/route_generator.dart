@@ -10,6 +10,8 @@ import 'package:skinsync_ai/screens/biometric_screen.dart';
 import 'package:skinsync_ai/screens/bottom_nav_page.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/face_scanning_complete_screen.dart';
 import 'package:skinsync_ai/screens/clinic_service_screen.dart';
+import 'package:skinsync_ai/screens/select_appointment_type_screen.dart';
+import 'package:skinsync_ai/screens/select_consultation_doctor_screen.dart';
 import 'package:skinsync_ai/screens/clinics_detail_screen.dart';
 import 'package:skinsync_ai/screens/face_scan_screen.dart';
 import 'package:skinsync_ai/screens/get_notified_screen.dart';
@@ -179,6 +181,16 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: RouteSettings(name: ClinicsDetailScreen.routeName),
           builder: (_) => ClinicsDetailScreen(clinic: args as Clinic?),
+        );
+      case SelectAppointmentTypeScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: SelectAppointmentTypeScreen.routeName),
+          builder: (_) => SelectAppointmentTypeScreen(clinic: args as Clinic),
+        );
+      case SelectConsultationDoctorScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(name: SelectConsultationDoctorScreen.routeName),
+          builder: (_) => SelectConsultationDoctorScreen(clinic: args as Clinic),
         );
       case ClinicServiceScreen.routeName:
         return MaterialPageRoute(

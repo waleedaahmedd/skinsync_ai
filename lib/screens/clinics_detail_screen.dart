@@ -17,7 +17,7 @@ import '../widgets/bottom_sheets/pre_booking_bottom_sheet.dart';
 import '../widgets/bottom_sheets/wallet_confirmation_bottom_sheet.dart';
 import '../widgets/dialogs/appointment_success_dialog.dart';
 import 'bottom_nav_page.dart';
-import 'clinic_service_screen.dart';
+import 'select_appointment_type_screen.dart';
 
 class ClinicsDetailScreen extends ConsumerWidget {
   final Clinic? clinic;
@@ -454,7 +454,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                           } else {
                             Navigator.pushNamed(
                               context,
-                              ClinicServiceScreen.routeName,
+                              SelectAppointmentTypeScreen.routeName,
                               arguments: clinic,
                             );
                           }

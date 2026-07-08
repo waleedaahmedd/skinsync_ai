@@ -19,6 +19,15 @@ enum LoginProviders {
   const LoginProviders(this.name);
 }
 
+enum AppointmentType {
+  consultation('consultation'),
+  treatment('Treatment session');
+
+  final String typeText;
+
+  const AppointmentType(this.typeText);
+}
+
 enum EndPoints {
   treatmentList('treatments/list'),
   treatments("treatments"),
