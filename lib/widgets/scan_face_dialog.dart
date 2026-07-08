@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/face_detection_screen.dart';
 import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
+import 'package:skinsync_ai/screens/treatment_area_screen.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/widgets/custom_button.dart';
+import 'package:skinsync_ai/view_models/checkout_view_model.dart';
 
 import '../view_models/treatment_view_model.dart';
-import '../models/responses/treatment_area_list_response.dart';
 
 void showMScanFaceDialog(BuildContext context) {
   showDialog(
@@ -54,64 +56,64 @@ void showMScanFaceDialog(BuildContext context) {
               SizedBox(height: 28.h),
 
               // Button 1: Scan Face (Primary Black Button)
-              SizedBox(
-                width: double.infinity,
-                height: 52.h,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context); // close dialog
-                    Navigator.of(context).pushNamed(FaceDetectionScreen.routeName);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    padding: EdgeInsets.zero, // Zero padding prevents vertical text clipping
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(26.r),
-                    ),
-                    elevation: 1,
-                  ),
-                  child: Text(
-                    "Scan Your Face",
-                    style: CustomFonts.white16w600,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+              CustomButton(
+                text: "Scan Your Face",
+                borderRadius: 26.r,
+                backgroundColor: Colors.black,
+                textColor: Colors.white,
+                onPressed: () {
+                  Navigator.pop(context); // close dialog
+                  Navigator.of(context).pushNamed(FaceDetectionScreen.routeName);
+                },
               ),
               SizedBox(height: 12.h),
 
-              // Button 2: Explore Clinics (Secondary Outlined Button)
+              // Button 2: Explore Clinics or Select Treatment Areas (Secondary Button)
               Consumer(
-                builder: (_, ref, __) {
-                  return SizedBox(
-                    width: double.infinity,
-                    height: 50.h,
-                    child: OutlinedButton(
+                builder: (context, ref, _) {
+                  final checkoutState = ref.watch(checkoutViewModel);
+                  final hasSelectedAreas = checkoutState.selectedTreatmentsAndAreas.isNotEmpty &&
+                      checkoutState.selectedTreatmentsAndAreas.any((item) => item.selectedAreas.isNotEmpty);
+
+                  final String buttonTitle = hasSelectedAreas ? "Explore Clinics" : "Select Treatment Areas";
+
+                  return Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25.r),
+                      border: Border.all(color: CustomColors.darkPurple, width: 1.5),
+                    ),
+                    child: CustomButton(
+                      text: buttonTitle,
+                      backgroundColor: Colors.transparent,
+                      textColor: CustomColors.darkPurple,
+                      borderRadius: 25.r,
                       onPressed: () {
-                        Navigator.pop(context);
-                        final state = ref.read(treatmentViewModel);
-                        final treatment = state.selectedTreatment;
-                        final sideAreaIds = state.selectedSubAreasList
-                            .map((s) => s.id!)
-                            .toList();
-                        Navigator.pushNamed(
-                          context,
-                          ExploreClinicsScreen.routeName,
-                          arguments: {
-                            'treatmentId': treatment?.id,
-                            'sideAreaIds': sideAreaIds,
-                          },
-                        );
+                        Navigator.pop(context); // close dialog
+
+                        if (hasSelectedAreas) {
+                          final state = ref.read(treatmentViewModel);
+                          final treatment = state.selectedTreatment;
+                          final sideAreaIds = state.selectedSubAreasList
+                              .map((s) => s.id!)
+                              .toList();
+                          Navigator.pushNamed(
+                            context,
+                            ExploreClinicsScreen.routeName,
+                            arguments: {
+                              'treatmentId': treatment?.id,
+                              'sideAreaIds': sideAreaIds,
+                            },
+                          );
+                        } else {
+                          Navigator.pushNamed(
+                            context,
+                            TreatmentAreaScreen.routeName,
+                            arguments: {
+                              'title': 'Focus Areas',
+                            },
+                          );
+                        }
                       },
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: CustomColors.darkPurple, width: 1.5),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25.r),
-                        ),
-                      ),
-                      child: Text(
-                        "Explore Clinics",
-                        style: CustomFonts.black14w600.copyWith(color: CustomColors.darkPurple),
-                      ),
                     ),
                   );
                 },

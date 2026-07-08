@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:skinsync_ai/models/responses/treatment_area_list_response.dart';
-import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
+import 'package:skinsync_ai/screens/select_appointment_type_screen.dart';
+import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_area_view_model.dart';
@@ -189,10 +190,20 @@ class _TreatmentAreaScreenState extends ConsumerState<TreatmentAreaScreen> {
                                           } else {
                                             ref.read(checkoutViewModel.notifier).addSelectedArea(area);
 
-                                            Navigator.pushNamed(
-                                              context,
-                                              TreatmentsScreen.routeName,
-                                            );
+                                            final checkoutState = ref.read(checkoutViewModel);
+
+                                            if (checkoutState.selectedClinic != null && checkoutState.selectedAppointmentType == null) {
+                                              Navigator.pushNamed(
+                                                context,
+                                                SelectAppointmentTypeScreen.routeName,
+                                                arguments: checkoutState.selectedClinic,
+                                              );
+                                            } else {
+                                              Navigator.pushNamed(
+                                                context,
+                                                ExploreClinicsScreen.routeName,
+                                              );
+                                            }
                                           }
                                         },
                                       ),
