@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:skinsync_ai/models/dummy_list_model.dart';
@@ -8,9 +9,10 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/doctor_card.dart';
 import 'package:skinsync_ai/widgets/custom_search_field.dart';
+import 'package:skinsync_ai/view_models/checkout_view_model.dart';
 import 'clinic_service_screen.dart';
 
-class SelectConsultationDoctorScreen extends StatefulWidget {
+class SelectConsultationDoctorScreen extends ConsumerStatefulWidget {
   static const routeName = '/select_consultation_doctor_screen';
   final Clinic clinic;
 
@@ -20,12 +22,12 @@ class SelectConsultationDoctorScreen extends StatefulWidget {
   });
 
   @override
-  State<SelectConsultationDoctorScreen> createState() =>
+  ConsumerState<SelectConsultationDoctorScreen> createState() =>
       _SelectConsultationDoctorScreenState();
 }
 
 class _SelectConsultationDoctorScreenState
-    extends State<SelectConsultationDoctorScreen> with SingleTickerProviderStateMixin {
+    extends ConsumerState<SelectConsultationDoctorScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = "";
@@ -65,6 +67,8 @@ class _SelectConsultationDoctorScreenState
       _searchController.clear();
       _searchQuery = "";
     });
+    ref.read(checkoutViewModel.notifier).setSelectedDate(null);
+    ref.read(checkoutViewModel.notifier).setSelectedSlot(null);
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -95,6 +99,7 @@ class _SelectConsultationDoctorScreenState
       setState(() {
         _selectedDate = picked;
       });
+      ref.read(checkoutViewModel.notifier).setSelectedDate(picked);
     }
   }
 
@@ -260,6 +265,7 @@ class _SelectConsultationDoctorScreenState
                           _selectedSlot = slot;
                         }
                       });
+                      ref.read(checkoutViewModel.notifier).setSelectedSlot(_selectedSlot);
                     },
                     child: Container(
                       margin: EdgeInsets.only(right: 8.w),
@@ -389,6 +395,9 @@ class _SelectConsultationDoctorScreenState
           width: double.infinity,
           margin: EdgeInsets.zero,
           onTap: () {
+            // Save selected Doctor into CheckoutState
+            ref.read(checkoutViewModel.notifier).setSelectedDoctor(doctor);
+
             Navigator.pushNamed(
               context,
               ClinicServiceScreen.routeName,

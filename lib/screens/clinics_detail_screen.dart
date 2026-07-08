@@ -18,6 +18,7 @@ import '../widgets/bottom_sheets/wallet_confirmation_bottom_sheet.dart';
 import '../widgets/dialogs/appointment_success_dialog.dart';
 import 'bottom_nav_page.dart';
 import 'select_appointment_type_screen.dart';
+import 'package:skinsync_ai/view_models/checkout_view_model.dart';
 
 class ClinicsDetailScreen extends ConsumerWidget {
   final Clinic? clinic;
@@ -452,6 +453,9 @@ class ClinicsDetailScreen extends ConsumerWidget {
                               },
                             );
                           } else {
+                            if (clinic != null) {
+                              ref.read(checkoutViewModel.notifier).setSelectedClinic(clinic!);
+                            }
                             Navigator.pushNamed(
                               context,
                               SelectAppointmentTypeScreen.routeName,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/models/dummy_list_model.dart';
 import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
@@ -7,10 +8,11 @@ import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/utills/enums.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
+import 'package:skinsync_ai/view_models/checkout_view_model.dart';
 import 'clinic_service_screen.dart';
 import 'select_consultation_doctor_screen.dart';
 
-class SelectAppointmentTypeScreen extends StatelessWidget {
+class SelectAppointmentTypeScreen extends ConsumerWidget {
   static const routeName = '/select_appointment_type_screen';
 
   final Clinic clinic;
@@ -21,7 +23,7 @@ class SelectAppointmentTypeScreen extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: CustomColors.whiteColor,
       appBar: const CustomAppBar(showTitle: true, title: "Select Appointment"),
@@ -58,6 +60,9 @@ class SelectAppointmentTypeScreen extends StatelessWidget {
                       customSubtitle: appointmentType.description,
                       customImageUrl: appointmentType.imageUrl,
                       customOnTap: () {
+                        // Save selection in CheckoutState
+                        ref.read(checkoutViewModel.notifier).setSelectedAppointmentType(appointmentType.type);
+
                         if (appointmentType.type == AppointmentType.consultation) {
                           Navigator.pushNamed(
                             context,

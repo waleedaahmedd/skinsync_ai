@@ -11,6 +11,8 @@ import '../models/responses/treatment_list_response.dart';
 import '../models/responses/treatment_category_list_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
 import '../models/selected_treatment_and_areas_model.dart';
+import '../models/dummy_list_model.dart';
+import '../utills/enums.dart';
 import '../repositories/clinic_doctor_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/clinic_doctor_service.dart';
@@ -37,6 +39,37 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     // Keep the provider alive to prevent disposal during navigation
     ref.keepAlive();
     return super.build();
+  }
+
+  void setSelectedClinic(Clinic clinic) {
+    state = state.copyWith(selectedClinic: clinic, clinicId: clinic.clinicId.toString());
+    print("Selected clinic saved to CheckoutState: ${clinic.clinicName}");
+  }
+
+  void setSelectedAppointmentType(AppointmentType type) {
+    state = state.copyWith(selectedAppointmentType: type);
+    print("Selected appointment type saved to CheckoutState: ${type.typeText}");
+  }
+
+  void setSelectedDoctor(DummyDoctor doctor) {
+    state = state.copyWith(selectedDoctor: doctor, drId: doctor.id);
+    print("Selected doctor saved to CheckoutState: ${doctor.name}");
+  }
+
+  void setSelectedDate(DateTime? date) {
+    state = state.copyWith(
+      selectedDate: date,
+      appointmentDate: date != null ? date.toIso8601String() : null,
+    );
+    print("Selected Date saved to CheckoutState: $date");
+  }
+
+  void setSelectedSlot(String? slot) {
+    state = state.copyWith(
+      selectedSlot: slot,
+      appointmentTime: slot,
+    );
+    print("Selected Slot saved to CheckoutState: $slot");
   }
 
   void updateState({
@@ -336,6 +369,13 @@ class CheckoutState extends BaseStateModel {
   final XFile? capturedImage;
   final AppointmentData? appointment;
 
+  // Selected entities for checkout session tracking
+  final Clinic? selectedClinic;
+  final AppointmentType? selectedAppointmentType;
+  final DummyDoctor? selectedDoctor;
+  final DateTime? selectedDate;
+  final String? selectedSlot;
+
   const CheckoutState({
     super.loading = false,
     super.errorMessage,
@@ -349,6 +389,11 @@ class CheckoutState extends BaseStateModel {
     this.selectedTreatments,
     this.selectedAreas,
     this.appointment,
+    this.selectedClinic,
+    this.selectedAppointmentType,
+    this.selectedDoctor,
+    this.selectedDate,
+    this.selectedSlot,
   });
 
   @override
@@ -365,6 +410,11 @@ class CheckoutState extends BaseStateModel {
     TreatmentData? selectedTreatments,
     TreatmentAreaModel? selectedAreas,
     AppointmentData? appointment,
+    Clinic? selectedClinic,
+    AppointmentType? selectedAppointmentType,
+    DummyDoctor? selectedDoctor,
+    DateTime? selectedDate,
+    String? selectedSlot,
   }) {
     return CheckoutState(
       loading: loading ?? this.loading,
@@ -380,6 +430,11 @@ class CheckoutState extends BaseStateModel {
       selectedTreatments: selectedTreatments ?? this.selectedTreatments,
       selectedAreas: selectedAreas ?? this.selectedAreas,
       appointment: appointment ?? this.appointment,
+      selectedClinic: selectedClinic ?? this.selectedClinic,
+      selectedAppointmentType: selectedAppointmentType ?? this.selectedAppointmentType,
+      selectedDoctor: selectedDoctor ?? this.selectedDoctor,
+      selectedDate: selectedDate ?? this.selectedDate,
+      selectedSlot: selectedSlot ?? this.selectedSlot,
     );
   }
 }
