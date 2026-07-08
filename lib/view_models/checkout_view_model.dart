@@ -1,16 +1,36 @@
 import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/base_state_model.dart';
+import '../models/requests/appointment_request.dart';
+import '../models/responses/appointment_response.dart';
+import '../models/responses/availability_response.dart';
+import '../models/responses/get_clinic_response.dart';
+import '../models/responses/get_doctor_response.dart';
+import '../models/responses/payment_options_response.dart';
 import '../models/responses/treatment_list_response.dart';
 import '../models/responses/treatment_category_list_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
 import '../models/selected_treatment_and_areas_model.dart';
+import '../repositories/clinic_doctor_repository.dart';
+import '../services/api_base_helper.dart';
+import '../services/clinic_doctor_service.dart';
+import '../services/media_service.dart';
+import '../utills/date_time_utills.dart';
+import 'auth_view_model.dart';
+import 'doctor_view_model.dart';
+import 'treatment_view_model.dart';
 
 import 'base_view_model.dart';
 
 final checkoutViewModel = NotifierProvider(() => CheckoutViewModel());
 
 class CheckoutViewModel extends BaseViewModel<CheckoutState> {
-  CheckoutViewModel() : super(initialState: const CheckoutState());
+  CheckoutViewModel({ClinicDoctorRepository? clinicRepository})
+    : _clinicRepository = clinicRepository ?? ClinicDoctorService(apiClient: ApiBaseHelper()),
+      super(initialState: const CheckoutState());
+
+  final ClinicDoctorRepository _clinicRepository;
+  final _mediaService = MediaService();
 
   @override
   CheckoutState build() {
@@ -37,6 +57,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       selectedCategories: state.selectedCategories,
       selectedTreatments: state.selectedTreatments,
       selectedAreas: state.selectedAreas,
+      appointment: state.appointment,
     );
   }
 
@@ -52,6 +73,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       selectedTreatments: null,
       selectedAreas: null,
       selectedTreatmentsAndAreas: [],
+      appointment: null,
     );
   }
 
@@ -201,6 +223,97 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     _printSelectedTreatmentsAndAreas();
   }
 
+  Future<void> createAppointment({
+    required Clinic clinic,
+    required Doctor doctor,
+    required Slot slot,
+    required PaymentOption paymentOption,
+  }) async {
+    return await runSafely(() async {
+      state = state.copyWith(loading: true);
+
+      final doctorState = ref.read(doctorProvider);
+      final pricingData = ref.read(doctorProvider.notifier).pricingData;
+
+      final actualAmount = doctorState.paymentOptions
+          .where((option) => option.title?.contains('Full Payment') ?? false)
+          .firstOrNull
+          ?.amount;
+      if (actualAmount == null) {
+        throw Exception('No full payment option found');
+      }
+      if (pricingData == null) {
+        throw Exception('Pricing data not found');
+      }
+      final treatmentState = ref.read(treatmentViewModel);
+      final beforeImage = treatmentState.capturedImage;
+      final afterImage = treatmentState.aiImage;
+      if (beforeImage == null || afterImage == null) {
+        throw Exception('No image captured');
+      }
+      final treatment = treatmentState.selectedTreatment!;
+      final subAreas = treatmentState.selectedSubAreasList;
+      final treatmentPrice =
+          pricingData.treatment!.price! *
+          subAreas.fold(0, (prev, next) {
+            return prev + next.currentSyringe + 1;
+          });
+      final userId = ref.read(authViewModel).authData!.user!.id!;
+      final uploadedBefore = await _mediaService.uploadImage(
+        '$userId/appointments/before/',
+        beforeImage,
+      );
+      if (uploadedBefore == null) {
+        throw Exception('Failed to upload before image');
+      }
+      final uploadedAfter = await _mediaService.uploadImage(
+        '$userId/appointments/after/',
+        afterImage,
+      );
+      if (uploadedAfter == null) {
+        throw Exception('Failed to upload after image');
+      }
+      final data = await _clinicRepository.createAppointment(
+        request: AppointmentRequest(
+          date: slot.startTime.secondsSinceEpoch,
+          startTime: slot.startTime.secondsSinceEpoch,
+          endTime: slot.endTime.secondsSinceEpoch,
+          clinicId: clinic.clinicId!,
+          paymentType: PaymentTypeRequest(
+            id: paymentOption.id!,
+            amount: paymentOption.amount!,
+          ),
+          actualAmount: actualAmount,
+          doctorId: doctor.id!,
+          amountPaid: paymentOption.amount!,
+          amountPayable: actualAmount - paymentOption.amount!,
+          discount: 0,
+          discountType: 'Flat',
+          loyalityPoints: 0,
+          treatment: AppointmentTreatmentRequest(
+            treatmentId: treatment.id!,
+            treatmentPrice: treatmentPrice.toInt(),
+            treatmentQuantity: subAreas.length,
+            beforeImage: uploadedBefore,
+            afterImage: uploadedAfter,
+          ),
+          treatmentSubsection: subAreas.map((subArea) {
+            final price = pricingData.subSections!.where((subSection) {
+              return subSection.name == subArea.name;
+            }).first;
+            return TreatmentSubsectionRequest(
+              sectionId: subArea.id!,
+              syringesQuantity: subArea.currentSyringe,
+              perSyringePrice: price.perSyringePrice!,
+            );
+          }).toList(),
+          treatmentTotal: treatmentPrice.toInt(),
+        ),
+      );
+      state = state.copyWith(loading: false, appointment: data);
+    });
+  }
+
   void _printSelectedTreatmentsAndAreas() {
     print("--- Selected Treatments and Areas ---");
     for (final item in state.selectedTreatmentsAndAreas) {
@@ -211,7 +324,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   }
 }
 
-class CheckoutState {
+class CheckoutState extends BaseStateModel {
   final List<SelectedTreatmentAndAreasModel> selectedTreatmentsAndAreas;
   final List<TreatmentCategoryModel>? selectedCategories;
   final TreatmentData? selectedTreatments;
@@ -221,8 +334,11 @@ class CheckoutState {
   final String? appointmentDate;
   final String? appointmentTime;
   final XFile? capturedImage;
+  final AppointmentData? appointment;
 
   const CheckoutState({
+    super.loading = false,
+    super.errorMessage,
     this.clinicId,
     this.drId,
     this.appointmentDate,
@@ -232,9 +348,13 @@ class CheckoutState {
     this.selectedCategories = const [],
     this.selectedTreatments,
     this.selectedAreas,
+    this.appointment,
   });
 
+  @override
   CheckoutState copyWith({
+    bool? loading,
+    String? errorMessage,
     String? clinicId,
     String? drId,
     String? appointmentDate,
@@ -244,8 +364,11 @@ class CheckoutState {
     List<TreatmentCategoryModel>? selectedCategories,
     TreatmentData? selectedTreatments,
     TreatmentAreaModel? selectedAreas,
+    AppointmentData? appointment,
   }) {
     return CheckoutState(
+      loading: loading ?? this.loading,
+      errorMessage: errorMessage ?? this.errorMessage,
       clinicId: clinicId ?? this.clinicId,
       drId: drId ?? this.drId,
       appointmentDate: appointmentDate ?? this.appointmentDate,
@@ -256,6 +379,7 @@ class CheckoutState {
       selectedCategories: selectedCategories ?? this.selectedCategories,
       selectedTreatments: selectedTreatments ?? this.selectedTreatments,
       selectedAreas: selectedAreas ?? this.selectedAreas,
+      appointment: appointment ?? this.appointment,
     );
   }
 }

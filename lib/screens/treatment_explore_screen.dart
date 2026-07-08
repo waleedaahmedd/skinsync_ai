@@ -69,23 +69,23 @@ class TreatmentExploreScreen extends ConsumerWidget {
                   );
                 },
               ),
-              SizedBox(height: 4.h),
+            //  SizedBox(height: 4.h),
 
               // CARD 3: AREAS (Reusing TreatmentContainer adaptively!)
-              TreatmentContainer(
-                customTitle: "Focus Areas",
-                customSubtitle: "Target forehead, eyes, cheeks, lips, neck or body zones.",
-                customImageUrl: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=600",
-                customOnTap: () {
-                  ref.read(checkoutViewModel.notifier).clearState();
-                  ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
-                  ref.read(treatmentViewModel.notifier).clearAiImage();
-                  Navigator.pushNamed(
-                    context,
-                    TreatmentAreaScreen.routeName,
-                  );
-                },
-              ),
+              // TreatmentContainer(
+              //   customTitle: "Focus Areas",
+              //   customSubtitle: "Target forehead, eyes, cheeks, lips, neck or body zones.",
+              //   customImageUrl: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=600",
+              //   customOnTap: () {
+              //     ref.read(checkoutViewModel.notifier).clearState();
+              //     ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+              //     ref.read(treatmentViewModel.notifier).clearAiImage();
+              //     Navigator.pushNamed(
+              //       context,
+              //       TreatmentAreaScreen.routeName,
+              //     );
+              //   },
+              // ),
               SizedBox(height: 110.h), // Padding so bottom floating navigation doesn't overlap
             ],
           ),

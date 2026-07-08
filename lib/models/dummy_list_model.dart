@@ -1,4 +1,5 @@
 import '../utills/assets.dart';
+import 'responses/get_clinic_response.dart';
 
 class Treatments {
   final String svg;
@@ -792,6 +793,45 @@ final List<DummyAreaModel> dummyAreas = [
         ],
       ),
     ],
+  ),
+];
+
+final List<Clinic> dummyClinicsForService = [
+  Clinic(
+    clinicId: 1,
+    clinicName: "Elite Aesthetic Wellness Clinic",
+    email: "info@eliteaesthetics.com",
+    phone: "+1 555-019-2834",
+    description: "Premium clinical skin & non-surgical face and body enhancements.",
+    address: "102 Beverly Hills Dr, Los Angeles, CA 90210",
+    logo: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=150",
+    price: 550,
+    syringeSize: 1,
+    status: "active",
+  ),
+  Clinic(
+    clinicId: 2,
+    clinicName: "Skinsync AI MedSpa",
+    email: "reception@skinsyncmedspa.com",
+    phone: "+1 555-024-8849",
+    description: "State-of-the-art AI-driven facial contouring & clinical dermatology.",
+    address: "742 Evergreen Terrace, Seattle, WA 98101",
+    logo: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=150",
+    price: 480,
+    syringeSize: 1,
+    status: "active",
+  ),
+  Clinic(
+    clinicId: 3,
+    clinicName: "Radiant Skin Clinical Suite",
+    email: "support@radiantclinical.com",
+    phone: "+1 555-072-1209",
+    description: "Elite dermatological injections and bespoke skincare therapies.",
+    address: "505 Fifth Avenue, New York, NY 10017",
+    logo: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=150",
+    price: 620,
+    syringeSize: 1,
+    status: "active",
   ),
 ];
 

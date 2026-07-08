@@ -11,10 +11,11 @@ class TreatmentAreaService implements TreatmentAreaRepository {
     : _apiClient = apiClient;
 
   @override
-  Future<TreatmentAreaListResponse> getAreasApi() async {
+  Future<TreatmentAreaListResponse> getAreasApi({int? treatmentId}) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.areas,
       requestType: 'GET',
+      params: treatmentId != null ? '?treatment_id=$treatmentId' : null,
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
@@ -23,24 +24,6 @@ class TreatmentAreaService implements TreatmentAreaRepository {
       final parsed = json.decode(response.body);
       throw AppException(
         TreatmentAreaListResponse.fromJson(parsed).message ?? "Failed to fetch target areas",
-      );
-    }
-  }
-
-  @override
-  Future<AreaListResponse> getAreasByTreatment(int treatmentId) async {
-    final response = await _apiClient.httpRequest(
-      endPoint: EndPoints.areas,
-      requestType: 'GET',
-      params: '?treatment_id=$treatmentId',
-    );
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      final parsed = json.decode(response.body);
-      return AreaListResponse.fromJson(parsed);
-    } else {
-      final parsed = json.decode(response.body);
-      throw AppException(
-        AreaListResponse.fromJson(parsed).message ?? "Failed to fetch target areas",
       );
     }
   }

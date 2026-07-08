@@ -3,7 +3,6 @@ import 'dart:convert';
 import '../models/requests/save_history_request.dart';
 import '../models/responses/base_response_model.dart';
 import '../models/responses/treatment_list_response.dart';
-import '../models/responses/treatment_area_list_response.dart';
 import '../models/responses/treatment_detail_response.dart';
 import '../repositories/treatment_repository.dart';
 
@@ -54,51 +53,6 @@ class TreatmentService implements TreatmentRepository {
       final parsed = json.decode(response.body);
       TreatmentListResponse treatmentListResponse = TreatmentListResponse.fromJson(parsed);
       return treatmentListResponse;
-    } else {
-      // Handle HTTP error status codes
-      final parsed = json.decode(response.body);
-      throw AppException(AuthResponse.fromJson(parsed).message as String);
-    }
-  }
-
-  @override
-  Future<TreatmentAreaListResponse> getAreasByTreatmentId({
-    required int treatmentId,
-  }) async {
-    final response = await _apiClient.httpRequest(
-      endPoint: EndPoints.treatments,
-      requestType: 'GET',
-      params: '/$treatmentId/areas',
-    );
-    // Check HTTP status code
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      final parsed = json.decode(response.body);
-      TreatmentAreaListResponse selectSelectionResponse =
-          TreatmentAreaListResponse.fromJson(parsed);
-      return selectSelectionResponse;
-    } else {
-      // Handle HTTP error status codes
-      final parsed = json.decode(response.body);
-      throw AppException(AuthResponse.fromJson(parsed).message as String);
-    }
-  }
-
-  @override
-  Future<TreatmentAreaListResponse> getSubSectionApi({
-    required int sectionId,
-    required int subSectionId,
-  }) async {
-    final response = await _apiClient.httpRequest(
-      endPoint: EndPoints.treatments,
-      requestType: 'GET',
-      params: '/$sectionId/areas/$subSectionId/sideareas',
-    );
-    // Check HTTP status code
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      final parsed = json.decode(response.body);
-      TreatmentAreaListResponse subSelectionResponse =
-          TreatmentAreaListResponse.fromJson(parsed);
-      return subSelectionResponse;
     } else {
       // Handle HTTP error status codes
       final parsed = json.decode(response.body);

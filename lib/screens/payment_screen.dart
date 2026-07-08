@@ -8,7 +8,7 @@ import 'notes_screen.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
-import '../view_models/clinlic_doctor_view_model.dart';
+import '../view_models/doctor_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 
 import '../models/responses/availability_response.dart';
@@ -39,7 +39,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref
-          .read(clinicDoctorProvider.notifier)
+          .read(doctorProvider.notifier)
           .getPaymentOptions(
             clinicId: widget.clinic.clinicId!,
             doctorId: widget.doctor.id!,
@@ -91,7 +91,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     return Consumer(
       builder: (_, ref, _) {
         final state = ref.watch(
-          clinicDoctorProvider.select((s) => (s.paymentOptions, s.loading)),
+          doctorProvider.select((s) => (s.paymentOptions, s.loading)),
         );
         if (state.$2) {
           return const Center(

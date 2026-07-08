@@ -19,6 +19,7 @@ import '../services/treatment_services.dart';
 import '../utills/image_utills.dart';
 import '../utills/list_utils.dart';
 import 'auth_view_model.dart';
+import 'treatment_area_view_model.dart';
 import 'base_view_model.dart';
 
 final treatmentViewModel = NotifierProvider(
@@ -46,7 +47,8 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     if (treatment != null) {
       await onTapTreatment(treatmentModel: treatment, isCallPredictAPI: true);
     }
-    final area = state.treatmentAreaResponse?.data?.firstWhereOrNull((area) {
+    final rootAreas = ref.read(treatmentAreaProvider).areas;
+    final area = rootAreas.firstWhereOrNull((area) {
       final found = simulation.subsections?.any(
         (subSection) => subSection.areaId == area.id,
       );
@@ -119,7 +121,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   void clearAiImage() => state = state.copyWith(clearAiImage: true);
 
   void _clearAreaSelection() {
-    state.treatmentAreaResponse?.data = null;
     state = state.copyWith(clearSelectSectionId: true);
   }
 
@@ -133,12 +134,10 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       areaNavigationStack: const [],
     );
     clearAiImage();
-    if (state.treatmentAreaResponse != null) _clearAreaSelection();
+    _clearAreaSelection();
     state = state.copyWith(isBefore: true);
-    if (treatmentModel.isArea == true) {
-      await getAreasByTreatmentId(treatmentId: treatmentModel.id ?? 0);
-    } else if (isCallPredictAPI) {
-      // callPredictAPI();
+    if (treatmentModel.isArea == true && isCallPredictAPI) {
+      await ref.read(treatmentAreaProvider.notifier).fetchAreasByTreatment(treatmentModel.id ?? 0);
     }
   }
 
@@ -192,9 +191,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       loading: state.loading,
       errorMessage: state.errorMessage,
       treatments: state.treatments,
-      treatmentAreaResponse: null,
       treatmentsLoading: state.treatmentsLoading,
-      treatmentAreaLoading: state.treatmentAreaLoading,
       selectedTreatment: null,
       selectTreatmentArea: null,
       selectedSubAreasList: const [],
@@ -420,19 +417,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     return jsonDecode(body) as Map<String, dynamic>;
   }
 
-  Future<bool?> getAreasByTreatmentId({required int treatmentId}) async {
-    return await runSafely(() async {
-      state = state.copyWith(treatmentAreaLoading: true);
-      final response = await _repo.getAreasByTreatmentId(
-        treatmentId: treatmentId,
-      );
-      state = state.copyWith(
-        treatmentAreaLoading: false,
-        treatmentAreaResponse: response,
-      );
-      return response.status == true;
-    });
-  }
+
 
   Future<void> saveAiImage() async {
     return await runSafely(() async {
@@ -492,7 +477,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   @override
   void onError(String message) {
     state = state.copyWith(
-      treatmentAreaLoading: false,
       treatmentsLoading: false,
     );
     super.onError(message);
@@ -503,9 +487,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 @immutable
 class TreatmentsState extends BaseStateModel {
   final List<TreatmentData> treatments;
-  final TreatmentAreaListResponse? treatmentAreaResponse;
   final bool treatmentsLoading;
-  final bool treatmentAreaLoading;
 
   final TreatmentData? selectedTreatment;
   final TreatmentAreaModel? selectTreatmentArea;
@@ -532,9 +514,7 @@ class TreatmentsState extends BaseStateModel {
     super.loading = false,
     super.errorMessage,
     this.treatments = const [],
-    this.treatmentAreaResponse,
     this.treatmentsLoading = false,
-    this.treatmentAreaLoading = false,
     this.selectedTreatment,
     this.selectTreatmentArea,
     this.selectedSubAreasList = const [],
@@ -559,9 +539,7 @@ class TreatmentsState extends BaseStateModel {
     bool? loading,
     String? errorMessage,
     List<TreatmentData>? treatments,
-    TreatmentAreaListResponse? treatmentAreaResponse,
     bool? treatmentsLoading,
-    bool? treatmentAreaLoading,
     TreatmentData? selectedTreatment,
     TreatmentAreaModel? selectedTreatmentArea,
     TreatmentAreaModel? selectedTreatmentSubArea,
@@ -591,10 +569,7 @@ class TreatmentsState extends BaseStateModel {
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
       treatments: treatments ?? this.treatments,
-      treatmentAreaResponse:
-          treatmentAreaResponse ?? this.treatmentAreaResponse,
       treatmentsLoading: treatmentsLoading ?? this.treatmentsLoading,
-      treatmentAreaLoading: treatmentAreaLoading ?? this.treatmentAreaLoading,
       selectedTreatment: selectedTreatment ?? this.selectedTreatment,
       selectTreatmentArea: clearSelectSectionId
           ? null

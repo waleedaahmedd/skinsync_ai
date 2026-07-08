@@ -8,7 +8,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:skinsync_ai/main.dart';
 import 'package:skinsync_ai/view_models/auth_view_model.dart';
-import 'package:skinsync_ai/view_models/clinlic_doctor_view_model.dart';
+import 'package:skinsync_ai/view_models/clinic_view_model.dart';
 import 'package:skinsync_ai/view_models/checkout_view_model.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/app_loader.dart';
@@ -48,15 +48,15 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
       setState(() {
         _searchQuery = _searchController.text.trim();
       });
-      ref.read(clinicDoctorProvider.notifier).onSearchChanged(_searchController.text);
+      ref.read(clinicProvider.notifier).onSearchChanged(_searchController.text);
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (isDeploymentMode) {
-        ref.read(clinicDoctorProvider.notifier).fetchClinicsFromMap();
+        ref.read(clinicProvider.notifier).fetchClinicsFromMap();
       } else {
         ref
-            .read(clinicDoctorProvider.notifier)
+            .read(clinicProvider.notifier)
             .getClinic(
               treatmentId: widget.treatmentId,
               sideAreaIds: widget.sideAreaIds,
@@ -73,7 +73,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(clinicDoctorProvider);
+    final state = ref.watch(clinicProvider);
     return Scaffold(
       backgroundColor: CustomColors.whiteColor,
       appBar: const CustomAppBar(showTitle: true, title: "Explore Clinics"),
@@ -179,7 +179,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                                             ref.read(checkoutViewModel.notifier).setSelectedAreas(updatedSubAreas.firstOrNull);
 
                                             // 3. Re-fetch clinics with updated sub-area filters
-                                            ref.read(clinicDoctorProvider.notifier).getClinic(
+                                            ref.read(clinicProvider.notifier).getClinic(
                                               treatmentId: treatment.id,
                                               sideAreaIds: updatedSubAreaIds,
                                             );
@@ -219,14 +219,14 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                       onTap: (index) {
                         if (index == 0) {
                           ref
-                              .read(clinicDoctorProvider.notifier)
+                              .read(clinicProvider.notifier)
                               .getClinic(
                                 treatmentId: widget.treatmentId,
                                 sideAreaIds: widget.sideAreaIds,
                               );
                         } else {
                           ref
-                              .read(clinicDoctorProvider.notifier)
+                              .read(clinicProvider.notifier)
                               .fetchClinicsFromMap();
                         }
                       },
@@ -283,7 +283,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                   ),
                   child: FloatingActionButton.extended(
                     onPressed: ref
-                        .read(clinicDoctorProvider.notifier)
+                        .read(clinicProvider.notifier)
                         .toggleViewType,
                     backgroundColor: Colors.black,
                     elevation: 0,
@@ -364,7 +364,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
               clinicData: clinics[index],
               onTap: () {
                 ref
-                    .read(clinicDoctorProvider.notifier)
+                    .read(clinicProvider.notifier)
                     .setClinicId(clinics[index].clinicId!);
                 Navigator.pushNamed(
                   context,

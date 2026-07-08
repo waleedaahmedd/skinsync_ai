@@ -39,7 +39,7 @@ class TreatmentAreaViewModel extends BaseViewModel<TreatmentAreaState> {
   Future<void> fetchAreasByTreatment(int treatmentId) async {
     await runSafely(() async {
       state = state.copyWith(loading: true, errorMessage: null);
-      final response = await _repo.getAreasByTreatment(treatmentId);
+      final response = await _repo.getAreasApi(treatmentId: treatmentId);
       state = state.copyWith(
         loading: false,
         areas: response.data ?? [],

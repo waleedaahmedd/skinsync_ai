@@ -6,7 +6,7 @@ import 'package:iconsax/iconsax.dart';
 import '../models/responses/payment_options_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
-import '../view_models/clinlic_doctor_view_model.dart';
+import '../view_models/checkout_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 
 import '../models/responses/availability_response.dart';
@@ -33,11 +33,11 @@ class NotesScreen extends ConsumerWidget {
 
   void _listener(
     WidgetRef ref,
-    ClinicDoctorState? prev,
-    ClinicDoctorState next,
+    CheckoutState? prev,
+    CheckoutState next,
   ) {
     if (next.appointment != null) {
-      ref.read(clinicDoctorProvider.notifier).clearState();
+      ref.read(checkoutViewModel.notifier).clearState();
       Navigator.pushNamedAndRemoveUntil(
         ref.context,
         BottomNavPage.routeName,
@@ -49,7 +49,7 @@ class NotesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen(
-      clinicDoctorProvider,
+      checkoutViewModel,
       (prev, next) => _listener(ref, prev, next),
     );
     return Scaffold(
@@ -122,7 +122,7 @@ class NotesScreen extends ConsumerWidget {
               child: Consumer(
                 builder: (_, ref, _) {
                   final loading = ref.watch(
-                    clinicDoctorProvider.select((s) => s.loading),
+                    checkoutViewModel.select((s) => s.loading),
                   );
                   final agreed = ref.watch(notesAgreementProvider);
                   if (loading) {
@@ -135,7 +135,7 @@ class NotesScreen extends ConsumerWidget {
                   return ElevatedButton(
                     onPressed: agreed
                         ? () => ref
-                              .read(clinicDoctorProvider.notifier)
+                              .read(checkoutViewModel.notifier)
                               .createAppointment(
                                 clinic: clinic,
                                 doctor: doctor,

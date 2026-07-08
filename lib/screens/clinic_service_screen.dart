@@ -8,7 +8,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../models/responses/get_doctor_response.dart';
-import '../view_models/clinlic_doctor_view_model.dart';
+import '../view_models/clinic_view_model.dart';
+import '../view_models/doctor_view_model.dart';
 import '../widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/app_network_image.dart';
 import '../widgets/custom_app_bar.dart';
@@ -53,12 +54,12 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
 
       if (widget.clinic?.clinicId != null) {
         ref
-            .read(clinicDoctorProvider.notifier)
+            .read(clinicProvider.notifier)
             .setClinicId(widget.clinic!.clinicId!);
       }
 
       await ref
-          .read(clinicDoctorProvider.notifier)
+          .read(doctorProvider.notifier)
           .getDoctors(
             treatmentId: treatment?.id ?? 0,
             sideAreaIds: subAreaIds,
@@ -67,7 +68,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
           );
       if (widget.clinic?.clinicId != null) {
         await ref
-            .read(clinicDoctorProvider.notifier)
+            .read(doctorProvider.notifier)
             .fetchAvailability(
               date: selectedDate,
               clinicId: widget.clinic!.clinicId!,
@@ -89,7 +90,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
       log('CLINIC ID: ${widget.clinic?.clinicId}');
       if (widget.clinic?.clinicId != null) {
         ref
-            .read(clinicDoctorProvider.notifier)
+            .read(doctorProvider.notifier)
             .fetchAvailability(
               date: picked,
               clinicId: widget.clinic!.clinicId!,
@@ -124,7 +125,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
 
               Consumer(
                 builder: (context, ref, _) {
-                  final state = ref.watch(clinicDoctorProvider);
+                  final state = ref.watch(doctorProvider);
                   final doctors = state.doctorResponse?.data;
                   if (state.doctorLoading) {
                     return SizedBox(
@@ -275,7 +276,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                     Consumer(
                       builder: (_, ref, _) {
                         final state = ref.watch(
-                          clinicDoctorProvider.select(
+                          doctorProvider.select(
                             (s) => (s.slots, s.loading),
                           ),
                         );
@@ -399,7 +400,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                       SizedBox(width: 47.h),
                       GestureDetector(
                         onTap: () {
-                          final state = ref.read(clinicDoctorProvider);
+                          final state = ref.read(doctorProvider);
                           if (state.selectedDoctor == null) {
                             EasyLoading.showError('Select a doctor first!');
                             return;
@@ -449,10 +450,10 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
   Widget _buildDoctorCard(Doctor doctor, int index, bool isSelected) {
     return GestureDetector(
       onTap: () {
-        ref.read(clinicDoctorProvider.notifier).setSelectedDoctor(doctor);
+        ref.read(doctorProvider.notifier).setSelectedDoctor(doctor);
         if (widget.clinic?.clinicId != null) {
           ref
-              .read(clinicDoctorProvider.notifier)
+              .read(doctorProvider.notifier)
               .fetchAvailability(
                 date: selectedDate,
                 clinicId: widget.clinic!.clinicId!,
