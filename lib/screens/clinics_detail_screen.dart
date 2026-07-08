@@ -16,6 +16,7 @@ import '../widgets/bottom_sheets/before_you_bookbottomsheet.dart';
 import '../widgets/bottom_sheets/pre_booking_bottom_sheet.dart';
 import '../widgets/bottom_sheets/wallet_confirmation_bottom_sheet.dart';
 import '../widgets/dialogs/appointment_success_dialog.dart';
+import '../widgets/custom_button.dart';
 import 'bottom_nav_page.dart';
 import 'select_appointment_type_screen.dart';
 import 'package:skinsync_ai/view_models/checkout_view_model.dart';
@@ -423,7 +424,13 @@ class ClinicsDetailScreen extends ConsumerWidget {
                     child: SizedBox(
                       width: double.infinity,
                       height: 52.h,
-                      child: ElevatedButton(
+                      child: CustomButton(
+                        text: clinic?.place != null
+                            ? "Invite this Medical Spa"
+                            : 'Book an Appointment',
+                        backgroundColor: Colors.black,
+                        textColor: Colors.white,
+                        borderRadius: 25.r,
                         onPressed: () {
                           if (clinic?.place != null) {
                             PreBookingBottomSheet.show(
@@ -463,20 +470,6 @@ class ClinicsDetailScreen extends ConsumerWidget {
                             );
                           }
                         },
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          textStyle: CustomFonts.white16w600,
-                          backgroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25.r),
-                          ),
-                          elevation: 2,
-                        ),
-                        child: Text(
-                          clinic?.place != null
-                              ? "Invite this Medical Spa"
-                              : 'Book an Appointment',
-                        ),
                       ),
                     ),
                   ),

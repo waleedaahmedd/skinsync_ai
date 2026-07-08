@@ -22,7 +22,7 @@ import '../utills/custom_fonts.dart';
 import '../utills/date_time_utills.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_view_model.dart';
-import 'payment_screen.dart';
+import 'treatment_payment_screen.dart';
 
 class ClinicServiceScreen extends ConsumerStatefulWidget {
   final Clinic? clinic;
@@ -411,7 +411,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                           }
                           Navigator.pushNamed(
                             context,
-                            PaymentScreen.routeName,
+                            TreatmentPaymentScreen.routeName,
                             arguments: {
                               'clinic': widget.clinic!,
                               'doctor': state.selectedDoctor!,

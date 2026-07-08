@@ -5,8 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/custom_app_bar.dart';
+import 'package:skinsync_ai/widgets/custom_button.dart';
 import 'package:skinsync_ai/view_models/checkout_view_model.dart';
-import 'consultation_review_screen.dart';
+import 'review_screen.dart';
 
 class SelectDateTimeScreen extends ConsumerStatefulWidget {
   static const routeName = '/select_date_time_screen';
@@ -224,35 +225,23 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                   ),
                 ],
               ),
-              child: SizedBox(
-                width: double.infinity,
-                height: 52.h,
-                child: ElevatedButton(
-                  onPressed: canContinue
-                      ? () {
-                          // Save Selected parameters to checkout ViewModel
-                          ref.read(checkoutViewModel.notifier).setSelectedDate(_selectedDate!);
-                          ref.read(checkoutViewModel.notifier).setSelectedSlot(_selectedSlot!);
+              child: CustomButton(
+                text: "Continue to Review",
+                borderRadius: 26.r,
+                backgroundColor: Colors.black,
+                textColor: Colors.white,
+                onPressed: canContinue
+                    ? () {
+                        // Save Selected parameters to checkout ViewModel
+                        ref.read(checkoutViewModel.notifier).setSelectedDate(_selectedDate!);
+                        ref.read(checkoutViewModel.notifier).setSelectedSlot(_selectedSlot!);
 
-                          Navigator.pushNamed(
-                            context,
-                            ConsultationReviewScreen.routeName,
-                          );
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    disabledBackgroundColor: Colors.grey.shade300,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(26.r),
-                    ),
-                    elevation: 2,
-                  ),
-                  child: Text(
-                    "Continue to Review",
-                    style: CustomFonts.white16w600,
-                  ),
-                ),
+                        Navigator.pushNamed(
+                          context,
+                          ReviewScreen.routeName,
+                        );
+                      }
+                    : null,
               ),
             ),
           ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'payment_screen.dart';
+import 'treatment_payment_screen.dart';
+import '../widgets/custom_button.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -194,17 +195,15 @@ class AdditionalInfoScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 25.h),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            PaymentScreen.routeName,
-                          );
-                        },
-                        child: const Text("Submit Now"),
-                      ),
+                    CustomButton(
+                      text: "Submit Now",
+                      borderRadius: 25.r,
+                      onPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          TreatmentPaymentScreen.routeName,
+                        );
+                      },
                     ),
                     SizedBox(height: 19.h),
                     Center(
@@ -212,7 +211,7 @@ class AdditionalInfoScreen extends StatelessWidget {
                         onTap: () {
                           Navigator.pushNamed(
                             context,
-                            PaymentScreen.routeName,
+                            TreatmentPaymentScreen.routeName,
                           );
                         },
                         child: Text(

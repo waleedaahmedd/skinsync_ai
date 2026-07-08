@@ -11,11 +11,12 @@ import 'package:skinsync_ai/screens/bottom_nav_page.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/face_scanning_complete_screen.dart';
 import 'package:skinsync_ai/screens/clinic_service_screen.dart';
 import 'package:skinsync_ai/screens/select_appointment_type_screen.dart';
-import 'package:skinsync_ai/screens/select_consultation_doctor_screen.dart';
-import 'package:skinsync_ai/screens/consultation_doctor_detail_screen.dart';
+import 'package:skinsync_ai/screens/doctors_screen.dart';
+import 'package:skinsync_ai/screens/doctor_detail_screen.dart';
 import 'package:skinsync_ai/screens/select_date_time_screen.dart';
-import 'package:skinsync_ai/screens/consultation_review_screen.dart';
-import 'package:skinsync_ai/screens/consultation_payment_screen.dart';
+import 'package:skinsync_ai/screens/review_screen.dart';
+import 'package:skinsync_ai/screens/payment_screen.dart';
+import 'package:skinsync_ai/screens/treatment_payment_screen.dart';
 import 'package:skinsync_ai/screens/clinics_detail_screen.dart';
 import 'package:skinsync_ai/screens/face_scan_screen.dart';
 import 'package:skinsync_ai/screens/get_notified_screen.dart';
@@ -24,7 +25,6 @@ import 'package:skinsync_ai/screens/home_screen.dart';
 import 'package:skinsync_ai/screens/login_screen.dart';
 import 'package:skinsync_ai/screens/notes_screen.dart';
 import 'package:skinsync_ai/screens/otp_screen.dart';
-import 'package:skinsync_ai/screens/payment_screen.dart';
 import 'package:skinsync_ai/screens/personal_detail_screen.dart';
 import 'package:skinsync_ai/screens/progress_detail_screen.dart';
 import 'package:skinsync_ai/screens/saved_treatment_screen.dart';
@@ -191,30 +191,30 @@ class RouteGenerator {
           settings: RouteSettings(name: SelectAppointmentTypeScreen.routeName),
           builder: (_) => SelectAppointmentTypeScreen(clinic: args as Clinic),
         );
-      case SelectConsultationDoctorScreen.routeName:
+      case DoctorsScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: SelectConsultationDoctorScreen.routeName),
-          builder: (_) => SelectConsultationDoctorScreen(clinic: args as Clinic),
+          settings: RouteSettings(name: DoctorsScreen.routeName),
+          builder: (_) => DoctorsScreen(clinic: args as Clinic),
         );
-      case ConsultationDoctorDetailScreen.routeName:
+      case DoctorDetailScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: ConsultationDoctorDetailScreen.routeName),
-          builder: (_) => ConsultationDoctorDetailScreen(doctor: args as DummyDoctor),
+          settings: RouteSettings(name: DoctorDetailScreen.routeName),
+          builder: (_) => DoctorDetailScreen(doctor: args as DummyDoctor),
         );
       case SelectDateTimeScreen.routeName:
         return MaterialPageRoute(
           settings: RouteSettings(name: SelectDateTimeScreen.routeName),
           builder: (_) => const SelectDateTimeScreen(),
         );
-      case ConsultationReviewScreen.routeName:
+      case ReviewScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: ConsultationReviewScreen.routeName),
-          builder: (_) => const ConsultationReviewScreen(),
+          settings: RouteSettings(name: ReviewScreen.routeName),
+          builder: (_) => const ReviewScreen(),
         );
-      case ConsultationPaymentScreen.routeName:
+      case PaymentScreen.routeName:
         return MaterialPageRoute(
-          settings: RouteSettings(name: ConsultationPaymentScreen.routeName),
-          builder: (_) => const ConsultationPaymentScreen(),
+          settings: RouteSettings(name: PaymentScreen.routeName),
+          builder: (_) => const PaymentScreen(),
         );
       case ClinicServiceScreen.routeName:
         return MaterialPageRoute(
@@ -293,11 +293,11 @@ class RouteGenerator {
           settings: RouteSettings(name: SelectProductScreen.routeName),
           builder: (_) => SelectProductScreen(),
         );
-      case PaymentScreen.routeName:
+      case TreatmentPaymentScreen.routeName:
         final data = args as Map<String, dynamic>;
         return MaterialPageRoute(
-          settings: RouteSettings(name: PaymentScreen.routeName),
-          builder: (_) => PaymentScreen(
+          settings: RouteSettings(name: TreatmentPaymentScreen.routeName),
+          builder: (_) => TreatmentPaymentScreen(
             clinic: data['clinic'],
             doctor: data['doctor'],
             slot: data['slot'],

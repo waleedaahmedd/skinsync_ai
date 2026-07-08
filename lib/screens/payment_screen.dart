@@ -1,283 +1,388 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../models/responses/get_clinic_response.dart';
-import '../models/responses/payment_options_response.dart';
-import 'notes_screen.dart';
-import '../utills/assets.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
-import '../view_models/doctor_view_model.dart';
-import '../widgets/custom_app_bar.dart';
-
-import '../models/responses/availability_response.dart';
-import '../models/responses/get_doctor_response.dart';
+import 'package:intl/intl.dart';
+import 'package:skinsync_ai/utills/color_constant.dart';
+import 'package:skinsync_ai/utills/custom_fonts.dart';
+import 'package:skinsync_ai/widgets/custom_app_bar.dart';
+import 'package:skinsync_ai/widgets/custom_button.dart';
+import 'package:skinsync_ai/view_models/checkout_view_model.dart';
+import 'bottom_nav_page.dart';
 
 class PaymentScreen extends ConsumerStatefulWidget {
-  final Clinic clinic;
-  final Doctor doctor;
-  final Slot slot;
+  static const routeName = '/payment_screen';
 
-  static const routeName = "/payment_screen";
-  const PaymentScreen({
-    super.key,
-    required this.clinic,
-    required this.doctor,
-    required this.slot,
-  });
+  const PaymentScreen({super.key});
 
   @override
   ConsumerState<PaymentScreen> createState() => _PaymentScreenState();
 }
 
 class _PaymentScreenState extends ConsumerState<PaymentScreen> {
-  PaymentOption? selectedMode;
+  // Payment Type options: 'deposit', 'full', 'wallet'
+  String _selectedPaymentType = 'deposit';
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref
-          .read(doctorProvider.notifier)
-          .getPaymentOptions(
-            clinicId: widget.clinic.clinicId!,
-            doctorId: widget.doctor.id!,
-          );
-    });
+  // Mock initial wallet balance
+  final double _walletBalance = 250.00;
+  final double _consultationFee = 150.00;
+
+  void _bookAppointment() {
+    final checkoutState = ref.read(checkoutViewModel);
+    final clinicName = checkoutState.selectedClinic?.clinicName ?? "Aesthetic Wellness Clinic";
+    final doctorName = checkoutState.selectedDoctor?.name ?? "Specialist Doctor";
+    final dateStr = checkoutState.selectedDate != null 
+        ? DateFormat('EEEE, MMM dd, yyyy').format(checkoutState.selectedDate!) 
+        : "Not Selected";
+    final slotStr = checkoutState.selectedSlot ?? "Not Selected";
+
+    double paidAmount = 0.0;
+    String paymentMethodName = "";
+
+    if (_selectedPaymentType == 'deposit') {
+      paidAmount = _consultationFee * 0.10;
+      paymentMethodName = "10% Security Deposit";
+    } else if (_selectedPaymentType == 'full') {
+      paidAmount = _consultationFee;
+      paymentMethodName = "Full Payment Pre-paid";
+    } else {
+      paidAmount = _consultationFee;
+      paymentMethodName = "Paid via Skinsync Wallet";
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24.r),
+          ),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 30.h),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Success Crown Check Icon
+                  Container(
+                    height: 70.w,
+                    width: 70.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.green.shade50,
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.check_circle_rounded,
+                        size: 44.sp,
+                        color: Colors.green.shade600,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 18.h),
+                  Text(
+                    "Booking Successful!",
+                    style: CustomFonts.black22w600,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    "Your consultation session has been secured successfully.",
+                    style: CustomFonts.grey12w400,
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 20.h),
+
+                  // Receipt-style Summary Details card
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(16.w),
+                    decoration: BoxDecoration(
+                      color: CustomColors.lightPurpleColor.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(color: Colors.grey.shade100),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildReceiptRow("Clinic:", clinicName),
+                        _buildReceiptRow("Specialist:", doctorName),
+                        _buildReceiptRow("Date:", dateStr),
+                        _buildReceiptRow("Time Slot:", slotStr),
+                        const Divider(height: 20, color: Colors.grey),
+                        _buildReceiptRow("Payment Mode:", paymentMethodName),
+                        _buildReceiptRow("Amount Paid:", "\$${paidAmount.toStringAsFixed(2)}", isPrice: true),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 24.h),
+
+                  // Dismiss and Reset Button (using custom button)
+                  CustomButton(
+                    text: "Return to Home",
+                    borderRadius: 26.r,
+                    backgroundColor: Colors.black,
+                    textColor: Colors.white,
+                    onPressed: () {
+                      // Clear the checkoutState context completely
+                      ref.read(checkoutViewModel.notifier).clearState();
+
+                      // Route to main Home Screen Bottom nav
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        BottomNavPage.routeName,
+                        (_) => false,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildReceiptRow(String label, String value, {bool isPrice = false}) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 4.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: CustomFonts.grey12w400.copyWith(fontWeight: FontWeight.bold),
+          ),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.right,
+              style: isPrice
+                  ? CustomFonts.black14w600.copyWith(color: CustomColors.pinkColor)
+                  : CustomFonts.black12w600,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomAppBar(showTitle: false),
-      body: Padding(
-        padding: EdgeInsetsGeometry.symmetric(horizontal: 30.w),
-        child: _buildBody(),
-      ),
-      bottomNavigationBar: Padding(
-        padding: EdgeInsets.only(
-          top: 20.h,
-          bottom: MediaQuery.paddingOf(context).bottom + 20.h,
-          left: 20.w,
-          right: 20.w,
-        ),
-        child: SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () {
-              if (selectedMode == null) {
-                EasyLoading.showError('Select a payment option!');
-              }
-              Navigator.pushNamed(
-                context,
-                NotesScreen.routeName,
-                arguments: {
-                  'clinic': widget.clinic,
-                  'doctor': widget.doctor,
-                  'slot': widget.slot,
-                  'paymentOption': selectedMode!,
-                },
-              );
-            },
-            child: const Text("Pay Now"),
-          ),
-        ),
-      ),
-    );
-  }
+    final double depositAmount = _consultationFee * 0.10;
+    final double remainingWalletBalance = _walletBalance - _consultationFee;
 
-  Widget _buildBody() {
-    return Consumer(
-      builder: (_, ref, _) {
-        final state = ref.watch(
-          doctorProvider.select((s) => (s.paymentOptions, s.loading)),
-        );
-        if (state.$2) {
-          return const Center(
-            child: CircularProgressIndicator(color: CustomColors.pinkColor),
-          );
-        }
-        return SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: .start,
-            children: [
-              SizedBox(height: 10.h),
-              Text(
-                "Your Treatment Appointment is Ready!",
-                style: CustomFonts.black30w600,
-              ),
-              SizedBox(height: 18.h),
-              Container(
-                padding: EdgeInsets.all(6.w),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.r),
-                  border: Border.all(color: CustomColors.blackColor),
-                ),
-                child: Row(
+    return Scaffold(
+      backgroundColor: CustomColors.whiteColor,
+      appBar: const CustomAppBar(showTitle: true, title: "Payment Type"),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: CustomColors.whiteBlueGradient,
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset(
-                      DummyAssets.treatmentimage,
-                      fit: BoxFit.fill,
-                      height: 105.h,
-                      width: 151.w,
+                    Text("Select Payment Option", style: CustomFonts.black18w600),
+                    SizedBox(height: 6.h),
+                    Text(
+                      "Choose how you would like to secure this medical spa consultation session.",
+                      style: CustomFonts.grey12w400,
                     ),
-                    SizedBox(width: 21.w),
-                    Column(
-                      crossAxisAlignment: .start,
-                      children: [
-                        Text(
-                          widget.slot.appointmentDateTime,
-                          style: CustomFonts.black14w500,
-                        ),
-                        Text(
-                          "Derma Fillers - Cheeks",
-                          style: CustomFonts.black14w600,
-                        ),
-                        Text(
-                          widget.clinic.clinicName ?? "Glow Skin Clinic",
-                          style: CustomFonts.black14w400,
-                        ),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.attach_file,
-                              size: 12.sp,
-                              color: CustomColors.blackColor,
-                            ),
-                            Text(
-                              " Derma Fillers Cheeks Model",
-                              style: CustomFonts.black14w400Underline,
-                            ),
-                          ],
-                        ),
-                      ],
+                    SizedBox(height: 20.h),
+
+                    // Option 1: 10% Security Deposit
+                    _buildPaymentOptionCard(
+                      id: 'deposit',
+                      title: "Pay 10% Security Deposit",
+                      description: "Secure your slot now by pre-paying a refundable 10% deposit. Pay the balance of \$${(_consultationFee * 0.90).toStringAsFixed(2)} at the clinic.",
+                      priceText: "\$${depositAmount.toStringAsFixed(2)}",
+                    ),
+
+                    // Option 2: Full Pre-payment
+                    _buildPaymentOptionCard(
+                      id: 'full',
+                      title: "Pay Full Amount",
+                      description: "Complete payment in full now for seamless premium checkout when visiting the clinic.",
+                      priceText: "\$${_consultationFee.toStringAsFixed(2)}",
+                    ),
+
+                    // Option 3: Deduct from Wallet
+                    _buildPaymentOptionCard(
+                      id: 'wallet',
+                      title: "Deduct from Skinsync Wallet",
+                      description: "Instantly pay using your pre-funded medical spa wallet. Available balance: \$${_walletBalance.toStringAsFixed(2)}",
+                      priceText: "\$${_consultationFee.toStringAsFixed(2)}",
+                      extraWidget: _selectedPaymentType == 'wallet'
+                          ? Container(
+                              margin: EdgeInsets.only(top: 10.h),
+                              padding: EdgeInsets.all(10.w),
+                              decoration: BoxDecoration(
+                                color: remainingWalletBalance >= 0 ? Colors.green.shade50 : Colors.red.shade50,
+                                borderRadius: BorderRadius.circular(10.r),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    remainingWalletBalance >= 0
+                                        ? Icons.check_circle_outline_rounded
+                                        : Icons.error_outline_rounded,
+                                    color: remainingWalletBalance >= 0 ? Colors.green.shade600 : Colors.red.shade600,
+                                    size: 16.sp,
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  Expanded(
+                                    child: Text(
+                                      remainingWalletBalance >= 0
+                                          ? "Sufficient balance! Remaining: \$${remainingWalletBalance.toStringAsFixed(2)}"
+                                          : "Insufficient wallet balance. fund wallet to use.",
+                                      style: TextStyle(
+                                        color: remainingWalletBalance >= 0 ? Colors.green.shade800 : Colors.red.shade800,
+                                        fontSize: 11.sp,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : null,
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 22.h),
-              Divider(height: 0, color: Colors.grey.shade300),
-              SizedBox(height: 22.h),
-              Text("Select Your Payment Mode", style: CustomFonts.black22w600),
-              SizedBox(height: 20.h),
-              for (final paymentOption in state.$1)
-                paymentTile(
-                  price: paymentOption.amount ?? 0,
-                  paymentOption: paymentOption,
-                  title: paymentOption.title ?? 'N/A',
-                  description: paymentOption.description ?? 'N/A',
-                ),
-              SizedBox(height: 22.h),
-              Divider(height: 0, color: Colors.grey.shade300),
-              SizedBox(height: 14.h),
-              Row(
-                mainAxisAlignment: .spaceBetween,
-                children: [
-                  Text("Total Amount", style: CustomFonts.black16w600),
-                  Text("\$ 550", style: CustomFonts.black16w600),
-                ],
-              ),
-              SizedBox(height: 24.h),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget paymentTile({
-    required String title,
-    required String description,
-    required int price,
-    required PaymentOption paymentOption,
-  }) {
-    final isSelected = selectedMode == paymentOption;
-
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedMode = paymentOption;
-        });
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
-        margin: EdgeInsets.only(bottom: 15.h),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15.r),
-          border: Border.all(
-            color: isSelected
-                ? CustomColors.lightBlueColor
-                : Colors.grey.shade300,
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: CustomFonts.black14w700),
-                  SizedBox(height: 2.h),
-                  Text(description, style: CustomFonts.black12w400),
-                ],
-              ),
             ),
 
-            /// Radio icon
-            Column(
-              children: [
-                Text("\$ $price", style: CustomFonts.red13w500),
-                SizedBox(height: 5.h),
-                Icon(
-                  isSelected
-                      ? Icons.radio_button_checked
-                      : Icons.radio_button_off,
-                  color: isSelected
-                      ? CustomColors.lightBlueColor
-                      : Colors.grey.shade400,
-                ),
-              ],
+            // Booking Execution Floating Bar
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 15,
+                    offset: const Offset(0, -4),
+                  ),
+                ],
+              ),
+              child: CustomButton(
+                text: "Confirm & Secure Consultation",
+                borderRadius: 26.r,
+                backgroundColor: Colors.black,
+                textColor: Colors.white,
+                onPressed: (_selectedPaymentType == 'wallet' && remainingWalletBalance < 0)
+                    ? null
+                    : _bookAppointment,
+              ),
             ),
           ],
         ),
       ),
     );
   }
-}
 
-class CustomSizedSwitch extends StatefulWidget {
-  const CustomSizedSwitch({super.key});
+  Widget _buildPaymentOptionCard({
+    required String id,
+    required String title,
+    required String description,
+    required String priceText,
+    Widget? extraWidget,
+  }) {
+    final isSelected = _selectedPaymentType == id;
 
-  @override
-  State<CustomSizedSwitch> createState() => _CustomSizedSwitchState();
-}
-
-class _CustomSizedSwitchState extends State<CustomSizedSwitch> {
-  bool isOn = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return Transform.scale(
-      scale: 0.8,
-      child: SwitchTheme(
-        data: SwitchThemeData(
-          thumbColor: WidgetStateProperty.all(Colors.white),
-          trackColor: WidgetStateProperty.all(
-            isOn ? CustomColors.lightBlueColor : Colors.grey.shade400,
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedPaymentType = id;
+        });
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 16.h),
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: isSelected ? CustomColors.pinkColor.withValues(alpha: 0.04) : Colors.white,
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(
+            color: isSelected ? CustomColors.pinkColor : Colors.grey.shade200,
+            width: isSelected ? 1.8 : 1,
           ),
-          trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isSelected ? 0.04 : 0.01),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        child: Switch(
-          value: isOn,
-          onChanged: (value) {
-            setState(() {
-              isOn = value;
-            });
-          },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                // Radio circular state
+                Container(
+                  height: 20.w,
+                  width: 20.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: isSelected ? CustomColors.pinkColor : Colors.grey.shade400,
+                      width: 2,
+                    ),
+                  ),
+                  child: isSelected
+                      ? Center(
+                          child: Container(
+                            height: 10.w,
+                            width: 10.w,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: CustomColors.pinkColor,
+                            ),
+                          ),
+                        )
+                      : null,
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: isSelected
+                        ? CustomFonts.black14w600.copyWith(color: CustomColors.pinkColor)
+                        : CustomFonts.black14w600,
+                  ),
+                ),
+                Text(
+                  priceText,
+                  style: CustomFonts.black14w600,
+                ),
+              ],
+            ),
+            SizedBox(height: 8.h),
+            Padding(
+              padding: EdgeInsets.only(left: 32.w),
+              child: Text(
+                description,
+                style: CustomFonts.grey12w400,
+              ),
+            ),
+            if (extraWidget != null)
+              Padding(
+                padding: EdgeInsets.only(left: 32.w),
+                child: extraWidget,
+              ),
+          ],
         ),
       ),
     );

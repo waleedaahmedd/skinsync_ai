@@ -10,7 +10,7 @@ import 'package:skinsync_ai/widgets/custom_app_bar.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 import 'package:skinsync_ai/view_models/checkout_view_model.dart';
 import 'clinic_service_screen.dart';
-import 'select_consultation_doctor_screen.dart';
+import 'doctors_screen.dart';
 
 class SelectAppointmentTypeScreen extends ConsumerWidget {
   static const routeName = '/select_appointment_type_screen';
@@ -66,7 +66,7 @@ class SelectAppointmentTypeScreen extends ConsumerWidget {
                         if (appointmentType.type == AppointmentType.consultation) {
                           Navigator.pushNamed(
                             context,
-                            SelectConsultationDoctorScreen.routeName,
+                            DoctorsScreen.routeName,
                             arguments: clinic,
                           );
                         } else {
