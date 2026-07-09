@@ -20,6 +20,7 @@ import '../utills/image_utills.dart';
 import '../utills/list_utils.dart';
 import 'auth_view_model.dart';
 import 'treatment_area_view_model.dart';
+import 'checkout_view_model.dart';
 import 'base_view_model.dart';
 
 final treatmentViewModel = NotifierProvider(
@@ -64,9 +65,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       );
       if (selectedSubArea != null) {
         onTapTreatmentSubArea(
-          subArea: subArea.copyWith(
-            currentSyringe: selectedSubArea.syringesQuantity,
-          ),
+          subArea: subArea,
         );
       }
     }
@@ -466,16 +465,31 @@ Future<void> loadArTreatments({
       Uri.parse('http://18.116.65.70/api/'),
     );
 
-    final subSectionData = state.selectedSubAreasList.map((e) {
-      return {'sub_section_id': e.id, 'syringe': e.currentSyringe};
+    final selectedTreatmentsAndAreas = ref.read(checkoutViewModel).selectedTreatmentsAndAreas;
+
+    final treatmentAreasJson = selectedTreatmentsAndAreas.map((item) {
+      return {
+        'treatment_sku': item.treatment.globalSku ?? '',
+        'areas': item.selectedAreas.map((area) {
+          return {
+            'areas_sku': area.globalSku ?? '',
+            'material_quantity': 0,
+          };
+        }).toList(),
+      };
     }).toList();
 
+
     request.fields.addAll({
-      'treatment_id': (state.selectedTreatment?.id ?? 0).toString(),
-      'treatment_section_id': (state.selectTreatmentArea?.id ?? 0).toString(),
-      'treatment_sub_section': jsonEncode(subSectionData),
+      'treatments': jsonEncode(treatmentAreasJson),
     });
     request.files.add(await _imageMultipartFile(image));
+
+    print("--- Multipart Request Debug ---");
+    print("URL: ${request.url}");
+    print("Fields: ${request.fields}");
+    print("Files: ${request.files.map((f) => '${f.field}: ${f.filename} (${f.length} bytes)').toList()}");
+    print("--------------------------------");
 
     final response = await request.send();
     final body = await response.stream.bytesToString();
@@ -512,7 +526,7 @@ Future<void> loadArTreatments({
         return SubSectionRequest(
           areaId: subArea.areaId!,
           sectionId: subArea.id!,
-          syringesQuantity: subArea.currentSyringe,
+          syringesQuantity: 0,
         );
       }).toList();
       if (beforeImage == null || afterImage == null) {

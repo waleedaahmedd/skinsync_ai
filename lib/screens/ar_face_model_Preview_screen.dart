@@ -14,7 +14,6 @@ import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_view_model.dart';
-import '../widgets/bottom_sheets/syringe_level_sheet.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/service_type_button.dart';
 import '../widgets/custom_button.dart';
@@ -192,27 +191,6 @@ class _ArFaceModelPreviewScreenState
     _treatmentScrollController.dispose();
     _pulseController.dispose();
     super.dispose();
-  }
-
-  void _maybeShowSyringeBottomSheet(
-    BuildContext context,
-    TreatmentAreaModel subArea,
-  ) {
-    final minSyringe = 1; // Dummy min syringe
-    final maxSyringe = 10; // Dummy max syringe
-    final divisions = (maxSyringe - minSyringe);
-    if (divisions <= 0) return;
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-      ),
-      builder: (context) {
-        return SyringeLevelSheet(subArea: subArea);
-      },
-    );
   }
 
   @override

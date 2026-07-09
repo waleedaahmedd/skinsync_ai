@@ -44,7 +44,6 @@ class SelectProductScreen extends ConsumerWidget {
               "Choose the product best suited for your treatment.\nEach option is selected to enhance your results.",
               style: CustomFonts.black16w400,
             ),
-
             SizedBox(height: 16.h),
 
             Expanded(

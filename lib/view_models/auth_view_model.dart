@@ -19,6 +19,7 @@ import '../models/responses/auth_response.dart';
 import '../repositories/auth_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/auth_service.dart';
+import '../services/location_service.dart';
 import '../utills/enums.dart';
 import '../utills/secure_storage_service.dart';
 import 'base_view_model.dart';
@@ -278,21 +279,27 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       state = state.copyWith(authData: authData);
       log('get me call successful,');
       // Location is fetched in background to avoid blocking the UI thread during splash/init
-      // _fetchLocationInBackground();
+      _fetchLocationInBackground();
       return true;
     });
   }
-  //
-  // void _fetchLocationInBackground() {
-  //   Future.delayed(const Duration(seconds: 2), () async {
-  //     try {
-  //       final addressData = await LocationService().fetchAddress();
-  //       state = state.copyWith(addressData: addressData);
-  //     } catch (e) {
-  //       log('Background location fetch skipped or failed: $e');
-  //     }
-  //   });
-  // }
+
+  Future<void> fetchLocation() async {
+    if (state.addressData != null) return;
+    await _fetchLocationInBackground();
+  }
+
+  Future<void> _fetchLocationInBackground() async {
+    Future.delayed(const Duration(seconds: 2), () async {
+      try {
+        final addressData = await LocationService().fetchAddress();
+        state = state.copyWith(addressData: addressData);
+      } catch (e) {
+        EasyLoading.showError('Location fetch failed: $e');
+        log('Background location fetch skipped or failed: $e');
+      }
+    });
+  }
 
   Future<bool?> callGoogleSignInApi() async {
     return await runSafely<bool>(() async {

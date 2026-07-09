@@ -83,13 +83,9 @@ class TreatmentAreaModel {
 }
 
 // Expando-based dynamic runtime properties to keep TreatmentAreaModel unmodified
-final _currentSyringeExpando = Expando<int>();
 final _areaIdExpando = Expando<int>();
 
 extension TreatmentAreaModelExtension on TreatmentAreaModel {
-  int get currentSyringe => _currentSyringeExpando[this] ?? 0;
-  set currentSyringe(int value) => _currentSyringeExpando[this] = value;
-
   int? get areaId => _areaIdExpando[this];
   set areaId(int? value) => _areaIdExpando[this] = value;
 
@@ -103,7 +99,6 @@ extension TreatmentAreaModelExtension on TreatmentAreaModel {
     String? image,
     int? subAreasCount,
     List<TreatmentAreaModel>? subAreas,
-    int? currentSyringe,
     int? areaId,
   }) {
     final copy = TreatmentAreaModel(
@@ -115,7 +110,6 @@ extension TreatmentAreaModelExtension on TreatmentAreaModel {
       subAreasCount: subAreasCount ?? this.subAreasCount,
       subAreas: subAreas ?? this.subAreas,
     );
-    _currentSyringeExpando[copy] = currentSyringe ?? this.currentSyringe;
     _areaIdExpando[copy] = areaId ?? this.areaId;
     return copy;
   }

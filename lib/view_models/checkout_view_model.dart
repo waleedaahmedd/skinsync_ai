@@ -261,10 +261,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       final treatment = treatmentState.selectedTreatment!;
       final subAreas = treatmentState.selectedSubAreasList;
       final treatmentPrice =
-          pricingData.treatment!.price! *
-          subAreas.fold(0, (prev, next) {
-            return prev + next.currentSyringe + 1;
-          });
+          pricingData.treatment!.price! * subAreas.length;
       final userId = ref.read(authViewModel).authData!.user!.id!;
       final uploadedBefore = await _mediaService.uploadImage(
         '$userId/appointments/before/',
@@ -310,7 +307,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
             }).first;
             return TreatmentSubsectionRequest(
               sectionId: subArea.id!,
-              syringesQuantity: subArea.currentSyringe,
+              syringesQuantity: 0,
               perSyringePrice: price.perSyringePrice!,
             );
           }).toList(),
