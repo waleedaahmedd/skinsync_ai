@@ -473,7 +473,7 @@ Future<void> loadArTreatments({
         'areas': item.selectedAreas.map((area) {
           return {
             'areas_sku': area.globalSku ?? '',
-            'material_quantity': 0,
+            'material_quantity': 1,
           };
         }).toList(),
       };
@@ -485,7 +485,12 @@ Future<void> loadArTreatments({
     });
     request.files.add(await _imageMultipartFile(image));
 
+    final encoded = jsonEncode(treatmentAreasJson);
+
+
+
     print("--- Multipart Request Debug ---");
+    print(encoded);
     print("URL: ${request.url}");
     print("Fields: ${request.fields}");
     print("Files: ${request.files.map((f) => '${f.field}: ${f.filename} (${f.length} bytes)').toList()}");
