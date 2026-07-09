@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/face_detection_screen.dart';
-import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
 import 'package:skinsync_ai/screens/treatment_area_screen.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/widgets/custom_button.dart';
 import 'package:skinsync_ai/view_models/checkout_view_model.dart';
+import 'package:skinsync_ai/view_models/treatment_area_view_model.dart';
 
 import '../view_models/treatment_view_model.dart';
 
@@ -15,7 +15,7 @@ void showMScanFaceDialog(BuildContext context) {
   showDialog(
     context: context,
     barrierDismissible: true, // tap outside to close
-    builder: (context) {
+    builder: (dialogContext) {
       return Dialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
@@ -62,57 +62,37 @@ void showMScanFaceDialog(BuildContext context) {
                 backgroundColor: Colors.black,
                 textColor: Colors.white,
                 onPressed: () {
-                  Navigator.pop(context); // close dialog
+                  Navigator.pop(dialogContext); // close dialog
                   Navigator.of(context).pushNamed(FaceDetectionScreen.routeName);
                 },
               ),
               SizedBox(height: 12.h),
 
-              // Button 2: Explore Clinics or Select Treatment Areas (Secondary Button)
+              // Button 2: Select Treatment Areas (Secondary Button)
               Consumer(
-                builder: (context, ref, _) {
-                  final checkoutState = ref.watch(checkoutViewModel);
-                  final hasSelectedAreas = checkoutState.selectedTreatmentsAndAreas.isNotEmpty &&
-                      checkoutState.selectedTreatmentsAndAreas.any((item) => item.selectedAreas.isNotEmpty);
-
-                  final String buttonTitle = hasSelectedAreas ? "Explore Clinics" : "Select Treatment Areas";
-
+                builder: (consumerContext, ref, _) {
                   return Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25.r),
                       border: Border.all(color: CustomColors.darkPurple, width: 1.5),
                     ),
                     child: CustomButton(
-                      text: buttonTitle,
+                      text: "Select Treatment Areas",
                       backgroundColor: Colors.transparent,
                       textColor: CustomColors.darkPurple,
                       borderRadius: 25.r,
                       onPressed: () {
-                        Navigator.pop(context); // close dialog
+                        Navigator.pop(dialogContext); // close dialog
 
-                        if (hasSelectedAreas) {
-                          final state = ref.read(treatmentViewModel);
-                          final treatment = state.selectedTreatment;
-                          final sideAreaIds = state.selectedSubAreasList
-                              .map((s) => s.id!)
-                              .toList();
-                          Navigator.pushNamed(
-                            context,
-                            ExploreClinicsScreen.routeName,
-                            arguments: {
-                              'treatmentId': treatment?.id,
-                              'sideAreaIds': sideAreaIds,
-                            },
-                          );
-                        } else {
-                          Navigator.pushNamed(
-                            context,
-                            TreatmentAreaScreen.routeName,
-                            arguments: {
-                              'title': 'Focus Areas',
-                            },
-                          );
-                        }
+                        final treatment = ref.read(treatmentViewModel).selectedTreatment;
+                        Navigator.pushNamed(
+                          context,
+                          TreatmentAreaScreen.routeName,
+                          arguments: {
+                            'title': treatment?.name ?? 'Focus Areas',
+                            'treatmentId': treatment?.id,
+                          },
+                        );
                       },
                     ),
                   );

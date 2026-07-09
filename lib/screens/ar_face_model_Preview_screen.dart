@@ -24,9 +24,7 @@ import '../view_models/treatment_area_view_model.dart';
 import 'explore_clinics_screen.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
-  const ArFaceModelPreviewScreen({
-    super.key,
-  });
+  const ArFaceModelPreviewScreen({super.key});
 
   static const String routeName = '/ArFaceModelPreviewScreen';
 
@@ -57,25 +55,24 @@ class _ArFaceModelPreviewScreenState
         }
       }
     }
+
     for (final area in rootAreas) {
       traverse(area);
     }
     return selected;
   }
 
-
-
-  Widget _buildAreasRecursively(List<AreaData> areas, {String title = "Area Selection"}) {
+  Widget _buildAreasRecursively(
+    List<AreaData> areas, {
+    String title = "Area Selection",
+  }) {
     if (areas.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (title.isNotEmpty) ...[
-          Text(
-            title,
-            style: CustomFonts.black18w600,
-          ),
+          Text(title, style: CustomFonts.black18w600),
           SizedBox(height: 8.h),
         ],
         Wrap(
@@ -93,7 +90,9 @@ class _ArFaceModelPreviewScreenState
                   setState(() {
                     _selectedAreaIds.add(area.id!);
                     if (area.subAreas == null || area.subAreas!.isEmpty) {
-                      ref.read(checkoutViewModel.notifier).addSelectedArea(area);
+                      ref
+                          .read(checkoutViewModel.notifier)
+                          .addSelectedArea(area);
                     }
                   });
                 }
@@ -102,15 +101,22 @@ class _ArFaceModelPreviewScreenState
           }).toList(),
         ),
         SizedBox(height: 15.h),
-        ...areas.where((area) => _selectedAreaIds.contains(area.id) && area.subAreas != null && area.subAreas!.isNotEmpty).map((area) {
-          return Padding(
-            padding: EdgeInsets.only(left: 16.w, top: 10.h, bottom: 10.h),
-            child: _buildAreasRecursively(
-              area.subAreas!,
-              title: "Sub Areas for ${area.name}",
-            ),
-          );
-        }),
+        ...areas
+            .where(
+              (area) =>
+                  _selectedAreaIds.contains(area.id) &&
+                  area.subAreas != null &&
+                  area.subAreas!.isNotEmpty,
+            )
+            .map((area) {
+              return Padding(
+                padding: EdgeInsets.only(left: 16.w, top: 10.h, bottom: 10.h),
+                child: _buildAreasRecursively(
+                  area.subAreas!,
+                  title: "Sub Areas for ${area.name}",
+                ),
+              );
+            }),
       ],
     );
   }
@@ -122,7 +128,7 @@ class _ArFaceModelPreviewScreenState
     _treatmentScrollController.addListener(() {
       if (_treatmentScrollController.position.pixels >=
           _treatmentScrollController.position.maxScrollExtent - 100.w) {
-        ref.read(treatmentViewModel.notifier).loadMoreTreatments();
+        ref.read(treatmentViewModel.notifier).loadMoreArTreatments();
       }
     });
 
@@ -138,40 +144,45 @@ class _ArFaceModelPreviewScreenState
     )..repeat(reverse: true);
 
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.04).animate(
-      CurvedAnimation(
-        parent: _pulseController,
-        curve: Curves.easeInOut,
-      ),
+      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final lastCategoryId = ref.read(treatmentViewModel).categoryId;
 
-      await ref.read(treatmentViewModel.notifier).loadTreatments(
-        isSimulator: true,
-        categoryId: lastCategoryId,
-        clearSearch: true,
-      );
+      await ref
+          .read(treatmentViewModel.notifier)
+          .loadArTreatments(
+            isSimulator: true,
+            categoryId: lastCategoryId,
+            clearSearch: true,
+          );
 
       var selectedTreatment = ref.read(checkoutViewModel).selectedTreatments;
       if (selectedTreatment == null) {
-        final loadedTreatments = ref.read(treatmentViewModel).treatments;
+        final loadedTreatments = ref.read(treatmentViewModel).arTreatments;
         if (loadedTreatments.isNotEmpty) {
           selectedTreatment = loadedTreatments.first;
         }
       }
 
       if (selectedTreatment != null) {
-        ref.read(checkoutViewModel.notifier).addSelectedTreatment(selectedTreatment);
-        await ref.read(treatmentViewModel.notifier).onTapTreatment(
-          treatmentModel: selectedTreatment,
-          isCallPredictAPI: false,
-        );
+        ref
+            .read(checkoutViewModel.notifier)
+            .addSelectedTreatment(selectedTreatment);
+        await ref
+            .read(treatmentViewModel.notifier)
+            .onTapTreatment(
+              treatmentModel: selectedTreatment,
+              isCallPredictAPI: false,
+            );
       }
 
       final treatmentId = selectedTreatment?.id;
       if (treatmentId != null) {
-        await ref.read(treatmentAreaProvider.notifier).fetchAreasByTreatment(treatmentId);
+        await ref
+            .read(treatmentAreaProvider.notifier)
+            .fetchAreasByTreatment(treatmentId);
       }
     });
   }
@@ -203,8 +214,6 @@ class _ArFaceModelPreviewScreenState
       },
     );
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -256,7 +265,9 @@ class _ArFaceModelPreviewScreenState
                         color: CustomColors.purpleColor.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(20.r),
                         border: Border.all(
-                          color: CustomColors.purpleColor.withValues(alpha: 0.4),
+                          color: CustomColors.purpleColor.withValues(
+                            alpha: 0.4,
+                          ),
                           width: 1,
                         ),
                       ),
@@ -316,9 +327,9 @@ class _ArFaceModelPreviewScreenState
                               Consumer(
                                 builder: (context, ref, _) {
                                   final state = ref.watch(treatmentViewModel);
-                                  final isLoading = state.isLoading;
-                                  final isLoadingMore = state.isLoadingMore;
-                                  final treatments = state.treatments;
+                                  final isLoading = state.isArLoading;
+                                  final isLoadingMore = state.isArLoadingMore;
+                                  final treatments = state.arTreatments;
 
                                   if (isLoading && treatments.isEmpty) {
                                     return SizedBox(
@@ -346,57 +357,91 @@ class _ArFaceModelPreviewScreenState
                                   return SizedBox(
                                     height: 50.h,
                                     child: AnimationLimiter(
-                                      key: const ValueKey('treatments_list_horizontal'),
+                                      key: const ValueKey(
+                                        'treatments_list_horizontal',
+                                      ),
                                       child: ListView.builder(
                                         controller: _treatmentScrollController,
                                         scrollDirection: Axis.horizontal,
                                         physics: const BouncingScrollPhysics(),
-                                        itemCount: treatments.length + (isLoadingMore ? 1 : 0),
+                                        itemCount:
+                                            treatments.length +
+                                            (isLoadingMore ? 1 : 0),
                                         itemBuilder: (context, index) {
                                           if (index == treatments.length) {
                                             return Padding(
-                                              padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 16.w,
+                                              ),
                                               child: const Center(
                                                 child: SizedBox(
                                                   width: 20,
                                                   height: 20,
-                                                  child: CircularProgressIndicator(
-                                                    strokeWidth: 2,
-                                                    color: CustomColors.purpleColor,
-                                                  ),
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                        strokeWidth: 2,
+                                                        color: CustomColors
+                                                            .purpleColor,
+                                                      ),
                                                 ),
                                               ),
                                             );
                                           }
 
                                           final treatment = treatments[index];
-                                          final isSelected = ref.watch(checkoutViewModel).selectedTreatmentsAndAreas.any((item) => item.treatment.id == treatment.id);
+                                          final isSelected = ref
+                                              .watch(checkoutViewModel)
+                                              .selectedTreatmentsAndAreas
+                                              .any(
+                                                (item) =>
+                                                    item.treatment.id ==
+                                                    treatment.id,
+                                              );
 
                                           return AnimationConfiguration.staggeredList(
                                             position: index,
-                                            duration: const Duration(milliseconds: 600),
+                                            duration: const Duration(
+                                              milliseconds: 600,
+                                            ),
                                             child: SlideAnimation(
                                               horizontalOffset: 50.0,
                                               child: FadeInAnimation(
                                                 child: Padding(
-                                                  padding: EdgeInsets.only(right: 12.w),
+                                                  padding: EdgeInsets.only(
+                                                    right: 12.w,
+                                                  ),
                                                   child: ServiceTypeButton(
                                                     icon: PngAssets.syringe,
                                                     text: treatment.name ?? '-',
                                                     selected: isSelected,
                                                     onPressed: () async {
                                                       ref
-                                                          .read(treatmentViewModel.notifier)
+                                                          .read(
+                                                            treatmentViewModel
+                                                                .notifier,
+                                                          )
                                                           .onTapTreatment(
-                                                            treatmentModel: treatment,
-                                                            isCallPredictAPI: true,
+                                                            treatmentModel:
+                                                                treatment,
+                                                            isCallPredictAPI:
+                                                                true,
                                                           );
                                                       ref
-                                                          .read(checkoutViewModel.notifier)
-                                                          .addSelectedTreatment(treatment);
+                                                          .read(
+                                                            checkoutViewModel
+                                                                .notifier,
+                                                          )
+                                                          .addSelectedTreatment(
+                                                            treatment,
+                                                          );
                                                       await ref
-                                                          .read(treatmentAreaProvider.notifier)
-                                                          .fetchAreasByTreatment(treatment.id ?? 0);
+                                                          .read(
+                                                            treatmentAreaProvider
+                                                                .notifier,
+                                                          )
+                                                          .fetchAreasByTreatment(
+                                                            treatment.id ?? 0,
+                                                          );
                                                     },
                                                   ),
                                                 ),
@@ -412,12 +457,16 @@ class _ArFaceModelPreviewScreenState
                               SizedBox(height: 30.h),
                               Consumer(
                                 builder: (context, ref, _) {
-                                  final selectedTreatment = ref.watch(treatmentViewModel).selectedTreatment;
+                                  final selectedTreatment = ref
+                                      .watch(treatmentViewModel)
+                                      .selectedTreatment;
                                   if (selectedTreatment == null) {
                                     return const SizedBox.shrink();
                                   }
 
-                                  final areaState = ref.watch(treatmentAreaProvider);
+                                  final areaState = ref.watch(
+                                    treatmentAreaProvider,
+                                  );
                                   final isLoading = areaState.loading;
                                   final treatmentsArea = areaState.areas;
 
@@ -442,7 +491,9 @@ class _ArFaceModelPreviewScreenState
                               SizedBox(height: 20.h),
                               Consumer(
                                 builder: (context, ref, _) {
-                                  final selectedTreatmentsAndAreas = ref.watch(checkoutViewModel).selectedTreatmentsAndAreas;
+                                  final selectedTreatmentsAndAreas = ref
+                                      .watch(checkoutViewModel)
+                                      .selectedTreatmentsAndAreas;
 
                                   if (selectedTreatmentsAndAreas.isEmpty) {
                                     return const SizedBox.shrink();
@@ -453,51 +504,75 @@ class _ArFaceModelPreviewScreenState
                                     child: ListView.builder(
                                       scrollDirection: Axis.horizontal,
                                       physics: const BouncingScrollPhysics(),
-                                      itemCount: selectedTreatmentsAndAreas.length,
+                                      itemCount:
+                                          selectedTreatmentsAndAreas.length,
                                       itemBuilder: (context, index) {
-                                        final item = selectedTreatmentsAndAreas[index];
+                                        final item =
+                                            selectedTreatmentsAndAreas[index];
                                         final treatment = item.treatment;
                                         final areas = item.selectedAreas;
 
                                         return Container(
                                           width: 260.w,
-                                          margin: EdgeInsets.only(right: 16.w, bottom: 16.h),
+                                          margin: EdgeInsets.only(
+                                            right: 16.w,
+                                            bottom: 16.h,
+                                          ),
                                           padding: EdgeInsets.all(16.w),
                                           decoration: BoxDecoration(
                                             color: Colors.white,
-                                            borderRadius: BorderRadius.circular(24.r),
+                                            borderRadius: BorderRadius.circular(
+                                              24.r,
+                                            ),
                                             border: Border.all(
-                                              color: Colors.black.withValues(alpha: 0.12),
+                                              color: Colors.black.withValues(
+                                                alpha: 0.12,
+                                              ),
                                               width: 1.5,
                                             ),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black.withValues(alpha: 0.015),
+                                                color: Colors.black.withValues(
+                                                  alpha: 0.015,
+                                                ),
                                                 blurRadius: 10,
                                                 offset: const Offset(0, 4),
                                               ),
                                             ],
                                           ),
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
                                                   Expanded(
                                                     child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
                                                       children: [
                                                         Text(
                                                           'Selected Treatment',
-                                                          style: CustomFonts.black10w600.copyWith(color: Colors.grey.shade500),
+                                                          style: CustomFonts
+                                                              .black10w600
+                                                              .copyWith(
+                                                                color: Colors
+                                                                    .grey
+                                                                    .shade500,
+                                                              ),
                                                         ),
                                                         SizedBox(height: 2.h),
                                                         Text(
                                                           treatment.name ?? '-',
-                                                          style: CustomFonts.black16w600,
+                                                          style: CustomFonts
+                                                              .black16w600,
                                                           maxLines: 1,
-                                                          overflow: TextOverflow.ellipsis,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
                                                         ),
                                                       ],
                                                     ),
@@ -506,23 +581,39 @@ class _ArFaceModelPreviewScreenState
                                                     onTap: () {
                                                       setState(() {
                                                         for (final a in areas) {
-                                                          _selectedAreaIds.remove(a.id);
+                                                          _selectedAreaIds
+                                                              .remove(a.id);
                                                         }
-                                                        ref.read(checkoutViewModel.notifier).removeTreatment(treatment.id ?? 0);
+                                                        ref
+                                                            .read(
+                                                              checkoutViewModel
+                                                                  .notifier,
+                                                            )
+                                                            .removeTreatment(
+                                                              treatment.id ?? 0,
+                                                            );
                                                       });
                                                     },
                                                     child: Icon(
                                                       Icons.cancel_rounded,
                                                       size: 20,
-                                                      color: Colors.red.shade400,
+                                                      color:
+                                                          Colors.red.shade400,
                                                     ),
                                                   ),
                                                 ],
                                               ),
-                                              const Divider(height: 16, color: Colors.black12),
+                                              const Divider(
+                                                height: 16,
+                                                color: Colors.black12,
+                                              ),
                                               Text(
                                                 'Selected Areas',
-                                                style: CustomFonts.black10w600.copyWith(color: Colors.grey.shade500),
+                                                style: CustomFonts.black10w600
+                                                    .copyWith(
+                                                      color:
+                                                          Colors.grey.shade500,
+                                                    ),
                                               ),
                                               SizedBox(height: 6.h),
                                               Expanded(
@@ -530,27 +621,48 @@ class _ArFaceModelPreviewScreenState
                                                     ? Center(
                                                         child: Text(
                                                           "No areas selected",
-                                                          style: CustomFonts.grey12w400,
+                                                          style: CustomFonts
+                                                              .grey12w400,
                                                         ),
                                                       )
                                                     : SingleChildScrollView(
                                                         child: Wrap(
                                                           spacing: 6.w,
                                                           runSpacing: 6.h,
-                                                          children: areas.map((area) {
+                                                          children: areas.map((
+                                                            area,
+                                                          ) {
                                                             return Chip(
-                                                              visualDensity: VisualDensity.compact,
+                                                              visualDensity:
+                                                                  VisualDensity
+                                                                      .compact,
                                                               label: Text(
-                                                                area.name ?? '-',
-                                                                style: CustomFonts.black10w600,
+                                                                area.name ??
+                                                                    '-',
+                                                                style: CustomFonts
+                                                                    .black10w600,
                                                               ),
                                                               onDeleted: () {
                                                                 setState(() {
-                                                                  _selectedAreaIds.remove(area.id);
-                                                                  ref.read(checkoutViewModel.notifier).removeArea(area.id ?? 0);
+                                                                  _selectedAreaIds
+                                                                      .remove(
+                                                                        area.id,
+                                                                      );
+                                                                  ref
+                                                                      .read(
+                                                                        checkoutViewModel
+                                                                            .notifier,
+                                                                      )
+                                                                      .removeArea(
+                                                                        area.id ??
+                                                                            0,
+                                                                      );
                                                                 });
                                                               },
-                                                              deleteIconColor: Colors.red.shade300,
+                                                              deleteIconColor:
+                                                                  Colors
+                                                                      .red
+                                                                      .shade300,
                                                             );
                                                           }).toList(),
                                                         ),
@@ -627,10 +739,7 @@ class _ArFaceModelPreviewScreenState
                               size: 48.sp,
                             ),
                             SizedBox(height: 16.h),
-                            Text(
-                              'Error',
-                              style: CustomFonts.red20w600,
-                            ),
+                            Text('Error', style: CustomFonts.red20w600),
                             SizedBox(height: 8.h),
                             Padding(
                               padding: EdgeInsets.symmetric(horizontal: 16.w),

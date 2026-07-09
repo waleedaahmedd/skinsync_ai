@@ -280,12 +280,14 @@ class RouteGenerator {
         final list = argsMap['areas'] as List<TreatmentAreaModel>?;
         final screenTitle = argsMap['title'] as String? ?? "Focus Areas";
         final path = argsMap['selectionPath'] as String? ?? "Focus Areas";
+        final treatmentId = argsMap['treatmentId'] as int?;
         return MaterialPageRoute(
           settings: RouteSettings(name: TreatmentAreaScreen.routeName),
           builder: (_) => TreatmentAreaScreen(
             areas: list,
             title: screenTitle,
             selectionPath: path,
+            treatmentId: treatmentId,
           ),
         );
       case SelectProductScreen.routeName:

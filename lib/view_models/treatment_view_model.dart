@@ -216,6 +216,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     int? areaId,
     bool clearSearch = false,
     bool? isSimulator,
+   
   }) async {
     state = state.copyWith(
       isLoading: true,
@@ -282,6 +283,79 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       );
     });
   }
+
+Future<void> loadArTreatments({
+    int? categoryId,
+    int? areaId,
+    bool clearSearch = false,
+    bool? isSimulator,
+  }) async {
+    state = state.copyWith(
+      isArLoading: true,
+      isArLoadingMore: true,
+      errorMessage: null,
+      arCurrentPage: 1,
+      arCategoryId: categoryId,
+      arAreaId: areaId,
+      isSimulator: isSimulator,
+      arSearchQuery: clearSearch ? "" : state.arSearchQuery,
+      arTreatments: [],
+    );
+
+    await runSafely(() async {
+      final response = await _repo.getTreatments(
+        search: state.arSearchQuery.isEmpty ? null : state.arSearchQuery,
+        categoryId: state.arCategoryId,
+        areaId: state.arAreaId,
+        page: 1,
+        limit: 10,
+        isSimulator: state.isSimulator,
+      );
+
+      final hasMore = (response.page ?? 1) < (response.totalPages ?? 1);
+      state = state.copyWith(
+        isArLoading: false,
+        isArLoadingMore: false,
+        arTreatments: response.data ?? [],
+        arCurrentPage: response.page ?? 1,
+        arTotalPages: response.totalPages ?? 1,
+        hasMoreArData: hasMore,
+      );
+    });
+  }
+
+  Future<void> loadMoreArTreatments() async {
+    if (state.isArLoadingMore || !state.hasMoreArData) return;
+
+    state = state.copyWith(isArLoadingMore: true);
+
+    await runSafely(() async {
+      final nextPage = state.arCurrentPage + 1;
+      final response = await _repo.getTreatments(
+        search: state.arSearchQuery.isEmpty ? null : state.arSearchQuery,
+        categoryId: state.arCategoryId,
+        areaId: state.arAreaId,
+        page: nextPage,
+        limit: 10,
+        isSimulator: state.isSimulator,
+      );
+
+      final hasMore = (response.page ?? nextPage) < (response.totalPages ?? 1);
+      final List<TreatmentData> updatedTreatments = [
+        ...state.arTreatments,
+        ...(response.data ?? []),
+      ];
+
+      state = state.copyWith(
+        isArLoadingMore: false,
+        arTreatments: updatedTreatments,
+        arCurrentPage: response.page ?? nextPage,
+        arTotalPages: response.totalPages ?? 1,
+        hasMoreArData: hasMore,
+      );
+    });
+  }
+
 
   Future<void> refreshTreatments() async {
     await loadTreatments(
@@ -478,6 +552,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   void onError(String message) {
     state = state.copyWith(
       treatmentsLoading: false,
+    
     );
     super.onError(message);
     EasyLoading.showError(message);
@@ -487,6 +562,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 @immutable
 class TreatmentsState extends BaseStateModel {
   final List<TreatmentData> treatments;
+  final List<TreatmentData> arTreatments;
   final bool treatmentsLoading;
 
   final TreatmentData? selectedTreatment;
@@ -509,11 +585,20 @@ class TreatmentsState extends BaseStateModel {
   final int? categoryId;
   final int? areaId;
   final bool? isSimulator;
+  final bool isArLoading;
+  final bool isArLoadingMore;
+  final bool hasMoreArData;
+  final int arCurrentPage;
+  final int arTotalPages;
+  final String arSearchQuery;
+  final int? arCategoryId;
+  final int? arAreaId;
 
   const TreatmentsState({
     super.loading = false,
     super.errorMessage,
     this.treatments = const [],
+    this.arTreatments = const [],
     this.treatmentsLoading = false,
     this.selectedTreatment,
     this.selectTreatmentArea,
@@ -532,6 +617,14 @@ class TreatmentsState extends BaseStateModel {
     this.categoryId,
     this.areaId,
     this.isSimulator,
+    this.isArLoading = false,
+    this.isArLoadingMore = false,
+    this.hasMoreArData = false,
+    this.arCurrentPage = 1,
+    this.arTotalPages = 1,
+    this.arSearchQuery = "",
+    this.arCategoryId,
+    this.arAreaId,
   });
 
   @override
@@ -539,6 +632,7 @@ class TreatmentsState extends BaseStateModel {
     bool? loading,
     String? errorMessage,
     List<TreatmentData>? treatments,
+   List<TreatmentData>? arTreatments,
     bool? treatmentsLoading,
     TreatmentData? selectedTreatment,
     TreatmentAreaModel? selectedTreatmentArea,
@@ -564,11 +658,22 @@ class TreatmentsState extends BaseStateModel {
     bool clearCategoryId = false,
     bool clearAreaId = false,
     bool? isSimulator,
+    bool? isArLoading,
+    bool? isArLoadingMore,
+    bool? hasMoreArData,
+    int? arCurrentPage,
+    int? arTotalPages,
+    String? arSearchQuery,
+    int? arCategoryId,
+    int? arAreaId,
+    bool clearArCategoryId = false,
+    bool clearArAreaId = false,
   }) {
     return TreatmentsState(
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
       treatments: treatments ?? this.treatments,
+      arTreatments: arTreatments?? this.arTreatments,
       treatmentsLoading: treatmentsLoading ?? this.treatmentsLoading,
       selectedTreatment: selectedTreatment ?? this.selectedTreatment,
       selectTreatmentArea: clearSelectSectionId
@@ -591,6 +696,15 @@ class TreatmentsState extends BaseStateModel {
       categoryId: clearCategoryId ? null : (categoryId ?? this.categoryId),
       areaId: clearAreaId ? null : (areaId ?? this.areaId),
       isSimulator: isSimulator ?? this.isSimulator,
+         isArLoading: isArLoading ?? this.isArLoading,
+      isArLoadingMore: isArLoadingMore ?? this.isArLoadingMore,
+      hasMoreArData: hasMoreArData ?? this.hasMoreArData,
+      arCurrentPage: arCurrentPage ?? this.arCurrentPage,
+      arTotalPages: arTotalPages ?? this.arTotalPages,
+      arSearchQuery: arSearchQuery ?? this.arSearchQuery,
+      arCategoryId: clearArCategoryId ? null : (arCategoryId ?? this.arCategoryId),
+      arAreaId: clearArAreaId ? null : (arAreaId ?? this.arAreaId),
+
     );
   }
 }

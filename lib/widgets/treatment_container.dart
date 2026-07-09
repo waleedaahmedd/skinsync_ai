@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/screens/treatment_detail_screen.dart';
-import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
+import 'package:skinsync_ai/screens/treatment_area_screen.dart';
 import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
+import 'package:skinsync_ai/view_models/treatment_area_view_model.dart';
 import 'package:skinsync_ai/widgets/app_network_image.dart';
 import 'package:skinsync_ai/widgets/scan_face_dialog.dart';
 
@@ -17,7 +18,7 @@ class TreatmentContainer extends StatelessWidget {
   final double? imageHeight;
   final double? width;
   final TreatmentData? treatments;
-  
+
   // Custom Adaptive Fields for Selection Screen Reusability
   final String? customTitle;
   final String? customSubtitle;
@@ -39,27 +40,24 @@ class TreatmentContainer extends StatelessWidget {
 
   Widget? _buildLeftIcon(String? iconKey) {
     // 1. If it's a network image URL, render it cleanly via AppNetworkImage
-      return Container(
-        margin: EdgeInsets.only(bottom: 4.h),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.r),
-          border: Border.all(color: Colors.white, width: 1.5),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 4,
-            ),
-          ],
-        ),
-        child: AppNetworkImage(
-          imageUrl: iconKey ?? '',
-          width: 38.w,
-          height: 38.w,
-          fit: BoxFit.cover,
-          borderRadius: BorderRadius.circular(10.r),
-          errorIcon: Icons.broken_image,
-        ),
-      );
+    return Container(
+      margin: EdgeInsets.only(bottom: 4.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(color: Colors.white, width: 1.5),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4),
+        ],
+      ),
+      child: AppNetworkImage(
+        imageUrl: iconKey ?? '',
+        width: 38.w,
+        height: 38.w,
+        fit: BoxFit.cover,
+        borderRadius: BorderRadius.circular(10.r),
+        errorIcon: Icons.broken_image,
+      ),
+    );
   }
 
   @override
@@ -67,41 +65,56 @@ class TreatmentContainer extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final isTreatmentData = treatments is TreatmentData;
-        final treatmentData = isTreatmentData ? treatments as TreatmentData : null;
+        final treatmentData = isTreatmentData
+            ? treatments as TreatmentData
+            : null;
 
         final titleText = customTitle ?? treatments?.name ?? "";
-        final subtitleText = customSubtitle ?? treatmentData?.shortDescription ?? treatments?.description ?? "";
-        final bgImage = customImageUrl ?? treatmentData?.image ?? treatments?.imageUrl ?? "";
+        final subtitleText =
+            customSubtitle ??
+            treatmentData?.shortDescription ??
+            treatments?.description ??
+            "";
+        final bgImage =
+            customImageUrl ??
+            treatmentData?.image ??
+            treatments?.imageUrl ??
+            "";
         final iconKey = customIcon ?? treatments?.icon;
-        final iconWidget = iconKey!= null?_buildLeftIcon(iconKey): null;
+        final iconWidget = iconKey != null ? _buildLeftIcon(iconKey) : null;
         final globalSku = treatmentData?.globalSku ?? "";
         final useInAiSimulator = treatmentData?.useInAiSimulator ?? false;
 
         return GestureDetector(
-          onTap: customOnTap ?? () {
-            if (treatments == null) return;
-            ref.read(checkoutViewModel.notifier).addSelectedTreatment(treatments!);
-            if (treatments!.isArea == true) {
-              ref
-                  .read(treatmentViewModel.notifier)
-                  .onTapTreatment(
-                    treatmentModel: treatments!,
-                    isCallPredictAPI: false,
+          onTap:
+              customOnTap ??
+              () {
+                if (treatments == null) return;
+                ref.read(checkoutViewModel.notifier).clearSelectedTreatments();
+                ref
+                    .read(checkoutViewModel.notifier)
+                    .addSelectedTreatment(treatments!);
+                if (treatments!.isArea == true) {
+                  ref
+                      .read(treatmentViewModel.notifier)
+                      .onTapTreatment(
+                        treatmentModel: treatments!,
+                        isCallPredictAPI: false,
+                      );
+                }
+                if (useInAiSimulator) {
+                  showMScanFaceDialog(context);
+                } else {
+                  Navigator.pushNamed(
+                    context,
+                    TreatmentAreaScreen.routeName,
+                    arguments: {
+                      'title': treatments!.name ?? 'Focus Areas',
+                      'treatmentId': treatments!.id,
+                    },
                   );
-            }
-            if (useInAiSimulator) {
-              showMScanFaceDialog(context);
-            } else {
-              Navigator.pushNamed(
-                context,
-                ExploreClinicsScreen.routeName,
-                arguments: {
-                  'treatmentId': treatments!.id,
-                  'sideAreaIds': <int>[],
-                },
-              );
-            }
-          },
+                }
+              },
           child: Container(
             height: imageHeight ?? 300.h,
             width: width ?? MediaQuery.sizeOf(context).width,
@@ -132,7 +145,8 @@ class TreatmentContainer extends StatelessWidget {
                     child: AppNetworkImage(
                       imageUrl: bgImage,
                       fit: BoxFit.cover,
-                      placeholderColor: Colors.transparent, // Keeps overlay visual hierarchy clean
+                      placeholderColor: Colors
+                          .transparent, // Keeps overlay visual hierarchy clean
                     ),
                   ),
 
@@ -146,7 +160,7 @@ class TreatmentContainer extends StatelessWidget {
                           colors: [
                             Colors.transparent,
                             Colors.white.withValues(alpha: 0.20),
-                            Colors.white
+                            Colors.white,
                           ],
                         ),
                       ),
@@ -154,7 +168,7 @@ class TreatmentContainer extends StatelessWidget {
                   ),
 
                   // 3. MedSpa Elegant Glow Layer on Left
-/*
+                  /*
                   Positioned(
                     left: 0,
                     top: 0,
@@ -251,25 +265,30 @@ class TreatmentContainer extends StatelessWidget {
 
                   // 5. Left-hand Icon on Top Left
                   if (iconWidget != null)
-                    Positioned(
-                      top: 12.h,
-                      left: 12.w,
-                      child: iconWidget,
-                    ),
+                    Positioned(top: 12.h, left: 12.w, child: iconWidget),
 
                   // AI Compatible Badge
                   if (useInAiSimulator)
                     Positioned(
                       top: 12.h,
-                      right: (treatments != null && !isDeploymentMode) ? 44.w : 12.w,
+                      right: (treatments != null && !isDeploymentMode)
+                          ? 44.w
+                          : 12.w,
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 5.h,
+                        ),
                         decoration: BoxDecoration(
-                          color: CustomColors.purpleColor.withValues(alpha: 0.9),
+                          color: CustomColors.purpleColor.withValues(
+                            alpha: 0.9,
+                          ),
                           borderRadius: BorderRadius.circular(12.r),
                           boxShadow: [
                             BoxShadow(
-                              color: CustomColors.purpleColor.withValues(alpha: 0.3),
+                              color: CustomColors.purpleColor.withValues(
+                                alpha: 0.3,
+                              ),
                               blurRadius: 6,
                               offset: const Offset(0, 2),
                             ),

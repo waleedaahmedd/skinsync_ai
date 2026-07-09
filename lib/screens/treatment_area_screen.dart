@@ -9,6 +9,7 @@ import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_area_view_model.dart';
 import 'package:skinsync_ai/view_models/checkout_view_model.dart';
+import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 
@@ -16,12 +17,14 @@ class TreatmentAreaScreen extends ConsumerStatefulWidget {
   final List<TreatmentAreaModel>? areas;
   final String title;
   final String selectionPath; // Path of selected focus areas
+  final int? treatmentId;
 
   const TreatmentAreaScreen({
     super.key,
     this.areas,
     required this.title,
     this.selectionPath = "Focus Areas", // Defaults to root path
+    this.treatmentId,
   });
 
   static const String routeName = '/TreatmentAreaScreen';
@@ -37,7 +40,16 @@ class _TreatmentAreaScreenState extends ConsumerState<TreatmentAreaScreen> {
     // Only fetch if we are at the root level / no areas were passed
     if (widget.areas == null || widget.areas!.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref.read(treatmentAreaProvider.notifier).fetchAreas();
+        if (widget.treatmentId != null) {
+          ref.read(treatmentAreaProvider.notifier).fetchAreasByTreatment(widget.treatmentId);
+        } else {
+          final selectedTreatment = ref.read(checkoutViewModel).selectedTreatments ?? ref.read(treatmentViewModel).selectedTreatment;
+          if (selectedTreatment != null) {
+            ref.read(treatmentAreaProvider.notifier).fetchAreasByTreatment(selectedTreatment.id);
+          } else {
+            ref.read(treatmentAreaProvider.notifier).fetchAreasByTreatment(null);
+          }
+        }
       });
     }
   }

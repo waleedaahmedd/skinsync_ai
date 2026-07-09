@@ -1,3 +1,4 @@
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/base_state_model.dart';
 import '../models/responses/treatment_area_list_response.dart';
@@ -24,20 +25,15 @@ class TreatmentAreaViewModel extends BaseViewModel<TreatmentAreaState> {
   bool get isLoading => state.loading;
   String? get errorMessage => state.errorMessage;
 
-  Future<void> fetchAreas() async {
-    await runSafely(() async {
-      state = state.copyWith(loading: true, errorMessage: null);
-      final response = await _repo.getAreasApi();
-      state = state.copyWith(
-        loading: false,
-        areas: response.data ?? [],
-        errorMessage: null,
-      );
-    });
-  }
+  // Future<void> fetchAreas() async {
+  //   await runSafely(() async {
+  //     state = state.copyWith(loading: true, errorMessage: null);
+  // Future<bool> fetchAreas() async {
+  //   return await fetchAreasByTreatment(null);
+  // }
 
-  Future<void> fetchAreasByTreatment(int treatmentId) async {
-    await runSafely(() async {
+  Future<bool> fetchAreasByTreatment(int? treatmentId) async {
+    final result = await runSafely(() async {
       state = state.copyWith(loading: true, errorMessage: null);
       final response = await _repo.getAreasApi(treatmentId: treatmentId);
       state = state.copyWith(
@@ -45,7 +41,9 @@ class TreatmentAreaViewModel extends BaseViewModel<TreatmentAreaState> {
         areas: response.data ?? [],
         errorMessage: null,
       );
+      return true;
     });
+    return result ?? false;
   }
 
   @override
