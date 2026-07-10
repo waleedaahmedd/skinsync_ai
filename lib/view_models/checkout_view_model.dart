@@ -11,6 +11,7 @@ import 'package:skinsync_ai/models/responses/treatment_list_response.dart';
 import 'package:skinsync_ai/models/responses/treatment_category_list_response.dart';
 import 'package:skinsync_ai/models/responses/treatment_area_list_response.dart';
 import 'package:skinsync_ai/models/selected_treatment_and_areas_model.dart';
+import 'package:skinsync_ai/models/flat_selection_model.dart';
 import 'package:skinsync_ai/models/dummy_list_model.dart';
 import 'package:skinsync_ai/utills/enums.dart';
 import 'package:skinsync_ai/repositories/clinic_doctor_repository.dart';
@@ -401,6 +402,26 @@ class CheckoutState extends BaseStateModel {
   final DummyDoctor? selectedDoctor;
   final DateTime? selectedDate;
   final String? selectedSlot;
+
+  List<FlatSelectionModel> get flatSelections {
+    final List<FlatSelectionModel> list = [];
+    for (final item in selectedTreatmentsAndAreas) {
+      final treatmentId = item.treatment.id ?? 0;
+      final treatmentName = item.treatment.name ?? '';
+      for (final areaItem in item.selectedAreas) {
+        list.add(
+          FlatSelectionModel(
+            treatmentId: treatmentId,
+            treatmentName: treatmentName,
+            areaId: areaItem.target.id ?? 0,
+            areaName: areaItem.target.name ?? '',
+            materials: areaItem.materials,
+          ),
+        );
+      }
+    }
+    return list;
+  }
 
   const CheckoutState({
     super.loading = false,
