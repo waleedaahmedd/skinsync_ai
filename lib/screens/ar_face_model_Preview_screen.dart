@@ -64,125 +64,117 @@ class _ArFaceModelPreviewScreenState
     return selected;
   }
 
-  Widget _buildAreasRecursively(
-    List<AreaData> areas, {
-    String title = "Area Selection",
-  }) {
-    if (areas.isEmpty) return const SizedBox.shrink();
+  List<AreaData> _getLeafAreas(List<AreaData> rootAreas) {
+    final List<AreaData> leafs = [];
+    void traverse(AreaData area) {
+      if (area.subAreas == null || area.subAreas!.isEmpty) {
+        leafs.add(area);
+      } else {
+        for (final sub in area.subAreas!) {
+          traverse(sub);
+        }
+      }
+    }
+
+    for (final area in rootAreas) {
+      traverse(area);
+    }
+    return leafs;
+  }
+
+  Widget _buildFlatAreas(List<AreaData> rootAreas) {
+    final leafAreas = _getLeafAreas(rootAreas);
+    if (leafAreas.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (title.isNotEmpty) ...[
-          Text(title, style: CustomFonts.black18w600),
-          SizedBox(height: 8.h),
-        ],
+        Text("Area Selection", style: CustomFonts.black18w600),
+        SizedBox(height: 12.h),
         Wrap(
           direction: Axis.horizontal,
           spacing: 12.w,
           runSpacing: 12.h,
-          children: areas.map((area) {
+          children: leafAreas.map((area) {
             final isSelected = _selectedAreaIds.contains(area.id);
             return ServiceTypeButton(
-              icon: PngAssets.syringe,
+              imageUrl: area.image,
+              icon: area.icon,
               text: area.name ?? '-',
               selected: isSelected,
               onPressed: () {
                 if (!isSelected) {
-                  if (area.subAreas == null || area.subAreas!.isEmpty) {
-                    final treatment = ref.read(treatmentViewModel).selectedTreatment;
-                    final treatmentSku = treatment?.globalSku ?? '';
-                    final areaSku = area.globalSku ?? '';
+                  final treatment = ref.read(treatmentViewModel).selectedTreatment;
+                  final treatmentSku = treatment?.globalSku ?? '';
+                  final areaSku = area.globalSku ?? '';
 
-                    EasyLoading.show(status: 'Fetching materials...');
-                    ref.read(treatmentViewModel.notifier).getMaterials(
-                      treatmentSku: treatmentSku,
-                      areaSku: areaSku,
-                    ).then((res) {
-                      EasyLoading.dismiss();
-                      if (res != null && res.isSuccess == true && res.data != null) {
-                        final materials = res.data ?? [];
-                        
-                        // Check if ALL materials returned satisfy the auto-selection criteria
-                        bool canAutoSelectAll = materials.isNotEmpty && materials.every((m) {
+                  EasyLoading.show(status: 'Fetching materials...');
+                  ref.read(treatmentViewModel.notifier).getMaterials(
+                    treatmentSku: treatmentSku,
+                    areaSku: areaSku,
+                  ).then((res) {
+                    EasyLoading.dismiss();
+                    if (res != null && res.isSuccess == true && res.data != null) {
+                      final materials = res.data ?? [];
+                      
+                      // Check if ALL materials returned satisfy the auto-selection criteria
+                      bool canAutoSelectAll = materials.isNotEmpty && materials.every((m) {
+                        final min = m.minQty ?? 0;
+                        final max = m.maxQty ?? 0;
+                        return (min == max) || (max == 0);
+                      });
+
+                      if (canAutoSelectAll) {
+                        final List<SelectedMaterialModel> selectedMaterials = [];
+                        for (final m in materials) {
                           final min = m.minQty ?? 0;
                           final max = m.maxQty ?? 0;
-                          return (min == max) || (max == 0);
-                        });
-
-                        if (canAutoSelectAll) {
-                          final List<SelectedMaterialModel> selectedMaterials = [];
-                          for (final m in materials) {
-                            final min = m.minQty ?? 0;
-                            final max = m.maxQty ?? 0;
-                            final qty = (min == max) ? min : 0;
-                            selectedMaterials.add(SelectedMaterialModel(
-                              id: m.id ?? 0,
-                              name: m.name ?? '',
-                              selectedQuantity: qty,
-                              minQty: min,
-                              maxQty: max,
-                            ));
-                          }
-                          if (treatment != null) {
-                            ref.read(checkoutViewModel.notifier).saveMaterialsForArea(
-                              treatment: treatment,
-                              area: area,
-                              materials: selectedMaterials,
-                            );
-                          }
-                          setState(() {
-                            _selectedAreaIds.add(area.id!);
-                          });
-                        } else {
-                          setState(() {
-                            _selectedAreaIds.add(area.id!);
-                          });
-                          if (!context.mounted) return;
-                          _showMaterialBottomSheet(context, area, materials);
+                          final qty = (min == max) ? min : 0;
+                          selectedMaterials.add(SelectedMaterialModel(
+                            id: m.id ?? 0,
+                            name: m.name ?? '',
+                            selectedQuantity: qty,
+                            minQty: min,
+                            maxQty: max,
+                          ));
                         }
-                      } else {
-                        // Fallback to existing flow if API returns empty or fails
-                        ref.read(checkoutViewModel.notifier).addSelectedArea(area);
+                        if (treatment != null) {
+                          ref.read(checkoutViewModel.notifier).saveMaterialsForArea(
+                            treatment: treatment,
+                            area: area,
+                            materials: selectedMaterials,
+                          );
+                        }
                         setState(() {
                           _selectedAreaIds.add(area.id!);
                         });
+                      } else {
+                        setState(() {
+                          _selectedAreaIds.add(area.id!);
+                        });
+                        if (!context.mounted) return;
+                        _showMaterialBottomSheet(context, area, materials);
                       }
-                    }).catchError((e) {
-                      EasyLoading.dismiss();
-                      // Fallback to existing flow if API fails
+                    } else {
+                      // Fallback to existing flow if API returns empty or fails
                       ref.read(checkoutViewModel.notifier).addSelectedArea(area);
                       setState(() {
                         _selectedAreaIds.add(area.id!);
                       });
-                    });
-                  } else {
+                    }
+                  }).catchError((e) {
+                    EasyLoading.dismiss();
+                    // Fallback to existing flow if API fails
+                    ref.read(checkoutViewModel.notifier).addSelectedArea(area);
                     setState(() {
                       _selectedAreaIds.add(area.id!);
                     });
-                  }
+                  });
                 }
               },
             );
           }).toList(),
         ),
-        SizedBox(height: 15.h),
-        ...areas
-            .where(
-              (area) =>
-                  _selectedAreaIds.contains(area.id) &&
-                  area.subAreas != null &&
-                  area.subAreas!.isNotEmpty,
-            )
-            .map((area) {
-              return Padding(
-                padding: EdgeInsets.only(left: 16.w, top: 10.h, bottom: 10.h),
-                child: _buildAreasRecursively(
-                  area.subAreas!,
-                  title: "Sub Areas for ${area.name}",
-                ),
-              );
-            }),
       ],
     );
   }
@@ -390,24 +382,6 @@ class _ArFaceModelPreviewScreenState
                                       ref
                                           .read(treatmentViewModel.notifier)
                                           .clearAllSelectedTreatments();
-
-                                      // Re-select the first treatment and load its areas so the lists do not disappear!
-                                      final loadedTreatments = ref.read(treatmentViewModel).arTreatments;
-                                      if (loadedTreatments.isNotEmpty) {
-                                        final firstTreatment = loadedTreatments.first;
-                                        ref
-                                            .read(checkoutViewModel.notifier)
-                                            .addSelectedTreatment(firstTreatment);
-                                        await ref
-                                            .read(treatmentViewModel.notifier)
-                                            .onTapTreatment(
-                                              treatmentModel: firstTreatment,
-                                              isCallPredictAPI: false,
-                                            );
-                                        await ref
-                                            .read(treatmentAreaProvider.notifier)
-                                            .fetchAreasByTreatment(firstTreatment.id ?? 0);
-                                      }
                                     },
                                     child: Text(
                                       "Reset",
@@ -504,7 +478,8 @@ class _ArFaceModelPreviewScreenState
                                                     right: 12.w,
                                                   ),
                                                   child: ServiceTypeButton(
-                                                    icon: PngAssets.syringe,
+                                                    imageUrl: treatment.image ?? treatment.imageUrl,
+                                                    icon: treatment.icon ?? PngAssets.syringe,
                                                     text: treatment.name ?? '-',
                                                     selected: isSelected,
                                                     onPressed: () async {
@@ -578,7 +553,7 @@ class _ArFaceModelPreviewScreenState
                                     return const SizedBox.shrink();
                                   }
 
-                                  return _buildAreasRecursively(treatmentsArea);
+                                  return _buildFlatAreas(treatmentsArea);
                                 },
                               ),
                               SizedBox(height: 20.h),
