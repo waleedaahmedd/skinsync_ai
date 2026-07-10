@@ -613,8 +613,20 @@ class _ArFaceModelPreviewScreenState
                                   );
                                 },
                               ),
-                              if (_selectedAreaIds.isNotEmpty)
-                                _bottomButtons(context),
+                              Consumer(
+                                builder: (context, ref, _) {
+                                  final selectedTreatmentsAndAreas = ref
+                                      .watch(checkoutViewModel)
+                                      .selectedTreatmentsAndAreas;
+                                  final hasAnySelectedArea = selectedTreatmentsAndAreas
+                                      .any((item) => item.selectedAreas.isNotEmpty);
+
+                                  if (hasAnySelectedArea) {
+                                    return _bottomButtons(context);
+                                  }
+                                  return const SizedBox.shrink();
+                                },
+                              ),
                             ],
                           ),
                         ),
