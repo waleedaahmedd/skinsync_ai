@@ -4,6 +4,7 @@ import '../models/requests/save_history_request.dart';
 import '../models/responses/base_response_model.dart';
 import '../models/responses/treatment_list_response.dart';
 import '../models/responses/treatment_detail_response.dart';
+import '../models/responses/materials_response.dart';
 import '../repositories/treatment_repository.dart';
 
 import '../exceptions/app_exception.dart';
@@ -94,6 +95,32 @@ class TreatmentService implements TreatmentRepository {
       return detailResponse;
     } else {
       // Handle HTTP error status codes
+      final parsed = json.decode(response.body);
+      throw AppException(AuthResponse.fromJson(parsed).message as String);
+    }
+  }
+
+  @override
+  Future<MaterialsResponse> getMaterials({
+    required String treatmentSku,
+    required String areaSku,
+  }) async {
+    final Map<String, String> queryParams = {
+      'treatment_sku': treatmentSku,
+      'area_sku': areaSku,
+    };
+    final queryString = Uri(queryParameters: queryParams).query;
+    final params = queryString.isNotEmpty ? '?$queryString' : '';
+
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.materials,
+      requestType: 'GET',
+      params: params,
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      return MaterialsResponse.fromJson(parsed);
+    } else {
       final parsed = json.decode(response.body);
       throw AppException(AuthResponse.fromJson(parsed).message as String);
     }

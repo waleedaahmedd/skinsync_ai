@@ -12,6 +12,7 @@ import '../models/responses/simulation_history_response.dart';
 import 'dart:async';
 import '../models/responses/treatment_list_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
+import '../models/responses/materials_response.dart';
 import '../repositories/treatment_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/media_service.dart';
@@ -190,6 +191,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       loading: state.loading,
       errorMessage: state.errorMessage,
       treatments: state.treatments,
+      arTreatments: state.arTreatments,
       treatmentsLoading: state.treatmentsLoading,
       selectedTreatment: null,
       selectTreatmentArea: null,
@@ -199,6 +201,25 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       capturedImage: state.capturedImage,
       aiImage: null,
       isAiImageGenerated: false,
+      isLoading: state.isLoading,
+      isLoadingMore: state.isLoadingMore,
+      hasMoreData: state.hasMoreData,
+      currentPage: state.currentPage,
+      totalPages: state.totalPages,
+      searchQuery: state.searchQuery,
+      categoryId: state.categoryId,
+      areaId: state.areaId,
+      isSimulator: state.isSimulator,
+      isArLoading: state.isArLoading,
+      isArLoadingMore: state.isArLoadingMore,
+      hasMoreArData: state.hasMoreArData,
+      arCurrentPage: state.arCurrentPage,
+      arTotalPages: state.arTotalPages,
+      arSearchQuery: state.arSearchQuery,
+      arCategoryId: state.arCategoryId,
+      arAreaId: state.arAreaId,
+      materials: state.materials,
+      materialsLoading: state.materialsLoading,
     );
   }
 
@@ -385,6 +406,28 @@ Future<void> loadArTreatments({
     return !state.isLoading;
   }
 
+  Future<MaterialsResponse?> getMaterials({
+    required String treatmentSku,
+    required String areaSku,
+  }) async {
+    final response = await runSafely(() async {
+      state = state.copyWith(materialsLoading: true);
+      final res = await _repo.getMaterials(
+        treatmentSku: treatmentSku,
+        areaSku: areaSku,
+      );
+      state = state.copyWith(
+        materialsLoading: false,
+        materials: res.data ?? [],
+      );
+      return res;
+    });
+    if (response == null) {
+      state = state.copyWith(materialsLoading: false);
+    }
+    return response;
+  }
+
   XFile? get _imageForPredict => //state.aiImage ??
       state.capturedImage;
 
@@ -470,17 +513,24 @@ Future<void> loadArTreatments({
     final treatmentAreasJson = selectedTreatmentsAndAreas.map((item) {
       return {
         'treatment_sku': item.treatment.globalSku ?? '',
-        'areas': item.selectedAreas.map((area) {
+        'areas': item.selectedAreas.map((areaItem) {
+          final int materialQty = areaItem.materials.isNotEmpty
+              ? areaItem.materials.first.selectedQuantity
+              : 0;
           return {
-            'areas_sku': area.globalSku ?? '',
-            'material_quantity': 1,
+            'areas_sku': areaItem.target.globalSku ?? '',
+            'material_quantity': materialQty,
           };
         }).toList(),
       };
     }).toList();
 
+    final treatmentSku = selectedTreatmentsAndAreas.isNotEmpty
+        ? selectedTreatmentsAndAreas.first.treatment.globalSku
+        : (state.selectedTreatment?.globalSku ?? '');
 
     request.fields.addAll({
+      'treatment_sku': treatmentSku ?? '',
       'treatments': jsonEncode(treatmentAreasJson),
     });
     request.files.add(await _imageMultipartFile(image));
@@ -613,6 +663,10 @@ class TreatmentsState extends BaseStateModel {
   final int? arCategoryId;
   final int? arAreaId;
 
+  // New fields for Materials API
+  final List<MaterialData> materials;
+  final bool materialsLoading;
+
   const TreatmentsState({
     super.loading = false,
     super.errorMessage,
@@ -621,6 +675,8 @@ class TreatmentsState extends BaseStateModel {
     this.treatmentsLoading = false,
     this.selectedTreatment,
     this.selectTreatmentArea,
+    this.materials = const [],
+    this.materialsLoading = false,
     this.selectedSubAreasList = const [],
     this.areaNavigationStack = const [],
     this.isBefore = false,
@@ -687,6 +743,8 @@ class TreatmentsState extends BaseStateModel {
     int? arAreaId,
     bool clearArCategoryId = false,
     bool clearArAreaId = false,
+    List<MaterialData>? materials,
+    bool? materialsLoading,
   }) {
     return TreatmentsState(
       loading: loading ?? this.loading,
@@ -723,7 +781,8 @@ class TreatmentsState extends BaseStateModel {
       arSearchQuery: arSearchQuery ?? this.arSearchQuery,
       arCategoryId: clearArCategoryId ? null : (arCategoryId ?? this.arCategoryId),
       arAreaId: clearArAreaId ? null : (arAreaId ?? this.arAreaId),
-
+      materials: materials ?? this.materials,
+      materialsLoading: materialsLoading ?? this.materialsLoading,
     );
   }
 }

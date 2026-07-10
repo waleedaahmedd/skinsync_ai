@@ -226,7 +226,7 @@ class ReviewScreen extends ConsumerWidget {
                                             if (item.selectedAreas.isNotEmpty) ...[
                                               SizedBox(height: 4.h),
                                               Text(
-                                                "Target Areas: ${item.selectedAreas.map((area) => area.name ?? '').join(', ')}",
+                                                "Target Areas: ${item.selectedAreas.map((e) => e.target.name ?? '').join(', ')}",
                                                 style: CustomFonts.grey12w400.copyWith(
                                                   color: CustomColors.purpleColor,
                                                   fontWeight: FontWeight.w600,
@@ -245,7 +245,7 @@ class ReviewScreen extends ConsumerWidget {
                                       child: Wrap(
                                         spacing: 8.w,
                                         runSpacing: 4.h,
-                                        children: item.selectedAreas.map((area) {
+                                        children: item.selectedAreas.map((e) {
                                           return Container(
                                             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                                             decoration: BoxDecoration(
@@ -253,7 +253,7 @@ class ReviewScreen extends ConsumerWidget {
                                               borderRadius: BorderRadius.circular(12.r),
                                             ),
                                             child: Text(
-                                              area.name ?? "Area",
+                                              e.target.name ?? "Area",
                                               style: CustomFonts.black12w600.copyWith(
                                                 color: CustomColors.purpleColor,
                                                 fontSize: 10.sp,

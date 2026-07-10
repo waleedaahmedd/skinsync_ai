@@ -1,6 +1,7 @@
 import '../models/requests/save_history_request.dart';
 import '../models/responses/treatment_list_response.dart';
 import '../models/responses/treatment_detail_response.dart';
+import '../models/responses/materials_response.dart';
 
 abstract class TreatmentRepository {
   Future<TreatmentListResponse> getTreatments({
@@ -13,4 +14,8 @@ abstract class TreatmentRepository {
   });
   Future<void> saveAiHistory(SaveHistoryRequest request);
   Future<TreatmentDetailResponse> getTreatmentDetail({required int treatmentId});
+  Future<MaterialsResponse> getMaterials({
+    required String treatmentSku,
+    required String areaSku,
+  });
 }

@@ -1,23 +1,23 @@
 import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/base_state_model.dart';
-import '../models/requests/appointment_request.dart';
-import '../models/responses/appointment_response.dart';
-import '../models/responses/availability_response.dart';
-import '../models/responses/get_clinic_response.dart';
-import '../models/responses/get_doctor_response.dart';
-import '../models/responses/payment_options_response.dart';
-import '../models/responses/treatment_list_response.dart';
-import '../models/responses/treatment_category_list_response.dart';
-import '../models/responses/treatment_area_list_response.dart';
-import '../models/selected_treatment_and_areas_model.dart';
-import '../models/dummy_list_model.dart';
-import '../utills/enums.dart';
-import '../repositories/clinic_doctor_repository.dart';
-import '../services/api_base_helper.dart';
-import '../services/clinic_doctor_service.dart';
-import '../services/media_service.dart';
-import '../utills/date_time_utills.dart';
+import 'package:skinsync_ai/models/base_state_model.dart';
+import 'package:skinsync_ai/models/requests/appointment_request.dart';
+import 'package:skinsync_ai/models/responses/appointment_response.dart';
+import 'package:skinsync_ai/models/responses/availability_response.dart';
+import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
+import 'package:skinsync_ai/models/responses/get_doctor_response.dart';
+import 'package:skinsync_ai/models/responses/payment_options_response.dart';
+import 'package:skinsync_ai/models/responses/treatment_list_response.dart';
+import 'package:skinsync_ai/models/responses/treatment_category_list_response.dart';
+import 'package:skinsync_ai/models/responses/treatment_area_list_response.dart';
+import 'package:skinsync_ai/models/selected_treatment_and_areas_model.dart';
+import 'package:skinsync_ai/models/dummy_list_model.dart';
+import 'package:skinsync_ai/utills/enums.dart';
+import 'package:skinsync_ai/repositories/clinic_doctor_repository.dart';
+import 'package:skinsync_ai/services/api_base_helper.dart';
+import 'package:skinsync_ai/services/clinic_doctor_service.dart';
+import 'package:skinsync_ai/services/media_service.dart';
+import 'package:skinsync_ai/utills/date_time_utills.dart';
 import 'auth_view_model.dart';
 import 'doctor_view_model.dart';
 import 'treatment_view_model.dart';
@@ -168,16 +168,19 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
 
       if (existingIndex != -1) {
         final existingItem = currentTreatmentsAndAreas[existingIndex];
-        if (!existingItem.selectedAreas.any((a) => a.id == area.id)) {
+        if (!existingItem.selectedAreas.any((a) => a.target.id == area.id)) {
           currentTreatmentsAndAreas[existingIndex] = existingItem.copyWith(
-            selectedAreas: [...existingItem.selectedAreas, area],
+            selectedAreas: [
+              ...existingItem.selectedAreas,
+              SelectedAreaModel(target: area, materials: const []),
+            ],
           );
         }
       } else {
         currentTreatmentsAndAreas.add(
           SelectedTreatmentAndAreasModel(
             treatment: activeTreatment,
-            selectedAreas: [area],
+            selectedAreas: [SelectedAreaModel(target: area, materials: const [])],
           ),
         );
       }
@@ -189,6 +192,56 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
 
     state = state.copyWith(
       selectedAreas: area,
+      selectedTreatmentsAndAreas: currentTreatmentsAndAreas,
+    );
+    _printSelectedTreatmentsAndAreas();
+  }
+
+  void saveMaterialsForArea({
+    required TreatmentData treatment,
+    required TreatmentAreaModel area,
+    required List<SelectedMaterialModel> materials,
+  }) {
+    final currentTreatmentsAndAreas = List<SelectedTreatmentAndAreasModel>.from(
+      state.selectedTreatmentsAndAreas,
+    );
+
+    final existingIndex = currentTreatmentsAndAreas.indexWhere(
+      (item) => item.treatment.id == treatment.id,
+    );
+
+    if (existingIndex != -1) {
+      final existingItem = currentTreatmentsAndAreas[existingIndex];
+      final areaIndex = existingItem.selectedAreas.indexWhere(
+        (a) => a.target.id == area.id,
+      );
+
+      if (areaIndex != -1) {
+        final existingArea = existingItem.selectedAreas[areaIndex];
+        final updatedAreas = List<SelectedAreaModel>.from(existingItem.selectedAreas);
+        updatedAreas[areaIndex] = existingArea.copyWith(materials: materials);
+        currentTreatmentsAndAreas[existingIndex] = existingItem.copyWith(
+          selectedAreas: updatedAreas,
+        );
+      } else {
+        final updatedAreas = List<SelectedAreaModel>.from(existingItem.selectedAreas);
+        updatedAreas.add(SelectedAreaModel(target: area, materials: materials));
+        currentTreatmentsAndAreas[existingIndex] = existingItem.copyWith(
+          selectedAreas: updatedAreas,
+        );
+      }
+    } else {
+      currentTreatmentsAndAreas.add(
+        SelectedTreatmentAndAreasModel(
+          treatment: treatment,
+          selectedAreas: [SelectedAreaModel(target: area, materials: materials)],
+        ),
+      );
+    }
+
+    state = state.copyWith(
+      selectedAreas: area,
+      selectedTreatments: treatment,
       selectedTreatmentsAndAreas: currentTreatmentsAndAreas,
     );
     _printSelectedTreatmentsAndAreas();
@@ -215,7 +268,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   void removeArea(int areaId) {
     final currentList = state.selectedTreatmentsAndAreas.map((item) {
       final updatedAreas = item.selectedAreas
-          .where((a) => a.id != areaId)
+          .where((a) => a.target.id != areaId)
           .toList();
       return item.copyWith(selectedAreas: updatedAreas);
     }).toList();
@@ -323,7 +376,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     for (final item in state.selectedTreatmentsAndAreas) {
       print("Treatment: ${item.treatment.name} (ID: ${item.treatment.id})");
       print(
-        "  Areas: ${item.selectedAreas.map((e) => '${e.name} (ID: ${e.id})').toList()}",
+        "  Areas: ${item.selectedAreas.map((e) => '${e.target.name} (ID: ${e.target.id})').toList()}",
       );
     }
     print("-------------------------------------");

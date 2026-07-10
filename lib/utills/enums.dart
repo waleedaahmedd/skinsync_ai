@@ -53,6 +53,7 @@ enum EndPoints {
   appointments('v1/appointments'),
   categories('categories'),
   areas('areas'),
+  materials('materials'),
   simulationHistory('v1/simulation-history');
 
   final String path;

@@ -14,6 +14,11 @@ import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_view_model.dart';
+import 'package:skinsync_ai/models/responses/materials_response.dart';
+import 'package:skinsync_ai/models/selected_treatment_and_areas_model.dart';
+import 'package:skinsync_ai/widgets/bottom_sheets/material_level_sheet.dart';
+import 'package:skinsync_ai/widgets/selected_treatments_summary_card.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/service_type_button.dart';
 import '../widgets/custom_button.dart';
@@ -86,14 +91,78 @@ class _ArFaceModelPreviewScreenState
               selected: isSelected,
               onPressed: () {
                 if (!isSelected) {
-                  setState(() {
-                    _selectedAreaIds.add(area.id!);
-                    if (area.subAreas == null || area.subAreas!.isEmpty) {
-                      ref
-                          .read(checkoutViewModel.notifier)
-                          .addSelectedArea(area);
-                    }
-                  });
+                  if (area.subAreas == null || area.subAreas!.isEmpty) {
+                    final treatment = ref.read(treatmentViewModel).selectedTreatment;
+                    final treatmentSku = treatment?.globalSku ?? '';
+                    final areaSku = area.globalSku ?? '';
+
+                    EasyLoading.show(status: 'Fetching materials...');
+                    ref.read(treatmentViewModel.notifier).getMaterials(
+                      treatmentSku: treatmentSku,
+                      areaSku: areaSku,
+                    ).then((res) {
+                      EasyLoading.dismiss();
+                      if (res != null && res.isSuccess == true && res.data != null) {
+                        final materials = res.data ?? [];
+                        
+                        // Check if ALL materials returned satisfy the auto-selection criteria
+                        bool canAutoSelectAll = materials.isNotEmpty && materials.every((m) {
+                          final min = m.minQty ?? 0;
+                          final max = m.maxQty ?? 0;
+                          return (min == max) || (max == 0);
+                        });
+
+                        if (canAutoSelectAll) {
+                          final List<SelectedMaterialModel> selectedMaterials = [];
+                          for (final m in materials) {
+                            final min = m.minQty ?? 0;
+                            final max = m.maxQty ?? 0;
+                            final qty = (min == max) ? min : 0;
+                            selectedMaterials.add(SelectedMaterialModel(
+                              id: m.id ?? 0,
+                              name: m.name ?? '',
+                              selectedQuantity: qty,
+                              minQty: min,
+                              maxQty: max,
+                            ));
+                          }
+                          if (treatment != null) {
+                            ref.read(checkoutViewModel.notifier).saveMaterialsForArea(
+                              treatment: treatment,
+                              area: area,
+                              materials: selectedMaterials,
+                            );
+                          }
+                          setState(() {
+                            _selectedAreaIds.add(area.id!);
+                          });
+                        } else {
+                          setState(() {
+                            _selectedAreaIds.add(area.id!);
+                          });
+                          if (!context.mounted) return;
+                          _showMaterialBottomSheet(context, area, materials);
+                        }
+                      } else {
+                        // Fallback to existing flow if API returns empty or fails
+                        ref.read(checkoutViewModel.notifier).addSelectedArea(area);
+                        setState(() {
+                          _selectedAreaIds.add(area.id!);
+                        });
+                      }
+                    }).catchError((e) {
+                      EasyLoading.dismiss();
+                      // Fallback to existing flow if API fails
+                      ref.read(checkoutViewModel.notifier).addSelectedArea(area);
+                      setState(() {
+                        _selectedAreaIds.add(area.id!);
+                      });
+                    });
+                  } else {
+                    setState(() {
+                      _selectedAreaIds.add(area.id!);
+                    });
+                  }
                 }
               },
             );
@@ -117,6 +186,31 @@ class _ArFaceModelPreviewScreenState
               );
             }),
       ],
+    );
+  }
+
+  void _showMaterialBottomSheet(
+    BuildContext context,
+    TreatmentAreaModel area,
+    List<MaterialData> materials,
+  ) {
+    final treatment = ref.read(treatmentViewModel).selectedTreatment;
+    if (treatment == null) return;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
+      builder: (context) {
+        return MaterialLevelSheet(
+          area: area,
+          materials: materials,
+          treatment: treatment,
+        );
+      },
     );
   }
 
@@ -289,10 +383,33 @@ class _ArFaceModelPreviewScreenState
                                     style: CustomFonts.black18w600,
                                   ),
                                   InkWell(
-                                    onTap: () {
+                                    onTap: () async {
+                                      setState(() {
+                                        _selectedAreaIds.clear();
+                                      });
+                                      ref.read(checkoutViewModel.notifier).clearState();
+                                      ref.read(treatmentViewModel.notifier).clearAiImage();
                                       ref
                                           .read(treatmentViewModel.notifier)
                                           .clearAllSelectedTreatments();
+
+                                      // Re-select the first treatment and load its areas so the lists do not disappear!
+                                      final loadedTreatments = ref.read(treatmentViewModel).arTreatments;
+                                      if (loadedTreatments.isNotEmpty) {
+                                        final firstTreatment = loadedTreatments.first;
+                                        ref
+                                            .read(checkoutViewModel.notifier)
+                                            .addSelectedTreatment(firstTreatment);
+                                        await ref
+                                            .read(treatmentViewModel.notifier)
+                                            .onTapTreatment(
+                                              treatmentModel: firstTreatment,
+                                              isCallPredictAPI: false,
+                                            );
+                                        await ref
+                                            .read(treatmentAreaProvider.notifier)
+                                            .fetchAreasByTreatment(firstTreatment.id ?? 0);
+                                      }
                                     },
                                     child: Text(
                                       "Reset",
@@ -473,184 +590,26 @@ class _ArFaceModelPreviewScreenState
                                       .watch(checkoutViewModel)
                                       .selectedTreatmentsAndAreas;
 
-                                  if (selectedTreatmentsAndAreas.isEmpty) {
-                                    return const SizedBox.shrink();
-                                  }
-
-                                  return SizedBox(
-                                    height: 180.h,
-                                    child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      physics: const BouncingScrollPhysics(),
-                                      itemCount:
-                                          selectedTreatmentsAndAreas.length,
-                                      itemBuilder: (context, index) {
-                                        final item =
-                                            selectedTreatmentsAndAreas[index];
-                                        final treatment = item.treatment;
-                                        final areas = item.selectedAreas;
-
-                                        return Container(
-                                          width: 260.w,
-                                          margin: EdgeInsets.only(
-                                            right: 16.w,
-                                            bottom: 16.h,
-                                          ),
-                                          padding: EdgeInsets.all(16.w),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.circular(
-                                              24.r,
-                                            ),
-                                            border: Border.all(
-                                              color: Colors.black.withValues(
-                                                alpha: 0.12,
-                                              ),
-                                              width: 1.5,
-                                            ),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black.withValues(
-                                                  alpha: 0.015,
-                                                ),
-                                                blurRadius: 10,
-                                                offset: const Offset(0, 4),
-                                              ),
-                                            ],
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          'Selected Treatment',
-                                                          style: CustomFonts
-                                                              .black10w600
-                                                              .copyWith(
-                                                                color: Colors
-                                                                    .grey
-                                                                    .shade500,
-                                                              ),
-                                                        ),
-                                                        SizedBox(height: 2.h),
-                                                        Text(
-                                                          treatment.name ?? '-',
-                                                          style: CustomFonts
-                                                              .black16w600,
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        for (final a in areas) {
-                                                          _selectedAreaIds
-                                                              .remove(a.id);
-                                                        }
-                                                        ref
-                                                            .read(
-                                                              checkoutViewModel
-                                                                  .notifier,
-                                                            )
-                                                            .removeTreatment(
-                                                              treatment.id ?? 0,
-                                                            );
-                                                      });
-                                                    },
-                                                    child: Icon(
-                                                      Icons.cancel_rounded,
-                                                      size: 20,
-                                                      color:
-                                                          Colors.red.shade400,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const Divider(
-                                                height: 16,
-                                                color: Colors.black12,
-                                              ),
-                                              Text(
-                                                'Selected Areas',
-                                                style: CustomFonts.black10w600
-                                                    .copyWith(
-                                                      color:
-                                                          Colors.grey.shade500,
-                                                    ),
-                                              ),
-                                              SizedBox(height: 6.h),
-                                              Expanded(
-                                                child: areas.isEmpty
-                                                    ? Center(
-                                                        child: Text(
-                                                          "No areas selected",
-                                                          style: CustomFonts
-                                                              .grey12w400,
-                                                        ),
-                                                      )
-                                                    : SingleChildScrollView(
-                                                        child: Wrap(
-                                                          spacing: 6.w,
-                                                          runSpacing: 6.h,
-                                                          children: areas.map((
-                                                            area,
-                                                          ) {
-                                                            return Chip(
-                                                              visualDensity:
-                                                                  VisualDensity
-                                                                      .compact,
-                                                              label: Text(
-                                                                area.name ??
-                                                                    '-',
-                                                                style: CustomFonts
-                                                                    .black10w600,
-                                                              ),
-                                                              onDeleted: () {
-                                                                setState(() {
-                                                                  _selectedAreaIds
-                                                                      .remove(
-                                                                        area.id,
-                                                                      );
-                                                                  ref
-                                                                      .read(
-                                                                        checkoutViewModel
-                                                                            .notifier,
-                                                                      )
-                                                                      .removeArea(
-                                                                        area.id ??
-                                                                            0,
-                                                                      );
-                                                                });
-                                                              },
-                                                              deleteIconColor:
-                                                                  Colors
-                                                                      .red
-                                                                      .shade300,
-                                                            );
-                                                          }).toList(),
-                                                        ),
-                                                      ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
+                                  return SelectedTreatmentsSummaryCard(
+                                    selectedTreatmentsAndAreas: selectedTreatmentsAndAreas,
+                                    onRemoveTreatment: (item) {
+                                      setState(() {
+                                        for (final a in item.selectedAreas) {
+                                          _selectedAreaIds.remove(a.target.id);
+                                        }
+                                        ref
+                                            .read(checkoutViewModel.notifier)
+                                            .removeTreatment(item.treatment.id ?? 0);
+                                      });
+                                    },
+                                    onRemoveArea: (item, areaItem) {
+                                      setState(() {
+                                        _selectedAreaIds.remove(areaItem.target.id);
+                                        ref
+                                            .read(checkoutViewModel.notifier)
+                                            .removeArea(areaItem.target.id ?? 0);
+                                      });
+                                    },
                                   );
                                 },
                               ),
