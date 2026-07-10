@@ -489,18 +489,27 @@ class _ArFaceModelPreviewScreenState
                                                     selected: isSelected,
                                                     onPressed: () async {
                                                       if (isSelected) {
-                                                        final existingItem = ref.read(checkoutViewModel).selectedTreatmentsAndAreas.where(
-                                                          (item) => item.treatment.id == treatment.id,
-                                                        ).firstOrNull;
-                                                        if (existingItem != null) {
-                                                          setState(() {
-                                                            for (final a in existingItem.selectedAreas) {
-                                                              _selectedAreaIds.remove(a.target.id);
-                                                            }
-                                                          });
-                                                        }
-                                                        ref.read(checkoutViewModel.notifier).removeTreatment(treatment.id ?? 0);
-                                                        ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+                                                        // Keep it selected, do not remove/deselect.
+                                                        // Just switch the active selection to show its areas below!
+                                                        ref
+                                                            .read(
+                                                              treatmentViewModel
+                                                                  .notifier,
+                                                            )
+                                                            .onTapTreatment(
+                                                              treatmentModel:
+                                                                  treatment,
+                                                              isCallPredictAPI:
+                                                                  false,
+                                                            );
+                                                        await ref
+                                                            .read(
+                                                              treatmentAreaProvider
+                                                                  .notifier,
+                                                            )
+                                                            .fetchAreasByTreatment(
+                                                              treatment.id ?? 0,
+                                                            );
                                                       } else {
                                                         ref
                                                             .read(

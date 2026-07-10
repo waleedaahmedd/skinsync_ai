@@ -248,7 +248,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       searchQuery: clearSearch ? "" : state.searchQuery,
       treatments: [],
     );
-
     await runSafely(() async {
       final response = await _repo.getTreatments(
         search: state.searchQuery.isEmpty ? null : state.searchQuery,
@@ -563,13 +562,13 @@ Future<void> loadArTreatments({
   Future<void> saveAiImage() async {
     return await runSafely(() async {
       EasyLoading.show(status: 'Please wait...');
-      
+
       final selectedTreatmentsAndAreas = ref.read(checkoutViewModel).selectedTreatmentsAndAreas;
       if (selectedTreatmentsAndAreas.isEmpty) {
         EasyLoading.showError('No treatment selected');
         return;
       }
-      
+
       final firstTreatment = selectedTreatmentsAndAreas.first;
       final treatmentId = firstTreatment.treatment.id;
       if (treatmentId == null) {
