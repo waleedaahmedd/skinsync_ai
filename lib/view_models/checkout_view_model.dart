@@ -272,7 +272,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
           .where((a) => a.target.id != areaId)
           .toList();
       return item.copyWith(selectedAreas: updatedAreas);
-    }).toList();
+    }).where((item) => item.selectedAreas.isNotEmpty).toList();
 
     final activeArea = state.selectedAreas;
     final updatedActiveArea = activeArea?.id == areaId ? null : activeArea;

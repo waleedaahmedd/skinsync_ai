@@ -103,7 +103,12 @@ class _ArFaceModelPreviewScreenState
               text: area.name ?? '-',
               selected: isSelected,
               onPressed: () {
-                if (!isSelected) {
+                if (isSelected) {
+                  setState(() {
+                    _selectedAreaIds.remove(area.id);
+                  });
+                  ref.read(checkoutViewModel.notifier).removeArea(area.id ?? 0);
+                } else {
                   final treatment = ref.read(treatmentViewModel).selectedTreatment;
                   final treatmentSku = treatment?.globalSku ?? '';
                   final areaSku = area.globalSku ?? '';
@@ -483,33 +488,48 @@ class _ArFaceModelPreviewScreenState
                                                     text: treatment.name ?? '-',
                                                     selected: isSelected,
                                                     onPressed: () async {
-                                                      ref
-                                                          .read(
-                                                            treatmentViewModel
-                                                                .notifier,
-                                                          )
-                                                          .onTapTreatment(
-                                                            treatmentModel:
-                                                                treatment,
-                                                            isCallPredictAPI:
-                                                                true,
-                                                          );
-                                                      ref
-                                                          .read(
-                                                            checkoutViewModel
-                                                                .notifier,
-                                                          )
-                                                          .addSelectedTreatment(
-                                                            treatment,
-                                                          );
-                                                      await ref
-                                                          .read(
-                                                            treatmentAreaProvider
-                                                                .notifier,
-                                                          )
-                                                          .fetchAreasByTreatment(
-                                                            treatment.id ?? 0,
-                                                          );
+                                                      if (isSelected) {
+                                                        final existingItem = ref.read(checkoutViewModel).selectedTreatmentsAndAreas.where(
+                                                          (item) => item.treatment.id == treatment.id,
+                                                        ).firstOrNull;
+                                                        if (existingItem != null) {
+                                                          setState(() {
+                                                            for (final a in existingItem.selectedAreas) {
+                                                              _selectedAreaIds.remove(a.target.id);
+                                                            }
+                                                          });
+                                                        }
+                                                        ref.read(checkoutViewModel.notifier).removeTreatment(treatment.id ?? 0);
+                                                        ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+                                                      } else {
+                                                        ref
+                                                            .read(
+                                                              treatmentViewModel
+                                                                  .notifier,
+                                                            )
+                                                            .onTapTreatment(
+                                                              treatmentModel:
+                                                                  treatment,
+                                                              isCallPredictAPI:
+                                                                  true,
+                                                            );
+                                                        ref
+                                                            .read(
+                                                              checkoutViewModel
+                                                                  .notifier,
+                                                            )
+                                                            .addSelectedTreatment(
+                                                              treatment,
+                                                            );
+                                                        await ref
+                                                            .read(
+                                                              treatmentAreaProvider
+                                                                  .notifier,
+                                                            )
+                                                            .fetchAreasByTreatment(
+                                                              treatment.id ?? 0,
+                                                            );
+                                                      }
                                                     },
                                                   ),
                                                 ),
