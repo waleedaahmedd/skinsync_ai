@@ -7,8 +7,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:glow_container/glow_container.dart';
 import 'package:before_after/before_after.dart';
 
-import '../models/responses/simulation_history_response.dart';
-import '../models/responses/treatment_area_list_response.dart';
+import 'package:skinsync_ai/models/responses/treatment_area_list_response.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -23,7 +22,6 @@ import '../widgets/custom_app_bar.dart';
 import '../widgets/service_type_button.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_bordered_button.dart';
-import '../models/responses/treatment_area_list_response.dart';
 import '../view_models/treatment_area_view_model.dart';
 import 'explore_clinics_screen.dart';
 
@@ -834,25 +832,6 @@ class _ArFaceModelPreviewScreenState
       ),
     );
   }
-
-  // Widget _accuracyRate() {
-  //   return Row(
-  //     children: [
-  //       SvgPicture.asset(SvgAssets.dail),
-  //       SizedBox(width: 5.w),
-  //       Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           Text('Accuracy Rate', style: CustomFonts.black20w600),
-  //           Text(
-  //             'This score is based on your Face analysis',
-  //             style: CustomFonts.black16w400,
-  //           ),
-  //         ],
-  //       ),
-  //     ],
-  //   );
-  // }
 
   Widget _bottomButtons(BuildContext context) {
     return Consumer(

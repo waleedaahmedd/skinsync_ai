@@ -183,7 +183,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       selectedSubAreasList: updatedList,
       isAiImageGenerated: false,
     );
-    //if (isCallPredictAPI) callPredictAPI();
   }
 
   void clearAllSelectedTreatments() {
@@ -428,8 +427,7 @@ Future<void> loadArTreatments({
     return response;
   }
 
-  XFile? get _imageForPredict => //state.aiImage ??
-      state.capturedImage;
+  XFile? get _imageForPredict => state.capturedImage;
 
   String _parseOutputImageBase64(Map<String, dynamic> jsonRes) {
     final outputImage = jsonRes['output_image'];
@@ -565,21 +563,38 @@ Future<void> loadArTreatments({
   Future<void> saveAiImage() async {
     return await runSafely(() async {
       EasyLoading.show(status: 'Please wait...');
-      final treatmentId = state.selectedTreatment?.id;
+      
+      final selectedTreatmentsAndAreas = ref.read(checkoutViewModel).selectedTreatmentsAndAreas;
+      if (selectedTreatmentsAndAreas.isEmpty) {
+        EasyLoading.showError('No treatment selected');
+        return;
+      }
+      
+      final firstTreatment = selectedTreatmentsAndAreas.first;
+      final treatmentId = firstTreatment.treatment.id;
       if (treatmentId == null) {
         EasyLoading.showError('No treatment selected');
         return;
       }
-      final areaId = state.selectTreatmentArea?.id;
+
+      if (firstTreatment.selectedAreas.isEmpty) {
+        EasyLoading.showError('No treatment area selected');
+        return;
+      }
+
+      final areaId = firstTreatment.selectedAreas.first.target.areaId ?? firstTreatment.selectedAreas.first.target.id;
       if (areaId == null) {
         EasyLoading.showError('No treatment area selected');
         return;
       }
+
       final beforeImage = state.capturedImage?.path;
       final afterImage = state.aiImage?.path;
-      final subSections = state.selectedSubAreasList.map((subArea) {
+
+      final subSections = firstTreatment.selectedAreas.map((selectedArea) {
+        final subArea = selectedArea.target;
         return SubSectionRequest(
-          areaId: subArea.areaId!,
+          areaId: subArea.areaId ?? subArea.id!,
           sectionId: subArea.id!,
           syringesQuantity: 0,
         );
