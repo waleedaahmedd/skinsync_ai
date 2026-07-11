@@ -195,6 +195,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       selectedAreas: area,
       selectedTreatmentsAndAreas: currentTreatmentsAndAreas,
     );
+    ref.read(treatmentViewModel.notifier).onTapTreatmentSubArea(subArea: area);
     _printSelectedTreatmentsAndAreas();
   }
 
@@ -245,6 +246,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       selectedTreatments: treatment,
       selectedTreatmentsAndAreas: currentTreatmentsAndAreas,
     );
+    ref.read(treatmentViewModel.notifier).onTapTreatmentSubArea(subArea: area);
     _printSelectedTreatmentsAndAreas();
   }
 
@@ -281,6 +283,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       selectedAreas: updatedActiveArea,
       selectedTreatmentsAndAreas: currentList,
     );
+    ref.read(treatmentViewModel.notifier).removeSubArea(areaId);
     _printSelectedTreatmentsAndAreas();
   }
 

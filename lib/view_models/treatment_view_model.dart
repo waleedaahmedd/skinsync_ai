@@ -91,17 +91,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     );
   }
 
-  void updateSyringeLevel({required TreatmentAreaModel subArea}) {
-    state = state.copyWith(
-      selectedSubAreasList: state.selectedSubAreasList.map((s) {
-        if (s.id == subArea.id) {
-          return subArea;
-        }
-        return s;
-      }).toList(),
-    );
-  }
-
   void removeSubArea(int id) {
     state = state.copyWith(
       selectedSubAreasList: state.selectedSubAreasList
