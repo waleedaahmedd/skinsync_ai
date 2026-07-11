@@ -27,13 +27,6 @@ class _TreatmentsScreenState extends ConsumerState<TreatmentsScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final selectedCategory = ref.read(checkoutViewModel).selectedCategories?.lastOrNull;
-      ref.read(treatmentViewModel.notifier).loadTreatments(
-        categoryId:  selectedCategory?.id,
-        clearSearch: true,
-      );
-    });
     _searchController.addListener(() {
       final query = _searchController.text.trim();
       ref.read(treatmentViewModel.notifier).searchTreatments(query);

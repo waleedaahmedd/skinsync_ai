@@ -8,6 +8,7 @@ import 'package:skinsync_ai/utills/color_constant.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/treatment_category_view_model.dart';
 import 'package:skinsync_ai/view_models/checkout_view_model.dart';
+import 'package:skinsync_ai/view_models/treatment_view_model.dart';
 import 'package:skinsync_ai/widgets/app_loader.dart';
 import 'package:skinsync_ai/widgets/treatment_container.dart';
 
@@ -210,6 +211,10 @@ class _TreatmentCategoryScreenState
                                       } else {
                                         // Add selected category in checkoutViewModel list
                                         // If no children (leaf node), open the Treatment Screen!
+                                        ref.read(treatmentViewModel.notifier).fetchingTreatmentLogic(
+                                          flow: 'byCategory',
+                                          categoryId: category.id,
+                                        );
                                         Navigator.pushNamed(
                                           context,
                                           TreatmentsScreen.routeName,

@@ -45,6 +45,9 @@ class TreatmentExploreScreen extends ConsumerWidget {
                   ref.read(checkoutViewModel.notifier).clearState();
                   ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
                   ref.read(treatmentViewModel.notifier).clearAiImage();
+                  ref.read(treatmentViewModel.notifier).fetchingTreatmentLogic(
+                    flow: 'allTreatments',
+                  );
                   Navigator.pushNamed(
                     context,
                     TreatmentsScreen.routeName,

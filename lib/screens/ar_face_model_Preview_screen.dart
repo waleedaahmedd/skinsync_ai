@@ -236,23 +236,7 @@ class _ArFaceModelPreviewScreenState
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final lastCategoryId = ref.read(treatmentViewModel).categoryId;
-
-      await ref
-          .read(treatmentViewModel.notifier)
-          .loadArTreatments(
-            isSimulator: true,
-            categoryId: lastCategoryId,
-            clearSearch: true,
-          );
-
-      var selectedTreatment = ref.read(checkoutViewModel).selectedTreatments;
-      if (selectedTreatment == null) {
-        final loadedTreatments = ref.read(treatmentViewModel).arTreatments;
-        if (loadedTreatments.isNotEmpty) {
-          selectedTreatment = loadedTreatments.first;
-        }
-      }
+      final selectedTreatment = ref.read(checkoutViewModel).selectedTreatments;
 
       if (selectedTreatment != null) {
         ref
@@ -264,13 +248,9 @@ class _ArFaceModelPreviewScreenState
               treatmentModel: selectedTreatment,
               isCallPredictAPI: false,
             );
-      }
-
-      final treatmentId = selectedTreatment?.id;
-      if (treatmentId != null) {
         await ref
             .read(treatmentAreaProvider.notifier)
-            .fetchAreasByTreatment(treatmentId);
+            .fetchAreasByTreatment(selectedTreatment.id ?? 0);
       }
     });
   }

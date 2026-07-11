@@ -222,6 +222,13 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                           ref
                               .read(checkoutViewModel.notifier)
                               .updateState(capturedImage: capturedImage);
+                          
+                          // Trigger API fetch before navigating!
+                          ref.read(treatmentViewModel.notifier).fetchingTreatmentLogic(
+                            flow: 'scanYourFace',
+                            isArList: true,
+                          );
+
                           Navigator.pop(context);
                           if (mounted) {
                             Navigator.pushReplacementNamed(

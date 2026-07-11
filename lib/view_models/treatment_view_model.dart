@@ -215,7 +215,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       arCurrentPage: state.arCurrentPage,
       arTotalPages: state.arTotalPages,
       arSearchQuery: state.arSearchQuery,
-      arCategoryId: state.arCategoryId,
       arAreaId: state.arAreaId,
       materials: state.materials,
       materialsLoading: state.materialsLoading,
@@ -235,7 +234,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     int? areaId,
     bool clearSearch = false,
     bool? isSimulator,
-   
   }) async {
     state = state.copyWith(
       isLoading: true,
@@ -243,8 +241,11 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       errorMessage: null,
       currentPage: 1,
       categoryId: categoryId,
+      clearCategoryId: categoryId == null,
       areaId: areaId,
+      clearAreaId: areaId == null,
       isSimulator: isSimulator,
+      clearIsSimulator: isSimulator == null,
       searchQuery: clearSearch ? "" : state.searchQuery,
       treatments: [],
     );
@@ -313,9 +314,12 @@ Future<void> loadArTreatments({
       isArLoadingMore: true,
       errorMessage: null,
       arCurrentPage: 1,
-      arCategoryId: categoryId,
+      categoryId: categoryId,
+      clearCategoryId: categoryId == null,
       arAreaId: areaId,
+      clearArAreaId: areaId == null,
       isSimulator: isSimulator,
+      clearIsSimulator: isSimulator == null,
       arSearchQuery: clearSearch ? "" : state.arSearchQuery,
       arTreatments: [],
     );
@@ -323,7 +327,7 @@ Future<void> loadArTreatments({
     await runSafely(() async {
       final response = await _repo.getTreatments(
         search: state.arSearchQuery.isEmpty ? null : state.arSearchQuery,
-        categoryId: state.arCategoryId,
+        categoryId: state.categoryId,
         areaId: state.arAreaId,
         page: 1,
         limit: 10,
@@ -351,7 +355,7 @@ Future<void> loadArTreatments({
       final nextPage = state.arCurrentPage + 1;
       final response = await _repo.getTreatments(
         search: state.arSearchQuery.isEmpty ? null : state.arSearchQuery,
-        categoryId: state.arCategoryId,
+        categoryId: state.categoryId,
         areaId: state.arAreaId,
         page: nextPage,
         limit: 10,
@@ -402,6 +406,60 @@ Future<void> loadArTreatments({
       isSimulator: isSimulator,
     );
     return !state.isLoading;
+  }
+
+  Future<void> fetchingTreatmentLogic({
+    required String flow,
+    int? categoryId,
+    int? areaId,
+    bool? isSimulator,
+    bool isArList = false,
+  }) async {
+    int? targetCategoryId;
+    int? targetAreaId;
+    bool? targetIsSimulator;
+
+    switch (flow) {
+      case 'allTreatments':
+        targetCategoryId = null;
+        targetAreaId = null;
+        targetIsSimulator = null;
+        break;
+
+      case 'byCategory':
+        targetCategoryId = categoryId;
+        targetAreaId = null;
+        targetIsSimulator = null;
+        break;
+
+      case 'scanYourFace':
+        targetCategoryId = state.categoryId;
+        targetAreaId = null;
+        targetIsSimulator = isSimulator ?? true;
+        break;
+
+      default:
+        targetCategoryId = categoryId;
+        targetAreaId = areaId;
+        targetIsSimulator = isSimulator;
+        break;
+    }
+
+    if (isArList) {
+      await loadArTreatments(
+        categoryId: targetCategoryId,
+        areaId: targetAreaId,
+        isSimulator: targetIsSimulator,
+        clearSearch: true,
+      );
+    } else {
+      await loadTreatments(
+        categoryId: targetCategoryId,
+        areaId: targetAreaId,
+        isSimulator: targetIsSimulator,
+        clearSearch: true,
+      );
+    }
   }
 
   Future<MaterialsResponse?> getMaterials({
@@ -674,7 +732,6 @@ class TreatmentsState extends BaseStateModel {
   final int arCurrentPage;
   final int arTotalPages;
   final String arSearchQuery;
-  final int? arCategoryId;
   final int? arAreaId;
 
   // New fields for Materials API
@@ -712,7 +769,6 @@ class TreatmentsState extends BaseStateModel {
     this.arCurrentPage = 1,
     this.arTotalPages = 1,
     this.arSearchQuery = "",
-    this.arCategoryId,
     this.arAreaId,
   });
 
@@ -747,15 +803,14 @@ class TreatmentsState extends BaseStateModel {
     bool clearCategoryId = false,
     bool clearAreaId = false,
     bool? isSimulator,
+    bool clearIsSimulator = false,
     bool? isArLoading,
     bool? isArLoadingMore,
     bool? hasMoreArData,
     int? arCurrentPage,
     int? arTotalPages,
     String? arSearchQuery,
-    int? arCategoryId,
     int? arAreaId,
-    bool clearArCategoryId = false,
     bool clearArAreaId = false,
     List<MaterialData>? materials,
     bool? materialsLoading,
@@ -786,14 +841,13 @@ class TreatmentsState extends BaseStateModel {
       searchQuery: searchQuery ?? this.searchQuery,
       categoryId: clearCategoryId ? null : (categoryId ?? this.categoryId),
       areaId: clearAreaId ? null : (areaId ?? this.areaId),
-      isSimulator: isSimulator ?? this.isSimulator,
+      isSimulator: clearIsSimulator ? null : (isSimulator ?? this.isSimulator),
          isArLoading: isArLoading ?? this.isArLoading,
       isArLoadingMore: isArLoadingMore ?? this.isArLoadingMore,
       hasMoreArData: hasMoreArData ?? this.hasMoreArData,
       arCurrentPage: arCurrentPage ?? this.arCurrentPage,
       arTotalPages: arTotalPages ?? this.arTotalPages,
       arSearchQuery: arSearchQuery ?? this.arSearchQuery,
-      arCategoryId: clearArCategoryId ? null : (arCategoryId ?? this.arCategoryId),
       arAreaId: clearArAreaId ? null : (arAreaId ?? this.arAreaId),
       materials: materials ?? this.materials,
       materialsLoading: materialsLoading ?? this.materialsLoading,
