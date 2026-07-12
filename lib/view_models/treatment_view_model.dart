@@ -157,8 +157,9 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   }
 
   void onTapTreatmentSubArea({required TreatmentAreaModel subArea}) {
+    final parentId = state.selectTreatmentArea?.id ?? subArea.areaId ?? subArea.id ?? 0;
     final treatmentSubArea = subArea.copyWith(
-      areaId: state.selectTreatmentArea!.id!,
+      areaId: parentId,
     );
     final id = treatmentSubArea.id;
     final alreadySelected =
