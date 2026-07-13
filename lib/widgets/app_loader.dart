@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../utills/color_constant.dart';
 
 import '../utills/assets.dart';
+import '../utills/color_constant.dart';
 
 class AppLoader extends StatelessWidget {
-  const AppLoader({super.key});
+  final double? size;
+  const AppLoader({super.key, this.size});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: SizedBox(
-        height: 60.w,
-        width: 60.w,
+        height: size ?? 60.w,
+        width: size ?? 60.w,
         child: Stack(
           children: [
             Center(

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,7 +12,8 @@ class TreatmentSelectionScreen extends StatefulWidget {
   const TreatmentSelectionScreen({super.key});
 
   @override
-  State<TreatmentSelectionScreen> createState() => _TreatmentSelectionScreenState();
+  State<TreatmentSelectionScreen> createState() =>
+      _TreatmentSelectionScreenState();
 }
 
 class _TreatmentSelectionScreenState extends State<TreatmentSelectionScreen> {
@@ -41,7 +41,7 @@ class _TreatmentSelectionScreenState extends State<TreatmentSelectionScreen> {
                   // Fetch treatments if not already loaded and not currently loading
                   if (!isLoading && state.treatments.isEmpty) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                      ref.read(treatmentViewModel.notifier).getTreatments();
+                      ref.read(treatmentViewModel.notifier).loadTreatments();
                     });
                   }
 

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
 import 'package:skinsync_ai/screens/treatment_category_screen.dart';
-import 'package:skinsync_ai/screens/treatment_area_screen.dart';
 import 'package:skinsync_ai/utills/custom_fonts.dart';
 import 'package:skinsync_ai/view_models/checkout_view_model.dart';
 import 'package:skinsync_ai/view_models/treatment_view_model.dart';
@@ -39,15 +38,16 @@ class TreatmentExploreScreen extends ConsumerWidget {
               // CARD 1: ALL TREATMENTS (Reusing TreatmentContainer adaptively!)
               TreatmentContainer(
                 customTitle: "All Treatments",
-                customSubtitle: "Browse our complete catalog of professional aesthetic solutions.",
-                customImageUrl: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=600",
+                customSubtitle:
+                    "Browse our complete catalog of professional aesthetic solutions.",
+                customImageUrl:
+                    "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=600",
                 customOnTap: () {
                   ref.read(checkoutViewModel.notifier).clearState();
-                  ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+                  ref
+                      .read(treatmentViewModel.notifier)
+                      .clearAllSelectedTreatments();
                   ref.read(treatmentViewModel.notifier).clearAiImage();
-                  ref.read(treatmentViewModel.notifier).fetchingTreatmentLogic(
-                    flow: 'allTreatments',
-                  );
                   Navigator.pushNamed(
                     context,
                     TreatmentsScreen.routeName,
@@ -55,16 +55,21 @@ class TreatmentExploreScreen extends ConsumerWidget {
                   );
                 },
               ),
-              SizedBox(height: 4.h), // Tightened margin spacing as the container itself provides internal margin
-
+              SizedBox(
+                height: 4.h,
+              ), // Tightened margin spacing as the container itself provides internal margin
               // CARD 2: CATEGORIES (Reusing TreatmentContainer adaptively!)
               TreatmentContainer(
                 customTitle: "By Category",
-                customSubtitle: "Explore injectables, laser resurfacing, body contouring & facials.",
-                customImageUrl: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=600",
+                customSubtitle:
+                    "Explore injectables, laser resurfacing, body contouring & facials.",
+                customImageUrl:
+                    "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=600",
                 customOnTap: () {
                   ref.read(checkoutViewModel.notifier).clearState();
-                  ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+                  ref
+                      .read(treatmentViewModel.notifier)
+                      .clearAllSelectedTreatments();
                   ref.read(treatmentViewModel.notifier).clearAiImage();
                   Navigator.pushNamed(
                     context,
@@ -72,7 +77,7 @@ class TreatmentExploreScreen extends ConsumerWidget {
                   );
                 },
               ),
-            //  SizedBox(height: 4.h),
+              //  SizedBox(height: 4.h),
 
               // CARD 3: AREAS (Reusing TreatmentContainer adaptively!)
               // TreatmentContainer(
@@ -89,7 +94,9 @@ class TreatmentExploreScreen extends ConsumerWidget {
               //     );
               //   },
               // ),
-              SizedBox(height: 110.h), // Padding so bottom floating navigation doesn't overlap
+              SizedBox(
+                height: 110.h,
+              ), // Padding so bottom floating navigation doesn't overlap
             ],
           ),
         ),

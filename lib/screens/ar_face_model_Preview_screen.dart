@@ -1,28 +1,31 @@
 import 'dart:io';
 
+import 'package:before_after/before_after.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:glow_container/glow_container.dart';
-import 'package:before_after/before_after.dart';
-
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:skinsync_ai/models/responses/materials_response.dart';
 import 'package:skinsync_ai/models/responses/treatment_area_list_response.dart';
+import 'package:skinsync_ai/models/selected_treatment_and_areas_model.dart';
+import 'package:skinsync_ai/widgets/bottom_sheets/material_level_sheet.dart';
+import 'package:skinsync_ai/widgets/selected_treatments_summary_card.dart';
+
+import '../models/responses/treatment_list_response.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
-import '../view_models/treatment_view_model.dart';
-import 'package:skinsync_ai/models/responses/materials_response.dart';
-import 'package:skinsync_ai/models/selected_treatment_and_areas_model.dart';
-import 'package:skinsync_ai/widgets/bottom_sheets/material_level_sheet.dart';
-import 'package:skinsync_ai/widgets/selected_treatments_summary_card.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/service_type_button.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/custom_bordered_button.dart';
 import '../view_models/treatment_area_view_model.dart';
+import '../view_models/treatment_view_model.dart';
+import '../widgets/app_loader.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_bordered_button.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/service_type_button.dart';
 import 'explore_clinics_screen.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
@@ -43,7 +46,20 @@ class _ArFaceModelPreviewScreenState
   late final AnimationController _pulseController;
   late final Animation<double> _pulseAnimation;
   final Set<int> _selectedAreaIds = {};
-  late final ScrollController _treatmentScrollController;
+  late final _pagingController = PagingController<int, TreatmentData>(
+    getNextPageKey: (state) {
+      if (state.items == null) {
+        return 1;
+      }
+      return state.items!.length < 10 ? null : state.nextIntPageKey;
+    },
+    fetchPage: (nextPage) async {
+      final data = await ref
+          .read(treatmentViewModel.notifier)
+          .loadTreatments(page: nextPage, isSimulator: true);
+      return data ?? [];
+    },
+  );
 
   List<AreaData> _getSelectedAreasList(List<AreaData> rootAreas) {
     final List<AreaData> selected = [];
@@ -109,72 +125,91 @@ class _ArFaceModelPreviewScreenState
                   });
                   ref.read(checkoutViewModel.notifier).removeArea(area.id ?? 0);
                 } else {
-                  final treatment = ref.read(treatmentViewModel).selectedTreatment;
+                  final treatment = ref
+                      .read(treatmentViewModel)
+                      .selectedTreatment;
                   final treatmentSku = treatment?.globalSku ?? '';
                   final areaSku = area.globalSku ?? '';
 
                   EasyLoading.show(status: 'Fetching materials...');
-                  ref.read(treatmentViewModel.notifier).getMaterials(
-                    treatmentSku: treatmentSku,
-                    areaSku: areaSku,
-                  ).then((res) {
-                    EasyLoading.dismiss();
-                    if (res != null && res.isSuccess == true && res.data != null) {
-                      final materials = res.data ?? [];
-                      
-                      // Check if ALL materials returned satisfy the auto-selection criteria
-                      bool canAutoSelectAll = materials.isNotEmpty && materials.every((m) {
-                        final min = m.minQty ?? 0;
-                        final max = m.maxQty ?? 0;
-                        return (min == max) || (max == 0);
-                      });
+                  ref
+                      .read(treatmentViewModel.notifier)
+                      .getMaterials(
+                        treatmentSku: treatmentSku,
+                        areaSku: areaSku,
+                      )
+                      .then((res) {
+                        EasyLoading.dismiss();
+                        if (res != null &&
+                            res.isSuccess == true &&
+                            res.data != null) {
+                          final materials = res.data ?? [];
 
-                      if (canAutoSelectAll) {
-                        final List<SelectedMaterialModel> selectedMaterials = [];
-                        for (final m in materials) {
-                          final min = m.minQty ?? 0;
-                          final max = m.maxQty ?? 0;
-                          final qty = (min == max) ? min : 0;
-                          selectedMaterials.add(SelectedMaterialModel(
-                            id: m.id ?? 0,
-                            name: m.name ?? '',
-                            selectedQuantity: qty,
-                            minQty: min,
-                            maxQty: max,
-                          ));
+                          // Check if ALL materials returned satisfy the auto-selection criteria
+                          bool canAutoSelectAll =
+                              materials.isNotEmpty &&
+                              materials.every((m) {
+                                final min = m.minQty ?? 0;
+                                final max = m.maxQty ?? 0;
+                                return (min == max) || (max == 0);
+                              });
+
+                          if (canAutoSelectAll) {
+                            final List<SelectedMaterialModel>
+                            selectedMaterials = [];
+                            for (final m in materials) {
+                              final min = m.minQty ?? 0;
+                              final max = m.maxQty ?? 0;
+                              final qty = (min == max) ? min : 0;
+                              selectedMaterials.add(
+                                SelectedMaterialModel(
+                                  id: m.id ?? 0,
+                                  name: m.name ?? '',
+                                  selectedQuantity: qty,
+                                  minQty: min,
+                                  maxQty: max,
+                                ),
+                              );
+                            }
+                            if (treatment != null) {
+                              ref
+                                  .read(checkoutViewModel.notifier)
+                                  .saveMaterialsForArea(
+                                    treatment: treatment,
+                                    area: area,
+                                    materials: selectedMaterials,
+                                  );
+                            }
+                            setState(() {
+                              _selectedAreaIds.add(area.id!);
+                            });
+                          } else {
+                            setState(() {
+                              _selectedAreaIds.add(area.id!);
+                            });
+                            if (!context.mounted) return;
+                            _showMaterialBottomSheet(context, area, materials);
+                          }
+                        } else {
+                          // Fallback to existing flow if API returns empty or fails
+                          ref
+                              .read(checkoutViewModel.notifier)
+                              .addSelectedArea(area);
+                          setState(() {
+                            _selectedAreaIds.add(area.id!);
+                          });
                         }
-                        if (treatment != null) {
-                          ref.read(checkoutViewModel.notifier).saveMaterialsForArea(
-                            treatment: treatment,
-                            area: area,
-                            materials: selectedMaterials,
-                          );
-                        }
+                      })
+                      .catchError((e) {
+                        EasyLoading.dismiss();
+                        // Fallback to existing flow if API fails
+                        ref
+                            .read(checkoutViewModel.notifier)
+                            .addSelectedArea(area);
                         setState(() {
                           _selectedAreaIds.add(area.id!);
                         });
-                      } else {
-                        setState(() {
-                          _selectedAreaIds.add(area.id!);
-                        });
-                        if (!context.mounted) return;
-                        _showMaterialBottomSheet(context, area, materials);
-                      }
-                    } else {
-                      // Fallback to existing flow if API returns empty or fails
-                      ref.read(checkoutViewModel.notifier).addSelectedArea(area);
-                      setState(() {
-                        _selectedAreaIds.add(area.id!);
                       });
-                    }
-                  }).catchError((e) {
-                    EasyLoading.dismiss();
-                    // Fallback to existing flow if API fails
-                    ref.read(checkoutViewModel.notifier).addSelectedArea(area);
-                    setState(() {
-                      _selectedAreaIds.add(area.id!);
-                    });
-                  });
                 }
               },
             );
@@ -212,13 +247,13 @@ class _ArFaceModelPreviewScreenState
   @override
   void initState() {
     super.initState();
-    _treatmentScrollController = ScrollController();
-    _treatmentScrollController.addListener(() {
-      if (_treatmentScrollController.position.pixels >=
-          _treatmentScrollController.position.maxScrollExtent - 100.w) {
-        ref.read(treatmentViewModel.notifier).loadMoreArTreatments();
-      }
-    });
+    // _treatmentScrollController = ScrollController();
+    // _treatmentScrollController.addListener(() {
+    //   if (_treatmentScrollController.position.pixels >=
+    //       _treatmentScrollController.position.maxScrollExtent - 100.w) {
+    //     ref.read(treatmentViewModel.notifier).loadMoreArTreatments();
+    //   }
+    // });
 
     final checkoutState = ref.read(checkoutViewModel);
     final selectedArea = checkoutState.selectedAreas;
@@ -257,7 +292,7 @@ class _ArFaceModelPreviewScreenState
 
   @override
   void dispose() {
-    _treatmentScrollController.dispose();
+    _pagingController.dispose();
     _pulseController.dispose();
     super.dispose();
   }
@@ -362,8 +397,12 @@ class _ArFaceModelPreviewScreenState
                                       setState(() {
                                         _selectedAreaIds.clear();
                                       });
-                                      ref.read(checkoutViewModel.notifier).clearState();
-                                      ref.read(treatmentViewModel.notifier).clearAiImage();
+                                      ref
+                                          .read(checkoutViewModel.notifier)
+                                          .clearState();
+                                      ref
+                                          .read(treatmentViewModel.notifier)
+                                          .clearAiImage();
                                       ref
                                           .read(treatmentViewModel.notifier)
                                           .clearAllSelectedTreatments();
@@ -376,161 +415,7 @@ class _ArFaceModelPreviewScreenState
                                 ],
                               ),
                               SizedBox(height: 8.h),
-                              Consumer(
-                                builder: (context, ref, _) {
-                                  final state = ref.watch(treatmentViewModel);
-                                  final isLoading = state.isArLoading;
-                                  final isLoadingMore = state.isArLoadingMore;
-                                  final treatments = state.arTreatments;
-
-                                  if (isLoading && treatments.isEmpty) {
-                                    return SizedBox(
-                                      height: 60.h,
-                                      child: const Center(
-                                        child: CircularProgressIndicator(
-                                          color: CustomColors.purpleColor,
-                                        ),
-                                      ),
-                                    );
-                                  }
-
-                                  if (treatments.isEmpty) {
-                                    return SizedBox(
-                                      height: 50.h,
-                                      child: Center(
-                                        child: Text(
-                                          "No treatments available.",
-                                          style: CustomFonts.grey14w400,
-                                        ),
-                                      ),
-                                    );
-                                  }
-
-                                  return SizedBox(
-                                    height: 50.h,
-                                    child: AnimationLimiter(
-                                      key: const ValueKey(
-                                        'treatments_list_horizontal',
-                                      ),
-                                      child: ListView.builder(
-                                        controller: _treatmentScrollController,
-                                        scrollDirection: Axis.horizontal,
-                                        physics: const BouncingScrollPhysics(),
-                                        itemCount:
-                                            treatments.length +
-                                            (isLoadingMore ? 1 : 0),
-                                        itemBuilder: (context, index) {
-                                          if (index == treatments.length) {
-                                            return Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 16.w,
-                                              ),
-                                              child: const Center(
-                                                child: SizedBox(
-                                                  width: 20,
-                                                  height: 20,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                        strokeWidth: 2,
-                                                        color: CustomColors
-                                                            .purpleColor,
-                                                      ),
-                                                ),
-                                              ),
-                                            );
-                                          }
-
-                                          final treatment = treatments[index];
-                                          final isSelected = ref
-                                              .watch(checkoutViewModel)
-                                              .selectedTreatmentsAndAreas
-                                              .any(
-                                                (item) =>
-                                                    item.treatment.id ==
-                                                    treatment.id,
-                                              );
-
-                                          return AnimationConfiguration.staggeredList(
-                                            position: index,
-                                            duration: const Duration(
-                                              milliseconds: 600,
-                                            ),
-                                            child: SlideAnimation(
-                                              horizontalOffset: 50.0,
-                                              child: FadeInAnimation(
-                                                child: Padding(
-                                                  padding: EdgeInsets.only(
-                                                    right: 12.w,
-                                                  ),
-                                                  child: ServiceTypeButton(
-                                                    imageUrl: treatment.image ?? treatment.imageUrl,
-                                                    icon: treatment.icon ?? PngAssets.syringe,
-                                                    text: treatment.name ?? '-',
-                                                    selected: isSelected,
-                                                    onPressed: () async {
-                                                      if (isSelected) {
-                                                        // Keep it selected, do not remove/deselect.
-                                                        // Just switch the active selection to show its areas below!
-                                                        ref
-                                                            .read(
-                                                              treatmentViewModel
-                                                                  .notifier,
-                                                            )
-                                                            .onTapTreatment(
-                                                              treatmentModel:
-                                                                  treatment,
-                                                              isCallPredictAPI:
-                                                                  false,
-                                                            );
-                                                        await ref
-                                                            .read(
-                                                              treatmentAreaProvider
-                                                                  .notifier,
-                                                            )
-                                                            .fetchAreasByTreatment(
-                                                              treatment.id ?? 0,
-                                                            );
-                                                      } else {
-                                                        ref
-                                                            .read(
-                                                              treatmentViewModel
-                                                                  .notifier,
-                                                            )
-                                                            .onTapTreatment(
-                                                              treatmentModel:
-                                                                  treatment,
-                                                              isCallPredictAPI:
-                                                                  true,
-                                                            );
-                                                        ref
-                                                            .read(
-                                                              checkoutViewModel
-                                                                  .notifier,
-                                                            )
-                                                            .addSelectedTreatment(
-                                                              treatment,
-                                                            );
-                                                        await ref
-                                                            .read(
-                                                              treatmentAreaProvider
-                                                                  .notifier,
-                                                            )
-                                                            .fetchAreasByTreatment(
-                                                              treatment.id ?? 0,
-                                                            );
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
+                              _buildTreatmentsList(ref),
                               SizedBox(height: 30.h),
                               Consumer(
                                 builder: (context, ref, _) {
@@ -573,7 +458,8 @@ class _ArFaceModelPreviewScreenState
                                       .selectedTreatmentsAndAreas;
 
                                   return SelectedTreatmentsSummaryCard(
-                                    selectedTreatmentsAndAreas: selectedTreatmentsAndAreas,
+                                    selectedTreatmentsAndAreas:
+                                        selectedTreatmentsAndAreas,
                                     onRemoveTreatment: (item) {
                                       setState(() {
                                         for (final a in item.selectedAreas) {
@@ -581,15 +467,21 @@ class _ArFaceModelPreviewScreenState
                                         }
                                         ref
                                             .read(checkoutViewModel.notifier)
-                                            .removeTreatment(item.treatment.id ?? 0);
+                                            .removeTreatment(
+                                              item.treatment.id ?? 0,
+                                            );
                                       });
                                     },
                                     onRemoveArea: (item, areaItem) {
                                       setState(() {
-                                        _selectedAreaIds.remove(areaItem.target.id);
+                                        _selectedAreaIds.remove(
+                                          areaItem.target.id,
+                                        );
                                         ref
                                             .read(checkoutViewModel.notifier)
-                                            .removeArea(areaItem.target.id ?? 0);
+                                            .removeArea(
+                                              areaItem.target.id ?? 0,
+                                            );
                                       });
                                     },
                                   );
@@ -600,8 +492,10 @@ class _ArFaceModelPreviewScreenState
                                   final selectedTreatmentsAndAreas = ref
                                       .watch(checkoutViewModel)
                                       .selectedTreatmentsAndAreas;
-                                  final hasAnySelectedArea = selectedTreatmentsAndAreas
-                                      .any((item) => item.selectedAreas.isNotEmpty);
+                                  final hasAnySelectedArea =
+                                      selectedTreatmentsAndAreas.any(
+                                        (item) => item.selectedAreas.isNotEmpty,
+                                      );
 
                                   if (hasAnySelectedArea) {
                                     return _bottomButtons(context);
@@ -621,6 +515,82 @@ class _ArFaceModelPreviewScreenState
           ),
         );
       },
+    );
+  }
+
+  Widget _buildTreatmentsList(WidgetRef ref) {
+    return SizedBox(
+      height: 50.h,
+      child: PagingListener(
+        controller: _pagingController,
+        builder: (context, state, fetchNextPage) {
+          return AnimationLimiter(
+            key: const ValueKey('treatments_list_horizontal'),
+            child: PagedListView<int, TreatmentData>(
+              state: state,
+              fetchNextPage: fetchNextPage,
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              builderDelegate: PagedChildBuilderDelegate(
+                newPageProgressIndicatorBuilder: (_) => AppLoader(size: 50.h),
+                firstPageProgressIndicatorBuilder: (_) => AppLoader(size: 40.h),
+                itemBuilder: (context, treatment, index) {
+                  final isSelected = ref
+                      .watch(checkoutViewModel)
+                      .selectedTreatmentsAndAreas
+                      .any((item) => item.treatment.id == treatment.id);
+                  return AnimationConfiguration.staggeredList(
+                    position: index,
+                    duration: const Duration(milliseconds: 600),
+                    child: SlideAnimation(
+                      horizontalOffset: 50.0,
+                      child: FadeInAnimation(
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 12.w),
+                          child: ServiceTypeButton(
+                            imageUrl: treatment.image ?? treatment.imageUrl,
+                            icon: treatment.icon ?? PngAssets.syringe,
+                            text: treatment.name ?? '-',
+                            selected: isSelected,
+                            onPressed: () async {
+                              if (isSelected) {
+                                // Keep it selected, do not remove/deselect.
+                                // Just switch the active selection to show its areas below!
+                                ref
+                                    .read(treatmentViewModel.notifier)
+                                    .onTapTreatment(
+                                      treatmentModel: treatment,
+                                      isCallPredictAPI: false,
+                                    );
+                                await ref
+                                    .read(treatmentAreaProvider.notifier)
+                                    .fetchAreasByTreatment(treatment.id ?? 0);
+                              } else {
+                                ref
+                                    .read(treatmentViewModel.notifier)
+                                    .onTapTreatment(
+                                      treatmentModel: treatment,
+                                      isCallPredictAPI: true,
+                                    );
+                                ref
+                                    .read(checkoutViewModel.notifier)
+                                    .addSelectedTreatment(treatment);
+                                await ref
+                                    .read(treatmentAreaProvider.notifier)
+                                    .fetchAreasByTreatment(treatment.id ?? 0);
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 

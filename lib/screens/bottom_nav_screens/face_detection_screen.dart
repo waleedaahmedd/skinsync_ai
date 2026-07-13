@@ -6,15 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import '../../utills/image_utills.dart';
-import '../../utills/secure_storage_service.dart';
-import '../../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
 
 import '../../utills/assets.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
+import '../../utills/image_utills.dart';
+import '../../utills/secure_storage_service.dart';
 import '../../view_models/checkout_view_model.dart';
 import '../../view_models/treatment_view_model.dart';
+import '../../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
 import '../ar_face_model_Preview_screen.dart';
 
 class FaceDetectionScreen extends ConsumerStatefulWidget {
@@ -222,12 +222,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                           ref
                               .read(checkoutViewModel.notifier)
                               .updateState(capturedImage: capturedImage);
-                          
-                          // Trigger API fetch before navigating!
-                          ref.read(treatmentViewModel.notifier).fetchingTreatmentLogic(
-                            flow: 'scanYourFace',
-                            isArList: true,
-                          );
 
                           Navigator.pop(context);
                           if (mounted) {
@@ -270,7 +264,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: _cameraController != null ? _buildCameraView() : const SizedBox.shrink(),
+      body: _cameraController != null
+          ? _buildCameraView()
+          : const SizedBox.shrink(),
     );
   }
 

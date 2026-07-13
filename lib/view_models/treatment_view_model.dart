@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:camera/camera.dart';
@@ -8,11 +9,10 @@ import 'package:http/http.dart' as http;
 
 import '../models/base_state_model.dart';
 import '../models/requests/save_history_request.dart';
-import '../models/responses/simulation_history_response.dart';
-import 'dart:async';
-import '../models/responses/treatment_list_response.dart';
-import '../models/responses/treatment_area_list_response.dart';
 import '../models/responses/materials_response.dart';
+import '../models/responses/simulation_history_response.dart';
+import '../models/responses/treatment_area_list_response.dart';
+import '../models/responses/treatment_list_response.dart';
 import '../repositories/treatment_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/media_service.dart';
@@ -20,9 +20,9 @@ import '../services/treatment_services.dart';
 import '../utills/image_utills.dart';
 import '../utills/list_utils.dart';
 import 'auth_view_model.dart';
-import 'treatment_area_view_model.dart';
-import 'checkout_view_model.dart';
 import 'base_view_model.dart';
+import 'checkout_view_model.dart';
+import 'treatment_area_view_model.dart';
 
 final treatmentViewModel = NotifierProvider(
   () => TreatmentViewModel._(
@@ -41,7 +41,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     state = state.copyWith(isAiImageGenerated: false);
     clearAiImage();
     if (state.treatments.isEmpty) {
-      await getTreatments();
+      await loadTreatments();
     }
     final treatment = state.treatments.firstWhereOrNull(
       (treatment) => treatment.id == simulation.treatmentId,
@@ -59,15 +59,14 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     if (area != null) {
       onTapTreatmentArea(area);
     }
-    final subAreas = state.selectTreatmentArea?.subAreas ?? <TreatmentAreaModel>[];
+    final subAreas =
+        state.selectTreatmentArea?.subAreas ?? <TreatmentAreaModel>[];
     for (final subArea in subAreas) {
       final selectedSubArea = simulation.subsections?.firstWhereOrNull(
         (subSection) => subSection.sectionId == subArea.id,
       );
       if (selectedSubArea != null) {
-        onTapTreatmentSubArea(
-          subArea: subArea,
-        );
+        onTapTreatmentSubArea(subArea: subArea);
       }
     }
     EasyLoading.show(status: 'Downloading images...');
@@ -126,7 +125,9 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     _clearAreaSelection();
     state = state.copyWith(isBefore: true);
     if (treatmentModel.isArea == true && isCallPredictAPI) {
-      await ref.read(treatmentAreaProvider.notifier).fetchAreasByTreatment(treatmentModel.id ?? 0);
+      await ref
+          .read(treatmentAreaProvider.notifier)
+          .fetchAreasByTreatment(treatmentModel.id ?? 0);
     }
   }
 
@@ -140,7 +141,9 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
   void popAreaNavigationStack() {
     if (state.areaNavigationStack.isNotEmpty) {
-      final updatedStack = List<TreatmentAreaModel>.from(state.areaNavigationStack)..removeLast();
+      final updatedStack = List<TreatmentAreaModel>.from(
+        state.areaNavigationStack,
+      )..removeLast();
       final previousArea = updatedStack.isNotEmpty ? updatedStack.last : null;
       state = state.copyWith(
         selectedTreatmentArea: previousArea,
@@ -157,10 +160,9 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   }
 
   void onTapTreatmentSubArea({required TreatmentAreaModel subArea}) {
-    final parentId = state.selectTreatmentArea?.id ?? subArea.areaId ?? subArea.id ?? 0;
-    final treatmentSubArea = subArea.copyWith(
-      areaId: parentId,
-    );
+    final parentId =
+        state.selectTreatmentArea?.id ?? subArea.areaId ?? subArea.id ?? 0;
+    final treatmentSubArea = subArea.copyWith(areaId: parentId);
     final id = treatmentSubArea.id;
     final alreadySelected =
         id != null && state.selectedSubAreasList.any((e) => e.id == id);
@@ -193,10 +195,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       isLoading: state.isLoading,
       isLoadingMore: state.isLoadingMore,
       hasMoreData: state.hasMoreData,
-      currentPage: state.currentPage,
       totalPages: state.totalPages,
-      searchQuery: state.searchQuery,
-      categoryId: state.categoryId,
       areaId: state.areaId,
       isSimulator: state.isSimulator,
       isArLoading: state.isArLoading,
@@ -211,40 +210,30 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     );
   }
 
-  Timer? _debounce;
-
-  @override
-  void dispose() {
-    _debounce?.cancel();
-    super.dispose();
-  }
-
-  Future<void> loadTreatments({
+  Future<List<TreatmentData>?> loadTreatments({
+    int page = 1,
     int? categoryId,
     int? areaId,
-    bool clearSearch = false,
+    String? search,
     bool? isSimulator,
   }) async {
-    state = state.copyWith(
-      isLoading: true,
-      treatmentsLoading: true,
-      errorMessage: null,
-      currentPage: 1,
-      categoryId: categoryId,
-      clearCategoryId: categoryId == null,
-      areaId: areaId,
-      clearAreaId: areaId == null,
-      isSimulator: isSimulator,
-      clearIsSimulator: isSimulator == null,
-      searchQuery: clearSearch ? "" : state.searchQuery,
-      treatments: [],
-    );
-    await runSafely(() async {
+    return await runSafely(() async {
+      state = state.copyWith(
+        isLoading: true,
+        treatmentsLoading: true,
+        errorMessage: null,
+        clearCategoryId: categoryId == null,
+        areaId: areaId,
+        clearAreaId: areaId == null,
+        isSimulator: isSimulator,
+        clearIsSimulator: isSimulator == null,
+        treatments: [],
+      );
       final response = await _repo.getTreatments(
-        search: state.searchQuery.isEmpty ? null : state.searchQuery,
-        categoryId: state.categoryId,
+        search: search,
+        categoryId: categoryId,
         areaId: state.areaId,
-        page: 1,
+        page: page,
         limit: 10,
         isSimulator: state.isSimulator,
       );
@@ -254,203 +243,189 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         isLoading: false,
         treatmentsLoading: false,
         treatments: response.data ?? [],
-        currentPage: response.page ?? 1,
         totalPages: response.totalPages ?? 1,
         hasMoreData: hasMore,
       );
+      return response.data ?? [];
     });
   }
 
-  Future<void> loadMoreTreatments() async {
-    if (state.isLoadingMore || !state.hasMoreData) return;
+  // Future<void> loadMoreTreatments() async {
+  //   if (state.isLoadingMore || !state.hasMoreData) return;
+  //
+  //   state = state.copyWith(isLoadingMore: true);
+  //
+  //   await runSafely(() async {
+  //     final nextPage = state.currentPage + 1;
+  //     final response = await _repo.getTreatments(
+  //       search: state.searchQuery.isEmpty ? null : state.searchQuery,
+  //       categoryId: state.categoryId,
+  //       areaId: state.areaId,
+  //       page: nextPage,
+  //       limit: 10,
+  //       isSimulator: state.isSimulator,
+  //     );
+  //
+  //     final hasMore = (response.page ?? nextPage) < (response.totalPages ?? 1);
+  //     final List<TreatmentData> updatedTreatments = [
+  //       ...state.treatments,
+  //       ...(response.data ?? []),
+  //     ];
+  //
+  //     state = state.copyWith(
+  //       isLoadingMore: false,
+  //       treatments: updatedTreatments,
+  //       currentPage: response.page ?? nextPage,
+  //       totalPages: response.totalPages ?? 1,
+  //       hasMoreData: hasMore,
+  //     );
+  //   });
+  // }
 
-    state = state.copyWith(isLoadingMore: true);
+  // Future<void> loadArTreatments({
+  //   int? categoryId,
+  //   int? areaId,
+  //   bool clearSearch = false,
+  //   bool? isSimulator,
+  // }) async {
+  //   state = state.copyWith(
+  //     isArLoading: true,
+  //     isArLoadingMore: true,
+  //     errorMessage: null,
+  //     arCurrentPage: 1,
+  //     clearCategoryId: categoryId == null,
+  //     arAreaId: areaId,
+  //     clearArAreaId: areaId == null,
+  //     isSimulator: isSimulator,
+  //     clearIsSimulator: isSimulator == null,
+  //     arSearchQuery: clearSearch ? "" : state.arSearchQuery,
+  //     arTreatments: [],
+  //   );
+  //
+  //   await runSafely(() async {
+  //     final response = await _repo.getTreatments(
+  //       search: state.arSearchQuery.isEmpty ? null : state.arSearchQuery,
+  //       categoryId: state.categoryId,
+  //       areaId: state.arAreaId,
+  //       page: 1,
+  //       limit: 10,
+  //       isSimulator: state.isSimulator,
+  //     );
+  //
+  //     final hasMore = (response.page ?? 1) < (response.totalPages ?? 1);
+  //     state = state.copyWith(
+  //       isArLoading: false,
+  //       isArLoadingMore: false,
+  //       arTreatments: response.data ?? [],
+  //       arCurrentPage: response.page ?? 1,
+  //       arTotalPages: response.totalPages ?? 1,
+  //       hasMoreArData: hasMore,
+  //     );
+  //   });
+  // }
 
-    await runSafely(() async {
-      final nextPage = state.currentPage + 1;
-      final response = await _repo.getTreatments(
-        search: state.searchQuery.isEmpty ? null : state.searchQuery,
-        categoryId: state.categoryId,
-        areaId: state.areaId,
-        page: nextPage,
-        limit: 10,
-        isSimulator: state.isSimulator,
-      );
+  // Future<void> loadMoreArTreatments() async {
+  //   if (state.isArLoadingMore || !state.hasMoreArData) return;
+  //
+  //   state = state.copyWith(isArLoadingMore: true);
+  //
+  //   await runSafely(() async {
+  //     final nextPage = state.arCurrentPage + 1;
+  //     final response = await _repo.getTreatments(
+  //       search: state.arSearchQuery.isEmpty ? null : state.arSearchQuery,
+  //       categoryId: state.categoryId,
+  //       areaId: state.arAreaId,
+  //       page: nextPage,
+  //       limit: 10,
+  //       isSimulator: state.isSimulator,
+  //     );
+  //
+  //     final hasMore = (response.page ?? nextPage) < (response.totalPages ?? 1);
+  //     final List<TreatmentData> updatedTreatments = [
+  //       ...state.arTreatments,
+  //       ...(response.data ?? []),
+  //     ];
+  //
+  //     state = state.copyWith(
+  //       isArLoadingMore: false,
+  //       arTreatments: updatedTreatments,
+  //       arCurrentPage: response.page ?? nextPage,
+  //       arTotalPages: response.totalPages ?? 1,
+  //       hasMoreArData: hasMore,
+  //     );
+  //   });
+  // }
 
-      final hasMore = (response.page ?? nextPage) < (response.totalPages ?? 1);
-      final List<TreatmentData> updatedTreatments = [
-        ...state.treatments,
-        ...(response.data ?? []),
-      ];
+  // Future<void> refreshTreatments() async {
+  //   await loadTreatments(
+  //     categoryId: state.categoryId,
+  //     areaId: state.areaId,
+  //     isSimulator: state.isSimulator,
+  //   );
+  // }
 
-      state = state.copyWith(
-        isLoadingMore: false,
-        treatments: updatedTreatments,
-        currentPage: response.page ?? nextPage,
-        totalPages: response.totalPages ?? 1,
-        hasMoreData: hasMore,
-      );
-    });
-  }
-
-Future<void> loadArTreatments({
-    int? categoryId,
-    int? areaId,
-    bool clearSearch = false,
-    bool? isSimulator,
-  }) async {
-    state = state.copyWith(
-      isArLoading: true,
-      isArLoadingMore: true,
-      errorMessage: null,
-      arCurrentPage: 1,
-      categoryId: categoryId,
-      clearCategoryId: categoryId == null,
-      arAreaId: areaId,
-      clearArAreaId: areaId == null,
-      isSimulator: isSimulator,
-      clearIsSimulator: isSimulator == null,
-      arSearchQuery: clearSearch ? "" : state.arSearchQuery,
-      arTreatments: [],
-    );
-
-    await runSafely(() async {
-      final response = await _repo.getTreatments(
-        search: state.arSearchQuery.isEmpty ? null : state.arSearchQuery,
-        categoryId: state.categoryId,
-        areaId: state.arAreaId,
-        page: 1,
-        limit: 10,
-        isSimulator: state.isSimulator,
-      );
-
-      final hasMore = (response.page ?? 1) < (response.totalPages ?? 1);
-      state = state.copyWith(
-        isArLoading: false,
-        isArLoadingMore: false,
-        arTreatments: response.data ?? [],
-        arCurrentPage: response.page ?? 1,
-        arTotalPages: response.totalPages ?? 1,
-        hasMoreArData: hasMore,
-      );
-    });
-  }
-
-  Future<void> loadMoreArTreatments() async {
-    if (state.isArLoadingMore || !state.hasMoreArData) return;
-
-    state = state.copyWith(isArLoadingMore: true);
-
-    await runSafely(() async {
-      final nextPage = state.arCurrentPage + 1;
-      final response = await _repo.getTreatments(
-        search: state.arSearchQuery.isEmpty ? null : state.arSearchQuery,
-        categoryId: state.categoryId,
-        areaId: state.arAreaId,
-        page: nextPage,
-        limit: 10,
-        isSimulator: state.isSimulator,
-      );
-
-      final hasMore = (response.page ?? nextPage) < (response.totalPages ?? 1);
-      final List<TreatmentData> updatedTreatments = [
-        ...state.arTreatments,
-        ...(response.data ?? []),
-      ];
-
-      state = state.copyWith(
-        isArLoadingMore: false,
-        arTreatments: updatedTreatments,
-        arCurrentPage: response.page ?? nextPage,
-        arTotalPages: response.totalPages ?? 1,
-        hasMoreArData: hasMore,
-      );
-    });
-  }
-
-
-  Future<void> refreshTreatments() async {
-    await loadTreatments(
-      categoryId: state.categoryId,
-      areaId: state.areaId,
-      isSimulator: state.isSimulator,
-    );
-  }
-
-  void searchTreatments(String query) {
-    state = state.copyWith(searchQuery: query);
-    _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      loadTreatments(
-        categoryId: state.categoryId,
-        areaId: state.areaId,
-        isSimulator: state.isSimulator,
-      );
-    });
-  }
-
-  Future<bool?> getTreatments({bool? isSimulator}) async {
-    await loadTreatments(
-      categoryId: state.categoryId,
-      areaId: state.areaId,
-      isSimulator: isSimulator,
-    );
-    return !state.isLoading;
-  }
-
-  Future<void> fetchingTreatmentLogic({
-    required String flow,
-    int? categoryId,
-    int? areaId,
-    bool? isSimulator,
-    bool isArList = false,
-  }) async {
-    int? targetCategoryId;
-    int? targetAreaId;
-    bool? targetIsSimulator;
-
-    switch (flow) {
-      case 'allTreatments':
-        targetCategoryId = null;
-        targetAreaId = null;
-        targetIsSimulator = null;
-        break;
-
-      case 'byCategory':
-        targetCategoryId = categoryId;
-        targetAreaId = null;
-        targetIsSimulator = null;
-        break;
-
-      case 'scanYourFace':
-        targetCategoryId = state.categoryId;
-        targetAreaId = null;
-        targetIsSimulator = isSimulator ?? true;
-        break;
-
-      default:
-        targetCategoryId = categoryId;
-        targetAreaId = areaId;
-        targetIsSimulator = isSimulator;
-        break;
-    }
-
-    if (isArList) {
-      await loadArTreatments(
-        categoryId: targetCategoryId,
-        areaId: targetAreaId,
-        isSimulator: targetIsSimulator,
-        clearSearch: true,
-      );
-    } else {
-      await loadTreatments(
-        categoryId: targetCategoryId,
-        areaId: targetAreaId,
-        isSimulator: targetIsSimulator,
-        clearSearch: true,
-      );
-    }
-  }
+  // Future<bool?> getTreatments({bool? isSimulator}) async {
+  //   await loadTreatments(
+  //     categoryId: state.categoryId,
+  //     areaId: state.areaId,
+  //     isSimulator: isSimulator,
+  //   );
+  //   return !state.isLoading;
+  // }
+  //
+  // Future<void> fetchingTreatmentLogic({
+  //   required String flow,
+  //   int? categoryId,
+  //   int? areaId,
+  //   bool? isSimulator,
+  //   bool isArList = false,
+  // }) async {
+  //   int? targetCategoryId;
+  //   int? targetAreaId;
+  //   bool? targetIsSimulator;
+  //
+  //   switch (flow) {
+  //     case 'allTreatments':
+  //       targetCategoryId = null;
+  //       targetAreaId = null;
+  //       targetIsSimulator = null;
+  //       break;
+  //
+  //     case 'byCategory':
+  //       targetCategoryId = categoryId;
+  //       targetAreaId = null;
+  //       targetIsSimulator = null;
+  //       break;
+  //
+  //     case 'scanYourFace':
+  //       targetCategoryId = state.categoryId;
+  //       targetAreaId = null;
+  //       targetIsSimulator = isSimulator ?? true;
+  //       break;
+  //
+  //     default:
+  //       targetCategoryId = categoryId;
+  //       targetAreaId = areaId;
+  //       targetIsSimulator = isSimulator;
+  //       break;
+  //   }
+  //
+  //   if (isArList) {
+  //     await loadArTreatments(
+  //       categoryId: targetCategoryId,
+  //       areaId: targetAreaId,
+  //       isSimulator: targetIsSimulator,
+  //       clearSearch: true,
+  //     );
+  //   } else {
+  //     await loadTreatments(
+  //       categoryId: targetCategoryId,
+  //       areaId: targetAreaId,
+  //       isSimulator: targetIsSimulator,
+  //       clearSearch: true,
+  //     );
+  //   }
+  // }
 
   Future<MaterialsResponse?> getMaterials({
     required String treatmentSku,
@@ -553,7 +528,9 @@ Future<void> loadArTreatments({
       Uri.parse('http://18.116.65.70/api/'),
     );
 
-    final selectedTreatmentsAndAreas = ref.read(checkoutViewModel).selectedTreatmentsAndAreas;
+    final selectedTreatmentsAndAreas = ref
+        .read(checkoutViewModel)
+        .selectedTreatmentsAndAreas;
 
     final treatmentAreasJson = selectedTreatmentsAndAreas.map((item) {
       return {
@@ -582,13 +559,13 @@ Future<void> loadArTreatments({
 
     final encoded = jsonEncode(treatmentAreasJson);
 
-
-
     print("--- Multipart Request Debug ---");
     print(encoded);
     print("URL: ${request.url}");
     print("Fields: ${request.fields}");
-    print("Files: ${request.files.map((f) => '${f.field}: ${f.filename} (${f.length} bytes)').toList()}");
+    print(
+      "Files: ${request.files.map((f) => '${f.field}: ${f.filename} (${f.length} bytes)').toList()}",
+    );
     print("--------------------------------");
 
     final response = await request.send();
@@ -605,13 +582,13 @@ Future<void> loadArTreatments({
     return jsonDecode(body) as Map<String, dynamic>;
   }
 
-
-
   Future<void> saveAiImage() async {
     return await runSafely(() async {
       EasyLoading.show(status: 'Please wait...');
 
-      final selectedTreatmentsAndAreas = ref.read(checkoutViewModel).selectedTreatmentsAndAreas;
+      final selectedTreatmentsAndAreas = ref
+          .read(checkoutViewModel)
+          .selectedTreatmentsAndAreas;
       if (selectedTreatmentsAndAreas.isEmpty) {
         EasyLoading.showError('No treatment selected');
         return;
@@ -629,7 +606,9 @@ Future<void> loadArTreatments({
         return;
       }
 
-      final areaId = firstTreatment.selectedAreas.first.target.areaId ?? firstTreatment.selectedAreas.first.target.id;
+      final areaId =
+          firstTreatment.selectedAreas.first.target.areaId ??
+          firstTreatment.selectedAreas.first.target.id;
       if (areaId == null) {
         EasyLoading.showError('No treatment area selected');
         return;
@@ -681,10 +660,7 @@ Future<void> loadArTreatments({
 
   @override
   void onError(String message) {
-    state = state.copyWith(
-      treatmentsLoading: false,
-    
-    );
+    state = state.copyWith(treatmentsLoading: false);
     super.onError(message);
     EasyLoading.showError(message);
   }
@@ -710,10 +686,7 @@ class TreatmentsState extends BaseStateModel {
   final bool isLoading;
   final bool isLoadingMore;
   final bool hasMoreData;
-  final int currentPage;
   final int totalPages;
-  final String searchQuery;
-  final int? categoryId;
   final int? areaId;
   final bool? isSimulator;
   final bool isArLoading;
@@ -747,10 +720,7 @@ class TreatmentsState extends BaseStateModel {
     this.isLoading = false,
     this.isLoadingMore = false,
     this.hasMoreData = false,
-    this.currentPage = 1,
     this.totalPages = 1,
-    this.searchQuery = "",
-    this.categoryId,
     this.areaId,
     this.isSimulator,
     this.isArLoading = false,
@@ -767,7 +737,7 @@ class TreatmentsState extends BaseStateModel {
     bool? loading,
     String? errorMessage,
     List<TreatmentData>? treatments,
-   List<TreatmentData>? arTreatments,
+    List<TreatmentData>? arTreatments,
     bool? treatmentsLoading,
     TreatmentData? selectedTreatment,
     TreatmentAreaModel? selectedTreatmentArea,
@@ -785,10 +755,7 @@ class TreatmentsState extends BaseStateModel {
     bool? isLoading,
     bool? isLoadingMore,
     bool? hasMoreData,
-    int? currentPage,
     int? totalPages,
-    String? searchQuery,
-    int? categoryId,
     int? areaId,
     bool clearCategoryId = false,
     bool clearAreaId = false,
@@ -809,7 +776,7 @@ class TreatmentsState extends BaseStateModel {
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
       treatments: treatments ?? this.treatments,
-      arTreatments: arTreatments?? this.arTreatments,
+      arTreatments: arTreatments ?? this.arTreatments,
       treatmentsLoading: treatmentsLoading ?? this.treatmentsLoading,
       selectedTreatment: selectedTreatment ?? this.selectedTreatment,
       selectTreatmentArea: clearSelectSectionId
@@ -826,13 +793,10 @@ class TreatmentsState extends BaseStateModel {
       isLoading: isLoading ?? this.isLoading,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       hasMoreData: hasMoreData ?? this.hasMoreData,
-      currentPage: currentPage ?? this.currentPage,
       totalPages: totalPages ?? this.totalPages,
-      searchQuery: searchQuery ?? this.searchQuery,
-      categoryId: clearCategoryId ? null : (categoryId ?? this.categoryId),
       areaId: clearAreaId ? null : (areaId ?? this.areaId),
       isSimulator: clearIsSimulator ? null : (isSimulator ?? this.isSimulator),
-         isArLoading: isArLoading ?? this.isArLoading,
+      isArLoading: isArLoading ?? this.isArLoading,
       isArLoadingMore: isArLoadingMore ?? this.isArLoadingMore,
       hasMoreArData: hasMoreArData ?? this.hasMoreArData,
       arCurrentPage: arCurrentPage ?? this.arCurrentPage,
