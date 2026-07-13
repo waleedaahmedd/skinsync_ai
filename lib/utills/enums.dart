@@ -70,3 +70,8 @@ enum BaseUrls {
 }
 
 enum ViewType { grid, map }
+
+enum InviteType {
+  clinic,
+  invite
+}

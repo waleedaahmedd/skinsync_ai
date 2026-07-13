@@ -2,20 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/custom_app_bar.dart';
-import 'package:skinsync_ai/widgets/custom_button.dart';
-import 'package:skinsync_ai/view_models/checkout_view_model.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../utills/enums.dart';
+import '../widgets/bottom_sheets/before_you_book_bottomsheet.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_button.dart';
+import '../view_models/checkout_view_model.dart';
 import 'review_screen.dart';
 
 class SelectDateTimeScreen extends ConsumerStatefulWidget {
   static const routeName = '/select_date_time_screen';
-
-  const SelectDateTimeScreen({super.key});
+  final InviteType? inviteType;
+  const SelectDateTimeScreen({super.key, this.inviteType});
 
   @override
-  ConsumerState<SelectDateTimeScreen> createState() => _SelectDateTimeScreenState();
+  ConsumerState<SelectDateTimeScreen> createState() =>
+      _SelectDateTimeScreenState();
 }
 
 class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
@@ -87,12 +90,17 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                     GestureDetector(
                       onTap: () => _selectDate(context),
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 16.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 18.w,
+                          vertical: 16.h,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(16.r),
                           border: Border.all(
-                            color: _selectedDate != null ? CustomColors.pinkColor : Colors.grey.shade200,
+                            color: _selectedDate != null
+                                ? CustomColors.pinkColor
+                                : Colors.grey.shade200,
                             width: 1.5,
                           ),
                           boxShadow: [
@@ -107,27 +115,38 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                           children: [
                             Icon(
                               Icons.calendar_month_rounded,
-                              color: _selectedDate != null ? CustomColors.pinkColor : Colors.grey,
+                              color: _selectedDate != null
+                                  ? CustomColors.pinkColor
+                                  : Colors.grey,
                             ),
                             SizedBox(width: 14.w),
                             Expanded(
                               child: Text(
                                 _selectedDate != null
-                                    ? DateFormat('EEEE, MMMM dd, yyyy').format(_selectedDate!)
+                                    ? DateFormat(
+                                        'EEEE, MMMM dd, yyyy',
+                                      ).format(_selectedDate!)
                                     : "Choose a consultation date",
                                 style: _selectedDate != null
                                     ? CustomFonts.black14w600
                                     : CustomFonts.grey14w400,
                               ),
                             ),
-                            const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey),
+                            const Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              size: 14,
+                              color: Colors.grey,
+                            ),
                           ],
                         ),
                       ),
                     ),
                     SizedBox(height: 32.h),
 
-                    Text("Available Time Slots", style: CustomFonts.black18w600),
+                    Text(
+                      "Available Time Slots",
+                      style: CustomFonts.black18w600,
+                    ),
                     SizedBox(height: 6.h),
                     Text(
                       "Select an available 2-hour consultation slot below:",
@@ -152,12 +171,21 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                           },
                           child: Container(
                             margin: EdgeInsets.only(bottom: 12.h),
-                            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 16.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 18.w,
+                              vertical: 16.h,
+                            ),
                             decoration: BoxDecoration(
-                              color: isSelected ? CustomColors.purpleColor.withValues(alpha: 0.08) : Colors.white,
+                              color: isSelected
+                                  ? CustomColors.purpleColor.withValues(
+                                      alpha: 0.08,
+                                    )
+                                  : Colors.white,
                               borderRadius: BorderRadius.circular(16.r),
                               border: Border.all(
-                                color: isSelected ? CustomColors.purpleColor : Colors.grey.shade100,
+                                color: isSelected
+                                    ? CustomColors.purpleColor
+                                    : Colors.grey.shade100,
                                 width: 1.5,
                               ),
                               boxShadow: [
@@ -172,15 +200,21 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                               children: [
                                 Icon(
                                   Icons.access_time_filled_rounded,
-                                  color: isSelected ? CustomColors.purpleColor : Colors.grey.shade400,
+                                  color: isSelected
+                                      ? CustomColors.purpleColor
+                                      : Colors.grey.shade400,
                                   size: 18.sp,
                                 ),
                                 SizedBox(width: 14.w),
                                 Text(
                                   slot,
                                   style: isSelected
-                                      ? CustomFonts.darkPurple12w600.copyWith(fontSize: 14.sp)
-                                      : CustomFonts.black14w600.copyWith(color: Colors.grey.shade800),
+                                      ? CustomFonts.darkPurple12w600.copyWith(
+                                          fontSize: 14.sp,
+                                        )
+                                      : CustomFonts.black14w600.copyWith(
+                                          color: Colors.grey.shade800,
+                                        ),
                                 ),
                                 const Spacer(),
                                 Container(
@@ -189,14 +223,22 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: isSelected ? CustomColors.purpleColor : Colors.grey.shade300,
+                                      color: isSelected
+                                          ? CustomColors.purpleColor
+                                          : Colors.grey.shade300,
                                       width: 2,
                                     ),
-                                    color: isSelected ? CustomColors.purpleColor : Colors.transparent,
+                                    color: isSelected
+                                        ? CustomColors.purpleColor
+                                        : Colors.transparent,
                                   ),
                                   child: isSelected
                                       ? const Center(
-                                          child: Icon(Icons.check, size: 12, color: Colors.white),
+                                          child: Icon(
+                                            Icons.check,
+                                            size: 12,
+                                            color: Colors.white,
+                                          ),
                                         )
                                       : null,
                                 ),
@@ -232,14 +274,26 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                 textColor: Colors.white,
                 onPressed: canContinue
                     ? () {
-                        // Save Selected parameters to checkout ViewModel
-                        ref.read(checkoutViewModel.notifier).setSelectedDate(_selectedDate!);
-                        ref.read(checkoutViewModel.notifier).setSelectedSlot(_selectedSlot!);
-
-                        Navigator.pushNamed(
-                          context,
-                          ReviewScreen.routeName,
-                        );
+                        if (widget.inviteType == InviteType.clinic) {
+                          // Save Selected parameters to checkout ViewModel
+                          ref
+                              .read(checkoutViewModel.notifier)
+                              .setSelectedDate(_selectedDate!);
+                          ref
+                              .read(checkoutViewModel.notifier)
+                              .setSelectedSlot(_selectedSlot!);
+                          Navigator.pushNamed(context, ReviewScreen.routeName);
+                        } else {
+                          BeforeYouBookBottomSheet.show(
+                            context,
+                            onConfirm: () {
+                              Navigator.pushNamed(
+                                context,
+                                ReviewScreen.routeName,
+                              );
+                            },
+                          );
+                        }
                       }
                     : null,
               ),

@@ -21,7 +21,7 @@ class ApiBaseHelper {
   Future<http.Response> httpRequest({
     required EndPoints endPoint,
     required String requestType,
-    var requestBody,
+    requestBody,
     String? params,
     String? imagePath,
   }) async {

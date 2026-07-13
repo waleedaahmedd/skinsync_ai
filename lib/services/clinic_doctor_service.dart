@@ -16,8 +16,7 @@ import '../models/responses/treatment_pricing_response.dart';
 class ClinicDoctorService implements ClinicDoctorRepository {
   final ApiBaseHelper _apiClient;
 
-  ClinicDoctorService({required ApiBaseHelper apiClient})
-    : _apiClient = apiClient;
+  ClinicDoctorService({required this._apiClient});
 
   @override
   Future<GetClinicResponse> getClinic({

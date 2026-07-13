@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 
 class DiscountCard extends StatelessWidget {
   const DiscountCard({super.key});

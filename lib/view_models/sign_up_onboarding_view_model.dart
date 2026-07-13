@@ -18,9 +18,8 @@ final onBoardingViewModel = NotifierProvider(() {
 
 // ViewModel
 class SignUpOnboardingViewModel extends BaseViewModel<SignUpOnboardingState> {
-  SignUpOnboardingViewModel({required OnBoardingService onBoardingService})
-    : _onBoardingService = onBoardingService,
-      super(initialState: const SignUpOnboardingState());
+  SignUpOnboardingViewModel({required this._onBoardingService})
+    : super(initialState: const SignUpOnboardingState());
 
   final OnBoardingService _onBoardingService;
   PageController? _pageController;

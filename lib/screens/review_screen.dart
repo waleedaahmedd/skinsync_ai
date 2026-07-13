@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/custom_app_bar.dart';
-import 'package:skinsync_ai/widgets/custom_button.dart';
-import 'package:skinsync_ai/view_models/checkout_view_model.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_button.dart';
+import '../view_models/checkout_view_model.dart';
 import 'payment_screen.dart';
 
 class ReviewScreen extends ConsumerWidget {

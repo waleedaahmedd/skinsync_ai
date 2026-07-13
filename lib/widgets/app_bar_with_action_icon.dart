@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/auth_view_model.dart';
 
 import '../utills/color_constant.dart';
 

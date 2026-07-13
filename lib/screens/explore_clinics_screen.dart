@@ -1,27 +1,26 @@
+import 'dart:async';
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:skinsync_ai/main.dart';
-import 'package:skinsync_ai/view_models/auth_view_model.dart';
-import 'package:skinsync_ai/view_models/clinic_view_model.dart';
-import 'package:skinsync_ai/view_models/checkout_view_model.dart';
-import 'package:skinsync_ai/view_models/treatment_view_model.dart';
-import 'package:skinsync_ai/widgets/app_loader.dart';
-import 'package:skinsync_ai/widgets/custom_app_bar.dart';
-import 'package:skinsync_ai/widgets/custom_clinic_grid_view_title.dart';
-import 'package:skinsync_ai/widgets/custom_search_field.dart';
 
+import '../main.dart';
 import '../models/responses/get_clinic_response.dart';
-import 'package:skinsync_ai/models/responses/treatment_area_list_response.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/enums.dart';
+import '../view_models/auth_view_model.dart';
+import '../view_models/checkout_view_model.dart';
+import '../view_models/clinic_view_model.dart';
+import '../view_models/treatment_view_model.dart';
+import '../widgets/app_loader.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_clinic_grid_view_title.dart';
+import '../widgets/custom_search_field.dart';
 import 'clinics_detail_screen.dart';
 
 class ExploreClinicsScreen extends ConsumerStatefulWidget {
@@ -38,18 +37,11 @@ class ExploreClinicsScreen extends ConsumerStatefulWidget {
 }
 
 class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
-  final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = "";
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(() {
-      setState(() {
-        _searchQuery = _searchController.text.trim();
-      });
-      ref.read(clinicProvider.notifier).onSearchChanged(_searchController.text);
-    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (isDeploymentMode) {
@@ -67,7 +59,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
 
   @override
   void dispose() {
-    _searchController.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -88,8 +80,15 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w),
                   child: CustomSearchField(
-                    controller: _searchController,
                     hintText: "Search Clinics...",
+                    onChanged: (query) {
+                      _timer?.cancel();
+                      _timer = Timer(const Duration(milliseconds: 500), () {
+                        ref
+                            .read(clinicProvider.notifier)
+                            .onSearchChanged(query.trim());
+                      });
+                    },
                   ),
                 ),
 
@@ -99,7 +98,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                     final checkoutState = ref.watch(checkoutViewModel);
                     final treatment = checkoutState.selectedTreatments;
                     final selectedArea = checkoutState.selectedAreas;
-                    final subAreas = [if (selectedArea != null) selectedArea];
+                    final subAreas = [?selectedArea];
 
                     if (treatment == null || subAreas.isEmpty) {
                       return const SizedBox.shrink();
@@ -115,7 +114,8 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                         itemCount: subAreas.length,
                         itemBuilder: (context, index) {
                           final subArea = subAreas[index];
-                          final chipText = "${treatment.name ?? ''} - ${subArea.name ?? ''}";
+                          final chipText =
+                              "${treatment.name ?? ''} - ${subArea.name ?? ''}";
 
                           return Container(
                             margin: EdgeInsets.only(right: 8.w),
@@ -124,7 +124,9 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                               gradient: CustomColors.purpleBlueGradient,
                               boxShadow: [
                                 BoxShadow(
-                                  color: CustomColors.purpleColor.withValues(alpha: 0.25),
+                                  color: CustomColors.purpleColor.withValues(
+                                    alpha: 0.25,
+                                  ),
                                   blurRadius: 6,
                                   offset: const Offset(0, 3),
                                 ),
@@ -137,13 +139,18 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                                   // 1. White Tint Mask Overlay (Consistent with preview screen chips)
                                   Positioned.fill(
                                     child: Container(
-                                      color: Colors.white.withValues(alpha: 0.85),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.85,
+                                      ),
                                     ),
                                   ),
 
                                   // 2. High-Contrast Content
                                   Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 14.w,
+                                      vertical: 8.h,
+                                    ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -155,7 +162,8 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                                         SizedBox(width: 8.w),
                                         Text(
                                           chipText,
-                                          style: CustomFonts.black10w600.copyWith(fontSize: 11.sp),
+                                          style: CustomFonts.black10w600
+                                              .copyWith(fontSize: 11.sp),
                                         ),
                                         SizedBox(width: 8.w),
                                         // Visual thin line divider
@@ -170,19 +178,37 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                                           onTap: () {
                                             final subAreaId = subArea.id!;
                                             // 1. Remove from treatmentViewModel
-                                            ref.read(treatmentViewModel.notifier).removeSubArea(subAreaId);
+                                            ref
+                                                .read(
+                                                  treatmentViewModel.notifier,
+                                                )
+                                                .removeSubArea(subAreaId);
 
                                             // 2. Sync and update checkoutViewModel (Do not clear entire state, keep parent treatment intact)
-                                            final updatedSubAreas = subAreas.where((e) => e.id != subAreaId).toList();
-                                            final updatedSubAreaIds = updatedSubAreas.map((e) => e.id!).toList();
+                                            final updatedSubAreas = subAreas
+                                                .where((e) => e.id != subAreaId)
+                                                .toList();
+                                            final updatedSubAreaIds =
+                                                updatedSubAreas
+                                                    .map((e) => e.id!)
+                                                    .toList();
 
-                                            ref.read(checkoutViewModel.notifier).setSelectedAreas(updatedSubAreas.firstOrNull);
+                                            ref
+                                                .read(
+                                                  checkoutViewModel.notifier,
+                                                )
+                                                .setSelectedAreas(
+                                                  updatedSubAreas.firstOrNull,
+                                                );
 
                                             // 3. Re-fetch clinics with updated sub-area filters
-                                            ref.read(clinicProvider.notifier).getClinic(
-                                              treatmentId: treatment.id,
-                                              sideAreaIds: updatedSubAreaIds,
-                                            );
+                                            ref
+                                                .read(clinicProvider.notifier)
+                                                .getClinic(
+                                                  treatmentId: treatment.id,
+                                                  sideAreaIds:
+                                                      updatedSubAreaIds,
+                                                );
                                           },
                                           child: Icon(
                                             Icons.cancel_rounded,
@@ -282,9 +308,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                     ],
                   ),
                   child: FloatingActionButton.extended(
-                    onPressed: ref
-                        .read(clinicProvider.notifier)
-                        .toggleViewType,
+                    onPressed: ref.read(clinicProvider.notifier).toggleViewType,
                     backgroundColor: Colors.black,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
@@ -299,13 +323,10 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                       width: 20.w,
                       color: Colors.white,
                     ),
-                    label: Text(
-                      switch (state.viewType) {
-                        ViewType.grid => "Map View",
-                        ViewType.map => 'Grid View',
-                      },
-                      style: CustomFonts.white16w600,
-                    ),
+                    label: Text(switch (state.viewType) {
+                      ViewType.grid => "Map View",
+                      ViewType.map => 'Grid View',
+                    }, style: CustomFonts.white16w600),
                   ),
                 ),
               ),
@@ -334,10 +355,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                 color: Colors.grey.shade300,
               ),
               SizedBox(height: 16.h),
-              Text(
-                "No Clinics Found",
-                style: CustomFonts.grey800_20w600,
-              ),
+              Text("No Clinics Found", style: CustomFonts.grey800_20w600),
               SizedBox(height: 6.h),
               Text(
                 "Try searching for a different keyword or check back later.",

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'checkout_view_model.dart';
 
 import '../models/base_state_model.dart';
-import '../models/responses/get_doctor_response.dart';
 import '../models/responses/availability_response.dart';
+import '../models/responses/get_doctor_response.dart';
 import '../models/responses/payment_options_response.dart';
 import '../models/responses/treatment_pricing_response.dart' hide Treatment;
 import '../repositories/clinic_doctor_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/clinic_doctor_service.dart';
 import 'base_view_model.dart';
-import 'treatment_view_model.dart';
 
 final doctorProvider = NotifierProvider(() {
   final apiBaseHelper = ApiBaseHelper();
@@ -20,9 +20,8 @@ final doctorProvider = NotifierProvider(() {
 });
 
 class DoctorViewModel extends BaseViewModel<DoctorState> {
-  DoctorViewModel({required ClinicDoctorRepository clinicRepository})
-    : _clinicRepository = clinicRepository,
-      super(initialState: const DoctorState());
+  DoctorViewModel({required this._clinicRepository})
+    : super(initialState: const DoctorState());
 
   final ClinicDoctorRepository _clinicRepository;
   PricingData? pricingData;
@@ -93,16 +92,16 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
     required int doctorId,
   }) async {
     return await runSafely(() async {
-      final treatmentState = ref.read(treatmentViewModel);
-      if (treatmentState.selectedTreatment == null ||
-          treatmentState.selectedSubAreasList.isEmpty) {
+      final checkoutState = ref.read(checkoutViewModel);
+      if (checkoutState.selectedTreatments == null ||
+          (checkoutState.selectedAreas?.subAreas?.isEmpty ?? false)) {
         return;
       }
       state = state.copyWith(loading: true);
       final pricing = await _clinicRepository.getTreatmentPricing(
         clinicId: clinicId,
-        treatmentId: treatmentState.selectedTreatment!.id!,
-        treatmentSubsectionIds: treatmentState.selectedSubAreasList
+        treatmentId: checkoutState.selectedTreatments!.id!,
+        treatmentSubsectionIds: checkoutState.selectedAreas!.subAreas!
             .map((area) => area.id!)
             .toList(),
       );
@@ -123,10 +122,7 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
 
   @override
   void onError(String message) {
-    state = state.copyWith(
-      doctorLoading: false,
-      loading: false,
-    );
+    state = state.copyWith(doctorLoading: false, loading: false);
     super.onError(message);
     EasyLoading.showError(message);
   }

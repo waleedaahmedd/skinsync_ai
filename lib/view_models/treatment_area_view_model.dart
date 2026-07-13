@@ -1,5 +1,5 @@
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/base_state_model.dart';
 import '../models/responses/treatment_area_list_response.dart';
 import '../repositories/treatment_area_repository.dart';
@@ -7,16 +7,20 @@ import '../services/api_base_helper.dart';
 import '../services/treatment_area_service.dart';
 import 'base_view_model.dart';
 
-final treatmentAreaProvider = NotifierProvider<TreatmentAreaViewModel, TreatmentAreaState>(
-  () => TreatmentAreaViewModel(
-    treatmentAreaRepository: TreatmentAreaService(apiClient: ApiBaseHelper()),
-  ),
-);
+final treatmentAreaProvider =
+    NotifierProvider<TreatmentAreaViewModel, TreatmentAreaState>(
+      () => TreatmentAreaViewModel(
+        treatmentAreaRepository: TreatmentAreaService(
+          apiClient: ApiBaseHelper(),
+        ),
+      ),
+    );
 
 class TreatmentAreaViewModel extends BaseViewModel<TreatmentAreaState> {
-  TreatmentAreaViewModel({required TreatmentAreaRepository treatmentAreaRepository})
-    : _repo = treatmentAreaRepository,
-      super(initialState: const TreatmentAreaState());
+  TreatmentAreaViewModel({
+    required TreatmentAreaRepository treatmentAreaRepository,
+  }) : _repo = treatmentAreaRepository,
+       super(initialState: const TreatmentAreaState());
 
   final TreatmentAreaRepository _repo;
 
@@ -24,13 +28,6 @@ class TreatmentAreaViewModel extends BaseViewModel<TreatmentAreaState> {
   List<TreatmentAreaModel> get areas => state.areas;
   bool get isLoading => state.loading;
   String? get errorMessage => state.errorMessage;
-
-  // Future<void> fetchAreas() async {
-  //   await runSafely(() async {
-  //     state = state.copyWith(loading: true, errorMessage: null);
-  // Future<bool> fetchAreas() async {
-  //   return await fetchAreasByTreatment(null);
-  // }
 
   Future<bool> fetchAreasByTreatment(int? treatmentId) async {
     final result = await runSafely(() async {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/app_bar_with_action_icon.dart';
-import 'package:skinsync_ai/widgets/custom_search_field.dart';
+import '../../utills/custom_fonts.dart';
+import '../../widgets/app_bar_with_action_icon.dart';
+import '../../widgets/custom_search_field.dart';
 
 import '../../widgets/grey_container.dart';
 

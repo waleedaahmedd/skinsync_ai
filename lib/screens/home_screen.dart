@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/models/dummy_list_model.dart';
-import 'package:skinsync_ai/screens/doctors_listing_screen.dart';
-import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
-import 'package:skinsync_ai/view_models/bottom_nav_view_model.dart';
-import 'package:skinsync_ai/widgets/home_horizontal_sections.dart';
+import '../models/dummy_list_model.dart';
+import 'doctors_listing_screen.dart';
+import 'explore_clinics_screen.dart';
+import '../view_models/bottom_nav_view_model.dart';
+import '../widgets/home_horizontal_sections.dart';
 
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -262,7 +262,7 @@ class HomeScreen extends ConsumerWidget {
                               left: index == 0 ? 24.w : 16.w,
                               right: index == promotionsCount - 1 ? 24.w : 0.w,
                             ),
-                            child: DiscountCard(),
+                            child: const DiscountCard(),
                           );
                         },
                       ),
@@ -281,7 +281,7 @@ class HomeScreen extends ConsumerWidget {
     required String title,
     required String subtitle,
   }) {
-    final myLocalGradient = LinearGradient(
+    const myLocalGradient = LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       colors: [CustomColors.lightPurpleColor, CustomColors.purpleColor],

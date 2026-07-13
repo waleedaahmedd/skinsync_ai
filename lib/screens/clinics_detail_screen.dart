@@ -7,19 +7,21 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
-import 'package:skinsync_ai/utills/assets.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../models/responses/get_clinic_response.dart';
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 
-import '../widgets/bottom_sheets/before_you_bookbottomsheet.dart';
-import '../widgets/bottom_sheets/pre_booking_bottom_sheet.dart';
-import '../widgets/bottom_sheets/wallet_confirmation_bottom_sheet.dart';
-import '../widgets/dialogs/appointment_success_dialog.dart';
+// import '../widgets/bottom_sheets/before_you_bookbottomsheet.dart';
+// import '../widgets/bottom_sheets/pre_booking_bottom_sheet.dart';
+// import '../widgets/bottom_sheets/wallet_confirmation_bottom_sheet.dart';
+// import '../widgets/dialogs/appointment_success_dialog.dart';
+import '../utills/enums.dart';
 import '../widgets/custom_button.dart';
-import 'bottom_nav_page.dart';
+// import 'bottom_nav_page.dart';
 import 'select_appointment_type_screen.dart';
-import 'package:skinsync_ai/view_models/checkout_view_model.dart';
+import '../view_models/checkout_view_model.dart';
+import 'select_date_time_screen.dart';
 
 class ClinicsDetailScreen extends ConsumerWidget {
   final Clinic? clinic;
@@ -386,7 +388,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.06),
+              color: Colors.black.withValues(alpha: 0.06),
               blurRadius: 15,
               offset: const Offset(0, -5),
             ),
@@ -433,32 +435,38 @@ class ClinicsDetailScreen extends ConsumerWidget {
                         borderRadius: 25.r,
                         onPressed: () {
                           if (clinic?.place != null) {
-                            PreBookingBottomSheet.show(
+                            print("clinic is not null");
+                            Navigator.pushNamed(
                               context,
-                              clinic: clinic!,
-                              onConfirm: () {
-                                WalletConfirmationBottomSheet.show(
-                                  context,
-                                  onConfirm: () {
-                                    BeforeYouBookBottomSheet.show(
-                                      context,
-                                      onConfirm: () {
-                                        showAppointmentSuccessDialog(
-                                          context: context,
-                                          onDone: () {
-                                            Navigator.pushNamedAndRemoveUntil(
-                                              context,
-                                              BottomNavPage.routeName,
-                                              (_) => false,
-                                            );
-                                          },
-                                        );
-                                      },
-                                    );
-                                  },
-                                );
-                              },
+                              SelectDateTimeScreen.routeName,
+                              arguments: InviteType.invite,
                             );
+                            // PreBookingBottomSheet.show(
+                            //   context,
+                            //   clinic: clinic!,
+                            //   onConfirm: () {
+                            //     WalletConfirmationBottomSheet.show(
+                            //       context,
+                            //       onConfirm: () {
+                            //         BeforeYouBookBottomSheet.show(
+                            //           context,
+                            //           onConfirm: () {
+                            //             showAppointmentSuccessDialog(
+                            //               context: context,
+                            //               onDone: () {
+                            //                 Navigator.pushNamedAndRemoveUntil(
+                            //                   context,
+                            //                   BottomNavPage.routeName,
+                            //                   (_) => false,
+                            //                 );
+                            //               },
+                            //             );
+                            //           },
+                            //         );
+                            //       },
+                            //     );
+                            //   },
+                            // );
                           } else {
                             if (clinic != null) {
                               ref.read(checkoutViewModel.notifier).setSelectedClinic(clinic!);
