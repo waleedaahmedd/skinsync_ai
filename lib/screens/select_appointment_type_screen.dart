@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../models/dummy_list_model.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../view_models/checkout_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/treatment_container.dart';
-import '../view_models/checkout_view_model.dart';
 import 'doctors_screen.dart';
 
 class SelectAppointmentTypeScreen extends ConsumerWidget {
@@ -15,10 +16,7 @@ class SelectAppointmentTypeScreen extends ConsumerWidget {
 
   final Clinic clinic;
 
-  const SelectAppointmentTypeScreen({
-    super.key,
-    required this.clinic,
-  });
+  const SelectAppointmentTypeScreen({super.key, required this.clinic});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,10 +33,7 @@ class SelectAppointmentTypeScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 24.h),
-              Text(
-                "Choose Appointment Type",
-                style: CustomFonts.black22w600,
-              ),
+              Text("Choose Appointment Type", style: CustomFonts.black22w600),
               SizedBox(height: 8.h),
               Text(
                 "Select whether you want to book a direct treatment or schedule a general medical spa consultation.",
@@ -59,11 +54,14 @@ class SelectAppointmentTypeScreen extends ConsumerWidget {
                       customImageUrl: appointmentType.imageUrl,
                       customOnTap: () {
                         // Save selection in CheckoutState
-                        ref.read(checkoutViewModel.notifier).setSelectedAppointmentType(appointmentType.type);
+                        ref
+                            .read(checkoutViewModel.notifier)
+                            .setSelectedAppointmentType(appointmentType.type);
 
                         Navigator.pushNamed(
                           context,
                           DoctorsScreen.routeName,
+                          arguments: clinic,
                         );
                       },
                     );

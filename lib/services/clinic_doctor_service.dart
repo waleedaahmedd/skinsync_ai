@@ -1,17 +1,18 @@
 import 'dart:convert';
 
 import '../exceptions/app_exception.dart';
-import '../models/responses/get_clinic_response.dart';
-import '../models/responses/get_doctor_response.dart';
-import '../repositories/clinic_doctor_repository.dart';
-import 'api_base_helper.dart';
-import '../utills/enums.dart';
-
 import '../models/requests/appointment_request.dart';
+import '../models/requests/invite_clinic_request.dart';
 import '../models/responses/appointment_response.dart';
 import '../models/responses/availability_response.dart';
+import '../models/responses/base_response_model.dart';
+import '../models/responses/get_clinic_response.dart';
+import '../models/responses/get_doctor_response.dart';
 import '../models/responses/payment_options_response.dart';
 import '../models/responses/treatment_pricing_response.dart';
+import '../repositories/clinic_doctor_repository.dart';
+import '../utills/enums.dart';
+import 'api_base_helper.dart';
 
 class ClinicDoctorService implements ClinicDoctorRepository {
   final ApiBaseHelper _apiClient;
@@ -136,5 +137,19 @@ class ClinicDoctorService implements ClinicDoctorRepository {
       throw AppException(data.message ?? 'Something went wrong!');
     }
     return data.data!;
+  }
+
+  @override
+  Future<void> inviteClinic(InviteClinicRequest request) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.inviteClinic,
+      requestType: 'POST',
+      requestBody: request.toJson(),
+      params: '',
+    );
+    final data = BaseResponseModel.fromJson(jsonDecode(response.body));
+    if (!(data.status ?? false)) {
+      throw AppException(data.message ?? 'Something went wrong!');
+    }
   }
 }

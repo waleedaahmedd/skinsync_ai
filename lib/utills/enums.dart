@@ -51,6 +51,7 @@ enum EndPoints {
   paymentOptions('v1/appointments/payment-options'),
   treatmentPricing('v1/treatments/pricing'),
   appointments('v1/appointments'),
+  inviteClinic('v1/invite-clinic'),
   categories('categories'),
   areas('areas'),
   materials('materials'),
@@ -70,8 +71,3 @@ enum BaseUrls {
 }
 
 enum ViewType { grid, map }
-
-enum InviteType {
-  clinic,
-  invite
-}

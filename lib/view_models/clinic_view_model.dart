@@ -4,13 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../models/base_state_model.dart';
+import '../models/dummy_list_model.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../repositories/clinic_doctor_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/clinic_doctor_service.dart';
 import '../services/location_service.dart';
 import '../utills/enums.dart';
-import '../models/dummy_list_model.dart';
 import 'auth_view_model.dart';
 import 'base_view_model.dart';
 
@@ -35,7 +35,10 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
       state = state.copyWith(clinicLoading: true);
       // Simulate network delay of 500ms
       await Future.delayed(const Duration(milliseconds: 500));
-      state = state.copyWith(clinicLoading: false, clinics: dummyClinicsForService);
+      state = state.copyWith(
+        clinicLoading: false,
+        clinics: dummyClinicsForService,
+      );
       return true;
     });
   }
@@ -43,8 +46,12 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
   Future<void> fetchClinicsFromMap() async {
     return await runSafely(() async {
       state = state.copyWith(clinicLoading: true);
-      await  ref.read(authViewModel.notifier).fetchLocation();
-      final location = ref.read(authViewModel).addressData!.latLng;
+      await ref.read(authViewModel.notifier).fetchLocation();
+      LatLng? location = ref.read(authViewModel).addressData?.latLng;
+      if (location == null) {
+        ref.read(authViewModel.notifier).fetchLocation();
+      }
+      location = ref.read(authViewModel).addressData!.latLng;
       final places = await LocationService().fetchNearbyClinics(
         location: location,
       );
@@ -104,9 +111,7 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
 
   @override
   void onError(String message) {
-    state = state.copyWith(
-      clinicLoading: false,
-    );
+    state = state.copyWith(clinicLoading: false);
     super.onError(message);
     EasyLoading.showError(message);
   }

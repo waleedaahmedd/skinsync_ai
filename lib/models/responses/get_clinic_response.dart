@@ -1,4 +1,7 @@
+import 'package:dlibphonenumber/dlibphonenumber.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+import '../requests/invite_clinic_request.dart';
 import 'base_response_model.dart';
 import 'map_clinics_response.dart';
 
@@ -64,6 +67,37 @@ class Clinic {
           ? LatLng(json['location']['lat'], json['location']['lng'])
           : null,
       place: json['place'] != null ? Place.fromJson(json['place']) : null,
+    );
+  }
+
+  Future<InviteClinicRequest> toInviteRequest({
+    required num consultationFees,
+    required num initialDeposit,
+    required List<AvailabilityModel> availability,
+  }) async {
+    int? cc;
+    final phoneNumber =
+        phone ?? place?.nationalPhoneNumber ?? place?.internationalPhoneNumber;
+    if (phoneNumber != null) {
+      final data = PhoneNumberUtil.instance.parse(phoneNumber, 'US');
+      cc = data.countryCode;
+    }
+    return InviteClinicRequest(
+      name: clinicName ?? '',
+      email: email ?? '',
+      phone: phoneNumber ?? '',
+      cc: cc != null ? '+$cc' : '',
+      country: '',
+      address: address ?? '',
+      logo: logo ?? '',
+      website: place?.websiteUri ?? '',
+      description: description ?? '',
+      consultationFee: consultationFees,
+      initialDeposit: initialDeposit,
+      availability: availability,
+      latitude: location?.latitude,
+      longitude: location?.longitude,
+      ownerEmail: email ?? '',
     );
   }
 }

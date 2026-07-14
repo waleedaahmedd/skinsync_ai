@@ -1,10 +1,12 @@
 import 'package:camera/camera.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/base_state_model.dart';
 import '../models/dummy_list_model.dart';
 import '../models/flat_selection_model.dart';
 import '../models/requests/appointment_request.dart';
+import '../models/requests/invite_clinic_request.dart';
 import '../models/responses/appointment_response.dart';
 import '../models/responses/availability_response.dart';
 import '../models/responses/get_clinic_response.dart';
@@ -330,6 +332,24 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
             .toList(),
       ),
     );
+  }
+
+  Future<bool?> inviteClinic({
+    required Clinic clinic,
+    required num consultationFees,
+    required num initialDeposit,
+    required List<AvailabilityModel> availability,
+  }) async {
+    return await runSafely(() async {
+      EasyLoading.show(status: 'Loading...');
+      final request = await clinic.toInviteRequest(
+        consultationFees: consultationFees,
+        initialDeposit: initialDeposit,
+        availability: availability,
+      );
+      await _clinicRepository.inviteClinic(request);
+      return true;
+    });
   }
 
   Future<void> createAppointment({

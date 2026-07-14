@@ -7,15 +7,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:iconsax/iconsax.dart';
+
 import '../models/responses/get_clinic_response.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
-import '../utills/enums.dart';
-import '../widgets/custom_button.dart';
-// import 'bottom_nav_page.dart';
-import 'select_appointment_type_screen.dart';
 import '../view_models/checkout_view_model.dart';
+import '../widgets/custom_button.dart';
+import 'select_appointment_type_screen.dart';
 import 'select_date_time_screen.dart';
 
 class ClinicsDetailScreen extends ConsumerWidget {
@@ -56,7 +55,9 @@ class ClinicsDetailScreen extends ConsumerWidget {
                                 gradient: CustomColors.purpleBlueGradient,
                               ),
                               child: const Center(
-                                child: CupertinoActivityIndicator(color: Colors.white),
+                                child: CupertinoActivityIndicator(
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                             errorWidget: (context, url, error) => Container(
@@ -198,10 +199,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                               ),
                             ),
                             SizedBox(width: 4.w),
-                            Text(
-                              "Top Choice",
-                              style: CustomFonts.pink10w700,
-                            ),
+                            Text("Top Choice", style: CustomFonts.pink10w700),
                           ],
                         ),
                       ),
@@ -210,7 +208,11 @@ class ClinicsDetailScreen extends ConsumerWidget {
                   SizedBox(height: 10.h),
                   Row(
                     children: [
-                      Icon(Icons.star_rounded, size: 20.sp, color: Colors.amber),
+                      Icon(
+                        Icons.star_rounded,
+                        size: 20.sp,
+                        color: Colors.amber,
+                      ),
                       SizedBox(width: 4.w),
                       Text(
                         '${clinic?.place?.rating ?? 0}',
@@ -278,7 +280,10 @@ class ClinicsDetailScreen extends ConsumerWidget {
             SizedBox(height: 24.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Divider(color: CustomColors.greyColor.withValues(alpha: 0.6), height: 1.h),
+              child: Divider(
+                color: CustomColors.greyColor.withValues(alpha: 0.6),
+                height: 1.h,
+              ),
             ),
             SizedBox(height: 24.h),
 
@@ -290,10 +295,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(24.r),
                   color: Colors.white,
-                  border: Border.all(
-                    color: CustomColors.greyColor,
-                    width: 1,
-                  ),
+                  border: Border.all(color: CustomColors.greyColor, width: 1),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.02),
@@ -316,21 +318,54 @@ class ClinicsDetailScreen extends ConsumerWidget {
                               size: 16.sp,
                             ),
                             SizedBox(width: 8.w),
-                            switch (clinic?.place?.currentOpeningHours?.periods?.length ?? 0) {
-                              0 => Text('Closed', style: CustomFonts.black18w600),
-                              1 => Text('Monday', style: CustomFonts.black18w600),
-                              2 => Text('Monday - Tuesday', style: CustomFonts.black18w600),
-                              3 => Text('Monday - Wednesday', style: CustomFonts.black18w600),
-                              4 => Text('Monday - Thursday', style: CustomFonts.black18w600),
-                              5 => Text('Monday - Friday', style: CustomFonts.black18w600),
-                              6 => Text('Monday - Saturday', style: CustomFonts.black18w600),
-                              7 => Text('Monday - Sunday', style: CustomFonts.black18w600),
+                            switch (clinic
+                                    ?.place
+                                    ?.currentOpeningHours
+                                    ?.periods
+                                    ?.length ??
+                                0) {
+                              0 => Text(
+                                'Closed',
+                                style: CustomFonts.black18w600,
+                              ),
+                              1 => Text(
+                                'Monday',
+                                style: CustomFonts.black18w600,
+                              ),
+                              2 => Text(
+                                'Monday - Tuesday',
+                                style: CustomFonts.black18w600,
+                              ),
+                              3 => Text(
+                                'Monday - Wednesday',
+                                style: CustomFonts.black18w600,
+                              ),
+                              4 => Text(
+                                'Monday - Thursday',
+                                style: CustomFonts.black18w600,
+                              ),
+                              5 => Text(
+                                'Monday - Friday',
+                                style: CustomFonts.black18w600,
+                              ),
+                              6 => Text(
+                                'Monday - Saturday',
+                                style: CustomFonts.black18w600,
+                              ),
+                              7 => Text(
+                                'Monday - Sunday',
+                                style: CustomFonts.black18w600,
+                              ),
                               int() => throw UnimplementedError(),
                             },
                           ],
                         ),
                         Text(
-                          clinic?.place?.currentOpeningHours?.todayOpeningHours ?? '',
+                          clinic
+                                  ?.place
+                                  ?.currentOpeningHours
+                                  ?.todayOpeningHours ??
+                              '',
                           style: CustomFonts.textGrey14w400,
                         ),
                       ],
@@ -390,7 +425,9 @@ class ClinicsDetailScreen extends ConsumerWidget {
           ],
         ),
         child: Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.paddingOf(context).bottom,
+          ),
           child: GlassMorphismContainer(
             borderRadius: BorderRadius.all(Radius.circular(0.r)),
             blurIntensity: 25.0,
@@ -417,7 +454,10 @@ class ClinicsDetailScreen extends ConsumerWidget {
                 // Full-width Button Booking Slot Row
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 24.w,
+                      vertical: 12.h,
+                    ),
                     child: SizedBox(
                       width: double.infinity,
                       height: 52.h,
@@ -434,37 +474,13 @@ class ClinicsDetailScreen extends ConsumerWidget {
                             Navigator.pushNamed(
                               context,
                               SelectDateTimeScreen.routeName,
-                              arguments: InviteType.invite,
+                              arguments: clinic,
                             );
-                            // PreBookingBottomSheet.show(
-                            //   context,
-                            //   clinic: clinic!,
-                            //   onConfirm: () {
-                            //     WalletConfirmationBottomSheet.show(
-                            //       context,
-                            //       onConfirm: () {
-                            //         BeforeYouBookBottomSheet.show(
-                            //           context,
-                            //           onConfirm: () {
-                            //             showAppointmentSuccessDialog(
-                            //               context: context,
-                            //               onDone: () {
-                            //                 Navigator.pushNamedAndRemoveUntil(
-                            //                   context,
-                            //                   BottomNavPage.routeName,
-                            //                   (_) => false,
-                            //                 );
-                            //               },
-                            //             );
-                            //           },
-                            //         );
-                            //       },
-                            //     );
-                            //   },
-                            // );
                           } else {
                             if (clinic != null) {
-                              ref.read(checkoutViewModel.notifier).setSelectedClinic(clinic!);
+                              ref
+                                  .read(checkoutViewModel.notifier)
+                                  .setSelectedClinic(clinic!);
                             }
                             Navigator.pushNamed(
                               context,

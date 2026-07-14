@@ -2,26 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+
 import '../models/dummy_list_model.dart';
+import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/doctor_card.dart';
-import '../widgets/custom_search_field.dart';
-import '../view_models/checkout_view_model.dart';
 import '../utills/enums.dart';
+import '../view_models/checkout_view_model.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_search_field.dart';
+import '../widgets/doctor_card.dart';
 import 'doctor_detail_screen.dart';
 
 class DoctorsScreen extends ConsumerStatefulWidget {
   static const routeName = '/doctors_screen';
+  final Clinic clinic;
 
-  const DoctorsScreen({super.key});
+  const DoctorsScreen({super.key, required this.clinic});
 
   @override
   ConsumerState<DoctorsScreen> createState() => _DoctorsScreenState();
 }
 
-class _DoctorsScreenState extends ConsumerState<DoctorsScreen> with SingleTickerProviderStateMixin {
+class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = "";
@@ -107,8 +111,12 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen> with SingleTicker
       // 2. Filter by Search Query
       if (_searchQuery.isNotEmpty) {
         final matchesName = doctor.name.toLowerCase().contains(_searchQuery);
-        final matchesSpec = doctor.specialization.toLowerCase().contains(_searchQuery);
-        final matchesClinic = doctor.clinicName.toLowerCase().contains(_searchQuery);
+        final matchesSpec = doctor.specialization.toLowerCase().contains(
+          _searchQuery,
+        );
+        final matchesClinic = doctor.clinicName.toLowerCase().contains(
+          _searchQuery,
+        );
         if (!matchesName && !matchesSpec && !matchesClinic) return false;
       }
 
@@ -122,10 +130,14 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen> with SingleTicker
 
       // 4. Filter by Slot (Simulated availability matching)
       if (_selectedSlot != null) {
-        if (_selectedSlot == "09:00 AM - 11:00 AM" && doctor.id == "2") return false;
-        if (_selectedSlot == "11:00 AM - 01:00 PM" && doctor.id == "3") return false;
-        if (_selectedSlot == "01:00 PM - 03:00 PM" && doctor.id == "1") return false;
-        if (_selectedSlot == "03:00 PM - 05:00 PM" && doctor.id == "1") return false;
+        if (_selectedSlot == "09:00 AM - 11:00 AM" && doctor.id == "2")
+          return false;
+        if (_selectedSlot == "11:00 AM - 01:00 PM" && doctor.id == "3")
+          return false;
+        if (_selectedSlot == "01:00 PM - 03:00 PM" && doctor.id == "1")
+          return false;
+        if (_selectedSlot == "03:00 PM - 05:00 PM" && doctor.id == "1")
+          return false;
       }
 
       return true;
@@ -135,8 +147,12 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen> with SingleTicker
   @override
   Widget build(BuildContext context) {
     final checkoutState = ref.watch(checkoutViewModel);
-    final isTreatment = checkoutState.selectedAppointmentType == AppointmentType.treatment;
-    final hasActiveFilters = _selectedDate != null || _selectedSlot != null || _searchQuery.isNotEmpty;
+    final isTreatment =
+        checkoutState.selectedAppointmentType == AppointmentType.treatment;
+    final hasActiveFilters =
+        _selectedDate != null ||
+        _selectedSlot != null ||
+        _searchQuery.isNotEmpty;
 
     return Scaffold(
       backgroundColor: CustomColors.whiteColor,
@@ -194,11 +210,16 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen> with SingleTicker
                     child: GestureDetector(
                       onTap: () => _selectDate(context),
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 14.w,
+                          vertical: 10.h,
+                        ),
                         decoration: BoxDecoration(
                           color: _selectedDate != null
                               ? CustomColors.pinkColor
-                              : CustomColors.lightPurpleColor.withValues(alpha: 0.3),
+                              : CustomColors.lightPurpleColor.withValues(
+                                  alpha: 0.3,
+                                ),
                           borderRadius: BorderRadius.circular(20.r),
                         ),
                         child: Row(
@@ -206,18 +227,27 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen> with SingleTicker
                           children: [
                             Icon(
                               Icons.calendar_month_rounded,
-                              color: _selectedDate != null ? Colors.white : Colors.black87,
+                              color: _selectedDate != null
+                                  ? Colors.white
+                                  : Colors.black87,
                               size: 16.sp,
                             ),
                             SizedBox(width: 6.w),
                             Expanded(
                               child: Text(
                                 _selectedDate != null
-                                    ? DateFormat('MMM dd, yyyy').format(_selectedDate!)
+                                    ? DateFormat(
+                                        'MMM dd, yyyy',
+                                      ).format(_selectedDate!)
                                     : "Select Date",
                                 style: _selectedDate != null
-                                    ? CustomFonts.white14w600.copyWith(fontSize: 13.sp)
-                                    : CustomFonts.black14w600.copyWith(color: Colors.black87, fontSize: 13.sp),
+                                    ? CustomFonts.white14w600.copyWith(
+                                        fontSize: 13.sp,
+                                      )
+                                    : CustomFonts.black14w600.copyWith(
+                                        color: Colors.black87,
+                                        fontSize: 13.sp,
+                                      ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 textAlign: TextAlign.center,
@@ -254,7 +284,9 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen> with SingleTicker
                           _selectedSlot = slot;
                         }
                       });
-                      ref.read(checkoutViewModel.notifier).setSelectedSlot(_selectedSlot);
+                      ref
+                          .read(checkoutViewModel.notifier)
+                          .setSelectedSlot(_selectedSlot);
                     },
                     child: Container(
                       margin: EdgeInsets.only(right: 8.w),
@@ -265,7 +297,9 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen> with SingleTicker
                       decoration: BoxDecoration(
                         color: isSelected
                             ? CustomColors.purpleColor
-                            : CustomColors.lightPurpleColor.withValues(alpha: 0.2),
+                            : CustomColors.lightPurpleColor.withValues(
+                                alpha: 0.2,
+                              ),
                         borderRadius: BorderRadius.circular(20.r),
                         border: Border.all(
                           color: isSelected
@@ -279,7 +313,9 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen> with SingleTicker
                           Icon(
                             Icons.access_time_filled_rounded,
                             size: 12.sp,
-                            color: isSelected ? Colors.white : Colors.grey.shade700,
+                            color: isSelected
+                                ? Colors.white
+                                : Colors.grey.shade700,
                           ),
                           SizedBox(width: 4.w),
                           Text(
@@ -301,9 +337,7 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen> with SingleTicker
 
             // Treatment restriction logic - hide tab bar if direct Treatment is booked
             if (isTreatment) ...[
-              Expanded(
-                child: _buildDoctorGrid(isVirtual: false),
-              ),
+              Expanded(child: _buildDoctorGrid(isVirtual: false)),
             ] else ...[
               // Tabs Header: In-Person vs Virtual
               Padding(
@@ -357,10 +391,7 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen> with SingleTicker
                 color: Colors.grey.shade300,
               ),
               SizedBox(height: 16.h),
-              Text(
-                "No Doctors Found",
-                style: CustomFonts.grey800_20w600,
-              ),
+              Text("No Doctors Found", style: CustomFonts.grey800_20w600),
               SizedBox(height: 6.h),
               Text(
                 "Try modifying your filter selections, resetting parameters, or check back later.",
@@ -397,7 +428,7 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen> with SingleTicker
             Navigator.pushNamed(
               context,
               DoctorDetailScreen.routeName,
-              arguments: doctor,
+              arguments: {'doctor': doctor, 'clinic': widget.clinic},
             );
           },
         );

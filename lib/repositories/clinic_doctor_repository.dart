@@ -1,3 +1,4 @@
+import '../models/requests/invite_clinic_request.dart';
 import '../models/responses/appointment_response.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../models/responses/get_doctor_response.dart';
@@ -40,4 +41,6 @@ abstract class ClinicDoctorRepository {
   Future<AppointmentData> createAppointment({
     required AppointmentRequest request,
   });
+
+  Future<void> inviteClinic(InviteClinicRequest request);
 }

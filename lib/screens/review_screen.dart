@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../widgets/custom_app_bar.dart';
@@ -12,14 +13,15 @@ import 'payment_screen.dart';
 
 class ReviewScreen extends ConsumerWidget {
   static const routeName = '/review_screen';
+  final Clinic clinic;
 
-  const ReviewScreen({super.key});
+  const ReviewScreen({super.key, required this.clinic});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final checkoutState = ref.watch(checkoutViewModel);
 
-    final clinic = checkoutState.selectedClinic;
+    // final clinic = checkoutState.selectedClinic;
     final doctor = checkoutState.selectedDoctor;
     final date = checkoutState.selectedDate;
     final slot = checkoutState.selectedSlot;
@@ -73,9 +75,12 @@ class ReviewScreen extends ConsumerWidget {
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
                                   color: Colors.grey.shade50,
-                                  child: const Center(child: CircularProgressIndicator()),
+                                  child: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
                                 ),
-                                errorWidget: (context, url, error) => const Icon(Icons.person),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.person),
                               ),
                             ),
                             SizedBox(width: 16.w),
@@ -83,15 +88,28 @@ class ReviewScreen extends ConsumerWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(doctor.name, style: CustomFonts.black14w600),
+                                  Text(
+                                    doctor.name,
+                                    style: CustomFonts.black14w600,
+                                  ),
                                   SizedBox(height: 4.h),
-                                  Text(doctor.specialization, style: CustomFonts.grey12w400),
+                                  Text(
+                                    doctor.specialization,
+                                    style: CustomFonts.grey12w400,
+                                  ),
                                   SizedBox(height: 4.h),
                                   Row(
                                     children: [
-                                      const Icon(Icons.star_rounded, color: Colors.amber, size: 14),
+                                      const Icon(
+                                        Icons.star_rounded,
+                                        color: Colors.amber,
+                                        size: 14,
+                                      ),
                                       SizedBox(width: 2.w),
-                                      Text(doctor.rating.toString(), style: CustomFonts.black10w600),
+                                      Text(
+                                        doctor.rating.toString(),
+                                        style: CustomFonts.black10w600,
+                                      ),
                                     ],
                                   ),
                                 ],
@@ -104,45 +122,51 @@ class ReviewScreen extends ConsumerWidget {
                     ],
 
                     // 2. Clinic Details
-                    if (clinic != null) ...[
-                      Container(
-                        padding: EdgeInsets.all(16.w),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20.r),
-                          border: Border.all(color: Colors.grey.shade100),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(8.w),
-                              decoration: BoxDecoration(
-                                color: CustomColors.lightPurpleColor.withValues(alpha: 0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(Icons.business_rounded, color: CustomColors.purpleColor),
-                            ),
-                            SizedBox(width: 16.w),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(clinic.clinicName ?? "Standard Clinic Name", style: CustomFonts.black14w600),
-                                  SizedBox(height: 4.h),
-                                  Text(
-                                    clinic.address ?? "Standard Clinic Location",
-                                    style: CustomFonts.grey12w400,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                    Container(
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20.r),
+                        border: Border.all(color: Colors.grey.shade100),
                       ),
-                      SizedBox(height: 16.h),
-                    ],
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(8.w),
+                            decoration: BoxDecoration(
+                              color: CustomColors.lightPurpleColor.withValues(
+                                alpha: 0.1,
+                              ),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.business_rounded,
+                              color: CustomColors.purpleColor,
+                            ),
+                          ),
+                          SizedBox(width: 16.w),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  clinic.clinicName ?? "Standard Clinic Name",
+                                  style: CustomFonts.black14w600,
+                                ),
+                                SizedBox(height: 4.h),
+                                Text(
+                                  clinic.address ?? "Standard Clinic Location",
+                                  style: CustomFonts.grey12w400,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
 
                     // 3. Appointment Date & Slot
                     Container(
@@ -157,7 +181,9 @@ class ReviewScreen extends ConsumerWidget {
                           _buildSummaryRow(
                             Icons.calendar_today_rounded,
                             "Date",
-                            date != null ? DateFormat('EEEE, MMM dd, yyyy').format(date) : "Not Selected",
+                            date != null
+                                ? DateFormat('EEEE, MMM dd, yyyy').format(date)
+                                : "Not Selected",
                           ),
                           const Divider(height: 24),
                           _buildSummaryRow(
@@ -177,12 +203,20 @@ class ReviewScreen extends ConsumerWidget {
                     SizedBox(height: 24.h),
 
                     // Selected Treatments & Areas Section
-                    if (checkoutState.selectedTreatmentsAndAreas.isNotEmpty) ...[
-                      Text("Selected Treatments & Areas", style: CustomFonts.black18w600),
+                    if (checkoutState
+                        .selectedTreatmentsAndAreas
+                        .isNotEmpty) ...[
+                      Text(
+                        "Selected Treatments & Areas",
+                        style: CustomFonts.black18w600,
+                      ),
                       SizedBox(height: 16.h),
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 16.h,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20.r),
@@ -197,10 +231,16 @@ class ReviewScreen extends ConsumerWidget {
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: checkoutState.selectedTreatmentsAndAreas.map((item) {
-                            final isLast = item == checkoutState.selectedTreatmentsAndAreas.last;
+                          children: checkoutState.selectedTreatmentsAndAreas.map((
+                            item,
+                          ) {
+                            final isLast =
+                                item ==
+                                checkoutState.selectedTreatmentsAndAreas.last;
                             return Padding(
-                              padding: EdgeInsets.only(bottom: isLast ? 0 : 12.h),
+                              padding: EdgeInsets.only(
+                                bottom: isLast ? 0 : 12.h,
+                              ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -209,28 +249,40 @@ class ReviewScreen extends ConsumerWidget {
                                       Container(
                                         padding: EdgeInsets.all(6.w),
                                         decoration: BoxDecoration(
-                                          color: CustomColors.pinkColor.withValues(alpha: 0.1),
+                                          color: CustomColors.pinkColor
+                                              .withValues(alpha: 0.1),
                                           shape: BoxShape.circle,
                                         ),
-                                        child: const Icon(Icons.spa_rounded, color: CustomColors.pinkColor, size: 16),
+                                        child: const Icon(
+                                          Icons.spa_rounded,
+                                          color: CustomColors.pinkColor,
+                                          size: 16,
+                                        ),
                                       ),
                                       SizedBox(width: 10.w),
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              item.treatment.name ?? "Treatment",
+                                              item.treatment.name ??
+                                                  "Treatment",
                                               style: CustomFonts.black14w600,
                                             ),
-                                            if (item.selectedAreas.isNotEmpty) ...[
+                                            if (item
+                                                .selectedAreas
+                                                .isNotEmpty) ...[
                                               SizedBox(height: 4.h),
                                               Text(
                                                 "Target Areas: ${item.selectedAreas.map((e) => e.target.name ?? '').join(', ')}",
-                                                style: CustomFonts.grey12w400.copyWith(
-                                                  color: CustomColors.purpleColor,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
+                                                style: CustomFonts.grey12w400
+                                                    .copyWith(
+                                                      color: CustomColors
+                                                          .purpleColor,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
                                               ),
                                             ],
                                           ],
@@ -247,17 +299,25 @@ class ReviewScreen extends ConsumerWidget {
                                         runSpacing: 4.h,
                                         children: item.selectedAreas.map((e) {
                                           return Container(
-                                            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 10.w,
+                                              vertical: 4.h,
+                                            ),
                                             decoration: BoxDecoration(
-                                              color: CustomColors.lightPurpleColor.withValues(alpha: 0.12),
-                                              borderRadius: BorderRadius.circular(12.r),
+                                              color: CustomColors
+                                                  .lightPurpleColor
+                                                  .withValues(alpha: 0.12),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.r),
                                             ),
                                             child: Text(
                                               e.target.name ?? "Area",
-                                              style: CustomFonts.black12w600.copyWith(
-                                                color: CustomColors.purpleColor,
-                                                fontSize: 10.sp,
-                                              ),
+                                              style: CustomFonts.black12w600
+                                                  .copyWith(
+                                                    color: CustomColors
+                                                        .purpleColor,
+                                                    fontSize: 10.sp,
+                                                  ),
                                             ),
                                           );
                                         }).toList(),
@@ -266,7 +326,10 @@ class ReviewScreen extends ConsumerWidget {
                                   ],
                                   if (!isLast) ...[
                                     SizedBox(height: 12.h),
-                                    const Divider(height: 1, color: Colors.grey),
+                                    const Divider(
+                                      height: 1,
+                                      color: Colors.grey,
+                                    ),
                                     SizedBox(height: 12.h),
                                   ],
                                 ],
@@ -293,18 +356,29 @@ class ReviewScreen extends ConsumerWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Consultation standard fee", style: CustomFonts.grey14w400),
-                              Text("\$${consultationFee.toStringAsFixed(2)}", style: CustomFonts.black14w600),
+                              Text(
+                                "Consultation standard fee",
+                                style: CustomFonts.grey14w400,
+                              ),
+                              Text(
+                                "\$${consultationFee.toStringAsFixed(2)}",
+                                style: CustomFonts.black14w600,
+                              ),
                             ],
                           ),
                           const Divider(height: 24),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Total booking price", style: CustomFonts.black16w600),
+                              Text(
+                                "Total booking price",
+                                style: CustomFonts.black16w600,
+                              ),
                               Text(
                                 "\$${consultationFee.toStringAsFixed(2)}",
-                                style: CustomFonts.black16w600.copyWith(color: CustomColors.pinkColor),
+                                style: CustomFonts.black16w600.copyWith(
+                                  color: CustomColors.pinkColor,
+                                ),
                               ),
                             ],
                           ),
@@ -339,6 +413,7 @@ class ReviewScreen extends ConsumerWidget {
                   Navigator.pushNamed(
                     context,
                     PaymentScreen.routeName,
+                    arguments: clinic,
                   );
                 },
               ),

@@ -3,29 +3,34 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../models/dummy_list_model.dart';
+import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
-import '../utills/enums.dart';
+import '../view_models/checkout_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
-import '../view_models/checkout_view_model.dart';
-import 'select_date_time_screen.dart';
 import 'review_screen.dart';
+import 'select_date_time_screen.dart';
 
 class DoctorDetailScreen extends ConsumerWidget {
   static const routeName = '/doctor_detail_screen';
+  final Clinic clinic;
   final DummyDoctor doctor;
 
   const DoctorDetailScreen({
     super.key,
     required this.doctor,
+    required this.clinic,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final checkoutState = ref.watch(checkoutViewModel);
-    final bool hasDateTime = checkoutState.selectedDate != null && checkoutState.selectedSlot != null;
+    final bool hasDateTime =
+        checkoutState.selectedDate != null &&
+        checkoutState.selectedSlot != null;
 
     return Scaffold(
       backgroundColor: CustomColors.whiteColor,
@@ -63,7 +68,9 @@ class DoctorDetailScreen extends ConsumerWidget {
                       child: Column(
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+                            borderRadius: BorderRadius.vertical(
+                              top: Radius.circular(24.r),
+                            ),
                             child: CachedNetworkImage(
                               imageUrl: doctor.image,
                               height: 200.h,
@@ -71,11 +78,17 @@ class DoctorDetailScreen extends ConsumerWidget {
                               fit: BoxFit.cover,
                               placeholder: (context, url) => Container(
                                 color: Colors.grey.shade50,
-                                child: const Center(child: CupertinoActivityIndicator()),
+                                child: const Center(
+                                  child: CupertinoActivityIndicator(),
+                                ),
                               ),
                               errorWidget: (context, url, error) => Container(
                                 color: Colors.grey.shade50,
-                                child: const Icon(Icons.person, size: 50, color: Colors.grey),
+                                child: const Icon(
+                                  Icons.person,
+                                  size: 50,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ),
                           ),
@@ -90,13 +103,20 @@ class DoctorDetailScreen extends ConsumerWidget {
                                 SizedBox(height: 6.h),
                                 Text(
                                   doctor.specialization,
-                                  style: CustomFonts.grey14w400.copyWith(color: CustomColors.pinkColor, fontWeight: FontWeight.w600),
+                                  style: CustomFonts.grey14w400.copyWith(
+                                    color: CustomColors.pinkColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                                 SizedBox(height: 10.h),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(Icons.star_rounded, color: Colors.amber, size: 20),
+                                    const Icon(
+                                      Icons.star_rounded,
+                                      color: Colors.amber,
+                                      size: 20,
+                                    ),
                                     SizedBox(width: 4.w),
                                     Text(
                                       doctor.rating.toString(),
@@ -109,11 +129,17 @@ class DoctorDetailScreen extends ConsumerWidget {
                                       color: Colors.grey.shade300,
                                     ),
                                     SizedBox(width: 16.w),
-                                    const Icon(Icons.verified_user_rounded, color: CustomColors.blueColor, size: 18),
+                                    const Icon(
+                                      Icons.verified_user_rounded,
+                                      color: CustomColors.blueColor,
+                                      size: 18,
+                                    ),
                                     SizedBox(width: 4.w),
                                     Text(
                                       "Board Certified",
-                                      style: CustomFonts.grey12w400.copyWith(fontWeight: FontWeight.bold),
+                                      style: CustomFonts.grey12w400.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -137,9 +163,21 @@ class DoctorDetailScreen extends ConsumerWidget {
                     // Professional Qualifications Card
                     Text("Qualifications", style: CustomFonts.black18w600),
                     SizedBox(height: 10.h),
-                    _buildQualificationItem(Icons.school_rounded, "MD in Aesthetic & Clinical Dermatology", "Stanford University School of Medicine"),
-                    _buildQualificationItem(Icons.workspace_premium_rounded, "Board of Facial Plastic & Reconstructive Surgery", "Active Premium Member"),
-                    _buildQualificationItem(Icons.business_center_rounded, "Resident MedSpa Physician Specialist", doctor.clinicName),
+                    _buildQualificationItem(
+                      Icons.school_rounded,
+                      "MD in Aesthetic & Clinical Dermatology",
+                      "Stanford University School of Medicine",
+                    ),
+                    _buildQualificationItem(
+                      Icons.workspace_premium_rounded,
+                      "Board of Facial Plastic & Reconstructive Surgery",
+                      "Active Premium Member",
+                    ),
+                    _buildQualificationItem(
+                      Icons.business_center_rounded,
+                      "Resident MedSpa Physician Specialist",
+                      doctor.clinicName,
+                    ),
                   ],
                 ),
               ),
@@ -160,18 +198,21 @@ class DoctorDetailScreen extends ConsumerWidget {
                 ],
               ),
               child: CustomButton(
-                text: hasDateTime ? "Review Consultation Booking" : "Select Date & Time Slot",
+                text: hasDateTime
+                    ? "Review Consultation Booking"
+                    : "Select Date & Time Slot",
                 onPressed: () {
                   if (hasDateTime) {
                     Navigator.pushNamed(
                       context,
                       ReviewScreen.routeName,
+                      arguments: clinic,
                     );
                   } else {
                     Navigator.pushNamed(
                       context,
                       SelectDateTimeScreen.routeName,
-                      arguments: InviteType.clinic,
+                      arguments: clinic,
                     );
                   }
                 },

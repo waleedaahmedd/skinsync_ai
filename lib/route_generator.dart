@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'models/dummy_list_model.dart';
 import 'models/responses/get_clinic_response.dart';
 import 'models/responses/treatment_area_list_response.dart';
 import 'models/responses/treatment_category_list_response.dart';
@@ -185,27 +184,33 @@ class RouteGenerator {
       case DoctorsScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: DoctorsScreen.routeName),
-          builder: (_) => const DoctorsScreen(),
+          builder: (_) => DoctorsScreen(clinic: args as Clinic),
         );
       case DoctorDetailScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: DoctorDetailScreen.routeName),
-          builder: (_) => DoctorDetailScreen(doctor: args as DummyDoctor),
+          builder: (_) {
+            final data = args as Map<String, dynamic>;
+            return DoctorDetailScreen(
+              doctor: data['doctor']!,
+              clinic: data['clinic']!,
+            );
+          },
         );
       case SelectDateTimeScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: SelectDateTimeScreen.routeName),
-          builder: (_) => SelectDateTimeScreen(inviteType: args as InviteType?),
+          builder: (_) => SelectDateTimeScreen(clinic: args as Clinic),
         );
       case ReviewScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: ReviewScreen.routeName),
-          builder: (_) => const ReviewScreen(),
+          builder: (_) => ReviewScreen(clinic: args as Clinic),
         );
       case PaymentScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: PaymentScreen.routeName),
-          builder: (_) => const PaymentScreen(),
+          builder: (_) => PaymentScreen(clinic: args as Clinic),
         );
       case ClinicServiceScreen.routeName:
         return MaterialPageRoute(
