@@ -348,6 +348,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
         availability: availability,
       );
       await _clinicRepository.inviteClinic(request);
+      EasyLoading.dismiss();
       return true;
     });
   }
