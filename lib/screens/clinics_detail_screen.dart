@@ -11,11 +11,6 @@ import '../models/responses/get_clinic_response.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
-
-// import '../widgets/bottom_sheets/before_you_bookbottomsheet.dart';
-// import '../widgets/bottom_sheets/pre_booking_bottom_sheet.dart';
-// import '../widgets/bottom_sheets/wallet_confirmation_bottom_sheet.dart';
-// import '../widgets/dialogs/appointment_success_dialog.dart';
 import '../utills/enums.dart';
 import '../widgets/custom_button.dart';
 // import 'bottom_nav_page.dart';

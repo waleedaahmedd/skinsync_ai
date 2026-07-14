@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/base_state_model.dart';
 import '../models/dummy_list_model.dart';
 import '../models/flat_selection_model.dart';
@@ -133,7 +134,10 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
         (state.selectedAreas?.subAreas?.any((e) => e.id == id) ?? false);
     final updatedList = alreadySelected
         ? state.selectedAreas?.subAreas ?? <TreatmentAreaModel>[]
-        : <TreatmentAreaModel>[...state.selectedAreas?.subAreas ?? [], treatmentSubArea];
+        : <TreatmentAreaModel>[
+            ...state.selectedAreas?.subAreas ?? [],
+            treatmentSubArea,
+          ];
     state = state.copyWith(
       selectedAreas: treatmentSubArea.copyWith(subAreas: updatedList),
     );
