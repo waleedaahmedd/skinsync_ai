@@ -10,8 +10,7 @@ import '../utills/enums.dart';
 
 class OnBoardingService implements OnBoardingRepository {
   final ApiBaseHelper _apiClient;
-  OnBoardingService({required ApiBaseHelper apiClient})
-    : _apiClient = apiClient;
+  OnBoardingService({required this._apiClient});
   @override
   Future<OnBoardingQuestionResponse> questionApi() async {
     final response = await _apiClient.httpRequest(

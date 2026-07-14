@@ -3,12 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/models/dummy_list_model.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/custom_app_bar.dart';
-import 'package:skinsync_ai/widgets/custom_button.dart';
-import 'package:skinsync_ai/view_models/checkout_view_model.dart';
+import '../models/dummy_list_model.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_button.dart';
+import '../view_models/checkout_view_model.dart';
 import 'select_date_time_screen.dart';
 import 'review_screen.dart';
 

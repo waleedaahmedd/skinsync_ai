@@ -34,8 +34,7 @@ class _TreatmentSelectionScreenState extends State<TreatmentSelectionScreen> {
               child: Consumer(
                 builder: (context, ref, _) {
                   final state = ref.watch(treatmentViewModel);
-                  final isLoading = state
-                      .treatmentsLoading; // Use separate loading for treatments
+                  final isLoading = state.loading;
                   final treatments = state.treatments;
 
                   // Fetch treatments if not already loaded and not currently loading

@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/models/dummy_list_model.dart';
-import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/utills/enums.dart';
-import 'package:skinsync_ai/widgets/custom_app_bar.dart';
-import 'package:skinsync_ai/widgets/treatment_container.dart';
-import 'package:skinsync_ai/view_models/checkout_view_model.dart';
-import 'clinic_service_screen.dart';
+import '../models/dummy_list_model.dart';
+import '../models/responses/get_clinic_response.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/treatment_container.dart';
+import '../view_models/checkout_view_model.dart';
 import 'doctors_screen.dart';
 
 class SelectAppointmentTypeScreen extends ConsumerWidget {

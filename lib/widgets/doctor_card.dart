@@ -2,9 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/models/dummy_list_model.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../models/dummy_list_model.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 
 class DoctorCard extends StatelessWidget {
   final DummyDoctor doctor;

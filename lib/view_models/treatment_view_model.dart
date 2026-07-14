@@ -25,15 +25,13 @@ import 'checkout_view_model.dart';
 import 'treatment_area_view_model.dart';
 
 final treatmentViewModel = NotifierProvider(
-  () => TreatmentViewModel._(
-    treatmentRepository: TreatmentService(apiClient: ApiBaseHelper()),
-  ),
+  () =>
+      TreatmentViewModel._(repo: TreatmentService(apiClient: ApiBaseHelper())),
 );
 
 class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
-  TreatmentViewModel._({required TreatmentRepository treatmentRepository})
-    : _repo = treatmentRepository,
-      super(initialState: const TreatmentsState());
+  TreatmentViewModel._({required this._repo})
+    : super(initialState: const TreatmentsState());
 
   final TreatmentRepository _repo;
 
@@ -59,14 +57,15 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     if (area != null) {
       onTapTreatmentArea(area);
     }
-    final subAreas =
-        state.selectTreatmentArea?.subAreas ?? <TreatmentAreaModel>[];
+    final subAreas = ref.read(checkoutViewModel).selectedAreas?.subAreas ?? [];
     for (final subArea in subAreas) {
       final selectedSubArea = simulation.subsections?.firstWhereOrNull(
         (subSection) => subSection.sectionId == subArea.id,
       );
       if (selectedSubArea != null) {
-        onTapTreatmentSubArea(subArea: subArea);
+        ref
+            .read(checkoutViewModel.notifier)
+            .onTapTreatmentSubArea(subArea: subArea);
       }
     }
     EasyLoading.show(status: 'Downloading images...');
@@ -91,12 +90,8 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   }
 
   void removeSubArea(int id) {
-    state = state.copyWith(
-      selectedSubAreasList: state.selectedSubAreasList
-          .where((element) => element.id != id)
-          .toList(),
-      isAiImageGenerated: false,
-    );
+    ref.read(checkoutViewModel.notifier).removeArea(id);
+    state = state.copyWith(isAiImageGenerated: false);
   }
 
   void toggleIsBefore() => state = state.copyWith(isBefore: !state.isBefore);
@@ -108,21 +103,14 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
   void clearAiImage() => state = state.copyWith(clearAiImage: true);
 
-  void _clearAreaSelection() {
-    state = state.copyWith(clearSelectSectionId: true);
-  }
-
   Future<void> onTapTreatment({
     required TreatmentData treatmentModel,
     required bool isCallPredictAPI,
   }) async {
-    state = state.copyWith(
-      selectedTreatment: treatmentModel,
-      clearSubSectionIds: true,
-      areaNavigationStack: const [],
-    );
+    state = state.copyWith(areaNavigationStack: const []);
     clearAiImage();
-    _clearAreaSelection();
+    ref.read(checkoutViewModel.notifier).setSelectedTreatments(treatmentModel);
+    ref.read(checkoutViewModel.notifier).clearAreaSelection();
     state = state.copyWith(isBefore: true);
     if (treatmentModel.isArea == true && isCallPredictAPI) {
       await ref
@@ -133,10 +121,8 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
   void onTapTreatmentArea(TreatmentAreaModel treatmentArea) {
     final updatedStack = [...state.areaNavigationStack, treatmentArea];
-    state = state.copyWith(
-      selectedTreatmentArea: treatmentArea,
-      areaNavigationStack: updatedStack,
-    );
+    ref.read(checkoutViewModel.notifier).setSelectedAreas(treatmentArea);
+    state = state.copyWith(areaNavigationStack: updatedStack);
   }
 
   void popAreaNavigationStack() {
@@ -145,36 +131,14 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         state.areaNavigationStack,
       )..removeLast();
       final previousArea = updatedStack.isNotEmpty ? updatedStack.last : null;
-      state = state.copyWith(
-        selectedTreatmentArea: previousArea,
-        areaNavigationStack: updatedStack,
-      );
+      ref.read(checkoutViewModel.notifier).setSelectedAreas(previousArea);
+      state = state.copyWith(areaNavigationStack: updatedStack);
     }
   }
 
   void resetAreaNavigationStack() {
-    state = state.copyWith(
-      selectedTreatmentArea: null,
-      areaNavigationStack: const [],
-    );
-  }
-
-  void onTapTreatmentSubArea({required TreatmentAreaModel subArea}) {
-    final parentId =
-        state.selectTreatmentArea?.id ?? subArea.areaId ?? subArea.id ?? 0;
-    final treatmentSubArea = subArea.copyWith(areaId: parentId);
-    final id = treatmentSubArea.id;
-    final alreadySelected =
-        id != null && state.selectedSubAreasList.any((e) => e.id == id);
-    final updatedList = alreadySelected
-        ? state.selectedSubAreasList
-        : [...state.selectedSubAreasList, treatmentSubArea];
-
-    state = state.copyWith(
-      selectedTreatmentSubArea: treatmentSubArea,
-      selectedSubAreasList: updatedList,
-      isAiImageGenerated: false,
-    );
+    ref.read(checkoutViewModel.notifier).clearAreaSelection();
+    state = state.copyWith(areaNavigationStack: const []);
   }
 
   void clearAllSelectedTreatments() {
@@ -182,29 +146,11 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       loading: state.loading,
       errorMessage: state.errorMessage,
       treatments: state.treatments,
-      arTreatments: state.arTreatments,
-      treatmentsLoading: state.treatmentsLoading,
-      selectedTreatment: null,
-      selectTreatmentArea: null,
-      selectedSubAreasList: const [],
       areaNavigationStack: const [],
       isBefore: true,
       capturedImage: state.capturedImage,
       aiImage: null,
       isAiImageGenerated: false,
-      isLoading: state.isLoading,
-      isLoadingMore: state.isLoadingMore,
-      hasMoreData: state.hasMoreData,
-      totalPages: state.totalPages,
-      areaId: state.areaId,
-      isSimulator: state.isSimulator,
-      isArLoading: state.isArLoading,
-      isArLoadingMore: state.isArLoadingMore,
-      hasMoreArData: state.hasMoreArData,
-      arCurrentPage: state.arCurrentPage,
-      arTotalPages: state.arTotalPages,
-      arSearchQuery: state.arSearchQuery,
-      arAreaId: state.arAreaId,
       materials: state.materials,
       materialsLoading: state.materialsLoading,
     );
@@ -218,214 +164,19 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     bool? isSimulator,
   }) async {
     return await runSafely(() async {
-      state = state.copyWith(
-        isLoading: true,
-        treatmentsLoading: true,
-        errorMessage: null,
-        clearCategoryId: categoryId == null,
-        areaId: areaId,
-        clearAreaId: areaId == null,
-        isSimulator: isSimulator,
-        clearIsSimulator: isSimulator == null,
-        treatments: [],
-      );
+      state = state.copyWith(loading: true, errorMessage: null, treatments: []);
       final response = await _repo.getTreatments(
         search: search,
         categoryId: categoryId,
-        areaId: state.areaId,
+        areaId: areaId,
         page: page,
         limit: 10,
-        isSimulator: state.isSimulator,
+        isSimulator: isSimulator,
       );
-
-      final hasMore = (response.page ?? 1) < (response.totalPages ?? 1);
-      state = state.copyWith(
-        isLoading: false,
-        treatmentsLoading: false,
-        treatments: response.data ?? [],
-        totalPages: response.totalPages ?? 1,
-        hasMoreData: hasMore,
-      );
+      state = state.copyWith(loading: false, treatments: response.data ?? []);
       return response.data ?? [];
     });
   }
-
-  // Future<void> loadMoreTreatments() async {
-  //   if (state.isLoadingMore || !state.hasMoreData) return;
-  //
-  //   state = state.copyWith(isLoadingMore: true);
-  //
-  //   await runSafely(() async {
-  //     final nextPage = state.currentPage + 1;
-  //     final response = await _repo.getTreatments(
-  //       search: state.searchQuery.isEmpty ? null : state.searchQuery,
-  //       categoryId: state.categoryId,
-  //       areaId: state.areaId,
-  //       page: nextPage,
-  //       limit: 10,
-  //       isSimulator: state.isSimulator,
-  //     );
-  //
-  //     final hasMore = (response.page ?? nextPage) < (response.totalPages ?? 1);
-  //     final List<TreatmentData> updatedTreatments = [
-  //       ...state.treatments,
-  //       ...(response.data ?? []),
-  //     ];
-  //
-  //     state = state.copyWith(
-  //       isLoadingMore: false,
-  //       treatments: updatedTreatments,
-  //       currentPage: response.page ?? nextPage,
-  //       totalPages: response.totalPages ?? 1,
-  //       hasMoreData: hasMore,
-  //     );
-  //   });
-  // }
-
-  // Future<void> loadArTreatments({
-  //   int? categoryId,
-  //   int? areaId,
-  //   bool clearSearch = false,
-  //   bool? isSimulator,
-  // }) async {
-  //   state = state.copyWith(
-  //     isArLoading: true,
-  //     isArLoadingMore: true,
-  //     errorMessage: null,
-  //     arCurrentPage: 1,
-  //     clearCategoryId: categoryId == null,
-  //     arAreaId: areaId,
-  //     clearArAreaId: areaId == null,
-  //     isSimulator: isSimulator,
-  //     clearIsSimulator: isSimulator == null,
-  //     arSearchQuery: clearSearch ? "" : state.arSearchQuery,
-  //     arTreatments: [],
-  //   );
-  //
-  //   await runSafely(() async {
-  //     final response = await _repo.getTreatments(
-  //       search: state.arSearchQuery.isEmpty ? null : state.arSearchQuery,
-  //       categoryId: state.categoryId,
-  //       areaId: state.arAreaId,
-  //       page: 1,
-  //       limit: 10,
-  //       isSimulator: state.isSimulator,
-  //     );
-  //
-  //     final hasMore = (response.page ?? 1) < (response.totalPages ?? 1);
-  //     state = state.copyWith(
-  //       isArLoading: false,
-  //       isArLoadingMore: false,
-  //       arTreatments: response.data ?? [],
-  //       arCurrentPage: response.page ?? 1,
-  //       arTotalPages: response.totalPages ?? 1,
-  //       hasMoreArData: hasMore,
-  //     );
-  //   });
-  // }
-
-  // Future<void> loadMoreArTreatments() async {
-  //   if (state.isArLoadingMore || !state.hasMoreArData) return;
-  //
-  //   state = state.copyWith(isArLoadingMore: true);
-  //
-  //   await runSafely(() async {
-  //     final nextPage = state.arCurrentPage + 1;
-  //     final response = await _repo.getTreatments(
-  //       search: state.arSearchQuery.isEmpty ? null : state.arSearchQuery,
-  //       categoryId: state.categoryId,
-  //       areaId: state.arAreaId,
-  //       page: nextPage,
-  //       limit: 10,
-  //       isSimulator: state.isSimulator,
-  //     );
-  //
-  //     final hasMore = (response.page ?? nextPage) < (response.totalPages ?? 1);
-  //     final List<TreatmentData> updatedTreatments = [
-  //       ...state.arTreatments,
-  //       ...(response.data ?? []),
-  //     ];
-  //
-  //     state = state.copyWith(
-  //       isArLoadingMore: false,
-  //       arTreatments: updatedTreatments,
-  //       arCurrentPage: response.page ?? nextPage,
-  //       arTotalPages: response.totalPages ?? 1,
-  //       hasMoreArData: hasMore,
-  //     );
-  //   });
-  // }
-
-  // Future<void> refreshTreatments() async {
-  //   await loadTreatments(
-  //     categoryId: state.categoryId,
-  //     areaId: state.areaId,
-  //     isSimulator: state.isSimulator,
-  //   );
-  // }
-
-  // Future<bool?> getTreatments({bool? isSimulator}) async {
-  //   await loadTreatments(
-  //     categoryId: state.categoryId,
-  //     areaId: state.areaId,
-  //     isSimulator: isSimulator,
-  //   );
-  //   return !state.isLoading;
-  // }
-  //
-  // Future<void> fetchingTreatmentLogic({
-  //   required String flow,
-  //   int? categoryId,
-  //   int? areaId,
-  //   bool? isSimulator,
-  //   bool isArList = false,
-  // }) async {
-  //   int? targetCategoryId;
-  //   int? targetAreaId;
-  //   bool? targetIsSimulator;
-  //
-  //   switch (flow) {
-  //     case 'allTreatments':
-  //       targetCategoryId = null;
-  //       targetAreaId = null;
-  //       targetIsSimulator = null;
-  //       break;
-  //
-  //     case 'byCategory':
-  //       targetCategoryId = categoryId;
-  //       targetAreaId = null;
-  //       targetIsSimulator = null;
-  //       break;
-  //
-  //     case 'scanYourFace':
-  //       targetCategoryId = state.categoryId;
-  //       targetAreaId = null;
-  //       targetIsSimulator = isSimulator ?? true;
-  //       break;
-  //
-  //     default:
-  //       targetCategoryId = categoryId;
-  //       targetAreaId = areaId;
-  //       targetIsSimulator = isSimulator;
-  //       break;
-  //   }
-  //
-  //   if (isArList) {
-  //     await loadArTreatments(
-  //       categoryId: targetCategoryId,
-  //       areaId: targetAreaId,
-  //       isSimulator: targetIsSimulator,
-  //       clearSearch: true,
-  //     );
-  //   } else {
-  //     await loadTreatments(
-  //       categoryId: targetCategoryId,
-  //       areaId: targetAreaId,
-  //       isSimulator: targetIsSimulator,
-  //       clearSearch: true,
-  //     );
-  //   }
-  // }
 
   Future<MaterialsResponse?> getMaterials({
     required String treatmentSku,
@@ -528,9 +279,8 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       Uri.parse('http://18.116.65.70/api/'),
     );
 
-    final selectedTreatmentsAndAreas = ref
-        .read(checkoutViewModel)
-        .selectedTreatmentsAndAreas;
+    final checkoutState = ref.read(checkoutViewModel);
+    final selectedTreatmentsAndAreas = checkoutState.selectedTreatmentsAndAreas;
 
     final treatmentAreasJson = selectedTreatmentsAndAreas.map((item) {
       return {
@@ -549,7 +299,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
     final treatmentSku = selectedTreatmentsAndAreas.isNotEmpty
         ? selectedTreatmentsAndAreas.first.treatment.globalSku
-        : (state.selectedTreatment?.globalSku ?? '');
+        : (checkoutState.selectedTreatments?.globalSku ?? '');
 
     request.fields.addAll({
       'treatment_sku': treatmentSku ?? '',
@@ -660,7 +410,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
   @override
   void onError(String message) {
-    state = state.copyWith(treatmentsLoading: false);
+    state = state.copyWith(loading: false, materialsLoading: false);
     super.onError(message);
     EasyLoading.showError(message);
   }
@@ -669,35 +419,11 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 @immutable
 class TreatmentsState extends BaseStateModel {
   final List<TreatmentData> treatments;
-  final List<TreatmentData> arTreatments;
-  final bool treatmentsLoading;
-
-  final TreatmentData? selectedTreatment;
-  final TreatmentAreaModel? selectTreatmentArea;
-  final List<TreatmentAreaModel> selectedSubAreasList;
   final List<TreatmentAreaModel> areaNavigationStack;
-
   final bool isBefore;
   final XFile? capturedImage;
   final XFile? aiImage;
   final bool isAiImageGenerated;
-
-  // New fields for Treatment Listing API migration
-  final bool isLoading;
-  final bool isLoadingMore;
-  final bool hasMoreData;
-  final int totalPages;
-  final int? areaId;
-  final bool? isSimulator;
-  final bool isArLoading;
-  final bool isArLoadingMore;
-  final bool hasMoreArData;
-  final int arCurrentPage;
-  final int arTotalPages;
-  final String arSearchQuery;
-  final int? arAreaId;
-
-  // New fields for Materials API
   final List<MaterialData> materials;
   final bool materialsLoading;
 
@@ -705,31 +431,13 @@ class TreatmentsState extends BaseStateModel {
     super.loading = false,
     super.errorMessage,
     this.treatments = const [],
-    this.arTreatments = const [],
-    this.treatmentsLoading = false,
-    this.selectedTreatment,
-    this.selectTreatmentArea,
     this.materials = const [],
     this.materialsLoading = false,
-    this.selectedSubAreasList = const [],
     this.areaNavigationStack = const [],
     this.isBefore = false,
     this.capturedImage,
     this.aiImage,
     this.isAiImageGenerated = false,
-    this.isLoading = false,
-    this.isLoadingMore = false,
-    this.hasMoreData = false,
-    this.totalPages = 1,
-    this.areaId,
-    this.isSimulator,
-    this.isArLoading = false,
-    this.isArLoadingMore = false,
-    this.hasMoreArData = false,
-    this.arCurrentPage = 1,
-    this.arTotalPages = 1,
-    this.arSearchQuery = "",
-    this.arAreaId,
   });
 
   @override
@@ -737,38 +445,12 @@ class TreatmentsState extends BaseStateModel {
     bool? loading,
     String? errorMessage,
     List<TreatmentData>? treatments,
-    List<TreatmentData>? arTreatments,
-    bool? treatmentsLoading,
-    TreatmentData? selectedTreatment,
-    TreatmentAreaModel? selectedTreatmentArea,
-    TreatmentAreaModel? selectedTreatmentSubArea,
-    List<TreatmentAreaModel>? selectedSubAreasList,
     List<TreatmentAreaModel>? areaNavigationStack,
     bool? isBefore,
     XFile? capturedImage,
     XFile? aiImage,
-    bool clearSelectSectionId = false,
-    bool clearSubSectionId = false,
-    bool clearSubSectionIds = false,
     bool clearAiImage = false,
     bool? isAiImageGenerated,
-    bool? isLoading,
-    bool? isLoadingMore,
-    bool? hasMoreData,
-    int? totalPages,
-    int? areaId,
-    bool clearCategoryId = false,
-    bool clearAreaId = false,
-    bool? isSimulator,
-    bool clearIsSimulator = false,
-    bool? isArLoading,
-    bool? isArLoadingMore,
-    bool? hasMoreArData,
-    int? arCurrentPage,
-    int? arTotalPages,
-    String? arSearchQuery,
-    int? arAreaId,
-    bool clearArAreaId = false,
     List<MaterialData>? materials,
     bool? materialsLoading,
   }) {
@@ -776,33 +458,11 @@ class TreatmentsState extends BaseStateModel {
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
       treatments: treatments ?? this.treatments,
-      arTreatments: arTreatments ?? this.arTreatments,
-      treatmentsLoading: treatmentsLoading ?? this.treatmentsLoading,
-      selectedTreatment: selectedTreatment ?? this.selectedTreatment,
-      selectTreatmentArea: clearSelectSectionId
-          ? null
-          : (selectedTreatmentArea ?? selectTreatmentArea),
-      selectedSubAreasList: clearSubSectionIds
-          ? const []
-          : (selectedSubAreasList ?? this.selectedSubAreasList),
       areaNavigationStack: areaNavigationStack ?? this.areaNavigationStack,
       isBefore: isBefore ?? this.isBefore,
       capturedImage: capturedImage ?? this.capturedImage,
       aiImage: clearAiImage ? null : (aiImage ?? this.aiImage),
       isAiImageGenerated: isAiImageGenerated ?? this.isAiImageGenerated,
-      isLoading: isLoading ?? this.isLoading,
-      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-      hasMoreData: hasMoreData ?? this.hasMoreData,
-      totalPages: totalPages ?? this.totalPages,
-      areaId: clearAreaId ? null : (areaId ?? this.areaId),
-      isSimulator: clearIsSimulator ? null : (isSimulator ?? this.isSimulator),
-      isArLoading: isArLoading ?? this.isArLoading,
-      isArLoadingMore: isArLoadingMore ?? this.isArLoadingMore,
-      hasMoreArData: hasMoreArData ?? this.hasMoreArData,
-      arCurrentPage: arCurrentPage ?? this.arCurrentPage,
-      arTotalPages: arTotalPages ?? this.arTotalPages,
-      arSearchQuery: arSearchQuery ?? this.arSearchQuery,
-      arAreaId: clearArAreaId ? null : (arAreaId ?? this.arAreaId),
       materials: materials ?? this.materials,
       materialsLoading: materialsLoading ?? this.materialsLoading,
     );

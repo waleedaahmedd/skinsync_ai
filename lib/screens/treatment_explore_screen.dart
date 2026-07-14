@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/screens/bottom_nav_screens/treatments_screen.dart';
-import 'package:skinsync_ai/screens/treatment_category_screen.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/checkout_view_model.dart';
-import 'package:skinsync_ai/view_models/treatment_view_model.dart';
-import 'package:skinsync_ai/widgets/treatment_container.dart';
+import 'bottom_nav_screens/treatments_screen.dart';
+import 'treatment_category_screen.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/checkout_view_model.dart';
+import '../view_models/treatment_view_model.dart';
+import '../widgets/treatment_container.dart';
 
 class TreatmentExploreScreen extends ConsumerWidget {
   const TreatmentExploreScreen({super.key});

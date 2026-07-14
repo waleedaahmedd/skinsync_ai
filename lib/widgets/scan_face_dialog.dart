@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/screens/bottom_nav_screens/face_detection_screen.dart';
-import 'package:skinsync_ai/screens/treatment_area_screen.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/custom_button.dart';
-import 'package:skinsync_ai/view_models/checkout_view_model.dart';
-import 'package:skinsync_ai/view_models/treatment_area_view_model.dart';
 
-import '../view_models/treatment_view_model.dart';
+import '../screens/bottom_nav_screens/face_detection_screen.dart';
+import '../screens/treatment_area_screen.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/checkout_view_model.dart';
+import 'custom_button.dart';
 
 void showMScanFaceDialog(BuildContext context) {
   showDialog(
@@ -63,7 +61,9 @@ void showMScanFaceDialog(BuildContext context) {
                 textColor: Colors.white,
                 onPressed: () {
                   Navigator.pop(dialogContext); // close dialog
-                  Navigator.of(context).pushNamed(FaceDetectionScreen.routeName);
+                  Navigator.of(
+                    context,
+                  ).pushNamed(FaceDetectionScreen.routeName);
                 },
               ),
               SizedBox(height: 12.h),
@@ -74,7 +74,10 @@ void showMScanFaceDialog(BuildContext context) {
                   return Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25.r),
-                      border: Border.all(color: CustomColors.darkPurple, width: 1.5),
+                      border: Border.all(
+                        color: CustomColors.darkPurple,
+                        width: 1.5,
+                      ),
                     ),
                     child: CustomButton(
                       text: "Select Treatment Areas",
@@ -84,7 +87,9 @@ void showMScanFaceDialog(BuildContext context) {
                       onPressed: () {
                         Navigator.pop(dialogContext); // close dialog
 
-                        final treatment = ref.read(treatmentViewModel).selectedTreatment;
+                        final treatment = ref
+                            .read(checkoutViewModel)
+                            .selectedTreatments;
                         Navigator.pushNamed(
                           context,
                           TreatmentAreaScreen.routeName,

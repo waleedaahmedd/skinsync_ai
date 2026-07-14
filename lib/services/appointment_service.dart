@@ -10,8 +10,7 @@ import '../models/responses/simulation_history_response.dart';
 
 class AppointmentService implements AppointmentRepository {
   final ApiBaseHelper _apiClient;
-  AppointmentService({required ApiBaseHelper apiClient})
-    : _apiClient = apiClient;
+  AppointmentService({required this._apiClient});
   @override
   Future<GetAppointmentResponse> getAppointmentsApi({
     required int page,

@@ -6,22 +6,21 @@ import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../widgets/app_network_image.dart';
+
 import '../models/responses/get_clinic_response.dart';
 import '../models/responses/get_doctor_response.dart';
-import '../view_models/clinic_view_model.dart';
-import '../view_models/doctor_view_model.dart';
-import '../widgets/app_loader.dart';
-import 'package:skinsync_ai/widgets/app_network_image.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/time_container.dart';
-import '../widgets/treatment_price_container.dart';
-
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/date_time_utills.dart';
 import '../view_models/checkout_view_model.dart';
-import '../view_models/treatment_view_model.dart';
+import '../view_models/clinic_view_model.dart';
+import '../view_models/doctor_view_model.dart';
+import '../widgets/app_loader.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/time_container.dart';
+import '../widgets/treatment_price_container.dart';
 import 'treatment_payment_screen.dart';
 
 class ClinicServiceScreen extends ConsumerStatefulWidget {
@@ -44,18 +43,18 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final treatment = ref.read(
-        treatmentViewModel.select((state) => state.selectedTreatment),
+        checkoutViewModel.select((state) => state.selectedTreatments),
       );
       final subAreas = ref.read(
-        treatmentViewModel.select((state) => state.selectedSubAreasList),
+        checkoutViewModel.select(
+          (state) => state.selectedAreas?.subAreas ?? [],
+        ),
       );
 
       final subAreaIds = subAreas.map((e) => e.id).whereType<int>().toList();
 
       if (widget.clinic?.clinicId != null) {
-        ref
-            .read(clinicProvider.notifier)
-            .setClinicId(widget.clinic!.clinicId!);
+        ref.read(clinicProvider.notifier).setClinicId(widget.clinic!.clinicId!);
       }
 
       await ref
@@ -108,7 +107,9 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
       extendBody: true,
       appBar: const CustomAppBar(showTitle: false),
       body: Container(
-        decoration: const BoxDecoration(gradient: CustomColors.whiteBlueGradient),
+        decoration: const BoxDecoration(
+          gradient: CustomColors.whiteBlueGradient,
+        ),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,8 +186,9 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                               .watch(checkoutViewModel)
                               .selectedTreatments,
                           selectedSubAreasList: [
-                            if (ref.watch(checkoutViewModel).selectedAreas != null)
-                              ref.watch(checkoutViewModel).selectedAreas!
+                            if (ref.watch(checkoutViewModel).selectedAreas !=
+                                null)
+                              ref.watch(checkoutViewModel).selectedAreas!,
                           ],
 
                           image: DummyAssets.treatmentimage,
@@ -276,9 +278,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                     Consumer(
                       builder: (_, ref, _) {
                         final state = ref.watch(
-                          doctorProvider.select(
-                            (s) => (s.slots, s.loading),
-                          ),
+                          doctorProvider.select((s) => (s.slots, s.loading)),
                         );
                         if (state.$1.isEmpty) {
                           return Center(

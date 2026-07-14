@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:skinsync_ai/models/requests/onboarding_profile_request.dart';
-import 'package:skinsync_ai/models/requests/otp_request.dart';
-import 'package:skinsync_ai/models/responses/address_data.dart';
-import 'package:skinsync_ai/models/responses/base_response_model.dart';
-import 'package:skinsync_ai/services/apple_auth_service.dart';
-import 'package:skinsync_ai/services/google_auth_service.dart';
-import 'package:skinsync_ai/services/media_service.dart';
-import 'package:skinsync_ai/utills/biometric_helper.dart';
+import '../models/requests/onboarding_profile_request.dart';
+import '../models/requests/otp_request.dart';
+import '../models/responses/address_data.dart';
+import '../models/responses/base_response_model.dart';
+import '../services/apple_auth_service.dart';
+import '../services/google_auth_service.dart';
+import '../services/media_service.dart';
+import '../utills/biometric_helper.dart';
 
 import '../models/base_state_model.dart';
 import '../models/requests/sign_in_request.dart';
@@ -31,9 +31,8 @@ final authViewModel = NotifierProvider(() {
 });
 
 class AuthViewModel extends BaseViewModel<AuthState> {
-  AuthViewModel({required AuthRepository authRepository})
-    : _authRepository = authRepository,
-      super(initialState: AuthState());
+  AuthViewModel({required this._authRepository})
+    : super(initialState: const AuthState());
 
   final AuthRepository _authRepository;
   final ImagePicker _imagePicker = ImagePicker();

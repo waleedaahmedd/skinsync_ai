@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:skinsync_ai/models/dummy_list_model.dart';
-import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/custom_app_bar.dart';
-import 'package:skinsync_ai/widgets/doctor_card.dart';
-import 'package:skinsync_ai/widgets/custom_search_field.dart';
-import 'package:skinsync_ai/view_models/checkout_view_model.dart';
-import 'package:skinsync_ai/utills/enums.dart';
+import '../models/dummy_list_model.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/doctor_card.dart';
+import '../widgets/custom_search_field.dart';
+import '../view_models/checkout_view_model.dart';
+import '../utills/enums.dart';
 import 'doctor_detail_screen.dart';
 
 class DoctorsScreen extends ConsumerStatefulWidget {

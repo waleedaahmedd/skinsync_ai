@@ -1,5 +1,5 @@
-import 'package:skinsync_ai/models/responses/treatment_list_response.dart';
-import 'package:skinsync_ai/models/responses/treatment_area_list_response.dart';
+import 'responses/treatment_list_response.dart';
+import 'responses/treatment_area_list_response.dart';
 
 class SelectedMaterialModel {
   final int id;

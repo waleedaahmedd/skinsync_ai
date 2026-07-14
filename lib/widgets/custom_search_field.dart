@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
 
 class CustomSearchField extends StatefulWidget {
   final TextEditingController? controller;
@@ -81,7 +81,7 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
         contentPadding: EdgeInsets.symmetric(vertical: 12.h),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.r),
-          borderSide: BorderSide(color: CustomColors.greyColor),
+          borderSide: const BorderSide(color: CustomColors.greyColor),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.r),
@@ -89,7 +89,7 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30.r),
-          borderSide: BorderSide(color: CustomColors.purpleColor),
+          borderSide: const BorderSide(color: CustomColors.purpleColor),
         ),
         fillColor: Colors.white,
         filled: true,

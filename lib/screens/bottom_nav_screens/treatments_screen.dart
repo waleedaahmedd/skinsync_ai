@@ -5,10 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:skinsync_ai/models/responses/treatment_list_response.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/treatment_view_model.dart';
-import 'package:skinsync_ai/widgets/custom_search_field.dart';
+import '../../models/responses/treatment_list_response.dart';
+import '../../utills/custom_fonts.dart';
+import '../../view_models/treatment_view_model.dart';
+import '../../widgets/custom_search_field.dart';
 
 import '../../view_models/checkout_view_model.dart';
 import '../../widgets/app_loader.dart';
@@ -27,7 +27,7 @@ class _TreatmentsScreenState extends ConsumerState<TreatmentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(showTitle: true, title: "Select Treatments"),
+      appBar: const CustomAppBar(showTitle: true, title: "Select Treatments"),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

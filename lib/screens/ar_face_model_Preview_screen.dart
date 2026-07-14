@@ -8,11 +8,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:glow_container/glow_container.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:skinsync_ai/models/responses/materials_response.dart';
-import 'package:skinsync_ai/models/responses/treatment_area_list_response.dart';
-import 'package:skinsync_ai/models/selected_treatment_and_areas_model.dart';
-import 'package:skinsync_ai/widgets/bottom_sheets/material_level_sheet.dart';
-import 'package:skinsync_ai/widgets/selected_treatments_summary_card.dart';
+import '../models/responses/materials_response.dart';
+import '../models/responses/treatment_area_list_response.dart';
+import '../models/selected_treatment_and_areas_model.dart';
+import '../widgets/bottom_sheets/material_level_sheet.dart';
+import '../widgets/selected_treatments_summary_card.dart';
 
 import '../models/responses/treatment_list_response.dart';
 import '../utills/assets.dart';
@@ -126,8 +126,8 @@ class _ArFaceModelPreviewScreenState
                   ref.read(checkoutViewModel.notifier).removeArea(area.id ?? 0);
                 } else {
                   final treatment = ref
-                      .read(treatmentViewModel)
-                      .selectedTreatment;
+                      .read(checkoutViewModel)
+                      .selectedTreatments;
                   final treatmentSku = treatment?.globalSku ?? '';
                   final areaSku = area.globalSku ?? '';
 
@@ -224,7 +224,7 @@ class _ArFaceModelPreviewScreenState
     TreatmentAreaModel area,
     List<MaterialData> materials,
   ) {
-    final treatment = ref.read(treatmentViewModel).selectedTreatment;
+    final treatment = ref.read(checkoutViewModel).selectedTreatments;
     if (treatment == null) return;
 
     showModalBottomSheet(
@@ -324,7 +324,7 @@ class _ArFaceModelPreviewScreenState
           child: AbsorbPointer(
             absorbing: isLoading,
             child: Scaffold(
-              appBar: CustomAppBar(
+              appBar: const CustomAppBar(
                 showTitle: true,
                 title: "AR Face Model Preview",
               ),
@@ -420,8 +420,8 @@ class _ArFaceModelPreviewScreenState
                               Consumer(
                                 builder: (context, ref, _) {
                                   final selectedTreatment = ref
-                                      .watch(treatmentViewModel)
-                                      .selectedTreatment;
+                                      .watch(checkoutViewModel)
+                                      .selectedTreatments;
                                   if (selectedTreatment == null) {
                                     return const SizedBox.shrink();
                                   }
@@ -433,9 +433,9 @@ class _ArFaceModelPreviewScreenState
                                   final treatmentsArea = areaState.areas;
 
                                   if (isLoading) {
-                                    return SizedBox(
+                                    return const SizedBox(
                                       height: 200,
-                                      child: const Center(
+                                      child: Center(
                                         child: CircularProgressIndicator(
                                           color: CustomColors.purpleColor,
                                         ),
@@ -773,9 +773,9 @@ class _ArFaceModelPreviewScreenState
                     onTap: () {
                       ref.read(treatmentViewModel.notifier).saveAiImage();
                     },
-                    child: CircleAvatar(
+                    child: const CircleAvatar(
                       backgroundColor: CustomColors.greyColor,
-                      child: const Icon(Icons.download_outlined),
+                      child: Icon(Icons.download_outlined),
                     ),
                   );
                 },
@@ -847,8 +847,8 @@ class _ArFaceModelPreviewScreenState
                   height: 58.h,
                   onPressed: () {
                     final treatment = ref.read(
-                      treatmentViewModel.select(
-                        (state) => state.selectedTreatment,
+                      checkoutViewModel.select(
+                        (state) => state.selectedTreatments,
                       ),
                     );
                     final rootAreas = ref.read(treatmentAreaProvider).areas;

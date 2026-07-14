@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:skinsync_ai/models/responses/treatment_area_list_response.dart';
-import 'package:skinsync_ai/screens/select_appointment_type_screen.dart';
-import 'package:skinsync_ai/screens/explore_clinics_screen.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/view_models/treatment_area_view_model.dart';
-import 'package:skinsync_ai/view_models/checkout_view_model.dart';
-import 'package:skinsync_ai/view_models/treatment_view_model.dart';
-import 'package:skinsync_ai/widgets/app_loader.dart';
-import 'package:skinsync_ai/widgets/treatment_container.dart';
+import '../models/responses/treatment_area_list_response.dart';
+import 'explore_clinics_screen.dart';
+import 'select_appointment_type_screen.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/checkout_view_model.dart';
+import '../view_models/treatment_area_view_model.dart';
+import '../widgets/app_loader.dart';
+import '../widgets/treatment_container.dart';
 
 class TreatmentAreaScreen extends ConsumerStatefulWidget {
   final List<TreatmentAreaModel>? areas;
@@ -30,24 +29,32 @@ class TreatmentAreaScreen extends ConsumerStatefulWidget {
   static const String routeName = '/TreatmentAreaScreen';
 
   @override
-  ConsumerState<TreatmentAreaScreen> createState() => _TreatmentAreaScreenState();
+  ConsumerState<TreatmentAreaScreen> createState() =>
+      _TreatmentAreaScreenState();
 }
 
 class _TreatmentAreaScreenState extends ConsumerState<TreatmentAreaScreen> {
   @override
   void initState() {
     super.initState();
-    // Only fetch if we are at the root level / no areas were passed
     if (widget.areas == null || widget.areas!.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (widget.treatmentId != null) {
-          ref.read(treatmentAreaProvider.notifier).fetchAreasByTreatment(widget.treatmentId);
+          ref
+              .read(treatmentAreaProvider.notifier)
+              .fetchAreasByTreatment(widget.treatmentId);
         } else {
-          final selectedTreatment = ref.read(checkoutViewModel).selectedTreatments ?? ref.read(treatmentViewModel).selectedTreatment;
+          final selectedTreatment = ref
+              .read(checkoutViewModel)
+              .selectedTreatments;
           if (selectedTreatment != null) {
-            ref.read(treatmentAreaProvider.notifier).fetchAreasByTreatment(selectedTreatment.id);
+            ref
+                .read(treatmentAreaProvider.notifier)
+                .fetchAreasByTreatment(selectedTreatment.id);
           } else {
-            ref.read(treatmentAreaProvider.notifier).fetchAreasByTreatment(null);
+            ref
+                .read(treatmentAreaProvider.notifier)
+                .fetchAreasByTreatment(null);
           }
         }
       });
@@ -82,7 +89,10 @@ class _TreatmentAreaScreenState extends ConsumerState<TreatmentAreaScreen> {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.grey.shade300, width: 1),
+                            border: Border.all(
+                              color: Colors.grey.shade300,
+                              width: 1,
+                            ),
                           ),
                           child: Icon(
                             Icons.arrow_back_ios_new_rounded,
@@ -107,12 +117,17 @@ class _TreatmentAreaScreenState extends ConsumerState<TreatmentAreaScreen> {
                   // Premium Breadcrumb Selection Path Container
                   Container(
                     width: double.infinity,
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(15.r),
                       border: Border.all(
-                        color: CustomColors.lightPurpleColor.withValues(alpha: 0.3),
+                        color: CustomColors.lightPurpleColor.withValues(
+                          alpha: 0.3,
+                        ),
                         width: 1,
                       ),
                       boxShadow: [
@@ -157,75 +172,89 @@ class _TreatmentAreaScreenState extends ConsumerState<TreatmentAreaScreen> {
               child: viewModel.loading && displayedAreas.isEmpty
                   ? const AppLoader()
                   : displayedAreas.isEmpty
-                      ? _buildEmptyResultsPlaceholder()
-                      : AnimationLimiter(
-                          key: ValueKey('area_list_${widget.title}'),
-                          child: ListView.builder(
-                            scrollDirection: Axis.vertical,
-                            padding: EdgeInsets.symmetric(horizontal: 30.w),
-                            physics: const BouncingScrollPhysics(),
-                            itemCount: displayedAreas.length + 1,
-                            itemBuilder: (context, index) {
-                              if (index == displayedAreas.length) {
-                                return SizedBox(height: 110.h); // Provide padding for floating items
-                              }
+                  ? _buildEmptyResultsPlaceholder()
+                  : AnimationLimiter(
+                      key: ValueKey('area_list_${widget.title}'),
+                      child: ListView.builder(
+                        scrollDirection: Axis.vertical,
+                        padding: EdgeInsets.symmetric(horizontal: 30.w),
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: displayedAreas.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index == displayedAreas.length) {
+                            return SizedBox(
+                              height: 110.h,
+                            ); // Provide padding for floating items
+                          }
 
-                              final area = displayedAreas[index];
+                          final area = displayedAreas[index];
 
-                              return AnimationConfiguration.staggeredList(
-                                position: index,
-                                duration: const Duration(milliseconds: 600),
-                                child: SlideAnimation(
-                                  verticalOffset: 50.0,
-                                  child: FadeInAnimation(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(bottom: 16.h),
-                                      child: TreatmentContainer(
-                                        customTitle: area.name,
-                                        customSubtitle: area.globalSku ?? "",
-                                        customImageUrl: area.image ?? "",
-                                        customIcon: area.icon ?? "",
-                                        customOnTap: () {
-
-                                          if (area.subAreas != null && area.subAreas!.isNotEmpty) {
-                                            // Recursively open another area screen with appended path
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => TreatmentAreaScreen(
+                          return AnimationConfiguration.staggeredList(
+                            position: index,
+                            duration: const Duration(milliseconds: 600),
+                            child: SlideAnimation(
+                              verticalOffset: 50.0,
+                              child: FadeInAnimation(
+                                child: Padding(
+                                  padding: EdgeInsets.only(bottom: 16.h),
+                                  child: TreatmentContainer(
+                                    customTitle: area.name,
+                                    customSubtitle: area.globalSku ?? "",
+                                    customImageUrl: area.image ?? "",
+                                    customIcon: area.icon ?? "",
+                                    customOnTap: () {
+                                      if (area.subAreas != null &&
+                                          area.subAreas!.isNotEmpty) {
+                                        // Recursively open another area screen with appended path
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                TreatmentAreaScreen(
                                                   areas: area.subAreas,
                                                   title: area.name ?? "",
-                                                  selectionPath: "${widget.selectionPath}  ▸  ${area.name}",
+                                                  selectionPath:
+                                                      "${widget.selectionPath}  ▸  ${area.name}",
                                                 ),
-                                              ),
-                                            );
-                                          } else {
-                                            ref.read(checkoutViewModel.notifier).addSelectedArea(area);
+                                          ),
+                                        );
+                                      } else {
+                                        ref
+                                            .read(checkoutViewModel.notifier)
+                                            .addSelectedArea(area);
 
-                                            final checkoutState = ref.read(checkoutViewModel);
+                                        final checkoutState = ref.read(
+                                          checkoutViewModel,
+                                        );
 
-                                            if (checkoutState.selectedClinic != null && checkoutState.selectedAppointmentType == null) {
-                                              Navigator.pushNamed(
-                                                context,
-                                                SelectAppointmentTypeScreen.routeName,
-                                                arguments: checkoutState.selectedClinic,
-                                              );
-                                            } else {
-                                              Navigator.pushNamed(
-                                                context,
-                                                ExploreClinicsScreen.routeName,
-                                              );
-                                            }
-                                          }
-                                        },
-                                      ),
-                                    ),
+                                        if (checkoutState.selectedClinic !=
+                                                null &&
+                                            checkoutState
+                                                    .selectedAppointmentType ==
+                                                null) {
+                                          Navigator.pushNamed(
+                                            context,
+                                            SelectAppointmentTypeScreen
+                                                .routeName,
+                                            arguments:
+                                                checkoutState.selectedClinic,
+                                          );
+                                        } else {
+                                          Navigator.pushNamed(
+                                            context,
+                                            ExploreClinicsScreen.routeName,
+                                          );
+                                        }
+                                      }
+                                    },
                                   ),
                                 ),
-                              );
-                            },
-                          ),
-                        ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
             ),
           ],
         ),
@@ -240,11 +269,17 @@ class _TreatmentAreaScreenState extends ConsumerState<TreatmentAreaScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.crop_free_rounded, size: 70.sp, color: Colors.grey.shade400),
+            Icon(
+              Icons.crop_free_rounded,
+              size: 70.sp,
+              color: Colors.grey.shade400,
+            ),
             SizedBox(height: 15.h),
             Text(
               "No Areas Found",
-              style: CustomFonts.black20w600.copyWith(color: Colors.grey.shade700),
+              style: CustomFonts.black20w600.copyWith(
+                color: Colors.grey.shade700,
+              ),
             ),
             SizedBox(height: 5.h),
             Text(

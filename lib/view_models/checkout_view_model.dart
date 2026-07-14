@@ -1,29 +1,29 @@
 import 'package:camera/camera.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:skinsync_ai/models/base_state_model.dart';
-import 'package:skinsync_ai/models/requests/appointment_request.dart';
-import 'package:skinsync_ai/models/responses/appointment_response.dart';
-import 'package:skinsync_ai/models/responses/availability_response.dart';
-import 'package:skinsync_ai/models/responses/get_clinic_response.dart';
-import 'package:skinsync_ai/models/responses/get_doctor_response.dart';
-import 'package:skinsync_ai/models/responses/payment_options_response.dart';
-import 'package:skinsync_ai/models/responses/treatment_list_response.dart';
-import 'package:skinsync_ai/models/responses/treatment_category_list_response.dart';
-import 'package:skinsync_ai/models/responses/treatment_area_list_response.dart';
-import 'package:skinsync_ai/models/selected_treatment_and_areas_model.dart';
-import 'package:skinsync_ai/models/flat_selection_model.dart';
-import 'package:skinsync_ai/models/dummy_list_model.dart';
-import 'package:skinsync_ai/utills/enums.dart';
-import 'package:skinsync_ai/repositories/clinic_doctor_repository.dart';
-import 'package:skinsync_ai/services/api_base_helper.dart';
-import 'package:skinsync_ai/services/clinic_doctor_service.dart';
-import 'package:skinsync_ai/services/media_service.dart';
-import 'package:skinsync_ai/utills/date_time_utills.dart';
+
+import '../models/base_state_model.dart';
+import '../models/dummy_list_model.dart';
+import '../models/flat_selection_model.dart';
+import '../models/requests/appointment_request.dart';
+import '../models/responses/appointment_response.dart';
+import '../models/responses/availability_response.dart';
+import '../models/responses/get_clinic_response.dart';
+import '../models/responses/get_doctor_response.dart';
+import '../models/responses/payment_options_response.dart';
+import '../models/responses/treatment_area_list_response.dart';
+import '../models/responses/treatment_category_list_response.dart';
+import '../models/responses/treatment_list_response.dart';
+import '../models/selected_treatment_and_areas_model.dart';
+import '../repositories/clinic_doctor_repository.dart';
+import '../services/api_base_helper.dart';
+import '../services/clinic_doctor_service.dart';
+import '../services/media_service.dart';
+import '../utills/date_time_utills.dart';
+import '../utills/enums.dart';
 import 'auth_view_model.dart';
+import 'base_view_model.dart';
 import 'doctor_view_model.dart';
 import 'treatment_view_model.dart';
-
-import 'base_view_model.dart';
 
 final checkoutViewModel = NotifierProvider(() => CheckoutViewModel());
 
@@ -64,7 +64,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   void setSelectedDate(DateTime? date) {
     state = state.copyWith(
       selectedDate: date,
-      appointmentDate: date != null ? date.toIso8601String() : null,
+      appointmentDate: date?.toIso8601String(),
     );
     print("Selected Date saved to CheckoutState: $date");
   }
@@ -118,6 +118,28 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
 
   void clearSelectedTreatments() {
     state = state.copyWith(selectedTreatmentsAndAreas: []);
+  }
+
+  void clearAreaSelection() {
+    state = state.copyWithNull(selectedAreas: true);
+  }
+
+  void onTapTreatmentSubArea({required TreatmentAreaModel subArea}) {
+    final parentId =
+        state.selectedAreas?.id ?? subArea.areaId ?? subArea.id ?? 0;
+    final treatmentSubArea = subArea.copyWith(areaId: parentId);
+    final id = treatmentSubArea.id;
+    final alreadySelected =
+        id != null &&
+        (state.selectedAreas?.subAreas?.any((e) => e.id == id) ?? false);
+    final updatedList = alreadySelected
+        ? state.selectedAreas?.subAreas ?? []
+        : [...state.selectedAreas?.subAreas ?? [], treatmentSubArea];
+
+    state = state.copyWith(
+      selectedAreas: treatmentSubArea.copyWith(subAreas: updatedList),
+    );
+    ref.read(treatmentViewModel.notifier).clearAiImage();
   }
 
   void addSelectedTreatment(TreatmentData treatment) {
@@ -181,7 +203,9 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
         currentTreatmentsAndAreas.add(
           SelectedTreatmentAndAreasModel(
             treatment: activeTreatment,
-            selectedAreas: [SelectedAreaModel(target: area, materials: const [])],
+            selectedAreas: [
+              SelectedAreaModel(target: area, materials: const []),
+            ],
           ),
         );
       }
@@ -195,7 +219,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       selectedAreas: area,
       selectedTreatmentsAndAreas: currentTreatmentsAndAreas,
     );
-    ref.read(treatmentViewModel.notifier).onTapTreatmentSubArea(subArea: area);
+    onTapTreatmentSubArea(subArea: area);
     _printSelectedTreatmentsAndAreas();
   }
 
@@ -220,13 +244,17 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
 
       if (areaIndex != -1) {
         final existingArea = existingItem.selectedAreas[areaIndex];
-        final updatedAreas = List<SelectedAreaModel>.from(existingItem.selectedAreas);
+        final updatedAreas = List<SelectedAreaModel>.from(
+          existingItem.selectedAreas,
+        );
         updatedAreas[areaIndex] = existingArea.copyWith(materials: materials);
         currentTreatmentsAndAreas[existingIndex] = existingItem.copyWith(
           selectedAreas: updatedAreas,
         );
       } else {
-        final updatedAreas = List<SelectedAreaModel>.from(existingItem.selectedAreas);
+        final updatedAreas = List<SelectedAreaModel>.from(
+          existingItem.selectedAreas,
+        );
         updatedAreas.add(SelectedAreaModel(target: area, materials: materials));
         currentTreatmentsAndAreas[existingIndex] = existingItem.copyWith(
           selectedAreas: updatedAreas,
@@ -236,7 +264,9 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       currentTreatmentsAndAreas.add(
         SelectedTreatmentAndAreasModel(
           treatment: treatment,
-          selectedAreas: [SelectedAreaModel(target: area, materials: materials)],
+          selectedAreas: [
+            SelectedAreaModel(target: area, materials: materials),
+          ],
         ),
       );
     }
@@ -246,7 +276,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       selectedTreatments: treatment,
       selectedTreatmentsAndAreas: currentTreatmentsAndAreas,
     );
-    ref.read(treatmentViewModel.notifier).onTapTreatmentSubArea(subArea: area);
+    onTapTreatmentSubArea(subArea: area);
     _printSelectedTreatmentsAndAreas();
   }
 
@@ -269,12 +299,15 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   }
 
   void removeArea(int areaId) {
-    final currentList = state.selectedTreatmentsAndAreas.map((item) {
-      final updatedAreas = item.selectedAreas
-          .where((a) => a.target.id != areaId)
-          .toList();
-      return item.copyWith(selectedAreas: updatedAreas);
-    }).where((item) => item.selectedAreas.isNotEmpty).toList();
+    final currentList = state.selectedTreatmentsAndAreas
+        .map((item) {
+          final updatedAreas = item.selectedAreas
+              .where((a) => a.target.id != areaId)
+              .toList();
+          return item.copyWith(selectedAreas: updatedAreas);
+        })
+        .where((item) => item.selectedAreas.isNotEmpty)
+        .toList();
 
     final activeArea = state.selectedAreas;
     final updatedActiveArea = activeArea?.id == areaId ? null : activeArea;
@@ -285,6 +318,16 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     );
     ref.read(treatmentViewModel.notifier).removeSubArea(areaId);
     _printSelectedTreatmentsAndAreas();
+  }
+
+  void removeSubArea(int subAreaId) {
+    state = state.copyWith(
+      selectedAreas: state.selectedAreas?.copyWith(
+        subAreas: state.selectedAreas?.subAreas
+            ?.where((element) => element.id != subAreaId)
+            .toList(),
+      ),
+    );
   }
 
   Future<void> createAppointment({
@@ -315,10 +358,9 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       if (beforeImage == null || afterImage == null) {
         throw Exception('No image captured');
       }
-      final treatment = treatmentState.selectedTreatment!;
-      final subAreas = treatmentState.selectedSubAreasList;
-      final treatmentPrice =
-          pricingData.treatment!.price! * subAreas.length;
+      final treatment = state.selectedTreatments!;
+      final subAreas = state.selectedAreas?.subAreas ?? [];
+      final treatmentPrice = pricingData.treatment!.price! * subAreas.length;
       final userId = ref.read(authViewModel).authData!.user!.id!;
       final uploadedBefore = await _mediaService.uploadImage(
         '$userId/appointments/before/',
@@ -486,6 +528,44 @@ class CheckoutState extends BaseStateModel {
       selectedDoctor: selectedDoctor ?? this.selectedDoctor,
       selectedDate: selectedDate ?? this.selectedDate,
       selectedSlot: selectedSlot ?? this.selectedSlot,
+    );
+  }
+
+  CheckoutState copyWithNull({
+    bool clinicId = false,
+    bool drId = false,
+    bool appointmentDate = false,
+    bool appointmentTime = false,
+    bool capturedImage = false,
+    bool selectedTreatments = false,
+    bool selectedAreas = false,
+    bool appointment = false,
+    bool selectedClinic = false,
+    bool selectedAppointmentType = false,
+    bool selectedDoctor = false,
+    bool selectedDate = false,
+    bool selectedSlot = false,
+  }) {
+    return CheckoutState(
+      loading: this.loading,
+      errorMessage: this.errorMessage,
+      clinicId: clinicId ? null : this.clinicId,
+      drId: drId ? null : this.drId,
+      appointmentDate: appointmentDate ? null : this.appointmentDate,
+      appointmentTime: appointmentTime ? null : this.appointmentTime,
+      capturedImage: capturedImage ? null : this.capturedImage,
+      selectedTreatmentsAndAreas: this.selectedTreatmentsAndAreas,
+      selectedCategories: this.selectedCategories,
+      selectedTreatments: selectedTreatments ? null : this.selectedTreatments,
+      selectedAreas: selectedAreas ? null : this.selectedAreas,
+      appointment: appointment ? null : this.appointment,
+      selectedClinic: selectedClinic ? null : this.selectedClinic,
+      selectedAppointmentType: selectedAppointmentType
+          ? null
+          : this.selectedAppointmentType,
+      selectedDoctor: selectedDoctor ? null : this.selectedDoctor,
+      selectedDate: selectedDate ? null : this.selectedDate,
+      selectedSlot: selectedSlot ? null : this.selectedSlot,
     );
   }
 }

@@ -7,8 +7,7 @@ import 'api_base_helper.dart';
 
 class TreatmentCategoryService implements TreatmentCategoryRepository {
   final ApiBaseHelper _apiClient;
-  TreatmentCategoryService({required ApiBaseHelper apiClient})
-    : _apiClient = apiClient;
+  TreatmentCategoryService({required this._apiClient});
 
   @override
   Future<TreatmentCategoryListResponse> getCategoriesApi() async {

@@ -2,11 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:skinsync_ai/models/dummy_list_model.dart';
-import 'package:skinsync_ai/screens/appointment_detail_screen.dart';
-import 'package:skinsync_ai/utills/color_constant.dart';
-import 'package:skinsync_ai/utills/custom_fonts.dart';
-import 'package:skinsync_ai/widgets/doctor_card.dart';
+
+import '../models/dummy_list_model.dart';
+import '../screens/appointment_detail_screen.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+import 'doctor_card.dart';
 
 class DoctorHomeCard extends StatelessWidget {
   final DummyDoctor doctor;
@@ -37,7 +38,9 @@ class ClinicHomeCard extends StatelessWidget {
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: CustomColors.greyColor.withValues(alpha: 0.6)),
+        border: Border.all(
+          color: CustomColors.greyColor.withValues(alpha: 0.6),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,7 +58,11 @@ class ClinicHomeCard extends StatelessWidget {
               ),
               errorWidget: (context, url, error) => Container(
                 color: Colors.grey.shade100,
-                child: const Icon(Icons.storefront_rounded, size: 30, color: Colors.grey),
+                child: const Icon(
+                  Icons.storefront_rounded,
+                  size: 30,
+                  color: Colors.grey,
+                ),
               ),
             ),
           ),
@@ -76,7 +83,10 @@ class ClinicHomeCard extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 4.h,
+                      ),
                       decoration: BoxDecoration(
                         color: CustomColors.purpleColor.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(20.r),
@@ -91,7 +101,11 @@ class ClinicHomeCard extends StatelessWidget {
                 SizedBox(height: 6.h),
                 Row(
                   children: [
-                    Icon(Icons.location_on_outlined, size: 12.sp, color: Colors.grey),
+                    Icon(
+                      Icons.location_on_outlined,
+                      size: 12.sp,
+                      color: Colors.grey,
+                    ),
                     SizedBox(width: 4.w),
                     Expanded(
                       child: Text(
@@ -115,7 +129,11 @@ class ClinicHomeCard extends StatelessWidget {
 class UpcomingAppointmentDateSection extends StatelessWidget {
   final String dateTitle;
   final List<DummyAppointment> appointments;
-  const UpcomingAppointmentDateSection({super.key, required this.dateTitle, required this.appointments});
+  const UpcomingAppointmentDateSection({
+    super.key,
+    required this.dateTitle,
+    required this.appointments,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -126,12 +144,16 @@ class UpcomingAppointmentDateSection extends StatelessWidget {
         gradient: CustomColors.purpleBlueGradient,
         borderRadius: BorderRadius.circular(22.r),
         border: Border.all(
-          color: CustomColors.greyColor.withValues(alpha: 0.6), // Delicate border
+          color: CustomColors.greyColor.withValues(
+            alpha: 0.6,
+          ), // Delicate border
           width: 1.2,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02), // Ultra-soft feathered shadow
+            color: Colors.black.withValues(
+              alpha: 0.02,
+            ), // Ultra-soft feathered shadow
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -144,18 +166,24 @@ class UpcomingAppointmentDateSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.calendar_today_rounded, color: CustomColors.blackColor, size: 13),
-              SizedBox(width: 6.w),
-              Text(
-                dateTitle,
-                style: CustomFonts.black13w600
+              const Icon(
+                Icons.calendar_today_rounded,
+                color: CustomColors.blackColor,
+                size: 13,
               ),
+              SizedBox(width: 6.w),
+              Text(dateTitle, style: CustomFonts.black13w600),
             ],
           ),
           SizedBox(height: 10.h),
           Row(
             mainAxisSize: MainAxisSize.min,
-            children: appointments.map((appointment) => UpcomingAppointmentHomeCard(appointment: appointment)).toList(),
+            children: appointments
+                .map(
+                  (appointment) =>
+                      UpcomingAppointmentHomeCard(appointment: appointment),
+                )
+                .toList(),
           ),
         ],
       ),
@@ -170,38 +198,53 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
   // Vertical Left Accent Color & Badge Styling based on type
   Color _getTypeAccentColor(String type) {
     switch (type) {
-      case "Consultation": return CustomColors.blueColor;
-      case "Sessions": return CustomColors.pinkColor;
-      case "Follow-Up / Touch-Up": return CustomColors.darkPurple;
-      case "Provisional Booking": return CustomColors.yellow;
-      default: return CustomColors.purpleColor;
+      case "Consultation":
+        return CustomColors.blueColor;
+      case "Sessions":
+        return CustomColors.pinkColor;
+      case "Follow-Up / Touch-Up":
+        return CustomColors.darkPurple;
+      case "Provisional Booking":
+        return CustomColors.yellow;
+      default:
+        return CustomColors.purpleColor;
     }
   }
 
-  Color _getTypeBgColor(String type) {
-    switch (type) {
-      case "Consultation": return CustomColors.blueColor.withValues(alpha: 0.18);
-      case "Sessions": return CustomColors.pinkColor.withValues(alpha: 0.18);
-      case "Follow-Up / Touch-Up": return CustomColors.darkPurple.withValues(alpha: 0.18);
-      case "Provisional Booking": return CustomColors.yellow.withValues(alpha: 0.22);
-      default: return CustomColors.purpleColor.withValues(alpha: 0.18);
-    }
-  }
+  // Color _getTypeBgColor(String type) {
+  //   switch (type) {
+  //     case "Consultation":
+  //       return CustomColors.blueColor.withValues(alpha: 0.18);
+  //     case "Sessions":
+  //       return CustomColors.pinkColor.withValues(alpha: 0.18);
+  //     case "Follow-Up / Touch-Up":
+  //       return CustomColors.darkPurple.withValues(alpha: 0.18);
+  //     case "Provisional Booking":
+  //       return CustomColors.yellow.withValues(alpha: 0.22);
+  //     default:
+  //       return CustomColors.purpleColor.withValues(alpha: 0.18);
+  //   }
+  // }
 
   TextStyle _getTimeStyle(String type) {
     switch (type) {
-      case "Consultation": return CustomFonts.blue10w700;
-      case "Sessions": return CustomFonts.pink10w700;
-      case "Follow-Up / Touch-Up": return CustomFonts.darkPurple10w700;
-      case "Provisional Booking": return CustomFonts.amber10w700;
-      default: return CustomFonts.blue10w700;
+      case "Consultation":
+        return CustomFonts.blue10w700;
+      case "Sessions":
+        return CustomFonts.pink10w700;
+      case "Follow-Up / Touch-Up":
+        return CustomFonts.darkPurple10w700;
+      case "Provisional Booking":
+        return CustomFonts.amber10w700;
+      default:
+        return CustomFonts.blue10w700;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final accentColor = _getTypeAccentColor(appointment.type);
-    final badgeBgColor = _getTypeBgColor(appointment.type);
+    // final badgeBgColor = _getTypeBgColor(appointment.type);
     final timeStyle = _getTimeStyle(appointment.type);
 
     // Dynamic background image matching TreatmentContainer falling back logic
@@ -214,7 +257,8 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => AppointmentDetailScreen(appointment: appointment),
+            builder: (context) =>
+                AppointmentDetailScreen(appointment: appointment),
           ),
         );
       },
@@ -248,16 +292,17 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                   ),
                   errorWidget: (context, url, error) => Container(
                     color: Colors.grey.shade100,
-                    child: const Icon(Icons.broken_image_rounded, color: Colors.grey),
+                    child: const Icon(
+                      Icons.broken_image_rounded,
+                      color: Colors.grey,
+                    ),
                   ),
                 ),
               ),
 
               // 2. Translucent Premium White Mask Overlay (Guarantees absolute legibility)
               Positioned.fill(
-                child: Container(
-                  color: Colors.white.withValues(alpha: 0.75),
-                ),
+                child: Container(color: Colors.white.withValues(alpha: 0.75)),
               ),
 
               // 3. Vertical Accent Left Indicator Bar
@@ -304,15 +349,23 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                           ),
                           SizedBox(width: 6.w),
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8.w,
+                              vertical: 3.h,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20.r),
-                              border: Border.all(color: Colors.black12, width: 0.5),
+                              border: Border.all(
+                                color: Colors.black12,
+                                width: 0.5,
+                              ),
                             ),
                             child: Text(
                               appointment.type,
-                              style: timeStyle.copyWith(fontSize: 8.sp), // permitted copyWith for dynamic auto font size only
+                              style: timeStyle.copyWith(
+                                fontSize: 8.sp,
+                              ), // permitted copyWith for dynamic auto font size only
                             ),
                           ),
                         ],
@@ -324,7 +377,11 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Icon(Icons.business_rounded, size: 12, color: Colors.grey.shade600),
+                              Icon(
+                                Icons.business_rounded,
+                                size: 12,
+                                color: Colors.grey.shade600,
+                              ),
                               SizedBox(width: 6.w),
                               Expanded(
                                 child: Text(
@@ -339,7 +396,11 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                           SizedBox(height: 2.h),
                           Row(
                             children: [
-                              Icon(Icons.person_rounded, size: 12, color: Colors.grey.shade600),
+                              Icon(
+                                Icons.person_rounded,
+                                size: 12,
+                                color: Colors.grey.shade600,
+                              ),
                               SizedBox(width: 6.w),
                               Expanded(
                                 child: Text(
@@ -356,7 +417,10 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
 
                       // Bottom Section: Clock Time Badge
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 3.h,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(20.r),
@@ -364,7 +428,11 @@ class UpcomingAppointmentHomeCard extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.access_time_filled_rounded, size: 10, color: Colors.grey.shade600),
+                            Icon(
+                              Icons.access_time_filled_rounded,
+                              size: 10,
+                              color: Colors.grey.shade600,
+                            ),
                             SizedBox(width: 4.w),
                             Text(
                               appointment.time,

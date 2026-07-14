@@ -18,7 +18,7 @@ class AuthService implements AuthRepository {
   final ApiBaseHelper _apiClient;
   final SecureStorage _secureStorage = SecureStorage();
 
-  AuthService({required ApiBaseHelper apiClient}) : _apiClient = apiClient;
+  AuthService({required this._apiClient});
 
   @override
   Future<BaseResponseModel> signInApi({
