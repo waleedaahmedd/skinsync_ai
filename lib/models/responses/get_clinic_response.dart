@@ -23,8 +23,8 @@ class GetClinicResponse extends BaseResponseModel {
 }
 
 class Clinic {
-  final int? clinicId;
-  final String? clinicName;
+  final int? id;
+  final String? name;
   final String? email;
   final String? phone;
   final String? description;
@@ -37,8 +37,8 @@ class Clinic {
   final Place? place;
 
   Clinic({
-    this.clinicId,
-    this.clinicName,
+    this.id,
+    this.name,
     this.email,
     this.phone,
     this.description,
@@ -53,13 +53,13 @@ class Clinic {
 
   factory Clinic.fromJson(Map<String, dynamic> json) {
     return Clinic(
-      clinicId: json['clinic_id'],
-      clinicName: json['clinic_name'],
+      id: json['id'],
+      name: json['name'],
       email: json['email'],
       phone: json['phone'],
       description: json['description'],
       address: json['address'],
-      logo: json['logo'],
+      logo: json['logo'] ?? json['image'],
       price: json['price'],
       syringeSize: json['syringe_size'],
       status: json['status'],
@@ -83,7 +83,7 @@ class Clinic {
       cc = data.countryCode;
     }
     return InviteClinicRequest(
-      name: clinicName ?? '',
+      name: name ?? '',
       email: email ?? '',
       phone: phoneNumber ?? '',
       cc: cc != null ? '+$cc' : '',

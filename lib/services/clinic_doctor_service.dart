@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import '../exceptions/app_exception.dart';
 import '../models/requests/appointment_request.dart';
+import '../models/requests/get_clinic_request.dart';
 import '../models/requests/invite_clinic_request.dart';
 import '../models/responses/appointment_response.dart';
 import '../models/responses/availability_response.dart';
@@ -21,13 +22,12 @@ class ClinicDoctorService implements ClinicDoctorRepository {
 
   @override
   Future<GetClinicResponse> getClinic({
-    int? treatmentId,
-    String? sideAreaIdsList,
+    required GetClinicRequest request,
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.getClinic,
-      requestType: 'GET',
-      params: 'treatment_id=$treatmentId&side_area_ids=$sideAreaIdsList',
+      requestType: 'POST',
+      requestBody: request.toJson(),
     );
     // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {

@@ -48,9 +48,9 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   void setSelectedClinic(Clinic clinic) {
     state = state.copyWith(
       selectedClinic: clinic,
-      clinicId: clinic.clinicId.toString(),
+      clinicId: clinic.id.toString(),
     );
-    print("Selected clinic saved to CheckoutState: ${clinic.clinicName}");
+    print("Selected clinic saved to CheckoutState: ${clinic.name}");
   }
 
   void setSelectedAppointmentType(AppointmentType type) {
@@ -404,7 +404,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
           date: slot.startTime.secondsSinceEpoch,
           startTime: slot.startTime.secondsSinceEpoch,
           endTime: slot.endTime.secondsSinceEpoch,
-          clinicId: clinic.clinicId!,
+          clinicId: clinic.id!,
           paymentType: PaymentTypeRequest(
             id: paymentOption.id!,
             amount: paymentOption.amount!,

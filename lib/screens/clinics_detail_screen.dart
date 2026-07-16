@@ -170,7 +170,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          clinic?.clinicName ?? 'N/A',
+                          clinic?.name ?? 'N/A',
                           style: CustomFonts.black28w600,
                         ),
                       ),

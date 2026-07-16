@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+
 import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../view_models/checkout_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
-import '../view_models/checkout_view_model.dart';
 import 'payment_screen.dart';
 
 class ReviewScreen extends ConsumerWidget {
@@ -150,7 +151,7 @@ class ReviewScreen extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  clinic.clinicName ?? "Standard Clinic Name",
+                                  clinic.name ?? "Standard Clinic Name",
                                   style: CustomFonts.black14w600,
                                 ),
                                 SizedBox(height: 4.h),

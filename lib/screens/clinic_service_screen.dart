@@ -6,7 +6,6 @@ import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../widgets/app_network_image.dart';
 
 import '../models/responses/get_clinic_response.dart';
 import '../models/responses/get_doctor_response.dart';
@@ -18,6 +17,7 @@ import '../view_models/checkout_view_model.dart';
 import '../view_models/clinic_view_model.dart';
 import '../view_models/doctor_view_model.dart';
 import '../widgets/app_loader.dart';
+import '../widgets/app_network_image.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/time_container.dart';
 import '../widgets/treatment_price_container.dart';
@@ -53,8 +53,8 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
 
       final subAreaIds = subAreas.map((e) => e.id).whereType<int>().toList();
 
-      if (widget.clinic?.clinicId != null) {
-        ref.read(clinicProvider.notifier).setClinicId(widget.clinic!.clinicId!);
+      if (widget.clinic?.id != null) {
+        ref.read(clinicProvider.notifier).setClinicId(widget.clinic!.id!);
       }
 
       await ref
@@ -63,14 +63,14 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
             treatmentId: treatment?.id ?? 0,
             sideAreaIds: subAreaIds,
             date: selectedDate,
-            clinicId: widget.clinic?.clinicId,
+            clinicId: widget.clinic?.id,
           );
-      if (widget.clinic?.clinicId != null) {
+      if (widget.clinic?.id != null) {
         await ref
             .read(doctorProvider.notifier)
             .fetchAvailability(
               date: selectedDate,
-              clinicId: widget.clinic!.clinicId!,
+              clinicId: widget.clinic!.id!,
             );
       }
     });
@@ -86,14 +86,11 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
 
     if (picked != null) {
       selectedTime = null;
-      log('CLINIC ID: ${widget.clinic?.clinicId}');
-      if (widget.clinic?.clinicId != null) {
+      log('CLINIC ID: ${widget.clinic?.id}');
+      if (widget.clinic?.id != null) {
         ref
             .read(doctorProvider.notifier)
-            .fetchAvailability(
-              date: picked,
-              clinicId: widget.clinic!.clinicId!,
-            );
+            .fetchAvailability(date: picked, clinicId: widget.clinic!.id!);
       }
       setState(() {
         selectedDate = picked;
@@ -451,12 +448,12 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
     return GestureDetector(
       onTap: () {
         ref.read(doctorProvider.notifier).setSelectedDoctor(doctor);
-        if (widget.clinic?.clinicId != null) {
+        if (widget.clinic?.id != null) {
           ref
               .read(doctorProvider.notifier)
               .fetchAvailability(
                 date: selectedDate,
-                clinicId: widget.clinic!.clinicId!,
+                clinicId: widget.clinic!.id!,
               );
         }
         setState(() {

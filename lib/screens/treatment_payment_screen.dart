@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../models/responses/availability_response.dart';
 import '../models/responses/get_clinic_response.dart';
+import '../models/responses/get_doctor_response.dart';
 import '../models/responses/payment_options_response.dart';
-import 'notes_screen.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/doctor_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
-
-import '../models/responses/availability_response.dart';
-import '../models/responses/get_doctor_response.dart';
+import 'notes_screen.dart';
 
 class TreatmentPaymentScreen extends ConsumerStatefulWidget {
   final Clinic clinic;
@@ -29,10 +29,12 @@ class TreatmentPaymentScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<TreatmentPaymentScreen> createState() => _TreatmentPaymentScreenState();
+  ConsumerState<TreatmentPaymentScreen> createState() =>
+      _TreatmentPaymentScreenState();
 }
 
-class _TreatmentPaymentScreenState extends ConsumerState<TreatmentPaymentScreen> {
+class _TreatmentPaymentScreenState
+    extends ConsumerState<TreatmentPaymentScreen> {
   PaymentOption? selectedMode;
 
   @override
@@ -42,7 +44,7 @@ class _TreatmentPaymentScreenState extends ConsumerState<TreatmentPaymentScreen>
       ref
           .read(doctorProvider.notifier)
           .getPaymentOptions(
-            clinicId: widget.clinic.clinicId!,
+            clinicId: widget.clinic.id!,
             doctorId: widget.doctor.id!,
           );
     });
@@ -137,7 +139,7 @@ class _TreatmentPaymentScreenState extends ConsumerState<TreatmentPaymentScreen>
                           style: CustomFonts.black14w600,
                         ),
                         Text(
-                          widget.clinic.clinicName ?? "Glow Skin Clinic",
+                          widget.clinic.name ?? "Glow Skin Clinic",
                           style: CustomFonts.black14w400,
                         ),
                         Row(

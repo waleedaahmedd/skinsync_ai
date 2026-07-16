@@ -143,13 +143,7 @@ class RouteGenerator {
       case ExploreClinicsScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: ExploreClinicsScreen.routeName),
-          builder: (_) {
-            final arguments = args as Map<String, dynamic>?;
-            return ExploreClinicsScreen(
-              sideAreaIds: arguments?['sideAreaIds'] ?? [],
-              treatmentId: arguments?['treatmentId'] ?? 0,
-            );
-          },
+          builder: (_) => const ExploreClinicsScreen(),
         );
       case TreatmentDetailScreen.routeName:
         final treatments = settings.arguments as TreatmentData;

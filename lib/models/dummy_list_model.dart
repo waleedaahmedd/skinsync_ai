@@ -1,6 +1,5 @@
 import '../utills/assets.dart';
 import '../utills/enums.dart';
-import 'responses/get_clinic_response.dart';
 
 class Treatments {
   final String svg;
@@ -54,10 +53,10 @@ class DummyAppointment {
   final String clinicName;
   final String doctorName;
   final String treatmentName;
-  final String area; 
+  final String area;
   final DateTime date;
-  final String time; 
-  final String type; 
+  final String time;
+  final String type;
   final String status;
   final String notes;
   final List<DummySession> pastSessions;
@@ -72,7 +71,8 @@ class DummyAppointment {
     required this.time,
     required this.type,
     this.status = "Scheduled",
-    this.notes = "Patient requested subtle results with focus on natural appearance.",
+    this.notes =
+        "Patient requested subtle results with focus on natural appearance.",
     this.pastSessions = const [],
   });
 }
@@ -117,7 +117,8 @@ final List<DummyDoctor> dummyDoctors = [
   DummyDoctor(
     id: "1",
     name: "Dr. Sarah Smith",
-    image: "https://t4.ftcdn.net/jpg/03/20/52/31/360_F_320523164_cc7at9W77BRD96qLYpSPlSdrofD8oM0S.jpg",
+    image:
+        "https://t4.ftcdn.net/jpg/03/20/52/31/360_F_320523164_cc7at9W77BRD96qLYpSPlSdrofD8oM0S.jpg",
     specialization: "Dermatologist",
     clinicName: "Glow Skin Clinic",
     rating: 4.8,
@@ -125,7 +126,8 @@ final List<DummyDoctor> dummyDoctors = [
   DummyDoctor(
     id: "2",
     name: "Dr. John Doe",
-    image: "https://t3.ftcdn.net/jpg/02/60/04/08/360_F_260040863_7y7D6shY6K75YI0yS2666OAXm0C46RRT.jpg",
+    image:
+        "https://t3.ftcdn.net/jpg/02/60/04/08/360_F_260040863_7y7D6shY6K75YI0yS2666OAXm0C46RRT.jpg",
     specialization: "Cosmetic Surgeon",
     clinicName: "Radiance Care",
     rating: 4.9,
@@ -133,7 +135,8 @@ final List<DummyDoctor> dummyDoctors = [
   DummyDoctor(
     id: "3",
     name: "Dr. Emily Brown",
-    image: "https://t4.ftcdn.net/jpg/03/17/85/49/360_F_317854905_2idSd8Kps97L9p85nL8k8uK07NMTQ3mF.jpg",
+    image:
+        "https://t4.ftcdn.net/jpg/03/17/85/49/360_F_317854905_2idSd8Kps97L9p85nL8k8uK07NMTQ3mF.jpg",
     specialization: "Aesthetic Physician",
     clinicName: "Skin Sync Center",
     rating: 4.7,
@@ -141,7 +144,8 @@ final List<DummyDoctor> dummyDoctors = [
   DummyDoctor(
     id: "4",
     name: "Dr. Michael Wilson",
-    image: "https://t3.ftcdn.net/jpg/02/95/51/80/360_F_295518052_NmSFeE1VPVCu499rkcyYpL6x6686K856.jpg",
+    image:
+        "https://t3.ftcdn.net/jpg/02/95/51/80/360_F_295518052_NmSFeE1VPVCu499rkcyYpL6x6686K856.jpg",
     specialization: "Laser Specialist",
     clinicName: "Elite Dermatology",
     rating: 4.6,
@@ -152,7 +156,8 @@ final List<DummyClinic> topClinics = [
   DummyClinic(
     id: "1",
     name: "Glow Skin Clinic",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl-cyJqFlcZav1TlRMEuajtrg2RJlWY3rTQA&s",
+    image:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl-cyJqFlcZav1TlRMEuajtrg2RJlWY3rTQA&s",
     address: "Bedford-Stuyvesant, Brooklyn, NY",
     treatmentCount: 25,
     doctorCount: 8,
@@ -160,7 +165,8 @@ final List<DummyClinic> topClinics = [
   DummyClinic(
     id: "2",
     name: "Radiance Care",
-    image: "https://images.squarespace-cdn.com/content/v1/5b3a6e9f1aef1db0d7a0c7e2/1531149791485-Y86L86E8N8V8M8N8Y8N8/Radiance-Care-Logo.png",
+    image:
+        "https://images.squarespace-cdn.com/content/v1/5b3a6e9f1aef1db0d7a0c7e2/1531149791485-Y86L86E8N8V8M8N8Y8N8/Radiance-Care-Logo.png",
     address: "Manhattan, New York, NY",
     treatmentCount: 40,
     doctorCount: 12,
@@ -168,7 +174,8 @@ final List<DummyClinic> topClinics = [
   DummyClinic(
     id: "3",
     name: "Skin Sync Center",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0_7K8G9C8g_9n9k_y_x_w_v_z_y_x_w_v_z_y_x_w_v_z_y_x_w_v_z&s",
+    image:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0_7K8G9C8g_9n9k_y_x_w_v_z_y_x_w_v_z_y_x_w_v_z_y_x_w_v_z&s",
     address: "Queens, New York, NY",
     treatmentCount: 30,
     doctorCount: 10,
@@ -176,13 +183,13 @@ final List<DummyClinic> topClinics = [
 ];
 
 final List<DummySession> _botoxCheeksHistory = [
-
   DummySession(
     date: DateTime(2024, 1, 10),
     doctorName: "Dr. Sarah Smith",
     clinicName: "Glow Skin Clinic",
     type: "Session",
-    outcome: "Successful initial application. Slight swelling resolved in 2 days.",
+    outcome:
+        "Successful initial application. Slight swelling resolved in 2 days.",
     products: ["Botox Cosmetic"],
     materials: "25 Units",
     postCare: "Avoid heavy exercise for 24 hours. Keep upright for 4 hours.",
@@ -432,7 +439,9 @@ class CategoryModel {
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
     var subList = json['sub_categories'] as List? ?? [];
-    List<CategoryModel> subs = subList.map((e) => CategoryModel.fromJson(e)).toList();
+    List<CategoryModel> subs = subList
+        .map((e) => CategoryModel.fromJson(e))
+        .toList();
     return CategoryModel(
       id: json['id'],
       name: json['name'],
@@ -450,24 +459,30 @@ final List<CategoryModel> dummyCategories = [
     id: 1,
     name: "Aesthetics",
     icon: "face",
-    image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
-    shortDescription: "Advanced facials, medical skin peels, and glow therapies.",
+    image:
+        "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+    shortDescription:
+        "Advanced facials, medical skin peels, and glow therapies.",
     parentId: null,
     subCategories: [
       CategoryModel(
         id: 10,
         name: "Facial Aesthetics",
         icon: "face",
-        image: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
-        shortDescription: "Signature dermaplaning, laser, and microdermabrasion.",
+        image:
+            "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+        shortDescription:
+            "Signature dermaplaning, laser, and microdermabrasion.",
         parentId: 1,
         subCategories: [
           CategoryModel(
             id: 101,
             name: "Chemical Peels",
             icon: "peel",
-            image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=800",
-            shortDescription: "Target hyperpigmentation and skin texture flaws.",
+            image:
+                "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=800",
+            shortDescription:
+                "Target hyperpigmentation and skin texture flaws.",
             parentId: 10,
             subCategories: [],
           ),
@@ -475,8 +490,10 @@ final List<CategoryModel> dummyCategories = [
             id: 102,
             name: "Hydrafacials",
             icon: "water",
-            image: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?auto=format&fit=crop&q=80&w=800",
-            shortDescription: "Intense hydration and deep pore vortex cleansing.",
+            image:
+                "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?auto=format&fit=crop&q=80&w=800",
+            shortDescription:
+                "Intense hydration and deep pore vortex cleansing.",
             parentId: 10,
             subCategories: [],
           ),
@@ -486,16 +503,20 @@ final List<CategoryModel> dummyCategories = [
         id: 11,
         name: "Body Aesthetics",
         icon: "accessibility",
-        image: "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
-        shortDescription: "Non-surgical skin tightening and cellulite contouring.",
+        image:
+            "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
+        shortDescription:
+            "Non-surgical skin tightening and cellulite contouring.",
         parentId: 1,
         subCategories: [
           CategoryModel(
             id: 111,
             name: "CoolSculpting",
             icon: "ac_unit",
-            image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
-            shortDescription: "Freeze stubborn fat cells safely and permanently.",
+            image:
+                "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
+            shortDescription:
+                "Freeze stubborn fat cells safely and permanently.",
             parentId: 11,
             subCategories: [],
           ),
@@ -507,15 +528,18 @@ final List<CategoryModel> dummyCategories = [
     id: 2,
     name: "Injectables",
     icon: "syringe",
-    image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=800",
-    shortDescription: "High-end dermal fillers, collagen boosters, and anti-aging injections.",
+    image:
+        "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=800",
+    shortDescription:
+        "High-end dermal fillers, collagen boosters, and anti-aging injections.",
     parentId: null,
     subCategories: [
       CategoryModel(
         id: 20,
         name: "Dermal Fillers",
         icon: "medical_services",
-        image: "https://images.unsplash.com/photo-15122909023902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+        image:
+            "https://images.unsplash.com/photo-15122909023902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
         shortDescription: "Hyaluronic acid-based structural volumization.",
         parentId: 2,
         subCategories: [
@@ -523,7 +547,8 @@ final List<CategoryModel> dummyCategories = [
             id: 201,
             name: "Lip Fillers",
             icon: "lips",
-            image: "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&q=80&w=800",
+            image:
+                "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&q=80&w=800",
             shortDescription: "Plump, hydrate, and define your lip contour.",
             parentId: 20,
             subCategories: [],
@@ -532,8 +557,10 @@ final List<CategoryModel> dummyCategories = [
             id: 202,
             name: "Cheek Fillers",
             icon: "face",
-            image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
-            shortDescription: "Lift cheekbones and restore youthful mid-face volume.",
+            image:
+                "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+            shortDescription:
+                "Lift cheekbones and restore youthful mid-face volume.",
             parentId: 20,
             subCategories: [],
           ),
@@ -543,8 +570,10 @@ final List<CategoryModel> dummyCategories = [
         id: 21,
         name: "Mesotherapy",
         icon: "spa",
-        image: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?auto=format&fit=crop&q=80&w=800",
-        shortDescription: "Micro-injections of custom medical vitamin cocktails.",
+        image:
+            "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?auto=format&fit=crop&q=80&w=800",
+        shortDescription:
+            "Micro-injections of custom medical vitamin cocktails.",
         parentId: 2,
         subCategories: [],
       ),
@@ -554,24 +583,30 @@ final List<CategoryModel> dummyCategories = [
     id: 3,
     name: "Neurotoxins",
     icon: "health_and_safety",
-    image: "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?auto=format&fit=crop&q=80&w=800",
-    shortDescription: "Wrinkle relaxers, frown line injections, and botulinum therapies.",
+    image:
+        "https://images.unsplash.com/photo-1614850523459-c2f4c699c52e?auto=format&fit=crop&q=80&w=800",
+    shortDescription:
+        "Wrinkle relaxers, frown line injections, and botulinum therapies.",
     parentId: null,
     subCategories: [
       CategoryModel(
         id: 30,
         name: "Botox Cosmetics",
         icon: "science",
-        image: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
-        shortDescription: "Frown lines, forehead wrinkles, and crow's feet relaxation.",
+        image:
+            "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+        shortDescription:
+            "Frown lines, forehead wrinkles, and crow's feet relaxation.",
         parentId: 3,
         subCategories: [
           CategoryModel(
             id: 301,
             name: "Forehead Botox",
             icon: "spa",
-            image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=800",
-            shortDescription: "Smooth persistent horizontal forehead expression lines.",
+            image:
+                "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=800",
+            shortDescription:
+                "Smooth persistent horizontal forehead expression lines.",
             parentId: 30,
             subCategories: [],
           ),
@@ -579,8 +614,10 @@ final List<CategoryModel> dummyCategories = [
             id: 302,
             name: "Crow's Feet Botox",
             icon: "remove_red_eye",
-            image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
-            shortDescription: "Soften fine laughter lines around your eye zone.",
+            image:
+                "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+            shortDescription:
+                "Soften fine laughter lines around your eye zone.",
             parentId: 30,
             subCategories: [],
           ),
@@ -590,8 +627,10 @@ final List<CategoryModel> dummyCategories = [
         id: 31,
         name: "Dysport Injections",
         icon: "vaccines",
-        image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=800",
-        shortDescription: "Fast-acting frown line smoothing with natural finish.",
+        image:
+            "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=800",
+        shortDescription:
+            "Fast-acting frown line smoothing with natural finish.",
         parentId: 3,
         subCategories: [],
       ),
@@ -621,35 +660,43 @@ final List<DummyAreaModel> dummyAreas = [
   DummyAreaModel(
     id: 1,
     name: "Face",
-    image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
-    shortDescription: "Explore treatments targeting specific facial muscles and zones.",
+    image:
+        "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+    shortDescription:
+        "Explore treatments targeting specific facial muscles and zones.",
     parentId: null,
     subAreas: [
       DummyAreaModel(
         id: 11,
         name: "Upper Face",
-        image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=800",
+        image:
+            "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=800",
         shortDescription: "Forehead, frown lines, temples, and brow lifts.",
         parentId: 1,
         subAreas: [
           DummyAreaModel(
             id: 111,
             name: "Forehead",
-            image: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=800",
-            shortDescription: "Horizontal lines and forehead skin rejuvenation.",
+            image:
+                "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=800",
+            shortDescription:
+                "Horizontal lines and forehead skin rejuvenation.",
             parentId: 11,
           ),
           DummyAreaModel(
             id: 112,
             name: "Frown Lines",
-            image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
-            shortDescription: "Relax persistence eleven lines between the eyebrows.",
+            image:
+                "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+            shortDescription:
+                "Relax persistence eleven lines between the eyebrows.",
             parentId: 11,
           ),
           DummyAreaModel(
             id: 113,
             name: "Temples",
-            image: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+            image:
+                "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
             shortDescription: "Restore lost volume in temporal hollows.",
             parentId: 11,
           ),
@@ -658,29 +705,35 @@ final List<DummyAreaModel> dummyAreas = [
       DummyAreaModel(
         id: 12,
         name: "Middle Face",
-        image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+        image:
+            "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
         shortDescription: "Under-eye area, cheeks, and nasolabial folds.",
         parentId: 1,
         subAreas: [
           DummyAreaModel(
             id: 121,
             name: "Cheeks",
-            image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
-            shortDescription: "Lift and volume restoration for structural definition.",
+            image:
+                "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+            shortDescription:
+                "Lift and volume restoration for structural definition.",
             parentId: 12,
           ),
           DummyAreaModel(
             id: 122,
             name: "Tear Troughs",
-            image: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+            image:
+                "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
             shortDescription: "Treat tired under-eye bags and hollows.",
             parentId: 12,
           ),
           DummyAreaModel(
             id: 123,
             name: "Nasolabial Folds",
-            image: "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?auto=format&fit=crop&q=80&w=800",
-            shortDescription: "Soften laugh lines extending from nose to mouth.",
+            image:
+                "https://images.unsplash.com/photo-1590439471364-192aa70c0b53?auto=format&fit=crop&q=80&w=800",
+            shortDescription:
+                "Soften laugh lines extending from nose to mouth.",
             parentId: 12,
           ),
         ],
@@ -688,29 +741,34 @@ final List<DummyAreaModel> dummyAreas = [
       DummyAreaModel(
         id: 13,
         name: "Lower Face",
-        image: "https://movelmedspa.com/storage/2024/05/Cheek-Filler-Treatment-at-Movel-Med-Spa.webp",
+        image:
+            "https://movelmedspa.com/storage/2024/05/Cheek-Filler-Treatment-at-Movel-Med-Spa.webp",
         shortDescription: "Lips, chin, jawline definition, and mouth corners.",
         parentId: 1,
         subAreas: [
           DummyAreaModel(
             id: 131,
             name: "Lips",
-            image: "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&q=80&w=800",
+            image:
+                "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&q=80&w=800",
             shortDescription: "Volumize, hydrate, and contour lips.",
             parentId: 13,
           ),
           DummyAreaModel(
             id: 132,
             name: "Jawline",
-            image: "https://movelmedspa.com/storage/2024/05/Cheek-Filler-Treatment-at-Movel-Med-Spa.webp",
+            image:
+                "https://movelmedspa.com/storage/2024/05/Cheek-Filler-Treatment-at-Movel-Med-Spa.webp",
             shortDescription: "Sharpen jawline angle and tighten jowls.",
             parentId: 13,
           ),
           DummyAreaModel(
             id: 133,
             name: "Chin",
-            image: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
-            shortDescription: "Elongate chin projection and balance facial symmetry.",
+            image:
+                "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=800",
+            shortDescription:
+                "Elongate chin projection and balance facial symmetry.",
             parentId: 13,
           ),
         ],
@@ -720,29 +778,35 @@ final List<DummyAreaModel> dummyAreas = [
   DummyAreaModel(
     id: 2,
     name: "Body",
-    image: "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
-    shortDescription: "Treatments covering arms, neck, chest, abdomen, and legs.",
+    image:
+        "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
+    shortDescription:
+        "Treatments covering arms, neck, chest, abdomen, and legs.",
     parentId: null,
     subAreas: [
       DummyAreaModel(
         id: 21,
         name: "Upper Body",
-        image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
+        image:
+            "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
         shortDescription: "Neck bands, shoulders, decolletage, and chest.",
         parentId: 2,
         subAreas: [
           DummyAreaModel(
             id: 211,
             name: "Neck",
-            image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
+            image:
+                "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
             shortDescription: "Tighten horizontal neck rings and skin sag.",
             parentId: 21,
           ),
           DummyAreaModel(
             id: 212,
             name: "Shoulders",
-            image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
-            shortDescription: "Laser treatment and sculpting on the shoulder zone.",
+            image:
+                "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800",
+            shortDescription:
+                "Laser treatment and sculpting on the shoulder zone.",
             parentId: 21,
           ),
         ],
@@ -750,21 +814,26 @@ final List<DummyAreaModel> dummyAreas = [
       DummyAreaModel(
         id: 22,
         name: "Middle Body",
-        image: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
-        shortDescription: "Abdomen contouring, flank fat freezing, and upper arms.",
+        image:
+            "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+        shortDescription:
+            "Abdomen contouring, flank fat freezing, and upper arms.",
         parentId: 2,
         subAreas: [
           DummyAreaModel(
             id: 221,
             name: "Abdomen",
-            image: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
-            shortDescription: "Fat reduction and muscle toning for stomach area.",
+            image:
+                "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=800",
+            shortDescription:
+                "Fat reduction and muscle toning for stomach area.",
             parentId: 22,
           ),
           DummyAreaModel(
             id: 222,
             name: "Upper Arms",
-            image: "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
+            image:
+                "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
             shortDescription: "Tighten batwing arms and contour upper arm fat.",
             parentId: 22,
           ),
@@ -773,22 +842,28 @@ final List<DummyAreaModel> dummyAreas = [
       DummyAreaModel(
         id: 23,
         name: "Lower Body",
-        image: "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
-        shortDescription: "Thighs tightening, buttocks contouring, and lower legs.",
+        image:
+            "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
+        shortDescription:
+            "Thighs tightening, buttocks contouring, and lower legs.",
         parentId: 2,
         subAreas: [
           DummyAreaModel(
             id: 231,
             name: "Thighs",
-            image: "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
-            shortDescription: "Cellulite reduction and inner/outer thigh tightening.",
+            image:
+                "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
+            shortDescription:
+                "Cellulite reduction and inner/outer thigh tightening.",
             parentId: 23,
           ),
           DummyAreaModel(
             id: 232,
             name: "Lower Legs",
-            image: "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
-            shortDescription: "Laser hair removal and capillary vein therapies.",
+            image:
+                "https://images.unsplash.com/photo-1519824141125-994e37c7af46?auto=format&fit=crop&q=80&w=800",
+            shortDescription:
+                "Laser hair removal and capillary vein therapies.",
             parentId: 23,
           ),
         ],
@@ -797,44 +872,44 @@ final List<DummyAreaModel> dummyAreas = [
   ),
 ];
 
-final List<Clinic> dummyClinicsForService = [
-  Clinic(
-    clinicId: 1,
-    clinicName: "Elite Aesthetic Wellness Clinic",
-    email: "info@eliteaesthetics.com",
-    phone: "+1 555-019-2834",
-    description: "Premium clinical skin & non-surgical face and body enhancements.",
-    address: "102 Beverly Hills Dr, Los Angeles, CA 90210",
-    logo: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=150",
-    price: 550,
-    syringeSize: 1,
-    status: "active",
-  ),
-  Clinic(
-    clinicId: 2,
-    clinicName: "Skinsync AI MedSpa",
-    email: "reception@skinsyncmedspa.com",
-    phone: "+1 555-024-8849",
-    description: "State-of-the-art AI-driven facial contouring & clinical dermatology.",
-    address: "742 Evergreen Terrace, Seattle, WA 98101",
-    logo: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=150",
-    price: 480,
-    syringeSize: 1,
-    status: "active",
-  ),
-  Clinic(
-    clinicId: 3,
-    clinicName: "Radiant Skin Clinical Suite",
-    email: "support@radiantclinical.com",
-    phone: "+1 555-072-1209",
-    description: "Elite dermatological injections and bespoke skincare therapies.",
-    address: "505 Fifth Avenue, New York, NY 10017",
-    logo: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=150",
-    price: 620,
-    syringeSize: 1,
-    status: "active",
-  ),
-];
+// final List<Clinic> dummyClinicsForService = [
+//   Clinic(
+//     clinicId: 1,
+//     clinicName: "Elite Aesthetic Wellness Clinic",
+//     email: "info@eliteaesthetics.com",
+//     phone: "+1 555-019-2834",
+//     description: "Premium clinical skin & non-surgical face and body enhancements.",
+//     address: "102 Beverly Hills Dr, Los Angeles, CA 90210",
+//     logo: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=150",
+//     price: 550,
+//     syringeSize: 1,
+//     status: "active",
+//   ),
+//   Clinic(
+//     clinicId: 2,
+//     clinicName: "Skinsync AI MedSpa",
+//     email: "reception@skinsyncmedspa.com",
+//     phone: "+1 555-024-8849",
+//     description: "State-of-the-art AI-driven facial contouring & clinical dermatology.",
+//     address: "742 Evergreen Terrace, Seattle, WA 98101",
+//     logo: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&q=80&w=150",
+//     price: 480,
+//     syringeSize: 1,
+//     status: "active",
+//   ),
+//   Clinic(
+//     clinicId: 3,
+//     clinicName: "Radiant Skin Clinical Suite",
+//     email: "support@radiantclinical.com",
+//     phone: "+1 555-072-1209",
+//     description: "Elite dermatological injections and bespoke skincare therapies.",
+//     address: "505 Fifth Avenue, New York, NY 10017",
+//     logo: "https://images.unsplash.com/photo-1522337360788-8b13edd793be?auto=format&fit=crop&q=80&w=150",
+//     price: 620,
+//     syringeSize: 1,
+//     status: "active",
+//   ),
+// ];
 
 class AppointmentTypeModel {
   final AppointmentType type;
@@ -854,15 +929,17 @@ final List<AppointmentTypeModel> dummyAppointmentTypes = [
   const AppointmentTypeModel(
     type: AppointmentType.consultation,
     title: "Consultation",
-    description: "Discuss your beauty goals, ask questions, and get personalized recommendations from our world-class medical spa physicians.",
-    imageUrl: "https://images.unsplash.com/photo-1579684389782-64d84b5e901a?auto=format&fit=crop&q=80&w=800",
+    description:
+        "Discuss your beauty goals, ask questions, and get personalized recommendations from our world-class medical spa physicians.",
+    imageUrl:
+        "https://images.unsplash.com/photo-1579684389782-64d84b5e901a?auto=format&fit=crop&q=80&w=800",
   ),
   const AppointmentTypeModel(
     type: AppointmentType.treatment,
     title: "Treatment Session",
-    description: "Book directly into your favorite injectables, skincare therapies, dermal fillers, and laser sessions for instant results.",
-    imageUrl: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=800",
+    description:
+        "Book directly into your favorite injectables, skincare therapies, dermal fillers, and laser sessions for instant results.",
+    imageUrl:
+        "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=800",
   ),
 ];
-
-

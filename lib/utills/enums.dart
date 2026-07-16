@@ -31,7 +31,6 @@ enum AppointmentType {
 enum EndPoints {
   treatmentList('treatments/list'),
   treatments("treatments"),
-
   signIn('login'),
   socialLogin("social-login"),
   biometricRegister('v1/biometric/register'),
@@ -42,7 +41,7 @@ enum EndPoints {
 
   verifyOtp("verify-otp"),
   onBoardingProfile("v1/onboarding/profile"),
-  getClinic("clinics/by-side-area?"),
+  getClinic("clinics/filter"),
   getDoctor("doctors/by-side-area?"),
   getMe("v1/me"),
   appVersion("admin/app-version/customer"),

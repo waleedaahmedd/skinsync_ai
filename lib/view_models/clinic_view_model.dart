@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../models/base_state_model.dart';
-import '../models/dummy_list_model.dart';
+import '../models/requests/get_clinic_request.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../repositories/clinic_doctor_repository.dart';
 import '../services/api_base_helper.dart';
@@ -13,33 +13,47 @@ import '../services/location_service.dart';
 import '../utills/enums.dart';
 import 'auth_view_model.dart';
 import 'base_view_model.dart';
+import 'checkout_view_model.dart';
 
 final clinicProvider = NotifierProvider(() {
   final apiBaseHelper = ApiBaseHelper();
   final clinicService = ClinicDoctorService(apiClient: apiBaseHelper);
-  return ClinicViewModel(clinicRepository: clinicService);
+  return ClinicViewModel(repository: clinicService);
 });
 
 class ClinicViewModel extends BaseViewModel<ClinicState> {
-  ClinicViewModel({ClinicDoctorRepository? clinicRepository})
+  final ClinicDoctorRepository _repository;
+  ClinicViewModel({required this._repository})
     : super(initialState: const ClinicState());
-
-  final List<Clinic> _allClinics = <Clinic>[];
 
   void setClinicId(int id) {
     state = state.copyWith(clinicId: id);
   }
 
-  Future<bool?> getClinic({int? treatmentId, List<int>? sideAreaIds}) async {
+  Future<List<Clinic>?> getClinic({int? page, String? search}) async {
     return runSafely(() async {
-      state = state.copyWith(clinicLoading: true);
-      // Simulate network delay of 500ms
-      await Future.delayed(const Duration(milliseconds: 500));
+      // state = state.copyWith(clinicLoading: true);
+      final treatments = ref.read(
+        checkoutViewModel.select((s) {
+          return s.selectedTreatmentsAndAreas;
+        }),
+      );
+      final request = GetClinicRequest(
+        search: search,
+        page: page ?? 1,
+        treatments: treatments.map((t) {
+          return GetClinicTreatmentRequest(
+            treatmentId: t.treatment.id!,
+            areaIds: t.selectedAreas.map((a) => a.target.id).nonNulls.toList(),
+          );
+        }).toList(),
+      );
+      final response = await _repository.getClinic(request: request);
       state = state.copyWith(
         clinicLoading: false,
-        clinics: dummyClinicsForService,
+        clinics: response.data ?? [],
       );
-      return true;
+      return response.data ?? [];
     });
   }
 
@@ -59,11 +73,11 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
       for (final place in places) {
         clinics.add(
           Clinic(
-            clinicId: 29,
+            id: 29,
             phone: place.internationalPhoneNumber,
             description: place.primaryTypeDisplayName?.text,
             address: place.shortFormattedAddress,
-            clinicName: place.displayName?.text,
+            name: place.displayName?.text,
             logo: place.photos?.firstOrNull?.name,
             location: place.location != null
                 ? LatLng(place.location!.latitude!, place.location!.longitude!)
@@ -72,8 +86,6 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
           ),
         );
       }
-      _allClinics.clear();
-      _allClinics.addAll(clinics);
       state = state.copyWith(clinicLoading: false, clinicsToInvite: clinics);
     });
   }
@@ -86,27 +98,6 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
 
   void clearState() {
     state = const ClinicState();
-  }
-
-  void onSearchChanged(String search) {
-    if (search.trim().isEmpty) {
-      state = state.copyWith(clinics: _allClinics);
-      return;
-    }
-    final searchedClinics = <Clinic>[];
-    for (final clinic in _allClinics) {
-      if (clinic.clinicName?.toLowerCase().contains(search.toLowerCase()) ??
-          false) {
-        searchedClinics.add(clinic);
-      } else if (clinic.address?.toLowerCase().contains(search.toLowerCase()) ??
-          false) {
-        searchedClinics.add(clinic);
-      } else if (clinic.phone?.toLowerCase().contains(search.toLowerCase()) ??
-          false) {
-        searchedClinics.add(clinic);
-      }
-    }
-    state = state.copyWith(clinics: searchedClinics);
   }
 
   @override

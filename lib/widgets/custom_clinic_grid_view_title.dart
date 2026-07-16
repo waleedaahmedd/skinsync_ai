@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+
 import '../models/responses/get_clinic_response.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
@@ -48,7 +49,9 @@ class CustomClinicGridViewTile extends StatelessWidget {
               child: Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16.r),
+                    ),
                     child: CachedNetworkImage(
                       imageUrl: clinicData?.logo ?? "",
                       height: 150.h,
@@ -121,11 +124,17 @@ class CustomClinicGridViewTile extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.star_rounded, color: Colors.amber, size: 14.sp),
+                          Icon(
+                            Icons.star_rounded,
+                            color: Colors.amber,
+                            size: 14.sp,
+                          ),
                           SizedBox(width: 3.w),
                           Text(
                             '${clinicData?.place?.rating ?? 0.0}',
-                            style: CustomFonts.black10w600.copyWith(fontSize: 10.sp),
+                            style: CustomFonts.black10w600.copyWith(
+                              fontSize: 10.sp,
+                            ),
                           ),
                         ],
                       ),
@@ -159,7 +168,7 @@ class CustomClinicGridViewTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    clinicData?.clinicName ?? "Clinic Name",
+                    clinicData?.name ?? "Clinic Name",
                     style: CustomFonts.black16w600.copyWith(
                       fontSize: 14.sp,
                       height: 1.2,
@@ -171,14 +180,20 @@ class CustomClinicGridViewTile extends StatelessWidget {
                     SizedBox(height: 5.h),
                     Row(
                       children: [
-                        Icon(Icons.location_on_outlined, size: 12.sp, color: Colors.grey),
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: 12.sp,
+                          color: Colors.grey,
+                        ),
                         SizedBox(width: 4.w),
                         Expanded(
                           child: Text(
                             clinicData!.address!,
                             style: CustomFonts.grey13w400.copyWith(
                               fontSize: 11.sp,
-                              color: CustomColors.textGreyColor.withValues(alpha: 0.8),
+                              color: CustomColors.textGreyColor.withValues(
+                                alpha: 0.8,
+                              ),
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -191,11 +206,18 @@ class CustomClinicGridViewTile extends StatelessWidget {
                     SizedBox(height: 4.h),
                     Row(
                       children: [
-                        Icon(Icons.access_time_rounded, size: 12.sp, color: Colors.grey),
+                        Icon(
+                          Icons.access_time_rounded,
+                          size: 12.sp,
+                          color: Colors.grey,
+                        ),
                         SizedBox(width: 4.w),
                         Expanded(
                           child: Text(
-                            clinicData!.place!.currentOpeningHours!.todayOpeningHours,
+                            clinicData!
+                                .place!
+                                .currentOpeningHours!
+                                .todayOpeningHours,
                             style: CustomFonts.grey13w400.copyWith(
                               fontSize: 11.sp,
                               color: Colors.grey.shade600,

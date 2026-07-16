@@ -32,7 +32,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   Future<void> _bookAppointment() async {
     final checkoutState = ref.read(checkoutViewModel);
     final clinicName =
-        checkoutState.selectedClinic?.clinicName ?? "Aesthetic Wellness Clinic";
+        checkoutState.selectedClinic?.name ?? "Aesthetic Wellness Clinic";
     final doctorName =
         checkoutState.selectedDoctor?.name ?? "Specialist Doctor";
     final dateStr = checkoutState.selectedDate != null
@@ -53,14 +53,16 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
       paidAmount = _consultationFee;
       paymentMethodName = "Paid via Skinsync Wallet";
     }
-    final success = widget.clinic.place != null ? await ref
-        .read(checkoutViewModel.notifier)
-        .inviteClinic(
-          clinic: widget.clinic,
-          consultationFees: _consultationFee,
-          initialDeposit: paidAmount,
-          availability: [],
-        ) : null;
+    final success = widget.clinic.place != null
+        ? await ref
+              .read(checkoutViewModel.notifier)
+              .inviteClinic(
+                clinic: widget.clinic,
+                consultationFees: _consultationFee,
+                initialDeposit: paidAmount,
+                availability: [],
+              )
+        : null;
     if (success ?? false) {
       showDialog(
         context: context,
