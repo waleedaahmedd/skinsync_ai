@@ -450,10 +450,38 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     }
     print("-------------------------------------");
   }
+
+  void removeFlatSelection({
+    required int treatmentId,
+    required int areaId,
+  }) {
+    final updatedList = state.selectedTreatmentsAndAreas
+        .map((item) {
+      final currentTreatmentId = item.treatment.id ?? 0;
+
+      // Not the treatment we're targeting — leave untouched
+      if (currentTreatmentId != treatmentId) {
+        return item;
+      }
+
+      // Rebuild a fresh, modifiable list with the area removed
+      final updatedAreas = item.selectedAreas
+          .where((areaItem) => (areaItem.target.id ?? 0) != areaId)
+          .toList();
+
+      return item.copyWith(selectedAreas: updatedAreas);
+    })
+    // Drop the whole treatment entry if it has no areas left
+        .where((item) => item.selectedAreas.isNotEmpty)
+        .toList();
+
+    state = state.copyWith(selectedTreatmentsAndAreas: updatedList);
+  }
 }
 
 class CheckoutState extends BaseStateModel {
   final List<SelectedTreatmentAndAreasModel> selectedTreatmentsAndAreas;
+  final List<int> selectedAreaIds;
   final List<TreatmentCategoryModel>? selectedCategories;
   final TreatmentData? selectedTreatments;
   final TreatmentAreaModel? selectedAreas;
@@ -464,7 +492,7 @@ class CheckoutState extends BaseStateModel {
   final XFile? capturedImage;
   final AppointmentData? appointment;
 
-  // Selected entities for checkout session tracking
+  // Selected entities for checkout session trackinga
   final Clinic? selectedClinic;
   final AppointmentType? selectedAppointmentType;
   final DummyDoctor? selectedDoctor;
@@ -500,6 +528,7 @@ class CheckoutState extends BaseStateModel {
     this.appointmentTime,
     this.capturedImage,
     this.selectedTreatmentsAndAreas = const [],
+    this.selectedAreaIds = const [],
     this.selectedCategories = const [],
     this.selectedTreatments,
     this.selectedAreas,
@@ -521,6 +550,7 @@ class CheckoutState extends BaseStateModel {
     String? appointmentTime,
     XFile? capturedImage,
     List<SelectedTreatmentAndAreasModel>? selectedTreatmentsAndAreas,
+    List<int>? selectedAreaIds,
     List<TreatmentCategoryModel>? selectedCategories,
     TreatmentData? selectedTreatments,
     TreatmentAreaModel? selectedAreas,
@@ -541,6 +571,7 @@ class CheckoutState extends BaseStateModel {
       capturedImage: capturedImage ?? this.capturedImage,
       selectedTreatmentsAndAreas:
           selectedTreatmentsAndAreas ?? this.selectedTreatmentsAndAreas,
+      selectedAreaIds: selectedAreaIds ?? this.selectedAreaIds,
       selectedCategories: selectedCategories ?? this.selectedCategories,
       selectedTreatments: selectedTreatments ?? this.selectedTreatments,
       selectedAreas: selectedAreas ?? this.selectedAreas,

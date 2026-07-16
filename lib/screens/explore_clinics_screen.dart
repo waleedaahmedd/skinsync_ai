@@ -1,16 +1,13 @@
 import 'dart:async';
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-
 import '../main.dart';
+import '../models/flat_selection_model.dart';
 import '../models/responses/get_clinic_response.dart';
-import '../models/responses/treatment_area_list_response.dart';
-import '../models/responses/treatment_list_response.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -18,7 +15,6 @@ import '../utills/enums.dart';
 import '../view_models/auth_view_model.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/clinic_view_model.dart';
-import '../view_models/treatment_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_clinic_grid_view_title.dart';
@@ -107,7 +103,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                 Consumer(
                   builder: (context, ref, _) {
                     final checkoutState = ref.watch(checkoutViewModel);
-                    final treatment = checkoutState.selectedTreatments;
+                    final treatment = checkoutState.flatSelections;
                     final selectedArea = checkoutState.selectedAreas;
                     final subAreas = [?selectedArea];
 
@@ -118,7 +114,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                     return _buildSelectedTreatmentAndAreas(
                       ref: ref,
                       treatment: treatment,
-                      subAreas: subAreas,
+                     // subAreas: subAreas,
                     );
                   },
                 ),
@@ -228,8 +224,8 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
 
   Container _buildSelectedTreatmentAndAreas({
     required WidgetRef ref,
-    required TreatmentData treatment,
-    required List<TreatmentAreaModel> subAreas,
+    required   List<FlatSelectionModel> treatment,
+   // required List<TreatmentAreaModel> subAreas,
   }) {
     return Container(
       height: 38.h,
@@ -238,10 +234,10 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: 24.w),
-        itemCount: subAreas.length,
+        itemCount: treatment.length,
         itemBuilder: (context, index) {
-          final subArea = subAreas[index];
-          final chipText = "${treatment.name ?? ''} - ${subArea.name ?? ''}";
+          final selection = treatment[index];
+          final chipText = "${selection.treatmentName ?? ''} - ${selection.areaName ?? ''}";
 
           return Container(
             margin: EdgeInsets.only(right: 8.w),
@@ -299,24 +295,33 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                         // Clickable Cancel Cross Button
                         GestureDetector(
                           onTap: () {
-                            final subAreaId = subArea.id!;
-                            // 1. Remove from treatmentViewModel
-                            ref
-                                .read(treatmentViewModel.notifier)
-                                .removeSubArea(subAreaId);
 
-                            // 2. Sync and update checkoutViewModel (Do not clear entire state, keep parent treatment intact)
-                            final updatedSubAreas = subAreas
-                                .where((e) => e.id != subAreaId)
-                                .toList();
+
+                            // 2. Sync checkoutViewModel — remove just this flat entry
+                            ref
+                                .read(checkoutViewModel.notifier)
+                                .removeFlatSelection(
+                              treatmentId: selection.treatmentId,
+                              areaId: selection.areaId,
+                            );
+                            // final subAreaId = subArea.id!;
+                            // // 1. Remove from treatmentViewModel
+                            // ref
+                            //     .read(treatmentViewModel.notifier)
+                            //     .removeSubArea(subAreaId);
+                            //
+                            // // 2. Sync and update checkoutViewModel (Do not clear entire state, keep parent treatment intact)
+                            // final updatedSubAreas = subAreas
+                            //     .where((e) => e.id != subAreaId)
+                            //     .toList();
                             // final updatedSubAreaIds =
                             //     updatedSubAreas
                             //         .map((e) => e.id!)
                             //         .toList();
 
-                            ref
-                                .read(checkoutViewModel.notifier)
-                                .setSelectedAreas(updatedSubAreas.firstOrNull);
+                            // ref
+                            //     .read(checkoutViewModel.notifier)
+                            //     .setSelectedAreas(updatedSubAreas.firstOrNull);
 
                             // 3. Re-fetch clinics with updated sub-area filters
                             _pagingController.refresh();
