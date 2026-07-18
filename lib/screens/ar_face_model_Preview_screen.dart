@@ -77,22 +77,27 @@ class _ArFaceModelPreviewScreenState
     return null;
   }
 
-  List<AreaData> _getLeafAreas(List<AreaData> rootAreas) {
-    final List<AreaData> leafs = [];
-    void traverse(AreaData area) {
+  Map<String, List<AreaData>> _getGroupedLeafAreas(List<AreaData> rootAreas) {
+    final Map<String, List<AreaData>> groups = {};
+
+    void traverse(AreaData area, String parentPath) {
       if (area.subAreas == null || area.subAreas!.isEmpty) {
-        leafs.add(area);
+        final groupName = parentPath.isEmpty ? "General Selection" : parentPath;
+        groups.putIfAbsent(groupName, () => []).add(area);
       } else {
+        String newPath = parentPath.isEmpty
+            ? (area.name ?? '')
+            : "$parentPath ➔ ${area.name}";
         for (final sub in area.subAreas!) {
-          traverse(sub);
+          traverse(sub, newPath);
         }
       }
     }
 
     for (final area in rootAreas) {
-      traverse(area);
+      traverse(area, "");
     }
-    return leafs;
+    return groups;
   }
 
   Widget _buildFlatAreas({
@@ -100,106 +105,123 @@ class _ArFaceModelPreviewScreenState
     required Set<int> selectedAreaIds,
     required TreatmentData treatment,
   }) {
-    final leafAreas = _getLeafAreas(rootAreas);
-    if (leafAreas.isEmpty) return const SizedBox.shrink();
+    final groupedLeafs = _getGroupedLeafAreas(rootAreas);
+    if (groupedLeafs.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Area Selection", style: CustomFonts.black18w600),
-        SizedBox(height: 12.h),
-        Wrap(
-          direction: Axis.horizontal,
-          spacing: 12.w,
-          runSpacing: 12.h,
-          children: leafAreas.map((area) {
-            final isSelected = selectedAreaIds.contains(area.id);
-            return ServiceTypeButton(
-              imageUrl: area.image,
-              icon: area.icon,
-              text: area.name ?? '-',
-              selected: isSelected,
-              onPressed: () {
-                if (isSelected) {
-                  // Checkout state is the single source of truth — removing
-                  // here is enough, the UI recomputes on the next watch.
-                  ref
-                      .read(checkoutViewModel.notifier)
-                      .removeArea(area.id ?? 0);
-                } else {
-                  final treatmentSku = treatment.globalSku ?? '';
-                  final areaSku = area.globalSku ?? '';
-
-                  EasyLoading.show(status: 'Fetching materials...');
-                  ref
-                      .read(treatmentViewModel.notifier)
-                      .getMaterials(
-                    treatmentSku: treatmentSku,
-                    areaSku: areaSku,
-                  )
-                      .then((res) {
-                    EasyLoading.dismiss();
-                    if (res != null &&
-                        res.isSuccess == true &&
-                        res.data != null) {
-                      final materials = res.data ?? [];
-
-                      // Check if ALL materials returned satisfy the auto-selection criteria
-                      bool canAutoSelectAll =
-                          materials.isNotEmpty &&
-                              materials.every((m) {
-                                final min = m.minQty ?? 0;
-                                final max = m.maxQty ?? 0;
-                                return (min == max) || (max == 0);
-                              });
-
-                      if (canAutoSelectAll) {
-                        final List<SelectedMaterialModel>
-                        selectedMaterials = [];
-                        for (final m in materials) {
-                          final min = m.minQty ?? 0;
-                          final max = m.maxQty ?? 0;
-                          final qty = (min == max) ? min : 0;
-                          selectedMaterials.add(
-                            SelectedMaterialModel(
-                              id: m.id ?? 0,
-                              name: m.name ?? '',
-                              selectedQuantity: qty,
-                              minQty: min,
-                              maxQty: max,
-                            ),
-                          );
-                        }
+        ...groupedLeafs.entries.map((entry) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20.h),
+              Text(
+                entry.key,
+                style: CustomFonts.black16w600.copyWith(
+                  color: CustomColors.purpleColor,
+                ),
+              ),
+              SizedBox(height: 12.h),
+              Wrap(
+                direction: Axis.horizontal,
+                spacing: 12.w,
+                runSpacing: 12.h,
+                children: entry.value.map((area) {
+                  final isSelected = selectedAreaIds.contains(area.id);
+                  return ServiceTypeButton(
+                    imageUrl: area.image,
+                    icon: area.icon,
+                    text: area.name ?? '-',
+                    selected: isSelected,
+                    onPressed: () {
+                      if (isSelected) {
+                        // Checkout state is the single source of truth — removing
+                        // here is enough, the UI recomputes on the next watch.
                         ref
                             .read(checkoutViewModel.notifier)
-                            .saveMaterialsForArea(
-                          treatment: treatment,
-                          area: area,
-                          materials: selectedMaterials,
-                        );
+                            .removeArea(area.id ?? 0);
                       } else {
-                        if (!context.mounted) return;
-                        _showMaterialBottomSheet(context, area, materials);
+                        final treatmentSku = treatment.globalSku ?? '';
+                        final areaSku = area.globalSku ?? '';
+
+                        EasyLoading.show(status: 'Fetching materials...');
+                        ref
+                            .read(treatmentViewModel.notifier)
+                            .getMaterials(
+                              treatmentSku: treatmentSku,
+                              areaSku: areaSku,
+                            )
+                            .then((res) {
+                          EasyLoading.dismiss();
+                          if (res != null &&
+                              res.isSuccess == true &&
+                              res.data != null) {
+                            final materials = res.data ?? [];
+
+                            // Check if ALL materials returned satisfy the auto-selection criteria
+                            bool canAutoSelectAll =
+                                materials.isNotEmpty &&
+                                materials.every((m) {
+                                  final min = m.minQty ?? 0;
+                                  final max = m.maxQty ?? 0;
+                                  return (min == max) || (max == 0);
+                                });
+
+                            if (canAutoSelectAll) {
+                              final List<SelectedMaterialModel>
+                                  selectedMaterials = [];
+                              for (final m in materials) {
+                                final min = m.minQty ?? 0;
+                                final max = m.maxQty ?? 0;
+                                final qty = (min == max) ? min : 0;
+                                selectedMaterials.add(
+                                  SelectedMaterialModel(
+                                    id: m.id ?? 0,
+                                    name: m.name ?? '',
+                                    selectedQuantity: qty,
+                                    minQty: min,
+                                    maxQty: max,
+                                  ),
+                                );
+                              }
+                              ref
+                                  .read(checkoutViewModel.notifier)
+                                  .saveMaterialsForArea(
+                                    treatment: treatment,
+                                    area: area,
+                                    materials: selectedMaterials,
+                                  );
+                            } else {
+                              if (!context.mounted) return;
+                              _showMaterialBottomSheet(
+                                context,
+                                area,
+                                materials,
+                              );
+                            }
+                          } else {
+                            // Fallback to existing flow if API returns empty or fails
+                            ref
+                                .read(checkoutViewModel.notifier)
+                                .addSelectedArea(area);
+                          }
+                        }).catchError((e) {
+                          EasyLoading.dismiss();
+                          // Fallback to existing flow if API fails
+                          ref
+                              .read(checkoutViewModel.notifier)
+                              .addSelectedArea(area);
+                        });
                       }
-                    } else {
-                      // Fallback to existing flow if API returns empty or fails
-                      ref
-                          .read(checkoutViewModel.notifier)
-                          .addSelectedArea(area);
-                    }
-                  })
-                      .catchError((e) {
-                    EasyLoading.dismiss();
-                    // Fallback to existing flow if API fails
-                    ref
-                        .read(checkoutViewModel.notifier)
-                        .addSelectedArea(area);
-                  });
-                }
-              },
-            );
-          }).toList(),
-        ),
+                    },
+                  );
+                }).toList(),
+              ),
+            ],
+          );
+        }).toList(),
       ],
     );
   }
