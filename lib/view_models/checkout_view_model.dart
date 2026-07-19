@@ -147,9 +147,12 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   }
 
   void addSelectedTreatment(TreatmentData treatment) {
-    final currentTreatmentsAndAreas = List<SelectedTreatmentAndAreasModel>.from(
-      state.selectedTreatmentsAndAreas,
-    );
+    // Remove any treatment that has NO selected areas,
+    // UNLESS it's the treatment we are currently switching to.
+    final currentTreatmentsAndAreas = state.selectedTreatmentsAndAreas
+        .where((item) =>
+            item.selectedAreas.isNotEmpty || item.treatment.id == treatment.id)
+        .toList();
 
     final existingIndex = currentTreatmentsAndAreas.indexWhere(
       (item) => item.treatment.id == treatment.id,

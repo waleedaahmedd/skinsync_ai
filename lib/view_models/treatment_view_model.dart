@@ -90,7 +90,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   }
 
   void removeSubArea(int id) {
-    ref.read(checkoutViewModel.notifier).removeArea(id);
     state = state.copyWith(isAiImageGenerated: false);
   }
 

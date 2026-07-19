@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../main.dart';
@@ -103,18 +104,15 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                 Consumer(
                   builder: (context, ref, _) {
                     final checkoutState = ref.watch(checkoutViewModel);
-                    final treatment = checkoutState.flatSelections;
-                    final selectedArea = checkoutState.selectedAreas;
-                    final subAreas = [?selectedArea];
+                    final flatSelections = checkoutState.flatSelections;
 
-                    if (treatment == null || subAreas.isEmpty) {
+                    if (flatSelections.isEmpty) {
                       return const SizedBox.shrink();
                     }
 
                     return _buildSelectedTreatmentAndAreas(
                       ref: ref,
-                      treatment: treatment,
-                     // subAreas: subAreas,
+                      flatSelections: flatSelections,
                     );
                   },
                 ),
@@ -224,8 +222,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
 
   Container _buildSelectedTreatmentAndAreas({
     required WidgetRef ref,
-    required   List<FlatSelectionModel> treatment,
-   // required List<TreatmentAreaModel> subAreas,
+    required List<FlatSelectionModel> flatSelections,
   }) {
     return Container(
       height: 38.h,
@@ -234,9 +231,9 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: 24.w),
-        itemCount: treatment.length,
+        itemCount: flatSelections.length,
         itemBuilder: (context, index) {
-          final selection = treatment[index];
+          final selection = flatSelections[index];
           final chipText = "${selection.treatmentName ?? ''} - ${selection.areaName ?? ''}";
 
           return Container(

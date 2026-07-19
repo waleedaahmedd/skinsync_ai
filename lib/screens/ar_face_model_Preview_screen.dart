@@ -87,7 +87,7 @@ class _ArFaceModelPreviewScreenState
       } else {
         String newPath = parentPath.isEmpty
             ? (area.name ?? '')
-            : "$parentPath ➔ ${area.name}";
+            : "$parentPath > ${area.name}";
         for (final sub in area.subAreas!) {
           traverse(sub, newPath);
         }
@@ -111,16 +111,20 @@ class _ArFaceModelPreviewScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Area Selection", style: CustomFonts.black18w600),
+        Text("Select Treatment Area", style: CustomFonts.black16w600),
         ...groupedLeafs.entries.map((entry) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 20.h),
+              SizedBox(height: 24.h),
               Text(
-                entry.key,
-                style: CustomFonts.black16w600.copyWith(
-                  color: CustomColors.purpleColor,
+                entry.key.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.w600,
+                  color: CustomColors.textGreyColor,
+                  letterSpacing: 1.2,
+                  fontFamily: 'Degular',
                 ),
               ),
               SizedBox(height: 12.h),
@@ -161,27 +165,23 @@ class _ArFaceModelPreviewScreenState
                             final materials = res.data ?? [];
 
                             // Check if ALL materials returned satisfy the auto-selection criteria
-                            bool canAutoSelectAll =
-                                materials.isNotEmpty &&
-                                materials.every((m) {
-                                  final min = m.minQty ?? 0;
-                                  final max = m.maxQty ?? 0;
-                                  return (min == max) || (max == 0);
-                                });
+                            bool canAutoSelectAll = materials.every((m) {
+                              final min = m.minQty ?? 0;
+                              final max = m.maxQty ?? 0;
+                              return (min == max) || (max == 0);
+                            });
 
-                            if (canAutoSelectAll) {
+                            if (canAutoSelectAll || materials.isEmpty) {
                               final List<SelectedMaterialModel>
                                   selectedMaterials = [];
                               for (final m in materials) {
-                                final min = m.minQty ?? 0;
                                 final max = m.maxQty ?? 0;
-                                final qty = (min == max) ? min : 0;
                                 selectedMaterials.add(
                                   SelectedMaterialModel(
                                     id: m.id ?? 0,
                                     name: m.name ?? '',
-                                    selectedQuantity: qty,
-                                    minQty: min,
+                                    selectedQuantity: max,
+                                    minQty: m.minQty ?? 0,
                                     maxQty: max,
                                   ),
                                 );
@@ -338,11 +338,11 @@ class _ArFaceModelPreviewScreenState
                         vertical: 12.h,
                       ),
                       decoration: BoxDecoration(
-                        color: CustomColors.purpleColor.withValues(alpha: 0.12),
+                        color: CustomColors.greyColor.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(20.r),
                         border: Border.all(
-                          color: CustomColors.purpleColor.withValues(
-                            alpha: 0.4,
+                          color: CustomColors.textFeildBoaderColor.withValues(
+                            alpha: 0.3,
                           ),
                           width: 1,
                         ),
@@ -351,7 +351,7 @@ class _ArFaceModelPreviewScreenState
                         children: [
                           Icon(
                             Icons.info_outline_rounded,
-                            color: CustomColors.darkPurple,
+                            color: CustomColors.textGreyColor,
                             size: 20.sp,
                           ),
                           SizedBox(width: 12.w),
@@ -359,7 +359,7 @@ class _ArFaceModelPreviewScreenState
                             child: Text(
                               "This is an AI-generated Simulation for Visualization Purpose only. Actual results may vary.",
                               style: CustomFonts.black12w600.copyWith(
-                                color: CustomColors.darkPurple,
+                                color: CustomColors.textGreyColor,
                                 fontSize: 11.sp,
                                 height: 1.3,
                               ),
@@ -384,7 +384,7 @@ class _ArFaceModelPreviewScreenState
                                 children: [
                                   Text(
                                     'Treatment Selection',
-                                    style: CustomFonts.black18w600,
+                                    style: CustomFonts.black16w600,
                                   ),
                                   InkWell(
                                     onTap: () {
@@ -400,7 +400,9 @@ class _ArFaceModelPreviewScreenState
                                     },
                                     child: Text(
                                       "Reset",
-                                      style: CustomFonts.pinkunderlined20w600,
+                                      style: CustomFonts.black14w500Underline.copyWith(
+                                        color: CustomColors.textGreyColor,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -548,32 +550,18 @@ class _ArFaceModelPreviewScreenState
                             text: treatment.name ?? '-',
                             selected: isSelected,
                             onPressed: () async {
-                              if (isSelected) {
-                                // Keep it selected, do not remove/deselect.
-                                // Just switch the active selection to show its areas below!
-                                ref
-                                    .read(treatmentViewModel.notifier)
-                                    .onTapTreatment(
-                                  treatmentModel: treatment,
-                                  isCallPredictAPI: false,
-                                );
-                                await ref
-                                    .read(treatmentAreaProvider.notifier)
-                                    .fetchAreasByTreatment(treatment.id ?? 0);
-                              } else {
-                                ref
-                                    .read(treatmentViewModel.notifier)
-                                    .onTapTreatment(
-                                  treatmentModel: treatment,
-                                  isCallPredictAPI: true,
-                                );
-                                ref
-                                    .read(checkoutViewModel.notifier)
-                                    .addSelectedTreatment(treatment);
-                                await ref
-                                    .read(treatmentAreaProvider.notifier)
-                                    .fetchAreasByTreatment(treatment.id ?? 0);
-                              }
+                              ref
+                                  .read(treatmentViewModel.notifier)
+                                  .onTapTreatment(
+                                treatmentModel: treatment,
+                                isCallPredictAPI: !isSelected,
+                              );
+                              ref
+                                  .read(checkoutViewModel.notifier)
+                                  .addSelectedTreatment(treatment);
+                              await ref
+                                  .read(treatmentAreaProvider.notifier)
+                                  .fetchAreasByTreatment(treatment.id ?? 0);
                             },
                           ),
                         ),
