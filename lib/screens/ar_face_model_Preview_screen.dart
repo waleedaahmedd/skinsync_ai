@@ -179,7 +179,7 @@ class _ArFaceModelPreviewScreenState
                                 selectedMaterials.add(
                                   SelectedMaterialModel(
                                     id: m.id ?? 0,
-                                    name: m.name ?? '',
+                                    name: m.unitType ?? '',
                                     selectedQuantity: max,
                                     minQty: m.minQty ?? 0,
                                     maxQty: max,

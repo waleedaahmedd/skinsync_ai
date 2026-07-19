@@ -129,7 +129,7 @@ class _MaterialLevelSheetState extends ConsumerState<MaterialLevelSheet> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  material.name ?? "Material",
+                                  material.unitType ?? "Material",
                                   style: CustomFonts.black14w600,
                                 ),
                               ),
@@ -211,7 +211,7 @@ class _MaterialLevelSheetState extends ConsumerState<MaterialLevelSheet> {
                   selectedMaterials.add(
                     SelectedMaterialModel(
                       id: material.id!,
-                      name: material.name ?? "Material",
+                      name: material.unitType ?? "Material",
                       selectedQuantity: qty,
                       minQty: material.minQty ?? 0,
                       maxQty: material.maxQty ?? 0,

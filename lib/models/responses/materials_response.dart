@@ -33,20 +33,20 @@ class MaterialsResponse extends BaseResponseModel {
 
 class MaterialData {
   int? id;
-  String? name;
+  String? unitType;
   int? minQty;
   int? maxQty;
 
   MaterialData({
     this.id,
-    this.name,
+    this.unitType,
     this.minQty,
     this.maxQty,
   });
 
   MaterialData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    name = json['name'];
+    unitType = json['unit_type'];
     minQty = json['min_qty'];
     maxQty = json['max_qty'];
   }
@@ -54,7 +54,7 @@ class MaterialData {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
-    data['name'] = name;
+    data['unit_type'] = unitType;
     data['min_qty'] = minQty;
     data['max_qty'] = maxQty;
     return data;
