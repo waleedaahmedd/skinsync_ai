@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../models/dummy_list_model.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../utills/enums.dart';
+import '../view_models/appointment_view_model.dart';
 import '../view_models/checkout_view_model.dart';
+import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/treatment_container.dart';
 import 'doctors_screen.dart';
 
-class SelectAppointmentTypeScreen extends ConsumerWidget {
+import 'select_date_time_screen.dart';
+
+class SelectAppointmentTypeScreen extends ConsumerStatefulWidget {
   static const routeName = '/select_appointment_type_screen';
 
   final Clinic clinic;
@@ -19,7 +23,24 @@ class SelectAppointmentTypeScreen extends ConsumerWidget {
   const SelectAppointmentTypeScreen({super.key, required this.clinic});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SelectAppointmentTypeScreen> createState() =>
+      _SelectAppointmentTypeScreenState();
+}
+
+class _SelectAppointmentTypeScreenState
+    extends ConsumerState<SelectAppointmentTypeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(appointmentProvider.notifier).getAppointmentTypes();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final appointmentState = ref.watch(appointmentProvider);
+
     return Scaffold(
       backgroundColor: CustomColors.whiteColor,
       appBar: const CustomAppBar(showTitle: true, title: "Select Appointment"),
@@ -41,32 +62,60 @@ class SelectAppointmentTypeScreen extends ConsumerWidget {
               ),
               SizedBox(height: 24.h),
               Expanded(
-                child: ListView.builder(
-                  itemCount: dummyAppointmentTypes.length,
-                  physics: const BouncingScrollPhysics(),
-                  itemBuilder: (context, index) {
-                    final appointmentType = dummyAppointmentTypes[index];
+                child:
+                    appointmentState.loading
+                        ? const AppLoader()
+                        : appointmentState.appointmentTypes.isEmpty
+                        ? Center(
+                          child: Text(
+                            "No appointment types found",
+                            style: CustomFonts.grey14w400,
+                          ),
+                        )
+                        : ListView.builder(
+                          itemCount: appointmentState.appointmentTypes.length,
+                          physics: const BouncingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            final typeData =
+                                appointmentState.appointmentTypes[index];
 
-                    return TreatmentContainer(
-                      imageHeight: 180.h,
-                      customTitle: appointmentType.title,
-                      customSubtitle: appointmentType.description,
-                      customImageUrl: appointmentType.imageUrl,
-                      customOnTap: () {
-                        // Save selection in CheckoutState
-                        ref
-                            .read(checkoutViewModel.notifier)
-                            .setSelectedAppointmentType(appointmentType.type);
+                            return TreatmentContainer(
+                              imageHeight: 180.h,
+                              customTitle: typeData.name ?? '',
+                              customSubtitle: typeData.description ?? '',
+                              customImageUrl: typeData.imageUrl ?? '',
+                              customOnTap: () {
+                                // Map string name to AppointmentType enum for state tracking
+                                final type =
+                                    typeData.name?.toLowerCase().contains(
+                                          'consultation',
+                                        ) ??
+                                        false
+                                        ? AppointmentType.consultation
+                                        : AppointmentType.treatment;
 
-                        Navigator.pushNamed(
-                          context,
-                          DoctorsScreen.routeName,
-                          arguments: clinic,
-                        );
-                      },
-                    );
-                  },
-                ),
+                                // Save selection in CheckoutState
+                                ref
+                                    .read(checkoutViewModel.notifier)
+                                    .setSelectedAppointmentType(type);
+
+                                if (ref.read(checkoutViewModel).isInviteClinic) {
+                                  Navigator.pushNamed(
+                                    context,
+                                    SelectDateTimeScreen.routeName,
+                                    arguments: widget.clinic,
+                                  );
+                                } else {
+                                  Navigator.pushNamed(
+                                    context,
+                                    DoctorsScreen.routeName,
+                                    arguments: widget.clinic,
+                                  );
+                                }
+                              },
+                            );
+                          },
+                        ),
               ),
             ],
           ),

@@ -1,3 +1,4 @@
+import '../models/responses/appointment_type_list_response.dart';
 import '../models/responses/get_appointment_response.dart';
 import '../models/responses/simulation_history_response.dart';
 
@@ -7,4 +8,5 @@ abstract class AppointmentRepository {
     required int limit,
   });
   Future<List<SimulationData>> getSimulationHistory();
+  Future<AppointmentTypeListResponse> getAppointmentTypes();
 }
