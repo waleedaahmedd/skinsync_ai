@@ -736,18 +736,19 @@ class _ArFaceModelPreviewScreenState
           .getMaterials(treatmentSku: treatmentSku, areaSku: areaSku)
           .then((res) {
             EasyLoading.dismiss();
-            if (res != null && res.isSuccess == true && res.data != null) {
-              final materials = res.data ?? [];
-
-              bool canAutoSelectAll = materials.every((m) {
+            if (res != null && res.isSuccess == true) {
+              bool canAutoSelectAll = true;
+              if (res.data != null) {
+                final m = res.data!;
                 final min = m.minQty ?? 0;
                 final max = m.maxQty ?? 0;
-                return (min == max) || (max == 0);
-              });
+                canAutoSelectAll = (min == max) || (max == 0);
+              }
 
-              if (canAutoSelectAll || materials.isEmpty) {
+              if (canAutoSelectAll || res.data == null) {
                 final List<SelectedMaterialModel> selectedMaterials = [];
-                for (final m in materials) {
+                if (res.data != null) {
+                  final m = res.data!;
                   final max = m.maxQty ?? 0;
                   selectedMaterials.add(
                     SelectedMaterialModel(
@@ -766,7 +767,7 @@ class _ArFaceModelPreviewScreenState
                     );
               } else {
                 if (!context.mounted) return;
-                _showMaterialBottomSheet(context, area, materials);
+                _showMaterialBottomSheet(context, area, res.data!);
               }
             } else {
               ref.read(checkoutViewModel.notifier).addSelectedArea(area);
@@ -782,7 +783,7 @@ class _ArFaceModelPreviewScreenState
   void _showMaterialBottomSheet(
     BuildContext context,
     TreatmentAreaModel area,
-    List<MaterialData> materials,
+    MaterialData material,
   ) {
     final treatment = ref.read(checkoutViewModel).selectedTreatments;
     if (treatment == null) return;
@@ -797,7 +798,7 @@ class _ArFaceModelPreviewScreenState
       builder: (context) {
         return MaterialLevelSheet(
           area: area,
-          materials: materials,
+          material: material,
           treatment: treatment,
         );
       },

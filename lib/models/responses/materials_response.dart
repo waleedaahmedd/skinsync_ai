@@ -1,7 +1,7 @@
 import 'base_response_model.dart';
 
 class MaterialsResponse extends BaseResponseModel {
-  List<MaterialData>? data;
+  MaterialData? data;
 
   MaterialsResponse({
     super.isSuccess,
@@ -12,11 +12,9 @@ class MaterialsResponse extends BaseResponseModel {
   MaterialsResponse.fromJson(Map<String, dynamic> json) {
     isSuccess = json['is_success'];
     message = json['message'];
-    if (json['data'] != null) {
-      data = <MaterialData>[];
-      json['data'].forEach((v) {
-        data!.add(MaterialData.fromJson(v));
-      });
+    final rawData = json['data'];
+    if (rawData != null && rawData is Map) {
+      data = MaterialData.fromJson(Map<String, dynamic>.from(rawData));
     }
   }
 
@@ -25,7 +23,7 @@ class MaterialsResponse extends BaseResponseModel {
     data['is_success'] = isSuccess;
     data['message'] = message;
     if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
+      data['data'] = this.data!.toJson();
     }
     return data;
   }
@@ -45,7 +43,7 @@ class MaterialData {
   });
 
   MaterialData.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    id = json['id'] ?? 0;
     unitType = json['unit_type'];
     minQty = json['min_qty'];
     maxQty = json['max_qty'];

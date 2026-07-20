@@ -148,7 +148,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       capturedImage: state.capturedImage,
       aiImage: null,
       isAiImageGenerated: false,
-      materials: state.materials,
+      material: state.material,
       materialsLoading: state.materialsLoading,
     );
   }
@@ -187,7 +187,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       );
       state = state.copyWith(
         materialsLoading: false,
-        materials: res.data ?? [],
+        material: res.data,
       );
       return res;
     });
@@ -421,14 +421,14 @@ class TreatmentsState extends BaseStateModel {
   final XFile? capturedImage;
   final XFile? aiImage;
   final bool isAiImageGenerated;
-  final List<MaterialData> materials;
+  final MaterialData? material;
   final bool materialsLoading;
 
   const TreatmentsState({
     super.loading = false,
     super.errorMessage,
     this.treatments = const [],
-    this.materials = const [],
+    this.material,
     this.materialsLoading = false,
     this.areaNavigationStack = const [],
     this.isBefore = false,
@@ -448,7 +448,7 @@ class TreatmentsState extends BaseStateModel {
     XFile? aiImage,
     bool clearAiImage = false,
     bool? isAiImageGenerated,
-    List<MaterialData>? materials,
+    MaterialData? material,
     bool? materialsLoading,
   }) {
     return TreatmentsState(
@@ -460,7 +460,7 @@ class TreatmentsState extends BaseStateModel {
       capturedImage: capturedImage ?? this.capturedImage,
       aiImage: clearAiImage ? null : (aiImage ?? this.aiImage),
       isAiImageGenerated: isAiImageGenerated ?? this.isAiImageGenerated,
-      materials: materials ?? this.materials,
+      material: material ?? this.material,
       materialsLoading: materialsLoading ?? this.materialsLoading,
     );
   }
