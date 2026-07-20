@@ -67,17 +67,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           ref.read(authViewModel.notifier).callGetMe().then((value) {
             if (value == true) {
               final islogin = ref.read(authViewModel).authData?.isFirstLogin;
-              if (islogin == false) {
+              if (islogin ?? false) {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  BottomNavPage.routeName,
-                  (Route<dynamic> route) => false,
+                  GetStartedScreen.routeName,
+                  (_) => false,
                 );
               } else {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  GetStartedScreen.routeName,
-                  (Route<dynamic> route) => false,
+                  BottomNavPage.routeName,
+                  (_) => false,
                 );
               }
             } else {

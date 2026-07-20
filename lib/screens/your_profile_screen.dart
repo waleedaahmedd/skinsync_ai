@@ -27,8 +27,8 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _locationController = TextEditingController();
-  final TextEditingController _bioController = TextEditingController();
+  // final TextEditingController _locationController = TextEditingController();
+  // final TextEditingController _bioController = TextEditingController();
   Country? _selectedCountry;
 
   @override
@@ -36,8 +36,8 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
     _nameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
-    _locationController.dispose();
-    _bioController.dispose();
+    // _locationController.dispose();
+    // _bioController.dispose();
     super.dispose();
   }
 
@@ -213,31 +213,31 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 20.h),
-                  TextFormField(
-                    controller: _locationController,
-                    style: CustomFonts.black18w400,
-                    decoration: const InputDecoration(hintText: "Location"),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your location';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20.h),
-                  TextFormField(
-                    controller: _bioController,
-                    style: CustomFonts.black18w400,
-                    maxLines: 4,
-                    decoration: const InputDecoration(hintText: "Bio"),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your Bio';
-                      }
-                      return null;
-                    },
-                  ),
+                  // SizedBox(height: 20.h),
+                  // TextFormField(
+                  //   controller: _locationController,
+                  //   style: CustomFonts.black18w400,
+                  //   decoration: const InputDecoration(hintText: "Location"),
+                  //   validator: (value) {
+                  //     if (value == null || value.trim().isEmpty) {
+                  //       return 'Please enter your location';
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
+                  // SizedBox(height: 20.h),
+                  // TextFormField(
+                  //   controller: _bioController,
+                  //   style: CustomFonts.black18w400,
+                  //   maxLines: 4,
+                  //   decoration: const InputDecoration(hintText: "Bio"),
+                  //   validator: (value) {
+                  //     if (value == null || value.trim().isEmpty) {
+                  //       return 'Please enter your Bio';
+                  //     }
+                  //     return null;
+                  //   },
+                  // ),
                   SizedBox(height: 35.h),
                   SizedBox(
                     width: double.infinity,
@@ -253,8 +253,8 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                                       phoneNumber: _phoneController.text.trim(),
                                       emailAddress: _emailController.text
                                           .trim(),
-                                      location: _locationController.text.trim(),
-                                      bio: _bioController.text.trim(),
+                                      // location: _locationController.text.trim(),
+                                      // bio: _bioController.text.trim(),
                                       cc: _selectedCountry?.countryCode,
                                       country: _selectedCountry?.name,
                                     )

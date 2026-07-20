@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../models/selected_treatment_and_areas_model.dart';
-import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 
 class SelectedTreatmentsSummaryCard extends StatelessWidget {
   final List<SelectedTreatmentAndAreasModel> selectedTreatmentsAndAreas;
   final void Function(SelectedTreatmentAndAreasModel item)? onRemoveTreatment;
-  final void Function(SelectedTreatmentAndAreasModel item, SelectedAreaModel areaItem)? onRemoveArea;
+  final void Function(
+    SelectedTreatmentAndAreasModel item,
+    SelectedAreaModel areaItem,
+  )?
+  onRemoveArea;
 
   const SelectedTreatmentsSummaryCard({
     super.key,
@@ -39,21 +43,20 @@ class SelectedTreatmentsSummaryCard extends StatelessWidget {
             for (final m in areaItem.materials) {
               if (groupedMaterials.containsKey(m.id)) {
                 groupedMaterials[m.id] = groupedMaterials[m.id]!.copyWith(
-                  selectedQuantity: groupedMaterials[m.id]!.selectedQuantity + m.selectedQuantity,
+                  selectedQuantity:
+                      groupedMaterials[m.id]!.selectedQuantity +
+                      m.selectedQuantity,
                 );
               } else {
                 groupedMaterials[m.id] = m;
               }
             }
           }
-          final materialsList = groupedMaterials.values.toList();
+          // final materialsList = groupedMaterials.values.toList();
 
           return Container(
             width: 260.w,
-            margin: EdgeInsets.only(
-              right: 16.w,
-              bottom: 16.h,
-            ),
+            margin: EdgeInsets.only(right: 16.w, bottom: 16.h),
             padding: EdgeInsets.all(16.w),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -107,10 +110,7 @@ class SelectedTreatmentsSummaryCard extends StatelessWidget {
                       ),
                   ],
                 ),
-                const Divider(
-                  height: 16,
-                  color: Colors.black12,
-                ),
+                const Divider(height: 16, color: Colors.black12),
                 Expanded(
                   child: SingleChildScrollView(
                     physics: const BouncingScrollPhysics(),
@@ -135,7 +135,8 @@ class SelectedTreatmentsSummaryCard extends StatelessWidget {
                                 spacing: 6.w,
                                 runSpacing: 6.h,
                                 children: areas.map((areaItem) {
-                                  final materialInfo = areaItem.materials.isNotEmpty
+                                  final materialInfo =
+                                      areaItem.materials.isNotEmpty
                                       ? " (${areaItem.materials.map((m) => '${m.selectedQuantity} ${m.name}').join(', ')})"
                                       : "";
 
