@@ -104,15 +104,15 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                 Consumer(
                   builder: (context, ref, _) {
                     final checkoutState = ref.watch(checkoutViewModel);
-                    final flatSelections = checkoutState.flatSelections;
+                    final checkoutTreatmentsList = checkoutState.checkoutTreatmentsList;
 
-                    if (flatSelections.isEmpty) {
+                    if (checkoutTreatmentsList.isEmpty) {
                       return const SizedBox.shrink();
                     }
 
                     return _buildSelectedTreatmentAndAreas(
                       ref: ref,
-                      flatSelections: flatSelections,
+                      checkoutTreatmentsList: checkoutTreatmentsList,
                     );
                   },
                 ),
@@ -132,9 +132,14 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                       dividerColor: Colors.transparent,
                       onTap: (index) {
                         if (index == 0) {
+                          ref
+                              .read(checkoutViewModel.notifier)
+                              .setInviteClinic(false);
                           _pagingController.refresh();
-                          // ref.read(clinicProvider.notifier).getClinic();
                         } else {
+                          ref
+                              .read(checkoutViewModel.notifier)
+                              .setInviteClinic(true);
                           ref
                               .read(clinicProvider.notifier)
                               .fetchClinicsFromMap();
@@ -222,7 +227,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
 
   Container _buildSelectedTreatmentAndAreas({
     required WidgetRef ref,
-    required List<FlatSelectionModel> flatSelections,
+    required List<FlatSelectionModel> checkoutTreatmentsList,
   }) {
     return Container(
       height: 38.h,
@@ -231,9 +236,9 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: 24.w),
-        itemCount: flatSelections.length,
+        itemCount: checkoutTreatmentsList.length,
         itemBuilder: (context, index) {
-          final selection = flatSelections[index];
+          final selection = checkoutTreatmentsList[index];
           final chipText = "${selection.treatmentName ?? ''} - ${selection.areaName ?? ''}";
 
           return Container(

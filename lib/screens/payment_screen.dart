@@ -53,7 +53,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
       paidAmount = _consultationFee;
       paymentMethodName = "Paid via Skinsync Wallet";
     }
-    final success = widget.clinic.place != null
+    final success = ref.read(checkoutViewModel).isInviteClinic
         ? await ref
               .read(checkoutViewModel.notifier)
               .inviteClinic(

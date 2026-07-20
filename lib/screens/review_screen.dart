@@ -46,7 +46,7 @@ class ReviewScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Appointment Summary", style: CustomFonts.black18w600),
+                    Text("Appointment Summary", style: CustomFonts.black16w600),
                     SizedBox(height: 16.h),
 
                     // 1. Doctor & Specialization Details
@@ -204,146 +204,96 @@ class ReviewScreen extends ConsumerWidget {
                     SizedBox(height: 24.h),
 
                     // Selected Treatments & Areas Section
-                    if (checkoutState
-                        .selectedTreatmentsAndAreas
-                        .isNotEmpty) ...[
+                    if (checkoutState.checkoutTreatmentsList.isNotEmpty) ...[
                       Text(
                         "Selected Treatments & Areas",
-                        style: CustomFonts.black18w600,
+                        style: CustomFonts.black16w600,
                       ),
                       SizedBox(height: 16.h),
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 16.h,
-                        ),
+                        padding: EdgeInsets.all(16.w),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(20.r),
+                          borderRadius: BorderRadius.circular(24.r),
                           border: Border.all(color: Colors.grey.shade100),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.02),
-                              blurRadius: 10,
+                              blurRadius: 12,
                               offset: const Offset(0, 4),
                             ),
                           ],
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: checkoutState.selectedTreatmentsAndAreas.map((
-                            item,
-                          ) {
-                            final isLast =
-                                item ==
-                                checkoutState.selectedTreatmentsAndAreas.last;
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                bottom: isLast ? 0 : 12.h,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ...checkoutState.checkoutTreatmentsList.asMap().entries.map((entry) {
+                              final index = entry.key;
+                              final selection = entry.value;
+                              final isLast = index == checkoutState.checkoutTreatmentsList.length - 1;
+
+                              return Column(
                                 children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.all(6.w),
-                                        decoration: BoxDecoration(
-                                          color: CustomColors.pinkColor
-                                              .withValues(alpha: 0.1),
-                                          shape: BoxShape.circle,
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 4.h),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.all(10.w),
+                                          decoration: BoxDecoration(
+                                            color: CustomColors.purpleColor.withValues(alpha: 0.08),
+                                            borderRadius: BorderRadius.circular(14.r),
+                                          ),
+                                          child: Icon(
+                                            Icons.auto_awesome_rounded,
+                                            color: CustomColors.purpleColor,
+                                            size: 18.sp,
+                                          ),
                                         ),
-                                        child: const Icon(
-                                          Icons.spa_rounded,
-                                          color: CustomColors.pinkColor,
-                                          size: 16,
-                                        ),
-                                      ),
-                                      SizedBox(width: 10.w),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              item.treatment.name ??
-                                                  "Treatment",
-                                              style: CustomFonts.black14w600,
-                                            ),
-                                            if (item
-                                                .selectedAreas
-                                                .isNotEmpty) ...[
-                                              SizedBox(height: 4.h),
+                                        SizedBox(width: 16.w),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
                                               Text(
-                                                "Target Areas: ${item.selectedAreas.map((e) => e.target.name ?? '').join(', ')}",
-                                                style: CustomFonts.grey12w400
-                                                    .copyWith(
-                                                      color: CustomColors
-                                                          .purpleColor,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
+                                                selection.treatmentName ?? "Treatment",
+                                                style: CustomFonts.black14w600,
+                                              ),
+                                              SizedBox(height: 2.h),
+                                              Text(
+                                                selection.areaName ?? "Target Area",
+                                                style: CustomFonts.grey12w400.copyWith(
+                                                  color: CustomColors.darkPurple,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                               ),
                                             ],
-                                          ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                  if (item.selectedAreas.isNotEmpty) ...[
-                                    SizedBox(height: 10.h),
+                                  if (!isLast)
                                     Padding(
-                                      padding: EdgeInsets.only(left: 32.w),
-                                      child: Wrap(
-                                        spacing: 8.w,
-                                        runSpacing: 4.h,
-                                        children: item.selectedAreas.map((e) {
-                                          return Container(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: 10.w,
-                                              vertical: 4.h,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: CustomColors
-                                                  .lightPurpleColor
-                                                  .withValues(alpha: 0.12),
-                                              borderRadius:
-                                                  BorderRadius.circular(12.r),
-                                            ),
-                                            child: Text(
-                                              e.target.name ?? "Area",
-                                              style: CustomFonts.black12w600
-                                                  .copyWith(
-                                                    color: CustomColors
-                                                        .purpleColor,
-                                                    fontSize: 10.sp,
-                                                  ),
-                                            ),
-                                          );
-                                        }).toList(),
+                                      padding: EdgeInsets.only(left: 52.w),
+                                      child: Divider(
+                                        height: 20.h,
+                                        thickness: 1,
+                                        color: Colors.grey.shade50,
                                       ),
                                     ),
-                                  ],
-                                  if (!isLast) ...[
-                                    SizedBox(height: 12.h),
-                                    const Divider(
-                                      height: 1,
-                                      color: Colors.grey,
-                                    ),
-                                    SizedBox(height: 12.h),
-                                  ],
                                 ],
-                              ),
-                            );
-                          }).toList(),
+                              );
+                            }),
+                          ],
                         ),
                       ),
                       SizedBox(height: 24.h),
                     ],
 
                     // 4. Pricing Details Section
-                    Text("Payment Summary", style: CustomFonts.black18w600),
+                    Text("Payment Summary", style: CustomFonts.black16w600),
                     SizedBox(height: 16.h),
                     Container(
                       padding: EdgeInsets.all(18.w),

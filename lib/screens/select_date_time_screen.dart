@@ -274,14 +274,15 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                 textColor: Colors.white,
                 onPressed: canContinue
                     ? () {
-                        if (widget.clinic.place == null) {
-                          // Save Selected parameters to checkout ViewModel
-                          ref
-                              .read(checkoutViewModel.notifier)
-                              .setSelectedDate(_selectedDate!);
-                          ref
-                              .read(checkoutViewModel.notifier)
-                              .setSelectedSlot(_selectedSlot!);
+                        // Save Selected parameters to checkout ViewModel
+                        ref
+                            .read(checkoutViewModel.notifier)
+                            .setSelectedDate(_selectedDate!);
+                        ref
+                            .read(checkoutViewModel.notifier)
+                            .setSelectedSlot(_selectedSlot!);
+
+                        if (!ref.read(checkoutViewModel).isInviteClinic) {
                           Navigator.pushNamed(
                             context,
                             ReviewScreen.routeName,

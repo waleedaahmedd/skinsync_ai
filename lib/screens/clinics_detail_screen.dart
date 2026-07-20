@@ -15,7 +15,6 @@ import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../widgets/custom_button.dart';
 import 'select_appointment_type_screen.dart';
-import 'select_date_time_screen.dart';
 
 class ClinicsDetailScreen extends ConsumerWidget {
   final Clinic? clinic;
@@ -25,6 +24,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final checkoutState = ref.watch(checkoutViewModel);
     return Scaffold(
       extendBody: true,
       backgroundColor: CustomColors.whiteColor,
@@ -462,21 +462,21 @@ class ClinicsDetailScreen extends ConsumerWidget {
                       width: double.infinity,
                       height: 52.h,
                       child: CustomButton(
-                        text: clinic?.place != null
+                        text: checkoutState.isInviteClinic
                             ? "Invite this Medical Spa"
                             : 'Book an Appointment',
                         backgroundColor: Colors.black,
                         textColor: Colors.white,
                         borderRadius: 25.r,
                         onPressed: () {
-                          if (clinic?.place != null) {
-                            print("clinic is not null");
-                            Navigator.pushNamed(
-                              context,
-                              SelectDateTimeScreen.routeName,
-                              arguments: clinic,
-                            );
-                          } else {
+                          // if (checkoutState.isInviteClinic) {
+                          //   print("clinic is not null");
+                          //   Navigator.pushNamed(
+                          //     context,
+                          //     SelectDateTimeScreen.routeName,
+                          //     arguments: clinic,
+                          //   );
+                          // } else {
                             if (clinic != null) {
                               ref
                                   .read(checkoutViewModel.notifier)
@@ -487,8 +487,8 @@ class ClinicsDetailScreen extends ConsumerWidget {
                               SelectAppointmentTypeScreen.routeName,
                               arguments: clinic,
                             );
-                          }
-                        },
+                          },
+                        // },
                       ),
                     ),
                   ),
