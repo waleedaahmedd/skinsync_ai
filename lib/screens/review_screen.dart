@@ -234,6 +234,10 @@ class ReviewScreen extends ConsumerWidget {
                               final selection = entry.value;
                               final isLast = index == checkoutState.checkoutTreatmentsList.length - 1;
 
+                              final materialInfo = selection.materials.isNotEmpty
+                                  ? " (${selection.materials.map((m) => '${m.selectedQuantity} ${m.name}').join(', ')})"
+                                  : "";
+
                               return Column(
                                 children: [
                                   Padding(
@@ -263,7 +267,7 @@ class ReviewScreen extends ConsumerWidget {
                                               ),
                                               SizedBox(height: 2.h),
                                               Text(
-                                                selection.areaName ?? "Target Area",
+                                                "${selection.areaName ?? "Target Area"}$materialInfo",
                                                 style: CustomFonts.grey12w400.copyWith(
                                                   color: CustomColors.darkPurple,
                                                   fontWeight: FontWeight.w500,

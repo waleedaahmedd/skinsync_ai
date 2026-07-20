@@ -135,10 +135,14 @@ class SelectedTreatmentsSummaryCard extends StatelessWidget {
                                 spacing: 6.w,
                                 runSpacing: 6.h,
                                 children: areas.map((areaItem) {
+                                  final materialInfo = areaItem.materials.isNotEmpty
+                                      ? " (${areaItem.materials.map((m) => '${m.selectedQuantity} ${m.name}').join(', ')})"
+                                      : "";
+
                                   return Chip(
                                     visualDensity: VisualDensity.compact,
                                     label: Text(
-                                      areaItem.target.name ?? '-',
+                                      "${areaItem.target.name ?? '-'}$materialInfo",
                                       style: CustomFonts.black10w600,
                                     ),
                                     onDeleted: onRemoveArea != null
@@ -148,36 +152,7 @@ class SelectedTreatmentsSummaryCard extends StatelessWidget {
                                   );
                                 }).toList(),
                               ),
-                        if (materialsList.isNotEmpty) ...[
-                          SizedBox(height: 12.h),
-                          Text(
-                            'Selected Materials',
-                            style: CustomFonts.black10w600.copyWith(
-                              color: Colors.grey.shade500,
-                            ),
-                          ),
-                          SizedBox(height: 6.h),
-                          Wrap(
-                            spacing: 6.w,
-                            runSpacing: 6.h,
-                            children: materialsList.map((material) {
-                              return Chip(
-                                visualDensity: VisualDensity.compact,
-                                backgroundColor: CustomColors.purpleColor.withValues(alpha: 0.05),
-                                side: BorderSide(
-                                  color: CustomColors.purpleColor.withValues(alpha: 0.15),
-                                  width: 1,
-                                ),
-                                label: Text(
-                                  "${material.name} (x${material.selectedQuantity})",
-                                  style: CustomFonts.black10w600.copyWith(
-                                    color: CustomColors.darkPurple,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ],
+                        // Removed redundant materials section as requested
                       ],
                     ),
                   ),
