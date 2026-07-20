@@ -46,6 +46,9 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     );
     if (treatment != null) {
       await onTapTreatment(treatmentModel: treatment, isCallPredictAPI: true);
+      await ref
+          .read(treatmentAreaProvider.notifier)
+          .fetchAreasByTreatment(treatment.id ?? 0);
     }
     final rootAreas = ref.read(treatmentAreaProvider).areas;
     final area = rootAreas.firstWhereOrNull((area) {
@@ -111,11 +114,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     ref.read(checkoutViewModel.notifier).setSelectedTreatments(treatmentModel);
     ref.read(checkoutViewModel.notifier).clearAreaSelection();
     state = state.copyWith(isBefore: true);
-    if (treatmentModel.isArea == true && isCallPredictAPI) {
-      await ref
-          .read(treatmentAreaProvider.notifier)
-          .fetchAreasByTreatment(treatmentModel.id ?? 0);
-    }
   }
 
   void onTapTreatmentArea(TreatmentAreaModel treatmentArea) {
