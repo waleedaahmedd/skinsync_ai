@@ -103,7 +103,8 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
   void setAiImage(XFile? image) => state = state.copyWith(aiImage: image);
 
-  void clearAiImage() => state = state.copyWith(clearAiImage: true);
+  void clearAiImage() =>
+      state = state.copyWith(clearAiImage: true, isAiImageGenerated: false);
 
   Future<void> onTapTreatment({
     required TreatmentData treatmentModel,

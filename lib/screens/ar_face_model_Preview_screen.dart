@@ -6,7 +6,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:glow_container/glow_container.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../models/responses/materials_response.dart';
@@ -48,6 +47,7 @@ class _ArFaceModelPreviewScreenState
   bool _hasInitialized = false;
   double _sliderValue = 0.5;
 
+  late final ScrollController _scrollController;
   late final AnimationController _pulseController;
   late final Animation<double> _pulseAnimation;
 
@@ -72,6 +72,8 @@ class _ArFaceModelPreviewScreenState
   @override
   void initState() {
     super.initState();
+
+    _scrollController = ScrollController();
 
     _pulseController = AnimationController(
       vsync: this,
@@ -102,6 +104,7 @@ class _ArFaceModelPreviewScreenState
 
   @override
   void dispose() {
+    _scrollController.dispose();
     _pagingController.dispose();
     _pulseController.dispose();
     super.dispose();
@@ -114,6 +117,16 @@ class _ArFaceModelPreviewScreenState
   @override
   Widget build(BuildContext context) {
     _handleInitialState();
+
+    ref.listen(treatmentViewModel.select((s) => s.isAiImageGenerated), (prev, next) {
+      if (next == true && prev != true) {
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
 
     final isLoading = ref.watch(
       treatmentViewModel.select((state) => state.loading),
@@ -139,6 +152,7 @@ class _ArFaceModelPreviewScreenState
               children: [
                 Expanded(
                   child: SingleChildScrollView(
+                    controller: _scrollController,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -392,12 +406,13 @@ class _ArFaceModelPreviewScreenState
 
         if (!hasAnySelectedArea) return const SizedBox.shrink();
 
-        final isAiImageGenerated = ref.watch(
-          treatmentViewModel.select((s) => s.isAiImageGenerated),
-        );
-
         return Container(
-          padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, MediaQuery.paddingOf(context).bottom + 16.h),
+          padding: EdgeInsets.fromLTRB(
+            20.w,
+            16.h,
+            20.w,
+            MediaQuery.paddingOf(context).bottom + 16.h,
+          ),
           decoration: BoxDecoration(
             color: Colors.white,
             boxShadow: [
@@ -413,37 +428,16 @@ class _ArFaceModelPreviewScreenState
               Expanded(
                 child: ScaleTransition(
                   scale: _pulseAnimation,
-                  child: isAiImageGenerated
-                      ? CustomBorderedButton(
-                        text: "Generate Ai Image",
-                        borderColor: Colors.black,
-                        textColor: Colors.black,
-                        borderRadius: 30.r,
-                        height: 58.h,
-                        onPressed: () {
-                          ref.read(treatmentViewModel.notifier).callPredictAPI();
-                        },
-                      )
-                      : GlowContainer(
-                        gradientColors: const [
-                          CustomColors.pinkColor,
-                          CustomColors.darkPurple,
-                        ],
-                        containerOptions: ContainerOptions(
-                          borderRadius: 30.r,
-                          width: 2.r,
-                        ),
-                        child: CustomButton(
-                          text: "Generate Ai Image",
-                          backgroundColor: Colors.transparent,
-                          textColor: CustomColors.darkPurple,
-                          borderRadius: 30.r,
-                          height: 54.h,
-                          onPressed: () {
-                            ref.read(treatmentViewModel.notifier).callPredictAPI();
-                          },
-                        ),
-                      ),
+                  child: CustomBorderedButton(
+                    text: "Generate Ai Image",
+                    borderRadius: 30.r,
+                    borderColor: CustomColors.blackColor,
+                    textColor: CustomColors.blackColor,
+                    height: 58.h,
+                    onPressed: () {
+                      ref.read(treatmentViewModel.notifier).callPredictAPI();
+                    },
+                  ),
                 ),
               ),
               const SizedBox(width: 16),
