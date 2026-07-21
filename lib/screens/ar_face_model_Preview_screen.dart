@@ -489,7 +489,7 @@ class _ArFaceModelPreviewScreenState
   Widget _buildFacePreview() {
     const cardRadius = 20.0;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: Card(
         elevation: 10,
         shape: RoundedRectangleBorder(
@@ -519,9 +519,14 @@ class _ArFaceModelPreviewScreenState
                       after: _buildPreviewImage(afterImage.path),
                       trackColor: Colors.white,
                       trackWidth: 2.w,
-                      thumbColor: Colors.white,
-                      thumbWidth: 16.w,
-                      thumbHeight: 16.w,
+                      thumbDecoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(PngAssets.customMarker),
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      thumbWidth: 32.w,
+                      thumbHeight: 32.w,
                     );
                   }
 
