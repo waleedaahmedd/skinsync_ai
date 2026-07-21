@@ -533,7 +533,8 @@ class _ArFaceModelPreviewScreenState
                 },
               ),
             ),
-            _buildBeforeAfterIndicator(),
+            _buildAfterLabel(),
+            _buildBeforeLabel(),
             _buildDownloadButton(),
           ],
         ),
@@ -592,53 +593,61 @@ class _ArFaceModelPreviewScreenState
     );
   }
 
-  Widget _buildBeforeAfterIndicator() {
-    return Positioned(
-      top: 10.h,
-      left: 10.w,
-      child: Consumer(
-        builder: (context, ref, _) {
-          final state = ref.watch(treatmentViewModel);
-          final hasAfterImage = state.aiImage != null;
+  Widget _buildAfterLabel() {
+    return Consumer(
+      builder: (context, ref, _) {
+        final state = ref.watch(treatmentViewModel);
+        final hasAfterImage = state.aiImage != null;
 
-          if (hasAfterImage) {
-            return Container(
-              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 4.h),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.65),
-                borderRadius: BorderRadius.circular(20.r),
-              ),
-              child: Text('Before ❘ After', style: CustomFonts.white14w600),
-            );
-          }
+        if (!hasAfterImage) return const SizedBox.shrink();
 
-          return Container(
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 2.h),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.8),
-              borderRadius: BorderRadius.circular(20.r),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Text(
-              state.isBefore ? 'Before' : 'After',
-              style: CustomFonts.black20w600,
-            ),
-          );
-        },
+        return Positioned(
+          top: 12.h,
+          left: 12.w,
+          child: _buildBadge("AFTER", Colors.black.withValues(alpha: 0.6)),
+        );
+      },
+    );
+  }
+
+  Widget _buildBeforeLabel() {
+    return Consumer(
+      builder: (context, ref, _) {
+        final state = ref.watch(treatmentViewModel);
+        final hasBeforeImage = state.capturedImage != null;
+
+        if (!hasBeforeImage) return const SizedBox.shrink();
+
+        return Positioned(
+          top: 12.h,
+          right: 12.w,
+          child: _buildBadge("BEFORE", Colors.black.withValues(alpha: 0.6)),
+        );
+      },
+    );
+  }
+
+  Widget _buildBadge(String text, Color bgColor) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(4.r),
+      ),
+      child: Text(
+        text,
+        style: CustomFonts.white12w600.copyWith(
+          letterSpacing: 0.8,
+          fontSize: 10.sp,
+        ),
       ),
     );
   }
 
   Widget _buildDownloadButton() {
     return Positioned(
-      top: 10.h,
-      right: 10.w,
+      bottom: 12.h,
+      right: 12.w,
       child: Consumer(
         builder: (context, ref, _) {
           final afterImage = ref.watch(
@@ -648,9 +657,24 @@ class _ArFaceModelPreviewScreenState
 
           return GestureDetector(
             onTap: () => ref.read(treatmentViewModel.notifier).saveAiImage(),
-            child: const CircleAvatar(
-              backgroundColor: CustomColors.greyColor,
-              child: Icon(Icons.download_outlined),
+            child: Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.9),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Icon(
+                Icons.file_download_outlined,
+                color: Colors.black,
+                size: 20.sp,
+              ),
             ),
           );
         },
