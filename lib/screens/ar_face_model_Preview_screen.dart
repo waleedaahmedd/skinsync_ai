@@ -517,6 +517,11 @@ class _ArFaceModelPreviewScreenState
                       onValueChanged: (value) => setState(() => _sliderValue = value),
                       before: _buildPreviewImage(beforeImage.path),
                       after: _buildPreviewImage(afterImage.path),
+                      trackColor: Colors.white,
+                      trackWidth: 2.w,
+                      thumbColor: Colors.white,
+                      thumbWidth: 16.w,
+                      thumbHeight: 16.w,
                     );
                   }
 
