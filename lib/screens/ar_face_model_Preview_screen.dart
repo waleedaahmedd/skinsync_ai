@@ -137,28 +137,36 @@ class _ArFaceModelPreviewScreenState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20.h),
-                _buildFacePreview(),
-                SizedBox(height: 10.h),
-                _buildSimulationBanner(),
                 Expanded(
                   child: SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(height: 30.h),
-                          _buildTreatmentHeader(),
-                          SizedBox(height: 8.h),
-                          _buildTreatmentsList(),
-                          SizedBox(height: 30.h),
-                          _buildAreaSelectionSection(),
-                          SizedBox(height: 20.h),
-                          _buildSummarySection(),
-                          _buildBottomActions(),
-                        ],
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 20.h),
+                        _buildFacePreview(),
+                        SizedBox(height: 10.h),
+                        _buildSimulationBanner(),
+                        SizedBox(height: 30.h),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          child: _buildTreatmentHeader(),
+                        ),
+                        SizedBox(height: 8.h),
+                        _buildTreatmentsList(),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 30.h),
+                              _buildAreaSelectionSection(),
+                              SizedBox(height: 20.h),
+                              _buildSummarySection(),
+                              _buildBottomActions(),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -259,6 +267,7 @@ class _ArFaceModelPreviewScreenState
               state: state,
               fetchNextPage: fetchNextPage,
               scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
               physics: const BouncingScrollPhysics(),
               builderDelegate: PagedChildBuilderDelegate(
                 newPageProgressIndicatorBuilder: (_) => AppLoader(size: 50.h),
