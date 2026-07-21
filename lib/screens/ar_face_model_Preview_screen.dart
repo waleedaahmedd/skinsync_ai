@@ -162,7 +162,6 @@ class _ArFaceModelPreviewScreenState
                               _buildAreaSelectionSection(),
                               SizedBox(height: 20.h),
                               _buildSummarySection(),
-                              _buildBottomActions(),
                             ],
                           ),
                         ),
@@ -170,6 +169,7 @@ class _ArFaceModelPreviewScreenState
                     ),
                   ),
                 ),
+                _buildBottomActions(),
               ],
             ),
           ),
@@ -396,9 +396,17 @@ class _ArFaceModelPreviewScreenState
           treatmentViewModel.select((s) => s.isAiImageGenerated),
         );
 
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.paddingOf(context).bottom + 20.h,
+        return Container(
+          padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, MediaQuery.paddingOf(context).bottom + 16.h),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -4),
+              ),
+            ],
           ),
           child: Row(
             children: [
