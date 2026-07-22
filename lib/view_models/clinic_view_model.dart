@@ -60,10 +60,9 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
   Future<void> fetchClinicsFromMap() async {
     return await runSafely(() async {
       state = state.copyWith(clinicLoading: true);
-      await ref.read(authViewModel.notifier).fetchLocation();
       LatLng? location = ref.read(authViewModel).addressData?.latLng;
       if (location == null) {
-        ref.read(authViewModel.notifier).fetchLocation();
+        await ref.read(authViewModel.notifier).fetchLocation(true);
       }
       location = ref.read(authViewModel).addressData!.latLng;
       final places = await LocationService().fetchNearbyClinics(

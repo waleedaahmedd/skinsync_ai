@@ -293,21 +293,22 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     });
   }
 
-  Future<void> fetchLocation() async {
+  Future<void> fetchLocation([bool shouldThrow = false]) async {
     if (state.addressData != null) return;
-    await _fetchLocationInBackground();
+    await _fetchLocationInBackground(shouldThrow);
   }
 
-  Future<void> _fetchLocationInBackground() async {
-    Future.delayed(const Duration(seconds: 2), () async {
-      try {
-        final addressData = await LocationService().fetchAddress();
-        state = state.copyWith(addressData: addressData);
-      } catch (e) {
-        EasyLoading.showError('Location fetch failed: $e');
-        log('Background location fetch skipped or failed: $e');
+  Future<void> _fetchLocationInBackground([bool shouldThrow = false]) async {
+    try {
+      final addressData = await LocationService().fetchAddress();
+      state = state.copyWith(addressData: addressData);
+    } catch (e) {
+      EasyLoading.showError('Location fetch failed: $e');
+      log('Background location fetch skipped or failed: $e');
+      if (shouldThrow) {
+        rethrow;
       }
-    });
+    }
   }
 
   Future<bool?> callGoogleSignInApi() async {

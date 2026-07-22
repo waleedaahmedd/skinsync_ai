@@ -5,12 +5,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../exceptions/app_exception.dart';
-import '../screens/get_started_screen.dart';
 
 import '../app_init.dart';
+import '../exceptions/app_exception.dart';
 import '../main.dart';
 import '../models/responses/refresh_token_response.dart';
+import '../screens/get_started_screen.dart';
 import '../utills/enums.dart';
 import '../utills/secure_storage_service.dart';
 
@@ -135,6 +135,7 @@ class ApiBaseHelper {
     }
     log('EXPIRY: $expiry');
     log('REFRESH EXPIRY: $refreshExpiry');
+    log('ACCESS TOKEN: $token');
     final uri = Uri.parse('${BaseUrls.api.url}${EndPoints.refreshToken.path}');
     log('URL: $uri');
     final request = {'refresh_token': refreshToken};
