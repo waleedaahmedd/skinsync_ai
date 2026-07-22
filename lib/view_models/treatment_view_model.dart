@@ -411,7 +411,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
               ));
             }
             return HistoryAreaRequest(
-              areaId: (area.id ?? area.areaId ?? 0).toString(),
+              areaId: (area.id ?? area.areaId ?? 0),
               areaName: area.name ?? '',
               materials: historyMaterials,
             );

@@ -39,7 +39,7 @@ class HistoryTreatmentRequest {
 }
 
 class HistoryAreaRequest {
-  final String areaId;
+  final int areaId;
   final String areaName;
   final List<HistoryMaterialRequest> materials;
 
