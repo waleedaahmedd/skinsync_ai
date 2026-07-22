@@ -13,6 +13,7 @@ import '../models/responses/materials_response.dart';
 import '../models/responses/simulation_history_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
 import '../models/responses/treatment_list_response.dart';
+import '../models/selected_treatment_and_areas_model.dart';
 import '../repositories/treatment_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/media_service.dart';
@@ -41,36 +42,65 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     if (state.treatments.isEmpty) {
       await loadTreatments();
     }
+
+    final firstSimTreatment = simulation.treatments?.firstOrNull;
+    if (firstSimTreatment == null) return;
+
     final treatment = state.treatments.firstWhereOrNull(
-      (treatment) => treatment.id == simulation.treatmentId,
+      (treatment) => treatment.id == firstSimTreatment.id,
     );
+
     if (treatment != null) {
-      await onTapTreatment(treatmentModel: treatment, isCallPredictAPI: true);
+      await onTapTreatment(treatmentModel: treatment, isCallPredictAPI: false);
       await ref
           .read(treatmentAreaProvider.notifier)
           .fetchAreasByTreatment(treatment.id ?? 0);
     }
+
     final rootAreas = ref.read(treatmentAreaProvider).areas;
-    final area = rootAreas.firstWhereOrNull((area) {
-      final found = simulation.subsections?.any(
-        (subSection) => subSection.areaId == area.id,
-      );
-      return found ?? false;
+    // Find a root area that contains one of the simulated areas
+    final rootArea = rootAreas.firstWhereOrNull((area) {
+      return firstSimTreatment.areas?.any((simArea) {
+            // Check if simArea is this root area or a child of it
+            final simAreaId = int.tryParse(simArea.id ?? '');
+            if (area.id == simAreaId) return true;
+            return area.subAreas?.any((sub) => sub.id == simAreaId) ?? false;
+          }) ??
+          false;
     });
-    if (area != null) {
-      onTapTreatmentArea(area);
+
+    if (rootArea != null) {
+      onTapTreatmentArea(rootArea);
     }
+
     final subAreas = ref.read(checkoutViewModel).selectedAreas?.subAreas ?? [];
     for (final subArea in subAreas) {
-      final selectedSubArea = simulation.subsections?.firstWhereOrNull(
-        (subSection) => subSection.sectionId == subArea.id,
+      final selectedSimArea = firstSimTreatment.areas?.firstWhereOrNull(
+        (simArea) => int.tryParse(simArea.id ?? '') == subArea.id,
       );
-      if (selectedSubArea != null) {
+      if (selectedSimArea != null) {
         ref
             .read(checkoutViewModel.notifier)
             .onTapTreatmentSubArea(subArea: subArea);
+
+        // Restore material if any
+        final simMaterial = selectedSimArea.materials?.firstOrNull;
+        if (simMaterial != null && treatment != null) {
+          ref.read(checkoutViewModel.notifier).saveMaterialForArea(
+                treatment: treatment,
+                area: subArea,
+                material: SelectedMaterialModel(
+                  id: simMaterial.id ?? 0,
+                  name: simMaterial.name ?? '',
+                  selectedQuantity: simMaterial.selectedQuantity ?? 0,
+                  minQty: 0,
+                  maxQty: 0,
+                ),
+              );
+        }
       }
     }
+
     EasyLoading.show(status: 'Downloading images...');
     final beforeImage = await MediaService().downloadSimulationImage(
       simId: simulation.id!,

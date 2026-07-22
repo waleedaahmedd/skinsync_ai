@@ -19,60 +19,94 @@ class SimulationHistoryResponse extends BaseResponseModel {
 
 class SimulationData {
   final int? id;
-  final int? treatmentId;
-  final String? treatmentName;
   final String? beforeImage;
   final String? afterImage;
-  final List<Subsection>? subsections;
+  final List<SimulationTreatment>? treatments;
   final DateTime? createdAt;
 
   const SimulationData({
     this.id,
-    this.treatmentId,
-    this.treatmentName,
     this.beforeImage,
     this.afterImage,
-    this.subsections,
+    this.treatments,
     this.createdAt,
   });
 
   factory SimulationData.fromJson(Map<String, dynamic> json) => SimulationData(
-    id: json["id"],
-    treatmentId: json["treatment_id"],
-    treatmentName: json["treatment_name"],
-    beforeImage: json["before_image"],
-    afterImage: json["after_image"],
-    subsections: json["subsections"] == null
-        ? []
-        : List<Subsection>.from(
-            json["subsections"]!.map((x) => Subsection.fromJson(x)),
-          ),
-    createdAt: json["created_at"] == null
-        ? null
-        : DateTime.parse(json["created_at"]).toLocal(),
-  );
+        id: json["id"],
+        beforeImage: json["before_image"],
+        afterImage: json["after_image"],
+        treatments: json["treatments"] == null
+            ? []
+            : List<SimulationTreatment>.from(
+                json["treatments"]!.map((x) => SimulationTreatment.fromJson(x)),
+              ),
+        createdAt: json["created_at"] == null
+            ? null
+            : DateTime.parse(json["created_at"]).toLocal(),
+      );
 }
 
-class Subsection {
-  final int? areaId;
-  final String? areaName;
-  final int? sectionId;
-  final String? sectionName;
-  final int? syringesQuantity;
+class SimulationTreatment {
+  final int? id;
+  final String? name;
+  final List<SimulationArea>? areas;
 
-  const Subsection({
-    this.areaId,
-    this.areaName,
-    this.sectionId,
-    this.sectionName,
-    this.syringesQuantity,
+  const SimulationTreatment({
+    this.id,
+    this.name,
+    this.areas,
   });
 
-  factory Subsection.fromJson(Map<String, dynamic> json) => Subsection(
-    areaId: json['area_id'],
-    areaName: json['area_name'],
-    sectionId: json["section_id"],
-    sectionName: json["section_name"],
-    syringesQuantity: json["syringes_quantity"],
-  );
+  factory SimulationTreatment.fromJson(Map<String, dynamic> json) =>
+      SimulationTreatment(
+        id: json["treatment_id"],
+        name: json["treatment_name"],
+        areas: json["areas"] == null
+            ? []
+            : List<SimulationArea>.from(
+                json["areas"]!.map((x) => SimulationArea.fromJson(x)),
+              ),
+      );
+}
+
+class SimulationArea {
+  final String? id;
+  final String? name;
+  final List<SimulationMaterial>? materials;
+
+  const SimulationArea({
+    this.id,
+    this.name,
+    this.materials,
+  });
+
+  factory SimulationArea.fromJson(Map<String, dynamic> json) => SimulationArea(
+        id: json["area_id"]?.toString(),
+        name: json["area_name"],
+        materials: json["materials"] == null
+            ? []
+            : List<SimulationMaterial>.from(
+                json["materials"]!.map((x) => SimulationMaterial.fromJson(x)),
+              ),
+      );
+}
+
+class SimulationMaterial {
+  final int? id;
+  final String? name;
+  final int? selectedQuantity;
+
+  const SimulationMaterial({
+    this.id,
+    this.name,
+    this.selectedQuantity,
+  });
+
+  factory SimulationMaterial.fromJson(Map<String, dynamic> json) =>
+      SimulationMaterial(
+        id: json["id"],
+        name: json["name"],
+        selectedQuantity: json["selected_quantity"],
+      );
 }
