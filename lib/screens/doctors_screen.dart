@@ -7,7 +7,6 @@ import '../models/dummy_list_model.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
-import '../utills/enums.dart';
 import '../view_models/checkout_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_search_field.dart';
@@ -148,7 +147,7 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
   Widget build(BuildContext context) {
     final checkoutState = ref.watch(checkoutViewModel);
     final isTreatment =
-        checkoutState.selectedAppointmentType == AppointmentType.treatment;
+        checkoutState.selectedAppointmentType?.key == 'treatment_session';
     final hasActiveFilters =
         _selectedDate != null ||
         _selectedSlot != null ||

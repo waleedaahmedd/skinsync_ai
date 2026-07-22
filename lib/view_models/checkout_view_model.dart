@@ -8,6 +8,7 @@ import '../models/flat_selection_model.dart';
 import '../models/requests/appointment_request.dart';
 import '../models/requests/invite_clinic_request.dart';
 import '../models/responses/appointment_response.dart';
+import '../models/responses/appointment_type_list_response.dart';
 import '../models/responses/availability_response.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../models/responses/get_doctor_response.dart';
@@ -21,7 +22,6 @@ import '../services/api_base_helper.dart';
 import '../services/clinic_doctor_service.dart';
 import '../services/media_service.dart';
 import '../utills/date_time_utills.dart';
-import '../utills/enums.dart';
 import 'auth_view_model.dart';
 import 'base_view_model.dart';
 import 'doctor_view_model.dart';
@@ -60,9 +60,9 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     _log("Selected clinic saved: ${clinic.name}");
   }
 
-  void setSelectedAppointmentType(AppointmentType type) {
+  void setSelectedAppointmentType(AppointmentTypeData type) {
     state = state.copyWith(selectedAppointmentType: type);
-    _log("Selected appointment type saved: ${type.typeText}");
+    _log("Selected appointment type saved: ${type.title}");
   }
 
   void setSelectedDoctor(DummyDoctor doctor) {
@@ -501,7 +501,7 @@ class CheckoutState extends BaseStateModel {
   final AppointmentData? appointment;
 
   final Clinic? selectedClinic;
-  final AppointmentType? selectedAppointmentType;
+  final AppointmentTypeData? selectedAppointmentType;
   final DummyDoctor? selectedDoctor;
   final DateTime? selectedDate;
   final String? selectedSlot;
@@ -548,7 +548,7 @@ class CheckoutState extends BaseStateModel {
     TreatmentAreaModel? selectedAreas,
     AppointmentData? appointment,
     Clinic? selectedClinic,
-    AppointmentType? selectedAppointmentType,
+    AppointmentTypeData? selectedAppointmentType,
     DummyDoctor? selectedDoctor,
     DateTime? selectedDate,
     String? selectedSlot,

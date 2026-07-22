@@ -196,7 +196,7 @@ class ReviewScreen extends ConsumerWidget {
                           _buildSummaryRow(
                             Icons.medical_services_outlined,
                             "Appointment Type",
-                            checkoutState.selectedAppointmentType?.typeText ??
+                            checkoutState.selectedAppointmentType?.title ??
                                 "Not Selected",
                           ),
                         ],

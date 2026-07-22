@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
-import '../utills/enums.dart';
 import '../view_models/appointment_view_model.dart';
 import '../view_models/checkout_view_model.dart';
 import '../widgets/app_loader.dart';
@@ -85,19 +84,10 @@ class _SelectAppointmentTypeScreenState
                               customSubtitle: typeData.description ?? '',
                               customImageUrl: typeData.image ?? '',
                               customOnTap: () {
-                                // Map string name to AppointmentType enum for state tracking
-                                final type =
-                                    typeData.title?.toLowerCase().contains(
-                                          'consultation',
-                                        ) ??
-                                        false
-                                        ? AppointmentType.consultation
-                                        : AppointmentType.treatment;
-
                                 // Save selection in CheckoutState
                                 ref
                                     .read(checkoutViewModel.notifier)
-                                    .setSelectedAppointmentType(type);
+                                    .setSelectedAppointmentType(typeData);
 
                                 if (ref.read(checkoutViewModel).isInviteClinic) {
                                   Navigator.pushNamed(
