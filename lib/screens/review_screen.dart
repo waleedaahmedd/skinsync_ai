@@ -30,6 +30,12 @@ class ReviewScreen extends ConsumerWidget {
     // Standard high-end mock consultation price
     const double consultationFee = 150.00;
 
+    final totalTreatmentCost = checkoutState.checkoutTreatmentsList.fold<int>(
+      0,
+      (sum, item) => sum + item.treatmentCost,
+    );
+    final totalBookingPrice = consultationFee + totalTreatmentCost;
+
     return Scaffold(
       backgroundColor: CustomColors.whiteColor,
       appBar: const CustomAppBar(showTitle: true, title: "Review Booking"),
@@ -261,9 +267,18 @@ class ReviewScreen extends ConsumerWidget {
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                selection.treatmentName ?? "Treatment",
-                                                style: CustomFonts.black14w600,
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    selection.treatmentName ?? "Treatment",
+                                                    style: CustomFonts.black14w600,
+                                                  ),
+                                                  Text(
+                                                    "\$${selection.treatmentCost}",
+                                                    style: CustomFonts.black14w600,
+                                                  ),
+                                                ],
                                               ),
                                               SizedBox(height: 2.h),
                                               Text(
@@ -327,11 +342,25 @@ class ReviewScreen extends ConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
+                                "Total treatment fee",
+                                style: CustomFonts.grey14w400,
+                              ),
+                              Text(
+                                "\$${totalTreatmentCost.toStringAsFixed(2)}",
+                                style: CustomFonts.black14w600,
+                              ),
+                            ],
+                          ),
+                          const Divider(height: 24),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
                                 "Total booking price",
                                 style: CustomFonts.black16w600,
                               ),
                               Text(
-                                "\$${consultationFee.toStringAsFixed(2)}",
+                                "\$${totalBookingPrice.toStringAsFixed(2)}",
                                 style: CustomFonts.black16w600.copyWith(
                                   color: CustomColors.pinkColor,
                                 ),

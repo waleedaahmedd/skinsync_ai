@@ -296,6 +296,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
             treatmentName: tName,
             areaId: areaItem.target.id ?? 0,
             areaName: areaItem.target.name ?? '',
+            treatmentCost: 120, // Static cost as requested
             material: areaItem.material,
           ),
         );
