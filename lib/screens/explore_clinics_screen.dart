@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../main.dart';
@@ -242,7 +241,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
           final materialInfo = selection.material != null
               ? " (${selection.material!.selectedQuantity} ${selection.material!.name})"
               : "";
-          final chipText = "${selection.treatmentName ?? ''} - ${selection.areaName ?? ''}$materialInfo";
+          final chipText = "${selection.treatmentName} - ${selection.areaName}$materialInfo";
 
           return Container(
             margin: EdgeInsets.only(right: 8.w),

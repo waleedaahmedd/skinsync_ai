@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +12,7 @@ import '../models/responses/payment_options_response.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../view_models/checkout_view_model.dart';
 import '../view_models/doctor_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
@@ -75,6 +78,19 @@ class _TreatmentPaymentScreenState
               EasyLoading.showError('Select a payment option!');
               return;
             }
+
+            final checkoutNotifier = ref.read(checkoutViewModel.notifier);
+            checkoutNotifier.setSelectedSlotObject(widget.slot);
+            checkoutNotifier.setSelectedPaymentOption(selectedMode!);
+            checkoutNotifier.setSelectedDoctorObject(widget.doctor);
+
+            final request = checkoutNotifier.buildAppointmentRequest();
+            if (request != null) {
+              debugPrint(
+                const JsonEncoder.withIndent('  ').convert(request.toJson()),
+              );
+            }
+
             Navigator.pushNamed(
               context,
               NotesScreen.routeName,

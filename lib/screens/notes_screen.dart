@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -134,14 +136,19 @@ class NotesScreen extends ConsumerWidget {
                   }
                   return ElevatedButton(
                     onPressed: agreed
-                        ? () => ref
-                              .read(checkoutViewModel.notifier)
-                              .createAppointment(
-                                clinic: clinic,
-                                doctor: doctor,
-                                slot: slot,
-                                paymentOption: paymentOption,
-                              )
+                        ? () {
+                            final checkoutNotifier =
+                                ref.read(checkoutViewModel.notifier);
+                            // Ensure objects are synced to state
+                            checkoutNotifier.setSelectedSlotObject(slot);
+                            checkoutNotifier.setSelectedPaymentOption(
+                              paymentOption,
+                            );
+                            checkoutNotifier.setSelectedDoctorObject(doctor);
+
+                            // Trigger booking
+                            checkoutNotifier.createAppointment();
+                          }
                         : null,
                     child: const Text("Confirm Appointment"),
                   );

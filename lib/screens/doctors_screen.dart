@@ -129,14 +129,18 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
 
       // 4. Filter by Slot (Simulated availability matching)
       if (_selectedSlot != null) {
-        if (_selectedSlot == "09:00 AM - 11:00 AM" && doctor.id == "2")
+        if (_selectedSlot == "09:00 AM - 11:00 AM" && doctor.id == "2") {
           return false;
-        if (_selectedSlot == "11:00 AM - 01:00 PM" && doctor.id == "3")
+        }
+        if (_selectedSlot == "11:00 AM - 01:00 PM" && doctor.id == "3") {
           return false;
-        if (_selectedSlot == "01:00 PM - 03:00 PM" && doctor.id == "1")
+        }
+        if (_selectedSlot == "01:00 PM - 03:00 PM" && doctor.id == "1") {
           return false;
-        if (_selectedSlot == "03:00 PM - 05:00 PM" && doctor.id == "1")
+        }
+        if (_selectedSlot == "03:00 PM - 05:00 PM" && doctor.id == "1") {
           return false;
+        }
       }
 
       return true;

@@ -4,8 +4,10 @@ class AppointmentRequest {
   final int date;
   final int startTime;
   final int endTime;
-  final AppointmentTreatmentRequest treatment;
-  final List<TreatmentSubsectionRequest> treatmentSubsection;
+  final int appointmentTypeId;
+  final bool isInviteClinic;
+  final SimulationsRequest simulations;
+  final List<TreatmentRequest> treatment;
   final int treatmentTotal;
   final PaymentTypeRequest paymentType;
   final String discountType;
@@ -21,8 +23,10 @@ class AppointmentRequest {
     required this.date,
     required this.startTime,
     required this.endTime,
+    required this.appointmentTypeId,
+    required this.isInviteClinic,
+    required this.simulations,
     required this.treatment,
-    required this.treatmentSubsection,
     required this.treatmentTotal,
     required this.paymentType,
     required this.discountType,
@@ -34,73 +38,88 @@ class AppointmentRequest {
   });
 
   Map<String, dynamic> toJson() => {
-    "clinic_id": clinicId,
-    "doctor_id": doctorId,
-    "date": date,
-    "start_time": startTime,
-    "end_time": endTime,
-    "treatment": treatment.toJson(),
-    "treatment_subsection": List<dynamic>.from(
-      treatmentSubsection.map((x) => x.toJson()),
-    ),
-    "treatment_total": treatmentTotal,
-    "payment_type": paymentType.toJson(),
-    "discount_type": discountType,
-    "loyality_points": loyalityPoints,
-    "discount": discount,
-    "actual_amount": actualAmount,
-    "amount_paid": amountPaid,
-    "amount_payable": amountPayable,
-  };
+        "clinic_id": clinicId,
+        "doctor_id": doctorId,
+        "date": date,
+        "start_time": startTime,
+        "end_time": endTime,
+        "appointment_type_id": appointmentTypeId,
+        "is_invite_clinic": isInviteClinic,
+        "simulations": simulations.toJson(),
+        "treatment": treatment.map((x) => x.toJson()).toList(),
+        "treatment_total": treatmentTotal,
+        "payment_type": paymentType.toJson(),
+        "discount_type": discountType,
+        "loyality_points": loyalityPoints,
+        "discount": discount,
+        "actual_amount": actualAmount,
+        "amount_paid": amountPaid,
+        "amount_payable": amountPayable,
+      };
 }
 
-class PaymentTypeRequest {
-  final int id;
-  final int amount;
-
-  PaymentTypeRequest({required this.id, required this.amount});
-
-  Map<String, dynamic> toJson() => {"id": id, "amount": amount};
-}
-
-class AppointmentTreatmentRequest {
-  final int treatmentId;
-  final int treatmentPrice;
-  final int treatmentQuantity;
+class SimulationsRequest {
   final String beforeImage;
   final String afterImage;
 
-  AppointmentTreatmentRequest({
-    required this.treatmentId,
-    required this.treatmentPrice,
-    required this.treatmentQuantity,
+  SimulationsRequest({
     required this.beforeImage,
     required this.afterImage,
   });
 
   Map<String, dynamic> toJson() => {
-    "treatment_id": treatmentId,
-    "treatment_price": treatmentPrice,
-    "treatment_quantity": treatmentQuantity,
-    "before_image": beforeImage,
-    "after_image": afterImage,
-  };
+        "before_image": beforeImage,
+        "after_image": afterImage,
+      };
 }
 
-class TreatmentSubsectionRequest {
-  final int sectionId;
-  final int syringesQuantity;
-  final int perSyringePrice;
+class TreatmentRequest {
+  final int treatmentId;
+  final int areaId;
+  final int treatmentCost;
+  final MaterialRequest? material;
 
-  TreatmentSubsectionRequest({
-    required this.sectionId,
-    required this.syringesQuantity,
-    required this.perSyringePrice,
+  TreatmentRequest({
+    required this.treatmentId,
+    required this.areaId,
+    required this.treatmentCost,
+    this.material,
   });
 
   Map<String, dynamic> toJson() => {
-    "section_id": sectionId,
-    "syringes_quantity": syringesQuantity,
-    "per_syringe_price": perSyringePrice,
-  };
+        "treatment_id": treatmentId,
+        "area_id": areaId,
+        "treatment_cost": treatmentCost,
+        if (material != null) "material": material!.toJson(),
+      };
+}
+
+class MaterialRequest {
+  final int id;
+  final int selectedQuantity;
+
+  MaterialRequest({
+    required this.id,
+    required this.selectedQuantity,
+  });
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "selected_quantity": selectedQuantity,
+      };
+}
+
+class PaymentTypeRequest {
+  final String type;
+  final String status;
+
+  PaymentTypeRequest({
+    required this.type,
+    required this.status,
+  });
+
+  Map<String, dynamic> toJson() => {
+        "type": type,
+        "status": status,
+      };
 }

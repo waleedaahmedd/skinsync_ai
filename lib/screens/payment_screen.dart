@@ -1,9 +1,11 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 import '../models/responses/get_clinic_response.dart';
+import '../models/responses/payment_options_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
@@ -53,17 +55,38 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
       paidAmount = _consultationFee;
       paymentMethodName = "Paid via Skinsync Wallet";
     }
-    final success = ref.read(checkoutViewModel).isInviteClinic
-        ? await ref
-              .read(checkoutViewModel.notifier)
-              .inviteClinic(
-                clinic: widget.clinic,
-                consultationFees: _consultationFee,
-                initialDeposit: paidAmount,
-                availability: [],
-              )
-        : null;
-    if (success ?? false) {
+
+    final checkoutNotifier = ref.read(checkoutViewModel.notifier);
+
+    // Set payment option in ViewModel
+    final dummyOption = PaymentOption(
+      id: _selectedPaymentType == 'deposit'
+          ? 1
+          : (_selectedPaymentType == 'full' ? 2 : 3),
+      title: _selectedPaymentType,
+      amount: paidAmount.toInt(),
+      description: paymentMethodName,
+    );
+    checkoutNotifier.setSelectedPaymentOption(dummyOption);
+
+    bool isSuccess = false;
+
+    if (checkoutState.isInviteClinic) {
+      final success = await checkoutNotifier.inviteClinic(
+        clinic: widget.clinic,
+        consultationFees: _consultationFee,
+        initialDeposit: paidAmount,
+        availability: [],
+      );
+      isSuccess = success ?? false;
+    } else {
+      // Regular booking via unified API
+      await checkoutNotifier.createAppointment();
+      isSuccess = ref.read(checkoutViewModel).appointment != null;
+    }
+
+    if (isSuccess) {
+      if (!mounted) return;
       showDialog(
         context: context,
         barrierDismissible: false,

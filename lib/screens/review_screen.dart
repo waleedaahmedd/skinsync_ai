@@ -271,7 +271,7 @@ class ReviewScreen extends ConsumerWidget {
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
                                                   Text(
-                                                    selection.treatmentName ?? "Treatment",
+                                                    selection.treatmentName,
                                                     style: CustomFonts.black14w600,
                                                   ),
                                                   Text(
@@ -282,7 +282,7 @@ class ReviewScreen extends ConsumerWidget {
                                               ),
                                               SizedBox(height: 2.h),
                                               Text(
-                                                "${selection.areaName ?? "Target Area"}$materialInfo",
+                                                "${selection.areaName}$materialInfo",
                                                 style: CustomFonts.grey12w400.copyWith(
                                                   color: CustomColors.darkPurple,
                                                   fontWeight: FontWeight.w500,
