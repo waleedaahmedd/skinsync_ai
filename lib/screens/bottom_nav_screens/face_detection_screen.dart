@@ -221,7 +221,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                               .setCapturedImage(capturedImage);
                           ref
                               .read(checkoutViewModel.notifier)
-                              .updateState(capturedImage: capturedImage);
+                              .updateCapturedImage(capturedImage);
 
                           Navigator.pop(context);
                           if (mounted) {
