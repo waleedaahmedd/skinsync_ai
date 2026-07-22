@@ -602,7 +602,7 @@ class _ArFaceModelPreviewScreenState
 
         return Positioned(
           top: 12.h,
-          left: 12.w,
+          right: 12.w,
           child: _buildBadge("AFTER", Colors.black.withValues(alpha: 0.6)),
         );
       },
@@ -619,7 +619,7 @@ class _ArFaceModelPreviewScreenState
 
         return Positioned(
           top: 12.h,
-          right: 12.w,
+          left: 12.w,
           child: _buildBadge("BEFORE", Colors.black.withValues(alpha: 0.6)),
         );
       },
