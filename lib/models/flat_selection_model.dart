@@ -5,14 +5,14 @@ class FlatSelectionModel {
   final String treatmentName;
   final int areaId;
   final String areaName;
-  final List<SelectedMaterialModel> materials;
+  final SelectedMaterialModel? material;
 
   const FlatSelectionModel({
     required this.treatmentId,
     required this.treatmentName,
     required this.areaId,
     required this.areaName,
-    required this.materials,
+    this.material,
   });
 
   Map<String, dynamic> toJson() {
@@ -21,7 +21,7 @@ class FlatSelectionModel {
       'treatment_name': treatmentName,
       'area_id': areaId,
       'area_name': areaName,
-      'materials': materials.map((m) => m.toJson()).toList(),
+      'material': material?.toJson(),
     };
   }
 }

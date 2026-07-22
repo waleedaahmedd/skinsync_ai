@@ -181,7 +181,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
         if (!existingAreas.any((a) => a.target.id == area.id)) {
           return [
             ...existingAreas,
-            SelectedAreaModel(target: area, materials: const []),
+            SelectedAreaModel(target: area, material: null),
           ];
         }
         return existingAreas;
@@ -189,10 +189,10 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     );
   }
 
-  void saveMaterialsForArea({
+  void saveMaterialForArea({
     required TreatmentData treatment,
     required TreatmentAreaModel area,
-    required List<SelectedMaterialModel> materials,
+    required SelectedMaterialModel? material,
   }) {
     _updateTreatmentAreaSelection(
       treatment: treatment,
@@ -203,9 +203,9 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
 
         if (areaIndex != -1) {
           updatedAreas[areaIndex] =
-              updatedAreas[areaIndex].copyWith(materials: materials);
+              updatedAreas[areaIndex].copyWith(material: material);
         } else {
-          updatedAreas.add(SelectedAreaModel(target: area, materials: materials));
+          updatedAreas.add(SelectedAreaModel(target: area, material: material));
         }
         return updatedAreas;
       },
@@ -296,7 +296,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
             treatmentName: tName,
             areaId: areaItem.target.id ?? 0,
             areaName: areaItem.target.name ?? '',
-            materials: areaItem.materials,
+            material: areaItem.material,
           ),
         );
       }

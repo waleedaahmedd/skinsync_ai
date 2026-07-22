@@ -239,8 +239,8 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
         itemCount: checkoutTreatmentsList.length,
         itemBuilder: (context, index) {
           final selection = checkoutTreatmentsList[index];
-          final materialInfo = selection.materials.isNotEmpty
-              ? " (${selection.materials.map((m) => '${m.selectedQuantity} ${m.name}').join(', ')})"
+          final materialInfo = selection.material != null
+              ? " (${selection.material!.selectedQuantity} ${selection.material!.name})"
               : "";
           final chipText = "${selection.treatmentName ?? ''} - ${selection.areaName ?? ''}$materialInfo";
 

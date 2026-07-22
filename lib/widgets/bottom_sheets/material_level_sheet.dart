@@ -45,9 +45,9 @@ class _MaterialLevelSheetState extends ConsumerState<MaterialLevelSheet> {
         .where((a) => a.target.id == widget.area.id)
         .firstOrNull;
 
-    final existingMaterial = existingArea?.materials
-        .where((m) => m.id == widget.material.id)
-        .firstOrNull;
+    final existingMaterial = existingArea?.material?.id == widget.material.id
+        ? existingArea?.material
+        : null;
 
     if (existingMaterial != null) {
       _selectedQuantity = existingMaterial.selectedQuantity;
@@ -192,10 +192,10 @@ class _MaterialLevelSheetState extends ConsumerState<MaterialLevelSheet> {
                   maxQty: material.maxQty ?? 0,
                 );
 
-                ref.read(checkoutViewModel.notifier).saveMaterialsForArea(
+                ref.read(checkoutViewModel.notifier).saveMaterialForArea(
                   treatment: widget.treatment,
                   area: widget.area,
-                  materials: [selectedMaterial],
+                  material: selectedMaterial,
                 );
 
                 Navigator.pop(context);

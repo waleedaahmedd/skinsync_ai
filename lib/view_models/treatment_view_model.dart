@@ -284,9 +284,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       return {
         'treatment_sku': item.treatment.globalSku ?? '',
         'areas': item.selectedAreas.map((areaItem) {
-          final int materialQty = areaItem.materials.isNotEmpty
-              ? areaItem.materials.first.selectedQuantity
-              : 0;
+          final int materialQty = areaItem.material?.selectedQuantity ?? 0;
           return {
             'areas_sku': areaItem.target.globalSku ?? '',
             'material_quantity': materialQty,

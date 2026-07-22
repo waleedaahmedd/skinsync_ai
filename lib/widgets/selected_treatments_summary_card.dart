@@ -40,7 +40,8 @@ class SelectedTreatmentsSummaryCard extends StatelessWidget {
           // Group and sum materials by ID/name for aggregate view under this treatment
           final Map<int, SelectedMaterialModel> groupedMaterials = {};
           for (final areaItem in areas) {
-            for (final m in areaItem.materials) {
+            final m = areaItem.material;
+            if (m != null) {
               if (groupedMaterials.containsKey(m.id)) {
                 groupedMaterials[m.id] = groupedMaterials[m.id]!.copyWith(
                   selectedQuantity:
@@ -136,8 +137,8 @@ class SelectedTreatmentsSummaryCard extends StatelessWidget {
                                 runSpacing: 6.h,
                                 children: areas.map((areaItem) {
                                   final materialInfo =
-                                      areaItem.materials.isNotEmpty
-                                      ? " (${areaItem.materials.map((m) => '${m.selectedQuantity} ${m.name}').join(', ')})"
+                                      areaItem.material != null
+                                      ? " (${areaItem.material!.selectedQuantity} ${areaItem.material!.name})"
                                       : "";
 
                                   return Chip(

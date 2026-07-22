@@ -45,27 +45,27 @@ class SelectedMaterialModel {
 
 class SelectedAreaModel {
   final TreatmentAreaModel target;
-  final List<SelectedMaterialModel> materials;
+  final SelectedMaterialModel? material;
 
   const SelectedAreaModel({
     required this.target,
-    this.materials = const [],
+    this.material,
   });
 
   SelectedAreaModel copyWith({
     TreatmentAreaModel? target,
-    List<SelectedMaterialModel>? materials,
+    SelectedMaterialModel? material,
   }) {
     return SelectedAreaModel(
       target: target ?? this.target,
-      materials: materials ?? this.materials,
+      material: material ?? this.material,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'areas_sku': target.globalSku ?? '',
-      'materials': materials.map((item) => item.toJson()).toList(),
+      'material': material?.toJson(),
     };
   }
 }

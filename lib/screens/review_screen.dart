@@ -234,8 +234,8 @@ class ReviewScreen extends ConsumerWidget {
                               final selection = entry.value;
                               final isLast = index == checkoutState.checkoutTreatmentsList.length - 1;
 
-                              final materialInfo = selection.materials.isNotEmpty
-                                  ? " (${selection.materials.map((m) => '${m.selectedQuantity} ${m.name}').join(', ')})"
+                              final materialInfo = selection.material != null
+                                  ? " (${selection.material!.selectedQuantity} ${selection.material!.name})"
                                   : "";
 
                               return Column(

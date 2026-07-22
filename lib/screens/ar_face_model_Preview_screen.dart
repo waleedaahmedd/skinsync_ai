@@ -791,24 +791,22 @@ class _ArFaceModelPreviewScreenState
               }
 
               if (canAutoSelectAll || res.data == null) {
-                final List<SelectedMaterialModel> selectedMaterials = [];
+                SelectedMaterialModel? selectedMaterial;
                 if (res.data != null) {
                   final m = res.data!;
                   final max = m.maxQty ?? 0;
-                  selectedMaterials.add(
-                    SelectedMaterialModel(
-                      id: m.id ?? 0,
-                      name: m.unitType ?? '',
-                      selectedQuantity: max,
-                      minQty: m.minQty ?? 0,
-                      maxQty: max,
-                    ),
+                  selectedMaterial = SelectedMaterialModel(
+                    id: m.id ?? 0,
+                    name: m.unitType ?? '',
+                    selectedQuantity: max,
+                    minQty: m.minQty ?? 0,
+                    maxQty: max,
                   );
                 }
-                ref.read(checkoutViewModel.notifier).saveMaterialsForArea(
+                ref.read(checkoutViewModel.notifier).saveMaterialForArea(
                       treatment: treatment,
                       area: area,
-                      materials: selectedMaterials,
+                      material: selectedMaterial,
                     );
               } else {
                 if (!context.mounted) return;
