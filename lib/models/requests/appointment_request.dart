@@ -50,11 +50,11 @@ class AppointmentRequest {
         "treatment_total": treatmentTotal,
         "payment_type": paymentType.toJson(),
         "discount_type": discountType,
-        "loyality_points": loyalityPoints,
+       // "loyality_points": loyalityPoints,
         "discount": discount,
-        "actual_amount": actualAmount,
-        "amount_paid": amountPaid,
-        "amount_payable": amountPayable,
+        // "actual_amount": actualAmount,
+        // "amount_paid": amountPaid,
+        // "amount_payable": amountPayable,
       };
 }
 
