@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import '../exceptions/app_exception.dart';
+import '../models/requests/appointment_request.dart';
+import '../models/responses/appointment_response.dart';
 import '../models/responses/appointment_type_list_response.dart';
 import '../models/responses/get_appointment_response.dart';
 import '../repositories/appointment_repository.dart';
@@ -90,5 +92,22 @@ class AppointmentService implements AppointmentRepository {
         GetAppointmentResponse.fromJson(parsed).message as String,
       );
     }
+  }
+
+  @override
+  Future<AppointmentData> createAppointment({
+    required AppointmentRequest request,
+  }) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.appointments,
+      requestType: 'POST',
+      requestBody: request.toJson(),
+      params: '',
+    );
+    final data = AppointmentResponse.fromJson(jsonDecode(response.body));
+    if (!(data.status ?? false)) {
+      throw AppException(data.message ?? 'Something went wrong!');
+    }
+    return data.data!;
   }
 }

@@ -1,7 +1,5 @@
-import '../models/requests/appointment_request.dart';
 import '../models/requests/get_clinic_request.dart';
 import '../models/requests/invite_clinic_request.dart';
-import '../models/responses/appointment_response.dart';
 import '../models/responses/availability_response.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../models/responses/get_doctor_response.dart';
@@ -33,10 +31,6 @@ abstract class ClinicDoctorRepository {
     required int clinicId,
     required int treatmentId,
     required List<int> treatmentSubsectionIds,
-  });
-
-  Future<AppointmentData> createAppointment({
-    required AppointmentRequest request,
   });
 
   Future<void> inviteClinic(InviteClinicRequest request);

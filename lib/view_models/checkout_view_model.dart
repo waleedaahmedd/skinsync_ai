@@ -17,8 +17,10 @@ import '../models/responses/treatment_area_list_response.dart';
 import '../models/responses/treatment_category_list_response.dart';
 import '../models/responses/treatment_list_response.dart';
 import '../models/selected_treatment_and_areas_model.dart';
+import '../repositories/appointment_repository.dart';
 import '../repositories/clinic_doctor_repository.dart';
 import '../services/api_base_helper.dart';
+import '../services/appointment_service.dart';
 import '../services/clinic_doctor_service.dart';
 import '../services/media_service.dart';
 import '../utills/date_time_utills.dart';
@@ -30,12 +32,17 @@ import 'treatment_view_model.dart';
 final checkoutViewModel = NotifierProvider(() => CheckoutViewModel());
 
 class CheckoutViewModel extends BaseViewModel<CheckoutState> {
-  CheckoutViewModel({ClinicDoctorRepository? clinicRepository})
-    : _clinicRepository =
-          clinicRepository ?? ClinicDoctorService(apiClient: ApiBaseHelper()),
-      super(initialState: const CheckoutState());
+  CheckoutViewModel({
+    ClinicDoctorRepository? clinicRepository,
+    AppointmentRepository? appointmentRepository,
+  }) : _clinicRepository = clinicRepository ??
+            ClinicDoctorService(apiClient: ApiBaseHelper()),
+        _appointmentRepository = appointmentRepository ??
+            AppointmentService(apiClient: ApiBaseHelper()),
+        super(initialState: const CheckoutState());
 
   final ClinicDoctorRepository _clinicRepository;
+  final AppointmentRepository _appointmentRepository;
   final _mediaService = MediaService();
 
   // ---------------------------------------------------------------------------
@@ -417,7 +424,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
         treatmentTotal: treatmentPrice.toInt(),
       );
 
-      final data = await _clinicRepository.createAppointment(request: request);
+      final data = await _appointmentRepository.createAppointment(request: request);
       state = state.copyWith(loading: false, appointment: data);
     });
   }
