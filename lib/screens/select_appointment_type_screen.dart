@@ -81,13 +81,13 @@ class _SelectAppointmentTypeScreenState
 
                             return TreatmentContainer(
                               imageHeight: 180.h,
-                              customTitle: typeData.name ?? '',
+                              customTitle: typeData.title ?? '',
                               customSubtitle: typeData.description ?? '',
-                              customImageUrl: typeData.imageUrl ?? '',
+                              customImageUrl: typeData.image ?? '',
                               customOnTap: () {
                                 // Map string name to AppointmentType enum for state tracking
                                 final type =
-                                    typeData.name?.toLowerCase().contains(
+                                    typeData.title?.toLowerCase().contains(
                                           'consultation',
                                         ) ??
                                         false

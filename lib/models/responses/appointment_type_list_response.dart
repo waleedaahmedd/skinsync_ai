@@ -33,50 +33,78 @@ class AppointmentTypeListResponse extends BaseResponseModel {
 
 class AppointmentTypeData {
   int? id;
-  String? name;
+  String? title;
+  String? key;
   String? description;
-  String? imageUrl;
+  String? timing;
+  int? maxDuration;
+  List<String>? appointmentModes;
   String? icon;
+  String? image;
 
   AppointmentTypeData({
     this.id,
-    this.name,
+    this.title,
+    this.key,
     this.description,
-    this.imageUrl,
+    this.timing,
+    this.maxDuration,
+    this.appointmentModes,
     this.icon,
+    this.image,
   });
 
   AppointmentTypeData copyWith({
     int? id,
-    String? name,
+    String? title,
+    String? key,
     String? description,
-    String? imageUrl,
+    String? timing,
+    int? maxDuration,
+    List<String>? appointmentModes,
     String? icon,
+    String? image,
   }) {
     return AppointmentTypeData(
       id: id ?? this.id,
-      name: name ?? this.name,
+      title: title ?? this.title,
+      key: key ?? this.key,
       description: description ?? this.description,
-      imageUrl: imageUrl ?? this.imageUrl,
+      timing: timing ?? this.timing,
+      maxDuration: maxDuration ?? this.maxDuration,
+      appointmentModes: appointmentModes ?? this.appointmentModes,
       icon: icon ?? this.icon,
+      image: image ?? this.image,
     );
   }
 
   AppointmentTypeData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    name = json['name'];
+    title = json['title'];
+    key = json['key'];
     description = json['description'];
-    imageUrl = json['image_url'];
+    timing = json['timing'];
+    maxDuration = json['max_duration'];
+    appointmentModes = json['appointment_modes'] != null
+        ? List<String>.from(json['appointment_modes'])
+        : null;
     icon = json['icon'];
+    image = json['image'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
-    data['name'] = name;
+    data['title'] = title;
+    data['key'] = key;
     data['description'] = description;
-    data['image_url'] = imageUrl;
+    data['timing'] = timing;
+    data['max_duration'] = maxDuration;
+    if (appointmentModes != null) {
+      data['appointment_modes'] = appointmentModes;
+    }
     data['icon'] = icon;
+    data['image'] = image;
     return data;
   }
 }
