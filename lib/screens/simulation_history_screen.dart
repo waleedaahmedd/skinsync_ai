@@ -111,7 +111,7 @@ class _SimulationHistoryScreenState
             children: [
               Expanded(
                 child: Text(
-                  sim.treatmentName ?? "Unnamed Treatment",
+                  sim.treatments?.firstOrNull?.name ?? "Unnamed Treatment",
                   style: CustomFonts.black16w600,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -149,12 +149,18 @@ class _SimulationHistoryScreenState
               ),
             ],
           ),
-          if (sim.subsections != null && sim.subsections!.isNotEmpty) ...[
+          if (sim.treatments != null && sim.treatments!.isNotEmpty) ...[
             SizedBox(height: 12.h),
             Wrap(
               spacing: 8.w,
               runSpacing: 5.h,
-              children: sim.subsections!.map((sub) {
+              children: sim.treatments!
+                  .expand((t) => t.areas ?? <SimulationArea>[])
+                  .map((area) {
+                final material = area.materials?.firstOrNull;
+                final materialText = material != null
+                    ? " (${material.selectedQuantity})"
+                    : "";
                 return Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: 10.w,
@@ -165,7 +171,7 @@ class _SimulationHistoryScreenState
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Text(
-                    "${sub.sectionName} (${sub.syringesQuantity})",
+                    "${area.name}$materialText",
                     style: CustomFonts.black12w500,
                   ),
                 );
