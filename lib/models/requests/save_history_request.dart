@@ -1,42 +1,79 @@
 class SaveHistoryRequest {
-  final int treatmentId;
   final String beforeImage;
   final String afterImage;
-  final List<SubSectionRequest> subSections;
+  final List<HistoryTreatmentRequest> treatments;
 
   const SaveHistoryRequest({
-    required this.treatmentId,
     required this.beforeImage,
     required this.afterImage,
-    required this.subSections,
+    required this.treatments,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'before_image': beforeImage,
+      'after_image': afterImage,
+      'treatments': treatments.map((e) => e.toJson()).toList(),
+    };
+  }
+}
+
+class HistoryTreatmentRequest {
+  final int treatmentId;
+  final String treatmentName;
+  final List<HistoryAreaRequest> areas;
+
+  const HistoryTreatmentRequest({
+    required this.treatmentId,
+    required this.treatmentName,
+    required this.areas,
   });
 
   Map<String, dynamic> toJson() {
     return {
       'treatment_id': treatmentId,
-      'before_image': beforeImage,
-      'after_image': afterImage,
-      'subsections': subSections.map((e) => e.toJson()).toList(),
+      'treatment_name': treatmentName,
+      'areas': areas.map((e) => e.toJson()).toList(),
     };
   }
 }
 
-class SubSectionRequest {
-  final int areaId;
-  final int sectionId;
-  final int syringesQuantity;
+class HistoryAreaRequest {
+  final String areaId;
+  final String areaName;
+  final List<HistoryMaterialRequest> materials;
 
-  const SubSectionRequest({
+  const HistoryAreaRequest({
     required this.areaId,
-    required this.sectionId,
-    required this.syringesQuantity,
+    required this.areaName,
+    required this.materials,
   });
 
   Map<String, dynamic> toJson() {
     return {
       'area_id': areaId,
-      'section_id': sectionId,
-      'syringes_quantity': syringesQuantity,
+      'area_name': areaName,
+      'materials': materials.map((e) => e.toJson()).toList(),
+    };
+  }
+}
+
+class HistoryMaterialRequest {
+  final int id;
+  final String name;
+  final int selectedQuantity;
+
+  const HistoryMaterialRequest({
+    required this.id,
+    required this.name,
+    required this.selectedQuantity,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'selected_quantity': selectedQuantity,
     };
   }
 }

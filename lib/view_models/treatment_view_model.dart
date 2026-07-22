@@ -332,49 +332,21 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     return await runSafely(() async {
       EasyLoading.show(status: 'Please wait...');
 
-      final selectedTreatmentsAndAreas = ref
-          .read(checkoutViewModel)
-          .selectedTreatmentsAndAreas;
+      final selectedTreatmentsAndAreas =
+          ref.read(checkoutViewModel).selectedTreatmentsAndAreas;
       if (selectedTreatmentsAndAreas.isEmpty) {
         EasyLoading.showError('No treatment selected');
-        return;
-      }
-
-      final firstTreatment = selectedTreatmentsAndAreas.first;
-      final treatmentId = firstTreatment.treatment.id;
-      if (treatmentId == null) {
-        EasyLoading.showError('No treatment selected');
-        return;
-      }
-
-      if (firstTreatment.selectedAreas.isEmpty) {
-        EasyLoading.showError('No treatment area selected');
-        return;
-      }
-
-      final areaId =
-          firstTreatment.selectedAreas.first.target.areaId ??
-          firstTreatment.selectedAreas.first.target.id;
-      if (areaId == null) {
-        EasyLoading.showError('No treatment area selected');
         return;
       }
 
       final beforeImage = state.capturedImage?.path;
       final afterImage = state.aiImage?.path;
 
-      final subSections = firstTreatment.selectedAreas.map((selectedArea) {
-        final subArea = selectedArea.target;
-        return SubSectionRequest(
-          areaId: subArea.areaId ?? subArea.id!,
-          sectionId: subArea.id!,
-          syringesQuantity: 0,
-        );
-      }).toList();
       if (beforeImage == null || afterImage == null) {
         EasyLoading.showError('Both images need to be selected!');
         return;
       }
+
       final mediaService = MediaService();
       final userId = ref.read(authViewModel).authData!.user!.id!;
       final beforeUrl = await mediaService.uploadImage(
@@ -393,11 +365,34 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         EasyLoading.showError('Failed to upload after image');
         return;
       }
+
+      final historyTreatments = selectedTreatmentsAndAreas.map((item) {
+        return HistoryTreatmentRequest(
+          treatmentId: item.treatment.id ?? 0,
+          treatmentName: item.treatment.name ?? '',
+          areas: item.selectedAreas.map((areaItem) {
+            final area = areaItem.target;
+            final List<HistoryMaterialRequest> historyMaterials = [];
+            if (areaItem.material != null) {
+              historyMaterials.add(HistoryMaterialRequest(
+                id: areaItem.material!.id,
+                name: areaItem.material!.name,
+                selectedQuantity: areaItem.material!.selectedQuantity,
+              ));
+            }
+            return HistoryAreaRequest(
+              areaId: (area.id ?? area.areaId ?? 0).toString(),
+              areaName: area.name ?? '',
+              materials: historyMaterials,
+            );
+          }).toList(),
+        );
+      }).toList();
+
       final request = SaveHistoryRequest(
-        treatmentId: treatmentId,
         beforeImage: beforeUrl,
         afterImage: afterUrl,
-        subSections: subSections,
+        treatments: historyTreatments,
       );
       await _repo.saveAiHistory(request);
       EasyLoading.showSuccess('Image saved!');
