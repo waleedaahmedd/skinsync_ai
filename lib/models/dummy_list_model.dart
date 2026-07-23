@@ -911,35 +911,5 @@ final List<DummyAreaModel> dummyAreas = [
 //   ),
 // ];
 
-class AppointmentTypeModel {
-  final AppointmentType type;
-  final String title;
-  final String description;
-  final String imageUrl;
 
-  const AppointmentTypeModel({
-    required this.type,
-    required this.title,
-    required this.description,
-    required this.imageUrl,
-  });
-}
-
-final List<AppointmentTypeModel> dummyAppointmentTypes = [
-  const AppointmentTypeModel(
-    type: AppointmentType.consultation,
-    title: "Consultation",
-    description:
-        "Discuss your beauty goals, ask questions, and get personalized recommendations from our world-class medical spa physicians.",
-    imageUrl:
-        "https://images.unsplash.com/photo-1579684389782-64d84b5e901a?auto=format&fit=crop&q=80&w=800",
-  ),
-  const AppointmentTypeModel(
-    type: AppointmentType.treatment,
-    title: "Treatment Session",
-    description:
-        "Book directly into your favorite injectables, skincare therapies, dermal fillers, and laser sessions for instant results.",
-    imageUrl:
-        "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=800",
-  ),
-];
+// Removed AppointmentTypeModel and dummyAppointmentTypes as they are now fetched from the API

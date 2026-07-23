@@ -17,36 +17,20 @@ class AppointmentService implements AppointmentRepository {
 
   @override
   Future<AppointmentTypeListResponse> getAppointmentTypes() async {
-    // Returning dummy data as requested until backend API is available
-    await Future.delayed(const Duration(milliseconds: 500)); // Simulate network delay
-    return AppointmentTypeListResponse(
-      isSuccess: true,
-      message: "Appointment types fetched successfully",
-      data: [
-        AppointmentTypeData(
-          id: 23,
-          title: "General Consultation",
-          key: "general_consultation",
-          description: "Standard medical checkup for patients",
-          timing: "Before Treatment",
-          maxDuration: 30,
-          appointmentModes: ["in_person", "virtual"],
-          icon: "https://example.com/icons/consultation.png",
-          image: "https://images.unsplash.com/photo-1579684389782-64d84b5e901a?auto=format&fit=crop&q=80&w=800",
-        ),
-        AppointmentTypeData(
-          id: 24,
-          title: "Treatment session",
-          key: "treatment_session",
-          description: "Book directly into your favorite injectables, skincare therapies, dermal fillers, and laser sessions for instant results.",
-          timing: "Primary Session",
-          maxDuration: 60,
-          appointmentModes: ["in_person"],
-          icon: "https://example.com/icons/treatment.png",
-          image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=800",
-        ),
-      ],
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.appointmentTypes,
+      requestType: 'GET',
     );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      return AppointmentTypeListResponse.fromJson(parsed);
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(
+        AppointmentTypeListResponse.fromJson(parsed).message ??
+            "Failed to fetch appointment types",
+      );
+    }
   }
 
   @override

@@ -64,6 +64,29 @@ class _SelectAppointmentTypeScreenState
                 child:
                     appointmentState.loading
                         ? const AppLoader()
+                        : appointmentState.errorMessage != null
+                        ? Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20.w),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  appointmentState.errorMessage!,
+                                  style: CustomFonts.red16w400,
+                                  textAlign: TextAlign.center,
+                                ),
+                                SizedBox(height: 16.h),
+                                ElevatedButton(
+                                  onPressed: () => ref
+                                      .read(appointmentProvider.notifier)
+                                      .getAppointmentTypes(),
+                                  child: const Text("Retry"),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
                         : appointmentState.appointmentTypes.isEmpty
                         ? Center(
                           child: Text(
