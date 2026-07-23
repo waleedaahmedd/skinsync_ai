@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -36,67 +37,78 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
   final TreatmentRepository _repo;
 
-  Future<void> initializeSimulation(SimulationData simulation) async {
+  Future<void> initializeSimulation(SimulationData? simulation) async {
+    if (simulation == null) {
+      return;
+    }
     state = state.copyWith(isAiImageGenerated: false);
     clearAiImage();
     if (state.treatments.isEmpty) {
       await loadTreatments();
     }
-
-    final firstSimTreatment = simulation.treatments?.firstOrNull;
-    if (firstSimTreatment == null) return;
-
-    final treatment = state.treatments.firstWhereOrNull(
-      (treatment) => treatment.id == firstSimTreatment.id,
-    );
-
-    if (treatment != null) {
-      await onTapTreatment(treatmentModel: treatment, isCallPredictAPI: false);
-      await ref
-          .read(treatmentAreaProvider.notifier)
-          .fetchAreasByTreatment(treatment.id ?? 0);
+    final simTreatments = simulation.treatments;
+    if (simTreatments?.isEmpty ?? true) {
+      return;
     }
-
-    final rootAreas = ref.read(treatmentAreaProvider).areas;
-    // Find a root area that contains one of the simulated areas
-    final rootArea = rootAreas.firstWhereOrNull((area) {
-      return firstSimTreatment.areas?.any((simArea) {
-            // Check if simArea is this root area or a child of it
-            final simAreaId = int.tryParse(simArea.id ?? '');
-            if (area.id == simAreaId) return true;
-            return area.subAreas?.any((sub) => sub.id == simAreaId) ?? false;
-          }) ??
-          false;
-    });
-
-    if (rootArea != null) {
-      onTapTreatmentArea(rootArea);
-    }
-
-    final subAreas = ref.read(checkoutViewModel).selectedAreas?.subAreas ?? [];
-    for (final subArea in subAreas) {
-      final selectedSimArea = firstSimTreatment.areas?.firstWhereOrNull(
-        (simArea) => int.tryParse(simArea.id ?? '') == subArea.id,
+    for (final firstSimTreatment in simTreatments!) {
+      final treatment = state.treatments.firstWhereOrNull(
+        (treatment) => treatment.id == firstSimTreatment.id,
       );
-      if (selectedSimArea != null) {
-        ref
-            .read(checkoutViewModel.notifier)
-            .onTapTreatmentSubArea(subArea: subArea);
 
-        // Restore material if any
-        final simMaterial = selectedSimArea.materials?.firstOrNull;
-        if (simMaterial != null && treatment != null) {
-          ref.read(checkoutViewModel.notifier).saveMaterialForArea(
-                treatment: treatment,
-                area: subArea,
-                material: SelectedMaterialModel(
-                  id: simMaterial.id ?? 0,
-                  name: simMaterial.name ?? '',
-                  selectedQuantity: simMaterial.selectedQuantity ?? 0,
-                  minQty: 0,
-                  maxQty: 0,
-                ),
-              );
+      if (treatment != null) {
+        await onTapTreatment(
+          treatmentModel: treatment,
+          isCallPredictAPI: false,
+        );
+        await ref
+            .read(treatmentAreaProvider.notifier)
+            .fetchAreasByTreatment(treatment.id ?? 0);
+      }
+
+      final rootAreas = ref.read(treatmentAreaProvider).areas;
+      // Find a root area that contains one of the simulated areas
+      final rootArea = rootAreas.firstWhereOrNull((area) {
+        return firstSimTreatment.areas?.any((simArea) {
+              // Check if simArea is this root area or a child of it
+              final simAreaId = int.tryParse(simArea.id ?? '');
+              if (area.id == simAreaId) return true;
+              return area.subAreas?.any((sub) => sub.id == simAreaId) ?? false;
+            }) ??
+            false;
+      });
+
+      if (rootArea != null) {
+        onTapTreatmentArea(rootArea);
+      }
+
+      final subAreas =
+          ref.read(checkoutViewModel).selectedAreas?.subAreas ?? [];
+      for (final subArea in subAreas) {
+        final selectedSimArea = firstSimTreatment.areas?.firstWhereOrNull(
+          (simArea) => int.tryParse(simArea.id ?? '') == subArea.id,
+        );
+        if (selectedSimArea != null) {
+          ref
+              .read(checkoutViewModel.notifier)
+              .onTapTreatmentSubArea(subArea: subArea);
+
+          // Restore material if any
+          final simMaterial = selectedSimArea.materials?.firstOrNull;
+          if (simMaterial != null && treatment != null) {
+            ref
+                .read(checkoutViewModel.notifier)
+                .saveMaterialForArea(
+                  treatment: treatment,
+                  area: subArea,
+                  material: SelectedMaterialModel(
+                    id: simMaterial.id ?? 0,
+                    name: simMaterial.name ?? '',
+                    selectedQuantity: simMaterial.selectedQuantity ?? 0,
+                    minQty: 0,
+                    maxQty: 0,
+                  ),
+                );
+          }
         }
       }
     }
@@ -113,6 +125,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       isBefore: false,
       imageUrl: simulation.afterImage,
     );
+    log('AFTER: ${afterImage?.path}');
     setAiImage(afterImage);
     EasyLoading.dismiss();
     state = state.copyWith(
@@ -131,7 +144,8 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   void setCapturedImage(XFile? image) =>
       state = state.copyWith(capturedImage: image);
 
-  void setAiImage(XFile? image) => state = state.copyWith(aiImage: image);
+  void setAiImage(XFile? image) =>
+      state = state.copyWith(aiImage: image, isAiImageGenerated: true);
 
   void clearAiImage() =>
       state = state.copyWith(clearAiImage: true, isAiImageGenerated: false);
@@ -169,14 +183,14 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     state = state.copyWith(areaNavigationStack: const []);
   }
 
-  void clearAllSelectedTreatments() {
+  void clearAllSelectedTreatments({bool capturedImage = false}) {
     state = TreatmentsState(
       loading: state.loading,
       errorMessage: state.errorMessage,
       treatments: state.treatments,
       areaNavigationStack: const [],
       isBefore: true,
-      capturedImage: state.capturedImage,
+      capturedImage: capturedImage ? null : state.capturedImage,
       aiImage: null,
       isAiImageGenerated: false,
       material: state.material,
@@ -216,10 +230,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         treatmentSku: treatmentSku,
         areaSku: areaSku,
       );
-      state = state.copyWith(
-        materialsLoading: false,
-        material: res.data,
-      );
+      state = state.copyWith(materialsLoading: false, material: res.data);
       return res;
     });
     if (response == null) {
@@ -362,8 +373,9 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     return await runSafely(() async {
       EasyLoading.show(status: 'Please wait...');
 
-      final selectedTreatmentsAndAreas =
-          ref.read(checkoutViewModel).selectedTreatmentsAndAreas;
+      final selectedTreatmentsAndAreas = ref
+          .read(checkoutViewModel)
+          .selectedTreatmentsAndAreas;
       if (selectedTreatmentsAndAreas.isEmpty) {
         EasyLoading.showError('No treatment selected');
         return;
@@ -404,11 +416,13 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
             final area = areaItem.target;
             final List<HistoryMaterialRequest> historyMaterials = [];
             if (areaItem.material != null) {
-              historyMaterials.add(HistoryMaterialRequest(
-                id: areaItem.material!.id,
-                name: areaItem.material!.name,
-                selectedQuantity: areaItem.material!.selectedQuantity,
-              ));
+              historyMaterials.add(
+                HistoryMaterialRequest(
+                  id: areaItem.material!.id,
+                  name: areaItem.material!.name,
+                  selectedQuantity: areaItem.material!.selectedQuantity,
+                ),
+              );
             }
             return HistoryAreaRequest(
               areaId: (area.id ?? area.areaId ?? 0),

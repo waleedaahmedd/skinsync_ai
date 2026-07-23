@@ -1,5 +1,4 @@
 import '../utills/assets.dart';
-import '../utills/enums.dart';
 
 class Treatments {
   final String svg;
@@ -910,6 +909,5 @@ final List<DummyAreaModel> dummyAreas = [
 //     status: "active",
 //   ),
 // ];
-
 
 // Removed AppointmentTypeModel and dummyAppointmentTypes as they are now fetched from the API

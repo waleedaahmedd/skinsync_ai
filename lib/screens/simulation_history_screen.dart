@@ -4,14 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+
 import '../models/responses/simulation_history_response.dart';
-import 'ar_face_model_Preview_screen.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/date_time_utills.dart';
 import '../view_models/appointment_view_model.dart';
+import '../view_models/treatment_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_button.dart';
+import 'ar_face_model_Preview_screen.dart';
+import 'bottom_nav_screens/face_detection_screen.dart';
 
 class SimulationHistoryScreen extends ConsumerStatefulWidget {
   static const String routeName = "/simulation_history_screen";
@@ -82,6 +86,16 @@ class _SimulationHistoryScreenState
                 );
               },
             ),
+      bottomNavigationBar: Padding(
+        padding: .all(20.w),
+        child: CustomButton(
+          text: 'Try another pose',
+          onPressed: () => Navigator.pushReplacementNamed(
+            context,
+            FaceDetectionScreen.routeName,
+          ),
+        ),
+      ),
     );
   }
 
@@ -157,36 +171,42 @@ class _SimulationHistoryScreenState
               children: sim.treatments!
                   .expand((t) => t.areas ?? <SimulationArea>[])
                   .map((area) {
-                final material = area.materials?.firstOrNull;
-                final materialText = material != null
-                    ? " (${material.selectedQuantity})"
-                    : "";
-                return Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 4.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: CustomColors.greyColor.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: Text(
-                    "${area.name}$materialText",
-                    style: CustomFonts.black12w500,
-                  ),
-                );
-              }).toList(),
+                    final material = area.materials?.firstOrNull;
+                    final materialText = material != null
+                        ? " (${material.selectedQuantity})"
+                        : "";
+                    return Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10.w,
+                        vertical: 4.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: CustomColors.greyColor.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Text(
+                        "${area.name}$materialText",
+                        style: CustomFonts.black12w500,
+                      ),
+                    );
+                  })
+                  .toList(),
             ),
           ],
           SizedBox(height: 10.h),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () => Navigator.pushReplacementNamed(
-                context,
-                ArFaceModelPreviewScreen.routeName,
-                arguments: sim,
-              ),
+              onPressed: () {
+                ref
+                    .read(treatmentViewModel.notifier)
+                    .clearAllSelectedTreatments(capturedImage: true);
+                Navigator.pushNamed(
+                  context,
+                  ArFaceModelPreviewScreen.routeName,
+                  arguments: sim,
+                );
+              },
               child: const Text('Use this simulation'),
             ),
           ),
@@ -231,7 +251,10 @@ class _SimulationHistoryScreenState
             context,
             CupertinoPageRoute(
               builder: (_) => Scaffold(
-                appBar: const CustomAppBar(showTitle: true, title: 'Image Viewer'),
+                appBar: const CustomAppBar(
+                  showTitle: true,
+                  title: 'Image Viewer',
+                ),
                 body: InteractiveViewer(
                   clipBehavior: Clip.none,
                   boundaryMargin: EdgeInsets.zero,

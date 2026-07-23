@@ -9,6 +9,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../models/responses/materials_response.dart';
+import '../models/responses/simulation_history_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
 import '../models/responses/treatment_list_response.dart';
 import '../models/selected_treatment_and_areas_model.dart';
@@ -28,7 +29,8 @@ import '../widgets/service_type_button.dart';
 import 'explore_clinics_screen.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
-  const ArFaceModelPreviewScreen({super.key});
+  final SimulationData? simulation;
+  const ArFaceModelPreviewScreen({super.key, this.simulation});
 
   static const String routeName = '/ArFaceModelPreviewScreen';
 
@@ -85,16 +87,21 @@ class _ArFaceModelPreviewScreenState
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref
+          .read(treatmentViewModel.notifier)
+          .initializeSimulation(widget.simulation);
       final selectedTreatment = ref.read(checkoutViewModel).selectedTreatments;
 
       if (selectedTreatment != null) {
         ref
             .read(checkoutViewModel.notifier)
             .addSelectedTreatment(selectedTreatment);
-        await ref.read(treatmentViewModel.notifier).onTapTreatment(
-          treatmentModel: selectedTreatment,
-          isCallPredictAPI: false,
-        );
+        await ref
+            .read(treatmentViewModel.notifier)
+            .onTapTreatment(
+              treatmentModel: selectedTreatment,
+              isCallPredictAPI: false,
+            );
         await ref
             .read(treatmentAreaProvider.notifier)
             .fetchAreasByTreatment(selectedTreatment.id ?? 0);
@@ -118,7 +125,10 @@ class _ArFaceModelPreviewScreenState
   Widget build(BuildContext context) {
     _handleInitialState();
 
-    ref.listen(treatmentViewModel.select((s) => s.isAiImageGenerated), (prev, next) {
+    ref.listen(treatmentViewModel.select((s) => s.isAiImageGenerated), (
+      prev,
+      next,
+    ) {
       if (next == true && prev != true) {
         _scrollController.animateTo(
           0,
@@ -375,8 +385,9 @@ class _ArFaceModelPreviewScreenState
   Widget _buildSummarySection() {
     return Consumer(
       builder: (context, ref, _) {
-        final selectedTreatmentsAndAreas =
-            ref.watch(checkoutViewModel).selectedTreatmentsAndAreas;
+        final selectedTreatmentsAndAreas = ref
+            .watch(checkoutViewModel)
+            .selectedTreatmentsAndAreas;
 
         return SelectedTreatmentsSummaryCard(
           selectedTreatmentsAndAreas: selectedTreatmentsAndAreas,
@@ -398,8 +409,9 @@ class _ArFaceModelPreviewScreenState
   Widget _buildBottomActions() {
     return Consumer(
       builder: (context, ref, _) {
-        final selectedTreatmentsAndAreas =
-            ref.watch(checkoutViewModel).selectedTreatmentsAndAreas;
+        final selectedTreatmentsAndAreas = ref
+            .watch(checkoutViewModel)
+            .selectedTreatmentsAndAreas;
         final hasAnySelectedArea = selectedTreatmentsAndAreas.any(
           (item) => item.selectedAreas.isNotEmpty,
         );
@@ -508,7 +520,8 @@ class _ArFaceModelPreviewScreenState
                   if (beforeImage != null && afterImage != null) {
                     return BeforeAfter(
                       value: _sliderValue,
-                      onValueChanged: (value) => setState(() => _sliderValue = value),
+                      onValueChanged: (value) =>
+                          setState(() => _sliderValue = value),
                       before: _buildPreviewImage(beforeImage.path),
                       after: _buildPreviewImage(afterImage.path),
                       trackColor: Colors.white,
@@ -691,9 +704,9 @@ class _ArFaceModelPreviewScreenState
   ) {
     if (treatmentId == null) return null;
     return list.cast<SelectedTreatmentAndAreasModel?>().firstWhere(
-          (e) => e?.treatment.id == treatmentId,
-          orElse: () => null,
-        );
+      (e) => e?.treatment.id == treatmentId,
+      orElse: () => null,
+    );
   }
 
   Map<String, List<AreaData>> _getGroupedLeafAreas(List<AreaData> rootAreas) {
@@ -704,8 +717,9 @@ class _ArFaceModelPreviewScreenState
         final groupName = parentPath.isEmpty ? "General Selection" : parentPath;
         groups.putIfAbsent(groupName, () => []).add(area);
       } else {
-        String newPath =
-            parentPath.isEmpty ? (area.name ?? '') : "$parentPath > ${area.name}";
+        String newPath = parentPath.isEmpty
+            ? (area.name ?? '')
+            : "$parentPath > ${area.name}";
         for (final sub in area.subAreas!) {
           traverse(sub, newPath);
         }
@@ -757,7 +771,8 @@ class _ArFaceModelPreviewScreenState
                     icon: area.icon,
                     text: area.name ?? '-',
                     selected: isSelected,
-                    onPressed: () => _onAreaPressed(area, isSelected, treatment),
+                    onPressed: () =>
+                        _onAreaPressed(area, isSelected, treatment),
                   );
                 }).toList(),
               ),
@@ -803,7 +818,9 @@ class _ArFaceModelPreviewScreenState
                     maxQty: max,
                   );
                 }
-                ref.read(checkoutViewModel.notifier).saveMaterialForArea(
+                ref
+                    .read(checkoutViewModel.notifier)
+                    .saveMaterialForArea(
                       treatment: treatment,
                       area: area,
                       material: selectedMaterial,
