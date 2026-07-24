@@ -129,7 +129,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         imageUrl: simulation.afterImage,
       );
       setAiImage(afterImage);
-      
+
       state = state.copyWith(
         loading: false,
         isAiImageGenerated: true,
@@ -299,8 +299,9 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       );
       EasyLoading.dismiss();
       EasyLoading.showSuccess('Image processed successfully!');
-    } catch (e) {
+    } catch (e, s) {
       final errorMsg = e.toString().replaceFirst('Exception: ', '');
+      log(errorMsg, stackTrace: s);
       state = state.copyWith(loading: false, errorMessage: errorMsg);
       EasyLoading.dismiss();
       EasyLoading.showError(errorMsg);
