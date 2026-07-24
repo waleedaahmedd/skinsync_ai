@@ -400,7 +400,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
         type: paymentOption?.title ?? "card",
         status: "completed",
       ),
-      discountType: "percentage",
+      discountType: "percent",
       loyalityPoints: loyalityPoints,
       discount: discount,
       actualAmount: actualAmount,
