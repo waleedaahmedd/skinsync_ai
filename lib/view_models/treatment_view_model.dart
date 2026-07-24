@@ -38,101 +38,108 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   final TreatmentRepository _repo;
 
   Future<void> initializeSimulation(SimulationData? simulation) async {
-    if (simulation == null) {
-      return;
-    }
+    if (simulation == null) return;
+
     state = state.copyWith(isAiImageGenerated: false);
     clearAiImage();
+
+    final checkoutNotifier = ref.read(checkoutViewModel.notifier);
+    checkoutNotifier.clearSelectedTreatments();
+
     if (state.treatments.isEmpty) {
       await loadTreatments();
     }
+
     final simTreatments = simulation.treatments;
-    if (simTreatments?.isEmpty ?? true) {
-      return;
-    }
-    for (final firstSimTreatment in simTreatments!) {
-      final treatment = state.treatments.firstWhereOrNull(
-        (treatment) => treatment.id == firstSimTreatment.id,
-      );
-
-      if (treatment != null) {
-        await onTapTreatment(
-          treatmentModel: treatment,
-          isCallPredictAPI: false,
+    if (simTreatments != null) {
+      for (final simTreatment in simTreatments) {
+        final treatment = state.treatments.firstWhereOrNull(
+          (t) => t.id == simTreatment.id,
         );
-        await ref
-            .read(treatmentAreaProvider.notifier)
-            .fetchAreasByTreatment(treatment.id ?? 0);
-      }
 
-      final rootAreas = ref.read(treatmentAreaProvider).areas;
-      // Find a root area that contains one of the simulated areas
-      final rootArea = rootAreas.firstWhereOrNull((area) {
-        return firstSimTreatment.areas?.any((simArea) {
-              // Check if simArea is this root area or a child of it
-              final simAreaId = int.tryParse(simArea.id ?? '');
-              if (area.id == simAreaId) return true;
-              return area.subAreas?.any((sub) => sub.id == simAreaId) ?? false;
-            }) ??
-            false;
-      });
+        if (treatment != null) {
+          // Add treatment to selection list
+          checkoutNotifier.addSelectedTreatment(treatment);
 
-      if (rootArea != null) {
-        onTapTreatmentArea(rootArea);
-      }
+          // Fetch areas for this treatment
+          await ref
+              .read(treatmentAreaProvider.notifier)
+              .fetchAreasByTreatment(treatment.id!);
 
-      final subAreas =
-          ref.read(checkoutViewModel).selectedAreas?.subAreas ?? [];
-      for (final subArea in subAreas) {
-        final selectedSimArea = firstSimTreatment.areas?.firstWhereOrNull(
-          (simArea) => int.tryParse(simArea.id ?? '') == subArea.id,
-        );
-        if (selectedSimArea != null) {
-          ref
-              .read(checkoutViewModel.notifier)
-              .onTapTreatmentSubArea(subArea: subArea);
+          final treatmentAreas = ref.read(treatmentAreaProvider).areas;
 
-          // Restore material if any
-          final simMaterial = selectedSimArea.materials?.firstOrNull;
-          if (simMaterial != null && treatment != null) {
-            ref
-                .read(checkoutViewModel.notifier)
-                .saveMaterialForArea(
-                  treatment: treatment,
-                  area: subArea,
-                  material: SelectedMaterialModel(
-                    id: simMaterial.id ?? 0,
-                    name: simMaterial.name ?? '',
-                    selectedQuantity: simMaterial.selectedQuantity ?? 0,
-                    minQty: 0,
-                    maxQty: 0,
-                  ),
-                );
+          if (simTreatment.areas != null) {
+            for (final simArea in simTreatment.areas!) {
+              // Find the Area model from fetched areas
+              final areaId = int.tryParse(simArea.id ?? '');
+              TreatmentAreaModel? targetArea;
+
+              // Helper to find area in tree
+              TreatmentAreaModel? findArea(List<TreatmentAreaModel> list) {
+                for (final a in list) {
+                  if (a.id == areaId) return a;
+                  if (a.subAreas != null) {
+                    final found = findArea(a.subAreas!);
+                    if (found != null) return found;
+                  }
+                }
+                return null;
+              }
+
+              targetArea = findArea(treatmentAreas);
+
+              if (targetArea != null) {
+                // Add area to selection
+                checkoutNotifier.addSelectedArea(targetArea);
+
+                // Restore material if any
+                final simMaterial = simArea.materials?.firstOrNull;
+                if (simMaterial != null) {
+                  checkoutNotifier.saveMaterialForArea(
+                    treatment: treatment,
+                    area: targetArea,
+                    material: SelectedMaterialModel(
+                      id: simMaterial.id ?? 0,
+                      name: simMaterial.name ?? '',
+                      selectedQuantity: simMaterial.selectedQuantity ?? 0,
+                      minQty: 0,
+                      maxQty: 0,
+                    ),
+                  );
+                }
+              }
+            }
           }
         }
       }
     }
 
     EasyLoading.show(status: 'Downloading images...');
-    final beforeImage = await MediaService().downloadSimulationImage(
-      simId: simulation.id!,
-      isBefore: true,
-      imageUrl: simulation.beforeImage,
-    );
-    setCapturedImage(beforeImage);
-    final afterImage = await MediaService().downloadSimulationImage(
-      simId: simulation.id!,
-      isBefore: false,
-      imageUrl: simulation.afterImage,
-    );
-    log('AFTER: ${afterImage?.path}');
-    setAiImage(afterImage);
-    EasyLoading.dismiss();
-    state = state.copyWith(
-      loading: false,
-      isAiImageGenerated: true,
-      isBefore: false,
-    );
+    try {
+      final beforeImage = await MediaService().downloadSimulationImage(
+        simId: simulation.id!,
+        isBefore: true,
+        imageUrl: simulation.beforeImage,
+      );
+      setCapturedImage(beforeImage);
+
+      final afterImage = await MediaService().downloadSimulationImage(
+        simId: simulation.id!,
+        isBefore: false,
+        imageUrl: simulation.afterImage,
+      );
+      setAiImage(afterImage);
+      
+      state = state.copyWith(
+        loading: false,
+        isAiImageGenerated: true,
+        isBefore: false,
+      );
+    } catch (e) {
+      log('Error downloading simulation images: $e');
+    } finally {
+      EasyLoading.dismiss();
+    }
   }
 
   void removeSubArea(int id) {
@@ -346,14 +353,14 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
     final encoded = jsonEncode(treatmentAreasJson);
 
-    print("--- Multipart Request Debug ---");
-    print(encoded);
-    print("URL: ${request.url}");
-    print("Fields: ${request.fields}");
-    print(
+    log("--- Multipart Request Debug ---");
+    log(encoded);
+    log("URL: ${request.url}");
+    log("Fields: ${request.fields}");
+    log(
       "Files: ${request.files.map((f) => '${f.field}: ${f.filename} (${f.length} bytes)').toList()}",
     );
-    print("--------------------------------");
+    log("--------------------------------");
 
     final response = await request.send();
     final body = await response.stream.bytesToString();

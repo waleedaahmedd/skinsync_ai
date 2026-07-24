@@ -197,15 +197,16 @@ class _SimulationHistoryScreenState
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-                ref
+              onPressed: () async {
+                await ref
                     .read(treatmentViewModel.notifier)
-                    .clearAllSelectedTreatments(capturedImage: true);
-                Navigator.pushNamed(
-                  context,
-                  ArFaceModelPreviewScreen.routeName,
-                  arguments: sim,
-                );
+                    .initializeSimulation(sim);
+                if (context.mounted) {
+                  Navigator.pushNamed(
+                    context,
+                    ArFaceModelPreviewScreen.routeName,
+                  );
+                }
               },
               child: const Text('Use this simulation'),
             ),

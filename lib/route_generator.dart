@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'models/responses/get_clinic_response.dart';
-import 'models/responses/simulation_history_response.dart';
 import 'models/responses/treatment_area_list_response.dart';
 import 'models/responses/treatment_category_list_response.dart';
 import 'models/responses/treatment_list_response.dart';
@@ -127,8 +126,7 @@ class RouteGenerator {
           settings: const RouteSettings(
             name: ArFaceModelPreviewScreen.routeName,
           ),
-          builder: (_) =>
-              ArFaceModelPreviewScreen(simulation: args as SimulationData?),
+          builder: (_) => const ArFaceModelPreviewScreen(),
         );
       case SuggestedTreatmentScreen.routeName:
         return MaterialPageRoute(

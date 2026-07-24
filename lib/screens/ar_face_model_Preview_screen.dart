@@ -9,7 +9,6 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../models/responses/materials_response.dart';
-import '../models/responses/simulation_history_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
 import '../models/responses/treatment_list_response.dart';
 import '../models/selected_treatment_and_areas_model.dart';
@@ -29,8 +28,7 @@ import '../widgets/service_type_button.dart';
 import 'explore_clinics_screen.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
-  final SimulationData? simulation;
-  const ArFaceModelPreviewScreen({super.key, this.simulation});
+  const ArFaceModelPreviewScreen({super.key});
 
   static const String routeName = '/ArFaceModelPreviewScreen';
 
@@ -87,21 +85,18 @@ class _ArFaceModelPreviewScreenState
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await ref
-          .read(treatmentViewModel.notifier)
-          .initializeSimulation(widget.simulation);
       final selectedTreatment = ref.read(checkoutViewModel).selectedTreatments;
+      final treatmentState = ref.read(treatmentViewModel);
 
-      if (selectedTreatment != null) {
+      // Only run auto-initialization if we don't already have an AI result (e.g. not restored from history)
+      if (selectedTreatment != null && treatmentState.aiImage == null) {
         ref
             .read(checkoutViewModel.notifier)
             .addSelectedTreatment(selectedTreatment);
-        await ref
-            .read(treatmentViewModel.notifier)
-            .onTapTreatment(
-              treatmentModel: selectedTreatment,
-              isCallPredictAPI: false,
-            );
+        await ref.read(treatmentViewModel.notifier).onTapTreatment(
+          treatmentModel: selectedTreatment,
+          isCallPredictAPI: false,
+        );
         await ref
             .read(treatmentAreaProvider.notifier)
             .fetchAreasByTreatment(selectedTreatment.id ?? 0);

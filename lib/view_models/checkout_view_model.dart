@@ -388,8 +388,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       date: date.millisecondsSinceEpoch ~/ 1000,
       startTime: slot.startTime.millisecondsSinceEpoch ~/ 1000,
       endTime: slot.endTime.millisecondsSinceEpoch ~/ 1000,
-      //ToDo : Change
-      appointmentTypeId: 1,
+      appointmentTypeId: appointmentType.id!,
       isInviteClinic: state.isInviteClinic,
       simulations: SimulationsRequest(
         beforeImage: beforeImage,
@@ -401,7 +400,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
         type: paymentOption?.title ?? "card",
         status: "completed",
       ),
-      discountType: "percent",
+      discountType: "percentage",
       loyalityPoints: loyalityPoints,
       discount: discount,
       actualAmount: actualAmount,
