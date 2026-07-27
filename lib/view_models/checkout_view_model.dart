@@ -35,11 +35,12 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   CheckoutViewModel({
     ClinicDoctorRepository? clinicRepository,
     AppointmentRepository? appointmentRepository,
-  }) : _clinicRepository = clinicRepository ??
-            ClinicDoctorService(apiClient: ApiBaseHelper()),
-        _appointmentRepository = appointmentRepository ??
-            AppointmentService(apiClient: ApiBaseHelper()),
-        super(initialState: const CheckoutState());
+  }) : _clinicRepository =
+           clinicRepository ?? ClinicDoctorService(apiClient: ApiBaseHelper()),
+       _appointmentRepository =
+           appointmentRepository ??
+           AppointmentService(apiClient: ApiBaseHelper()),
+       super(initialState: const CheckoutState());
 
   final ClinicDoctorRepository _clinicRepository;
   final AppointmentRepository _appointmentRepository;
@@ -143,8 +144,11 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
 
   void addSelectedTreatment(TreatmentData treatment) {
     final updatedList = state.selectedTreatmentsAndAreas
-        .where((item) =>
-            item.selectedAreas.isNotEmpty || item.treatment.id == treatment.id)
+        .where(
+          (item) =>
+              item.selectedAreas.isNotEmpty ||
+              item.treatment.id == treatment.id,
+        )
         .toList();
 
     if (!updatedList.any((item) => item.treatment.id == treatment.id)) {
@@ -175,8 +179,9 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       state.selectedTreatmentsAndAreas,
     )..removeWhere((item) => item.treatment.id == treatmentId);
 
-    final updatedActive =
-        state.selectedTreatments?.id == treatmentId ? null : state.selectedTreatments;
+    final updatedActive = state.selectedTreatments?.id == treatmentId
+        ? null
+        : state.selectedTreatments;
 
     state = state.copyWith(
       selectedTreatmentsAndAreas: currentList,
@@ -242,15 +247,18 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   void removeArea(int areaId) {
     final updatedList = state.selectedTreatmentsAndAreas
         .map((item) {
-          final filteredAreas =
-              item.selectedAreas.where((a) => a.target.id != areaId).toList();
+          final filteredAreas = item.selectedAreas
+              .where((a) => a.target.id != areaId)
+              .toList();
           return item.copyWith(selectedAreas: filteredAreas);
         })
         .where((item) => item.selectedAreas.isNotEmpty)
         .toList();
 
     state = state.copyWith(
-      selectedAreas: state.selectedAreas?.id == areaId ? null : state.selectedAreas,
+      selectedAreas: state.selectedAreas?.id == areaId
+          ? null
+          : state.selectedAreas,
       selectedTreatmentsAndAreas: updatedList,
     );
     flatSelections();
@@ -308,14 +316,16 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
 
   void flatSelections() {
     final list = state.selectedTreatmentsAndAreas.expand((item) {
-      return item.selectedAreas.map((areaItem) => FlatSelectionModel(
-            treatmentId: item.treatment.id ?? 0,
-            treatmentName: item.treatment.name ?? '',
-            areaId: areaItem.target.id ?? 0,
-            areaName: areaItem.target.name ?? '',
-            treatmentCost: 120,
-            material: areaItem.material,
-          ));
+      return item.selectedAreas.map(
+        (areaItem) => FlatSelectionModel(
+          treatmentId: item.treatment.id ?? 0,
+          treatmentName: item.treatment.name ?? '',
+          areaId: areaItem.target.id ?? 0,
+          areaName: areaItem.target.name ?? '',
+          treatmentCost: 120,
+          material: areaItem.material,
+        ),
+      );
     }).toList();
     state = state.copyWith(checkoutTreatmentsList: list);
   }
@@ -339,7 +349,8 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   AppointmentRequest? buildAppointmentRequest() {
     final state = this.state;
     final clinicId = state.selectedClinic?.id;
-    final doctorId = state.selectedDoctorObject?.id ??
+    final doctorId =
+        state.selectedDoctorObject?.id ??
         int.tryParse(state.selectedDoctor?.id ?? '') ??
         ref.read(doctorProvider).selectedDoctor?.id;
     final date = state.selectedDate;
@@ -347,13 +358,21 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     final appointmentType = state.selectedAppointmentType;
     final paymentOption = state.selectedPaymentOption;
 
-    if (clinicId == null || doctorId == null || date == null || slot == null || appointmentType == null) {
+    if (clinicId == null ||
+        doctorId == null ||
+        date == null ||
+        slot == null ||
+        appointmentType == null) {
       return null;
     }
 
     final treatmentViewModelState = ref.read(treatmentViewModel);
-    final beforeImage = treatmentViewModelState.capturedImage?.path ?? "";
-    final afterImage = treatmentViewModelState.aiImage?.path ?? "";
+    final frontImageBefore = treatmentViewModelState.frontPoseImage?.path;
+    final frontImageAfter = treatmentViewModelState.frontAiImage?.path;
+    final rightImageBefore = treatmentViewModelState.rightPoseImage?.path;
+    final rightImageAfter = treatmentViewModelState.rightAiImage?.path;
+    final leftImageBefore = treatmentViewModelState.leftPoseImage?.path;
+    final leftImageAfter = treatmentViewModelState.leftAiImage?.path;
 
     int treatmentTotal = 0;
     List<TreatmentRequest> treatmentRequests = [];
@@ -391,8 +410,12 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       appointmentTypeId: appointmentType.id!,
       isInviteClinic: state.isInviteClinic,
       simulations: SimulationsRequest(
-        beforeImage: beforeImage,
-        afterImage: afterImage,
+        frontImageBefore: frontImageBefore,
+        frontImageAfter: frontImageAfter,
+        rightImageBefore: rightImageBefore,
+        rightImageAfter: rightImageAfter,
+        leftImageBefore: leftImageBefore,
+        leftImageAfter: leftImageAfter,
       ),
       treatment: treatmentRequests,
       treatmentTotal: treatmentTotal,
@@ -415,15 +438,17 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
 
       final request = buildAppointmentRequest();
       if (request == null) {
-        throw Exception('Incomplete appointment details. Please check selection.');
+        throw Exception(
+          'Incomplete appointment details. Please check selection.',
+        );
       }
 
       // Print request for debugging as requested before
-      debugPrint(
-        const JsonEncoder.withIndent('  ').convert(request.toJson()),
-      );
+      debugPrint(const JsonEncoder.withIndent('  ').convert(request.toJson()));
 
-      final data = await _appointmentRepository.createAppointment(request: request);
+      final data = await _appointmentRepository.createAppointment(
+        request: request,
+      );
       state = state.copyWith(loading: false, appointment: data);
     });
   }
@@ -454,13 +479,16 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   void _updateTreatmentAreaSelection({
     required TreatmentData treatment,
     required TreatmentAreaModel area,
-    required List<SelectedAreaModel> Function(List<SelectedAreaModel>) updateAction,
+    required List<SelectedAreaModel> Function(List<SelectedAreaModel>)
+    updateAction,
   }) {
     final currentList = List<SelectedTreatmentAndAreasModel>.from(
       state.selectedTreatmentsAndAreas,
     );
 
-    final index = currentList.indexWhere((item) => item.treatment.id == treatment.id);
+    final index = currentList.indexWhere(
+      (item) => item.treatment.id == treatment.id,
+    );
 
     if (index != -1) {
       currentList[index] = currentList[index].copyWith(

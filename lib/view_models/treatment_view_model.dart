@@ -114,29 +114,50 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       }
     }
 
-    EasyLoading.show(status: 'Downloading images...');
-    log('INITIALIZING SIMULATION: before=${simulation.beforeImage}, after=${simulation.afterImage}');
+    EasyLoading.show(status: 'Fetching AI Images...');
+    log('INITIALIZING SIMULATION');
     try {
-      final beforeImage = await MediaService().downloadSimulationImage(
-        simId: simulation.id!,
-        isBefore: true,
-        imageUrl: simulation.beforeImage,
+      final service = MediaService();
+      final frontImageBefore = await service.downloadSimulationImage(
+        imageUrl: simulation.frontImageBefore,
+        pose: 'front-before',
+        simId: simulation.id,
       );
-      log('DOWNLOADED BEFORE: ${beforeImage?.path}');
-      setCapturedImage(beforeImage, pose: 'front');
-
-      final afterImage = await MediaService().downloadSimulationImage(
-        simId: simulation.id!,
-        isBefore: false,
-        imageUrl: simulation.afterImage,
+      final frontImageAfter = await service.downloadSimulationImage(
+        imageUrl: simulation.frontImageAfter,
+        pose: 'front-after',
+        simId: simulation.id,
       );
-      log('DOWNLOADED AFTER: ${afterImage?.path}');
-      setAiImage(afterImage, pose: 'front');
-
+      final rightImageBefore = await service.downloadSimulationImage(
+        imageUrl: simulation.rightImageBefore,
+        pose: 'right-before',
+        simId: simulation.id,
+      );
+      final rightImageAfter = await service.downloadSimulationImage(
+        imageUrl: simulation.rightImageAfter,
+        pose: 'right-after',
+        simId: simulation.id,
+      );
+      final leftImageBefore = await service.downloadSimulationImage(
+        imageUrl: simulation.leftImageBefore,
+        pose: 'left-before',
+        simId: simulation.id,
+      );
+      final leftImageAfter = await service.downloadSimulationImage(
+        imageUrl: simulation.leftImageAfter,
+        pose: 'left-after',
+        simId: simulation.id,
+      );
       state = state.copyWith(
         loading: false,
         isAiImageGenerated: true,
         isBefore: false,
+        frontPoseImage: frontImageBefore,
+        frontAiImage: frontImageAfter,
+        rightPoseImage: rightImageBefore,
+        rightAiImage: rightImageAfter,
+        leftPoseImage: leftImageBefore,
+        leftAiImage: leftImageAfter,
       );
     } catch (e) {
       log('Error downloading simulation images: $e');
@@ -159,17 +180,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     } else {
       state = state.copyWith(frontPoseImage: image, capturedImage: image);
     }
-  }
-
-  void setAiImage(XFile? image, {String pose = 'front'}) {
-    if (pose == 'left') {
-      state = state.copyWith(leftAiImage: image);
-    } else if (pose == 'right') {
-      state = state.copyWith(rightAiImage: image);
-    } else {
-      state = state.copyWith(frontAiImage: image, aiImage: image);
-    }
-    state = state.copyWith(isAiImageGenerated: true);
   }
 
   void clearAiImage() {
@@ -222,8 +232,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       treatments: state.treatments,
       areaNavigationStack: const [],
       isBefore: true,
-      capturedImage: capturedImage ? null : state.capturedImage,
-      aiImage: null,
       isAiImageGenerated: false,
       material: state.material,
       materialsLoading: state.materialsLoading,
@@ -271,18 +279,13 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     return response;
   }
 
-  XFile? get _imageForPredict => state.capturedImage;
-
-  String _parseOutputImageBase64(Map<String, dynamic> jsonRes) {
-    final outputImage = jsonRes['output_image'];
-    if (outputImage == null) {
+  String _parseOutputImageBase64(dynamic image) {
+    if (image == null) {
       throw Exception(
         'No image data received from server: output_image is null',
       );
     }
-    final String raw = outputImage is String
-        ? outputImage
-        : outputImage.toString();
+    final String raw = image is String ? image : image.toString();
     if (raw.trim().isEmpty) {
       throw Exception(
         'No image data received from server: output_image is empty',
@@ -292,7 +295,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   }
 
   Future<void> callPredictAPI() async {
-    if (state.capturedImage == null) {
+    if (state.capturedImagesNull) {
       const msg =
           'No captured image available. Please capture your face first.';
       state = state.copyWith(loading: false, errorMessage: msg);
@@ -305,22 +308,34 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     EasyLoading.show(status: 'Processing image...');
 
     try {
-      final jsonRes = await _uploadCapturedImage(image: _imageForPredict!);
+      final jsonRes = await _uploadCapturedImages();
       if (jsonRes == null) throw Exception('Failed to upload image');
 
-      final base64 = _parseOutputImageBase64(jsonRes);
-      final ximage = await base64ToXFile(
-        base64,
-        fileName: 'ai_image_${DateTime.now().millisecondsSinceEpoch}.jpg',
+      final base64Front = _parseOutputImageBase64(jsonRes['front_image']);
+      final base64Right = _parseOutputImageBase64(jsonRes['right_image']);
+      final base64Left = _parseOutputImageBase64(jsonRes['left_image']);
+      final imageFront = await base64ToXFile(
+        base64Front,
+        fileName: 'ai_front_image_${DateTime.now().millisecondsSinceEpoch}.jpg',
+      );
+      final imageRight = await base64ToXFile(
+        base64Right,
+        fileName: 'ai_right_image_${DateTime.now().millisecondsSinceEpoch}.jpg',
+      );
+      final imageLeft = await base64ToXFile(
+        base64Left,
+        fileName: 'ai_left_image_${DateTime.now().millisecondsSinceEpoch}.jpg',
       );
 
-      setAiImage(ximage);
       if (wasBefore) toggleIsBefore();
 
       state = state.copyWith(
         loading: false,
         errorMessage: null,
         isAiImageGenerated: true,
+        frontAiImage: imageFront,
+        rightAiImage: imageRight,
+        leftAiImage: imageLeft,
       );
       EasyLoading.dismiss();
       EasyLoading.showSuccess('Image processed successfully!');
@@ -333,7 +348,10 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     }
   }
 
-  Future<http.MultipartFile> _imageMultipartFile(XFile image) async {
+  Future<http.MultipartFile?> _imageMultipartFile(XFile? image) async {
+    if (image == null) {
+      return null;
+    }
     if (image.path.isNotEmpty) {
       try {
         return await http.MultipartFile.fromPath('image', image.path);
@@ -343,9 +361,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     return http.MultipartFile.fromBytes('image', bytes, filename: 'image.jpg');
   }
 
-  Future<Map<String, dynamic>?> _uploadCapturedImage({
-    required XFile image,
-  }) async {
+  Future<Map<String, dynamic>?> _uploadCapturedImages() async {
     final request = http.MultipartRequest(
       'POST',
       Uri.parse('http://18.116.65.70/api/'),
@@ -375,7 +391,10 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       'treatment_sku': treatmentSku ?? '',
       'treatments': jsonEncode(treatmentAreasJson),
     });
-    request.files.add(await _imageMultipartFile(image));
+    final frontImage = await _imageMultipartFile(state.frontPoseImage);
+    final rightImage = await _imageMultipartFile(state.rightPoseImage);
+    final leftImage = await _imageMultipartFile(state.leftPoseImage);
+    request.files.addAll([?frontImage, ?rightImage, ?leftImage]);
 
     final encoded = jsonEncode(treatmentAreasJson);
 
@@ -405,7 +424,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   Future<void> saveAiImage() async {
     return await runSafely(() async {
       EasyLoading.show(status: 'Please wait...');
-
       final selectedTreatmentsAndAreas = ref
           .read(checkoutViewModel)
           .selectedTreatmentsAndAreas;
@@ -414,32 +432,64 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         return;
       }
 
-      final beforeImage = state.capturedImage?.path;
-      final afterImage = state.aiImage?.path;
-
-      if (beforeImage == null || afterImage == null) {
-        EasyLoading.showError('Both images need to be selected!');
-        return;
+      if (state.frontPoseImage != null) {
+        if (state.frontAiImage == null) {
+          throw Exception('No AI image captured for front Pose!');
+        }
       }
-
+      if (state.rightPoseImage != null) {
+        if (state.rightAiImage == null) {
+          throw Exception('No AI image captured for right Pose!');
+        }
+      }
+      if (state.leftPoseImage != null) {
+        if (state.leftAiImage == null) {
+          throw Exception('No AI image captured for left Pose!');
+        }
+      }
       final mediaService = MediaService();
       final userId = ref.read(authViewModel).authData!.user!.id!;
-      final beforeUrl = await mediaService.uploadImage(
-        '$userId/appointments/before/',
-        XFile(beforeImage),
-      );
-      if (beforeUrl == null) {
-        EasyLoading.showError('Failed to upload before image');
-        return;
+      Future<String?> uploadImageToFirebase({
+        required XFile? file,
+        required String path,
+      }) async {
+        if (file == null) {
+          return null;
+        }
+        final url = await mediaService.uploadImage(path, file);
+        if (url == null) {
+          EasyLoading.showError('Failed to upload image');
+          return null;
+        }
+        return url;
       }
-      final afterUrl = await mediaService.uploadImage(
-        '$userId/appointments/after/',
-        XFile(afterImage),
+
+      final frontImageBefore = await uploadImageToFirebase(
+        file: state.frontPoseImage,
+        path: '$userId/appointments/front/before/',
       );
-      if (afterUrl == null) {
-        EasyLoading.showError('Failed to upload after image');
-        return;
-      }
+      final frontImageAfter = await uploadImageToFirebase(
+        file: state.frontAiImage,
+        path: '$userId/appointments/front/after/',
+      );
+
+      final rightImageBefore = await uploadImageToFirebase(
+        file: state.rightPoseImage,
+        path: '$userId/appointments/before/right/',
+      );
+      final rightImageAfter = await uploadImageToFirebase(
+        file: state.rightAiImage,
+        path: '$userId/appointments/after/right/',
+      );
+
+      final leftImageBefore = await uploadImageToFirebase(
+        file: state.leftPoseImage,
+        path: '$userId/appointments/before/left/',
+      );
+      final leftImageAfter = await uploadImageToFirebase(
+        file: state.rightAiImage,
+        path: '$userId/appointments/after/left/',
+      );
 
       final historyTreatments = selectedTreatmentsAndAreas.map((item) {
         return HistoryTreatmentRequest(
@@ -467,8 +517,12 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       }).toList();
 
       final request = SaveHistoryRequest(
-        beforeImage: beforeUrl,
-        afterImage: afterUrl,
+        frontImageBefore: frontImageBefore,
+        frontImageAfter: frontImageAfter,
+        rightImageBefore: rightImageBefore,
+        rightImageAfter: rightImageAfter,
+        leftImageBefore: leftImageBefore,
+        leftImageAfter: leftImageAfter,
         treatments: historyTreatments,
       );
       await _repo.saveAiHistory(request);
@@ -489,9 +543,6 @@ class TreatmentsState extends BaseStateModel {
   final List<TreatmentData> treatments;
   final List<TreatmentAreaModel> areaNavigationStack;
   final bool isBefore;
-  final XFile? capturedImage;
-  final XFile? aiImage;
-
   final XFile? frontPoseImage;
   final XFile? leftPoseImage;
   final XFile? rightPoseImage;
@@ -512,8 +563,6 @@ class TreatmentsState extends BaseStateModel {
     this.materialsLoading = false,
     this.areaNavigationStack = const [],
     this.isBefore = false,
-    this.capturedImage,
-    this.aiImage,
     this.frontPoseImage,
     this.leftPoseImage,
     this.rightPoseImage,
@@ -549,8 +598,6 @@ class TreatmentsState extends BaseStateModel {
       treatments: treatments ?? this.treatments,
       areaNavigationStack: areaNavigationStack ?? this.areaNavigationStack,
       isBefore: isBefore ?? this.isBefore,
-      capturedImage: capturedImage ?? this.capturedImage,
-      aiImage: clearAiImage ? null : (aiImage ?? this.aiImage),
       frontPoseImage: frontPoseImage ?? this.frontPoseImage,
       leftPoseImage: leftPoseImage ?? this.leftPoseImage,
       rightPoseImage: rightPoseImage ?? this.rightPoseImage,
@@ -561,5 +608,15 @@ class TreatmentsState extends BaseStateModel {
       material: material ?? this.material,
       materialsLoading: materialsLoading ?? this.materialsLoading,
     );
+  }
+
+  bool get aiImagesNull {
+    return frontAiImage == null && leftAiImage == null && rightAiImage == null;
+  }
+
+  bool get capturedImagesNull {
+    return frontPoseImage == null &&
+        leftPoseImage == null &&
+        rightPoseImage == null;
   }
 }

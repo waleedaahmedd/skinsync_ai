@@ -56,9 +56,10 @@ class MediaService {
           ? 'application/pdf'
           : 'application/octet-stream',
     );
+    final bytes = await file.readAsBytes();
 
-    if (file.bytes != null) {
-      final task = ref.putData(file.bytes!, metadata);
+    if (bytes.isNotEmpty) {
+      final task = ref.putData(bytes, metadata);
       await task.whenComplete(() {});
     } else if (file.path != null) {
       final task = ref.putFile(File(file.path!), metadata);
@@ -89,12 +90,11 @@ class MediaService {
       // PlatformFile
       else if (file is PlatformFile) {
         fileName = file.name;
+        bytes = await file.readAsBytes();
 
-        if (file.bytes == null) {
+        if (bytes.isNotEmpty) {
           throw Exception('PlatformFile.bytes is null. Use withData:true');
         }
-
-        bytes = file.bytes!;
       } else {
         throw Exception('Unsupported file type');
       }
@@ -159,8 +159,8 @@ class MediaService {
 
   Future<XFile?> downloadSimulationImage({
     int? simId,
-    required bool isBefore,
     String? imageUrl,
+    required String pose,
   }) async {
     if (imageUrl == null) {
       return null;
@@ -168,8 +168,7 @@ class MediaService {
     final uri = Uri.parse(imageUrl);
     final ext = uri.path.split('.').last;
     final dir = await getApplicationCacheDirectory();
-    final path =
-        '${dir.path}/simulation_${isBefore ? 'before' : 'after'}_${simId ?? 0}.$ext';
+    final path = '${dir.path}/simulation_${pose}_${simId ?? 0}.$ext';
     final file = File(path);
     if (await file.exists()) {
       return XFile(file.path);

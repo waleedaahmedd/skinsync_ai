@@ -138,31 +138,17 @@ class _SimulationHistoryScreenState
             ],
           ),
           SizedBox(height: 15.h),
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Before", style: CustomFonts.grey14w400),
-                    SizedBox(height: 8.h),
-                    _buildImage(sim.beforeImage),
-                  ],
-                ),
-              ),
-              SizedBox(width: 15.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("After", style: CustomFonts.grey14w400),
-                    SizedBox(height: 8.h),
-                    _buildImage(sim.afterImage),
-                  ],
-                ),
-              ),
-            ],
+          _buildImagePair(
+            "Front View",
+            sim.frontImageBefore,
+            sim.frontImageAfter,
           ),
+          _buildImagePair(
+            "Right View",
+            sim.rightImageBefore,
+            sim.rightImageAfter,
+          ),
+          _buildImagePair("Left View", sim.leftImageBefore, sim.leftImageAfter),
           if (sim.treatments != null && sim.treatments!.isNotEmpty) ...[
             SizedBox(height: 12.h),
             Wrap(
@@ -213,6 +199,46 @@ class _SimulationHistoryScreenState
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildImagePair(String label, String? before, String? after) {
+    if (before == null && after == null) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(bottom: 8.h, top: 5.h),
+          child: Text(label, style: CustomFonts.black14w600),
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Before", style: CustomFonts.grey12w400),
+                  SizedBox(height: 6.h),
+                  _buildImage(before),
+                ],
+              ),
+            ),
+            SizedBox(width: 15.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("After", style: CustomFonts.grey12w400),
+                  SizedBox(height: 6.h),
+                  _buildImage(after),
+                ],
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 10.h),
+      ],
     );
   }
 

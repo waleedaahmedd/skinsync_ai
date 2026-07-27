@@ -10,7 +10,6 @@ import 'screens/ar_face_model_Preview_screen.dart';
 import 'screens/biometric_screen.dart';
 import 'screens/bottom_nav_page.dart';
 import 'screens/bottom_nav_screens/face_detection_screen.dart';
-import 'screens/bottom_nav_screens/face_scanning_complete_screen.dart';
 import 'screens/bottom_nav_screens/my_profile_screen.dart';
 import 'screens/bottom_nav_screens/treatments_screen.dart';
 import 'screens/clinic_service_screen.dart';
@@ -105,13 +104,13 @@ class RouteGenerator {
           settings: const RouteSettings(name: FaceDetectionScreen.routeName),
           builder: (_) => FaceDetectionScreen(pose: args as String? ?? 'front'),
         );
-      case FaceScanningCompleteScreen.routeName:
-        return MaterialPageRoute(
-          settings: const RouteSettings(
-            name: FaceScanningCompleteScreen.routeName,
-          ),
-          builder: (_) => const FaceScanningCompleteScreen(),
-        );
+      // case FaceScanningCompleteScreen.routeName:
+      //   return MaterialPageRoute(
+      //     settings: const RouteSettings(
+      //       name: FaceScanningCompleteScreen.routeName,
+      //     ),
+      //     builder: (_) => const FaceScanningCompleteScreen(),
+      //   );
       case FacePoseCaptureScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: FacePoseCaptureScreen.routeName),
@@ -120,7 +119,10 @@ class RouteGenerator {
       case FaceScanScreen.routeName:
         final pose = settings.arguments as String? ?? 'front';
         return MaterialPageRoute(
-          settings: RouteSettings(name: FaceScanScreen.routeName, arguments: pose),
+          settings: RouteSettings(
+            name: FaceScanScreen.routeName,
+            arguments: pose,
+          ),
           builder: (_) => FaceScanScreen(pose: pose),
         );
       case MyProfileScreen.routeName:

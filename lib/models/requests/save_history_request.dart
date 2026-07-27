@@ -1,18 +1,30 @@
 class SaveHistoryRequest {
-  final String beforeImage;
-  final String afterImage;
+  final String? frontImageBefore;
+  final String? frontImageAfter;
+  final String? rightImageBefore;
+  final String? rightImageAfter;
+  final String? leftImageBefore;
+  final String? leftImageAfter;
   final List<HistoryTreatmentRequest> treatments;
 
   const SaveHistoryRequest({
-    required this.beforeImage,
-    required this.afterImage,
+    this.frontImageBefore,
+    this.frontImageAfter,
+    this.rightImageBefore,
+    this.rightImageAfter,
+    this.leftImageBefore,
+    this.leftImageAfter,
     required this.treatments,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'before_image': beforeImage,
-      'after_image': afterImage,
+      'front_image_before': frontImageBefore,
+      'front_image_after': frontImageAfter,
+      'right_image_before': rightImageBefore,
+      'right_image_after': rightImageAfter,
+      'left_image_before': leftImageBefore,
+      'left_image_after': leftImageAfter,
       'treatments': treatments.map((e) => e.toJson()).toList(),
     };
   }
@@ -70,10 +82,6 @@ class HistoryMaterialRequest {
   });
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'selected_quantity': selectedQuantity,
-    };
+    return {'id': id, 'name': name, 'selected_quantity': selectedQuantity};
   }
 }

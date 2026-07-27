@@ -256,7 +256,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   @override
   Widget build(BuildContext context) {
     // Keep the treatment state alive by watching it
-    ref.watch(treatmentViewModel.select((s) => s.capturedImage));
+    ref.watch(treatmentViewModel.select((s) => s));
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -367,8 +367,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                       text: widget.pose == 'front'
                           ? "Face forward and make sure your eyes are clearly visible."
                           : widget.pose == 'left'
-                              ? "Turn your face to the left so your profile is clearly visible."
-                              : "Turn your face to the right so your profile is clearly visible.",
+                          ? "Turn your face to the left so your profile is clearly visible."
+                          : "Turn your face to the right so your profile is clearly visible.",
                       iconHeight: 24.h,
                       iconWidth: 26.w,
                     ),

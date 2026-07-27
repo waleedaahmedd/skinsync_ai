@@ -42,40 +42,43 @@ dependencies:
   flutter_svg: ^2.3.0
   pinput: ^6.0.2
   country_picker: ^2.0.28
-  camera: ^0.12.0+1
+  camera: ^0.12.0+2
   flutter_glass_morphism: 1.0.2
-  local_auth: ^3.0.1
+  local_auth: ^3.0.2
   image: ^4.9.1
   dropdown_button2: ^3.1.0
   http: ^1.6.0
-  flutter_riverpod: ^3.3.2
+  flutter_riverpod: ^3.4.1
   flutter_staggered_animations: ^1.1.1
   image_picker: ^1.2.3
   percent_indicator: ^4.2.5
   path_provider: any
   cross_file: any
   intl: ^0.20.3
-  firebase_core: ^4.11.0
+  firebase_core: ^4.12.1
   flutter_staggered_grid_view: ^0.7.0
-  webview_flutter: ^4.14.0
+  webview_flutter: ^4.14.1
   permission_handler: ^12.0.3
-  google_maps_flutter: ^2.17.1
-  location: ^8.0.1
+  google_maps_flutter: ^2.18.0
+  location: ^10.0.2
   infinite_scroll_pagination: ^5.1.1
-  firebase_storage: ^13.4.3
+  firebase_storage: ^13.4.5
   device_info_plus: ^13.2.0
   crypto: ^3.0.7
-  firebase_auth: ^6.5.4
+  firebase_auth: ^6.5.6
   google_sign_in: ^7.2.0
   sign_in_with_apple: ^8.1.0
-  image_gallery_saver_plus: ^5.0.0
+  image_gallery_saver_plus: ^5.1.1
   cached_network_image: ^3.4.1
-  package_info_plus: ^10.2.0
+  package_info_plus: ^10.2.1
   glow_container: ^1.0.1
   before_after: any
-  flutter_image_compress: ^2.4.0
+  flutter_image_compress: ^2.5.1
   file_picker: ^12.0.0-beta.7
-  dlibphonenumber: ^1.1.67
+  dlibphonenumber: ^1.1.68
+
+dependency_overrides:
+  jni: 1.0.0
 
 dev_dependencies:
   flutter_test:

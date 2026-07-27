@@ -91,14 +91,16 @@ class _ArFaceModelPreviewScreenState
       final treatmentState = ref.read(treatmentViewModel);
 
       // Only run auto-initialization if we don't already have an AI result (e.g. not restored from history)
-      if (selectedTreatment != null && treatmentState.aiImage == null) {
+      if (selectedTreatment != null && treatmentState.aiImagesNull) {
         ref
             .read(checkoutViewModel.notifier)
             .addSelectedTreatment(selectedTreatment);
-        await ref.read(treatmentViewModel.notifier).onTapTreatment(
-          treatmentModel: selectedTreatment,
-          isCallPredictAPI: false,
-        );
+        await ref
+            .read(treatmentViewModel.notifier)
+            .onTapTreatment(
+              treatmentModel: selectedTreatment,
+              isCallPredictAPI: false,
+            );
         await ref
             .read(treatmentAreaProvider.notifier)
             .fetchAreasByTreatment(selectedTreatment.id ?? 0);
@@ -519,11 +521,13 @@ class _ArFaceModelPreviewScreenState
                     beforeImage = state.rightPoseImage;
                     afterImage = state.rightAiImage;
                   } else {
-                    beforeImage = state.frontPoseImage ?? state.capturedImage;
-                    afterImage = state.frontAiImage ?? state.aiImage;
+                    beforeImage = state.frontPoseImage;
+                    afterImage = state.frontAiImage;
                   }
 
-                  debugPrint('PREVIEW: pose=$_selectedPose, before=${beforeImage?.path}, after=${afterImage?.path}');
+                  debugPrint(
+                    'PREVIEW: pose=$_selectedPose, before=${beforeImage?.path}, after=${afterImage?.path}',
+                  );
 
                   final errorMessage = state.errorMessage;
 
@@ -533,7 +537,9 @@ class _ArFaceModelPreviewScreenState
 
                   if (beforeImage != null && afterImage != null) {
                     return BeforeAfter(
-                      key: ValueKey('preview_${_selectedPose}_${beforeImage.path}_${afterImage.path}'),
+                      key: ValueKey(
+                        'preview_${_selectedPose}_${beforeImage.path}_${afterImage.path}',
+                      ),
                       value: _sliderValue,
                       onValueChanged: (value) =>
                           setState(() => _sliderValue = value),
@@ -791,7 +797,10 @@ class _ArFaceModelPreviewScreenState
       child: Consumer(
         builder: (context, ref, _) {
           final afterImage = ref.watch(
-            treatmentViewModel.select((state) => state.aiImage),
+            treatmentViewModel.select(
+              (state) =>
+                  state.frontAiImage ?? state.leftAiImage ?? state.rightAiImage,
+            ),
           );
           if (afterImage == null) return const SizedBox.shrink();
 
