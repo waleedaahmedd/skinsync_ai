@@ -15,7 +15,7 @@ import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 import 'ar_face_model_Preview_screen.dart';
-import 'bottom_nav_screens/face_detection_screen.dart';
+import 'face_pose_capture_screen.dart';
 
 class SimulationHistoryScreen extends ConsumerStatefulWidget {
   static const String routeName = "/simulation_history_screen";
@@ -92,7 +92,7 @@ class _SimulationHistoryScreenState
           text: 'Try another pose',
           onPressed: () => Navigator.pushReplacementNamed(
             context,
-            FaceDetectionScreen.routeName,
+            FacePoseCaptureScreen.routeName,
           ),
         ),
       ),

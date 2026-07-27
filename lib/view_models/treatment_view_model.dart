@@ -115,20 +115,23 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     }
 
     EasyLoading.show(status: 'Downloading images...');
+    log('INITIALIZING SIMULATION: before=${simulation.beforeImage}, after=${simulation.afterImage}');
     try {
       final beforeImage = await MediaService().downloadSimulationImage(
         simId: simulation.id!,
         isBefore: true,
         imageUrl: simulation.beforeImage,
       );
-      setCapturedImage(beforeImage);
+      log('DOWNLOADED BEFORE: ${beforeImage?.path}');
+      setCapturedImage(beforeImage, pose: 'front');
 
       final afterImage = await MediaService().downloadSimulationImage(
         simId: simulation.id!,
         isBefore: false,
         imageUrl: simulation.afterImage,
       );
-      setAiImage(afterImage);
+      log('DOWNLOADED AFTER: ${afterImage?.path}');
+      setAiImage(afterImage, pose: 'front');
 
       state = state.copyWith(
         loading: false,
@@ -148,14 +151,36 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
   void toggleIsBefore() => state = state.copyWith(isBefore: !state.isBefore);
 
-  void setCapturedImage(XFile? image) =>
-      state = state.copyWith(capturedImage: image);
+  void setCapturedImage(XFile? image, {String pose = 'front'}) {
+    if (pose == 'left') {
+      state = state.copyWith(leftPoseImage: image);
+    } else if (pose == 'right') {
+      state = state.copyWith(rightPoseImage: image);
+    } else {
+      state = state.copyWith(frontPoseImage: image, capturedImage: image);
+    }
+  }
 
-  void setAiImage(XFile? image) =>
-      state = state.copyWith(aiImage: image, isAiImageGenerated: true);
+  void setAiImage(XFile? image, {String pose = 'front'}) {
+    if (pose == 'left') {
+      state = state.copyWith(leftAiImage: image);
+    } else if (pose == 'right') {
+      state = state.copyWith(rightAiImage: image);
+    } else {
+      state = state.copyWith(frontAiImage: image, aiImage: image);
+    }
+    state = state.copyWith(isAiImageGenerated: true);
+  }
 
-  void clearAiImage() =>
-      state = state.copyWith(clearAiImage: true, isAiImageGenerated: false);
+  void clearAiImage() {
+    state = state.copyWith(
+      clearAiImage: true,
+      isAiImageGenerated: false,
+      frontAiImage: null,
+      leftAiImage: null,
+      rightAiImage: null,
+    );
+  }
 
   Future<void> onTapTreatment({
     required TreatmentData treatmentModel,
@@ -466,6 +491,15 @@ class TreatmentsState extends BaseStateModel {
   final bool isBefore;
   final XFile? capturedImage;
   final XFile? aiImage;
+
+  final XFile? frontPoseImage;
+  final XFile? leftPoseImage;
+  final XFile? rightPoseImage;
+
+  final XFile? frontAiImage;
+  final XFile? leftAiImage;
+  final XFile? rightAiImage;
+
   final bool isAiImageGenerated;
   final MaterialData? material;
   final bool materialsLoading;
@@ -480,6 +514,12 @@ class TreatmentsState extends BaseStateModel {
     this.isBefore = false,
     this.capturedImage,
     this.aiImage,
+    this.frontPoseImage,
+    this.leftPoseImage,
+    this.rightPoseImage,
+    this.frontAiImage,
+    this.leftAiImage,
+    this.rightAiImage,
     this.isAiImageGenerated = false,
   });
 
@@ -492,6 +532,12 @@ class TreatmentsState extends BaseStateModel {
     bool? isBefore,
     XFile? capturedImage,
     XFile? aiImage,
+    XFile? frontPoseImage,
+    XFile? leftPoseImage,
+    XFile? rightPoseImage,
+    XFile? frontAiImage,
+    XFile? leftAiImage,
+    XFile? rightAiImage,
     bool clearAiImage = false,
     bool? isAiImageGenerated,
     MaterialData? material,
@@ -505,6 +551,12 @@ class TreatmentsState extends BaseStateModel {
       isBefore: isBefore ?? this.isBefore,
       capturedImage: capturedImage ?? this.capturedImage,
       aiImage: clearAiImage ? null : (aiImage ?? this.aiImage),
+      frontPoseImage: frontPoseImage ?? this.frontPoseImage,
+      leftPoseImage: leftPoseImage ?? this.leftPoseImage,
+      rightPoseImage: rightPoseImage ?? this.rightPoseImage,
+      frontAiImage: clearAiImage ? null : (frontAiImage ?? this.frontAiImage),
+      leftAiImage: clearAiImage ? null : (leftAiImage ?? this.leftAiImage),
+      rightAiImage: clearAiImage ? null : (rightAiImage ?? this.rightAiImage),
       isAiImageGenerated: isAiImageGenerated ?? this.isAiImageGenerated,
       material: material ?? this.material,
       materialsLoading: materialsLoading ?? this.materialsLoading,

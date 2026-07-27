@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../screens/bottom_nav_screens/face_detection_screen.dart';
+import '../screens/face_pose_capture_screen.dart';
 import '../screens/treatment_area_screen.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -63,7 +63,7 @@ void showMScanFaceDialog(BuildContext context) {
                   Navigator.pop(dialogContext); // close dialog
                   Navigator.of(
                     context,
-                  ).pushNamed(FaceDetectionScreen.routeName);
+                  ).pushNamed(FacePoseCaptureScreen.routeName);
                 },
               ),
               SizedBox(height: 12.h),

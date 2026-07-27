@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../screens/bottom_nav_screens/face_detection_screen.dart';
+import '../screens/face_pose_capture_screen.dart';
 import '../utills/assets.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
@@ -24,7 +24,7 @@ class ScanFaceButton extends ConsumerWidget {
         ref.read(checkoutViewModel.notifier).clearState();
         ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
         ref.read(treatmentViewModel.notifier).clearAiImage();
-        Navigator.of(context).pushNamed(FaceDetectionScreen.routeName);
+        Navigator.of(context).pushNamed(FacePoseCaptureScreen.routeName);
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 14.h),

@@ -24,6 +24,8 @@ class TreatmentContainer extends StatelessWidget {
   final String? customImageUrl;
   final String? customIcon;
   final VoidCallback? customOnTap;
+  final Widget? backgroundWidget;
+  final Widget? topRightWidget;
 
   const TreatmentContainer({
     super.key,
@@ -35,6 +37,8 @@ class TreatmentContainer extends StatelessWidget {
     this.customImageUrl,
     this.customIcon,
     this.customOnTap,
+    this.backgroundWidget,
+    this.topRightWidget,
   });
 
   Widget? _buildLeftIcon(String? iconKey) {
@@ -139,32 +143,33 @@ class TreatmentContainer extends StatelessWidget {
               borderRadius: BorderRadius.circular(20.r),
               child: Stack(
                 children: [
-                  // 1. Full-Cover Image Background via AppNetworkImage
+                  // 1. Full-Cover Image Background via AppNetworkImage or custom widget
                   Positioned.fill(
-                    child: AppNetworkImage(
-                      imageUrl: bgImage,
-                      fit: BoxFit.cover,
-                      placeholderColor: Colors
-                          .transparent, // Keeps overlay visual hierarchy clean
-                    ),
+                    child: backgroundWidget ??
+                        AppNetworkImage(
+                          imageUrl: bgImage,
+                          fit: BoxFit.cover,
+                          placeholderColor: Colors
+                              .transparent, // Keeps overlay visual hierarchy clean
+                        ),
                   ),
 
                   // 2. Translucent Premium White Mask Overlay
-                  Positioned.fill(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Colors.white.withValues(alpha: 0.20),
-                            Colors.white,
-                          ],
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.white.withValues(alpha: 0.20),
+                              Colors.white,
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
                   // 3. MedSpa Elegant Glow Layer on Left
                   /*
@@ -265,6 +270,10 @@ class TreatmentContainer extends StatelessWidget {
                   // 5. Left-hand Icon on Top Left
                   if (iconWidget != null)
                     Positioned(top: 12.h, left: 12.w, child: iconWidget),
+
+                  // Custom Top Right Widget (e.g. Pose Label)
+                  if (topRightWidget != null)
+                    Positioned(top: 12.h, right: 12.w, child: topRightWidget!),
 
                   // AI Compatible Badge
                   if (useInAiSimulator)

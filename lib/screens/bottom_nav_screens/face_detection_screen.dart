@@ -12,13 +12,12 @@ import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
 import '../../utills/image_utills.dart';
 import '../../utills/secure_storage_service.dart';
-import '../../view_models/checkout_view_model.dart';
 import '../../view_models/treatment_view_model.dart';
 import '../../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
-import '../ar_face_model_Preview_screen.dart';
 
 class FaceDetectionScreen extends ConsumerStatefulWidget {
-  const FaceDetectionScreen({super.key});
+  final String pose;
+  const FaceDetectionScreen({super.key, this.pose = 'front'});
 
   static const String routeName = '/FaceDetectionScreen';
 
@@ -218,17 +217,14 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                           // Store captured image in view model
                           ref
                               .read(treatmentViewModel.notifier)
-                              .setCapturedImage(capturedImage);
-                          ref
-                              .read(checkoutViewModel.notifier)
-                              .updateCapturedImage(capturedImage);
+                              .setCapturedImage(
+                                capturedImage,
+                                pose: widget.pose,
+                              );
 
                           Navigator.pop(context);
                           if (mounted) {
-                            Navigator.pushReplacementNamed(
-                              context,
-                              ArFaceModelPreviewScreen.routeName,
-                            );
+                            Navigator.pop(context, capturedImage);
                           }
                         },
                         style: ElevatedButton.styleFrom(
@@ -368,8 +364,11 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                     SizedBox(height: 20.h),
                     _buildInstructionRow(
                       icon: SvgAssets.eye,
-                      text:
-                          "Face forward and make sure your eyes are clearly visible.",
+                      text: widget.pose == 'front'
+                          ? "Face forward and make sure your eyes are clearly visible."
+                          : widget.pose == 'left'
+                              ? "Turn your face to the left so your profile is clearly visible."
+                              : "Turn your face to the right so your profile is clearly visible.",
                       iconHeight: 24.h,
                       iconWidth: 26.w,
                     ),

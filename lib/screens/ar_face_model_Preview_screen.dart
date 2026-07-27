@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:before_after/before_after.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -46,6 +47,7 @@ class _ArFaceModelPreviewScreenState
 
   bool _hasInitialized = false;
   double _sliderValue = 0.5;
+  String _selectedPose = 'front';
 
   late final ScrollController _scrollController;
   late final AnimationController _pulseController;
@@ -162,6 +164,8 @@ class _ArFaceModelPreviewScreenState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 20.h),
+                        _buildPoseSelector(),
+                        SizedBox(height: 12.h),
                         _buildFacePreview(),
                         SizedBox(height: 10.h),
                         _buildSimulationBanner(),
@@ -504,8 +508,23 @@ class _ArFaceModelPreviewScreenState
               child: Consumer(
                 builder: (context, ref, _) {
                   final state = ref.watch(treatmentViewModel);
-                  final beforeImage = state.capturedImage;
-                  final afterImage = state.aiImage;
+
+                  XFile? beforeImage;
+                  XFile? afterImage;
+
+                  if (_selectedPose == 'left') {
+                    beforeImage = state.leftPoseImage;
+                    afterImage = state.leftAiImage;
+                  } else if (_selectedPose == 'right') {
+                    beforeImage = state.rightPoseImage;
+                    afterImage = state.rightAiImage;
+                  } else {
+                    beforeImage = state.frontPoseImage ?? state.capturedImage;
+                    afterImage = state.frontAiImage ?? state.aiImage;
+                  }
+
+                  debugPrint('PREVIEW: pose=$_selectedPose, before=${beforeImage?.path}, after=${afterImage?.path}');
+
                   final errorMessage = state.errorMessage;
 
                   if (errorMessage != null && beforeImage == null) {
@@ -514,6 +533,7 @@ class _ArFaceModelPreviewScreenState
 
                   if (beforeImage != null && afterImage != null) {
                     return BeforeAfter(
+                      key: ValueKey('preview_${_selectedPose}_${beforeImage.path}_${afterImage.path}'),
                       value: _sliderValue,
                       onValueChanged: (value) =>
                           setState(() => _sliderValue = value),
@@ -544,6 +564,54 @@ class _ArFaceModelPreviewScreenState
             _buildBeforeLabel(),
             _buildDownloadButton(),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPoseSelector() {
+    return Consumer(
+      builder: (context, ref, _) {
+        final state = ref.watch(treatmentViewModel);
+
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Row(
+            children: [
+              _poseChip("Front", 'front', state.frontPoseImage != null),
+              SizedBox(width: 8.w),
+              _poseChip("Left", 'left', state.leftPoseImage != null),
+              SizedBox(width: 8.w),
+              _poseChip("Right", 'right', state.rightPoseImage != null),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _poseChip(String label, String value, bool hasImage) {
+    final isSelected = _selectedPose == value;
+    return GestureDetector(
+      onTap: hasImage ? () => setState(() => _selectedPose = value) : null,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? CustomColors.purpleColor
+              : CustomColors.lightPurpleColor.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(
+            color: isSelected ? CustomColors.purpleColor : Colors.transparent,
+          ),
+        ),
+        child: Text(
+          label,
+          style: CustomFonts.black12w600.copyWith(
+            color: isSelected
+                ? Colors.white
+                : (hasImage ? Colors.black : Colors.grey),
+          ),
         ),
       ),
     );
@@ -604,9 +672,16 @@ class _ArFaceModelPreviewScreenState
     return Consumer(
       builder: (context, ref, _) {
         final state = ref.watch(treatmentViewModel);
-        final hasAfterImage = state.aiImage != null;
+        XFile? afterImage;
+        if (_selectedPose == 'left') {
+          afterImage = state.leftAiImage;
+        } else if (_selectedPose == 'right') {
+          afterImage = state.rightAiImage;
+        } else {
+          afterImage = state.frontAiImage;
+        }
 
-        if (!hasAfterImage) return const SizedBox.shrink();
+        if (afterImage == null) return const SizedBox.shrink();
 
         return Positioned(
           top: 12.h,
@@ -621,9 +696,16 @@ class _ArFaceModelPreviewScreenState
     return Consumer(
       builder: (context, ref, _) {
         final state = ref.watch(treatmentViewModel);
-        final hasBeforeImage = state.capturedImage != null;
+        XFile? beforeImage;
+        if (_selectedPose == 'left') {
+          beforeImage = state.leftPoseImage;
+        } else if (_selectedPose == 'right') {
+          beforeImage = state.rightPoseImage;
+        } else {
+          beforeImage = state.frontPoseImage;
+        }
 
-        if (!hasBeforeImage) return const SizedBox.shrink();
+        if (beforeImage == null) return const SizedBox.shrink();
 
         return Positioned(
           top: 12.h,
