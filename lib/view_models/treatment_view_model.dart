@@ -348,17 +348,20 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     }
   }
 
-  Future<http.MultipartFile?> _imageMultipartFile(XFile? image) async {
+  Future<http.MultipartFile?> _imageMultipartFile({
+    XFile? image,
+    required String field,
+  }) async {
     if (image == null) {
       return null;
     }
     if (image.path.isNotEmpty) {
       try {
-        return await http.MultipartFile.fromPath('image', image.path);
+        return await http.MultipartFile.fromPath(field, image.path);
       } catch (_) {}
     }
     final bytes = await image.readAsBytes();
-    return http.MultipartFile.fromBytes('image', bytes, filename: 'image.jpg');
+    return http.MultipartFile.fromBytes(field, bytes, filename: 'image.jpg');
   }
 
   Future<Map<String, dynamic>?> _uploadCapturedImages() async {
@@ -391,9 +394,18 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       'treatment_sku': treatmentSku ?? '',
       'treatments': jsonEncode(treatmentAreasJson),
     });
-    final frontImage = await _imageMultipartFile(state.frontPoseImage);
-    final rightImage = await _imageMultipartFile(state.rightPoseImage);
-    final leftImage = await _imageMultipartFile(state.leftPoseImage);
+    final frontImage = await _imageMultipartFile(
+      image: state.frontPoseImage,
+      field: 'front_image',
+    );
+    final rightImage = await _imageMultipartFile(
+      image: state.rightPoseImage,
+      field: 'right_image',
+    );
+    final leftImage = await _imageMultipartFile(
+      image: state.leftPoseImage,
+      field: 'left_image',
+    );
     request.files.addAll([?frontImage, ?rightImage, ?leftImage]);
 
     final encoded = jsonEncode(treatmentAreasJson);
