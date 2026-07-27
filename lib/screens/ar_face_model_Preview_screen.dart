@@ -578,11 +578,32 @@ class _ArFaceModelPreviewScreenState
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Row(
             children: [
-              _poseChip("Front", 'front', state.frontPoseImage != null),
-              SizedBox(width: 8.w),
-              _poseChip("Left", 'left', state.leftPoseImage != null),
-              SizedBox(width: 8.w),
-              _poseChip("Right", 'right', state.rightPoseImage != null),
+              Expanded(
+                child: _poseChip(
+                  "Front View",
+                  'front',
+                  state.frontPoseImage != null,
+                  Icons.face_unlock_rounded,
+                ),
+              ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: _poseChip(
+                  "Left Profile",
+                  'left',
+                  state.leftPoseImage != null,
+                  Icons.person_pin_circle_outlined,
+                ),
+              ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: _poseChip(
+                  "Right Profile",
+                  'right',
+                  state.rightPoseImage != null,
+                  Icons.person_pin_circle_outlined,
+                ),
+              ),
             ],
           ),
         );
@@ -590,28 +611,58 @@ class _ArFaceModelPreviewScreenState
     );
   }
 
-  Widget _poseChip(String label, String value, bool hasImage) {
+  Widget _poseChip(String label, String value, bool hasImage, IconData icon) {
     final isSelected = _selectedPose == value;
+    final bool canTap = hasImage;
+
     return GestureDetector(
-      onTap: hasImage ? () => setState(() => _selectedPose = value) : null,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+      onTap: canTap ? () => setState(() => _selectedPose = value) : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+        padding: EdgeInsets.symmetric(vertical: 12.h),
         decoration: BoxDecoration(
           color: isSelected
               ? CustomColors.purpleColor
               : CustomColors.lightPurpleColor.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(20.r),
+          borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
             color: isSelected ? CustomColors.purpleColor : Colors.transparent,
+            width: 1.5,
           ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: CustomColors.purpleColor.withValues(alpha: 0.25),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : null,
         ),
-        child: Text(
-          label,
-          style: CustomFonts.black12w600.copyWith(
-            color: isSelected
-                ? Colors.white
-                : (hasImage ? Colors.black : Colors.grey),
-          ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 20.sp,
+              color: isSelected
+                  ? Colors.white
+                  : (canTap ? Colors.black54 : Colors.grey.shade300),
+            ),
+            SizedBox(height: 6.h),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: CustomFonts.black12w600.copyWith(
+                fontSize: 10.sp,
+                letterSpacing: 0.5,
+                color: isSelected
+                    ? Colors.white
+                    : (canTap ? Colors.black87 : Colors.grey.shade300),
+              ),
+            ),
+          ],
         ),
       ),
     );
