@@ -24,13 +24,17 @@ class FacePoseCaptureScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(treatmentViewModel);
 
-    final bool allCaptured = state.frontPoseImage != null &&
+    final bool allCaptured =
+        state.frontPoseImage != null &&
         state.leftPoseImage != null &&
         state.rightPoseImage != null;
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const CustomAppBar(showTitle: true, title: "Capture Your Profile"),
+      appBar: const CustomAppBar(
+        showTitle: true,
+        title: "Capture Your Profile",
+      ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,14 +47,15 @@ class FacePoseCaptureScreen extends ConsumerWidget {
                   SizedBox(height: 20.h),
                   Text(
                     "Clear photos from multiple angles ensure our AI provides the most precise treatment recommendations for your unique features.",
-                    style: CustomFonts.grey14w400.copyWith(
-                      height: 1.4,
-                    ),
+                    style: CustomFonts.grey14w400.copyWith(height: 1.4),
                   ),
                   SizedBox(height: 24.h),
                   Row(
                     children: [
-                      _buildIndicator(active: true, color: CustomColors.purpleColor),
+                      _buildIndicator(
+                        active: true,
+                        color: CustomColors.purpleColor,
+                      ),
                       SizedBox(width: 8.w),
                       _buildIndicator(
                         active: state.frontPoseImage != null,
@@ -58,7 +63,8 @@ class FacePoseCaptureScreen extends ConsumerWidget {
                       ),
                       SizedBox(width: 8.w),
                       _buildIndicator(
-                        active: state.leftPoseImage != null &&
+                        active:
+                            state.leftPoseImage != null &&
                             state.rightPoseImage != null,
                         color: CustomColors.purpleColor,
                       ),
@@ -103,13 +109,16 @@ class FacePoseCaptureScreen extends ConsumerWidget {
                 text: "Proceed to AI Preview",
                 onPressed: allCaptured
                     ? () {
+                        ref.read(treatmentViewModel.notifier).clearAiImage();
                         Navigator.pushNamed(
                           context,
                           ArFaceModelPreviewScreen.routeName,
                         );
                       }
                     : null,
-                backgroundColor: allCaptured ? Colors.black : Colors.grey.shade300,
+                backgroundColor: allCaptured
+                    ? Colors.black
+                    : Colors.grey.shade300,
                 textColor: allCaptured ? Colors.white : Colors.grey.shade500,
               ),
             ),
@@ -132,7 +141,11 @@ class FacePoseCaptureScreen extends ConsumerWidget {
   }
 
   void _capturePose(BuildContext context, String pose) {
-    Navigator.pushNamed(context, FaceDetectionScreen.routeName, arguments: pose);
+    Navigator.pushNamed(
+      context,
+      FaceDetectionScreen.routeName,
+      arguments: pose,
+    );
   }
 
   Widget _buildPoseContainer({
@@ -145,14 +158,14 @@ class FacePoseCaptureScreen extends ConsumerWidget {
     final String poseLabel = title.toLowerCase().contains("front")
         ? "front pose"
         : title.toLowerCase().contains("left")
-            ? "side pose (left)"
-            : "side pose (right)";
+        ? "side pose (left)"
+        : "side pose (right)";
 
     final String placeholderAsset = title.toLowerCase().contains("front")
         ? PngAssets.frontFace
         : title.toLowerCase().contains("left")
-            ? PngAssets.leftFace
-            : PngAssets.rightFace;
+        ? PngAssets.leftFace
+        : PngAssets.rightFace;
 
     return TreatmentContainer(
       imageHeight: 300.h,
@@ -161,10 +174,7 @@ class FacePoseCaptureScreen extends ConsumerWidget {
       customOnTap: onTap,
       backgroundWidget: image != null
           ? Image.file(File(image.path), fit: BoxFit.cover)
-          : Image.asset(
-              placeholderAsset,
-              fit: BoxFit.cover,
-            ),
+          : Image.asset(placeholderAsset, fit: BoxFit.cover),
       topRightWidget: Container(
         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
         decoration: BoxDecoration(
