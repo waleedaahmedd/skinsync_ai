@@ -375,7 +375,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                     SizedBox(height: 16.h),
                     _buildInstructionRow(
                       icon: SvgAssets.profileIcon,
-                      text: "Align your face within the circular frame.",
+                      text: "Align your face within the frame.",
                       iconHeight: 24.h,
                       iconWidth: 24.w,
                       iconColor: CustomColors.purpleColor,
