@@ -311,9 +311,12 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       final jsonRes = await _uploadCapturedImages();
       if (jsonRes == null) throw Exception('Failed to upload image');
 
-      final base64Front = _parseOutputImageBase64(jsonRes['front_image']);
-      final base64Right = _parseOutputImageBase64(jsonRes['right_image']);
-      final base64Left = _parseOutputImageBase64(jsonRes['left_image']);
+      final output = jsonRes['output'] as Map<String, dynamic>?;
+      if (output == null) throw Exception('No output data received from server');
+
+      final base64Front = _parseOutputImageBase64(output['front_image']);
+      final base64Right = _parseOutputImageBase64(output['right_image']);
+      final base64Left = _parseOutputImageBase64(output['left_image']);
       final imageFront = await base64ToXFile(
         base64Front,
         fileName: 'ai_front_image_${DateTime.now().millisecondsSinceEpoch}.jpg',
@@ -499,7 +502,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         path: '$userId/appointments/before/left/',
       );
       final leftImageAfter = await uploadImageToFirebase(
-        file: state.rightAiImage,
+        file: state.leftAiImage,
         path: '$userId/appointments/after/left/',
       );
 
