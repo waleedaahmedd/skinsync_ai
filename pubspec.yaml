@@ -76,6 +76,7 @@ dependencies:
   flutter_image_compress: ^2.5.1
   file_picker: ^12.0.0-beta.7
   dlibphonenumber: ^1.1.68
+  firebase_ai: ^3.14.1
 
 dependency_overrides:
   jni: 1.0.0
