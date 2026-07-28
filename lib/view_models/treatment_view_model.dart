@@ -315,6 +315,10 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         imageLeft = await bytesToXFile(results['left']!, 'ai_left_$timestamp.jpg');
       }
 
+      if (imageFront == null && imageRight == null && imageLeft == null) {
+        throw Exception('AI failed to generate valid images. Please try again.');
+      }
+
       if (wasBefore) toggleIsBefore();
 
       state = state.copyWith(

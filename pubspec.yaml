@@ -66,6 +66,7 @@ dependencies:
   device_info_plus: ^13.2.0
   crypto: ^3.0.7
   firebase_auth: ^6.5.6
+  firebase_app_check: ^0.4.5+2
   google_sign_in: ^7.2.0
   sign_in_with_apple: ^8.1.0
   image_gallery_saver_plus: ^5.1.1

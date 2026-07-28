@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "55541632083-c5sn03tg1510p7cfutm694k918uabaml.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skinsync.clinic",
+            "certificate_hash": "c1debe1375b1df77f71f17da8f0f752b78f439d0"
+          }
+        },
+        {
           "client_id": "55541632083-rmv67oi9q88454a3v18sn1e9a3sfopgh.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -55,6 +63,14 @@
           "android_info": {
             "package_name": "com.skinsyncaiinc.skinsyncai",
             "certificate_hash": "c1debe1375b1df77f71f17da8f0f752b78f439d0"
+          }
+        },
+        {
+          "client_id": "55541632083-qvpl1guf5tus79v1bpfseo02mcsgvkgo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skinsyncaiinc.skinsyncai",
+            "certificate_hash": "348c1b217f2d2de8b8407688364beebe11f3d227"
           }
         },
         {

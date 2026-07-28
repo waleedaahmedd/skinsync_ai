@@ -86,7 +86,7 @@ Future<XFile> cropImageToCircle(XFile xFile, {
   return XFile(newFile.path);
 }
 
-Future<XFile> base64ToXFile(
+Future<XFile?> base64ToXFile(
   String base64Image, {
   String fileName = 'image.jpg',
 }) async {
@@ -99,10 +99,13 @@ Future<XFile> base64ToXFile(
   return bytesToXFile(bytes, fileName);
 }
 
-Future<XFile> bytesToXFile(
+Future<XFile?> bytesToXFile(
   Uint8List bytes,
   String fileName,
 ) async {
+  if (bytes.isEmpty) {
+    return null;
+  }
   final tempDir = await getTemporaryDirectory();
   final filePath = '${tempDir.path}/$fileName';
 
