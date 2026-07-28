@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/bottom_sheets/media_picker_button.dart';
+import '../widgets/bottom_sheets/media_source_sheet.dart';
+import '../widgets/post_image_preview.dart';
+import '../widgets/post_video_preview.dart';
+import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 
 class CreatePostScreen extends ConsumerStatefulWidget {
@@ -13,12 +19,80 @@ class CreatePostScreen extends ConsumerStatefulWidget {
 }
 
 class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
+  final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+  final List<XFile> _selectedImages = [];
+  XFile? _selectedVideo;
 
   @override
   void dispose() {
+    _titleController.dispose();
     _contentController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImages(ImageSource source) async {
+    if (source == ImageSource.gallery) {
+      final List<XFile> images = await _picker.pickMultiImage();
+      if (images.isNotEmpty) {
+        setState(() {
+          _selectedImages.addAll(images);
+          _selectedVideo = null;
+        });
+      }
+    } else {
+      final XFile? image = await _picker.pickImage(source: source);
+      if (image != null) {
+        setState(() {
+          _selectedImages.add(image);
+          _selectedVideo = null;
+        });
+      }
+    }
+  }
+
+  Future<void> _pickVideo(ImageSource source) async {
+    final XFile? video = await _picker.pickVideo(source: source);
+    if (video != null) {
+      setState(() {
+        _selectedVideo = video;
+        _selectedImages.clear();
+      });
+    }
+  }
+
+  void _showPickerOptions({required bool isVideo}) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (context) {
+        return MediaSourceSheet(
+          isVideo: isVideo,
+          onSourceSelected: (source) {
+            if (isVideo) {
+              _pickVideo(source);
+            } else {
+              _pickImages(source);
+            }
+          },
+        );
+      },
+    );
+  }
+
+  void _removeImage(int index) {
+    setState(() {
+      _selectedImages.removeAt(index);
+    });
+  }
+
+  void _removeVideo() {
+    setState(() {
+      _selectedVideo = null;
+    });
   }
 
   @override
@@ -29,27 +103,96 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
         showTitle: true,
         title: "Create Post",
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: EdgeInsets.all(20.w),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: TextField(
-                controller: _contentController,
-                maxLines: null,
-                decoration: InputDecoration(
-                  hintText: "What's on your mind?",
-                  hintStyle: CustomFonts.grey14w400,
-                  border: InputBorder.none,
+            // Title Field
+            TextField(
+              controller: _titleController,
+              decoration: InputDecoration(
+                hintText: "Post Title (Optional)",
+                hintStyle: CustomFonts.grey16w500,
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey.shade200),
                 ),
-                style: CustomFonts.black14w400,
+                focusedBorder: const UnderlineInputBorder(
+                  borderSide: BorderSide(color: CustomColors.purpleColor),
+                ),
               ),
+              style: CustomFonts.black18w600,
             ),
-            // TODO: Add image picker UI here
             SizedBox(height: 20.h),
+
+            // Content Field
+            TextField(
+              controller: _contentController,
+              maxLines: 8,
+              minLines: 5,
+              decoration: InputDecoration(
+                hintText: "What's on your mind?",
+                hintStyle: CustomFonts.grey14w400,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: BorderSide(color: Colors.grey.shade200),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: BorderSide(color: Colors.grey.shade200),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: const BorderSide(color: CustomColors.purpleColor),
+                ),
+                fillColor: Colors.grey.shade50,
+                filled: true,
+              ),
+              style: CustomFonts.black14w400,
+            ),
+            SizedBox(height: 20.h),
+
+            // Media Selection Row
+            Row(
+              children: [
+                MediaPickerButton(
+                  onTap: () => _showPickerOptions(isVideo: false),
+                  icon: Icons.image_rounded,
+                  label: "Images",
+                  color: Colors.blue.shade400,
+                ),
+                SizedBox(width: 15.w),
+                MediaPickerButton(
+                  onTap: () => _showPickerOptions(isVideo: true),
+                  icon: Icons.videocam_rounded,
+                  label: "Video",
+                  color: Colors.red.shade400,
+                ),
+              ],
+            ),
+            SizedBox(height: 20.h),
+
+            // Media Preview
+            PostImagePreview(
+              images: _selectedImages,
+              onRemove: _removeImage,
+            ),
+            PostVideoPreview(
+              video: _selectedVideo,
+              onRemove: _removeVideo,
+            ),
+
+            SizedBox(height: 30.h),
+
             CustomButton(
               text: "Post",
               onPressed: () {
+                if (_contentController.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Please enter some content")),
+                  );
+                  return;
+                }
                 // TODO: Implement post creation logic
                 Navigator.pop(context);
               },
