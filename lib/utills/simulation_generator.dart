@@ -1,28 +1,84 @@
-import 'dart:typed_data';
+import 'dart:convert';
 import 'package:camera/camera.dart';
 import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../view_models/checkout_view_model.dart';
 
 class SimulationGenerator {
   // Use Gemini 1.5 Flash for fast multi-modal processing
-  // Note: Standard GenerativeModel currently returns text. 
-  // If you need actual image-to-image generation via Firebase AI, 
-  // ensure your project has the 'imagen-3' model enabled if available.
-  
   static final _model = FirebaseAI.googleAI().generativeModel(
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.5-flash',
   );
 
-  /// Takes an [image] and a [prompt], sends them to Firebase AI,
-  /// and returns the processed image as [Uint8List].
-  Future<Uint8List?> generateSimulation({
-    required XFile image,
-    required String prompt,
+  /// Generates simulations for all non-null poses provided.
+  /// Returns a map with keys 'front', 'left', 'right' containing the image bytes.
+  Future<Map<String, Uint8List?>> generateAllSimulations({
+    required XFile? front,
+    required XFile? left,
+    required XFile? right,
+    required Ref ref,
   }) async {
+    final results = <String, Uint8List?>{
+      'front': null,
+      'left': null,
+      'right': null,
+    };
+
+    final checkoutState = ref.read(checkoutViewModel);
+    final selectedTreatmentsAndAreas = checkoutState.selectedTreatmentsAndAreas;
+
+    // 1. Construct the dynamic prompt base
+    String treatmentDetails = "";
+    for (var item in selectedTreatmentsAndAreas) {
+      final areaDetails = item.selectedAreas.map((a) {
+        String detail = a.target.name ?? "";
+        if (a.material != null && a.material!.selectedQuantity > 0) {
+          detail += " (Material: ${a.material!.name}, Quantity: ${a.material!.selectedQuantity})";
+        }
+        return detail;
+      }).join(", ");
+      treatmentDetails += "- ${item.treatment.name} on areas: $areaDetails\n";
+    }
+
+    final promptBase = """
+Analyze this facial image and generate a high-quality aesthetic simulation showing the results of the following treatments:
+$treatmentDetails
+
+IMPORTANT: 
+- Your response must consist ONLY of the raw Base64 string of the resulting image.
+- Do not include any text, markdown formatting, or explanations. 
+- Ensure the output is a valid JPEG/PNG image encoded in Base64.
+""";
+
+    // 2. Process all poses in parallel
+    try {
+      final List<Future<void>> tasks = [];
+
+      if (front != null) {
+        tasks.add(_processPose(front, promptBase).then((val) => results['front'] = val));
+      }
+      if (left != null) {
+        tasks.add(_processPose(left, promptBase).then((val) => results['left'] = val));
+      }
+      if (right != null) {
+        tasks.add(_processPose(right, promptBase).then((val) => results['right'] = val));
+      }
+
+      await Future.wait(tasks);
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error in multi-pose simulation generation: $e");
+      }
+    }
+
+    return results;
+  }
+
+  Future<Uint8List?> _processPose(XFile image, String prompt) async {
     try {
       final bytes = await image.readAsBytes();
-      
-      // Construct the multi-modal prompt
+
       final content = [
         Content.multi([
           TextPart(prompt),
@@ -30,32 +86,19 @@ class SimulationGenerator {
         ]),
       ];
 
-      // Generate content
       final response = await _model.generateContent(content);
-
-      // IMPORTANT: Currently, GenerativeModel returns Text. 
-      // If the model is configured to return an image (like in some advanced 
-      // multi-modal setups), it would be in the response parts.
-      // For standard Gemini, you might get a Base64 string in the text response 
-      // if you prompt it specifically to "return only the base64 of the image".
-      
       final responseText = response.text;
-      if (responseText != null && responseText.isNotEmpty) {
-        if (kDebugMode) {
-          print("AI Response received (length): ${responseText.length}");
-        }
-        
-        // Logic to extract image if returned as base64 or similar
-        // This is a placeholder for your specific AI output handling
-        // return _extractImageFromResponse(responseText);
+
+      if (responseText != null && responseText.trim().isNotEmpty) {
+        // Clean and decode Base64
+        final cleanedBase64 = responseText.replaceAll(RegExp(r'\s+'), '').replaceAll('`', '');
+        return base64Decode(cleanedBase64);
       }
-      
-      return null;
     } catch (e) {
       if (kDebugMode) {
-        print("Error generating simulation: $e");
+        print("Error processing pose: $e");
       }
-      return null;
     }
+    return null;
   }
 }

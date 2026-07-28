@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
 
 import '../models/base_state_model.dart';
 import '../models/requests/save_history_request.dart';
@@ -21,6 +19,7 @@ import '../services/media_service.dart';
 import '../services/treatment_services.dart';
 import '../utills/image_utills.dart';
 import '../utills/list_utils.dart';
+import '../utills/simulation_generator.dart';
 import 'auth_view_model.dart';
 import 'base_view_model.dart';
 import 'checkout_view_model.dart';
@@ -279,21 +278,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     return response;
   }
 
-  String _parseOutputImageBase64(dynamic image) {
-    if (image == null) {
-      throw Exception(
-        'No image data received from server: output_image is null',
-      );
-    }
-    final String raw = image is String ? image : image.toString();
-    if (raw.trim().isEmpty) {
-      throw Exception(
-        'No image data received from server: output_image is empty',
-      );
-    }
-    return raw;
-  }
-
   Future<void> callPredictAPI() async {
     if (state.capturedImagesNull) {
       const msg =
@@ -305,30 +289,31 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
     final wasBefore = state.isBefore;
     state = state.copyWith(loading: true, errorMessage: null);
-    EasyLoading.show(status: 'Processing image...');
+    EasyLoading.show(status: 'Processing images with AI...');
 
     try {
-      final jsonRes = await _uploadCapturedImages();
-      if (jsonRes == null) throw Exception('Failed to upload image');
+      final results = await SimulationGenerator().generateAllSimulations(
+        front: state.frontPoseImage,
+        left: state.leftPoseImage,
+        right: state.rightPoseImage,
+        ref: ref,
+      );
 
-      final output = jsonRes['output'] as Map<String, dynamic>?;
-      if (output == null) throw Exception('No output data received from server');
+      XFile? imageFront;
+      XFile? imageRight;
+      XFile? imageLeft;
 
-      final base64Front = _parseOutputImageBase64(output['front_image']);
-      final base64Right = _parseOutputImageBase64(output['right_image']);
-      final base64Left = _parseOutputImageBase64(output['left_image']);
-      final imageFront = await base64ToXFile(
-        base64Front,
-        fileName: 'ai_front_image_${DateTime.now().millisecondsSinceEpoch}.jpg',
-      );
-      final imageRight = await base64ToXFile(
-        base64Right,
-        fileName: 'ai_right_image_${DateTime.now().millisecondsSinceEpoch}.jpg',
-      );
-      final imageLeft = await base64ToXFile(
-        base64Left,
-        fileName: 'ai_left_image_${DateTime.now().millisecondsSinceEpoch}.jpg',
-      );
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+
+      if (results['front'] != null) {
+        imageFront = await bytesToXFile(results['front']!, 'ai_front_$timestamp.jpg');
+      }
+      if (results['right'] != null) {
+        imageRight = await bytesToXFile(results['right']!, 'ai_right_$timestamp.jpg');
+      }
+      if (results['left'] != null) {
+        imageLeft = await bytesToXFile(results['left']!, 'ai_left_$timestamp.jpg');
+      }
 
       if (wasBefore) toggleIsBefore();
 
@@ -341,7 +326,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         leftAiImage: imageLeft,
       );
       EasyLoading.dismiss();
-      EasyLoading.showSuccess('Image processed successfully!');
+      EasyLoading.showSuccess('Simulations generated successfully!');
     } catch (e, s) {
       final errorMsg = e.toString().replaceFirst('Exception: ', '');
       log(errorMsg, stackTrace: s);
@@ -349,91 +334,6 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       EasyLoading.dismiss();
       EasyLoading.showError(errorMsg);
     }
-  }
-
-  Future<http.MultipartFile?> _imageMultipartFile({
-    XFile? image,
-    required String field,
-  }) async {
-    if (image == null) {
-      return null;
-    }
-    if (image.path.isNotEmpty) {
-      try {
-        return await http.MultipartFile.fromPath(field, image.path);
-      } catch (_) {}
-    }
-    final bytes = await image.readAsBytes();
-    return http.MultipartFile.fromBytes(field, bytes, filename: 'image.jpg');
-  }
-
-  Future<Map<String, dynamic>?> _uploadCapturedImages() async {
-    final request = http.MultipartRequest(
-      'POST',
-      Uri.parse('http://18.116.65.70/api/'),
-    );
-
-    final checkoutState = ref.read(checkoutViewModel);
-    final selectedTreatmentsAndAreas = checkoutState.selectedTreatmentsAndAreas;
-
-    final treatmentAreasJson = selectedTreatmentsAndAreas.map((item) {
-      return {
-        'treatment_sku': item.treatment.globalSku ?? '',
-        'areas': item.selectedAreas.map((areaItem) {
-          final int materialQty = areaItem.material?.selectedQuantity ?? 0;
-          return {
-            'areas_sku': areaItem.target.globalSku ?? '',
-            'material_quantity': materialQty,
-          };
-        }).toList(),
-      };
-    }).toList();
-
-    final treatmentSku = selectedTreatmentsAndAreas.isNotEmpty
-        ? selectedTreatmentsAndAreas.first.treatment.globalSku
-        : (checkoutState.selectedTreatments?.globalSku ?? '');
-
-    request.fields.addAll({
-      'treatment_sku': treatmentSku ?? '',
-      'treatments': jsonEncode(treatmentAreasJson),
-    });
-    final frontImage = await _imageMultipartFile(
-      image: state.frontPoseImage,
-      field: 'front_image',
-    );
-    final rightImage = await _imageMultipartFile(
-      image: state.rightPoseImage,
-      field: 'right_image',
-    );
-    final leftImage = await _imageMultipartFile(
-      image: state.leftPoseImage,
-      field: 'left_image',
-    );
-    request.files.addAll([?frontImage, ?rightImage, ?leftImage]);
-
-    final encoded = jsonEncode(treatmentAreasJson);
-
-    log("--- Multipart Request Debug ---");
-    log(encoded);
-    log("URL: ${request.url}");
-    log("Fields: ${request.fields}");
-    log(
-      "Files: ${request.files.map((f) => '${f.field}: ${f.filename} (${f.length} bytes)').toList()}",
-    );
-    log("--------------------------------");
-
-    final response = await request.send();
-    final body = await response.stream.bytesToString();
-
-    if (response.statusCode != 200) {
-      final data = jsonDecode(body) as Map<String, dynamic>?;
-      final msg =
-          data?['message'] as String? ??
-          response.reasonPhrase ??
-          'Upload failed';
-      throw Exception(msg);
-    }
-    return jsonDecode(body) as Map<String, dynamic>;
   }
 
   Future<void> saveAiImage() async {

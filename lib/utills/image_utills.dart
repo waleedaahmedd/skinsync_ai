@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:cross_file/cross_file.dart';
@@ -95,7 +96,13 @@ Future<XFile> base64ToXFile(
       : base64Image;
 
   final bytes = base64Decode(cleanedBase64);
+  return bytesToXFile(bytes, fileName);
+}
 
+Future<XFile> bytesToXFile(
+  Uint8List bytes,
+  String fileName,
+) async {
   final tempDir = await getTemporaryDirectory();
   final filePath = '${tempDir.path}/$fileName';
 
