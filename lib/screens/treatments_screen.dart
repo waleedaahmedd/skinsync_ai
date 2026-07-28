@@ -6,14 +6,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-import '../../models/responses/treatment_list_response.dart';
-import '../../utills/custom_fonts.dart';
-import '../../view_models/checkout_view_model.dart';
-import '../../view_models/treatment_view_model.dart';
-import '../../widgets/app_loader.dart';
-import '../../widgets/custom_app_bar.dart';
-import '../../widgets/custom_search_field.dart';
-import '../../widgets/treatment_container.dart';
+import '../models/responses/treatment_list_response.dart';
+import '../utills/custom_fonts.dart';
+import '../view_models/checkout_view_model.dart';
+import '../view_models/treatment_view_model.dart';
+import '../widgets/app_loader.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_search_field.dart';
+import '../widgets/treatment_container.dart';
 
 class TreatmentsScreen extends ConsumerStatefulWidget {
   const TreatmentsScreen({super.key});
@@ -128,7 +128,7 @@ class _TreatmentMainScreenState extends ConsumerState<TreatmentMainScreen> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 20.h),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
           child: CustomSearchField(
             controller: _searchController,
             hintText: "Search Treatments...",
