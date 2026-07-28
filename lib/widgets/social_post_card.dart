@@ -26,20 +26,24 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10.h, horizontal: 16.w),
+      margin: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(24.r),
+        border: Border.all(
+          color: Colors.grey.withValues(alpha: 0.08),
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -48,22 +52,31 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
         children: [
           // User Info Header
           Padding(
-            padding: EdgeInsets.all(14.w),
+            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 12.h),
             child: Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(2.r),
+                  padding: EdgeInsets.all(2.5.r),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: CustomColors.purpleColor.withValues(alpha: 0.3),
-                      width: 1.5,
+                    gradient: LinearGradient(
+                      colors: [
+                        CustomColors.purpleColor.withValues(alpha: 0.5),
+                        CustomColors.lightBlueColor.withValues(alpha: 0.5),
+                      ],
                     ),
                   ),
-                  child: CircleAvatar(
-                    radius: 22.r,
-                    backgroundColor: CustomColors.greyColor,
-                    backgroundImage: NetworkImage(widget.post.userProfileImage),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: EdgeInsets.all(1.5.r),
+                    child: CircleAvatar(
+                      radius: 22.r,
+                      backgroundColor: CustomColors.greyColor,
+                      backgroundImage: NetworkImage(widget.post.userProfileImage),
+                    ),
                   ),
                 ),
                 SizedBox(width: 12.w),
@@ -73,21 +86,38 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                     children: [
                       Text(
                         widget.post.userName,
-                        style: CustomFonts.black16w600,
-                      ),
-                      Text(
-                        _getRelativeTime(widget.post.createdAt),
-                        style: CustomFonts.grey12w400.copyWith(
-                          fontSize: 11.sp,
-                          color: Colors.grey.shade500,
+                        style: CustomFonts.black16w600.copyWith(
+                          letterSpacing: -0.3,
                         ),
+                      ),
+                      SizedBox(height: 1.h),
+                      Row(
+                        children: [
+                          Icon(Icons.public, size: 10.sp, color: Colors.grey.shade400),
+                          SizedBox(width: 4.w),
+                          Text(
+                            _getRelativeTime(widget.post.createdAt),
+                            style: CustomFonts.grey12w400.copyWith(
+                              fontSize: 11.sp,
+                              color: Colors.grey.shade500,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.more_vert, color: Colors.grey.shade600, size: 22.sp),
-                  onPressed: () {},
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(20.r),
+                    onTap: () {},
+                    child: Padding(
+                      padding: EdgeInsets.all(8.r),
+                      child: Icon(Icons.more_horiz_rounded, color: Colors.grey.shade600, size: 22.sp),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -96,27 +126,28 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
           // Post Content Text
           if (widget.post.contentText != null && widget.post.contentText!.isNotEmpty)
             Padding(
-              padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 12.h),
+              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
               child: Text(
                 widget.post.contentText!,
                 style: CustomFonts.black14w400.copyWith(
-                  height: 1.5,
-                  color: Colors.black87,
+                  height: 1.6,
+                  color: Colors.black.withValues(alpha: 0.85),
+                  letterSpacing: 0.1,
                 ),
               ),
             ),
 
           // Post Images
           if (widget.post.imageUrls.isNotEmpty)
-            Stack(
-              alignment: Alignment.bottomCenter,
-              children: [
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 14.w),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12.r),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(18.r),
                     child: SizedBox(
-                      height: 280.h,
+                      height: 300.h,
                       width: double.infinity,
                       child: PageView.builder(
                         itemCount: widget.post.imageUrls.length,
@@ -135,60 +166,67 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                       ),
                     ),
                   ),
-                ),
-                if (widget.post.imageUrls.length > 1)
-                  Positioned(
-                    bottom: 12.h,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        widget.post.imageUrls.length,
-                        (index) => AnimatedContainer(
-                          duration: const Duration(milliseconds: 300),
-                          margin: EdgeInsets.symmetric(horizontal: 3.w),
-                          height: 6.h,
-                          width: _currentPage == index ? 18.w : 6.w,
-                          decoration: BoxDecoration(
-                            color: _currentPage == index 
-                                ? CustomColors.purpleColor 
-                                : Colors.white.withValues(alpha: 0.6),
-                            borderRadius: BorderRadius.circular(3.r),
+                  if (widget.post.imageUrls.length > 1)
+                    Positioned(
+                      bottom: 16.h,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                            widget.post.imageUrls.length,
+                            (index) => AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              margin: EdgeInsets.symmetric(horizontal: 3.w),
+                              height: 5.h,
+                              width: _currentPage == index ? 16.w : 5.w,
+                              decoration: BoxDecoration(
+                                color: _currentPage == index 
+                                    ? Colors.white 
+                                    : Colors.white.withValues(alpha: 0.5),
+                                borderRadius: BorderRadius.circular(3.r),
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
 
           // Interaction Bar
           Padding(
-            padding: EdgeInsets.all(14.w),
+            padding: EdgeInsets.all(16.w),
             child: Row(
               children: [
                 _buildActionButton(
                   onTap: () => ref.read(socialViewModel.notifier).toggleLike(widget.post.id),
-                  icon: widget.post.isLiked ? Icons.favorite : Icons.favorite_border,
-                  iconColor: widget.post.isLiked ? Colors.red : Colors.black87,
+                  icon: widget.post.isLiked ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
+                  iconColor: widget.post.isLiked ? Colors.red.shade400 : Colors.black.withValues(alpha: 0.7),
                   label: widget.post.likesCount.toString(),
+                  isActive: widget.post.isLiked,
                 ),
-                SizedBox(width: 24.w),
+                SizedBox(width: 20.w),
                 _buildActionButton(
                   onTap: () {},
                   icon: Icons.chat_bubble_outline_rounded,
-                  iconColor: Colors.black87,
+                  iconColor: Colors.black.withValues(alpha: 0.7),
                   label: widget.post.commentsCount.toString(),
                 ),
                 const Spacer(),
-                IconButton(
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () {},
-                  icon: Icon(Icons.share_outlined, size: 22.sp, color: Colors.black87),
+                _buildSimpleIconButton(
+                  onTap: () {},
+                  icon: Icons.share_outlined,
                 ),
-                IconButton(
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () {},
-                  icon: Icon(Icons.bookmark_border_rounded, size: 22.sp, color: Colors.black87),
+                SizedBox(width: 8.w),
+                _buildSimpleIconButton(
+                  onTap: () {},
+                  icon: Icons.bookmark_border_rounded,
                 ),
               ],
             ),
@@ -203,19 +241,50 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
     required IconData icon,
     required Color iconColor,
     required String label,
+    bool isActive = false,
   }) {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: Row(
-        children: [
-          Icon(icon, color: iconColor, size: 22.sp),
-          SizedBox(width: 6.w),
-          Text(
-            label,
-            style: CustomFonts.black13w600.copyWith(color: Colors.black87),
-          ),
-        ],
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: isActive 
+              ? Colors.red.withValues(alpha: 0.05) 
+              : Colors.grey.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: iconColor, size: 20.sp),
+            SizedBox(width: 8.w),
+            Text(
+              label,
+              style: CustomFonts.black13w600.copyWith(
+                color: iconColor,
+                fontSize: 12.sp,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSimpleIconButton({
+    required VoidCallback onTap,
+    required IconData icon,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: EdgeInsets.all(8.r),
+        decoration: BoxDecoration(
+          color: Colors.grey.withValues(alpha: 0.05),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, size: 20.sp, color: Colors.black.withValues(alpha: 0.7)),
       ),
     );
   }
