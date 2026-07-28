@@ -4,9 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'bottom_nav_bar.dart';
 import 'bottom_nav_screens/appointments_screen.dart';
 import 'bottom_nav_screens/my_profile_screen.dart';
-import 'bottom_nav_screens/progress_screen.dart';
-import 'treatment_explore_screen.dart';
-import 'home_screen.dart';
+import 'bottom_nav_screens/social_screen.dart';
+import 'bottom_nav_screens/treatment_explore_screen.dart';
+import 'bottom_nav_screens/home_screen.dart';
 
 import '../view_models/bottom_nav_view_model.dart';
 import '../view_models/treatment_view_model.dart';
@@ -20,21 +20,8 @@ class BottomNavPage extends ConsumerStatefulWidget {
     const HomeScreen(),
     const TreatmentExploreScreen(),
     const AppointmentsScreen(),
-    const ProgressScreen(),
+    const SocialScreen(),
     const MyProfileScreen(),
-    // HomeScreen(),
-    // ChangeNotifierProvider(
-    //   lazy: true,
-    //   create: (context) => VisitsViewModel(),
-    //   child: VisitsScreen(),
-    // ),
-    // RiderOnTheWayScreen(),
-    // ChatListScreen(),
-    // SettingScreen(),
-    // // TreatmentsScreen(),
-    // // ApppointmentsScreen(),
-    // // ProgressScreen(),
-    // // MyProfileScreen(),
   ];
 
   @override

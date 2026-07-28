@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../models/dummy_list_model.dart';
-import 'doctors_listing_screen.dart';
-import 'explore_clinics_screen.dart';
-import '../view_models/bottom_nav_view_model.dart';
-import '../widgets/home_horizontal_sections.dart';
+import '../../models/dummy_list_model.dart';
+import '../doctors_listing_screen.dart';
+import '../explore_clinics_screen.dart';
+import '../../view_models/bottom_nav_view_model.dart';
+import '../../widgets/home_horizontal_sections.dart';
 
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
-import '../view_models/auth_view_model.dart';
-import '../widgets/app_bar_with_action_icon.dart';
-import '../widgets/discount_card.dart';
-import '../widgets/grey_container.dart';
-import '../widgets/heading_with_right_arrow.dart';
-import '../widgets/points_earn_card.dart';
-import '../widgets/treatment_container.dart';
-import 'notification_screen.dart';
-import 'suggested_treatmentsScreen.dart';
+import '../../utills/color_constant.dart';
+import '../../utills/custom_fonts.dart';
+import '../../view_models/auth_view_model.dart';
+import '../../widgets/app_bar_with_action_icon.dart';
+import '../../widgets/discount_card.dart';
+import '../../widgets/grey_container.dart';
+import '../../widgets/heading_with_right_arrow.dart';
+import '../../widgets/points_earn_card.dart';
+import '../../widgets/treatment_container.dart';
+import '../notification_screen.dart';
+import '../suggested_treatmentsScreen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});

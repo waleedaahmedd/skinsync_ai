@@ -7,8 +7,9 @@ import '../utills/custom_fonts.dart';
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showTitle;
   final String? title;
+  final List<Widget>? actions;
 
-  const CustomAppBar({super.key, required this.showTitle, this.title});
+  const CustomAppBar({super.key, required this.showTitle, this.title, this.actions});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -37,6 +38,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: showTitle
           ? Text(title ?? '', style: CustomFonts.black26w600)
           : const SizedBox.shrink(),
+      actions: actions,
     );
   }
 }

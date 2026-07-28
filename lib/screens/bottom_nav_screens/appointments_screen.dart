@@ -87,107 +87,98 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
     final groupedAppointments = _getGroupedAppointments();
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: false,
-        title: Text("My Appointments", style: CustomFonts.black26w600),
-      ),
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              color: Colors.white,
-              padding: EdgeInsets.only(bottom: 20.h, top: 10.h),
-              child: Column(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: CustomSearchField(
-                      controller: _searchController,
-                      hintText: "Search appointments...",
-                      onChanged: (value) {
-                        setState(() {
-                          _searchQuery = value;
-                        });
-                      },
-                    ),
+                  Text(
+                    "My Appointments",
+                    style: CustomFonts.black30w600.copyWith(fontSize: 28.sp),
+                  ),
+                  SizedBox(height: 20.h),
+                  CustomSearchField(
+                    controller: _searchController,
+                    hintText: "Search appointments...",
+                    onChanged: (value) {
+                      setState(() {
+                        _searchQuery = value;
+                      });
+                    },
                   ),
                   SizedBox(height: 16.h),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: _buildDropdown<AppointmentGrouping>(
-                            label: "Group By",
-                            value: _selectedGrouping,
-                            items: AppointmentGrouping.values.map((e) {
-                              return DropdownMenuItem(
-                                value: e,
-                                child: Text(_getGroupingLabel(e), style: CustomFonts.black14w600),
-                              );
-                            }).toList(),
-                            onChanged: (val) {
-                              if (val != null) setState(() => _selectedGrouping = val);
-                            },
-                          ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildDropdown<AppointmentGrouping>(
+                          label: "Group By",
+                          value: _selectedGrouping,
+                          items: AppointmentGrouping.values.map((e) {
+                            return DropdownMenuItem(
+                              value: e,
+                              child: Text(_getGroupingLabel(e), style: CustomFonts.black14w600),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            if (val != null) setState(() => _selectedGrouping = val);
+                          },
                         ),
-                        SizedBox(width: 12.w),
-                        Expanded(
-                          child: _buildDropdown<String>(
-                            label: "Type",
-                            value: _selectedTypeFilter,
-                            items: _appointmentTypes.map((e) {
-                              return DropdownMenuItem(
-                                value: e,
-                                child: Text(e, style: CustomFonts.black14w600),
-                              );
-                            }).toList(),
-                            onChanged: (val) {
-                              if (val != null) setState(() => _selectedTypeFilter = val);
-                            },
-                          ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: _buildDropdown<String>(
+                          label: "Type",
+                          value: _selectedTypeFilter,
+                          items: _appointmentTypes.map((e) {
+                            return DropdownMenuItem(
+                              value: e,
+                              child: Text(e, style: CustomFonts.black14w600),
+                            );
+                          }).toList(),
+                          onChanged: (val) {
+                            if (val != null) setState(() => _selectedTypeFilter = val);
+                          },
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ),
-            Expanded(
-              child: groupedAppointments.isEmpty
-                  ? _buildEmptyState()
-                  : ListView.builder(
-                      padding: EdgeInsets.only(left: 24.w, right: 24.w, top: 20.h,bottom: 70),
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: groupedAppointments.length,
-                      itemBuilder: (context, index) {
-                        String key = groupedAppointments.keys.elementAt(index);
-                        List<DummyAppointment> appointments = groupedAppointments[key]!;
-                        return Container(
-                          padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 8.h),
-                          margin: EdgeInsets.only(bottom: 16.h),
-                          decoration: BoxDecoration(
-                            gradient: CustomColors.purpleBlueGradient,
-                            borderRadius: BorderRadius.circular(24.r),
-                            boxShadow: [
-                              BoxShadow(
-                                color: CustomColors.purpleColor.withValues(alpha: 0.15),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: _buildGroupSection(key, appointments),
-                        );
-                      },
-                    ),
-            ),
-          ],
+              Expanded(
+                child: groupedAppointments.isEmpty
+                    ? _buildEmptyState()
+                    : ListView.builder(
+                        padding: EdgeInsets.only( top: 20.h,bottom: 80),
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: groupedAppointments.length,
+                        itemBuilder: (context, index) {
+                          String key = groupedAppointments.keys.elementAt(index);
+                          List<DummyAppointment> appointments = groupedAppointments[key]!;
+                          return Container(
+                            padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 8.h),
+                            margin: EdgeInsets.only(bottom: 16.h),
+                            decoration: BoxDecoration(
+                              gradient: CustomColors.purpleBlueGradient,
+                              borderRadius: BorderRadius.circular(24.r),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: CustomColors.purpleColor.withValues(alpha: 0.15),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: _buildGroupSection(key, appointments),
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
         ),
       ),
     );
