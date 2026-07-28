@@ -9,7 +9,7 @@ import '../view_models/checkout_view_model.dart';
 class SimulationGenerator {
   // Use gemini-1.5-flash for stable image processing
   static final _model = FirebaseAI.googleAI().generativeModel(
-    model: 'gemini-2.5-flash-image',
+    model: 'gemini-3.1-flash-image',
   );
 
   /// Generates simulations for all non-null poses provided.
