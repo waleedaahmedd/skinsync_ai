@@ -9,7 +9,7 @@ import '../view_models/checkout_view_model.dart';
 class SimulationGenerator {
   // Use gemini-1.5-flash for stable image processing
   static final _model = FirebaseAI.googleAI().generativeModel(
-    model: 'gemini-1.5-flash',
+    model: 'gemini-2.5-flash-image',
   );
 
   /// Generates simulations for all non-null poses provided.
@@ -39,6 +39,8 @@ class SimulationGenerator {
       }).join(", ");
       treatmentDetails += "- ${item.treatment.name} on: $areaDetails\n";
     }
+
+    log("Treatment Details:\n$treatmentDetails");
 
     // Role-based clinical prompt for MedSpa simulations
     String getPrompt(String pose) => """
@@ -78,6 +80,7 @@ Output Requirements:
 - Return the edited image as binary image data.
 """;
 
+    log("Simulation Prompt:\n${getPrompt('front')}");
 
     try {
       final List<Future<void>> tasks = [];
