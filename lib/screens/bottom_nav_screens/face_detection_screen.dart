@@ -389,13 +389,13 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                       iconWidth: 22.w,
                     ),
                     SizedBox(height: 16.h),
-                    _buildInstructionRow(
-                      icon: SvgAssets.face,
-                      text: "Move Your Face Inside The Border",
-                      iconHeight: 24.h,
-                      iconWidth: 22.w,
-                    ),
-                    SizedBox(height: 16.h),
+                    // _buildInstructionRow(
+                    //   icon: SvgAssets.face,
+                    //   text: "Move Your Face Inside The Border",
+                    //   iconHeight: 24.h,
+                    //   iconWidth: 22.w,
+                    // ),
+                    // SizedBox(height: 16.h),
                     _buildInstructionRow(
                       icon: Icons.warning,
                       iconColor: CustomColors.purpleColor,
