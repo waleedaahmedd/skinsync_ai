@@ -21,6 +21,7 @@ import '../../widgets/logout_dialog_box.dart';
 import '../../main.dart';
 import '../../widgets/dialogs/delete_account_dialog.dart';
 import '../simulation_history_screen.dart';
+import 'appointments_screen.dart';
 
 class MyProfileScreen extends StatelessWidget {
   const MyProfileScreen({super.key});
@@ -176,6 +177,16 @@ class MyProfileScreen extends StatelessWidget {
                       },
                       icon: SvgAssets.profileIcon,
                       title: "Personal Details",
+                    ),
+                    _buildCardOption(
+                      callBack: () {
+                        Navigator.pushNamed(
+                          context,
+                          AppointmentsScreen.routeName,
+                        );
+                      },
+                      icon: SvgAssets.appointment,
+                      title: "Appointments",
                     ),
                     if (!isDeploymentMode) ...[
                       _buildCardOption(

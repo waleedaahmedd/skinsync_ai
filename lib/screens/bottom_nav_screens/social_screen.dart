@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../utills/color_constant.dart';
+import '../../utills/custom_fonts.dart';
 import '../../view_models/social_view_model.dart';
-import '../../widgets/custom_app_bar.dart';
 import '../../widgets/social_post_card.dart';
 import '../create_post_screen.dart';
 
@@ -16,41 +16,64 @@ class SocialScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        showTitle: true,
-        title: "Community",
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 16.w),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CreatePostScreen()),
-                );
-              },
-              child: Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: CustomColors.purpleColor,
-                ),
-                child: const Icon(Icons.add, color: Colors.white),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Community",
+                          style: CustomFonts.black30w600.copyWith(fontSize: 28.sp),
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          "Share your journey and connect with others.",
+                          style: CustomFonts.grey14w400.copyWith(height: 1.3),
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const CreatePostScreen()),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: CustomColors.purpleColor,
+                      ),
+                      child: const Icon(Icons.add, color: Colors.white),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: state.loading
-            ? const Center(child: CircularProgressIndicator())
-            : ListView.builder(
-                padding: EdgeInsets.only( bottom:80.h),
-                itemCount: state.posts.length,
-                itemBuilder: (context, index) {
-                  return SocialPostCard(post: state.posts[index]);
-                },
-              ),
+            Expanded(
+              child: state.loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                      padding: EdgeInsets.only(bottom: 80.h),
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: state.posts.length,
+                      itemBuilder: (context, index) {
+                        return SocialPostCard(post: state.posts[index]);
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

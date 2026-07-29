@@ -9,6 +9,7 @@ import 'screens/allergy_and_medical_history.dart';
 import 'screens/ar_face_model_Preview_screen.dart';
 import 'screens/biometric_screen.dart';
 import 'screens/bottom_nav_page.dart';
+import 'screens/bottom_nav_screens/appointments_screen.dart';
 import 'screens/bottom_nav_screens/face_detection_screen.dart';
 import 'screens/bottom_nav_screens/my_profile_screen.dart';
 import 'screens/treatments_screen.dart';
@@ -124,6 +125,11 @@ class RouteGenerator {
             arguments: pose,
           ),
           builder: (_) => FaceScanScreen(pose: pose),
+        );
+      case AppointmentsScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: AppointmentsScreen.routeName),
+          builder: (_) => const AppointmentsScreen(),
         );
       case MyProfileScreen.routeName:
         return MaterialPageRoute(

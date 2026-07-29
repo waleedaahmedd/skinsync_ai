@@ -15,6 +15,7 @@ enum AppointmentGrouping { dayWise, treatmentWise, clinicWise, doctorWise }
 
 class AppointmentsScreen extends ConsumerStatefulWidget {
   const AppointmentsScreen({super.key});
+  static const String routeName = "/AppointmentsScreen";
 
   @override
   ConsumerState<AppointmentsScreen> createState() => _AppointmentsScreenState();
@@ -96,6 +97,32 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (Navigator.of(context).canPop()) ...[
+                    SizedBox(height: 16.h),
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        height: 42.w,
+                        width: 42.w,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: CustomColors.greyColor,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            size: 18.sp,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                  SizedBox(height: 20.h),
                   Text(
                     "My Appointments",
                     style: CustomFonts.black30w600.copyWith(fontSize: 28.sp),
