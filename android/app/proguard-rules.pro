@@ -16,9 +16,15 @@
 -keep class com.google.android.libraries.maps.** { *; }
 -dontwarn com.google.android.libraries.maps.**
 
+-keepattributes *Annotation*,Signature,InnerClasses,EnclosingMethod
+
 # Firebase
 -keep class com.google.firebase.** { *; }
 -dontwarn com.google.firebase.**
+
+# Keep Firebase App Check and Play Integrity
+-keep class com.google.firebase.appcheck.** { *; }
+-keep class com.google.android.play.core.integrity.** { *; }
 
 # ML Kit
 -keep class com.google.mlkit.** { *; }

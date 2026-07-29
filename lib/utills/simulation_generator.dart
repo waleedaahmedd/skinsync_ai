@@ -13,17 +13,14 @@ class SimulationGenerator {
   );
 
   /// Generates simulations for all non-null poses provided.
-  Future<Map<String, Uint8List?>> generateAllSimulations({
+  Future<({Map<String, Uint8List> images, List<String> errors})> generateAllSimulations({
     required XFile? front,
     required XFile? left,
     required XFile? right,
     required Ref ref,
   }) async {
-    final results = <String, Uint8List?>{
-      'front': null,
-      'left': null,
-      'right': null,
-    };
+    final images = <String, Uint8List>{};
+    final errors = <String>[];
 
     final checkoutState = ref.read(checkoutViewModel);
     final selectedTreatmentsAndAreas = checkoutState.selectedTreatmentsAndAreas;
@@ -318,82 +315,100 @@ Return the image as binary image data.""";
       final List<Future<void>> tasks = [];
 
       if (front != null) {
-        tasks.add(_processPose('front', front, getPrompt('front')).then((val) => results['front'] = val));
+        tasks.add(() async {
+          try {
+            final val = await _processPose('front', front, getPrompt('front'));
+            if (val != null) images['front'] = val;
+          } catch (e) {
+            errors.add('Front: ${e.toString().replaceFirst('Exception: ', '')}');
+          }
+        }());
       }
+
       if (left != null) {
-        tasks.add(_processPose('left', left, getPrompt('left')).then((val) => results['left'] = val));
+        tasks.add(() async {
+          try {
+            final val = await _processPose('left', left, getPrompt('left'));
+            if (val != null) images['left'] = val;
+          } catch (e) {
+            errors.add('Left: ${e.toString().replaceFirst('Exception: ', '')}');
+          }
+        }());
       }
+
       if (right != null) {
-        tasks.add(_processPose('right', right, getPrompt('right')).then((val) => results['right'] = val));
+        tasks.add(() async {
+          try {
+            final val = await _processPose('right', right, getPrompt('right'));
+            if (val != null) images['right'] = val;
+          } catch (e) {
+            errors.add('Right: ${e.toString().replaceFirst('Exception: ', '')}');
+          }
+        }());
       }
 
       await Future.wait(tasks);
     } catch (e) {
       log("Error in multi-pose generation: $e");
+      errors.add("Generation failed: $e");
     }
 
-    return results;
+    return (images: images, errors: errors);
   }
 
   Future<Uint8List?> _processPose(String poseName, XFile image, String prompt) async {
-    try {
-      final bytes = await image.readAsBytes();
-      log("Processing pose: $poseName (${bytes.length} bytes)");
-      log("FULL PROMPT ($poseName):\n$prompt");
+    final bytes = await image.readAsBytes();
+    log("Processing pose: $poseName (${bytes.length} bytes)");
 
-      final content = [
-        Content.multi([
-          TextPart(prompt),
-          InlineDataPart('image/jpeg', bytes),
-        ]),
-      ];
+    final content = [
+      Content.multi([
+        TextPart(prompt),
+        InlineDataPart('image/jpeg', bytes),
+      ]),
+    ];
 
-      final response = await _model.generateContent(content);
-      
-      // 1. Check for binary data output (Direct Image Response)
-      for (var part in response.candidates.first.content.parts) {
-        if (part is InlineDataPart) {
-          log("AI returned direct binary data for $poseName (${part.bytes.length} bytes)");
-          return part.bytes;
-        }
+    final response = await _model.generateContent(content);
+    
+    // 1. Check for binary data output (Direct Image Response)
+    for (var part in response.candidates.first.content.parts) {
+      if (part is InlineDataPart) {
+        log("AI returned direct binary data for $poseName (${part.bytes.length} bytes)");
+        return part.bytes;
       }
-
-      // 2. Fallback to text parsing (Base64)
-      String? responseText = response.text;
-      log("AI RAW RESPONSE ($poseName): ${responseText?.substring(0, responseText.length > 50 ? 50 : responseText.length)}...");
-
-      if (responseText != null && responseText.trim().isNotEmpty) {
-        String cleanedBase64 = responseText.trim();
-        
-        if (cleanedBase64.contains('```')) {
-          final regExp = RegExp(r'```(?:[a-zA-Z0-9]+)?\s*([\s\S]*?)\s*```');
-          final match = regExp.firstMatch(cleanedBase64);
-          if (match != null) {
-            cleanedBase64 = match.group(1) ?? cleanedBase64;
-          }
-        }
-        
-        cleanedBase64 = cleanedBase64.replaceAll(RegExp(r'\s+'), '').replaceAll('`', '');
-        
-        if (cleanedBase64.contains(',')) {
-          cleanedBase64 = cleanedBase64.split(',').last;
-        }
-        
-        try {
-          final decodedBytes = base64Decode(cleanedBase64);
-          if (decodedBytes.isNotEmpty) {
-            log("Successfully decoded Base64 for $poseName (${decodedBytes.length} bytes)");
-            return decodedBytes;
-          }
-        } catch (e) {
-          log("Base64 decoding failed for $poseName");
-        }
-      } else {
-        log("AI returned empty text response for $poseName");
-      }
-    } catch (e) {
-      log("Error processing pose $poseName: $e");
     }
-    return null;
+
+    // 2. Fallback to text parsing (Base64)
+    String? responseText = response.text;
+    log("AI RAW RESPONSE ($poseName): ${responseText?.substring(0, responseText.length > 50 ? 50 : responseText.length)}...");
+
+    if (responseText != null && responseText.trim().isNotEmpty) {
+      String cleanedBase64 = responseText.trim();
+      
+      if (cleanedBase64.contains('```')) {
+        final regExp = RegExp(r'```(?:[a-zA-Z0-9]+)?\s*([\s\S]*?)\s*```');
+        final match = regExp.firstMatch(cleanedBase64);
+        if (match != null) {
+          cleanedBase64 = match.group(1) ?? cleanedBase64;
+        }
+      }
+      
+      cleanedBase64 = cleanedBase64.replaceAll(RegExp(r'\s+'), '').replaceAll('`', '');
+      
+      if (cleanedBase64.contains(',')) {
+        cleanedBase64 = cleanedBase64.split(',').last;
+      }
+      
+      try {
+        final decodedBytes = base64Decode(cleanedBase64);
+        if (decodedBytes.isNotEmpty) {
+          log("Successfully decoded Base64 for $poseName (${decodedBytes.length} bytes)");
+          return decodedBytes;
+        }
+      } catch (e) {
+        throw Exception("Failed to decode image data for $poseName.");
+      }
+    }
+    
+    throw Exception("AI failed to provide a valid image response for $poseName.");
   }
 }

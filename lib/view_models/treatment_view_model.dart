@@ -305,18 +305,21 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
       final timestamp = DateTime.now().millisecondsSinceEpoch;
 
-      if (results['front'] != null) {
-        imageFront = await bytesToXFile(results['front']!, 'ai_front_$timestamp.jpg');
+      if (results.images.containsKey('front')) {
+        imageFront = await bytesToXFile(results.images['front']!, 'ai_front_$timestamp.jpg');
       }
-      if (results['right'] != null) {
-        imageRight = await bytesToXFile(results['right']!, 'ai_right_$timestamp.jpg');
+      if (results.images.containsKey('right')) {
+        imageRight = await bytesToXFile(results.images['right']!, 'ai_right_$timestamp.jpg');
       }
-      if (results['left'] != null) {
-        imageLeft = await bytesToXFile(results['left']!, 'ai_left_$timestamp.jpg');
+      if (results.images.containsKey('left')) {
+        imageLeft = await bytesToXFile(results.images['left']!, 'ai_left_$timestamp.jpg');
       }
 
       if (imageFront == null && imageRight == null && imageLeft == null) {
-        throw Exception('AI failed to generate valid images. Please try again.');
+        String errorMsg = results.errors.join('\n');
+        if (errorMsg.isEmpty) errorMsg = 'AI failed to generate valid images. Please try again.';
+        log('SIMULATION FAILED: $errorMsg');
+        throw Exception(errorMsg);
       }
 
       if (wasBefore) toggleIsBefore();
@@ -330,10 +333,18 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         leftAiImage: imageLeft,
       );
       EasyLoading.dismiss();
-      EasyLoading.showSuccess('Simulations generated successfully!');
+      
+      String successMsg = 'Simulations generated successfully!';
+      if (results.errors.isNotEmpty) {
+        successMsg += '\nNote: Some poses failed to generate.';
+        log('SIMULATION PARTIAL SUCCESS. Errors: ${results.errors.join(', ')}');
+      } else {
+        log('SIMULATION FULL SUCCESS');
+      }
+      EasyLoading.showSuccess(successMsg);
     } catch (e, s) {
       final errorMsg = e.toString().replaceFirst('Exception: ', '');
-      log(errorMsg, stackTrace: s);
+      log('SIMULATION ERROR: $errorMsg', stackTrace: s);
       state = state.copyWith(loading: false, errorMessage: errorMsg);
       EasyLoading.dismiss();
       EasyLoading.showError(errorMsg);

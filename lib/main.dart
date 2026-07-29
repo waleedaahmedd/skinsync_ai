@@ -17,12 +17,24 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Initialize Firebase App Check
-  await FirebaseAppCheck.instance.activate(
-    androidProvider: kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
-    appleProvider: kDebugMode ? AppleProvider.debug : AppleProvider.deviceCheck,
-  );
+  if (kDebugMode) {
+    // Replace this string with the permanent token you generated in Step 1
 
+    await FirebaseAppCheck.instance.activate(
+      androidProvider: AndroidProvider.debug,
+      appleProvider: AppleProvider.debug,
+      // Pass the static token manually for Web if needed
+    );
+
+    // For native platforms, ensure the token is fed directly into the native layer.
+    // If you are using environment variables via --dart-define-from-file:
+    // const token = String.fromEnvironment('APP_CHECK_DEBUG_TOKEN');
+  } else {
+    // Production attestation providers
+    await FirebaseAppCheck.instance.activate(
+      androidProvider: AndroidProvider.playIntegrity,
+      appleProvider: AppleProvider.appAttestWithDeviceCheckFallback,    );
+  }
   await ScreenUtil.ensureScreenSize();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await SharedPref.init();
