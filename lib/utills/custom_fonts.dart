@@ -60,6 +60,13 @@ abstract final class CustomFonts {
     color: CustomColors.whiteColor,
     fontFamily: 'Degular',
   );
+  static TextStyle white12w400 = TextStyle(
+    height: 0,
+    fontSize: 12.sp,
+    fontWeight: FontWeight.w400,
+    color: CustomColors.whiteColor,
+    fontFamily: 'Degular',
+  );
   static TextStyle white14w600 = TextStyle(
     height: 0,
     fontSize: 14.sp,
@@ -71,6 +78,13 @@ abstract final class CustomFonts {
     height: 0,
     fontSize: 14.sp,
     fontWeight: FontWeight.w500,
+    color: CustomColors.whiteColor,
+    fontFamily: 'Degular',
+  );
+  static TextStyle white14w400 = TextStyle(
+    height: 0,
+    fontSize: 14.sp,
+    fontWeight: FontWeight.w400,
     color: CustomColors.whiteColor,
     fontFamily: 'Degular',
   );

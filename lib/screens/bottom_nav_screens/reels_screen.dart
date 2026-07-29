@@ -1,0 +1,154 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../utills/custom_fonts.dart';
+import '../../view_models/explore_view_model.dart';
+import '../../view_models/reels_view_model.dart';
+import '../../widgets/reel_card.dart';
+import '../../widgets/social_toggle_button.dart';
+import '../create_post_screen.dart';
+
+class ReelsScreen extends ConsumerStatefulWidget {
+  const ReelsScreen({super.key});
+
+  @override
+  ConsumerState<ReelsScreen> createState() => _ReelsScreenState();
+}
+
+class _ReelsScreenState extends ConsumerState<ReelsScreen> {
+  final PageController _pageController = PageController();
+  int _currentIndex = 0;
+  int _selectedTab = 1; // 0: Following, 1: For You, 2: Nearby
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(reelsViewModel);
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // Infinite Vertical PageView
+            PageView.builder(
+              controller: _pageController,
+              scrollDirection: Axis.vertical,
+              itemCount: state.reels.length,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              itemBuilder: (context, index) {
+                return ReelCard(
+                  reel: state.reels[index],
+                  isActive: _currentIndex == index,
+                );
+              },
+            ),
+
+            // Header with Icons and Tabs
+            SafeArea(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Search Icon (Top Left)
+                    GestureDetector(
+                      onTap: () {},
+                      child: Padding(
+                        padding: EdgeInsets.all(8.r),
+                        child: Icon(Icons.search_rounded, color: Colors.white, size: 26.sp),
+                      ),
+                    ),
+
+                    // Tabs (Center)
+                    Row(
+                      children: [
+                        _buildTab("Following", 0),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                          child: Text("|", style: CustomFonts.white14w400.copyWith(color: Colors.white38)),
+                        ),
+                        _buildTab("For You", 1),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                          child: Text("|", style: CustomFonts.white14w400.copyWith(color: Colors.white38)),
+                        ),
+                        _buildTab("Nearby", 2),
+                      ],
+                    ),
+
+                    // Right Actions (Plus & Toggle)
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const CreatePostScreen()),
+                            );
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.all(8.r),
+                            child: Icon(Icons.add_box_outlined, color: Colors.white, size: 26.sp),
+                          ),
+                        ),
+                        SizedBox(width: 4.w),
+                        SocialToggleButton(
+                          onTap: () => ref.read(exploreViewModel.notifier).toggleViewType(),
+                          icon: Icons.grid_view_rounded,
+                          isReels: true,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTab(String title, int index) {
+    bool isSelected = _selectedTab == index;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedTab = index;
+        });
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            title,
+            style: CustomFonts.white16w600.copyWith(
+              color: isSelected ? Colors.white : Colors.white70,
+              fontSize: isSelected ? 16.sp : 15.sp,
+            ),
+          ),
+          if (isSelected)
+            Container(
+              margin: EdgeInsets.only(top: 4.h),
+              height: 2.h,
+              width: 20.w,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}

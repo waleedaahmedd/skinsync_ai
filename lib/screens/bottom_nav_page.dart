@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'bottom_nav_bar.dart';
 import 'bottom_nav_screens/appointments_screen.dart';
+import 'bottom_nav_screens/explore_screen.dart';
 import 'bottom_nav_screens/my_profile_screen.dart';
-import 'bottom_nav_screens/social_screen.dart';
 import 'bottom_nav_screens/treatment_explore_screen.dart';
 import 'bottom_nav_screens/home_screen.dart';
 
@@ -19,8 +19,8 @@ class BottomNavPage extends ConsumerStatefulWidget {
   static final List<Widget> _children = [
     const HomeScreen(),
     const TreatmentExploreScreen(),
+    const ExploreScreen(),
     const AppointmentsScreen(),
-    const SocialScreen(),
     const MyProfileScreen(),
   ];
 
