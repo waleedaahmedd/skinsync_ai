@@ -68,7 +68,7 @@ class HomeScreen extends ConsumerWidget {
                     HeadingWithRightArrow(
                       title: "Upcoming Appointments",
                       onTap: () {
-                        ref.read(bottomNavViewModel.notifier).changePage(2);
+                        ref.read(bottomNavViewModel.notifier).changePage(3);
                       },
                     ),
                   ],

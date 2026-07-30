@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../view_models/auth_view_model.dart';
-import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_search_field.dart';
 import '../widgets/treatment_container.dart';
@@ -69,7 +68,7 @@ class _SuggestedTreatmentScreenState extends ConsumerState<SuggestedTreatmentScr
             child: filteredTreatments.isEmpty
                 ? _buildEmptyState()
                 : AnimationLimiter(
-                    key: ValueKey('suggested_treatments_list_\${_searchQuery}'),
+                    key: ValueKey('suggested_treatments_list_$_searchQuery'),
                     child: ListView.builder(
                       padding: EdgeInsets.symmetric(horizontal: 20.w),
                       scrollDirection: Axis.vertical,

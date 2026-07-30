@@ -574,6 +574,13 @@ abstract final class CustomFonts {
     fontFamily: 'Degular',
   );
 
+  static TextStyle grey800_16w600 = TextStyle(
+    fontSize: 16.sp,
+    fontWeight: FontWeight.w600,
+    color: const Color(0xFF424242),
+    fontFamily: 'Degular',
+  );
+
   static TextStyle white70_12w500 = TextStyle(
     fontSize: 12.sp,
     fontWeight: FontWeight.w500,
