@@ -57,4 +57,12 @@ extension DateTimeUtils on DateTime {
   int get secondsSinceEpoch {
     return millisecondsSinceEpoch ~/ 1000;
   }
+
+  static DateTime fromTimestamp(int timestamp) {
+    return DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+  }
+
+  static String formatTimestamp(int timestamp, {String pattern = 'dd MMM yyyy'}) {
+    return DateFormat(pattern).format(fromTimestamp(timestamp));
+  }
 }

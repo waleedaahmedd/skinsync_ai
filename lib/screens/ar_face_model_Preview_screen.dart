@@ -56,8 +56,9 @@ class _ArFaceModelPreviewScreenState
   late final PagingController<int, TreatmentData> _pagingController =
       PagingController<int, TreatmentData>(
         getNextPageKey: (state) {
-          if (state.items == null) return 1;
-          return state.items!.length < 10 ? null : state.nextIntPageKey;
+          final lastPageLength = state.pages?.lastOrNull?.length;
+          if (lastPageLength == null) return 1;
+          return lastPageLength < 10 ? null : state.nextIntPageKey;
         },
         fetchPage: (nextPage) async {
           final data = await ref

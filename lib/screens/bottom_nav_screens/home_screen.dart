@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../models/dummy_list_model.dart';
-import '../doctors_listing_screen.dart';
-import '../explore_clinics_screen.dart';
-import '../../view_models/bottom_nav_view_model.dart';
-import '../../widgets/home_horizontal_sections.dart';
-
+import '../../models/responses/auth_response.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
+import '../../utills/date_time_utills.dart';
 import '../../view_models/auth_view_model.dart';
+import '../../view_models/bottom_nav_view_model.dart';
 import '../../widgets/app_bar_with_action_icon.dart';
 import '../../widgets/discount_card.dart';
 import '../../widgets/grey_container.dart';
 import '../../widgets/heading_with_right_arrow.dart';
+import '../../widgets/home_horizontal_sections.dart';
 import '../../widgets/points_earn_card.dart';
 import '../../widgets/treatment_container.dart';
+import '../doctors_listing_screen.dart';
+import '../explore_clinics_screen.dart';
 import '../notification_screen.dart';
 import '../suggested_treatmentsScreen.dart';
 
@@ -25,8 +25,22 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Mock check for promotions count (Set to 0 to test empty state)
-    const int promotionsCount = 4;
+    // Promotions are still static as no API endpoint provides them yet
+    const int promotionsCount = 0; // Set to 0 to show empty state if not available
+
+    final authData = ref.watch(authViewModel).authData;
+    final dashboard = authData?.dashboard;
+    final appointments = dashboard?.appointments ?? [];
+
+    // Group appointments by date
+    final Map<String, List<DashboardAppointment>> groupedAppointments = {};
+    for (var appt in appointments) {
+      if (appt.date != null) {
+        final dateKey = DateTimeUtils.formatTimestamp(appt.date!);
+        groupedAppointments.putIfAbsent(dateKey, () => []).add(appt);
+      }
+    }
+    final sortedDateKeys = groupedAppointments.keys.toList();
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
@@ -63,7 +77,7 @@ class HomeScreen extends ConsumerWidget {
               SizedBox(height: 16.h),
 
               // Upcoming Appointments Empty State Check
-              dummyAppointments.isEmpty
+              appointments.isEmpty
                   ? _buildHorizontalEmptyState(
                       height: 100.h,
                       icon: Icons.calendar_today_rounded,
@@ -77,21 +91,14 @@ class HomeScreen extends ConsumerWidget {
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
                         scrollDirection: Axis.horizontal,
-                        itemCount: 3, // 3 Date Sections
+                        itemCount: sortedDateKeys.length,
                         itemBuilder: (context, dateIndex) {
-                          final dates = [
-                            "12 May 2026",
-                            "15 May 2026",
-                            "20 May 2026",
-                          ];
-                          final startIndex = dateIndex * 2;
-                          final dateAppointments = dummyAppointments
-                              .skip(startIndex)
-                              .take(2)
-                              .toList();
+                          final dateTitle = sortedDateKeys[dateIndex];
+                          final dateAppointments =
+                              groupedAppointments[dateTitle]!;
 
-                          return UpcomingAppointmentDateSection(
-                            dateTitle: dates[dateIndex],
+                          return DashboardAppointmentDateSection(
+                            dateTitle: dateTitle,
                             appointments: dateAppointments,
                           );
                         },
@@ -117,12 +124,10 @@ class HomeScreen extends ConsumerWidget {
                 height: 180.h,
                 child: Consumer(
                   builder: (context, ref, _) {
-                    final treatment = ref
-                        .watch(authViewModel)
-                        .authData
-                        ?.treatment;
+                    final suggestedTreatments =
+                        dashboard?.suggestedTreatments ?? [];
 
-                    if (treatment == null || treatment.isEmpty) {
+                    if (suggestedTreatments.isEmpty) {
                       return _buildHorizontalEmptyState(
                         height: 100.h,
                         icon: Icons.auto_awesome_rounded,
@@ -135,18 +140,21 @@ class HomeScreen extends ConsumerWidget {
                     return ListView.builder(
                       physics: const BouncingScrollPhysics(),
                       shrinkWrap: true,
-                      itemCount: treatment.length,
+                      itemCount: suggestedTreatments.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: EdgeInsets.only(
                             left: index == 0 ? 24.w : 16.w,
-                            right: index == treatment.length - 1 ? 24.w : 0.w,
+                            right:
+                                index == suggestedTreatments.length - 1
+                                    ? 24.w
+                                    : 0.w,
                           ),
                           child: TreatmentContainer(
                             imageHeight: 145.h,
                             width: 310.w,
-                            treatments: treatment[index],
+                            treatments: suggestedTreatments[index],
                           ),
                         );
                       },
@@ -172,7 +180,7 @@ class HomeScreen extends ConsumerWidget {
               SizedBox(height: 16.h),
 
               // Top Doctors Empty State Check
-              dummyDoctors.isEmpty
+              (dashboard?.topDoctors?.isEmpty ?? true)
                   ? _buildHorizontalEmptyState(
                       height: 100.h,
                       icon: Icons.badge_outlined,
@@ -186,9 +194,10 @@ class HomeScreen extends ConsumerWidget {
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
                         scrollDirection: Axis.horizontal,
-                        itemCount: dummyDoctors.length,
-                        itemBuilder: (context, index) =>
-                            DoctorHomeCard(doctor: dummyDoctors[index]),
+                        itemCount: dashboard!.topDoctors!.length,
+                        itemBuilder: (context, index) => DashboardDoctorHomeCard(
+                          doctor: dashboard.topDoctors![index],
+                        ),
                       ),
                     ),
               SizedBox(height: 28.h),
@@ -209,7 +218,7 @@ class HomeScreen extends ConsumerWidget {
               SizedBox(height: 16.h),
 
               // Top Clinics Empty State Check
-              topClinics.isEmpty
+              (dashboard?.topClinics?.isEmpty ?? true)
                   ? _buildHorizontalEmptyState(
                       height: 100.h,
                       icon: Icons.storefront_rounded,
@@ -223,9 +232,10 @@ class HomeScreen extends ConsumerWidget {
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
                         scrollDirection: Axis.horizontal,
-                        itemCount: topClinics.length,
-                        itemBuilder: (context, index) =>
-                            ClinicHomeCard(clinic: topClinics[index]),
+                        itemCount: dashboard!.topClinics!.length,
+                        itemBuilder: (context, index) => DashboardClinicHomeCard(
+                          clinic: dashboard.topClinics![index],
+                        ),
                       ),
                     ),
               SizedBox(height: 28.h),

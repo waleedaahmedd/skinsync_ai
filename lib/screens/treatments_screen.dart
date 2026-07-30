@@ -80,12 +80,11 @@ class _TreatmentMainScreenState extends ConsumerState<TreatmentMainScreen> {
   final TextEditingController _searchController = TextEditingController();
   late final _pagingController = PagingController<int, TreatmentData>(
     getNextPageKey: (state) {
-      if (state.items == null) {
+      final lastPageLength = state.pages?.lastOrNull?.length;
+      if (lastPageLength == null) {
         return 1;
       }
-      return state.items!.length < 10 ? null : state.nextIntPageKey;
-      // final length = state.pages?.lastOrNull?.length ?? 0;
-      // return length < 10 ? 0 : state.nextIntPageKey;
+      return lastPageLength < 10 ? null : state.nextIntPageKey;
     },
     fetchPage: (nextPage) async {
       final search = _searchController.text.trim();

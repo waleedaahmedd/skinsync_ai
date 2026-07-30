@@ -36,11 +36,11 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
   final _searchController = TextEditingController();
   late final _pagingController = PagingController<int, Clinic>(
     getNextPageKey: (state) {
-      final items = state.items;
-      if (items == null) {
+      final lastPageLength = state.pages?.lastOrNull?.length;
+      if (lastPageLength == null) {
         return 1;
       }
-      return items.length < 10 ? null : state.nextIntPageKey;
+      return lastPageLength < 10 ? null : state.nextIntPageKey;
     },
     fetchPage: (page) async {
       final clinics = await ref
