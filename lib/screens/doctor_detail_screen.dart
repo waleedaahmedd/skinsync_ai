@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../models/dummy_list_model.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../models/responses/get_doctor_response.dart';
 import '../utills/color_constant.dart';

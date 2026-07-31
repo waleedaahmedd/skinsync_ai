@@ -17,15 +17,15 @@ class AppointmentResponse extends BaseResponseModel {
 
 class AppointmentData {
   final int? appointmentId;
-  final AppointmentEntity? clinic;
-  final AppointmentEntity? doctor;
+  final CreatedAppointmentEntity? clinic;
+  final CreatedAppointmentEntity? doctor;
   final int? date;
   final int? startTime;
   final int? endTime;
-  final AppointmentTreatment? treatment;
-  final List<TreatmentSubsection>? treatmentSubsection;
+  final CreatedAppointmentTreatment? treatment;
+  final List<CreatedTreatmentSubsection>? treatmentSubsection;
   final int? treatmentTotal;
-  final PaymentType? paymentType;
+  final AppointmentPaymentType? paymentType;
   final int? discount;
   final String? discountType;
   final int? loyalityPoints;
@@ -59,27 +59,27 @@ class AppointmentData {
         appointmentId: json["appointment_id"],
         clinic: json["clinic"] == null
             ? null
-            : AppointmentEntity.fromJson(json["clinic"]),
+            : CreatedAppointmentEntity.fromJson(json["clinic"]),
         doctor: json["doctor"] == null
             ? null
-            : AppointmentEntity.fromJson(json["doctor"]),
+            : CreatedAppointmentEntity.fromJson(json["doctor"]),
         date: json["date"],
         startTime: json["start_time"],
         endTime: json["end_time"],
         treatment: json["treatment"] == null
             ? null
-            : AppointmentTreatment.fromJson(json["treatment"]),
+            : CreatedAppointmentTreatment.fromJson(json["treatment"]),
         treatmentSubsection: json["treatment_subsection"] == null
             ? []
-            : List<TreatmentSubsection>.from(
+            : List<CreatedTreatmentSubsection>.from(
                 json["treatment_subsection"]!.map(
-                  (x) => TreatmentSubsection.fromJson(x),
+                  (x) => CreatedTreatmentSubsection.fromJson(x),
                 ),
               ),
         treatmentTotal: json["treatment_total"],
         paymentType: json["payment_type"] == null
             ? null
-            : PaymentType.fromJson(json["payment_type"]),
+            : AppointmentPaymentType.fromJson(json["payment_type"]),
         discount: json["discount"],
         discountType: json["discount_type"],
         loyalityPoints: json["loyality_points"],
@@ -90,40 +90,40 @@ class AppointmentData {
       );
 }
 
-class AppointmentEntity {
+class CreatedAppointmentEntity {
   final int? id;
   final String? name;
   final String? image;
 
-  AppointmentEntity({this.id, this.name, this.image});
+  CreatedAppointmentEntity({this.id, this.name, this.image});
 
-  factory AppointmentEntity.fromJson(Map<String, dynamic> json) =>
-      AppointmentEntity(
+  factory CreatedAppointmentEntity.fromJson(Map<String, dynamic> json) =>
+      CreatedAppointmentEntity(
         id: json["id"],
         name: json["name"],
         image: json["image"],
       );
 }
 
-class PaymentType {
+class AppointmentPaymentType {
   final int? id;
   final String? title;
   final int? amount;
 
-  PaymentType({this.id, this.title, this.amount});
+  AppointmentPaymentType({this.id, this.title, this.amount});
 
-  factory PaymentType.fromJson(Map<String, dynamic> json) =>
-      PaymentType(id: json["id"], title: json["title"], amount: json["amount"]);
+  factory AppointmentPaymentType.fromJson(Map<String, dynamic> json) =>
+      AppointmentPaymentType(id: json["id"], title: json["title"], amount: json["amount"]);
 }
 
-class AppointmentTreatment {
+class CreatedAppointmentTreatment {
   final int? treatmentId;
   final int? treatmentPrice;
   final int? treatmentQuantity;
   final String? beforeImage;
   final String? afterImage;
 
-  AppointmentTreatment({
+  CreatedAppointmentTreatment({
     this.treatmentId,
     this.treatmentPrice,
     this.treatmentQuantity,
@@ -131,8 +131,8 @@ class AppointmentTreatment {
     this.afterImage,
   });
 
-  factory AppointmentTreatment.fromJson(Map<String, dynamic> json) =>
-      AppointmentTreatment(
+  factory CreatedAppointmentTreatment.fromJson(Map<String, dynamic> json) =>
+      CreatedAppointmentTreatment(
         treatmentId: json["treatment_id"],
         treatmentPrice: json["treatment_price"],
         treatmentQuantity: json["treatment_quantity"],
@@ -141,19 +141,19 @@ class AppointmentTreatment {
       );
 }
 
-class TreatmentSubsection {
+class CreatedTreatmentSubsection {
   final int? sectionId;
   final int? syringesQuantity;
   final int? perSyringePrice;
 
-  TreatmentSubsection({
+  CreatedTreatmentSubsection({
     this.sectionId,
     this.syringesQuantity,
     this.perSyringePrice,
   });
 
-  factory TreatmentSubsection.fromJson(Map<String, dynamic> json) =>
-      TreatmentSubsection(
+  factory CreatedTreatmentSubsection.fromJson(Map<String, dynamic> json) =>
+      CreatedTreatmentSubsection(
         sectionId: json["section_id"],
         syringesQuantity: json["syringes_quantity"],
         perSyringePrice: json["per_syringe_price"],

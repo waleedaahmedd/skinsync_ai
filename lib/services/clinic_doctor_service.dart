@@ -11,6 +11,7 @@ import '../models/responses/get_doctor_response.dart';
 import '../models/responses/payment_options_response.dart';
 import '../models/responses/treatment_pricing_response.dart';
 import '../repositories/clinic_doctor_repository.dart';
+import '../utills/date_time_utills.dart';
 import '../utills/enums.dart';
 import 'api_base_helper.dart';
 
@@ -93,7 +94,7 @@ class ClinicDoctorService implements ClinicDoctorRepository {
       endPoint: EndPoints.getAvailability,
       requestType: 'GET',
       params:
-          '?doctor_id=$doctorId&clinic_id=$clinicId&date=${date.millisecondsSinceEpoch ~/ 1000}',
+          '?doctor_id=$doctorId&clinic_id=$clinicId&date=${date.secondsSinceEpoch}',
     );
     final data = AvailabilityResponse.fromJson(jsonDecode(response.body));
     if (data.status == false) {

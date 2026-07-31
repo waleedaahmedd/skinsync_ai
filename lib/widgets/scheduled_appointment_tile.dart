@@ -5,7 +5,7 @@ import '../utills/assets.dart';
 import '../utills/custom_fonts.dart';
 
 class ScheduledAppointmentTile extends StatelessWidget {
-  final Appointment appointment;
+  final AppointmentItem appointment;
   const ScheduledAppointmentTile({super.key, required this.appointment});
 
   @override
@@ -14,9 +14,9 @@ class ScheduledAppointmentTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Image.asset(PngAssets.image, width: 287.w),
-        Text(appointment.clinic?.name ?? 'N/A', style: CustomFonts.black18w600),
-        Text("Dermal Fillers – Cheeks", style: CustomFonts.black14w400),
-        Text("Glow Skin Clinic", style: CustomFonts.black14w400),
+        Text(appointment.clinic?.clinicName ?? 'N/A', style: CustomFonts.black18w600),
+        Text(appointment.treatments?.firstOrNull?.treatmentName ?? "Consultation", style: CustomFonts.black14w400),
+        Text(appointment.clinic?.clinicName ?? "Medical Spa", style: CustomFonts.black14w400),
       ],
     );
   }

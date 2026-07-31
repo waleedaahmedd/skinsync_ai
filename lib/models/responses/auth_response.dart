@@ -1,4 +1,5 @@
 import 'base_response_model.dart';
+import 'get_appointment_response.dart';
 import 'treatment_list_response.dart';
 
 class AuthResponse extends BaseResponseModel {
@@ -216,60 +217,32 @@ class DashboardAppointment {
     "doctor": doctor?.toJson(),
     "clinic": clinic?.toJson(),
   };
+
+  AppointmentItem toAppointmentItem() {
+    return AppointmentItem(
+      date: date,
+      appointmentType: appointmentType,
+      appointmentTypeId: appointmentTypeId,
+      treatments: treatments?.expand((x) => x).toList(),
+      doctor: doctor != null
+          ? AppointmentDoctor(
+            doctorId: doctor!.doctorId,
+            doctorName: doctor!.doctorName,
+            doctorImage: doctor!.doctorImage,
+          )
+          : null,
+      clinic: clinic != null
+          ? AppointmentClinic(
+            clinicId: clinic!.clinicId,
+            clinicName: clinic!.clinicName,
+            clinicImage: clinic!.clinicImage,
+          )
+          : null,
+    );
+  }
 }
 
-class AppointmentTreatment {
-  final int? treatmentId;
-  final String? treatmentName;
-  final int? areaId;
-  final String? areaName;
-  final AppointmentMaterial? material;
-
-  AppointmentTreatment({
-    this.treatmentId,
-    this.treatmentName,
-    this.areaId,
-    this.areaName,
-    this.material,
-  });
-
-  factory AppointmentTreatment.fromJson(Map<String, dynamic> json) =>
-      AppointmentTreatment(
-        treatmentId: json["treatment_id"],
-        treatmentName: json["treatment_name"],
-        areaId: json["area_id"],
-        areaName: json["area_name"],
-        material: json["material"] == null
-            ? null
-            : AppointmentMaterial.fromJson(json["material"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-    "treatment_id": treatmentId,
-    "treatment_name": treatmentName,
-    "area_id": areaId,
-    "area_name": areaName,
-    "material": material?.toJson(),
-  };
-}
-
-class AppointmentMaterial {
-  final int? id;
-  final int? selectedQuantity;
-
-  AppointmentMaterial({this.id, this.selectedQuantity});
-
-  factory AppointmentMaterial.fromJson(Map<String, dynamic> json) =>
-      AppointmentMaterial(
-        id: json["id"],
-        selectedQuantity: json["selected_quantity"],
-      );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "selected_quantity": selectedQuantity,
-  };
-}
+// Remove AppointmentTreatment and AppointmentMaterial here to use from get_appointment_response.dart
 
 class DashboardDoctor {
   final int? doctorId;

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../utills/date_time_utills.dart';
 import '../widgets/bottom_sheets/before_you_book_bottomsheet.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
@@ -121,9 +121,7 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                             Expanded(
                               child: Text(
                                 _selectedDate != null
-                                    ? DateFormat(
-                                        'EEEE, MMMM dd, yyyy',
-                                      ).format(_selectedDate!)
+                                    ? _selectedDate!.formattedDayDate
                                     : "Choose a consultation date",
                                 style: _selectedDate != null
                                     ? CustomFonts.black14w600

@@ -2,10 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
-import '../../models/dummy_list_model.dart';
+import '../../models/responses/get_appointment_response.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
+import '../../utills/date_time_utills.dart';
+import '../../view_models/appointment_view_model.dart';
 
 import '../appointment_detail_screen.dart';
 import '../../widgets/custom_search_field.dart';
@@ -29,11 +30,17 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
 
   final List<String> _appointmentTypes = [
     "All",
-    "Consultation",
-    "Sessions",
-    "Follow-Up / Touch-Up",
-    "Provisional Booking",
+    "consultation",
+    "Treatment session",
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(appointmentProvider.notifier).getAppointments();
+    });
+  }
 
   @override
   void dispose() {
@@ -41,36 +48,43 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
     super.dispose();
   }
 
-  Map<String, List<DummyAppointment>> _getGroupedAppointments() {
-    List<DummyAppointment> filteredList = dummyAppointments.where((appointment) {
+  Map<String, List<AppointmentItem>> _getGroupedAppointments(List<AppointmentItem> items) {
+    List<AppointmentItem> filteredList = items.where((appointment) {
       final query = _searchQuery.toLowerCase();
-      final matchesSearch = appointment.clinicName.toLowerCase().contains(query) ||
-          appointment.doctorName.toLowerCase().contains(query) ||
-          appointment.treatmentName.toLowerCase().contains(query) ||
-          appointment.area.toLowerCase().contains(query) ||
-          appointment.type.toLowerCase().contains(query);
+      final clinicName = appointment.clinic?.clinicName?.toLowerCase() ?? "";
+      final doctorName = appointment.doctor?.doctorName?.toLowerCase() ?? "";
+      final type = appointment.appointmentType?.toLowerCase() ?? "";
 
-      final matchesType = _selectedTypeFilter == "All" || appointment.type == _selectedTypeFilter;
+      final matchesSearch = clinicName.contains(query) ||
+          doctorName.contains(query) ||
+          type.contains(query);
+
+      final matchesType = _selectedTypeFilter == "All" ||
+          appointment.appointmentType == _selectedTypeFilter;
 
       return matchesSearch && matchesType;
     }).toList();
 
-    Map<String, List<DummyAppointment>> grouped = {};
+    Map<String, List<AppointmentItem>> grouped = {};
 
     for (var appointment in filteredList) {
       String key = "";
       switch (_selectedGrouping) {
         case AppointmentGrouping.dayWise:
-          key = DateFormat('EEEE, MMM d, yyyy').format(appointment.date);
+          if (appointment.date != null) {
+            key = DateTimeUtils.formatTimestampToDayDate(appointment.date!);
+          } else {
+            key = "Unknown Date";
+          }
           break;
         case AppointmentGrouping.treatmentWise:
-          key = appointment.treatmentName;
+          key = appointment.treatments?.firstOrNull?.treatmentName ?? "No Treatment";
           break;
         case AppointmentGrouping.clinicWise:
-          key = appointment.clinicName;
+          key = appointment.clinic?.clinicName ?? "Unknown Clinic";
           break;
         case AppointmentGrouping.doctorWise:
-          key = appointment.doctorName;
+          key = appointment.doctor?.doctorName ?? "Unknown Doctor";
           break;
       }
 
@@ -85,7 +99,9 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final groupedAppointments = _getGroupedAppointments();
+    final appointmentState = ref.watch(appointmentProvider);
+    final appointments = appointmentState.appointmentsResponse?.data?.items ?? [];
+    final groupedAppointments = _getGroupedAppointments(appointments);
 
     return Scaffold(
       body: SafeArea(
@@ -176,7 +192,9 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                 ],
               ),
               Expanded(
-                child: groupedAppointments.isEmpty
+                child: appointmentState.loading
+                    ? const Center(child: CupertinoActivityIndicator())
+                    : groupedAppointments.isEmpty
                     ? _buildEmptyState()
                     : ListView.builder(
                         padding: EdgeInsets.only( top: 20.h,bottom: 80),
@@ -184,7 +202,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                         itemCount: groupedAppointments.length,
                         itemBuilder: (context, index) {
                           String key = groupedAppointments.keys.elementAt(index);
-                          List<DummyAppointment> appointments = groupedAppointments[key]!;
+                          List<AppointmentItem> appointments = groupedAppointments[key]!;
                           return Container(
                             padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 8.h),
                             margin: EdgeInsets.only(bottom: 16.h),
@@ -258,7 +276,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
     );
   }
 
-  Widget _buildGroupSection(String title, List<DummyAppointment> appointments) {
+  Widget _buildGroupSection(String title, List<AppointmentItem> appointments) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -284,14 +302,22 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
     );
   }
 
-  Widget _buildAppointmentCard(DummyAppointment appointment) {
-    bool isProvisional = appointment.type == "Provisional Booking";
-    Color typeColor = _getTypeColor(appointment.type);
-    TextStyle timeStyle = _getTimeStyle(appointment.type);
+  Widget _buildAppointmentCard(AppointmentItem appointment) {
+    final type = appointment.appointmentType ?? "consultation";
+    Color typeColor = _getTypeColor(type);
+    TextStyle timeStyle = _getTimeStyle(type);
 
-    final bgImage = appointment.treatmentName.toLowerCase().contains("botox")
-        ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl-cyJqFlcZav1TlRMEuajtrg2RJlWY3rTQA&s"
-        : "https://movelmedspa.com/storage/2024/05/Cheek-Filler-Treatment-at-Movel-Med-Spa.webp";
+    final dateStr = appointment.date != null
+        ? DateTimeUtils.formatTimestampToDayDate(appointment.date!)
+        : "N/A";
+
+    final startTime = appointment.slot?.startTime != null
+        ? DateTimeUtils.formatTimestampToTime(appointment.slot!.startTime!)
+        : "--:--";
+    final endTime = appointment.slot?.endTime != null
+        ? DateTimeUtils.formatTimestampToTime(appointment.slot!.endTime!)
+        : "--:--";
+    final timeString = "$startTime - $endTime";
 
     return GestureDetector(
       onTap: () {
@@ -303,185 +329,197 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
         );
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: 12.h),
+        margin: EdgeInsets.only(bottom: 16.h),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18.r),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24.r),
+          border: Border.all(color: Colors.grey.shade100, width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 15,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(18.r),
-          child: Stack(
-            children: [
-              // 1. Cover Image Background
-              Positioned.fill(
-                child: CachedNetworkImage(
-                  imageUrl: bgImage,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: Colors.grey.shade100,
-                    child: const Center(child: CupertinoActivityIndicator()),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    color: Colors.grey.shade100,
-                    child: const Icon(Icons.broken_image_rounded, color: Colors.grey),
-                  ),
-                ),
+        child: Column(
+          children: [
+            // 1. Top Section: Date & Appointment Slot (Gradient-style background)
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
+              decoration: BoxDecoration(
+                color: typeColor.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
               ),
-
-              // 2. Translucent Premium White Mask Overlay
-              Positioned.fill(
-                child: Container(
-                  color: Colors.white.withValues(alpha: 0.75),
-                ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.calendar_today_rounded, size: 16.sp, color: typeColor),
+                      SizedBox(width: 8.w),
+                      Text(dateStr, style: CustomFonts.black14w700),
+                      const Spacer(),
+                      _buildTypeBadge(type, typeColor, timeStyle),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.access_time_filled_rounded,
+                        size: 14.sp,
+                        color: typeColor.withValues(alpha: 0.7),
+                      ),
+                      SizedBox(width: 8.w),
+                      Text(
+                        timeString,
+                        style: CustomFonts.black13w600.copyWith(color: Colors.black87),
+                      ),
+                    ],
+                  ),
+                ],
               ),
+            ),
 
-              // 3. Card Content Layout (IntrinsicHeight Row)
-              IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Left Time Block with custom translucent background styling
-                    Container(
-                      width: 85.w,
-                      decoration: BoxDecoration(
-                        color: typeColor.withValues(alpha: 0.25),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(18.r),
-                          bottomLeft: Radius.circular(18.r),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w),
-                        child: Center(
-                          child: Text(
-                            appointment.time.replaceAll(" - ", "\n-\n"),
-                            textAlign: TextAlign.center,
-                            style: CustomFonts.black10w600.copyWith(
-                              height: 1.3,
-                              color: Colors.black87,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 10.sp,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.all(14.w),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        appointment.treatmentName,
-                                        style: CustomFonts.black13w600,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      SizedBox(height: 1.h),
-                                      Text(
-                                        appointment.area,
-                                        style: CustomFonts.grey700_10w400,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
+            // 2. Middle Section: Clinic & Doctor
+            Padding(
+              padding: EdgeInsets.all(18.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Doctor & Clinic Row
+                  Row(
+                    children: [
+                      // Clinic Info
+                      if (appointment.clinic != null)
+                        Expanded(
+                          child: Row(
+                            children: [
+                              ClipOval(
+                                child: CachedNetworkImage(
+                                  imageUrl: appointment.clinic?.clinicImage ?? "",
+                                  height: 32.w,
+                                  width: 32.w,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(color: Colors.grey.shade100),
+                                  errorWidget: (context, url, error) => Container(
+                                    color: Colors.grey.shade100,
+                                    child: const Icon(Icons.business, size: 16, color: Colors.grey),
                                   ),
                                 ),
-                                SizedBox(width: 4.w),
-                                _buildTypeBadge(appointment.type, typeColor, timeStyle),
-                              ],
+                              ),
+                              SizedBox(width: 10.w),
+                              Expanded(
+                                child: Text(
+                                  appointment.clinic!.clinicName ?? "N/A",
+                                  style: CustomFonts.grey700_12w400,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      SizedBox(width: 12.w),
+                      // Doctor Info
+                      if (appointment.doctor != null)
+                        Expanded(
+                          child: Row(
+                            children: [
+                              ClipOval(
+                                child: CachedNetworkImage(
+                                  imageUrl: appointment.doctor?.doctorImage ?? "",
+                                  height: 32.w,
+                                  width: 32.w,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(color: Colors.grey.shade100),
+                                  errorWidget: (context, url, error) => Container(
+                                    color: Colors.grey.shade100,
+                                    child: const Icon(Icons.person, size: 16, color: Colors.grey),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 10.w),
+                              Expanded(
+                                child: Text(
+                                  appointment.doctor!.doctorName ?? "N/A",
+                                  style: CustomFonts.grey700_12w400,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
+
+                  if (appointment.treatments?.isNotEmpty ?? false) ...[
+                    SizedBox(height: 18.h),
+                    const Divider(height: 1, color: Colors.black12),
+                    SizedBox(height: 18.h),
+
+                    // 3. Treatments List
+                    Text("Selected Treatments", style: CustomFonts.darkPurple12w600),
+                    SizedBox(height: 12.h),
+                    ...appointment.treatments!.map(
+                      (t) => Padding(
+                        padding: EdgeInsets.only(bottom: 10.h),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(6.w),
+                              decoration: BoxDecoration(
+                                color: CustomColors.purpleColor.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: Icon(
+                                Icons.auto_awesome_rounded,
+                                size: 14.sp,
+                                color: CustomColors.purpleColor,
+                              ),
                             ),
-                            SizedBox(height: 8.h),
-                            _buildInfoRow(Icons.business_rounded, appointment.clinicName),
-                            if (appointment.doctorName != "Pending")
-                              Padding(
-                                padding: EdgeInsets.only(top: 3.h),
-                                child: _buildInfoRow(Icons.person_rounded, appointment.doctorName),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(t.treatmentName ?? "N/A", style: CustomFonts.black13w600),
+                                  Text(
+                                    "${t.areaName ?? ''} ${t.material != null ? '(${t.material!.selectedQuantity} Syringes)' : ''}",
+                                    style: CustomFonts.grey700_10w400,
+                                  ),
+                                ],
                               ),
-                            if (isProvisional)
-                              Container(
-                                margin: EdgeInsets.only(top: 8.h),
-                                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withValues(alpha: 0.05),
-                                  borderRadius: BorderRadius.circular(6.r),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(Icons.info_outline_rounded, size: 10, color: Colors.black54),
-                                    SizedBox(width: 4.w),
-                                    Text(
-                                      "Awaiting clinic onboarding",
-                                      style: CustomFonts.grey700_10w400,
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            ),
                           ],
                         ),
                       ),
                     ),
                   ],
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Color _getTypeColor(String type) {
-    switch (type) {
-      case "Consultation": return CustomColors.blueColor;
-      case "Sessions": return CustomColors.pinkColor;
-      case "Follow-Up / Touch-Up": return CustomColors.darkPurple;
-      case "Provisional Booking": return CustomColors.yellow;
+    switch (type.toLowerCase()) {
+      case "consultation": return CustomColors.blueColor;
+      case "treatment session": return CustomColors.pinkColor;
       default: return CustomColors.purpleColor;
     }
   }
 
   TextStyle _getTimeStyle(String type) {
-    switch (type) {
-      case "Consultation": return CustomFonts.blue10w700;
-      case "Sessions": return CustomFonts.pink10w700;
-      case "Follow-Up / Touch-Up": return CustomFonts.darkPurple10w700;
-      case "Provisional Booking": return CustomFonts.amber10w700;
+    switch (type.toLowerCase()) {
+      case "consultation": return CustomFonts.blue10w700;
+      case "treatment session": return CustomFonts.pink10w700;
       default: return CustomFonts.blue10w700;
     }
-  }
-
-  Widget _buildInfoRow(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(icon, size: 13.sp, color: Colors.grey.shade500),
-        SizedBox(width: 6.w),
-        Expanded(
-          child: Text(
-            text,
-            style: CustomFonts.grey700_10w400,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
-    );
   }
 
   Widget _buildTypeBadge(String type, Color color, TextStyle textStyle) {

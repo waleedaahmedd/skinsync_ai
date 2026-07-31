@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 
 import '../models/responses/payment_options_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../utills/date_time_utills.dart';
 import '../view_models/checkout_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
@@ -36,7 +36,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     final doctorName =
         checkoutState.selectedDoctor?.name ?? "Specialist Doctor";
     final dateStr = checkoutState.selectedDate != null
-        ? DateFormat('EEEE, MMM dd, yyyy').format(checkoutState.selectedDate!)
+        ? checkoutState.selectedDate!.formattedDayDate
         : "Not Selected";
     final slotStr = checkoutState.selectedSlot ?? "Not Selected";
 

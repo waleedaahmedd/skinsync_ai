@@ -2,10 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../utills/date_time_utills.dart';
 import '../view_models/checkout_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
@@ -185,9 +185,7 @@ class ReviewScreen extends ConsumerWidget {
                           _buildSummaryRow(
                             Icons.calendar_today_rounded,
                             "Date",
-                            date != null
-                                ? DateFormat('EEEE, MMM dd, yyyy').format(date)
-                                : "Not Selected",
+                            date != null ? date.formattedDayDate : "Not Selected",
                           ),
                           const Divider(height: 24),
                           _buildSummaryRow(

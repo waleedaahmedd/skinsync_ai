@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 
 import '../models/responses/get_doctor_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../utills/date_time_utills.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/doctor_view_model.dart';
 import '../widgets/custom_app_bar.dart';
@@ -207,9 +207,7 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                               Expanded(
                                 child: Text(
                                   _selectedDate != null
-                                      ? DateFormat(
-                                          'MMM dd, yyyy',
-                                        ).format(_selectedDate!)
+                                      ? _selectedDate!.formattedDate
                                       : "Select Date",
                                   style: _selectedDate != null
                                       ? CustomFonts.white14w600.copyWith(

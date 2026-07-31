@@ -25,6 +25,7 @@ import '../repositories/clinic_doctor_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/appointment_service.dart';
 import '../services/clinic_doctor_service.dart';
+import '../utills/date_time_utills.dart';
 import 'base_view_model.dart';
 import 'doctor_view_model.dart';
 import 'treatment_view_model.dart';
@@ -404,9 +405,9 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     return AppointmentRequest(
       clinicId: clinicId,
       doctorId: doctorId,
-      date: date.millisecondsSinceEpoch ~/ 1000,
-      startTime: slot.startTime.millisecondsSinceEpoch ~/ 1000,
-      endTime: slot.endTime.millisecondsSinceEpoch ~/ 1000,
+      date: date.secondsSinceEpoch,
+      startTime: slot.startTime.secondsSinceEpoch,
+      endTime: slot.endTime.secondsSinceEpoch,
       appointmentTypeId: appointmentType.id!,
       isInviteClinic: state.isInviteClinic,
       simulations: SimulationsRequest(

@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
 
 import '../models/responses/simulation_history_response.dart';
 import '../utills/color_constant.dart';
@@ -41,10 +40,9 @@ class _SimulationHistoryScreenState
     final state = ref.watch(appointmentProvider);
     final simulations = state.simulations;
     final Map<String, List<SimulationData>> groupedSimulations = {};
-    final dateFormat = DateFormat('MMMM dd, yyyy');
     for (var sim in simulations) {
       if (sim.createdAt != null) {
-        final dateKey = dateFormat.format(sim.createdAt!);
+        final dateKey = sim.createdAt!.formattedFullDate;
         if (groupedSimulations.containsKey(dateKey)) {
           groupedSimulations[dateKey]!.add(sim);
         } else {

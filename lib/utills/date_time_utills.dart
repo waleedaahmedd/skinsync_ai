@@ -37,7 +37,25 @@ String _getDayString(int weekday) {
   }
 }
 
-extension DateTimeUtils on DateTime {
+class DateTimeUtils {
+  static DateTime fromTimestamp(int timestamp) {
+    return DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+  }
+
+  static String formatTimestamp(int timestamp, {String pattern = 'dd MMM yyyy'}) {
+    return DateFormat(pattern).format(fromTimestamp(timestamp));
+  }
+
+  static String formatTimestampToDayDate(int timestamp) {
+    return DateFormat('EEEE, MMM d, yyyy').format(fromTimestamp(timestamp));
+  }
+
+  static String formatTimestampToTime(int timestamp) {
+    return DateFormat('hh:mm a').format(fromTimestamp(timestamp));
+  }
+}
+
+extension DateTimeExtension on DateTime {
   String get formattedDate {
     return DateFormat('dd MMM yyyy').format(this);
   }
@@ -54,15 +72,15 @@ extension DateTimeUtils on DateTime {
     return DateFormat('EEE MMM dd - hh:mm a').format(this);
   }
 
+  String get formattedDayDate {
+    return DateFormat('EEEE, MMM d, yyyy').format(this);
+  }
+
+  String get formattedFullDate {
+    return DateFormat('MMMM dd, yyyy').format(this);
+  }
+
   int get secondsSinceEpoch {
     return millisecondsSinceEpoch ~/ 1000;
-  }
-
-  static DateTime fromTimestamp(int timestamp) {
-    return DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-  }
-
-  static String formatTimestamp(int timestamp, {String pattern = 'dd MMM yyyy'}) {
-    return DateFormat(pattern).format(fromTimestamp(timestamp));
   }
 }
