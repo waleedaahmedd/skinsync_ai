@@ -4,7 +4,7 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:flutter_screenutil/flutter_screenutil.dart';
-// import 'package:skinsync_ai/screens/ar_face_model_Preview_screen.dart';
+// import 'package:skinsync_ai/screens/ar_face_model_preview_screen.dart';
 // import 'package:skinsync_ai/utills/color_constant.dart';
 // import 'package:skinsync_ai/widgets/grey_container.dart';
 // import 'package:skinsync_ai/widgets/service_type_button.dart';

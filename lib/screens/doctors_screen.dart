@@ -15,9 +15,10 @@ import 'doctor_detail_screen.dart';
 
 class DoctorsScreen extends ConsumerStatefulWidget {
   static const routeName = '/doctors_screen';
-  final Clinic clinic;
+  final Clinic? clinic;
+  final bool isFromHome;
 
-  const DoctorsScreen({super.key, required this.clinic});
+  const DoctorsScreen({super.key, this.clinic, this.isFromHome = false});
 
   @override
   ConsumerState<DoctorsScreen> createState() => _DoctorsScreenState();
@@ -159,220 +160,226 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
 
     return Scaffold(
       backgroundColor: CustomColors.whiteColor,
-      appBar: const CustomAppBar(showTitle: true, title: "Select Doctor"),
+      appBar: CustomAppBar(
+        showTitle: true,
+        title: widget.isFromHome ? "Our Specialists" : "Select Doctor",
+      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: CustomColors.whiteBlueGradient,
         ),
-        child: Column(
-          children: [
-            SizedBox(height: 16.h),
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 16.h),
 
-            // Search Bar & Filter Clear Button Row
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: CustomSearchField(
-                      controller: _searchController,
-                      hintText: "Search Doctors...",
-                    ),
-                  ),
-                  if (hasActiveFilters) ...[
-                    SizedBox(width: 8.w),
-                    GestureDetector(
-                      onTap: _clearFilters,
-                      child: Container(
-                        padding: EdgeInsets.all(12.w),
-                        decoration: BoxDecoration(
-                          color: Colors.red.shade50,
-                          borderRadius: BorderRadius.circular(12.r),
-                          border: Border.all(color: Colors.red.shade100),
-                        ),
-                        child: Icon(
-                          Icons.filter_alt_off_rounded,
-                          color: Colors.red.shade400,
-                          size: 20.sp,
-                        ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            SizedBox(height: 16.h),
-
-            // Premium Date Selector Card & Slot Selector Slider Horizontal Row
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Row(
-                children: [
-                  // Premium Calendar Date Picker Trigger
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => _selectDate(context),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 14.w,
-                          vertical: 10.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _selectedDate != null
-                              ? CustomColors.pinkColor
-                              : CustomColors.lightPurpleColor.withValues(
-                                  alpha: 0.3,
-                                ),
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.calendar_month_rounded,
-                              color: _selectedDate != null
-                                  ? Colors.white
-                                  : Colors.black87,
-                              size: 16.sp,
-                            ),
-                            SizedBox(width: 6.w),
-                            Expanded(
-                              child: Text(
-                                _selectedDate != null
-                                    ? DateFormat(
-                                        'MMM dd, yyyy',
-                                      ).format(_selectedDate!)
-                                    : "Select Date",
-                                style: _selectedDate != null
-                                    ? CustomFonts.white14w600.copyWith(
-                                        fontSize: 13.sp,
-                                      )
-                                    : CustomFonts.black14w600.copyWith(
-                                        color: Colors.black87,
-                                        fontSize: 13.sp,
-                                      ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 12.h),
-
-            // Time Slots Header / Horizontal Scrolling List
-            SizedBox(
-              height: 38.h,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                itemCount: _slots.length,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  final slot = _slots[index];
-                  final isSelected = _selectedSlot == slot;
-
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (isSelected) {
-                          _selectedSlot = null;
-                        } else {
-                          _selectedSlot = slot;
-                        }
-                      });
-                      ref
-                          .read(checkoutViewModel.notifier)
-                          .setSelectedSlot(_selectedSlot);
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(right: 8.w),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 14.w,
-                        vertical: 8.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? CustomColors.purpleColor
-                            : CustomColors.lightPurpleColor.withValues(
-                                alpha: 0.2,
-                              ),
-                        borderRadius: BorderRadius.circular(20.r),
-                        border: Border.all(
-                          color: isSelected
-                              ? CustomColors.purpleColor
-                              : Colors.transparent,
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.access_time_filled_rounded,
-                            size: 12.sp,
-                            color: isSelected
-                                ? Colors.white
-                                : Colors.grey.shade700,
-                          ),
-                          SizedBox(width: 4.w),
-                          Text(
-                            slot,
-                            style: isSelected
-                                ? CustomFonts.white12w600
-                                : CustomFonts.black12w600.copyWith(
-                                    color: Colors.grey.shade700,
-                                  ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 16.h),
-
-            // Treatment restriction logic - hide tab bar if direct Treatment is booked
-            if (isTreatment) ...[
-              Expanded(child: _buildDoctorGrid(isVirtual: false)),
-            ] else ...[
-              // Tabs Header: In-Person vs Virtual
+              // Search Bar & Filter Clear Button Row
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: TabBar(
-                  controller: _tabController,
-                  indicatorColor: CustomColors.pinkColor,
-                  labelColor: Colors.black,
-                  unselectedLabelColor: Colors.grey.shade400,
-                  labelStyle: CustomFonts.black16w600,
-                  unselectedLabelStyle: CustomFonts.grey16w500,
-                  dividerColor: Colors.transparent,
-                  tabs: const [
-                    Tab(text: "In-Person"),
-                    Tab(text: "Virtual Consultation"),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: CustomSearchField(
+                        controller: _searchController,
+                        hintText: "Search Doctors...",
+                      ),
+                    ),
+                    if (hasActiveFilters) ...[
+                      SizedBox(width: 8.w),
+                      GestureDetector(
+                        onTap: _clearFilters,
+                        child: Container(
+                          padding: EdgeInsets.all(12.w),
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade50,
+                            borderRadius: BorderRadius.circular(12.r),
+                            border: Border.all(color: Colors.red.shade100),
+                          ),
+                          child: Icon(
+                            Icons.filter_alt_off_rounded,
+                            color: Colors.red.shade400,
+                            size: 20.sp,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              SizedBox(height: 16.h),
+
+              // Premium Date Selector Card & Slot Selector Slider Horizontal Row
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                child: Row(
+                  children: [
+                    // Premium Calendar Date Picker Trigger
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => _selectDate(context),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 14.w,
+                            vertical: 10.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _selectedDate != null
+                                ? CustomColors.pinkColor
+                                : CustomColors.lightPurpleColor.withValues(
+                                    alpha: 0.3,
+                                  ),
+                            borderRadius: BorderRadius.circular(20.r),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.calendar_month_rounded,
+                                color: _selectedDate != null
+                                    ? Colors.white
+                                    : Colors.black87,
+                                size: 16.sp,
+                              ),
+                              SizedBox(width: 6.w),
+                              Expanded(
+                                child: Text(
+                                  _selectedDate != null
+                                      ? DateFormat(
+                                          'MMM dd, yyyy',
+                                        ).format(_selectedDate!)
+                                      : "Select Date",
+                                  style: _selectedDate != null
+                                      ? CustomFonts.white14w600.copyWith(
+                                          fontSize: 13.sp,
+                                        )
+                                      : CustomFonts.black14w600.copyWith(
+                                          color: Colors.black87,
+                                          fontSize: 13.sp,
+                                        ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
               SizedBox(height: 12.h),
 
-              // Tab Views Grid List
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildDoctorGrid(isVirtual: false),
-                    _buildDoctorGrid(isVirtual: true),
-                  ],
+              // Time Slots Header / Horizontal Scrolling List
+              SizedBox(
+                height: 38.h,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  itemCount: _slots.length,
+                  physics: const BouncingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    final slot = _slots[index];
+                    final isSelected = _selectedSlot == slot;
+
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (isSelected) {
+                            _selectedSlot = null;
+                          } else {
+                            _selectedSlot = slot;
+                          }
+                        });
+                        ref
+                            .read(checkoutViewModel.notifier)
+                            .setSelectedSlot(_selectedSlot);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(right: 8.w),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 14.w,
+                          vertical: 8.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? CustomColors.purpleColor
+                              : CustomColors.lightPurpleColor.withValues(
+                                  alpha: 0.2,
+                                ),
+                          borderRadius: BorderRadius.circular(20.r),
+                          border: Border.all(
+                            color: isSelected
+                                ? CustomColors.purpleColor
+                                : Colors.transparent,
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.access_time_filled_rounded,
+                              size: 12.sp,
+                              color: isSelected
+                                  ? Colors.white
+                                  : Colors.grey.shade700,
+                            ),
+                            SizedBox(width: 4.w),
+                            Text(
+                              slot,
+                              style: isSelected
+                                  ? CustomFonts.white12w600
+                                  : CustomFonts.black12w600.copyWith(
+                                      color: Colors.grey.shade700,
+                                    ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
+              SizedBox(height: 16.h),
+
+              // Treatment restriction logic - hide tab bar if direct Treatment is booked
+              if (isTreatment) ...[
+                Expanded(child: _buildDoctorGrid(isVirtual: false)),
+              ] else ...[
+                // Tabs Header: In-Person vs Virtual
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: TabBar(
+                    controller: _tabController,
+                    indicatorColor: CustomColors.pinkColor,
+                    labelColor: Colors.black,
+                    unselectedLabelColor: Colors.grey.shade400,
+                    labelStyle: CustomFonts.black16w600,
+                    unselectedLabelStyle: CustomFonts.grey16w500,
+                    dividerColor: Colors.transparent,
+                    tabs: const [
+                      Tab(text: "In-Person"),
+                      Tab(text: "Virtual Consultation"),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 12.h),
+
+                // Tab Views Grid List
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildDoctorGrid(isVirtual: false),
+                      _buildDoctorGrid(isVirtual: true),
+                    ],
+                  ),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );

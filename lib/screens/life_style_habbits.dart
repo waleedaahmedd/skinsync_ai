@@ -27,7 +27,7 @@ class LifeStyleHabbits extends StatelessWidget {
             child: ListView.builder(
               itemCount: 10,
               itemBuilder: (context, index) {
-                return QuestionTitle(
+                return const QuestionTitle(
                   isSelected: false,
                   title: "Do you eat a balanced diet with plenty of water? ",
                 );

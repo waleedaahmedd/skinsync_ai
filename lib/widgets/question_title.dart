@@ -4,9 +4,9 @@ import '../utills/custom_fonts.dart';
 import 'radio_button_widget.dart';
 
 class QuestionTitle extends StatelessWidget {
-  bool isSelected;
+  final bool isSelected;
   final String title;
-   QuestionTitle({super.key, required this.isSelected, required this.title});
+  const QuestionTitle({super.key, required this.isSelected, required this.title});
 
   @override
   Widget build(BuildContext context) {

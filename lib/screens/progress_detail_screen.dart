@@ -13,10 +13,10 @@ import '../utills/custom_fonts.dart';
 final selectedFilterProvider = StateProvider<int?>((ref) => 0);
 
 class ProgressDetailScreen extends ConsumerWidget {
-  ProgressDetailScreen({super.key});
+  const ProgressDetailScreen({super.key});
   static const String routeName = '/progress_detail_screen';
 
-  List<FilterModel> filter = [
+  final List<FilterModel> filter = const [
     FilterModel(assetIcon: PngAssets.syringe, name: "Sessions"),
     FilterModel(assetIcon: PngAssets.beforeAfter, name: "Skin Comparision"),
   ];
@@ -376,8 +376,8 @@ class TreatmentCard extends StatelessWidget {
 }
 
 class FilterModel {
-  String assetIcon;
-  String name;
+  final String assetIcon;
+  final String name;
 
-  FilterModel({required this.assetIcon, required this.name});
+  const FilterModel({required this.assetIcon, required this.name});
 }

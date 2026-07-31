@@ -16,13 +16,13 @@ import 'select_date_time_screen.dart';
 
 class DoctorDetailScreen extends ConsumerWidget {
   static const routeName = '/doctor_detail_screen';
-  final Clinic clinic;
+  final Clinic? clinic;
   final DummyDoctor doctor;
 
   const DoctorDetailScreen({
     super.key,
     required this.doctor,
-    required this.clinic,
+    this.clinic,
   });
 
   @override
@@ -184,43 +184,45 @@ class DoctorDetailScreen extends ConsumerWidget {
             ),
 
             // Premium Floating Booking Button Container
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 15,
-                    offset: const Offset(0, -4),
-                  ),
-                ],
+            if (clinic != null)
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius:
+                      BorderRadius.vertical(top: Radius.circular(24.r)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 15,
+                      offset: const Offset(0, -4),
+                    ),
+                  ],
+                ),
+                child: CustomButton(
+                  text: hasDateTime
+                      ? "Review Consultation Booking"
+                      : "Select Date & Time Slot",
+                  onPressed: () {
+                    if (hasDateTime) {
+                      Navigator.pushNamed(
+                        context,
+                        ReviewScreen.routeName,
+                        arguments: clinic!,
+                      );
+                    } else {
+                      Navigator.pushNamed(
+                        context,
+                        SelectDateTimeScreen.routeName,
+                        arguments: clinic!,
+                      );
+                    }
+                  },
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                  borderRadius: 26.r,
+                ),
               ),
-              child: CustomButton(
-                text: hasDateTime
-                    ? "Review Consultation Booking"
-                    : "Select Date & Time Slot",
-                onPressed: () {
-                  if (hasDateTime) {
-                    Navigator.pushNamed(
-                      context,
-                      ReviewScreen.routeName,
-                      arguments: clinic,
-                    );
-                  } else {
-                    Navigator.pushNamed(
-                      context,
-                      SelectDateTimeScreen.routeName,
-                      arguments: clinic,
-                    );
-                  }
-                },
-                backgroundColor: Colors.black,
-                textColor: Colors.white,
-                borderRadius: 26.r,
-              ),
-            ),
           ],
         ),
       ),

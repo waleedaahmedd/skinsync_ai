@@ -49,7 +49,7 @@ class AdditionalInfoScreen extends StatelessWidget {
                     SizedBox(height: 18.h),
                     Row(
                       children: [
-                        RadioButtonWidget(isSelected: false),
+                        const RadioButtonWidget(isSelected: false),
                         SizedBox(width: 13.w),
                         Text("Yes", style: CustomFonts.black18w600),
                         SizedBox(height: 35.h),
@@ -58,7 +58,7 @@ class AdditionalInfoScreen extends StatelessWidget {
                     SizedBox(height: 16.h),
                     Row(
                       children: [
-                        RadioButtonWidget(isSelected: false),
+                        const RadioButtonWidget(isSelected: false),
                         SizedBox(width: 13.w),
                         Text("No", style: CustomFonts.black18w600),
                         SizedBox(height: 37.h),
@@ -72,7 +72,7 @@ class AdditionalInfoScreen extends StatelessWidget {
                     SizedBox(height: 18.h),
                     Row(
                       children: [
-                        RadioButtonWidget(isSelected: false),
+                        const RadioButtonWidget(isSelected: false),
                         SizedBox(width: 13.w),
                         Text("Yes", style: CustomFonts.black18w600),
                         SizedBox(height: 35.h),
@@ -81,7 +81,7 @@ class AdditionalInfoScreen extends StatelessWidget {
                     SizedBox(height: 16.h),
                     Row(
                       children: [
-                        RadioButtonWidget(isSelected: false),
+                        const RadioButtonWidget(isSelected: false),
                         SizedBox(width: 13.w),
                         Text("No", style: CustomFonts.black18w600),
                         SizedBox(height: 35.h),
@@ -137,7 +137,7 @@ class AdditionalInfoScreen extends StatelessWidget {
                     SizedBox(height: 18.h),
                     Row(
                       children: [
-                        RadioButtonWidget(isSelected: false),
+                        const RadioButtonWidget(isSelected: false),
                         SizedBox(width: 13.w),
                         Text("Yes", style: CustomFonts.black18w600),
                         SizedBox(height: 35.h),
@@ -146,7 +146,7 @@ class AdditionalInfoScreen extends StatelessWidget {
                     SizedBox(height: 16.h),
                     Row(
                       children: [
-                        RadioButtonWidget(isSelected: false),
+                        const RadioButtonWidget(isSelected: false),
                         SizedBox(width: 13.w),
                         Text("No", style: CustomFonts.black18w600),
                         SizedBox(height: 35.h),

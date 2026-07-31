@@ -6,7 +6,7 @@ import 'models/responses/treatment_category_list_response.dart';
 import 'models/responses/treatment_list_response.dart';
 import 'screens/additional_info_screen.dart';
 import 'screens/allergy_and_medical_history.dart';
-import 'screens/ar_face_model_Preview_screen.dart';
+import 'screens/ar_face_model_preview_screen.dart';
 import 'screens/biometric_screen.dart';
 import 'screens/bottom_nav_page.dart';
 import 'screens/bottom_nav_screens/appointments_screen.dart';
@@ -16,7 +16,6 @@ import 'screens/treatments_screen.dart';
 import 'screens/clinic_service_screen.dart';
 import 'screens/clinics_detail_screen.dart';
 import 'screens/doctor_detail_screen.dart';
-import 'screens/doctors_listing_screen.dart';
 import 'screens/doctors_screen.dart';
 import 'screens/explore_clinics_screen.dart';
 import 'screens/face_pose_capture_screen.dart';
@@ -40,7 +39,6 @@ import 'screens/setting_screen.dart';
 import 'screens/signup_onboarding.dart';
 import 'screens/simulation_history_screen.dart';
 import 'screens/splash_screen.dart';
-import 'screens/suggested_treatmentsScreen.dart';
 import 'screens/treatment_area_screen.dart';
 import 'screens/treatment_category_screen.dart';
 import 'screens/treatment_detail_screen.dart';
@@ -143,13 +141,6 @@ class RouteGenerator {
           ),
           builder: (_) => const ArFaceModelPreviewScreen(),
         );
-      case SuggestedTreatmentScreen.routeName:
-        return MaterialPageRoute(
-          settings: const RouteSettings(
-            name: SuggestedTreatmentScreen.routeName,
-          ),
-          builder: (_) => const SuggestedTreatmentScreen(),
-        );
       // case ServiceSelectionScreen.routeName:
       //   return MaterialPageRoute(
       //     settings: RouteSettings(name: ServiceSelectionScreen.routeName),
@@ -191,9 +182,19 @@ class RouteGenerator {
           builder: (_) => SelectAppointmentTypeScreen(clinic: args as Clinic),
         );
       case DoctorsScreen.routeName:
+        if (args is Clinic) {
+          return MaterialPageRoute(
+            settings: const RouteSettings(name: DoctorsScreen.routeName),
+            builder: (_) => DoctorsScreen(clinic: args),
+          );
+        }
+        final argsMap = args as Map<String, dynamic>? ?? {};
         return MaterialPageRoute(
           settings: const RouteSettings(name: DoctorsScreen.routeName),
-          builder: (_) => DoctorsScreen(clinic: args as Clinic),
+          builder: (_) => DoctorsScreen(
+            clinic: argsMap['clinic'] as Clinic?,
+            isFromHome: argsMap['isFromHome'] as bool? ?? false,
+          ),
         );
       case DoctorDetailScreen.routeName:
         return MaterialPageRoute(
@@ -202,7 +203,7 @@ class RouteGenerator {
             final data = args as Map<String, dynamic>;
             return DoctorDetailScreen(
               doctor: data['doctor']!,
-              clinic: data['clinic']!,
+              clinic: data['clinic'],
             );
           },
         );
@@ -337,7 +338,7 @@ class RouteGenerator {
       case ProgressDetailScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: ProgressDetailScreen.routeName),
-          builder: (_) => ProgressDetailScreen(),
+          builder: (_) => const ProgressDetailScreen(),
         );
       case BiometricScreen.routeName:
         return MaterialPageRoute(
@@ -350,11 +351,6 @@ class RouteGenerator {
             name: SimulationHistoryScreen.routeName,
           ),
           builder: (_) => const SimulationHistoryScreen(),
-        );
-      case DoctorsListingScreen.routeName:
-        return MaterialPageRoute(
-          settings: const RouteSettings(name: DoctorsListingScreen.routeName),
-          builder: (_) => const DoctorsListingScreen(),
         );
       default:
         return _errorRoute();

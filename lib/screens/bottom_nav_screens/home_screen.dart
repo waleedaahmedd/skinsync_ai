@@ -14,10 +14,9 @@ import '../../widgets/heading_with_right_arrow.dart';
 import '../../widgets/home_horizontal_sections.dart';
 import '../../widgets/points_earn_card.dart';
 import '../../widgets/treatment_container.dart';
-import '../doctors_listing_screen.dart';
+import '../doctors_screen.dart';
 import '../explore_clinics_screen.dart';
 import '../notification_screen.dart';
-import '../suggested_treatmentsScreen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -112,10 +111,7 @@ class HomeScreen extends ConsumerWidget {
                 child: HeadingWithRightArrow(
                   title: "Suggested Treatments",
                   onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      SuggestedTreatmentScreen.routeName,
-                    );
+                    ref.read(bottomNavViewModel.notifier).changePage(1);
                   },
                 ),
               ),
@@ -172,7 +168,8 @@ class HomeScreen extends ConsumerWidget {
                   onTap: () {
                     Navigator.pushNamed(
                       context,
-                      DoctorsListingScreen.routeName,
+                      DoctorsScreen.routeName,
+                      arguments: {'isFromHome': true},
                     );
                   },
                 ),

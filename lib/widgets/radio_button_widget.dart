@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../utills/color_constant.dart';
 
 class RadioButtonWidget extends StatelessWidget {
-   bool isSelected = false;
-  RadioButtonWidget({super.key, required this.isSelected});
+  final bool isSelected;
+  const RadioButtonWidget({super.key, required this.isSelected});
  
   @override
   Widget build(BuildContext context) {
