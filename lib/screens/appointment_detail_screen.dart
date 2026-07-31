@@ -58,43 +58,92 @@ class AppointmentDetailScreen extends StatelessWidget {
             _buildInfoSection(
               title: "Treatment Details",
               children: [
-                if (appointment.treatments?.isEmpty ?? true)
+                if (appointment.treatments == null || appointment.treatments!.isEmpty)
                   _buildDetailRow("Treatment", "General Consultation")
                 else
-                  ...appointment.treatments!.map(
-                    (t) => Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.h),
+                  for (var t in appointment.treatments!)
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 8.h),
+                      padding: EdgeInsets.all(16.w),
+                      decoration: BoxDecoration(
+                        color: CustomColors.lightPurpleColor.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(
+                          color: CustomColors.lightPurpleColor.withValues(alpha: 0.1),
+                          width: 1,
+                        ),
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             children: [
-                              const Icon(
-                                Icons.auto_awesome_rounded,
-                                size: 14,
-                                color: CustomColors.purpleColor,
-                              ),
-                              SizedBox(width: 8.w),
-                              Text(t.treatmentName ?? "N/A", style: CustomFonts.black14w700),
-                              const Spacer(),
-                              if (t.material != null)
-                                Text(
-                                  "${t.material!.selectedQuantity} Syringes",
-                                  style: CustomFonts.darkPurple10w700,
+                              Container(
+                                padding: EdgeInsets.all(8.w),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: CustomColors.purpleColor.withValues(alpha: 0.1),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
+                                child: Icon(
+                                  Icons.auto_awesome_rounded,
+                                  size: 16.sp,
+                                  color: CustomColors.purpleColor,
+                                ),
+                              ),
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      t.treatmentName ?? "N/A",
+                                      style: CustomFonts.black16w700.copyWith(fontSize: 15.sp),
+                                    ),
+                                    SizedBox(height: 2.h),
+                                    Text(
+                                      "Target Area: ${t.areaName ?? 'N/A'}",
+                                      style: CustomFonts.grey700_12w400.copyWith(fontSize: 12.sp),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 22.w),
-                            child: Text(
-                              "Area: ${t.areaName ?? 'N/A'}",
-                              style: CustomFonts.grey700_10w400,
+                          if (t.material != null) ...[
+                            SizedBox(height: 12.h),
+                            Divider(color: Colors.grey.shade200, height: 1),
+                            SizedBox(height: 12.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Material/Quantity",
+                                  style: CustomFonts.grey700_10w400.copyWith(fontSize: 11.sp),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                                  decoration: BoxDecoration(
+                                    color: CustomColors.darkPurple.withValues(alpha: 0.08),
+                                    borderRadius: BorderRadius.circular(6.r),
+                                  ),
+                                  child: Text(
+                                    "${t.material!.selectedQuantity} Syringes",
+                                    style: CustomFonts.darkPurple10w700.copyWith(fontSize: 10.sp),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
+                          ],
                         ],
                       ),
                     ),
-                  ),
               ],
             ),
             SizedBox(height: 16.h),

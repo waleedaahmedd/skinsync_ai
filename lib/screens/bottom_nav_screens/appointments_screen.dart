@@ -395,18 +395,32 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                       ],
                     ),
                     SizedBox(height: 14.h),
-                    ...appointment.treatments!.map(
-                      (t) => Padding(
-                        padding: EdgeInsets.only(bottom: 12.h),
+                    for (var t in (appointment.treatments ?? []))
+                      Container(
+                        margin: EdgeInsets.only(bottom: 12.h),
+                        padding: EdgeInsets.all(12.w),
+                        decoration: BoxDecoration(
+                          color: CustomColors.lightPurpleColor.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(16.r),
+                          border: Border.all(
+                            color: CustomColors.lightPurpleColor.withValues(alpha: 0.1),
+                            width: 1,
+                          ),
+                        ),
                         child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
-                              margin: EdgeInsets.only(top: 2.h),
-                              padding: EdgeInsets.all(6.w),
+                              padding: EdgeInsets.all(8.w),
                               decoration: BoxDecoration(
-                                color: CustomColors.purpleColor.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(8.r),
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: CustomColors.purpleColor.withValues(alpha: 0.1),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
                               child: Icon(
                                 Icons.auto_awesome_rounded,
@@ -414,7 +428,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                                 color: CustomColors.purpleColor,
                               ),
                             ),
-                            SizedBox(width: 12.w),
+                            SizedBox(width: 14.w),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -423,18 +437,39 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                                     t.treatmentName ?? "N/A",
                                     style: CustomFonts.black14w600.copyWith(fontSize: 13.sp),
                                   ),
-                                  SizedBox(height: 2.h),
-                                  Text(
-                                    "Area: ${t.areaName ?? 'N/A'} ${t.material != null ? '• ${t.material!.selectedQuantity} Syringes' : ''}",
-                                    style: CustomFonts.grey700_10w400.copyWith(fontSize: 11.sp),
+                                  SizedBox(height: 4.h),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Area: ${t.areaName ?? 'N/A'}",
+                                        style: CustomFonts.grey700_10w400.copyWith(fontSize: 11.sp),
+                                      ),
+                                      if (t.material != null) ...[
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 6.w),
+                                          child: Text("•", style: TextStyle(color: Colors.grey.shade300, fontSize: 10.sp)),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                                          decoration: BoxDecoration(
+                                            color: CustomColors.darkPurple.withValues(alpha: 0.08),
+                                            borderRadius: BorderRadius.circular(4.r),
+                                          ),
+                                          child: Text(
+                                            "${t.material!.selectedQuantity} Syringes",
+                                            style: CustomFonts.darkPurple10w700.copyWith(fontSize: 9.sp),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
                                   ),
                                 ],
                               ),
                             ),
+                            Icon(Icons.chevron_right_rounded, size: 18.sp, color: Colors.grey.shade300),
                           ],
                         ),
                       ),
-                    ),
                   ],
                 ],
               ),
