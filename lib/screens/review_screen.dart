@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
-import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
@@ -14,15 +13,13 @@ import 'payment_screen.dart';
 
 class ReviewScreen extends ConsumerWidget {
   static const routeName = '/review_screen';
-  final Clinic clinic;
 
-  const ReviewScreen({super.key, required this.clinic});
+  const ReviewScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final checkoutState = ref.watch(checkoutViewModel);
-
-    // final clinic = checkoutState.selectedClinic;
+    final clinic = checkoutState.selectedClinic;
     final doctor = checkoutState.selectedDoctor;
     final date = checkoutState.selectedDate;
     final slot = checkoutState.selectedSlot;
@@ -157,12 +154,12 @@ class ReviewScreen extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  clinic.name ?? "Standard Clinic Name",
+                                  clinic?.name ?? "Standard Clinic Name",
                                   style: CustomFonts.black14w600,
                                 ),
                                 SizedBox(height: 4.h),
                                 Text(
-                                  clinic.address ?? "Standard Clinic Location",
+                                  clinic?.address ?? "Standard Clinic Location",
                                   style: CustomFonts.grey12w400,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -398,7 +395,6 @@ class ReviewScreen extends ConsumerWidget {
                   Navigator.pushNamed(
                     context,
                     PaymentScreen.routeName,
-                    arguments: clinic,
                   );
                 },
               ),

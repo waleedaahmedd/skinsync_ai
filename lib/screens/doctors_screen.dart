@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 import '../models/dummy_list_model.dart';
-import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
@@ -15,10 +14,9 @@ import 'doctor_detail_screen.dart';
 
 class DoctorsScreen extends ConsumerStatefulWidget {
   static const routeName = '/doctors_screen';
-  final Clinic? clinic;
   final bool isFromHome;
 
-  const DoctorsScreen({super.key, this.clinic, this.isFromHome = false});
+  const DoctorsScreen({super.key, this.isFromHome = false});
 
   @override
   ConsumerState<DoctorsScreen> createState() => _DoctorsScreenState();
@@ -438,7 +436,10 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
             Navigator.pushNamed(
               context,
               DoctorDetailScreen.routeName,
-              arguments: {'doctor': doctor, 'clinic': widget.clinic},
+              arguments: {
+                'doctor': doctor,
+                'clinic': ref.read(checkoutViewModel).selectedClinic,
+              },
             );
           },
         );

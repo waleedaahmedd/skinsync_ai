@@ -4,33 +4,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
-import '../models/responses/payment_options_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 
-import '../models/responses/availability_response.dart';
-import '../models/responses/get_clinic_response.dart';
-import '../models/responses/get_doctor_response.dart';
 import 'bottom_nav_page.dart';
 
 final notesAgreementProvider = StateProvider<bool>((ref) => false);
 
 class NotesScreen extends ConsumerWidget {
-  final Clinic clinic;
-  final Doctor doctor;
-  final Slot slot;
-  final PaymentOption paymentOption;
-
   static const routeName = "/notes_screen";
-  const NotesScreen({
-    super.key,
-    required this.clinic,
-    required this.doctor,
-    required this.slot,
-    required this.paymentOption,
-  });
+  const NotesScreen({super.key});
 
   void _listener(
     WidgetRef ref,
@@ -136,17 +121,19 @@ class NotesScreen extends ConsumerWidget {
                   return ElevatedButton(
                     onPressed: agreed
                         ? () {
-                            final checkoutNotifier =
-                                ref.read(checkoutViewModel.notifier);
-                            // Ensure objects are synced to state
-                            checkoutNotifier.setSelectedSlotObject(slot);
-                            checkoutNotifier.setSelectedPaymentOption(
-                              paymentOption,
-                            );
-                            checkoutNotifier.setSelectedDoctorObject(doctor);
+                            // final checkoutNotifier =
+                            //     ref.read(checkoutViewModel.notifier);
+                            // // Ensure objects are synced to state
+                            // checkoutNotifier.setSelectedSlotObject(slot);
+                            // checkoutNotifier.setSelectedPaymentOption(
+                            //   paymentOption,
+                            // );
+                            // checkoutNotifier.setSelectedDoctorObject(doctor);
 
                             // Trigger booking
-                            checkoutNotifier.createAppointment();
+                            ref
+                                .read(checkoutViewModel.notifier)
+                                .createAppointment();
                           }
                         : null,
                     child: const Text("Confirm Appointment"),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/appointment_view_model.dart';
@@ -17,9 +16,7 @@ import 'select_date_time_screen.dart';
 class SelectAppointmentTypeScreen extends ConsumerStatefulWidget {
   static const routeName = '/select_appointment_type_screen';
 
-  final Clinic clinic;
-
-  const SelectAppointmentTypeScreen({super.key, required this.clinic});
+  const SelectAppointmentTypeScreen({super.key});
 
   @override
   ConsumerState<SelectAppointmentTypeScreen> createState() =>
@@ -116,13 +113,11 @@ class _SelectAppointmentTypeScreenState
                                   Navigator.pushNamed(
                                     context,
                                     SelectDateTimeScreen.routeName,
-                                    arguments: widget.clinic,
                                   );
                                 } else {
                                   Navigator.pushNamed(
                                     context,
                                     DoctorsScreen.routeName,
-                                    arguments: widget.clinic,
                                   );
                                 }
                               },

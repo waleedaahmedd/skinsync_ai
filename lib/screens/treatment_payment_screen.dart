@@ -5,9 +5,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../models/responses/availability_response.dart';
-import '../models/responses/get_clinic_response.dart';
-import '../models/responses/get_doctor_response.dart';
 import '../models/responses/payment_options_response.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
@@ -19,17 +16,8 @@ import '../widgets/custom_button.dart';
 import 'notes_screen.dart';
 
 class TreatmentPaymentScreen extends ConsumerStatefulWidget {
-  final Clinic clinic;
-  final Doctor doctor;
-  final Slot slot;
-
   static const routeName = "/treatment_payment_screen";
-  const TreatmentPaymentScreen({
-    super.key,
-    required this.clinic,
-    required this.doctor,
-    required this.slot,
-  });
+  const TreatmentPaymentScreen({super.key});
 
   @override
   ConsumerState<TreatmentPaymentScreen> createState() =>
@@ -44,11 +32,14 @@ class _TreatmentPaymentScreenState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final checkoutState = ref.read(checkoutViewModel);
+      final clinic = checkoutState.selectedClinic;
+      final doctor = checkoutState.selectedDoctorObject;
       ref
           .read(doctorProvider.notifier)
           .getPaymentOptions(
-            clinicId: widget.clinic.id!,
-            doctorId: widget.doctor.id!,
+            clinicId: clinic!.id!,
+            doctorId: doctor!.id!,
           );
     });
   }
@@ -80,9 +71,9 @@ class _TreatmentPaymentScreenState
             }
 
             final checkoutNotifier = ref.read(checkoutViewModel.notifier);
-            checkoutNotifier.setSelectedSlotObject(widget.slot);
+            // checkoutNotifier.setSelectedSlotObject(widget.slot);
             checkoutNotifier.setSelectedPaymentOption(selectedMode!);
-            checkoutNotifier.setSelectedDoctorObject(widget.doctor);
+            // checkoutNotifier.setSelectedDoctorObject(widget.doctor);
 
             final request = checkoutNotifier.buildAppointmentRequest();
             if (request != null) {
@@ -94,12 +85,6 @@ class _TreatmentPaymentScreenState
             Navigator.pushNamed(
               context,
               NotesScreen.routeName,
-              arguments: {
-                'clinic': widget.clinic,
-                'doctor': widget.doctor,
-                'slot': widget.slot,
-                'paymentOption': selectedMode!,
-              },
             );
           },
         ),
@@ -134,46 +119,53 @@ class _TreatmentPaymentScreenState
                   borderRadius: BorderRadius.circular(15.r),
                   border: Border.all(color: CustomColors.blackColor),
                 ),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      DummyAssets.treatmentimage,
-                      fit: BoxFit.fill,
-                      height: 105.h,
-                      width: 151.w,
-                    ),
-                    SizedBox(width: 21.w),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    final checkoutState = ref.watch(checkoutViewModel);
+                    final clinic = checkoutState.selectedClinic;
+                    final slot = checkoutState.selectedSlotObject;
+                    return Row(
                       children: [
-                        Text(
-                          widget.slot.appointmentDateTime,
-                          style: CustomFonts.black14w500,
+                        Image.asset(
+                          DummyAssets.treatmentimage,
+                          fit: BoxFit.fill,
+                          height: 105.h,
+                          width: 151.w,
                         ),
-                        Text(
-                          "Derma Fillers - Cheeks",
-                          style: CustomFonts.black14w600,
-                        ),
-                        Text(
-                          widget.clinic.name ?? "Glow Skin Clinic",
-                          style: CustomFonts.black14w400,
-                        ),
-                        Row(
+                        SizedBox(width: 21.w),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(
-                              Icons.attach_file,
-                              size: 12.sp,
-                              color: CustomColors.blackColor,
+                            Text(
+                              slot?.appointmentDateTime ?? '',
+                              style: CustomFonts.black14w500,
                             ),
                             Text(
-                              " Derma Fillers Cheeks Model",
-                              style: CustomFonts.black14w400Underline,
+                              "Derma Fillers - Cheeks",
+                              style: CustomFonts.black14w600,
+                            ),
+                            Text(
+                              clinic?.name ?? "Glow Skin Clinic",
+                              style: CustomFonts.black14w400,
+                            ),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.attach_file,
+                                  size: 12.sp,
+                                  color: CustomColors.blackColor,
+                                ),
+                                Text(
+                                  " Derma Fillers Cheeks Model",
+                                  style: CustomFonts.black14w400Underline,
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ],
-                    ),
-                  ],
+                    );
+                  },
                 ),
               ),
               SizedBox(height: 22.h),

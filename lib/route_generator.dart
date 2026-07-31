@@ -103,13 +103,6 @@ class RouteGenerator {
           settings: const RouteSettings(name: FaceDetectionScreen.routeName),
           builder: (_) => FaceDetectionScreen(pose: args as String? ?? 'front'),
         );
-      // case FaceScanningCompleteScreen.routeName:
-      //   return MaterialPageRoute(
-      //     settings: const RouteSettings(
-      //       name: FaceScanningCompleteScreen.routeName,
-      //     ),
-      //     builder: (_) => const FaceScanningCompleteScreen(),
-      //   );
       case FacePoseCaptureScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: FacePoseCaptureScreen.routeName),
@@ -141,11 +134,6 @@ class RouteGenerator {
           ),
           builder: (_) => const ArFaceModelPreviewScreen(),
         );
-      // case ServiceSelectionScreen.routeName:
-      //   return MaterialPageRoute(
-      //     settings: RouteSettings(name: ServiceSelectionScreen.routeName),
-      //     builder: (_) => ServiceSelectionScreen(),
-      //   );
       case ExploreClinicsScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: ExploreClinicsScreen.routeName),
@@ -157,18 +145,6 @@ class RouteGenerator {
           settings: const RouteSettings(name: TreatmentDetailScreen.routeName),
           builder: (_) => TreatmentDetailScreen(treatments: treatments),
         );
-      // SelectSectionsScreen is now a bottom sheet, not a route
-      // case SelectSectionsScreen.routeName:
-      //   return MaterialPageRoute(
-      //     settings: RouteSettings(name: SelectSectionsScreen.routeName),
-      //     builder: (_) => SelectSectionsScreen(),
-      //   );
-      // SelectSubSectionsScreen is now a bottom sheet, not a route
-      // case SelectSubSectionsScreen.routeName:
-      //   return MaterialPageRoute(
-      //     settings: RouteSettings(name: SelectSubSectionsScreen.routeName),
-      //     builder: (_) => SelectSubSectionsScreen(),
-      //   );
       case ClinicsDetailScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: ClinicsDetailScreen.routeName),
@@ -179,20 +155,13 @@ class RouteGenerator {
           settings: const RouteSettings(
             name: SelectAppointmentTypeScreen.routeName,
           ),
-          builder: (_) => SelectAppointmentTypeScreen(clinic: args as Clinic),
+          builder: (_) => const SelectAppointmentTypeScreen(),
         );
       case DoctorsScreen.routeName:
-        if (args is Clinic) {
-          return MaterialPageRoute(
-            settings: const RouteSettings(name: DoctorsScreen.routeName),
-            builder: (_) => DoctorsScreen(clinic: args),
-          );
-        }
         final argsMap = args as Map<String, dynamic>? ?? {};
         return MaterialPageRoute(
           settings: const RouteSettings(name: DoctorsScreen.routeName),
           builder: (_) => DoctorsScreen(
-            clinic: argsMap['clinic'] as Clinic?,
             isFromHome: argsMap['isFromHome'] as bool? ?? false,
           ),
         );
@@ -210,22 +179,22 @@ class RouteGenerator {
       case SelectDateTimeScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: SelectDateTimeScreen.routeName),
-          builder: (_) => SelectDateTimeScreen(clinic: args as Clinic),
+          builder: (_) => const SelectDateTimeScreen(),
         );
       case ReviewScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: ReviewScreen.routeName),
-          builder: (_) => ReviewScreen(clinic: args as Clinic),
+          builder: (_) => const ReviewScreen(),
         );
       case PaymentScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: PaymentScreen.routeName),
-          builder: (_) => PaymentScreen(clinic: args as Clinic),
+          builder: (_) => const PaymentScreen(),
         );
       case ClinicServiceScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: ClinicServiceScreen.routeName),
-          builder: (_) => ClinicServiceScreen(clinic: args as Clinic?),
+          builder: (_) => const ClinicServiceScreen(),
         );
       case SettingScreen.routeName:
         return MaterialPageRoute(
@@ -255,12 +224,6 @@ class RouteGenerator {
           builder: (_) => const AdditionalInfoScreen(),
         );
       case TreatmentsScreen.routeName:
-        // int? categoryId;
-        // int? areaId;
-        // if (args is Map<String, dynamic>) {
-        //   categoryId = args['categoryId'] as int?;
-        //   areaId = args['areaId'] as int?;
-        // }
         return MaterialPageRoute(
           settings: const RouteSettings(name: TreatmentsScreen.routeName),
           builder: (_) => const TreatmentsScreen(),
@@ -306,27 +269,14 @@ class RouteGenerator {
           builder: (_) => const SelectProductScreen(),
         );
       case TreatmentPaymentScreen.routeName:
-        final data = args as Map<String, dynamic>;
         return MaterialPageRoute(
           settings: const RouteSettings(name: TreatmentPaymentScreen.routeName),
-          builder: (_) => TreatmentPaymentScreen(
-            clinic: data['clinic'],
-            doctor: data['doctor'],
-            slot: data['slot'],
-          ),
+          builder: (_) => const TreatmentPaymentScreen(),
         );
       case NotesScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: NotesScreen.routeName),
-          builder: (_) {
-            final data = args as Map<String, dynamic>;
-            return NotesScreen(
-              slot: data['slot'],
-              clinic: data['clinic'],
-              doctor: data['doctor'],
-              paymentOption: data['paymentOption'],
-            );
-          },
+          builder: (_) => const NotesScreen(),
         );
       case NotificationScreen.routeName:
         return MaterialPageRoute(

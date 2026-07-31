@@ -7,7 +7,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../models/responses/get_clinic_response.dart';
 import '../models/responses/get_doctor_response.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
@@ -24,8 +23,7 @@ import '../widgets/treatment_price_container.dart';
 import 'treatment_payment_screen.dart';
 
 class ClinicServiceScreen extends ConsumerStatefulWidget {
-  final Clinic? clinic;
-  const ClinicServiceScreen({super.key, this.clinic});
+  const ClinicServiceScreen({super.key});
   static const String routeName = '/ClinicServiceScreen';
 
   @override
@@ -53,8 +51,9 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
 
       final subAreaIds = subAreas.map((e) => e.id).whereType<int>().toList();
 
-      if (widget.clinic?.id != null) {
-        ref.read(clinicProvider.notifier).setClinicId(widget.clinic!.id!);
+      final selectedClinic = ref.read(checkoutViewModel).selectedClinic;
+      if (selectedClinic?.id != null) {
+        ref.read(clinicProvider.notifier).setClinicId(selectedClinic!.id!);
       }
 
       await ref
@@ -63,14 +62,14 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
             treatmentId: treatment?.id ?? 0,
             sideAreaIds: subAreaIds,
             date: selectedDate,
-            clinicId: widget.clinic?.id,
+            clinicId: selectedClinic?.id,
           );
-      if (widget.clinic?.id != null) {
+      if (selectedClinic?.id != null) {
         await ref
             .read(doctorProvider.notifier)
             .fetchAvailability(
               date: selectedDate,
-              clinicId: widget.clinic!.id!,
+              clinicId: selectedClinic!.id!,
             );
       }
     });
@@ -86,11 +85,12 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
 
     if (picked != null) {
       selectedTime = null;
-      log('CLINIC ID: ${widget.clinic?.id}');
-      if (widget.clinic?.id != null) {
+      final selectedClinic = ref.read(checkoutViewModel).selectedClinic;
+      log('CLINIC ID: ${selectedClinic?.id}');
+      if (selectedClinic?.id != null) {
         ref
             .read(doctorProvider.notifier)
-            .fetchAvailability(date: picked, clinicId: widget.clinic!.id!);
+            .fetchAvailability(date: picked, clinicId: selectedClinic!.id!);
       }
       setState(() {
         selectedDate = picked;
@@ -406,14 +406,21 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                             EasyLoading.showError('Select a slot first!');
                             return;
                           }
+                          // final selectedClinic =
+                          //     ref.read(checkoutViewModel).selectedClinic;
+
+                          final checkoutNotifier =
+                              ref.read(checkoutViewModel.notifier);
+                          checkoutNotifier.setSelectedDoctorObject(
+                            state.selectedDoctor!,
+                          );
+                          checkoutNotifier.setSelectedSlotObject(
+                            state.slots[selectedTime!],
+                          );
+
                           Navigator.pushNamed(
                             context,
                             TreatmentPaymentScreen.routeName,
-                            arguments: {
-                              'clinic': widget.clinic!,
-                              'doctor': state.selectedDoctor!,
-                              'slot': state.slots[selectedTime!],
-                            },
                           );
                         },
                         child: Container(
@@ -448,12 +455,13 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
     return GestureDetector(
       onTap: () {
         ref.read(doctorProvider.notifier).setSelectedDoctor(doctor);
-        if (widget.clinic?.id != null) {
+        final selectedClinic = ref.read(checkoutViewModel).selectedClinic;
+        if (selectedClinic?.id != null) {
           ref
               .read(doctorProvider.notifier)
               .fetchAvailability(
                 date: selectedDate,
-                clinicId: widget.clinic!.id!,
+                clinicId: selectedClinic!.id!,
               );
         }
         setState(() {

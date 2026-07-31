@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../widgets/bottom_sheets/before_you_book_bottomsheet.dart';
@@ -13,8 +12,7 @@ import 'review_screen.dart';
 
 class SelectDateTimeScreen extends ConsumerStatefulWidget {
   static const routeName = '/select_date_time_screen';
-  final Clinic clinic;
-  const SelectDateTimeScreen({super.key, required this.clinic});
+  const SelectDateTimeScreen({super.key});
 
   @override
   ConsumerState<SelectDateTimeScreen> createState() =>
@@ -286,7 +284,6 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                           Navigator.pushNamed(
                             context,
                             ReviewScreen.routeName,
-                            arguments: widget.clinic,
                           );
                         } else {
                           BeforeYouBookBottomSheet.show(
@@ -295,7 +292,6 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                               Navigator.pushNamed(
                                 context,
                                 ReviewScreen.routeName,
-                                arguments: widget.clinic,
                               );
                             },
                           );

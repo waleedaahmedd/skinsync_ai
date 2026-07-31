@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
-import '../models/responses/get_clinic_response.dart';
 import '../models/responses/payment_options_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -15,9 +14,8 @@ import 'bottom_nav_page.dart';
 
 class PaymentScreen extends ConsumerStatefulWidget {
   static const routeName = '/payment_screen';
-  final Clinic clinic;
 
-  const PaymentScreen({super.key, required this.clinic});
+  const PaymentScreen({super.key});
 
   @override
   ConsumerState<PaymentScreen> createState() => _PaymentScreenState();
@@ -72,8 +70,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     bool isSuccess = false;
 
     if (checkoutState.isInviteClinic) {
+      final clinic = ref.read(checkoutViewModel).selectedClinic;
       final success = await checkoutNotifier.inviteClinic(
-        clinic: widget.clinic,
+        clinic: clinic!,
         consultationFees: _consultationFee,
         initialDeposit: paidAmount,
         availability: [],
