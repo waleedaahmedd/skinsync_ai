@@ -21,11 +21,7 @@ final appointmentProvider = NotifierProvider(
 class AppointmentViewModel extends BaseViewModel<AppointmentState> {
   AppointmentViewModel({required AppointmentRepository repo})
       : _repo = repo,
-        super(
-          initialState: AppointmentState(
-            appointmentsResponse: dummyAppointmentResponse,
-          ),
-        );
+        super(initialState: const AppointmentState());
 
   final AppointmentRepository _repo;
 

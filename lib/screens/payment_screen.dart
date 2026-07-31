@@ -34,7 +34,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     final clinicName =
         checkoutState.selectedClinic?.name ?? "Aesthetic Wellness Clinic";
     final doctorName =
-        checkoutState.selectedDoctor?.name ?? "Specialist Doctor";
+        checkoutState.selectedDoctorObject?.doctorName ?? checkoutState.selectedDoctor?.doctorName ?? "Specialist Doctor";
     final dateStr = checkoutState.selectedDate != null
         ? checkoutState.selectedDate!.formattedDayDate
         : "Not Selected";

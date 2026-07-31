@@ -7,7 +7,7 @@ import '../models/requests/invite_clinic_request.dart';
 import '../models/responses/availability_response.dart';
 import '../models/responses/base_response_model.dart';
 import '../models/responses/get_clinic_response.dart';
-import '../models/responses/get_doctor_response.dart';
+import '../models/responses/practitioner_list_response.dart';
 import '../models/responses/payment_options_response.dart';
 import '../models/responses/treatment_pricing_response.dart';
 import '../repositories/clinic_doctor_repository.dart';
@@ -42,26 +42,26 @@ class ClinicDoctorService implements ClinicDoctorRepository {
   }
 
   @override
-  Future<GetDoctorResponse> getPractitioners({
+  Future<PractitionerListResponse> getPractitioners({
     required GetPractitionersRequest request,
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.practitionersList,
-      requestType: 'GET', // Following curl but ApiBaseHelper might need a fix if body is required for GET
+      requestType: 'GET',
       requestBody: request.toJson(),
     );
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
-      return GetDoctorResponse.fromJson(parsed);
+      return PractitionerListResponse.fromJson(parsed);
     } else {
       final parsed = json.decode(response.body);
-      throw AppException(GetDoctorResponse.fromJson(parsed).message ?? 'Error fetching practitioners');
+      throw AppException(PractitionerListResponse.fromJson(parsed).message ?? 'Error fetching practitioners');
     }
   }
 
   @override
-  Future<GetDoctorResponse> getDoctors({
+  Future<PractitionerListResponse> getDoctors({
     required int clinicId,
     required int treatmentId,
     required String sideAreaIdsList,
@@ -75,12 +75,11 @@ class ClinicDoctorService implements ClinicDoctorRepository {
     // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
-      GetDoctorResponse getDoctorResponse = GetDoctorResponse.fromJson(parsed);
-      return getDoctorResponse;
+      return PractitionerListResponse.fromJson(parsed);
     } else {
       // Handle HTTP error status codes
       final parsed = json.decode(response.body);
-      throw AppException(GetDoctorResponse.fromJson(parsed).message as String);
+      throw AppException(PractitionerListResponse.fromJson(parsed).message as String);
     }
   }
 

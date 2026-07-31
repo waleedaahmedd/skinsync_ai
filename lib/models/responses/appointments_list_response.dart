@@ -63,6 +63,7 @@ class AppointmentItem {
   AppointmentSlot? slot;
   String? appointmentType;
   int? appointmentTypeId;
+  String? appointmentKey;
   String? status;
   List<AppointmentTreatment>? treatments;
   AppointmentDoctor? doctor;
@@ -74,6 +75,7 @@ class AppointmentItem {
     this.slot,
     this.appointmentType,
     this.appointmentTypeId,
+    this.appointmentKey,
     this.status,
     this.treatments,
     this.doctor,
@@ -86,6 +88,7 @@ class AppointmentItem {
     slot = json['slot'] != null ? AppointmentSlot.fromJson(json['slot']) : null;
     appointmentType = json['appointment_type'];
     appointmentTypeId = json['appointment_type_id'];
+    appointmentKey = json['appointment_key'];
     status = json['status'];
     if (json['treatments'] != null) {
       treatments = <AppointmentTreatment>[];
@@ -106,6 +109,7 @@ class AppointmentItem {
     }
     data['appointment_type'] = appointmentType;
     data['appointment_type_id'] = appointmentTypeId;
+    data['appointment_key'] = appointmentKey;
     data['status'] = status;
     if (treatments != null) {
       data['treatments'] = treatments!.map((v) => v.toJson()).toList();
@@ -142,35 +146,51 @@ class AppointmentSlot {
 class AppointmentTreatment {
   int? treatmentId;
   String? treatmentName;
+  String? treatmentImage;
   int? areaId;
   String? areaName;
   AppointmentMaterial? material;
+  String? status;
+  int? startTime;
+  int? endTime;
 
   AppointmentTreatment({
     this.treatmentId,
     this.treatmentName,
+    this.treatmentImage,
     this.areaId,
     this.areaName,
     this.material,
+    this.status,
+    this.startTime,
+    this.endTime,
   });
 
   AppointmentTreatment.fromJson(Map<String, dynamic> json) {
     treatmentId = json['treatment_id'];
     treatmentName = json['treatment_name'];
+    treatmentImage = json['treatment_image'];
     areaId = json['area_id'];
     areaName = json['area_name'];
     material = json['material'] != null ? AppointmentMaterial.fromJson(json['material']) : null;
+    status = json['status'];
+    startTime = json['start_time'];
+    endTime = json['end_time'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['treatment_id'] = treatmentId;
     data['treatment_name'] = treatmentName;
+    data['treatment_image'] = treatmentImage;
     data['area_id'] = areaId;
     data['area_name'] = areaName;
     if (material != null) {
       data['material'] = material!.toJson();
     }
+    data['status'] = status;
+    data['start_time'] = startTime;
+    data['end_time'] = endTime;
     return data;
   }
 }
@@ -178,18 +198,21 @@ class AppointmentTreatment {
 class AppointmentMaterial {
   int? id;
   int? selectedQuantity;
+  String? name;
 
-  AppointmentMaterial({this.id, this.selectedQuantity});
+  AppointmentMaterial({this.id, this.selectedQuantity, this.name});
 
   AppointmentMaterial.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     selectedQuantity = json['selected_quantity'];
+    name = json['name'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['selected_quantity'] = selectedQuantity;
+    data['name'] = name;
     return data;
   }
 }
@@ -237,53 +260,3 @@ class AppointmentClinic {
     return data;
   }
 }
-
-final AppointmentsListResponse dummyAppointmentResponse = AppointmentsListResponse(
-  isSuccess: true,
-  message: "Dummy appointments",
-  data: AppointmentListData(
-    page: 1,
-    limit: 10,
-    total: 1,
-    totalPages: 1,
-    items: [
-      AppointmentItem(
-        appointmentId: 54210,
-        date: 1753142400,
-        appointmentType: "Treatment session",
-        appointmentTypeId: 12,
-        status: "Confirmed",
-        slot: AppointmentSlot(
-          startTime: 1753142400 + 3600 * 9, // 9 AM
-          endTime: 1753142400 + 3600 * 11, // 11 AM
-        ),
-        doctor: AppointmentDoctor(
-          doctorId: 1,
-          doctorName: "Dr. Sarah Smith",
-          doctorImage: "https://t4.ftcdn.net/jpg/03/20/52/31/360_F_320523164_cc7at9W77BRD96qLYpSPlSdrofD8oM0S.jpg",
-        ),
-        clinic: AppointmentClinic(
-          clinicId: 1,
-          clinicName: "Glow Skin Clinic",
-          clinicImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl-cyJqFlcZav1TlRMEuajtrg2RJlWY3rTQA&s",
-        ),
-        treatments: [
-          AppointmentTreatment(
-            treatmentId: 1,
-            treatmentName: "Botox",
-            areaId: 5,
-            areaName: "Pre Jaw",
-            material: AppointmentMaterial(id: 101, selectedQuantity: 2),
-          ),
-          AppointmentTreatment(
-            treatmentId: 2,
-            treatmentName: "Dermal Filler",
-            areaId: 8,
-            areaName: "Cheeks",
-            material: AppointmentMaterial(id: 102, selectedQuantity: 1),
-          ),
-        ],
-      ),
-    ],
-  ),
-);

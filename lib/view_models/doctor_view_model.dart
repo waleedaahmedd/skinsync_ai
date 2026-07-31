@@ -6,7 +6,7 @@ import 'checkout_view_model.dart';
 import '../models/base_state_model.dart';
 import '../models/requests/get_practitioners_request.dart';
 import '../models/responses/availability_response.dart';
-import '../models/responses/get_doctor_response.dart';
+import '../models/responses/practitioner_list_response.dart';
 import '../models/responses/payment_options_response.dart';
 import '../models/responses/treatment_pricing_response.dart' hide Treatment;
 import '../repositories/clinic_doctor_repository.dart';
@@ -27,7 +27,7 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
   final ClinicDoctorRepository _clinicRepository;
   PricingData? pricingData;
 
-  void setSelectedDoctor(Doctor doctor) {
+  void setSelectedDoctor(PractitionerDoctor doctor) {
     state = state.copyWith(selectedDoctor: doctor);
   }
 
@@ -85,11 +85,11 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
         treatmentId: treatmentId,
         sideAreaIdsList: sideAreas,
       );
-      final doctor = response.data?.firstOrNull;
+      final doctor = response.data?.doctors?.firstOrNull;
       List<Slot> availability = [];
       if (doctor != null && clinicId != null) {
         availability = await _clinicRepository.getAvailability(
-          doctorId: doctor.id!,
+          doctorId: doctor.doctorId!,
           clinicId: clinicId,
           date: date,
         );
@@ -97,7 +97,7 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
       state = state.copyWith(
         doctorLoading: false,
         doctorResponse: response,
-        selectedDoctor: response.data?.firstOrNull,
+        selectedDoctor: response.data?.doctors?.firstOrNull,
         slots: availability,
       );
       return response.status == true;
@@ -115,7 +115,7 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
       EasyLoading.show(status: 'Loading...');
       state = state.copyWith(loading: true);
       final availability = await _clinicRepository.getAvailability(
-        doctorId: state.selectedDoctor!.id!,
+        doctorId: state.selectedDoctor!.doctorId!,
         clinicId: clinicId,
         date: date,
       );
@@ -171,9 +171,9 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
 
 @immutable
 class DoctorState extends BaseStateModel {
-  final GetDoctorResponse? doctorResponse;
+  final PractitionerListResponse? doctorResponse;
   final bool doctorLoading;
-  final Doctor? selectedDoctor;
+  final PractitionerDoctor? selectedDoctor;
   final List<Slot> slots;
   final List<PaymentOption> paymentOptions;
 
@@ -191,9 +191,9 @@ class DoctorState extends BaseStateModel {
   DoctorState copyWith({
     bool? loading,
     String? errorMessage,
-    GetDoctorResponse? doctorResponse,
+    PractitionerListResponse? doctorResponse,
     bool? doctorLoading,
-    Doctor? selectedDoctor,
+    PractitionerDoctor? selectedDoctor,
     List<Slot>? slots,
     List<PaymentOption>? paymentOptions,
   }) {

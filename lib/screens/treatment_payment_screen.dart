@@ -39,7 +39,7 @@ class _TreatmentPaymentScreenState
           .read(doctorProvider.notifier)
           .getPaymentOptions(
             clinicId: clinic!.id!,
-            doctorId: doctor!.id!,
+            doctorId: doctor!.doctorId!,
           );
     });
   }

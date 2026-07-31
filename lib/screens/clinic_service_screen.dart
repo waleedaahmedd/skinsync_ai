@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../models/responses/get_doctor_response.dart';
+import '../models/responses/practitioner_list_response.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -124,7 +124,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
               Consumer(
                 builder: (context, ref, _) {
                   final state = ref.watch(doctorProvider);
-                  final doctors = state.doctorResponse?.data;
+                  final doctors = state.doctorResponse?.data?.doctors;
                   if (state.doctorLoading) {
                     return SizedBox(
                       height: 150.h, // same height as doctor list
@@ -149,7 +149,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         final isSelected =
-                            doctors[index].id == state.selectedDoctor?.id;
+                            doctors[index].doctorId == state.selectedDoctor?.doctorId;
                         return _buildDoctorCard(
                           doctors[index],
                           index,
@@ -451,7 +451,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
     );
   }
 
-  Widget _buildDoctorCard(Doctor doctor, int index, bool isSelected) {
+  Widget _buildDoctorCard(PractitionerDoctor doctor, int index, bool isSelected) {
     return GestureDetector(
       onTap: () {
         ref.read(doctorProvider.notifier).setSelectedDoctor(doctor);
@@ -492,7 +492,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
               ClipOval(
                 clipBehavior: Clip.antiAliasWithSaveLayer,
                 child: AppNetworkImage(
-                  imageUrl: doctor.image ?? "",
+                  imageUrl: doctor.doctorImage ?? "",
                   fit: BoxFit.cover,
                   height: 57.67.w,
                   width: 58.39.w,
@@ -500,7 +500,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                 ),
               ),
               SizedBox(height: 6.23.h),
-              Text(doctor.name ?? "", style: CustomFonts.black18w600),
+              Text(doctor.doctorName ?? "", style: CustomFonts.black18w600),
               SizedBox(height: 3.32.h),
               Text(doctor.specialization ?? "", style: CustomFonts.black14w400),
             ],

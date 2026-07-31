@@ -35,7 +35,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // ref.read(appointmentProvider.notifier).getAppointments();
+      ref.read(appointmentProvider.notifier).getAppointments();
     });
   }
 
@@ -259,6 +259,13 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                                 Text(dateStr, style: CustomFonts.white14w700),
                               ],
                             ),
+                            if (appointment.appointmentKey != null) ...[
+                              SizedBox(height: 4.h),
+                              Text(
+                                appointment.appointmentKey!,
+                                style: CustomFonts.white10w600.copyWith(color: Colors.white70),
+                              ),
+                            ],
                             SizedBox(height: 10.h),
                             Row(
                               children: [
@@ -381,7 +388,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                     ],
                   ),
 
-                  if (appointment.treatments?.isNotEmpty ?? false) ...[
+                  if (appointment.treatments != null && appointment.treatments!.isNotEmpty) ...[
                     SizedBox(height: 18.h),
                     const Divider(height: 1, color: Colors.black12),
                     SizedBox(height: 18.h),
@@ -395,7 +402,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                       ],
                     ),
                     SizedBox(height: 14.h),
-                    for (var t in (appointment.treatments ?? []))
+                    for (var t in appointment.treatments!)
                       Container(
                         margin: EdgeInsets.only(bottom: 12.h),
                         padding: EdgeInsets.all(12.w),
@@ -409,23 +416,26 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                         ),
                         child: Row(
                           children: [
-                            Container(
-                              padding: EdgeInsets.all(8.w),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: CustomColors.purpleColor.withValues(alpha: 0.1),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12.r),
+                              child: CachedNetworkImage(
+                                imageUrl: t.treatmentImage ?? "",
+                                height: 40.w,
+                                width: 40.w,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Container(
+                                  color: Colors.white,
+                                  child: const Center(child: CupertinoActivityIndicator(radius: 8)),
+                                ),
+                                errorWidget: (context, url, error) => Container(
+                                  color: Colors.white,
+                                  padding: EdgeInsets.all(8.w),
+                                  child: Icon(
+                                    Icons.auto_awesome_rounded,
+                                    size: 14.sp,
+                                    color: CustomColors.purpleColor,
                                   ),
-                                ],
-                              ),
-                              child: Icon(
-                                Icons.auto_awesome_rounded,
-                                size: 14.sp,
-                                color: CustomColors.purpleColor,
+                                ),
                               ),
                             ),
                             SizedBox(width: 14.w),
@@ -433,9 +443,24 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    t.treatmentName ?? "N/A",
-                                    style: CustomFonts.black14w600.copyWith(fontSize: 13.sp),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          t.treatmentName ?? "N/A",
+                                          style: CustomFonts.black14w600.copyWith(fontSize: 13.sp),
+                                        ),
+                                      ),
+                                      if (t.status != null)
+                                        Text(
+                                          t.status!.toUpperCase(),
+                                          style: TextStyle(
+                                            color: _getTreatmentStatusColor(t.status!),
+                                            fontSize: 9.sp,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                    ],
                                   ),
                                   SizedBox(height: 4.h),
                                   Row(
@@ -456,13 +481,20 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                                             borderRadius: BorderRadius.circular(4.r),
                                           ),
                                           child: Text(
-                                            "${t.material!.selectedQuantity} Syringes",
+                                            "${t.material!.selectedQuantity} ${t.material!.name ?? 'Syringes'}",
                                             style: CustomFonts.darkPurple10w700.copyWith(fontSize: 9.sp),
                                           ),
                                         ),
                                       ],
                                     ],
                                   ),
+                                  if (t.startTime != null || t.endTime != null) ...[
+                                    SizedBox(height: 4.h),
+                                    Text(
+                                      "${t.startTime != null ? DateTimeUtils.formatTimestampToTime(t.startTime!) : '--:--'} - ${t.endTime != null ? DateTimeUtils.formatTimestampToTime(t.endTime!) : '--:--'}",
+                                      style: CustomFonts.grey700_10w400.copyWith(fontSize: 10.sp),
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),
@@ -478,6 +510,15 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
         ),
       ),
     );
+  }
+
+  Color _getTreatmentStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending': return Colors.orange;
+      case 'start': return Colors.blue;
+      case 'end': return Colors.green;
+      default: return Colors.grey;
+    }
   }
 
   Color _getTypeColor(String type) {

@@ -6,7 +6,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/base_state_model.dart';
-import '../models/dummy_list_model.dart';
 import '../models/flat_selection_model.dart';
 import '../models/requests/appointment_request.dart';
 import '../models/requests/invite_clinic_request.dart';
@@ -14,7 +13,7 @@ import '../models/responses/appointment_response.dart';
 import '../models/responses/appointment_type_list_response.dart';
 import '../models/responses/availability_response.dart';
 import '../models/responses/get_clinic_response.dart';
-import '../models/responses/get_doctor_response.dart';
+import '../models/responses/practitioner_list_response.dart';
 import '../models/responses/payment_options_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
 import '../models/responses/treatment_category_list_response.dart';
@@ -64,11 +63,11 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     state = state.copyWith(selectedAppointmentType: type);
   }
 
-  void setSelectedDoctor(DummyDoctor doctor) {
+  void setSelectedDoctor(PractitionerDoctor doctor) {
     state = state.copyWith(selectedDoctor: doctor);
   }
 
-  void setSelectedDoctorObject(Doctor? doctor) {
+  void setSelectedDoctorObject(PractitionerDoctor? doctor) {
     state = state.copyWith(selectedDoctorObject: doctor);
   }
 
@@ -351,9 +350,9 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     final state = this.state;
     final clinicId = state.selectedClinic?.id;
     final doctorId =
-        state.selectedDoctorObject?.id ??
-        int.tryParse(state.selectedDoctor?.id ?? '') ??
-        ref.read(doctorProvider).selectedDoctor?.id;
+        state.selectedDoctorObject?.doctorId ??
+        state.selectedDoctor?.doctorId ??
+        ref.read(doctorProvider).selectedDoctor?.doctorId;
     final date = state.selectedDate;
     final slot = state.selectedSlotObject;
     final appointmentType = state.selectedAppointmentType;
@@ -530,8 +529,8 @@ class CheckoutState extends BaseStateModel {
 
   final Clinic? selectedClinic;
   final AppointmentTypeData? selectedAppointmentType;
-  final DummyDoctor? selectedDoctor;
-  final Doctor? selectedDoctorObject;
+  final PractitionerDoctor? selectedDoctor;
+  final PractitionerDoctor? selectedDoctorObject;
   final DateTime? selectedDate;
   final String? selectedSlot;
   final Slot? selectedSlotObject;
@@ -572,8 +571,8 @@ class CheckoutState extends BaseStateModel {
     AppointmentData? appointment,
     Clinic? selectedClinic,
     AppointmentTypeData? selectedAppointmentType,
-    DummyDoctor? selectedDoctor,
-    Doctor? selectedDoctorObject,
+    PractitionerDoctor? selectedDoctor,
+    PractitionerDoctor? selectedDoctorObject,
     DateTime? selectedDate,
     String? selectedSlot,
     Slot? selectedSlotObject,

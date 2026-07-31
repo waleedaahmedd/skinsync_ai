@@ -2,12 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../models/responses/get_doctor_response.dart';
+import '../models/responses/practitioner_list_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 
 class DoctorCard extends StatelessWidget {
-  final Doctor doctor;
+  final PractitionerDoctor doctor;
   final double? width;
   final VoidCallback? onTap;
   final EdgeInsetsGeometry? margin;
@@ -47,7 +47,7 @@ class DoctorCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
               child: CachedNetworkImage(
-                imageUrl: doctor.image ?? '',
+                imageUrl: doctor.doctorImage ?? '',
                 height: 100.h,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -75,7 +75,7 @@ class DoctorCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          doctor.name ?? '',
+                          doctor.doctorName ?? '',
                           style: CustomFonts.black12w600,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -89,7 +89,10 @@ class DoctorCard extends StatelessWidget {
                             size: 14,
                           ),
                           SizedBox(width: 2.w),
-                          Text("4.5", style: CustomFonts.black10w600),
+                          Text(
+                            doctor.doctorRating?.toString() ?? "4.5", 
+                            style: CustomFonts.black10w600,
+                          ),
                         ],
                       ),
                     ],
@@ -103,7 +106,7 @@ class DoctorCard extends StatelessWidget {
                   ),
                   SizedBox(height: 6.h),
                   Text(
-                    "Premium Specialist", // Or get from clinic if available
+                    doctor.clinic?.clinicName ?? "Premium Specialist",
                     style: CustomFonts.darkPurple12w600,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

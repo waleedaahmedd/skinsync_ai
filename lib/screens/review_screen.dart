@@ -20,7 +20,7 @@ class ReviewScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final checkoutState = ref.watch(checkoutViewModel);
     final clinic = checkoutState.selectedClinic;
-    final doctor = checkoutState.selectedDoctor;
+    final doctor = checkoutState.selectedDoctorObject ?? checkoutState.selectedDoctor;
     final date = checkoutState.selectedDate;
     final slot = checkoutState.selectedSlot;
 
@@ -73,7 +73,7 @@ class ReviewScreen extends ConsumerWidget {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(12.r),
                               child: CachedNetworkImage(
-                                imageUrl: doctor.image,
+                                imageUrl: doctor.doctorImage ?? '',
                                 height: 60.w,
                                 width: 60.w,
                                 fit: BoxFit.cover,
@@ -93,12 +93,12 @@ class ReviewScreen extends ConsumerWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    doctor.name,
+                                    doctor.doctorName ?? 'Unknown Specialist',
                                     style: CustomFonts.black14w600,
                                   ),
                                   SizedBox(height: 4.h),
                                   Text(
-                                    doctor.specialization,
+                                    doctor.specialization ?? 'Aesthetic Medicine',
                                     style: CustomFonts.grey12w400,
                                   ),
                                   SizedBox(height: 4.h),
@@ -111,7 +111,7 @@ class ReviewScreen extends ConsumerWidget {
                                       ),
                                       SizedBox(width: 2.w),
                                       Text(
-                                        doctor.rating.toString(),
+                                        doctor.doctorRating?.toString() ?? "4.5",
                                         style: CustomFonts.black10w600,
                                       ),
                                     ],
@@ -154,7 +154,7 @@ class ReviewScreen extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  clinic?.name ?? "Standard Clinic Name",
+                                  doctor?.clinic?.clinicName ?? clinic?.name ?? "Standard Clinic Name",
                                   style: CustomFonts.black14w600,
                                 ),
                                 SizedBox(height: 4.h),

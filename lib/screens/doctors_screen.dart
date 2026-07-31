@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../models/responses/get_doctor_response.dart';
+import '../models/responses/practitioner_list_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/date_time_utills.dart';
@@ -100,8 +100,8 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
     }
   }
 
-  List<Doctor> _getFilteredDoctors(bool isVirtual) {
-    final apiDoctors = ref.watch(doctorProvider).doctorResponse?.data ?? [];
+  List<PractitionerDoctor> _getFilteredDoctors(bool isVirtual) {
+    final apiDoctors = ref.watch(doctorProvider).doctorResponse?.data?.doctors ?? [];
     if (apiDoctors.isNotEmpty) {
       return apiDoctors; // Assuming server-side filtering as per request params
     }
