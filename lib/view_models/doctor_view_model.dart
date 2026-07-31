@@ -34,7 +34,7 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
   Future<void> loadPractitioners({
     int page = 1,
     int limit = 10,
-    bool? isVirtual,
+    bool isVirtual = false,
     String? search,
   }) async {
     await runSafely(() async {
