@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'checkout_view_model.dart';
 
 import '../models/base_state_model.dart';
 import '../models/requests/get_practitioners_request.dart';
 import '../models/responses/availability_response.dart';
-import '../models/responses/practitioner_list_response.dart';
 import '../models/responses/payment_options_response.dart';
+import '../models/responses/practitioner_list_response.dart';
 import '../models/responses/treatment_pricing_response.dart' hide Treatment;
 import '../repositories/clinic_doctor_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/clinic_doctor_service.dart';
 import 'base_view_model.dart';
+import 'checkout_view_model.dart';
 
 final doctorProvider = NotifierProvider(() {
   final apiBaseHelper = ApiBaseHelper();
@@ -36,8 +36,12 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
     int limit = 10,
     bool isVirtual = false,
     String? search,
+    bool showEasyLoading = false,
   }) async {
     await runSafely(() async {
+      if (showEasyLoading) {
+        EasyLoading.show(status: 'Loading...');
+      }
       state = state.copyWith(doctorLoading: true);
 
       final checkoutState = ref.read(checkoutViewModel);
@@ -63,11 +67,8 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
       final response = await _clinicRepository.getPractitioners(
         request: request,
       );
-
-      state = state.copyWith(
-        doctorLoading: false,
-        doctorResponse: response,
-      );
+      EasyLoading.dismiss();
+      state = state.copyWith(doctorLoading: false, doctorResponse: response);
     });
   }
 

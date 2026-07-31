@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../models/responses/practitioner_list_response.dart';
 import '../utills/color_constant.dart';
@@ -101,7 +102,8 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
   }
 
   List<PractitionerDoctor> _getFilteredDoctors(bool isVirtual) {
-    final apiDoctors = ref.watch(doctorProvider).doctorResponse?.data?.doctors ?? [];
+    final apiDoctors =
+        ref.watch(doctorProvider).doctorResponse?.data?.doctors ?? [];
     if (apiDoctors.isNotEmpty) {
       return apiDoctors; // Assuming server-side filtering as per request params
     }
@@ -374,15 +376,17 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
       );
     }
 
-    return GridView.builder(
+    return MasonryGridView.builder(
       itemCount: doctors.length,
       padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
       physics: const BouncingScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisSpacing: 14.w,
+      mainAxisSpacing: 14.h,
+      gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.76,
-        crossAxisSpacing: 14.w,
-        mainAxisSpacing: 14.h,
+        // childAspectRatio: 0.76,
+        // crossAxisSpacing: 14.w,
+        // mainAxisSpacing: 14.h,
       ),
       itemBuilder: (context, index) {
         final doctor = doctors[index];
@@ -393,7 +397,9 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
           margin: EdgeInsets.zero,
           onTap: () {
             // Save selected Doctor into CheckoutState
-            ref.read(checkoutViewModel.notifier).setSelectedDoctorObject(doctor);
+            ref
+                .read(checkoutViewModel.notifier)
+                .setSelectedDoctorObject(doctor);
 
             Navigator.pushNamed(
               context,

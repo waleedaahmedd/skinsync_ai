@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import '../../models/responses/auth_response.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
@@ -26,7 +27,8 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Promotions are still static as no API endpoint provides them yet
-    const int promotionsCount = 0; // Set to 0 to show empty state if not available
+    const int promotionsCount =
+        0; // Set to 0 to show empty state if not available
 
     final authData = ref.watch(authViewModel).authData;
     final dashboard = authData?.dashboard;
@@ -143,10 +145,9 @@ class HomeScreen extends ConsumerWidget {
                         return Padding(
                           padding: EdgeInsets.only(
                             left: index == 0 ? 24.w : 16.w,
-                            right:
-                                index == suggestedTreatments.length - 1
-                                    ? 24.w
-                                    : 0.w,
+                            right: index == suggestedTreatments.length - 1
+                                ? 24.w
+                                : 0.w,
                           ),
                           child: TreatmentContainer(
                             imageHeight: 145.h,
@@ -166,8 +167,10 @@ class HomeScreen extends ConsumerWidget {
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
                 child: HeadingWithRightArrow(
                   title: "Top Doctors",
-                  onTap: () {
-                    ref.read(doctorProvider.notifier).loadPractitioners();
+                  onTap: () async {
+                    await ref
+                        .read(doctorProvider.notifier)
+                        .loadPractitioners(showEasyLoading: true);
                     Navigator.pushNamed(
                       context,
                       DoctorsScreen.routeName,
@@ -188,15 +191,16 @@ class HomeScreen extends ConsumerWidget {
                           "Specialist dermatologists and clinical practitioners will be listed here soon.",
                     )
                   : SizedBox(
-                      height: 190.h,
+                      height: 200.h,
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
                         scrollDirection: Axis.horizontal,
                         itemCount: dashboard!.topDoctors!.length,
-                        itemBuilder: (context, index) => DashboardDoctorHomeCard(
-                          doctor: dashboard.topDoctors![index],
-                        ),
+                        itemBuilder: (context, index) =>
+                            DashboardDoctorHomeCard(
+                              doctor: dashboard.topDoctors![index],
+                            ),
                       ),
                     ),
               SizedBox(height: 28.h),
@@ -232,9 +236,10 @@ class HomeScreen extends ConsumerWidget {
                         padding: EdgeInsets.symmetric(horizontal: 24.w),
                         scrollDirection: Axis.horizontal,
                         itemCount: dashboard!.topClinics!.length,
-                        itemBuilder: (context, index) => DashboardClinicHomeCard(
-                          clinic: dashboard.topClinics![index],
-                        ),
+                        itemBuilder: (context, index) =>
+                            DashboardClinicHomeCard(
+                              clinic: dashboard.topClinics![index],
+                            ),
                       ),
                     ),
               SizedBox(height: 28.h),
