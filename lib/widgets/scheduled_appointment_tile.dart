@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../models/responses/get_appointment_response.dart';
+import '../models/responses/appointments_list_response.dart';
 import '../utills/assets.dart';
 import '../utills/custom_fonts.dart';
 

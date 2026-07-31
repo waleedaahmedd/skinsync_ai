@@ -1,11 +1,11 @@
 import 'base_response_model.dart';
 
-class GetAppointmentResponse extends BaseResponseModel {
+class AppointmentsListResponse extends BaseResponseModel {
   AppointmentListData? data;
 
-  GetAppointmentResponse({this.data, super.isSuccess, super.message});
+  AppointmentsListResponse({this.data, super.isSuccess, super.message});
 
-  GetAppointmentResponse.fromJson(Map<String, dynamic> json) {
+  AppointmentsListResponse.fromJson(Map<String, dynamic> json) {
     isSuccess = json['is_success'];
     message = json['message'];
     data = json['data'] != null ? AppointmentListData.fromJson(json['data']) : null;
@@ -58,6 +58,7 @@ class AppointmentListData {
 }
 
 class AppointmentItem {
+  int? appointmentId;
   int? date;
   AppointmentSlot? slot;
   String? appointmentType;
@@ -68,6 +69,7 @@ class AppointmentItem {
   AppointmentClinic? clinic;
 
   AppointmentItem({
+    this.appointmentId,
     this.date,
     this.slot,
     this.appointmentType,
@@ -79,6 +81,7 @@ class AppointmentItem {
   });
 
   AppointmentItem.fromJson(Map<String, dynamic> json) {
+    appointmentId = json['id'];
     date = json['date'];
     slot = json['slot'] != null ? AppointmentSlot.fromJson(json['slot']) : null;
     appointmentType = json['appointment_type'];
@@ -96,6 +99,7 @@ class AppointmentItem {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = appointmentId;
     data['date'] = date;
     if (slot != null) {
       data['slot'] = slot!.toJson();
@@ -234,7 +238,7 @@ class AppointmentClinic {
   }
 }
 
-final GetAppointmentResponse dummyAppointmentResponse = GetAppointmentResponse(
+final AppointmentsListResponse dummyAppointmentResponse = AppointmentsListResponse(
   isSuccess: true,
   message: "Dummy appointments",
   data: AppointmentListData(
@@ -244,6 +248,7 @@ final GetAppointmentResponse dummyAppointmentResponse = GetAppointmentResponse(
     totalPages: 1,
     items: [
       AppointmentItem(
+        appointmentId: 54210,
         date: 1753142400,
         appointmentType: "Treatment session",
         appointmentTypeId: 12,

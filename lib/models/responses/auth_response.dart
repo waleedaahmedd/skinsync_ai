@@ -1,5 +1,5 @@
 import 'base_response_model.dart';
-import 'get_appointment_response.dart';
+import 'appointments_list_response.dart';
 import 'treatment_list_response.dart';
 
 class AuthResponse extends BaseResponseModel {
