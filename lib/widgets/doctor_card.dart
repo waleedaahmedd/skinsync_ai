@@ -2,12 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../models/dummy_list_model.dart';
+import '../models/responses/get_doctor_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 
 class DoctorCard extends StatelessWidget {
-  final DummyDoctor doctor;
+  final Doctor doctor;
   final double? width;
   final VoidCallback? onTap;
   final EdgeInsetsGeometry? margin;
@@ -37,7 +37,9 @@ class DoctorCard extends StatelessWidget {
               offset: const Offset(0, 4),
             ),
           ],
-          border: Border.all(color: CustomColors.greyColor.withValues(alpha: 0.6)),
+          border: Border.all(
+            color: CustomColors.greyColor.withValues(alpha: 0.6),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,7 +47,7 @@ class DoctorCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
               child: CachedNetworkImage(
-                imageUrl: doctor.image,
+                imageUrl: doctor.image ?? '',
                 height: 100.h,
                 width: double.infinity,
                 fit: BoxFit.cover,
@@ -55,7 +57,11 @@ class DoctorCard extends StatelessWidget {
                 ),
                 errorWidget: (context, url, error) => Container(
                   color: Colors.grey.shade100,
-                  child: const Icon(Icons.person_outline_rounded, size: 30, color: Colors.grey),
+                  child: const Icon(
+                    Icons.person_outline_rounded,
+                    size: 30,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
             ),
@@ -69,7 +75,7 @@ class DoctorCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          doctor.name,
+                          doctor.name ?? '',
                           style: CustomFonts.black12w600,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -77,26 +83,27 @@ class DoctorCard extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          const Icon(Icons.star_rounded, color: Colors.amber, size: 14),
-                          SizedBox(width: 2.w),
-                          Text(
-                            doctor.rating.toString(),
-                            style: CustomFonts.black10w600,
+                          const Icon(
+                            Icons.star_rounded,
+                            color: Colors.amber,
+                            size: 14,
                           ),
+                          SizedBox(width: 2.w),
+                          Text("4.5", style: CustomFonts.black10w600),
                         ],
                       ),
                     ],
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    doctor.specialization,
+                    doctor.specialization ?? '',
                     style: CustomFonts.grey700_10w400,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 6.h),
                   Text(
-                    doctor.clinicName,
+                    "Premium Specialist", // Or get from clinic if available
                     style: CustomFonts.darkPurple12w600,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

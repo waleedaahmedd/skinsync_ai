@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'checkout_view_model.dart';
 
 import '../models/base_state_model.dart';
+import '../models/requests/get_practitioners_request.dart';
 import '../models/responses/availability_response.dart';
 import '../models/responses/get_doctor_response.dart';
 import '../models/responses/payment_options_response.dart';
@@ -28,6 +29,46 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
 
   void setSelectedDoctor(Doctor doctor) {
     state = state.copyWith(selectedDoctor: doctor);
+  }
+
+  Future<void> loadPractitioners({
+    int page = 1,
+    int limit = 10,
+    bool? isVirtual,
+    String? search,
+  }) async {
+    await runSafely(() async {
+      state = state.copyWith(doctorLoading: true);
+
+      final checkoutState = ref.read(checkoutViewModel);
+      final clinicId = checkoutState.selectedClinic?.id;
+
+      // Extract treatments from checkout state if any
+      final treatments = checkoutState.checkoutTreatmentsList.map((t) {
+        return PractitionerTreatmentRequest(
+          treatmentId: t.treatmentId,
+          areaIds: [t.areaId],
+        );
+      }).toList();
+
+      final request = GetPractitionersRequest(
+        page: page,
+        limit: limit,
+        clinicId: clinicId,
+        isVirtual: isVirtual,
+        search: search,
+        treatments: treatments.isEmpty ? null : treatments,
+      );
+
+      final response = await _clinicRepository.getPractitioners(
+        request: request,
+      );
+
+      state = state.copyWith(
+        doctorLoading: false,
+        doctorResponse: response,
+      );
+    });
   }
 
   Future<bool?> getDoctors({

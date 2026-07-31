@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
-import '../models/dummy_list_model.dart';
+import '../models/responses/get_doctor_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
+import '../view_models/doctor_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_search_field.dart';
 import '../widgets/doctor_card.dart';
@@ -99,51 +100,14 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
     }
   }
 
-  List<DummyDoctor> _getFilteredDoctors(bool isVirtual) {
-    return dummyDoctors.where((doctor) {
-      // 1. Filter by Tab (In-Person: Even-indexed id; Virtual: Odd-indexed id)
-      final int idNum = int.tryParse(doctor.id) ?? 0;
-      final bool isDocVirtual = idNum % 2 == 0;
-      if (isVirtual != isDocVirtual) return false;
+  List<Doctor> _getFilteredDoctors(bool isVirtual) {
+    final apiDoctors = ref.watch(doctorProvider).doctorResponse?.data ?? [];
+    if (apiDoctors.isNotEmpty) {
+      return apiDoctors; // Assuming server-side filtering as per request params
+    }
 
-      // 2. Filter by Search Query
-      if (_searchQuery.isNotEmpty) {
-        final matchesName = doctor.name.toLowerCase().contains(_searchQuery);
-        final matchesSpec = doctor.specialization.toLowerCase().contains(
-          _searchQuery,
-        );
-        final matchesClinic = doctor.clinicName.toLowerCase().contains(
-          _searchQuery,
-        );
-        if (!matchesName && !matchesSpec && !matchesClinic) return false;
-      }
-
-      // 3. Filter by Date (Simulated availability matching)
-      if (_selectedDate != null) {
-        final day = _selectedDate!.weekday;
-        if (doctor.id == "1" && ![1, 3, 5].contains(day)) return false;
-        if (doctor.id == "2" && ![2, 4, 6].contains(day)) return false;
-        if (doctor.id == "3" && ![3, 5, 7].contains(day)) return false;
-      }
-
-      // 4. Filter by Slot (Simulated availability matching)
-      if (_selectedSlot != null) {
-        if (_selectedSlot == "09:00 AM - 11:00 AM" && doctor.id == "2") {
-          return false;
-        }
-        if (_selectedSlot == "11:00 AM - 01:00 PM" && doctor.id == "3") {
-          return false;
-        }
-        if (_selectedSlot == "01:00 PM - 03:00 PM" && doctor.id == "1") {
-          return false;
-        }
-        if (_selectedSlot == "03:00 PM - 05:00 PM" && doctor.id == "1") {
-          return false;
-        }
-      }
-
-      return true;
-    }).toList();
+    // Fallback to dummy for now if API returns nothing (optional, maybe better to show empty)
+    return [];
   }
 
   @override
@@ -431,7 +395,7 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
           margin: EdgeInsets.zero,
           onTap: () {
             // Save selected Doctor into CheckoutState
-            ref.read(checkoutViewModel.notifier).setSelectedDoctor(doctor);
+            ref.read(checkoutViewModel.notifier).setSelectedDoctorObject(doctor);
 
             Navigator.pushNamed(
               context,

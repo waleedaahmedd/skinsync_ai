@@ -1,4 +1,5 @@
 import '../models/requests/get_clinic_request.dart';
+import '../models/requests/get_practitioners_request.dart';
 import '../models/requests/invite_clinic_request.dart';
 import '../models/responses/availability_response.dart';
 import '../models/responses/get_clinic_response.dart';
@@ -8,6 +9,10 @@ import '../models/responses/treatment_pricing_response.dart';
 
 abstract class ClinicDoctorRepository {
   Future<GetClinicResponse> getClinic({required GetClinicRequest request});
+
+  Future<GetDoctorResponse> getPractitioners({
+    required GetPractitionersRequest request,
+  });
 
   Future<GetDoctorResponse> getDoctors({
     required int clinicId,

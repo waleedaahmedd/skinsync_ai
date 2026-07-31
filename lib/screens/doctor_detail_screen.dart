@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../models/dummy_list_model.dart';
 import '../models/responses/get_clinic_response.dart';
+import '../models/responses/get_doctor_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
@@ -17,7 +18,7 @@ import 'select_date_time_screen.dart';
 class DoctorDetailScreen extends ConsumerWidget {
   static const routeName = '/doctor_detail_screen';
   final Clinic? clinic;
-  final DummyDoctor doctor;
+  final Doctor doctor;
 
   const DoctorDetailScreen({
     super.key,
@@ -72,7 +73,7 @@ class DoctorDetailScreen extends ConsumerWidget {
                               top: Radius.circular(24.r),
                             ),
                             child: CachedNetworkImage(
-                              imageUrl: doctor.image,
+                              imageUrl: doctor.image ?? '',
                               height: 200.h,
                               width: double.infinity,
                               fit: BoxFit.cover,
@@ -97,12 +98,12 @@ class DoctorDetailScreen extends ConsumerWidget {
                             child: Column(
                               children: [
                                 Text(
-                                  doctor.name,
+                                  doctor.name ?? '',
                                   style: CustomFonts.black22w600,
                                 ),
                                 SizedBox(height: 6.h),
                                 Text(
-                                  doctor.specialization,
+                                  doctor.specialization ?? '',
                                   style: CustomFonts.grey14w400.copyWith(
                                     color: CustomColors.pinkColor,
                                     fontWeight: FontWeight.w600,
@@ -119,7 +120,7 @@ class DoctorDetailScreen extends ConsumerWidget {
                                     ),
                                     SizedBox(width: 4.w),
                                     Text(
-                                      doctor.rating.toString(),
+                                      "4.5", // Static or add to model
                                       style: CustomFonts.black14w600,
                                     ),
                                     SizedBox(width: 16.w),
@@ -155,7 +156,7 @@ class DoctorDetailScreen extends ConsumerWidget {
                     Text("About Specialist", style: CustomFonts.black18w600),
                     SizedBox(height: 10.h),
                     Text(
-                      "${doctor.name} is a highly qualified specialist in clinical dermatology and non-surgical facial enhancements. With over 12 years of hands-on experience and continuous contribution to aesthetic research, they provide bespoke luxury care using state-of-the-art diagnostic algorithms and premium injection materials.",
+                      "${doctor.name ?? 'Specialist'} is a highly qualified specialist in clinical dermatology and non-surgical facial enhancements. With over 12 years of hands-on experience and continuous contribution to aesthetic research, they provide bespoke luxury care using state-of-the-art diagnostic algorithms and premium injection materials.",
                       style: CustomFonts.textGrey14w400,
                     ),
                     SizedBox(height: 20.h),
@@ -175,15 +176,14 @@ class DoctorDetailScreen extends ConsumerWidget {
                     ),
                     _buildQualificationItem(
                       Icons.business_center_rounded,
-                      "Resident MedSpa Physician Specialist",
-                      doctor.clinicName,
+                      "Resident MedSpa Specialist",
+                      clinic?.name ?? "Premium Clinic",
                     ),
                   ],
                 ),
               ),
             ),
-
-            // Premium Floating Booking Button Container
+          // Premium Floating Booking Button Container
             if (clinic != null)
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),

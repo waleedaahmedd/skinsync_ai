@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import '../exceptions/app_exception.dart';
 import '../models/requests/get_clinic_request.dart';
+import '../models/requests/get_practitioners_request.dart';
 import '../models/requests/invite_clinic_request.dart';
 import '../models/responses/availability_response.dart';
 import '../models/responses/base_response_model.dart';
@@ -36,6 +37,25 @@ class ClinicDoctorService implements ClinicDoctorRepository {
       // Handle HTTP error status codes
       final parsed = json.decode(response.body);
       throw AppException(GetClinicResponse.fromJson(parsed).message as String);
+    }
+  }
+
+  @override
+  Future<GetDoctorResponse> getPractitioners({
+    required GetPractitionersRequest request,
+  }) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.practitionersList,
+      requestType: 'GET', // Following curl but ApiBaseHelper might need a fix if body is required for GET
+      requestBody: request.toJson(),
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      return GetDoctorResponse.fromJson(parsed);
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(GetDoctorResponse.fromJson(parsed).message ?? 'Error fetching practitioners');
     }
   }
 

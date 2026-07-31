@@ -35,6 +35,15 @@ class ApiBaseHelper {
       await _refreshToken();
       switch (requestType) {
         case 'GET':
+          if (requestBody != null) {
+            final request = http.Request('GET', Uri.parse(url));
+            request.headers.addAll(getHeaders());
+            request.body = jsonEncode(requestBody);
+            final response = await http.Client().send(request);
+            final responseJson = await http.Response.fromStream(response);
+            log('RESPONSE: ${responseJson.body}');
+            return responseJson;
+          }
           final responseJson = await http.get(
             Uri.parse(url),
             headers: getHeaders(),

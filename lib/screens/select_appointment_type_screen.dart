@@ -6,6 +6,7 @@ import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/appointment_view_model.dart';
 import '../view_models/checkout_view_model.dart';
+import '../view_models/doctor_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/treatment_container.dart';
@@ -115,6 +116,7 @@ class _SelectAppointmentTypeScreenState
                                     SelectDateTimeScreen.routeName,
                                   );
                                 } else {
+                                  ref.read(doctorProvider.notifier).loadPractitioners();
                                   Navigator.pushNamed(
                                     context,
                                     DoctorsScreen.routeName,

@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../models/dummy_list_model.dart';
 import '../models/responses/auth_response.dart';
+import '../models/responses/get_doctor_response.dart';
 import '../screens/appointment_detail_screen.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -12,7 +13,7 @@ import '../utills/date_time_utills.dart';
 import 'doctor_card.dart';
 
 class DoctorHomeCard extends StatelessWidget {
-  final DummyDoctor doctor;
+  final Doctor doctor;
   const DoctorHomeCard({super.key, required this.doctor});
 
   @override
