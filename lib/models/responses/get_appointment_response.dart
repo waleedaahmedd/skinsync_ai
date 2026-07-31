@@ -62,6 +62,7 @@ class AppointmentItem {
   AppointmentSlot? slot;
   String? appointmentType;
   int? appointmentTypeId;
+  String? status;
   List<AppointmentTreatment>? treatments;
   AppointmentDoctor? doctor;
   AppointmentClinic? clinic;
@@ -71,6 +72,7 @@ class AppointmentItem {
     this.slot,
     this.appointmentType,
     this.appointmentTypeId,
+    this.status,
     this.treatments,
     this.doctor,
     this.clinic,
@@ -81,6 +83,7 @@ class AppointmentItem {
     slot = json['slot'] != null ? AppointmentSlot.fromJson(json['slot']) : null;
     appointmentType = json['appointment_type'];
     appointmentTypeId = json['appointment_type_id'];
+    status = json['status'];
     if (json['treatments'] != null) {
       treatments = <AppointmentTreatment>[];
       json['treatments'].forEach((v) {
@@ -99,6 +102,7 @@ class AppointmentItem {
     }
     data['appointment_type'] = appointmentType;
     data['appointment_type_id'] = appointmentTypeId;
+    data['status'] = status;
     if (treatments != null) {
       data['treatments'] = treatments!.map((v) => v.toJson()).toList();
     }
@@ -229,3 +233,52 @@ class AppointmentClinic {
     return data;
   }
 }
+
+final GetAppointmentResponse dummyAppointmentResponse = GetAppointmentResponse(
+  isSuccess: true,
+  message: "Dummy appointments",
+  data: AppointmentListData(
+    page: 1,
+    limit: 10,
+    total: 1,
+    totalPages: 1,
+    items: [
+      AppointmentItem(
+        date: 1753142400,
+        appointmentType: "Treatment session",
+        appointmentTypeId: 12,
+        status: "Confirmed",
+        slot: AppointmentSlot(
+          startTime: 1753142400 + 3600 * 9, // 9 AM
+          endTime: 1753142400 + 3600 * 11, // 11 AM
+        ),
+        doctor: AppointmentDoctor(
+          doctorId: 1,
+          doctorName: "Dr. Sarah Smith",
+          doctorImage: "https://t4.ftcdn.net/jpg/03/20/52/31/360_F_320523164_cc7at9W77BRD96qLYpSPlSdrofD8oM0S.jpg",
+        ),
+        clinic: AppointmentClinic(
+          clinicId: 1,
+          clinicName: "Glow Skin Clinic",
+          clinicImage: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl-cyJqFlcZav1TlRMEuajtrg2RJlWY3rTQA&s",
+        ),
+        treatments: [
+          AppointmentTreatment(
+            treatmentId: 1,
+            treatmentName: "Botox",
+            areaId: 5,
+            areaName: "Pre Jaw",
+            material: AppointmentMaterial(id: 101, selectedQuantity: 2),
+          ),
+          AppointmentTreatment(
+            treatmentId: 2,
+            treatmentName: "Dermal Filler",
+            areaId: 8,
+            areaName: "Cheeks",
+            material: AppointmentMaterial(id: 102, selectedQuantity: 1),
+          ),
+        ],
+      ),
+    ],
+  ),
+);

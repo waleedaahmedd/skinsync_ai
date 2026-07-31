@@ -12,8 +12,6 @@ import '../appointment_detail_screen.dart';
 import '../../widgets/custom_search_field.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-enum AppointmentGrouping { dayWise, treatmentWise, clinicWise, doctorWise }
-
 class AppointmentsScreen extends ConsumerStatefulWidget {
   const AppointmentsScreen({super.key});
   static const String routeName = "/AppointmentsScreen";
@@ -23,7 +21,6 @@ class AppointmentsScreen extends ConsumerStatefulWidget {
 }
 
 class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
-  AppointmentGrouping _selectedGrouping = AppointmentGrouping.dayWise;
   String _selectedTypeFilter = "All";
   String _searchQuery = "";
   final TextEditingController _searchController = TextEditingController();
@@ -38,7 +35,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(appointmentProvider.notifier).getAppointments();
+      // ref.read(appointmentProvider.notifier).getAppointments();
     });
   }
 
@@ -48,8 +45,8 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
     super.dispose();
   }
 
-  Map<String, List<AppointmentItem>> _getGroupedAppointments(List<AppointmentItem> items) {
-    List<AppointmentItem> filteredList = items.where((appointment) {
+  List<AppointmentItem> _getFilteredAppointments(List<AppointmentItem> items) {
+    return items.where((appointment) {
       final query = _searchQuery.toLowerCase();
       final clinicName = appointment.clinic?.clinicName?.toLowerCase() ?? "";
       final doctorName = appointment.doctor?.doctorName?.toLowerCase() ?? "";
@@ -64,44 +61,13 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
 
       return matchesSearch && matchesType;
     }).toList();
-
-    Map<String, List<AppointmentItem>> grouped = {};
-
-    for (var appointment in filteredList) {
-      String key = "";
-      switch (_selectedGrouping) {
-        case AppointmentGrouping.dayWise:
-          if (appointment.date != null) {
-            key = DateTimeUtils.formatTimestampToDayDate(appointment.date!);
-          } else {
-            key = "Unknown Date";
-          }
-          break;
-        case AppointmentGrouping.treatmentWise:
-          key = appointment.treatments?.firstOrNull?.treatmentName ?? "No Treatment";
-          break;
-        case AppointmentGrouping.clinicWise:
-          key = appointment.clinic?.clinicName ?? "Unknown Clinic";
-          break;
-        case AppointmentGrouping.doctorWise:
-          key = appointment.doctor?.doctorName ?? "Unknown Doctor";
-          break;
-      }
-
-      if (!grouped.containsKey(key)) {
-        grouped[key] = [];
-      }
-      grouped[key]!.add(appointment);
-    }
-
-    return grouped;
   }
 
   @override
   Widget build(BuildContext context) {
     final appointmentState = ref.watch(appointmentProvider);
     final appointments = appointmentState.appointmentsResponse?.data?.items ?? [];
-    final groupedAppointments = _getGroupedAppointments(appointments);
+    final filteredAppointments = _getFilteredAppointments(appointments);
 
     return Scaffold(
       body: SafeArea(
@@ -154,71 +120,32 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                     },
                   ),
                   SizedBox(height: 16.h),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildDropdown<AppointmentGrouping>(
-                          label: "Group By",
-                          value: _selectedGrouping,
-                          items: AppointmentGrouping.values.map((e) {
-                            return DropdownMenuItem(
-                              value: e,
-                              child: Text(_getGroupingLabel(e), style: CustomFonts.black14w600),
-                            );
-                          }).toList(),
-                          onChanged: (val) {
-                            if (val != null) setState(() => _selectedGrouping = val);
-                          },
-                        ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: _buildDropdown<String>(
-                          label: "Type",
-                          value: _selectedTypeFilter,
-                          items: _appointmentTypes.map((e) {
-                            return DropdownMenuItem(
-                              value: e,
-                              child: Text(e, style: CustomFonts.black14w600),
-                            );
-                          }).toList(),
-                          onChanged: (val) {
-                            if (val != null) setState(() => _selectedTypeFilter = val);
-                          },
-                        ),
-                      ),
-                    ],
+                  _buildDropdown<String>(
+                    label: "Appointment Type Filter",
+                    value: _selectedTypeFilter,
+                    items: _appointmentTypes.map((e) {
+                      return DropdownMenuItem(
+                        value: e,
+                        child: Text(e, style: CustomFonts.black14w600),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      if (val != null) setState(() => _selectedTypeFilter = val);
+                    },
                   ),
                 ],
               ),
               Expanded(
                 child: appointmentState.loading
                     ? const Center(child: CupertinoActivityIndicator())
-                    : groupedAppointments.isEmpty
+                    : filteredAppointments.isEmpty
                     ? _buildEmptyState()
                     : ListView.builder(
                         padding: EdgeInsets.only( top: 20.h,bottom: 80),
                         physics: const BouncingScrollPhysics(),
-                        itemCount: groupedAppointments.length,
+                        itemCount: filteredAppointments.length,
                         itemBuilder: (context, index) {
-                          String key = groupedAppointments.keys.elementAt(index);
-                          List<AppointmentItem> appointments = groupedAppointments[key]!;
-                          return Container(
-                            padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 8.h),
-                            margin: EdgeInsets.only(bottom: 16.h),
-                            decoration: BoxDecoration(
-                              gradient: CustomColors.purpleBlueGradient,
-                              borderRadius: BorderRadius.circular(24.r),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: CustomColors.purpleColor.withValues(alpha: 0.15),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
-                            child: _buildGroupSection(key, appointments),
-                          );
+                          return _buildAppointmentCard(filteredAppointments[index]);
                         },
                       ),
               ),
@@ -227,15 +154,6 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
         ),
       ),
     );
-  }
-
-  String _getGroupingLabel(AppointmentGrouping grouping) {
-    switch (grouping) {
-      case AppointmentGrouping.dayWise: return "Day";
-      case AppointmentGrouping.treatmentWise: return "Treatment";
-      case AppointmentGrouping.clinicWise: return "Clinic";
-      case AppointmentGrouping.doctorWise: return "Doctor";
-    }
   }
 
   Widget _buildDropdown<T>({
@@ -276,32 +194,6 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
     );
   }
 
-  Widget _buildGroupSection(String title, List<AppointmentItem> appointments) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.only(left: 4.w, bottom: 15.h),
-          child: Row(
-            children: [
-              const Icon(Icons.stars_rounded, color: CustomColors.yellow, size: 16),
-              SizedBox(width: 8.w),
-              Expanded(
-                child: Text(
-                  title,
-                  style: CustomFonts.black14w700,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ),
-        ...appointments.map((appointment) => _buildAppointmentCard(appointment)),
-      ],
-    );
-  }
-
   Widget _buildAppointmentCard(AppointmentItem appointment) {
     final type = appointment.appointmentType ?? "consultation";
     Color typeColor = _getTypeColor(type);
@@ -329,51 +221,86 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
         );
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: 16.h),
+        margin: EdgeInsets.only(bottom: 22.h),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(24.r),
           border: Border.all(color: Colors.grey.shade100, width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 15,
-              offset: const Offset(0, 6),
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 25,
+              offset: const Offset(0, 10),
             ),
           ],
         ),
         child: Column(
           children: [
-            // 1. Top Section: Date & Appointment Slot (Gradient-style background)
+            // 1. Top Section: Date, Slot & Status (Gradient background)
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 14.h),
+              padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 16.h),
               decoration: BoxDecoration(
-                color: typeColor.withValues(alpha: 0.08),
+                gradient: CustomColors.purpleBlueGradient,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
               ),
               child: Column(
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.calendar_today_rounded, size: 16.sp, color: typeColor),
-                      SizedBox(width: 8.w),
-                      Text(dateStr, style: CustomFonts.black14w700),
-                      const Spacer(),
-                      _buildTypeBadge(type, typeColor, timeStyle),
-                    ],
-                  ),
-                  SizedBox(height: 8.h),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.access_time_filled_rounded,
-                        size: 14.sp,
-                        color: typeColor.withValues(alpha: 0.7),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_today_rounded, size: 16, color: Colors.white),
+                                SizedBox(width: 8.w),
+                                Text(dateStr, style: CustomFonts.white14w700),
+                              ],
+                            ),
+                            SizedBox(height: 10.h),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.access_time_filled_rounded,
+                                  size: 14,
+                                  color: Colors.white70,
+                                ),
+                                SizedBox(width: 8.w),
+                                Text(
+                                  timeString,
+                                  style: CustomFonts.white14w600.copyWith(fontSize: 13.sp),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                      SizedBox(width: 8.w),
-                      Text(
-                        timeString,
-                        style: CustomFonts.black13w600.copyWith(color: Colors.black87),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          _buildTypeBadge(type, Colors.white, timeStyle.copyWith(color: typeColor)),
+                          if (appointment.status != null) ...[
+                            SizedBox(height: 10.h),
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(20.r),
+                                border: Border.all(color: Colors.white24),
+                              ),
+                              child: Text(
+                                appointment.status!.toUpperCase(),
+                                style: CustomFonts.white10w600.copyWith(
+                                  letterSpacing: 1.2,
+                                  fontSize: 8.5.sp,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ],
                   ),
@@ -412,7 +339,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                               Expanded(
                                 child: Text(
                                   appointment.clinic!.clinicName ?? "N/A",
-                                  style: CustomFonts.grey700_12w400,
+                                  style: CustomFonts.black14w600.copyWith(fontSize: 12.sp),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -443,7 +370,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                               Expanded(
                                 child: Text(
                                   appointment.doctor!.doctorName ?? "N/A",
-                                  style: CustomFonts.grey700_12w400,
+                                  style: CustomFonts.black14w600.copyWith(fontSize: 12.sp),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -460,14 +387,22 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                     SizedBox(height: 18.h),
 
                     // 3. Treatments List
-                    Text("Selected Treatments", style: CustomFonts.darkPurple12w600),
-                    SizedBox(height: 12.h),
+                    Row(
+                      children: [
+                        const Icon(Icons.medical_services_rounded, size: 14, color: CustomColors.darkPurple),
+                        SizedBox(width: 8.w),
+                        Text("Selected Treatments", style: CustomFonts.darkPurple12w600),
+                      ],
+                    ),
+                    SizedBox(height: 14.h),
                     ...appointment.treatments!.map(
                       (t) => Padding(
-                        padding: EdgeInsets.only(bottom: 10.h),
+                        padding: EdgeInsets.only(bottom: 12.h),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
+                              margin: EdgeInsets.only(top: 2.h),
                               padding: EdgeInsets.all(6.w),
                               decoration: BoxDecoration(
                                 color: CustomColors.purpleColor.withValues(alpha: 0.1),
@@ -484,10 +419,14 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(t.treatmentName ?? "N/A", style: CustomFonts.black13w600),
                                   Text(
-                                    "${t.areaName ?? ''} ${t.material != null ? '(${t.material!.selectedQuantity} Syringes)' : ''}",
-                                    style: CustomFonts.grey700_10w400,
+                                    t.treatmentName ?? "N/A",
+                                    style: CustomFonts.black14w600.copyWith(fontSize: 13.sp),
+                                  ),
+                                  SizedBox(height: 2.h),
+                                  Text(
+                                    "Area: ${t.areaName ?? 'N/A'} ${t.material != null ? '• ${t.material!.selectedQuantity} Syringes' : ''}",
+                                    style: CustomFonts.grey700_10w400.copyWith(fontSize: 11.sp),
                                   ),
                                 ],
                               ),

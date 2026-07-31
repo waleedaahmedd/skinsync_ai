@@ -51,7 +51,7 @@ class AppointmentDetailScreen extends StatelessWidget {
                 _buildDetailRow("Type", type, isType: true),
                 _buildDetailRow("Date", dateStr),
                 _buildDetailRow("Time Slot", timeString),
-                _buildDetailRow("Status", "Confirmed", isStatus: true),
+                _buildDetailRow("Status", appointment.status ?? "Confirmed", isStatus: true),
               ],
             ),
             SizedBox(height: 16.h),
