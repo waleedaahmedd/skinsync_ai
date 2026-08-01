@@ -116,7 +116,7 @@ class DashboardAppointmentHomeCard extends StatelessWidget {
     final accentColor = _getTypeAccentColor(type);
     final timeStyle = _getTimeStyle(type);
 
-    final treatment = appointment.treatments?.firstOrNull?.firstOrNull;
+    final treatment = appointment.treatments?.firstOrNull;
     final treatmentName = treatment?.treatmentName ?? "Consultation";
     final areaName = treatment?.areaName ?? "Full Face";
 

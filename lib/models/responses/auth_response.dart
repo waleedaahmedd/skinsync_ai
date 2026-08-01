@@ -172,7 +172,7 @@ class DashboardAppointment {
   final int? date;
   final String? appointmentType;
   final int? appointmentTypeId;
-  final List<List<AppointmentTreatment>>? treatments;
+  final List<AppointmentTreatment>? treatments;
   final DashboardDoctor? doctor;
   final DashboardClinic? clinic;
 
@@ -192,11 +192,9 @@ class DashboardAppointment {
         appointmentTypeId: json["appointment_type_id"],
         treatments: json["treatments"] == null
             ? []
-            : List<List<AppointmentTreatment>>.from(
+            : List<AppointmentTreatment>.from(
                 json["treatments"]!.map(
-                  (x) => List<AppointmentTreatment>.from(
-                    x.map((y) => AppointmentTreatment.fromJson(y)),
-                  ),
+                  (x) => AppointmentTreatment.fromJson(x),
                 ),
               ),
         doctor: json["doctor"] == null
@@ -211,9 +209,7 @@ class DashboardAppointment {
     "date": date,
     "appointment_type": appointmentType,
     "appointment_type_id": appointmentTypeId,
-    "treatments": treatments
-        ?.map((x) => x.map((y) => y.toJson()).toList())
-        .toList(),
+    "treatments": treatments?.map((x) => x.toJson()).toList(),
     "doctor": doctor?.toJson(),
     "clinic": clinic?.toJson(),
   };
@@ -223,7 +219,7 @@ class DashboardAppointment {
       date: date,
       appointmentType: appointmentType,
       appointmentTypeId: appointmentTypeId,
-      treatments: treatments?.expand((x) => x).toList(),
+      treatments: treatments,
       doctor: doctor != null
           ? AppointmentDoctor(
             doctorId: doctor!.doctorId,
@@ -255,13 +251,13 @@ class DashboardDoctor {
       DashboardDoctor(
         doctorId: json["doctor_id"],
         doctorName: json["doctor_name"],
-        doctorImage: json["docotor_image"],
+        doctorImage: json["doctor_image"],
       );
 
   Map<String, dynamic> toJson() => {
     "doctor_id": doctorId,
     "doctor_name": doctorName,
-    "docotor_image": doctorImage,
+    "doctor_image": doctorImage,
   };
 }
 
@@ -308,7 +304,7 @@ class TopDoctor {
     doctorImage: json["doctor_image"],
     doctorRating: json["doctor_rating"],
     doctorName: json["doctor_name"],
-    specialization: json["specaialization"],
+    specialization: json["specialization"],
     clinic: json["clinic"] == null
         ? null
         : DashboardClinic.fromJson(json["clinic"]),
