@@ -8,7 +8,6 @@ import '../../utills/custom_fonts.dart';
 import '../../utills/date_time_utills.dart';
 import '../../view_models/auth_view_model.dart';
 import '../../view_models/bottom_nav_view_model.dart';
-import '../../view_models/doctor_view_model.dart';
 import '../../widgets/app_bar_with_action_icon.dart';
 import '../../widgets/discount_card.dart';
 import '../../widgets/grey_container.dart';
@@ -167,10 +166,7 @@ class HomeScreen extends ConsumerWidget {
                 padding: EdgeInsets.symmetric(horizontal: 24.w),
                 child: HeadingWithRightArrow(
                   title: "Top Doctors",
-                  onTap: () async {
-                    await ref
-                        .read(doctorProvider.notifier)
-                        .loadPractitioners(showEasyLoading: true);
+                  onTap: () {
                     Navigator.pushNamed(
                       context,
                       DoctorsScreen.routeName,

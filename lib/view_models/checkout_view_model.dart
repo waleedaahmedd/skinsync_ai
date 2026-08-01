@@ -13,8 +13,8 @@ import '../models/responses/appointment_response.dart';
 import '../models/responses/appointment_type_list_response.dart';
 import '../models/responses/availability_response.dart';
 import '../models/responses/get_clinic_response.dart';
-import '../models/responses/practitioner_list_response.dart';
 import '../models/responses/payment_options_response.dart';
+import '../models/responses/practitioner_list_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
 import '../models/responses/treatment_category_list_response.dart';
 import '../models/responses/treatment_list_response.dart';
@@ -294,6 +294,14 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
 
   void clearAreaSelection() {
     state = state.clearSelectedAreas();
+  }
+
+  void clearDateAndSlot() {
+    state = state.copyWithNull(
+      selectedDate: true,
+      selectedDoctorObject: true,
+      selectedSlot: true,
+    );
   }
 
   void onTapTreatmentSubArea({required TreatmentAreaModel subArea}) {
@@ -624,6 +632,50 @@ class CheckoutState extends BaseStateModel {
       selectedSlot: selectedSlot,
       selectedSlotObject: selectedSlotObject,
       selectedPaymentOption: selectedPaymentOption,
+      isInviteClinic: isInviteClinic,
+    );
+  }
+
+  CheckoutState copyWithNull({
+    bool errorMessage = false,
+    bool capturedImage = false,
+    bool selectedCategories = false,
+    bool selectedTreatments = false,
+    bool selectedAreas = false,
+    bool appointment = false,
+    bool selectedClinic = false,
+    bool selectedAppointmentType = false,
+    bool selectedDoctor = false,
+    bool selectedDoctorObject = false,
+    bool selectedDate = false,
+    bool selectedSlot = false,
+    bool selectedSlotObject = false,
+    bool selectedPaymentOption = false,
+  }) {
+    return CheckoutState(
+      loading: loading,
+      errorMessage: errorMessage ? null : this.errorMessage,
+      capturedImage: capturedImage ? null : this.capturedImage,
+      selectedTreatmentsAndAreas: selectedTreatmentsAndAreas,
+      checkoutTreatmentsList: checkoutTreatmentsList,
+      selectedCategories: selectedCategories ? null : this.selectedCategories,
+      selectedTreatments: selectedTreatments ? null : this.selectedTreatments,
+      selectedAreas: selectedAreas ? null : this.selectedAreas,
+      appointment: appointment ? null : this.appointment,
+      selectedClinic: selectedClinic ? null : this.selectedClinic,
+      selectedAppointmentType: selectedAppointmentType
+          ? null
+          : this.selectedAppointmentType,
+      selectedDoctor: selectedDoctor ? null : this.selectedDoctor,
+      selectedDoctorObject: selectedDoctorObject
+          ? null
+          : this.selectedDoctorObject,
+      selectedDate: selectedDate ? null : this.selectedDate,
+      selectedSlot: selectedSlot ? null : this.selectedSlot,
+      selectedSlotObject: selectedSlotObject ? null : this.selectedSlotObject,
+      selectedPaymentOption: selectedPaymentOption
+          ? null
+          : this.selectedPaymentOption,
       isInviteClinic: isInviteClinic,
     );
   }

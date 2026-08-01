@@ -14,7 +14,7 @@ import '../services/clinic_doctor_service.dart';
 import 'base_view_model.dart';
 import 'checkout_view_model.dart';
 
-final doctorProvider = NotifierProvider(() {
+final doctorProvider = NotifierProvider.autoDispose(() {
   final apiBaseHelper = ApiBaseHelper();
   final clinicService = ClinicDoctorService(apiClient: apiBaseHelper);
   return DoctorViewModel(clinicRepository: clinicService);
@@ -61,6 +61,9 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
         clinicId: clinicId,
         isVirtual: isVirtual,
         search: search,
+        date: checkoutState.selectedDate == null
+            ? null
+            : checkoutState.selectedDate!.millisecondsSinceEpoch ~/ 1000,
         treatments: treatments.isEmpty ? null : treatments,
       );
 
