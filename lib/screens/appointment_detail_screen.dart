@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../models/responses/appointments_list_response.dart';
 import '../models/responses/appointment_detail_response.dart';
 import '../utills/assets.dart';
@@ -280,16 +281,29 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                 children: [
                   Row(
                     children: [
-                      Container(
-                        padding: EdgeInsets.all(10.w),
-                        decoration: BoxDecoration(
-                          color: CustomColors.purpleColor.withValues(alpha: 0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.auto_awesome_rounded,
-                          size: 18.sp,
-                          color: CustomColors.purpleColor,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(16.r),
+                        child: CachedNetworkImage(
+                          imageUrl: t.treatmentImage ?? "",
+                          height: 50.w,
+                          width: 50.w,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            color: CustomColors.purpleColor.withValues(alpha: 0.1),
+                            child: const Center(child: CupertinoActivityIndicator(radius: 8)),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            padding: EdgeInsets.all(10.w),
+                            decoration: BoxDecoration(
+                              color: CustomColors.purpleColor.withValues(alpha: 0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.auto_awesome_rounded,
+                              size: 18.sp,
+                              color: CustomColors.purpleColor,
+                            ),
+                          ),
                         ),
                       ),
                       SizedBox(width: 16.w),
@@ -355,7 +369,7 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                             borderRadius: BorderRadius.circular(8.r),
                           ),
                           child: Text(
-                            "${t.material!.selectedQuantity} Syringes",
+                            "${t.material!.selectedQuantity} ${t.material!.name ?? 'Syringes'}",
                             style: CustomFonts.darkPurple10w700.copyWith(fontSize: 11.sp),
                           ),
                         ),

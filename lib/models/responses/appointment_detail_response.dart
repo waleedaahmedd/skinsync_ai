@@ -101,6 +101,7 @@ class AppointmentDetailData {
 class DetailedAppointmentTreatment {
   int? treatmentId;
   String? treatmentName;
+  String? treatmentImage;
   int? areaId;
   String? areaName;
   AppointmentMaterial? material;
@@ -111,6 +112,7 @@ class DetailedAppointmentTreatment {
   DetailedAppointmentTreatment({
     this.treatmentId,
     this.treatmentName,
+    this.treatmentImage,
     this.areaId,
     this.areaName,
     this.material,
@@ -122,6 +124,7 @@ class DetailedAppointmentTreatment {
   DetailedAppointmentTreatment.fromJson(Map<String, dynamic> json) {
     treatmentId = json['treatment_id'];
     treatmentName = json['treatment_name'];
+    treatmentImage = json['treatment_image'];
     areaId = json['area_id'];
     areaName = json['area_name'];
     material = json['material'] != null ? AppointmentMaterial.fromJson(json['material']) : null;
@@ -134,6 +137,7 @@ class DetailedAppointmentTreatment {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['treatment_id'] = treatmentId;
     data['treatment_name'] = treatmentName;
+    data['treatment_image'] = treatmentImage;
     data['area_id'] = areaId;
     data['area_name'] = areaName;
     if (material != null) {
