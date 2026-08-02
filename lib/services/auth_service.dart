@@ -235,7 +235,7 @@ class AuthService implements AuthRepository {
     required SignInWithGoogleRequest request,
   }) async {
     final response = await _apiClient.httpRequest(
-      endPoint: EndPoints.signIn,
+      endPoint: EndPoints.socialLogin,
       requestType: 'POST',
       requestBody: request,
       params: '',
@@ -275,7 +275,7 @@ class AuthService implements AuthRepository {
     required SignInWithAppleRequest request,
   }) async {
     final response = await _apiClient.httpRequest(
-      endPoint: EndPoints.signIn,
+      endPoint: EndPoints.socialLogin,
       requestType: 'POST',
       requestBody: request,
       params: '',
