@@ -5,11 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import 'package:pretty_qr_code/pretty_qr_code.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../models/responses/appointment_detail_response.dart';
 import '../models/responses/appointments_list_response.dart';
-import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/date_time_utills.dart';
@@ -81,19 +80,20 @@ class _AppointmentDetailScreenState
                 child: SizedBox(
                   width: context.w(220),
                   height: context.w(220),
-                  child: PrettyQrView.data(
-                    data: encryptedData,
-                    decoration: const PrettyQrDecoration(
-                      shape: PrettyQrSmoothSymbol(
-                        color: CustomColors.darkPurple,
-                        roundFactor: 1,
-                      ),
-                      image: PrettyQrDecorationImage(
-                        image: AssetImage(PngAssets.splashLogo),
-                        scale: 0.25,
-                      ),
-                    ),
-                  ),
+                  child: QrImageView(data: encryptedData, size: context.w(220)),
+                  // child: PrettyQrView.data(
+                  //   data: encryptedData,
+                  //   decoration: const PrettyQrDecoration(
+                  //     shape: PrettyQrSmoothSymbol(
+                  //       color: CustomColors.darkPurple,
+                  //       roundFactor: 1,
+                  //     ),
+                  //     image: PrettyQrDecorationImage(
+                  //       image: AssetImage(PngAssets.splashLogo),
+                  //       scale: 0.25,
+                  //     ),
+                  //   ),
+                  // ),
                 ),
               ),
               SizedBox(height: context.h(24)),

@@ -69,7 +69,7 @@ class AppointmentViewModel extends BaseViewModel<AppointmentState> {
 
   Future<String?> encryptAppointmentData(AppointmentDetailData? data) async {
     return await runSafely<String?>(() async {
-      final appointmentId = data?.appointmentId;
+      final appointmentId = data?.id;
       final doctorId = data?.doctor?.id;
       final clinicId = data?.clinic?.id;
       if (appointmentId == null || doctorId == null || clinicId == null) {
