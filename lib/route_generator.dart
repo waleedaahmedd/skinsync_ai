@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import 'models/responses/get_clinic_response.dart';
@@ -11,8 +13,9 @@ import 'screens/biometric_screen.dart';
 import 'screens/bottom_nav_page.dart';
 import 'screens/bottom_nav_screens/appointments_screen.dart';
 import 'screens/bottom_nav_screens/face_detection_screen.dart';
+import 'screens/bottom_nav_screens/home_screen.dart';
 import 'screens/bottom_nav_screens/my_profile_screen.dart';
-import 'screens/treatments_screen.dart';
+import 'screens/bottom_nav_screens/treatment_explore_screen.dart';
 import 'screens/clinic_service_screen.dart';
 import 'screens/clinics_detail_screen.dart';
 import 'screens/doctor_detail_screen.dart';
@@ -22,7 +25,6 @@ import 'screens/face_pose_capture_screen.dart';
 import 'screens/face_scan_screen.dart';
 import 'screens/get_notified_screen.dart';
 import 'screens/get_started_screen.dart';
-import 'screens/bottom_nav_screens/home_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/notes_screen.dart';
 import 'screens/notification_screen.dart';
@@ -42,16 +44,15 @@ import 'screens/splash_screen.dart';
 import 'screens/treatment_area_screen.dart';
 import 'screens/treatment_category_screen.dart';
 import 'screens/treatment_detail_screen.dart';
-import 'screens/bottom_nav_screens/treatment_explore_screen.dart';
 import 'screens/treatment_payment_screen.dart';
+import 'screens/treatments_screen.dart';
 import 'screens/your_profile_screen.dart';
-import 'utills/colored_print.dart';
 import 'utills/enums.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final args = settings.arguments;
-    CP.yellow('Navigating to ${settings.name} with args: $args');
+    log('Navigating to ${settings.name} with args: $args');
     switch (settings.name) {
       case SplashScreen.routeName:
         return MaterialPageRoute(
@@ -308,7 +309,6 @@ class RouteGenerator {
   }
 
   static Route<dynamic> _errorRoute() {
-    CP.red('Error: Route not found');
     return MaterialPageRoute(
       builder: (_) {
         return Scaffold(

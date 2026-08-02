@@ -1,28 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'bottom_nav_bar.dart';
-import 'bottom_nav_screens/appointments_screen.dart';
-import 'bottom_nav_screens/explore_screen.dart';
-import 'bottom_nav_screens/my_profile_screen.dart';
-import 'bottom_nav_screens/treatment_explore_screen.dart';
-import 'bottom_nav_screens/home_screen.dart';
 
 import '../view_models/bottom_nav_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 import '../widgets/scan_face_button.dart';
+import 'bottom_nav_bar.dart';
+import 'bottom_nav_screens/appointments_screen.dart';
+import 'bottom_nav_screens/explore_screen.dart';
+import 'bottom_nav_screens/home_screen.dart';
+import 'bottom_nav_screens/my_profile_screen.dart';
+import 'bottom_nav_screens/treatment_explore_screen.dart';
 
 class BottomNavPage extends ConsumerStatefulWidget {
   const BottomNavPage({super.key});
   static const String routeName = '/BottomNavPage';
 
-  static final List<Widget> _children = [
-    const HomeScreen(),
-    const TreatmentExploreScreen(),
-    const ExploreScreen(),
-    const AppointmentsScreen(),
-    const MyProfileScreen(),
-  ];
+  static final List<Widget> _children = [];
 
   @override
   ConsumerState<BottomNavPage> createState() => _BottomNavPageState();
@@ -46,6 +40,19 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage> {
           body: Stack(
             alignment: Alignment.center,
             children: [
+              Consumer(
+                builder: (_, ref, _) {
+                  final index = ref.watch(bottomNavViewModel);
+                  return switch (index) {
+                    0 => const HomeScreen(),
+                    1 => const TreatmentExploreScreen(),
+                    2 => const ExploreScreen(),
+                    3 => const AppointmentsScreen(),
+                    4 => const MyProfileScreen(),
+                    int() => throw UnimplementedError(),
+                  };
+                },
+              ),
               BottomNavPage._children[ref.watch(bottomNavViewModel)],
               Positioned(
                 bottom: 110.h + MediaQuery.paddingOf(context).bottom,
