@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../../utills/custom_fonts.dart';
 
 import '../../utills/color_constant.dart';
@@ -34,13 +34,13 @@ class MedicalDisclaimerBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        padding: EdgeInsets.all(20.w),
+        padding: EdgeInsets.all(context.w(20)),
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.r),
-            topRight: Radius.circular(20.r),
+            topLeft: Radius.circular(context.r(20)),
+            topRight: Radius.circular(context.r(20)),
           ),
         ),
         child: Column(
@@ -49,7 +49,7 @@ class MedicalDisclaimerBottomSheet extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(width: 28.w),
+                SizedBox(width: context.w(28)),
                 Text(title, style: CustomFonts.black20w600),
                 GestureDetector(
                   onTap: () {
@@ -57,28 +57,28 @@ class MedicalDisclaimerBottomSheet extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   child: Container(
-                    width: 28.w,
-                    height: 28.w,
+                    width: context.w(28),
+                    height: context.w(28),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(color: CustomColors.blackColor),
                     ),
                     child: Icon(
                       Icons.close,
-                      size: 16.sp,
+                      size: context.sp(16),
                       color: CustomColors.blackColor,
                     ),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: context.h(12)),
             Text(
               description,
               style: CustomFonts.grey14w400,
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 8.h),
+            SizedBox(height: context.h(8)),
           ],
         ),
       ),

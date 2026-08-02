@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'treatment_payment_screen.dart';
 import '../widgets/custom_button.dart';
 import '../utills/assets.dart';
@@ -22,80 +22,80 @@ class AdditionalInfoScreen extends StatelessWidget {
         child: Stack(
           children: [
             Positioned(
-              top: -100.h,
+              top: -context.h(100),
               child: Image.asset(
                 PngAssets.signupVector,
-                height: 201.h,
+                height: context.h(201),
                 colorBlendMode: BlendMode.dstOver,
                 fit: BoxFit.fitWidth,
                 color: CustomColors.lightBlueColor.withValues(alpha: 0.2),
               ),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.0.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(30.0)),
               child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: .start,
-                  children: [
-                    SizedBox(height: 68.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                    SizedBox(height: context.h(68)),
                     Text(
                       "Please Provide The Additional Information Needed To Send To Your Injector.",
                       style: CustomFonts.black28w600,
                     ),
-                    SizedBox(height: 28.h),
+                    SizedBox(height: context.h(28)),
                     const Divider(color: CustomColors.greyColor, height: 0),
-                    SizedBox(height: 24.h),
+                    SizedBox(height: context.h(24)),
                     Text("Do you smoke ?", style: CustomFonts.black26w600),
-                    SizedBox(height: 18.h),
+                    SizedBox(height: context.h(18)),
                     Row(
                       children: [
                         const RadioButtonWidget(isSelected: false),
-                        SizedBox(width: 13.w),
+                        SizedBox(width: context.w(13)),
                         Text("Yes", style: CustomFonts.black18w600),
-                        SizedBox(height: 35.h),
+                        SizedBox(height: context.h(35)),
                       ],
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: context.h(16)),
                     Row(
                       children: [
                         const RadioButtonWidget(isSelected: false),
-                        SizedBox(width: 13.w),
+                        SizedBox(width: context.w(13)),
                         Text("No", style: CustomFonts.black18w600),
-                        SizedBox(height: 37.h),
+                        SizedBox(height: context.h(37)),
                       ],
                     ),
-                    SizedBox(height: 35.h),
+                    SizedBox(height: context.h(35)),
                     Text(
                       "Previous Aesthetic treatments? Please Specify (Botox, Fillers, Laser, Microneedling)",
                       style: CustomFonts.black26w600,
                     ),
-                    SizedBox(height: 18.h),
+                    SizedBox(height: context.h(18)),
                     Row(
                       children: [
                         const RadioButtonWidget(isSelected: false),
-                        SizedBox(width: 13.w),
+                        SizedBox(width: context.w(13)),
                         Text("Yes", style: CustomFonts.black18w600),
-                        SizedBox(height: 35.h),
+                        SizedBox(height: context.h(35)),
                       ],
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: context.h(16)),
                     Row(
                       children: [
                         const RadioButtonWidget(isSelected: false),
-                        SizedBox(width: 13.w),
+                        SizedBox(width: context.w(13)),
                         Text("No", style: CustomFonts.black18w600),
-                        SizedBox(height: 35.h),
+                        SizedBox(height: context.h(35)),
                       ],
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: context.h(16)),
                     Container(
                       padding: EdgeInsets.symmetric(
-                        vertical: 16.h,
-                        horizontal: 20.w,
+                        vertical: context.h(16),
+                        horizontal: context.w(20),
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(10.r),
+                        borderRadius: BorderRadius.circular(context.r(10)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,38 +129,38 @@ class AdditionalInfoScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 35.h),
+                    SizedBox(height: context.h(35)),
                     Text(
                       "Do You Have Any Allergies to Lidocaine Or Other Anesthetics?",
                       style: CustomFonts.black26w600,
                     ),
-                    SizedBox(height: 18.h),
+                    SizedBox(height: context.h(18)),
                     Row(
                       children: [
                         const RadioButtonWidget(isSelected: false),
-                        SizedBox(width: 13.w),
+                        SizedBox(width: context.w(13)),
                         Text("Yes", style: CustomFonts.black18w600),
-                        SizedBox(height: 35.h),
+                        SizedBox(height: context.h(35)),
                       ],
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: context.h(16)),
                     Row(
                       children: [
                         const RadioButtonWidget(isSelected: false),
-                        SizedBox(width: 13.w),
+                        SizedBox(width: context.w(13)),
                         Text("No", style: CustomFonts.black18w600),
-                        SizedBox(height: 35.h),
+                        SizedBox(height: context.h(35)),
                       ],
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: context.h(16)),
                     Container(
                       padding: EdgeInsets.symmetric(
-                        vertical: 16.h,
-                        horizontal: 20.w,
+                        vertical: context.h(16),
+                        horizontal: context.w(20),
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(10.r),
+                        borderRadius: BorderRadius.circular(context.r(10)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,10 +194,10 @@ class AdditionalInfoScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 25.h),
+                    SizedBox(height: context.h(25)),
                     CustomButton(
                       text: "Submit Now",
-                      borderRadius: 25.r,
+                      borderRadius: context.r(25),
                       onPressed: () {
                         Navigator.pushNamed(
                           context,
@@ -205,7 +205,7 @@ class AdditionalInfoScreen extends StatelessWidget {
                         );
                       },
                     ),
-                    SizedBox(height: 19.h),
+                    SizedBox(height: context.h(19)),
                     Center(
                       child: GestureDetector(
                         onTap: () {
@@ -221,7 +221,7 @@ class AdditionalInfoScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      height: 35.h + MediaQuery.paddingOf(context).bottom,
+                      height: context.h(35) + MediaQuery.paddingOf(context).bottom,
                     ),
                   ],
                 ),

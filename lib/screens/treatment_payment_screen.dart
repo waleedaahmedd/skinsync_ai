@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../models/responses/payment_options_response.dart';
 import '../utills/assets.dart';
@@ -49,19 +49,19 @@ class _TreatmentPaymentScreenState
     return Scaffold(
       appBar: const CustomAppBar(showTitle: false),
       body: Padding(
-        padding: EdgeInsetsGeometry.symmetric(horizontal: 30.w),
-        child: _buildBody(),
+        padding: EdgeInsets.symmetric(horizontal: context.w(30)),
+        child: _buildBody(context),
       ),
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(
-          top: 20.h,
-          bottom: MediaQuery.paddingOf(context).bottom + 20.h,
-          left: 20.w,
-          right: 20.w,
+          top: context.h(20),
+          bottom: MediaQuery.paddingOf(context).bottom + context.h(20),
+          left: context.w(20),
+          right: context.w(20),
         ),
         child: CustomButton(
           text: "Pay Now",
-          borderRadius: 25.r,
+          borderRadius: context.r(25),
           backgroundColor: Colors.black,
           textColor: Colors.white,
           onPressed: () {
@@ -92,7 +92,7 @@ class _TreatmentPaymentScreenState
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
     return Consumer(
       builder: (_, ref, _) {
         final state = ref.watch(
@@ -107,16 +107,16 @@ class _TreatmentPaymentScreenState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 10.h),
+              SizedBox(height: context.h(10)),
               Text(
                 "Your Treatment Appointment is Ready!",
                 style: CustomFonts.black30w600,
               ),
-              SizedBox(height: 18.h),
+              SizedBox(height: context.h(18)),
               Container(
-                padding: EdgeInsets.all(6.w),
+                padding: EdgeInsets.all(context.w(6)),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.r),
+                  borderRadius: BorderRadius.circular(context.r(15)),
                   border: Border.all(color: CustomColors.blackColor),
                 ),
                 child: Consumer(
@@ -129,10 +129,10 @@ class _TreatmentPaymentScreenState
                         Image.asset(
                           DummyAssets.treatmentimage,
                           fit: BoxFit.fill,
-                          height: 105.h,
-                          width: 151.w,
+                          height: context.h(105),
+                          width: context.w(151),
                         ),
-                        SizedBox(width: 21.w),
+                        SizedBox(width: context.w(21)),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -152,7 +152,7 @@ class _TreatmentPaymentScreenState
                               children: [
                                 Icon(
                                   Icons.attach_file,
-                                  size: 12.sp,
+                                  size: context.sp(12),
                                   color: CustomColors.blackColor,
                                 ),
                                 Text(
@@ -168,21 +168,22 @@ class _TreatmentPaymentScreenState
                   },
                 ),
               ),
-              SizedBox(height: 22.h),
+              SizedBox(height: context.h(22)),
               Divider(height: 0, color: Colors.grey.shade300),
-              SizedBox(height: 22.h),
+              SizedBox(height: context.h(22)),
               Text("Select Your Payment Mode", style: CustomFonts.black22w600),
-              SizedBox(height: 20.h),
+              SizedBox(height: context.h(20)),
               for (final paymentOption in state.$1)
                 paymentTile(
+                  context,
                   price: paymentOption.amount ?? 0,
                   paymentOption: paymentOption,
                   title: paymentOption.title ?? 'N/A',
                   description: paymentOption.description ?? 'N/A',
                 ),
-              SizedBox(height: 22.h),
+              SizedBox(height: context.h(22)),
               Divider(height: 0, color: Colors.grey.shade300),
-              SizedBox(height: 14.h),
+              SizedBox(height: context.h(14)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -190,7 +191,7 @@ class _TreatmentPaymentScreenState
                   Text("\$ 550", style: CustomFonts.black16w600),
                 ],
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: context.h(24)),
             ],
           ),
         );
@@ -198,7 +199,8 @@ class _TreatmentPaymentScreenState
     );
   }
 
-  Widget paymentTile({
+  Widget paymentTile(
+    BuildContext context, {
     required String title,
     required String description,
     required int price,
@@ -213,10 +215,10 @@ class _TreatmentPaymentScreenState
         });
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
-        margin: EdgeInsets.only(bottom: 15.h),
+        padding: EdgeInsets.symmetric(horizontal: context.w(15), vertical: context.h(10)),
+        margin: EdgeInsets.only(bottom: context.h(15)),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15.r),
+          borderRadius: BorderRadius.circular(context.r(15)),
           border: Border.all(
             color: isSelected
                 ? CustomColors.lightBlueColor
@@ -232,7 +234,7 @@ class _TreatmentPaymentScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(title, style: CustomFonts.black14w700),
-                  SizedBox(height: 2.h),
+                  SizedBox(height: context.h(2)),
                   Text(description, style: CustomFonts.black12w400),
                 ],
               ),
@@ -242,7 +244,7 @@ class _TreatmentPaymentScreenState
             Column(
               children: [
                 Text("\$ $price", style: CustomFonts.red13w500),
-                SizedBox(height: 5.h),
+                SizedBox(height: context.h(5)),
                 Icon(
                   isSelected
                       ? Icons.radio_button_checked

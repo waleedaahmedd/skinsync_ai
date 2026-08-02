@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import '../utills/custom_fonts.dart';
 
@@ -20,32 +20,32 @@ class PostVideoPreview extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Selected Video", style: CustomFonts.black14w600),
-        SizedBox(height: 10.h),
+        SizedBox(height: context.h(10)),
         Stack(
           children: [
             Container(
-              height: 150.h,
-              width: 200.w,
+              height: context.h(150),
+              width: context.w(200),
               decoration: BoxDecoration(
                 color: Colors.black12,
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(context.r(12)),
               ),
               child: Center(
-                child: Icon(Icons.play_circle_fill, size: 50.sp, color: Colors.white70),
+                child: Icon(Icons.play_circle_fill, size: context.sp(50), color: Colors.white70),
               ),
             ),
             Positioned(
-              top: 10.h,
-              right: 10.w,
+              top: context.h(10),
+              right: context.w(10),
               child: GestureDetector(
                 onTap: onRemove,
                 child: Container(
-                  padding: EdgeInsets.all(4.r),
+                  padding: EdgeInsets.all(context.r(4)),
                   decoration: const BoxDecoration(
                     color: Colors.black54,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(Icons.close, color: Colors.white, size: 16.sp),
+                  child: Icon(Icons.close, color: Colors.white, size: context.sp(16)),
                 ),
               ),
             ),

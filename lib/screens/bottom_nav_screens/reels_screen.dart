@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../../utills/custom_fonts.dart';
 import '../../view_models/explore_view_model.dart';
 import '../../view_models/reels_view_model.dart';
@@ -56,7 +56,7 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
             // Header with Icons and Tabs
             SafeArea(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(8)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -64,8 +64,8 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
                     GestureDetector(
                       onTap: () {},
                       child: Padding(
-                        padding: EdgeInsets.all(8.r),
-                        child: Icon(Icons.search_rounded, color: Colors.white, size: 26.sp),
+                        padding: EdgeInsets.all(context.r(8)),
+                        child: Icon(Icons.search_rounded, color: Colors.white, size: context.sp(26)),
                       ),
                     ),
 
@@ -74,12 +74,12 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
                       children: [
                         _buildTab("Following", 0),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                          padding: EdgeInsets.symmetric(horizontal: context.w(8)),
                           child: Text("|", style: CustomFonts.white14w400.copyWith(color: Colors.white38)),
                         ),
                         _buildTab("For You", 1),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                          padding: EdgeInsets.symmetric(horizontal: context.w(8)),
                           child: Text("|", style: CustomFonts.white14w400.copyWith(color: Colors.white38)),
                         ),
                         _buildTab("Nearby", 2),
@@ -97,11 +97,11 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
                             );
                           },
                           child: Padding(
-                            padding: EdgeInsets.all(8.r),
-                            child: Icon(Icons.add_box_outlined, color: Colors.white, size: 26.sp),
+                            padding: EdgeInsets.all(context.r(8)),
+                            child: Icon(Icons.add_box_outlined, color: Colors.white, size: context.sp(26)),
                           ),
                         ),
-                        SizedBox(width: 4.w),
+                        SizedBox(width: context.w(4)),
                         SocialToggleButton(
                           onTap: () => ref.read(exploreViewModel.notifier).toggleViewType(),
                           icon: Icons.grid_view_rounded,
@@ -134,17 +134,17 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
             title,
             style: CustomFonts.white16w600.copyWith(
               color: isSelected ? Colors.white : Colors.white70,
-              fontSize: isSelected ? 16.sp : 15.sp,
+              fontSize: isSelected ? context.sp(16) : context.sp(15),
             ),
           ),
           if (isSelected)
             Container(
-              margin: EdgeInsets.only(top: 4.h),
-              height: 2.h,
-              width: 20.w,
+              margin: EdgeInsets.only(top: context.h(4)),
+              height: context.h(2),
+              width: context.w(20),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(2.r),
+                borderRadius: BorderRadius.circular(context.r(2)),
               ),
             ),
         ],

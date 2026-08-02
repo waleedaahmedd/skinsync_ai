@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../models/responses/auth_response.dart';
 import '../models/responses/practitioner_list_response.dart';
@@ -33,11 +33,11 @@ class DashboardAppointmentDateSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(right: 16.w),
-      padding: EdgeInsets.fromLTRB(16.w, 10.h, 10.w, 10.h),
+      margin: EdgeInsets.only(right: context.w(16)),
+      padding: EdgeInsets.fromLTRB(context.w(16), context.h(10), context.w(10), context.h(10)),
       decoration: BoxDecoration(
         gradient: CustomColors.purpleBlueGradient,
-        borderRadius: BorderRadius.circular(22.r),
+        borderRadius: BorderRadius.circular(context.r(22)),
         border: Border.all(
           color: CustomColors.greyColor.withValues(alpha: 0.6),
           width: 1.2,
@@ -62,11 +62,11 @@ class DashboardAppointmentDateSection extends StatelessWidget {
                 color: CustomColors.blackColor,
                 size: 13,
               ),
-              SizedBox(width: 6.w),
+              SizedBox(width: context.w(6)),
               Text(dateTitle, style: CustomFonts.black13w600),
             ],
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: context.h(10)),
           Row(
             mainAxisSize: MainAxisSize.min,
             children: appointments
@@ -130,21 +130,19 @@ class DashboardAppointmentHomeCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Navigator.pushNamed(
           context,
-          MaterialPageRoute(
-            builder: (context) =>
-                AppointmentDetailScreen(appointment: appointment.toAppointmentItem()),
-          ),
+          AppointmentDetailScreen.routeName,
+          arguments: appointment.toAppointmentItem(),
         );
       },
       child: Container(
-        width: 245.w,
-        height: 135.h,
-        margin: EdgeInsets.only(right: 8.w),
+        width: context.w(245),
+        height: context.h(135),
+        margin: EdgeInsets.only(right: context.w(8)),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(context.r(16)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.08),
@@ -154,7 +152,7 @@ class DashboardAppointmentHomeCard extends StatelessWidget {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(context.r(16)),
           child: Stack(
             children: [
               Positioned.fill(
@@ -181,12 +179,12 @@ class DashboardAppointmentHomeCard extends StatelessWidget {
                 left: 0,
                 top: 0,
                 bottom: 0,
-                width: 4.w,
+                width: context.w(4),
                 child: Container(color: accentColor),
               ),
               Positioned.fill(
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(14.w, 10.h, 10.w, 10.h),
+                  padding: EdgeInsets.fromLTRB(context.w(14), context.h(10), context.w(10), context.h(10)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -205,7 +203,7 @@ class DashboardAppointmentHomeCard extends StatelessWidget {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                SizedBox(height: 1.h),
+                                SizedBox(height: context.h(1)),
                                 Text(
                                   areaName,
                                   style: CustomFonts.grey700_10w400,
@@ -215,15 +213,15 @@ class DashboardAppointmentHomeCard extends StatelessWidget {
                               ],
                             ),
                           ),
-                          SizedBox(width: 6.w),
+                          SizedBox(width: context.w(6)),
                           Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: 8.w,
-                              vertical: 3.h,
+                              horizontal: context.w(8),
+                              vertical: context.h(3),
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(20.r),
+                              borderRadius: BorderRadius.circular(context.r(20)),
                               border: Border.all(
                                 color: Colors.black12,
                                 width: 0.5,
@@ -231,7 +229,7 @@ class DashboardAppointmentHomeCard extends StatelessWidget {
                             ),
                             child: Text(
                               type,
-                              style: timeStyle.copyWith(fontSize: 8.sp),
+                              style: timeStyle.copyWith(fontSize: context.sp(8)),
                             ),
                           ),
                         ],
@@ -246,7 +244,7 @@ class DashboardAppointmentHomeCard extends StatelessWidget {
                                 size: 12,
                                 color: Colors.grey.shade600,
                               ),
-                              SizedBox(width: 6.w),
+                              SizedBox(width: context.w(6)),
                               Expanded(
                                 child: Text(
                                   appointment.clinic?.clinicName ??
@@ -258,7 +256,7 @@ class DashboardAppointmentHomeCard extends StatelessWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: 2.h),
+                          SizedBox(height: context.h(2)),
                           Row(
                             children: [
                               Icon(
@@ -266,7 +264,7 @@ class DashboardAppointmentHomeCard extends StatelessWidget {
                                 size: 12,
                                 color: Colors.grey.shade600,
                               ),
-                              SizedBox(width: 6.w),
+                              SizedBox(width: context.w(6)),
                               Expanded(
                                 child: Text(
                                   appointment.doctor?.doctorName ?? "Pending",
@@ -281,12 +279,12 @@ class DashboardAppointmentHomeCard extends StatelessWidget {
                       ),
                       Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 8.w,
-                          vertical: 3.h,
+                          horizontal: context.w(8),
+                          vertical: context.h(3),
                         ),
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.05),
-                          borderRadius: BorderRadius.circular(20.r),
+                          borderRadius: BorderRadius.circular(context.r(20)),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -296,7 +294,7 @@ class DashboardAppointmentHomeCard extends StatelessWidget {
                               size: 10,
                               color: Colors.grey.shade600,
                             ),
-                            SizedBox(width: 4.w),
+                            SizedBox(width: context.w(4)),
                             Text(
                               timeString,
                               style: CustomFonts.black10w600,
@@ -323,12 +321,12 @@ class DashboardDoctorHomeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 160.w,
-      margin: EdgeInsets.only(right: 16.w, bottom: 8.h, top: 4.h),
-      padding: EdgeInsets.all(12.w),
+      width: context.w(160),
+      margin: EdgeInsets.only(right: context.w(16), bottom: context.h(8), top: context.h(4)),
+      padding: EdgeInsets.all(context.w(12)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(context.r(16)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -343,10 +341,10 @@ class DashboardDoctorHomeCard extends StatelessWidget {
       child: Column(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(12.r),
+            borderRadius: BorderRadius.circular(context.r(12)),
             child: CachedNetworkImage(
               imageUrl: doctor.doctorImage ?? "",
-              height: 100.h,
+              height: context.h(100),
               width: double.infinity,
               fit: BoxFit.cover,
               placeholder: (context, url) => Container(
@@ -359,7 +357,7 @@ class DashboardDoctorHomeCard extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: context.h(8)),
           Text(
             doctor.doctorName ?? "Unknown Doctor",
             style: CustomFonts.black14w600,
@@ -367,7 +365,7 @@ class DashboardDoctorHomeCard extends StatelessWidget {
             textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(height: 2.h),
+          SizedBox(height: context.h(2)),
           Text(
             doctor.specialization ?? "Specialist",
             style: CustomFonts.grey700_10w400,
@@ -375,12 +373,12 @@ class DashboardDoctorHomeCard extends StatelessWidget {
             textAlign: TextAlign.center,
             overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(height: 4.h),
+          SizedBox(height: context.h(4)),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.star_rounded, color: Colors.amber, size: 14),
-              SizedBox(width: 2.w),
+              SizedBox(width: context.w(2)),
               Text(
                 (doctor.doctorRating ?? 0.0).toStringAsFixed(1),
                 style: CustomFonts.black12w600,
@@ -400,11 +398,11 @@ class DashboardClinicHomeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 245.w,
-      margin: EdgeInsets.only(right: 16.w, bottom: 8.h, top: 4.h),
+      width: context.w(245),
+      margin: EdgeInsets.only(right: context.w(16), bottom: context.h(8), top: context.h(4)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(context.r(16)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -420,10 +418,10 @@ class DashboardClinicHomeCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(16))),
             child: CachedNetworkImage(
               imageUrl: clinic.clinicImage ?? "",
-              height: 100.h,
+              height: context.h(100),
               width: double.infinity,
               fit: BoxFit.cover,
               placeholder: (context, url) => Container(
@@ -441,7 +439,7 @@ class DashboardClinicHomeCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+            padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(8)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -458,12 +456,12 @@ class DashboardClinicHomeCard extends StatelessWidget {
                     ),
                     Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 8.w,
-                        vertical: 4.h,
+                        horizontal: context.w(8),
+                        vertical: context.h(4),
                       ),
                       decoration: BoxDecoration(
                         color: CustomColors.purpleColor.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(20.r),
+                        borderRadius: BorderRadius.circular(context.r(20)),
                       ),
                       child: Text(
                         "${clinic.doctorCount ?? 0} Doctors",
@@ -472,15 +470,15 @@ class DashboardClinicHomeCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 6.h),
+                SizedBox(height: context.h(6)),
                 Row(
                   children: [
                     Icon(
                       Icons.location_on_outlined,
-                      size: 12.sp,
+                      size: context.sp(12),
                       color: Colors.grey,
                     ),
-                    SizedBox(width: 4.w),
+                    SizedBox(width: context.w(4)),
                     Expanded(
                       child: Text(
                         clinic.address ?? "No address provided",

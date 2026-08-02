@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import 'app_network_image.dart';
@@ -20,27 +20,27 @@ class ServiceTypeButton extends StatelessWidget {
     this.imageUrl,
   });
 
-  Widget _buildLeftIcon(String iconPath, bool selected) {
+  Widget _buildLeftIcon(BuildContext context, String iconPath, bool selected) {
     if (iconPath.startsWith('http://') || iconPath.startsWith('https://')) {
       return Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(6.r),
+          borderRadius: BorderRadius.circular(context.r(6)),
           border: Border.all(color: Colors.white, width: 1),
         ),
         child: AppNetworkImage(
           imageUrl: iconPath,
-          width: 20.w,
-          height: 20.w,
+          width: context.w(20),
+          height: context.w(20),
           fit: BoxFit.cover,
-          borderRadius: BorderRadius.circular(6.r),
+          borderRadius: BorderRadius.circular(context.r(6)),
           errorIcon: Icons.broken_image,
         ),
       );
     } else {
       return Image.asset(
         iconPath,
-        width: 16.w,
-        height: 16.w,
+        width: context.w(16),
+        height: context.w(16),
         color: selected ? Colors.white : Colors.black,
       );
     }
@@ -53,9 +53,9 @@ class ServiceTypeButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        height: 50.h,
+        height: context.h(50),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(context.r(16)),
           border: Border.all(
             color: selected ? CustomColors.purpleColor : Colors.black,
             width: selected ? 2.0 : 1.5,
@@ -71,7 +71,7 @@ class ServiceTypeButton extends StatelessWidget {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(14.r),
+          borderRadius: BorderRadius.circular(context.r(14)),
           child: Stack(
             children: [
               // 1. Background Image if provided
@@ -97,13 +97,13 @@ class ServiceTypeButton extends StatelessWidget {
 
               // 3. Content Layer (Icon + Text)
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+                padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(10)),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (icon != null && icon!.isNotEmpty) ...[
-                      _buildLeftIcon(icon!, selected),
-                      SizedBox(width: 8.w),
+                      _buildLeftIcon(context, icon!, selected),
+                      SizedBox(width: context.w(8)),
                     ],
                     Text(
                       text,

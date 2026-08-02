@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
@@ -66,7 +66,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(20))),
       ),
       builder: (context) {
         return MediaSourceSheet(
@@ -104,7 +104,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
         title: "Create Post",
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(20.w),
+        padding: EdgeInsets.all(context.w(20)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -123,7 +123,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
               ),
               style: CustomFonts.black18w600,
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: context.h(20)),
 
             // Content Field
             TextField(
@@ -134,15 +134,15 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                 hintText: "What's on your mind?",
                 hintStyle: CustomFonts.grey14w400,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(context.r(12)),
                   borderSide: BorderSide(color: Colors.grey.shade200),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(context.r(12)),
                   borderSide: BorderSide(color: Colors.grey.shade200),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(context.r(12)),
                   borderSide: const BorderSide(color: CustomColors.purpleColor),
                 ),
                 fillColor: Colors.grey.shade50,
@@ -150,7 +150,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
               ),
               style: CustomFonts.black14w400,
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: context.h(20)),
 
             // Media Selection Row
             Row(
@@ -161,7 +161,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                   label: "Images",
                   color: Colors.blue.shade400,
                 ),
-                SizedBox(width: 15.w),
+                SizedBox(width: context.w(15)),
                 MediaPickerButton(
                   onTap: () => _showPickerOptions(isVideo: true),
                   icon: Icons.videocam_rounded,
@@ -170,7 +170,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                 ),
               ],
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: context.h(20)),
 
             // Media Preview
             PostImagePreview(
@@ -182,7 +182,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
               onRemove: _removeVideo,
             ),
 
-            SizedBox(height: 30.h),
+            SizedBox(height: context.h(30)),
 
             CustomButton(
               text: "Post",

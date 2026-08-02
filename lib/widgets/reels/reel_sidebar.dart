@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../../utills/custom_fonts.dart';
 
 class ReelSidebar extends StatelessWidget {
@@ -33,32 +33,37 @@ class ReelSidebar extends StatelessWidget {
     return Column(
       children: [
         _buildSidebarAction(
+          context: context,
           icon: isLiked ? Icons.favorite_rounded : Icons.favorite_border_rounded,
           label: _formatCount(likesCount),
           color: isLiked ? Colors.red : Colors.white,
           onTap: onLike,
         ),
-        SizedBox(height: 20.h),
+        SizedBox(height: context.h(20)),
         _buildSidebarAction(
+          context: context,
           icon: Icons.chat_bubble_rounded,
           label: _formatCount(commentsCount),
           onTap: onComment,
         ),
-        SizedBox(height: 20.h),
+        SizedBox(height: context.h(20)),
         _buildSidebarAction(
+          context: context,
           icon: Icons.share_rounded,
           label: _formatCount(sharesCount),
           onTap: onShare,
         ),
-        SizedBox(height: 20.h),
+        SizedBox(height: context.h(20)),
         _buildSidebarAction(
+          context: context,
           icon: isSaved ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
           label: 'Save',
           color: isSaved ? Colors.yellow : Colors.white,
           onTap: onSave,
         ),
-        SizedBox(height: 20.h),
+        SizedBox(height: context.h(20)),
         _buildSidebarAction(
+          context: context,
           icon: Icons.more_vert_rounded,
           onTap: onMore,
         ),
@@ -67,6 +72,7 @@ class ReelSidebar extends StatelessWidget {
   }
 
   Widget _buildSidebarAction({
+    required BuildContext context,
     required IconData icon,
     String? label,
     Color color = Colors.white,
@@ -76,10 +82,10 @@ class ReelSidebar extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: onTap,
-          child: Icon(icon, color: color, size: 30.sp),
+          child: Icon(icon, color: color, size: context.sp(30)),
         ),
         if (label != null) ...[
-          SizedBox(height: 4.h),
+          SizedBox(height: context.h(4)),
           Text(
             label,
             style: CustomFonts.white12w600,

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import '../utills/custom_fonts.dart';
 
@@ -21,9 +21,9 @@ class PostImagePreview extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Selected Images", style: CustomFonts.black14w600),
-        SizedBox(height: 10.h),
+        SizedBox(height: context.h(10)),
         SizedBox(
-          height: 100.h,
+          height: context.h(100),
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: images.length,
@@ -31,10 +31,10 @@ class PostImagePreview extends StatelessWidget {
               return Stack(
                 children: [
                   Container(
-                    margin: EdgeInsets.only(right: 10.w),
-                    width: 100.w,
+                    margin: EdgeInsets.only(right: context.w(10)),
+                    width: context.w(100),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8.r),
+                      borderRadius: BorderRadius.circular(context.r(8)),
                       image: DecorationImage(
                         image: FileImage(File(images[index].path)),
                         fit: BoxFit.cover,
@@ -47,12 +47,12 @@ class PostImagePreview extends StatelessWidget {
                     child: GestureDetector(
                       onTap: () => onRemove(index),
                       child: Container(
-                        padding: EdgeInsets.all(4.r),
+                        padding: EdgeInsets.all(context.r(4)),
                         decoration: const BoxDecoration(
                           color: Colors.black54,
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(Icons.close, color: Colors.white, size: 14.sp),
+                        child: Icon(Icons.close, color: Colors.white, size: context.sp(14)),
                       ),
                     ),
                   ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/assets.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/sign_up_onboarding_view_model.dart';
@@ -13,7 +13,7 @@ class SkinAllergiesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 30.w),
+      padding: EdgeInsets.symmetric(horizontal: context.w(30)),
       child: Column(
         children: [
           Expanded(
@@ -24,36 +24,36 @@ class SkinAllergiesScreen extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 33.h),
+                    SizedBox(height: context.h(33)),
                     Text(
                       'Have you been diagnosed with any skin conditions or allergies?',
                       style: CustomFonts.black28w600,
                     ),
-                    SizedBox(height: 39.h),
+                    SizedBox(height: context.h(39)),
                     Row(
                       children: [
                         Expanded(
                           child: Container(
-                            padding: EdgeInsets.all(8.w),
+                            padding: EdgeInsets.all(context.w(8)),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(15.r),
+                              borderRadius: BorderRadius.circular(context.r(15)),
                             ),
                             margin: EdgeInsets.zero,
                             child: Column(
                               children: [
                                 Container(
-                                  height: 118.h,
+                                  height: context.h(118),
 
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15.r),
+                                    borderRadius: BorderRadius.circular(context.r(15)),
                                     image: const DecorationImage(
                                       fit: BoxFit.cover,
                                       image: AssetImage(DummyAssets.acen),
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 7.h),
+                                SizedBox(height: context.h(7)),
                                 Center(
                                   child: Text(
                                     "Acne",
@@ -64,29 +64,29 @@ class SkinAllergiesScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(width: 10.w),
+                        SizedBox(width: context.w(10)),
                         Expanded(
                           child: Container(
-                            padding: EdgeInsets.all(8.w),
+                            padding: EdgeInsets.all(context.w(8)),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(15.r),
+                              borderRadius: BorderRadius.circular(context.r(15)),
                             ),
                             margin: EdgeInsets.zero,
                             child: Column(
                               children: [
                                 Container(
-                                  height: 118.h,
+                                  height: context.h(118),
 
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15.r),
+                                    borderRadius: BorderRadius.circular(context.r(15)),
                                     image: const DecorationImage(
                                       fit: BoxFit.cover,
                                       image: AssetImage(DummyAssets.acen),
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 7.h),
+                                SizedBox(height: context.h(7)),
                                 Center(
                                   child: Text(
                                     "Acne",
@@ -99,31 +99,31 @@ class SkinAllergiesScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10.h),
+                    SizedBox(height: context.h(10)),
                     Row(
                       children: [
                         Expanded(
                           child: Container(
-                            padding: EdgeInsets.all(8.w),
+                            padding: EdgeInsets.all(context.w(8)),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(15.r),
+                              borderRadius: BorderRadius.circular(context.r(15)),
                             ),
                             margin: EdgeInsets.zero,
                             child: Column(
                               children: [
                                 Container(
-                                  height: 118.h,
+                                  height: context.h(118),
 
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15.r),
+                                    borderRadius: BorderRadius.circular(context.r(15)),
                                     image: const DecorationImage(
                                       fit: BoxFit.cover,
                                       image: AssetImage(DummyAssets.acen),
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 7.h),
+                                SizedBox(height: context.h(7)),
                                 Center(
                                   child: Text(
                                     "Acne",
@@ -134,29 +134,29 @@ class SkinAllergiesScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(width: 10.w),
+                        SizedBox(width: context.w(10)),
                         Expanded(
                           child: Container(
-                            padding: EdgeInsets.all(8.w),
+                            padding: EdgeInsets.all(context.w(8)),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(15.r),
+                              borderRadius: BorderRadius.circular(context.r(15)),
                             ),
                             margin: EdgeInsets.zero,
                             child: Column(
                               children: [
                                 Container(
-                                  height: 118.h,
+                                  height: context.h(118),
 
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15.r),
+                                    borderRadius: BorderRadius.circular(context.r(15)),
                                     image: const DecorationImage(
                                       fit: BoxFit.cover,
                                       image: AssetImage(DummyAssets.acen),
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: 7.h),
+                                SizedBox(height: context.h(7)),
                                 Center(
                                   child: Text(
                                     "Acne",
@@ -169,39 +169,39 @@ class SkinAllergiesScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 14.h),
+                    SizedBox(height: context.h(14)),
                     const QuestionTitle(title: "None of the above ", isSelected: false),
-                    SizedBox(height: 40.h),
+                    SizedBox(height: context.h(40)),
                     Text(
                       "Are you currently using any medications or treatments for your skin? ",
                       style: CustomFonts.black28w600,
                     ),
-                    SizedBox(height: 13.h),
+                    SizedBox(height: context.h(13)),
                     Row(
                       children: [
                         const RadioButtonWidget(isSelected: false),
-                        SizedBox(width: 13.w),
+                        SizedBox(width: context.w(13)),
                         Text(
                           "Yes ( Please Specify)",
                           style: CustomFonts.black18w600,
                         ),
                       ],
                     ),
-                    SizedBox(height: 18.h),
+                    SizedBox(height: context.h(18)),
                     Row(
                       children: [
                         const RadioButtonWidget(isSelected: false),
-                        SizedBox(width: 13.w),
+                        SizedBox(width: context.w(13)),
                         Text("No", style: CustomFonts.black18w600),
                       ],
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: context.h(20)),
                   ],
                 ),
               ],
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.h(20)),
           SizedBox(
             width: double.infinity,
             child: Consumer(
@@ -217,7 +217,7 @@ class SkinAllergiesScreen extends StatelessWidget {
               },
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.h(20)),
         ],
       ),
     );

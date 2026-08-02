@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../../utills/custom_fonts.dart';
 
 class ReelContentOverlay extends StatelessWidget {
@@ -24,20 +24,20 @@ class ReelContentOverlay extends StatelessWidget {
         Row(
           children: [
             CircleAvatar(
-              radius: 18.r,
+              radius: context.r(18),
               backgroundImage: NetworkImage(userProfileImage),
             ),
-            SizedBox(width: 10.w),
+            SizedBox(width: context.w(10)),
             Text(
               userName,
               style: CustomFonts.white16w600,
             ),
-            SizedBox(width: 10.w),
+            SizedBox(width: context.w(10)),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+              padding: EdgeInsets.symmetric(horizontal: context.w(8), vertical: context.h(2)),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.white),
-                borderRadius: BorderRadius.circular(4.r),
+                borderRadius: BorderRadius.circular(context.r(4)),
               ),
               child: Text(
                 'Follow',
@@ -46,7 +46,7 @@ class ReelContentOverlay extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: 12.h),
+        SizedBox(height: context.h(12)),
         if (caption != null)
           Text(
             caption!,
@@ -54,12 +54,12 @@ class ReelContentOverlay extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-        SizedBox(height: 8.h),
+        SizedBox(height: context.h(8)),
         if (musicTitle != null)
           Row(
             children: [
-              Icon(Icons.music_note_rounded, size: 14.sp, color: Colors.white),
-              SizedBox(width: 4.w),
+              Icon(Icons.music_note_rounded, size: context.sp(14), color: Colors.white),
+              SizedBox(width: context.w(4)),
               Expanded(
                 child: Text(
                   musicTitle!,

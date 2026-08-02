@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../models/responses/practitioner_list_response.dart';
@@ -150,11 +150,11 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 16.h),
+                SizedBox(height: context.h(16)),
 
                 // Search Bar & Filter Clear Button Row
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                   child: Row(
                     children: [
                       Expanded(
@@ -164,20 +164,20 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                         ),
                       ),
                       if (hasActiveFilters) ...[
-                        SizedBox(width: 8.w),
+                        SizedBox(width: context.w(8)),
                         GestureDetector(
                           onTap: _clearFilters,
                           child: Container(
-                            padding: EdgeInsets.all(12.w),
+                            padding: EdgeInsets.all(context.w(12)),
                             decoration: BoxDecoration(
                               color: Colors.red.shade50,
-                              borderRadius: BorderRadius.circular(12.r),
+                              borderRadius: BorderRadius.circular(context.r(12)),
                               border: Border.all(color: Colors.red.shade100),
                             ),
                             child: Icon(
                               Icons.filter_alt_off_rounded,
                               color: Colors.red.shade400,
-                              size: 20.sp,
+                              size: context.sp(20),
                             ),
                           ),
                         ),
@@ -185,11 +185,11 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                     ],
                   ),
                 ),
-                SizedBox(height: 16.h),
+                SizedBox(height: context.h(16)),
 
                 // Premium Date Selector Card & Slot Selector Slider Horizontal Row
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                   child: Row(
                     children: [
                       // Premium Calendar Date Picker Trigger
@@ -198,8 +198,8 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                           onTap: () => _selectDate(context),
                           child: Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: 14.w,
-                              vertical: 10.h,
+                              horizontal: context.w(14),
+                              vertical: context.h(10),
                             ),
                             decoration: BoxDecoration(
                               color: _selectedDate != null
@@ -207,7 +207,7 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                                   : CustomColors.lightPurpleColor.withValues(
                                       alpha: 0.3,
                                     ),
-                              borderRadius: BorderRadius.circular(20.r),
+                              borderRadius: BorderRadius.circular(context.r(20)),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -217,9 +217,9 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                                   color: _selectedDate != null
                                       ? Colors.white
                                       : Colors.black87,
-                                  size: 16.sp,
+                                  size: context.sp(16),
                                 ),
-                                SizedBox(width: 6.w),
+                                SizedBox(width: context.w(6)),
                                 Expanded(
                                   child: Text(
                                     _selectedDate != null
@@ -227,11 +227,11 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                                         : "Select Date",
                                     style: _selectedDate != null
                                         ? CustomFonts.white14w600.copyWith(
-                                            fontSize: 13.sp,
+                                            fontSize: context.sp(13),
                                           )
                                         : CustomFonts.black14w600.copyWith(
                                             color: Colors.black87,
-                                            fontSize: 13.sp,
+                                            fontSize: context.sp(13),
                                           ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -246,14 +246,14 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                     ],
                   ),
                 ),
-                SizedBox(height: 12.h),
+                SizedBox(height: context.h(12)),
 
                 // Time Slots Header / Horizontal Scrolling List
                 SizedBox(
-                  height: 38.h,
+                  height: context.h(38),
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                     itemCount: _slots.length,
                     physics: const BouncingScrollPhysics(),
                     itemBuilder: (context, index) {
@@ -275,10 +275,10 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                           ref.read(doctorProvider.notifier).loadPractitioners();
                         },
                         child: Container(
-                          margin: EdgeInsets.only(right: 8.w),
+                          margin: EdgeInsets.only(right: context.w(8)),
                           padding: EdgeInsets.symmetric(
-                            horizontal: 14.w,
-                            vertical: 8.h,
+                            horizontal: context.w(14),
+                            vertical: context.h(8),
                           ),
                           decoration: BoxDecoration(
                             color: isSelected
@@ -286,7 +286,7 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                                 : CustomColors.lightPurpleColor.withValues(
                                     alpha: 0.2,
                                   ),
-                            borderRadius: BorderRadius.circular(20.r),
+                            borderRadius: BorderRadius.circular(context.r(20)),
                             border: Border.all(
                               color: isSelected
                                   ? CustomColors.purpleColor
@@ -298,12 +298,12 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                             children: [
                               Icon(
                                 Icons.access_time_filled_rounded,
-                                size: 12.sp,
+                                size: context.sp(12),
                                 color: isSelected
                                     ? Colors.white
                                     : Colors.grey.shade700,
                               ),
-                              SizedBox(width: 4.w),
+                              SizedBox(width: context.w(4)),
                               Text(
                                 slot,
                                 style: isSelected
@@ -319,7 +319,7 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                     },
                   ),
                 ),
-                SizedBox(height: 16.h),
+                SizedBox(height: context.h(16)),
                 Expanded(
                   child: Consumer(
                     builder: (_, ref, _) {
@@ -335,7 +335,7 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                       return Column(
                         children: [
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24.w),
+                            padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                             child: TabBar(
                               controller: _tabController,
                               indicatorColor: CustomColors.pinkColor,
@@ -350,7 +350,7 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                               ],
                             ),
                           ),
-                          SizedBox(height: 12.h),
+                          SizedBox(height: context.h(12)),
 
                           // Tab Views Grid List
                           Expanded(
@@ -381,18 +381,18 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
     if (doctors.isEmpty) {
       return Center(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40.w),
+          padding: EdgeInsets.symmetric(horizontal: context.w(40)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 Icons.people_alt_rounded,
-                size: 64.sp,
+                size: context.sp(64),
                 color: Colors.grey.shade300,
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: context.h(16)),
               Text("No Doctors Found", style: CustomFonts.grey800_20w600),
-              SizedBox(height: 6.h),
+              SizedBox(height: context.h(6)),
               Text(
                 "Try modifying your filter selections, resetting parameters, or check back later.",
                 textAlign: TextAlign.center,
@@ -406,15 +406,15 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
 
     return MasonryGridView.builder(
       itemCount: doctors.length,
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(8)),
       physics: const BouncingScrollPhysics(),
-      crossAxisSpacing: 14.w,
-      mainAxisSpacing: 14.h,
+      crossAxisSpacing: context.w(14),
+      mainAxisSpacing: context.h(14),
       gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         // childAspectRatio: 0.76,
-        // crossAxisSpacing: 14.w,
-        // mainAxisSpacing: 14.h,
+        // crossAxisSpacing: context.w(14),
+        // mainAxisSpacing: context.h(14),
       ),
       itemBuilder: (context, index) {
         final doctor = doctors[index];

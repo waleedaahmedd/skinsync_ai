@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/sign_up_onboarding_view_model.dart';
 import '../widgets/question_title.dart';
@@ -11,16 +11,16 @@ class SkinGoalsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 30.w),
+      padding: EdgeInsets.symmetric(horizontal: context.w(30)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: 33.h),
+          SizedBox(height: context.h(33)),
           Text(
             'What are your primary skin goals? ',
             style: CustomFonts.black28w600,
           ),
-          SizedBox(height: 39.h),
+          SizedBox(height: context.h(39)),
 
           // ⭐ FIX: Give ListView a height using Expanded
           Expanded(
@@ -33,7 +33,7 @@ class SkinGoalsScreen extends StatelessWidget {
               },
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.h(20)),
           SizedBox(
             width: double.infinity,
             child: Consumer(
@@ -49,7 +49,7 @@ class SkinGoalsScreen extends StatelessWidget {
               },
             ),
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.h(20)),
         ],
       ),
     );

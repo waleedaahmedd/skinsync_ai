@@ -41,6 +41,7 @@ class AppointmentTypeData {
   List<String>? appointmentModes;
   String? icon;
   String? image;
+  String? status;
 
   AppointmentTypeData({
     this.id,
@@ -52,6 +53,7 @@ class AppointmentTypeData {
     this.appointmentModes,
     this.icon,
     this.image,
+    this.status,
   });
 
   AppointmentTypeData copyWith({
@@ -64,6 +66,7 @@ class AppointmentTypeData {
     List<String>? appointmentModes,
     String? icon,
     String? image,
+    String? status,
   }) {
     return AppointmentTypeData(
       id: id ?? this.id,
@@ -75,6 +78,7 @@ class AppointmentTypeData {
       appointmentModes: appointmentModes ?? this.appointmentModes,
       icon: icon ?? this.icon,
       image: image ?? this.image,
+      status: status ?? this.status,
     );
   }
 
@@ -90,6 +94,7 @@ class AppointmentTypeData {
         : null;
     icon = json['icon'];
     image = json['image'];
+    status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
@@ -105,6 +110,7 @@ class AppointmentTypeData {
     }
     data['icon'] = icon;
     data['image'] = image;
+    data['status'] = status;
     return data;
   }
 }

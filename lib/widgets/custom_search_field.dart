@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 
@@ -78,17 +78,17 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
               )
             : null,
         hintText: widget.hintText,
-        contentPadding: EdgeInsets.symmetric(vertical: 12.h),
+        contentPadding: EdgeInsets.symmetric(vertical: context.h(12)),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.r),
+          borderRadius: BorderRadius.circular(context.r(30)),
           borderSide: const BorderSide(color: CustomColors.greyColor),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.r),
+          borderRadius: BorderRadius.circular(context.r(30)),
           borderSide: BorderSide(color: Colors.grey.shade300),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.r),
+          borderRadius: BorderRadius.circular(context.r(30)),
           borderSide: const BorderSide(color: CustomColors.purpleColor),
         ),
         fillColor: Colors.white,

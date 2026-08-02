@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 
@@ -17,7 +17,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      leadingWidth: 40.w + 40.w,
+      leadingWidth: context.w(40) + context.w(40),
       leading: Padding(
         padding: const EdgeInsets.all(8.0),
         child: GestureDetector(
@@ -29,7 +29,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ),
             child: Icon(
               CupertinoIcons.arrow_left,
-              size: 20.w,
+              size: context.w(20),
               color: Colors.black,
             ),
           ),

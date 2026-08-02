@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:intl/intl.dart';
 import '../models/social_post_model.dart';
 import '../utills/color_constant.dart';
@@ -26,10 +26,10 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
+      margin: EdgeInsets.symmetric(vertical: context.h(12), horizontal: context.w(16)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24.r),
+        borderRadius: BorderRadius.circular(context.r(24)),
         border: Border.all(
           color: Colors.grey.withValues(alpha: 0.08),
           width: 1,
@@ -52,11 +52,11 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
         children: [
           // User Info Header
           Padding(
-            padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 12.h),
+            padding: EdgeInsets.fromLTRB(context.w(16), context.h(16), context.w(16), context.h(12)),
             child: Row(
               children: [
                 Container(
-                  padding: EdgeInsets.all(2.5.r),
+                  padding: EdgeInsets.all(context.r(2.5)),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
@@ -71,15 +71,15 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                       color: Colors.white,
                       shape: BoxShape.circle,
                     ),
-                    padding: EdgeInsets.all(1.5.r),
+                    padding: EdgeInsets.all(context.r(1.5)),
                     child: CircleAvatar(
-                      radius: 22.r,
+                      radius: context.r(22),
                       backgroundColor: CustomColors.greyColor,
                       backgroundImage: NetworkImage(widget.post.userProfileImage),
                     ),
                   ),
                 ),
-                SizedBox(width: 12.w),
+                SizedBox(width: context.w(12)),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,15 +90,15 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                           letterSpacing: -0.3,
                         ),
                       ),
-                      SizedBox(height: 1.h),
+                      SizedBox(height: context.h(1)),
                       Row(
                         children: [
-                          Icon(Icons.public, size: 10.sp, color: Colors.grey.shade400),
-                          SizedBox(width: 4.w),
+                          Icon(Icons.public, size: context.sp(10), color: Colors.grey.shade400),
+                          SizedBox(width: context.w(4)),
                           Text(
                             _getRelativeTime(widget.post.createdAt),
                             style: CustomFonts.grey12w400.copyWith(
-                              fontSize: 11.sp,
+                              fontSize: context.sp(11),
                               color: Colors.grey.shade500,
                               fontWeight: FontWeight.w500,
                             ),
@@ -111,11 +111,11 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                 Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    borderRadius: BorderRadius.circular(20.r),
+                    borderRadius: BorderRadius.circular(context.r(20)),
                     onTap: () {},
                     child: Padding(
-                      padding: EdgeInsets.all(8.r),
-                      child: Icon(Icons.more_horiz_rounded, color: Colors.grey.shade600, size: 22.sp),
+                      padding: EdgeInsets.all(context.r(8)),
+                      child: Icon(Icons.more_horiz_rounded, color: Colors.grey.shade600, size: context.sp(22)),
                     ),
                   ),
                 ),
@@ -126,7 +126,7 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
           // Post Content Text
           if (widget.post.contentText != null && widget.post.contentText!.isNotEmpty)
             Padding(
-              padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 16.h),
+              padding: EdgeInsets.fromLTRB(context.w(16), 0, context.w(16), context.h(16)),
               child: Text(
                 widget.post.contentText!,
                 style: CustomFonts.black14w400.copyWith(
@@ -140,14 +140,14 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
           // Post Images
           if (widget.post.imageUrls.isNotEmpty)
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(12)),
               child: Stack(
                 alignment: Alignment.bottomCenter,
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(18.r),
+                    borderRadius: BorderRadius.circular(context.r(18)),
                     child: SizedBox(
-                      height: 300.h,
+                      height: context.h(300),
                       width: double.infinity,
                       child: PageView.builder(
                         itemCount: widget.post.imageUrls.length,
@@ -168,12 +168,12 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                   ),
                   if (widget.post.imageUrls.length > 1)
                     Positioned(
-                      bottom: 16.h,
+                      bottom: context.h(16),
                       child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+                        padding: EdgeInsets.symmetric(horizontal: context.w(8), vertical: context.h(6)),
                         decoration: BoxDecoration(
                           color: Colors.black.withValues(alpha: 0.3),
-                          borderRadius: BorderRadius.circular(20.r),
+                          borderRadius: BorderRadius.circular(context.r(20)),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -181,14 +181,14 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                             widget.post.imageUrls.length,
                             (index) => AnimatedContainer(
                               duration: const Duration(milliseconds: 300),
-                              margin: EdgeInsets.symmetric(horizontal: 3.w),
-                              height: 5.h,
-                              width: _currentPage == index ? 16.w : 5.w,
+                              margin: EdgeInsets.symmetric(horizontal: context.w(3)),
+                              height: context.h(5),
+                              width: _currentPage == index ? context.w(16) : context.w(5),
                               decoration: BoxDecoration(
                                 color: _currentPage == index 
                                     ? Colors.white 
                                     : Colors.white.withValues(alpha: 0.5),
-                                borderRadius: BorderRadius.circular(3.r),
+                                borderRadius: BorderRadius.circular(context.r(3)),
                               ),
                             ),
                           ),
@@ -201,7 +201,7 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
 
           // Interaction Bar
           Padding(
-            padding: EdgeInsets.all(16.w),
+            padding: EdgeInsets.all(context.w(16)),
             child: Row(
               children: [
                 _buildActionButton(
@@ -211,7 +211,7 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                   label: widget.post.likesCount.toString(),
                   isActive: widget.post.isLiked,
                 ),
-                SizedBox(width: 20.w),
+                SizedBox(width: context.w(20)),
                 _buildActionButton(
                   onTap: () {},
                   icon: Icons.chat_bubble_outline_rounded,
@@ -223,7 +223,7 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                   onTap: () {},
                   icon: Icons.share_outlined,
                 ),
-                SizedBox(width: 8.w),
+                SizedBox(width: context.w(8)),
                 _buildSimpleIconButton(
                   onTap: () {},
                   icon: Icons.bookmark_border_rounded,
@@ -247,22 +247,22 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+        padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(8)),
         decoration: BoxDecoration(
           color: isActive 
               ? Colors.red.withValues(alpha: 0.05) 
               : Colors.grey.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(context.r(12)),
         ),
         child: Row(
           children: [
-            Icon(icon, color: iconColor, size: 20.sp),
-            SizedBox(width: 8.w),
+            Icon(icon, color: iconColor, size: context.sp(20)),
+            SizedBox(width: context.w(8)),
             Text(
               label,
               style: CustomFonts.black13w600.copyWith(
                 color: iconColor,
-                fontSize: 12.sp,
+                fontSize: context.sp(12),
               ),
             ),
           ],
@@ -279,12 +279,12 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: EdgeInsets.all(8.r),
+        padding: EdgeInsets.all(context.r(8)),
         decoration: BoxDecoration(
           color: Colors.grey.withValues(alpha: 0.05),
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, size: 20.sp, color: Colors.black.withValues(alpha: 0.7)),
+        child: Icon(icon, size: context.sp(20), color: Colors.black.withValues(alpha: 0.7)),
       ),
     );
   }

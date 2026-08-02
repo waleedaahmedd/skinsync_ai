@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../screens/face_pose_capture_screen.dart';
 import '../utills/assets.dart';
@@ -27,7 +27,7 @@ class ScanFaceButton extends ConsumerWidget {
         Navigator.of(context).pushNamed(FacePoseCaptureScreen.routeName);
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 14.h),
+        padding: EdgeInsets.symmetric(horizontal: context.w(22), vertical: context.h(14)),
         decoration: BoxDecoration(
          // color: CustomColors.lightBlueColor,
           gradient: CustomColors.purpleBlueGradient,
@@ -50,7 +50,13 @@ class ScanFaceButton extends ConsumerWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SvgPicture.asset(SvgAssets.faceId,color: CustomColors.blackColor,),
+            SvgPicture.asset(
+              SvgAssets.faceId,
+              colorFilter: const ColorFilter.mode(
+                CustomColors.blackColor,
+                BlendMode.srcIn,
+              ),
+            ),
             const SizedBox(width: 8),
             Text(
               "Scan Your Face",

@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 class AppNetworkImage extends StatelessWidget {
   final String imageUrl;
@@ -50,7 +50,7 @@ class AppNetworkImage extends StatelessWidget {
           child: Icon(
             errorIcon ?? Icons.broken_image_rounded,
             color: errorIconColor ?? Colors.grey.shade400,
-            size: errorIconSize ?? 24.sp,
+            size: errorIconSize ?? context.sp(24),
           ),
         ),
       ),

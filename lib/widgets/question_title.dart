@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/custom_fonts.dart';
 import 'radio_button_widget.dart';
 
@@ -13,15 +13,15 @@ class QuestionTitle extends StatelessWidget {
     return Card(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(50.r)),
+                  borderRadius: BorderRadius.all(Radius.circular(context.r(50))),
                 ),
-                margin: EdgeInsets.only(bottom: 12.h),
+                margin: EdgeInsets.only(bottom: context.h(12)),
                 child: Padding(
-                  padding: EdgeInsets.all(16.w),
+                  padding: EdgeInsets.all(context.w(16)),
                   child: Row(
                     children: [
                       RadioButtonWidget(isSelected: isSelected),
-                      SizedBox(width: 12.w),
+                      SizedBox(width: context.w(12)),
                       Flexible(
                         child: Text(
                           title,

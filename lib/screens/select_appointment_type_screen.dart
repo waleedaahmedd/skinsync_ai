@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -44,25 +44,25 @@ class _SelectAppointmentTypeScreenState
           gradient: CustomColors.whiteBlueGradient,
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          padding: EdgeInsets.symmetric(horizontal: context.w(24)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 24.h),
+              SizedBox(height: context.h(24)),
               Text("Choose Appointment Type", style: CustomFonts.black22w600),
-              SizedBox(height: 8.h),
+              SizedBox(height: context.h(8)),
               Text(
                 "Select whether you want to book a direct treatment or schedule a general medical spa consultation.",
                 style: CustomFonts.grey14w400,
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: context.h(24)),
               Expanded(
                 child: appointmentState.loading
                     ? const AppLoader()
                     : appointmentState.errorMessage != null
                     ? Center(
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          padding: EdgeInsets.symmetric(horizontal: context.w(20)),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -71,7 +71,7 @@ class _SelectAppointmentTypeScreenState
                                 style: CustomFonts.red16w400,
                                 textAlign: TextAlign.center,
                               ),
-                              SizedBox(height: 16.h),
+                              SizedBox(height: context.h(16)),
                               ElevatedButton(
                                 onPressed: () => ref
                                     .read(appointmentProvider.notifier)
@@ -97,7 +97,7 @@ class _SelectAppointmentTypeScreenState
                               appointmentState.appointmentTypes[index];
 
                           return TreatmentContainer(
-                            imageHeight: 180.h,
+                            imageHeight: context.h(180),
                             customTitle: typeData.title ?? '',
                             customSubtitle: typeData.description ?? '',
                             customImageUrl: typeData.image ?? '',

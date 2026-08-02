@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'bottom_nav_page.dart';
 import '../utills/assets.dart';
@@ -31,7 +31,7 @@ class ProgressDetailScreen extends ConsumerWidget {
           children: [
             Container(
               alignment: Alignment.topLeft,
-              height: 293.h,
+              height: context.h(293),
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(DummyAssets.treatmentimage),
@@ -39,27 +39,27 @@ class ProgressDetailScreen extends ConsumerWidget {
                 ),
               ),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 55.h),
+                padding: EdgeInsets.symmetric(horizontal: context.w(30), vertical: context.h(55)),
                 child: InkWell(
                   onTap: () => Navigator.pop(context),
                   child: Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: EdgeInsets.all(context.w(8)),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.grey.withValues(alpha: 0.7),
                     ),
                     child: Icon(
                       CupertinoIcons.arrow_left,
-                      size: 20.sp,
+                      size: context.sp(20),
                       color: Colors.white,
                     ),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 15.h),
+            SizedBox(height: context.h(15)),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(30)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -67,28 +67,28 @@ class ProgressDetailScreen extends ConsumerWidget {
                     "Derma Fillers - Cheeks",
                     style: CustomFonts.black30w600,
                   ),
-                  SizedBox(height: 2.h),
+                  SizedBox(height: context.h(2)),
                   Text("Glow Skin Clinic", style: CustomFonts.black18w400),
 
-                  SizedBox(height: 14.h),
+                  SizedBox(height: context.h(14)),
 
                   Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 18.w,
-                      vertical: 11.h,
+                      horizontal: context.w(18),
+                      vertical: context.h(11),
                     ),
                     decoration: BoxDecoration(
                       color: CustomColors.lightBlueColor.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(10.r),
+                      borderRadius: BorderRadius.circular(context.r(10)),
                     ),
                     child: Row(
                       children: [
                         SizedBox(
-                          width: 59.r, // radius * 2
-                          height: 59.r, // radius * 2
+                          width: context.r(59), // radius * 2
+                          height: context.r(59), // radius * 2
                           child: CircularPercentIndicator(
-                            radius: 29.5.r,
-                            lineWidth: 6.7.w,
+                            radius: context.r(29.5),
+                            lineWidth: context.w(6.7),
                             animation: true,
                             percent: 0.72,
                             center: Text("72%", style: CustomFonts.black16w600),
@@ -97,7 +97,7 @@ class ProgressDetailScreen extends ConsumerWidget {
                             backgroundColor: Colors.white,
                           ),
                         ),
-                        SizedBox(width: 16.w),
+                        SizedBox(width: context.w(16)),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -105,7 +105,7 @@ class ProgressDetailScreen extends ConsumerWidget {
                               "Progress Complete!",
                               style: CustomFonts.black22w600,
                             ),
-                            SizedBox(height: 9.w),
+                            SizedBox(height: context.w(9)),
                             Text(
                               "Almost there! Keep going!",
                               style: CustomFonts.black16w400,
@@ -115,20 +115,20 @@ class ProgressDetailScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 14.h),
+                  SizedBox(height: context.h(14)),
                   Text(
                     "Enhance your natural beauty by adding volume, smoothing wrinkles, and contouring areas like cheeks, lips, and under-eyes for a youthful, refreshed look.",
                     style: CustomFonts.black16w400,
                   ),
-                  SizedBox(height: 29.h),
+                  SizedBox(height: context.h(29)),
                   Divider(color: Colors.grey.shade300, height: 0),
-                  SizedBox(height: 22.h),
+                  SizedBox(height: context.h(22)),
                   Row(
                     children: List.generate(filter.length, (index) {
                       final selectedIndex = ref.watch(selectedFilterProvider);
                       final isSelected = selectedIndex == index;
                       return Padding(
-                        padding: EdgeInsets.only(right: 10.w),
+                        padding: EdgeInsets.only(right: context.w(10)),
                         child: GestureDetector(
                           onTap: () {
                             ref.read(selectedFilterProvider.notifier).state =
@@ -143,13 +143,13 @@ class ProgressDetailScreen extends ConsumerWidget {
                               children: [
                                 Image.asset(
                                   filter[index].assetIcon,
-                                  height: 16.h,
-                                  width: 16.w,
+                                  height: context.h(16),
+                                  width: context.w(16),
                                   color: isSelected
                                       ? Colors.white
                                       : Colors.black,
                                 ),
-                                const SizedBox(width: 7),
+                                SizedBox(width: context.w(7)),
                                 Text(
                                   filter[index].name,
                                   style: isSelected
@@ -163,12 +163,12 @@ class ProgressDetailScreen extends ConsumerWidget {
                       );
                     }),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: context.h(20)),
                   Text(
                     "Your Treatment Journey",
                     style: CustomFonts.black22w600,
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: context.h(20)),
 
                   TreatmentJourneyStepper(steps: _getTreatmentSteps()),
                 ],
@@ -180,13 +180,13 @@ class ProgressDetailScreen extends ConsumerWidget {
       bottomNavigationBar: Container(
         color: Colors.white,
         padding: EdgeInsets.only(
-          bottom: MediaQuery.paddingOf(context).bottom + 20.h,
+          bottom: MediaQuery.paddingOf(context).bottom + context.h(20),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min, // 👈 add this
           children: [
             Padding(
-              padding: EdgeInsets.only(top: 20.h, left: 30.w, right: 30.w),
+              padding: EdgeInsets.only(top: context.h(20), left: context.w(30), right: context.w(30)),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -285,31 +285,31 @@ class TreatmentJourneyStepper extends StatelessWidget {
                 Column(
                   children: [
                     Container(
-                      width: 27.w,
-                      height: 27.h,
+                      width: context.w(27),
+                      height: context.h(27),
                       decoration: BoxDecoration(
                         color: steps[index].isCompleted
                             ? CustomColors.purpleColor
                             : Colors.grey.shade300,
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.check, size: 14.w, color: Colors.white),
+                      child: Icon(Icons.check, size: context.w(14), color: Colors.white),
                     ),
                     if (!isLast)
                       Container(
-                        height: 148.h,
-                        width: 1.w,
+                        height: context.h(148),
+                        width: context.w(1),
                         color: Colors.grey.shade400,
                       ),
                   ],
                 ),
-                SizedBox(width: 16.w),
+                SizedBox(width: context.w(16)),
                 // Content
                 Expanded(
                   child: Column(
                     children: [
                       TreatmentCard(step: steps[index]),
-                      if (!isLast) SizedBox(height: 18.h),
+                      if (!isLast) SizedBox(height: context.h(18)),
                     ],
                   ),
                 ),
@@ -333,35 +333,35 @@ class TreatmentCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xffDEF8FF),
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(context.r(12)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(left: 20.w),
+              padding: EdgeInsets.only(left: context.w(20)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 14.h),
+                  SizedBox(height: context.h(14)),
                   Text(step.title, style: CustomFonts.black18w600),
-                  SizedBox(height: 11.h),
+                  SizedBox(height: context.h(11)),
                   Text(step.description, style: CustomFonts.black16w400),
-                  SizedBox(height: 34.h),
+                  SizedBox(height: context.h(34)),
                   Text(step.date, style: CustomFonts.black16w500),
-                  SizedBox(height: 14.h),
+                  SizedBox(height: context.h(14)),
                 ],
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(6.0),
+            padding: EdgeInsets.all(context.w(6)),
             child: Container(
-              height: 144.h,
-              width: 122.w,
+              height: context.h(144),
+              width: context.w(122),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12.r),
+                borderRadius: BorderRadius.circular(context.r(12)),
                 image: DecorationImage(
                   fit: BoxFit.fill,
                   image: AssetImage(step.imageAsset),

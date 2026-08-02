@@ -19,16 +19,15 @@ final appointmentProvider = NotifierProvider(
 );
 
 class AppointmentViewModel extends BaseViewModel<AppointmentState> {
-  AppointmentViewModel({required AppointmentRepository repo})
-      : _repo = repo,
-        super(initialState: const AppointmentState());
+  AppointmentViewModel({required this.repo})
+      : super(initialState: const AppointmentState());
 
-  final AppointmentRepository _repo;
+  final AppointmentRepository repo;
 
   Future<List<AppointmentTypeData>?> getAppointmentTypes() async {
     return await runSafely(() async {
       state = state.copyWith(loading: true, errorMessage: null);
-      final response = await _repo.getAppointmentTypes();
+      final response = await repo.getAppointmentTypes();
       state = state.copyWith(
         loading: false,
         appointmentTypes: response.data ?? [],
@@ -40,7 +39,7 @@ class AppointmentViewModel extends BaseViewModel<AppointmentState> {
   Future<void> fetchSimulationHistory() async {
     await runSafely(() async {
       state = state.copyWith(loading: true, errorMessage: null);
-      final data = await _repo.getSimulationHistory();
+      final data = await repo.getSimulationHistory();
       state = state.copyWith(loading: false, simulations: data);
     });
   }
@@ -48,7 +47,7 @@ class AppointmentViewModel extends BaseViewModel<AppointmentState> {
   Future<void> getAppointments({int page = 1, int limit = 10}) async {
     await runSafely(() async {
       state = state.copyWith(loading: true, errorMessage: null);
-      final response = await _repo.getAppointmentsApi(page: page, limit: limit);
+      final response = await repo.getAppointmentsApi(page: page, limit: limit);
       state = state.copyWith(
         loading: false,
         appointmentsResponse: response,
@@ -59,7 +58,7 @@ class AppointmentViewModel extends BaseViewModel<AppointmentState> {
   Future<void> getAppointmentDetail(int appointmentId) async {
     await runSafely(() async {
       state = state.copyWith(loading: true, errorMessage: null, appointmentDetail: null);
-      final response = await _repo.getAppointmentDetail(appointmentId: appointmentId);
+      final response = await repo.getAppointmentDetail(appointmentId: appointmentId);
       state = state.copyWith(
         loading: false,
         appointmentDetail: response.data,

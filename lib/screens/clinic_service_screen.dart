@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../models/responses/practitioner_list_response.dart';
@@ -111,15 +111,15 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 25.h),
+              SizedBox(height: context.h(25)),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30.0.w),
+                padding: EdgeInsets.symmetric(horizontal: context.w(30.0)),
                 child: Text(
                   "Select Dr / Injector",
                   style: CustomFonts.black22w600,
                 ),
               ),
-              SizedBox(height: 23.h),
+              SizedBox(height: context.h(23)),
 
               Consumer(
                 builder: (context, ref, _) {
@@ -127,12 +127,12 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                   final doctors = state.doctorResponse?.data?.doctors;
                   if (state.doctorLoading) {
                     return SizedBox(
-                      height: 150.h, // same height as doctor list
+                      height: context.h(150), // same height as doctor list
                       child: const AppLoader(),
                     );
                   } else if (doctors?.isEmpty ?? true) {
                     return SizedBox(
-                      height: 150.h,
+                      height: context.h(150),
                       child: Center(
                         child: Text(
                           "No Doctor Found",
@@ -142,7 +142,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                     );
                   }
                   return SizedBox(
-                    height: 150.h,
+                    height: context.h(150),
                     child: ListView.builder(
                       itemCount: doctors!.length,
                       scrollDirection: Axis.horizontal,
@@ -160,21 +160,21 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                   );
                 },
               ),
-              SizedBox(height: 21.h),
+              SizedBox(height: context.h(21)),
               const Divider(height: 0, color: CustomColors.greyColor),
-              SizedBox(height: 25.h),
+              SizedBox(height: context.h(25)),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30.w),
+                padding: EdgeInsets.symmetric(horizontal: context.w(30)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("Selected Services", style: CustomFonts.black22w600),
-                    SizedBox(height: 17.h),
+                    SizedBox(height: context.h(17)),
                     Text(
                       "Review your selected treatments and details.\nEverything is tailored for your personalized care.",
                       style: CustomFonts.grey13w400,
                     ),
-                    SizedBox(height: 10.h),
+                    SizedBox(height: context.h(10)),
                     Consumer(
                       builder: (context, ref, _) {
                         return TreatmentPriceContainer(
@@ -195,11 +195,11 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 25.h),
+              SizedBox(height: context.h(25)),
               const Divider(height: 0, color: CustomColors.greyColor),
-              SizedBox(height: 25.h),
+              SizedBox(height: context.h(25)),
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                padding: EdgeInsets.symmetric(horizontal: context.w(30)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -207,16 +207,16 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                       "Select a Date & Time",
                       style: CustomFonts.black30w600,
                     ),
-                    SizedBox(height: 2.h),
+                    SizedBox(height: context.h(2)),
                     Text(
                       "we’ll notify you in advance so you’re always prepared. Your journey to glowing skin is just a tap away!",
                       style: CustomFonts.black16w400,
                     ),
-                    SizedBox(height: 11.h),
+                    SizedBox(height: context.h(11)),
                     Container(
-                      padding: const EdgeInsets.all(14),
+                      padding: EdgeInsets.all(context.w(14)),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12.r),
+                        borderRadius: BorderRadius.circular(context.r(12)),
                         color: CustomColors.lightBlueColor.withValues(
                           alpha: 0.4,
                         ),
@@ -231,7 +231,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                                 "Appointment Date",
                                 style: CustomFonts.black12w400,
                               ),
-                              SizedBox(height: 3.45.h),
+                              SizedBox(height: context.h(3.45)),
                               Text(
                                 selectedDate.formattedDate,
                                 style: CustomFonts.black12w600,
@@ -243,35 +243,35 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                               _pickDate();
                             },
                             child: Container(
-                              padding: const EdgeInsets.all(10),
+                              padding: EdgeInsets.all(context.w(10)),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.r),
+                                borderRadius: BorderRadius.circular(context.r(10)),
                                 color: Colors.lightBlue.withValues(alpha: 0.5),
                               ),
                               child: SvgPicture.asset(
                                 SvgAssets.edit,
-                                height: 14.5,
-                                width: 14.5,
+                                height: context.h(14.5),
+                                width: context.w(14.5),
                               ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(height: 25.h),
+                    SizedBox(height: context.h(25)),
                     Row(
                       children: [
                         statusHint(status: "Booked", color: Colors.grey),
-                        SizedBox(width: 16.w),
+                        SizedBox(width: context.w(16)),
                         statusHint(
                           status: "Available",
                           color: CustomColors.greyColor,
                         ),
-                        SizedBox(width: 16.w),
+                        SizedBox(width: context.w(16)),
                         statusHint(status: "Selected", color: Colors.green),
                       ],
                     ),
-                    SizedBox(height: 25.h),
+                    SizedBox(height: context.h(25)),
                     Consumer(
                       builder: (_, ref, _) {
                         final state = ref.watch(
@@ -287,7 +287,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                         }
                         if (state.$2) {
                           return SizedBox(
-                            height: 60.h,
+                            height: context.h(60),
                             child: const Center(
                               child: CircularProgressIndicator(
                                 color: CustomColors.pinkColor,
@@ -296,8 +296,8 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                           );
                         }
                         return Wrap(
-                          spacing: 12.w,
-                          runSpacing: 12.0.h,
+                          spacing: context.w(12),
+                          runSpacing: context.h(12.0),
                           children: List.generate(state.$1.length, (index) {
                             final slot = state.$1[index];
                             return TimeContainer(
@@ -315,17 +315,17 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                         );
                       },
                     ),
-                    SizedBox(height: 25.h),
+                    SizedBox(height: context.h(25)),
                     Divider(
                       color: CustomColors.blackColor.withValues(alpha: 0.2),
                       height: 0,
                     ),
-                    SizedBox(height: 15.h),
+                    SizedBox(height: context.h(15)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SizedBox(
-                          width: 206.w,
+                          width: context.w(206),
                           child: Text(
                             "Derma Fillers - Cheeks By Glow Skin Clinic  ",
                             style: CustomFonts.black12w600,
@@ -334,12 +334,12 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                         Text("\$ 550", style: CustomFonts.black12w600),
                       ],
                     ),
-                    SizedBox(height: 15.h),
+                    SizedBox(height: context.h(15)),
                     Divider(
                       color: CustomColors.blackColor.withValues(alpha: 0.2),
                       height: 0,
                     ),
-                    SizedBox(height: 15.h),
+                    SizedBox(height: context.h(15)),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -350,7 +350,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 170.h),
+              SizedBox(height: context.h(170)),
             ],
           ),
         ),
@@ -365,11 +365,11 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
           // tintColor: Colors.white.withOpacity(0.15),
           enableBackgroundDistortion: true,
           enableGlassBorder: true,
-          height: 144.h,
+          height: context.h(144),
           child: Column(
             children: [
               Container(
-                padding: EdgeInsets.symmetric(vertical: 12.h),
+                padding: EdgeInsets.symmetric(vertical: context.h(12)),
                 color: CustomColors.lightPurpleColor,
                 child: Center(
                   child: Text(
@@ -379,7 +379,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 10.h),
+                padding: EdgeInsets.only(top: context.h(10)),
                 child: Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -394,7 +394,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(width: 47.h),
+                      SizedBox(width: context.h(47)),
                       GestureDetector(
                         onTap: () {
                           final state = ref.read(doctorProvider);
@@ -424,12 +424,12 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                           );
                         },
                         child: Container(
-                          width: 187.w,
-                          height: 60.h,
+                          width: context.w(187),
+                          height: context.h(60),
                           alignment: Alignment.center,
 
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50.r),
+                            borderRadius: BorderRadius.circular(context.r(50)),
                             color: Colors.black,
                           ),
                           child: Center(
@@ -469,21 +469,21 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
         });
       },
       child: Padding(
-        padding: EdgeInsets.only(left: index == 0 ? 30.w : 0, right: 15.w),
+        padding: EdgeInsets.only(left: index == 0 ? context.w(30) : 0, right: context.w(15)),
         child: Container(
           padding: EdgeInsets.only(
-            top: 21.h,
-            bottom: 12.h,
-            left: 25.w,
-            right: 25.w,
+            top: context.h(21),
+            bottom: context.h(12),
+            left: context.w(25),
+            right: context.w(25),
           ),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15.r),
+            borderRadius: BorderRadius.circular(context.r(15)),
             border: Border.all(
               color: isSelected
                   ? CustomColors.pinkColor
                   : CustomColors.lightPurpleColor,
-              width: 2.w,
+              width: context.w(2),
             ),
           ),
           child: Column(
@@ -494,14 +494,14 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                 child: AppNetworkImage(
                   imageUrl: doctor.doctorImage ?? "",
                   fit: BoxFit.cover,
-                  height: 57.67.w,
-                  width: 58.39.w,
-                  errorIconSize: 57.sp,
+                  height: context.w(57.67),
+                  width: context.w(58.39),
+                  errorIconSize: context.sp(57),
                 ),
               ),
-              SizedBox(height: 6.23.h),
+              SizedBox(height: context.h(6.23)),
               Text(doctor.doctorName ?? "", style: CustomFonts.black18w600),
-              SizedBox(height: 3.32.h),
+              SizedBox(height: context.h(3.32)),
               Text(doctor.specialization ?? "", style: CustomFonts.black14w400),
             ],
           ),
@@ -514,14 +514,14 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
     return Row(
       children: [
         Container(
-          height: 11.02.h,
-          width: 11.02.w,
+          height: context.h(11.02),
+          width: context.w(11.02),
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(3.r),
+            borderRadius: BorderRadius.circular(context.r(3)),
           ),
         ),
-        SizedBox(width: 6.78.w),
+        SizedBox(width: context.w(6.78)),
         Text(status, style: CustomFonts.black14w500),
       ],
     );

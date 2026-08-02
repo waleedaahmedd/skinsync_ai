@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../../models/responses/appointments_list_response.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
@@ -72,7 +72,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          padding: EdgeInsets.symmetric(horizontal: context.w(20)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -80,12 +80,12 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (Navigator.of(context).canPop()) ...[
-                    SizedBox(height: 16.h),
+                    SizedBox(height: context.h(16)),
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
                       child: Container(
-                        height: 42.w,
-                        width: 42.w,
+                        height: context.w(42),
+                        width: context.w(42),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
@@ -97,19 +97,19 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                         child: Center(
                           child: Icon(
                             Icons.arrow_back_ios_new_rounded,
-                            size: 18.sp,
+                            size: context.sp(18),
                             color: Colors.black,
                           ),
                         ),
                       ),
                     ),
                   ],
-                  SizedBox(height: 20.h),
+                  SizedBox(height: context.h(20)),
                   Text(
                     "My Appointments",
-                    style: CustomFonts.black30w600.copyWith(fontSize: 28.sp),
+                    style: CustomFonts.black30w600.copyWith(fontSize: context.sp(28)),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: context.h(20)),
                   CustomSearchField(
                     controller: _searchController,
                     hintText: "Search appointments...",
@@ -119,7 +119,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                       });
                     },
                   ),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: context.h(16)),
                   _buildDropdown<String>(
                     label: "Appointment Type Filter",
                     value: _selectedTypeFilter,
@@ -141,7 +141,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                     : filteredAppointments.isEmpty
                     ? _buildEmptyState()
                     : ListView.builder(
-                        padding: EdgeInsets.only( top: 20.h,bottom: 80),
+                        padding: EdgeInsets.only( top: context.h(20),bottom: 80),
                         physics: const BouncingScrollPhysics(),
                         itemCount: filteredAppointments.length,
                         itemBuilder: (context, index) {
@@ -169,12 +169,12 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
           label,
           style: CustomFonts.grey700_11w700,
         ),
-        SizedBox(height: 6.h),
+        SizedBox(height: context.h(6)),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 14.w),
+          padding: EdgeInsets.symmetric(horizontal: context.w(14)),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(30.r),
+            borderRadius: BorderRadius.circular(context.r(30)),
             border: Border.all(color: Colors.grey.shade300),
           ),
           child: DropdownButtonHideUnderline(
@@ -183,9 +183,9 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
               items: items,
               onChanged: onChanged,
               isExpanded: true,
-              icon: Icon(Icons.keyboard_arrow_down_rounded, size: 20.sp, color: Colors.grey.shade600),
+              icon: Icon(Icons.keyboard_arrow_down_rounded, size: context.sp(20), color: Colors.grey.shade600),
               dropdownColor: Colors.white,
-              borderRadius: BorderRadius.circular(16.r),
+              borderRadius: BorderRadius.circular(context.r(16)),
               style: CustomFonts.black13w600,
             ),
           ),
@@ -213,18 +213,17 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Navigator.pushNamed(
           context,
-          MaterialPageRoute(
-            builder: (context) => AppointmentDetailScreen(appointment: appointment),
-          ),
+          AppointmentDetailScreen.routeName,
+          arguments: appointment,
         );
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: 22.h),
+        margin: EdgeInsets.only(bottom: context.h(22)),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24.r),
+          borderRadius: BorderRadius.circular(context.r(24)),
           border: Border.all(color: Colors.grey.shade100, width: 1.5),
           boxShadow: [
             BoxShadow(
@@ -238,10 +237,10 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
           children: [
             // 1. Top Section: Date, Slot & Status (Gradient background)
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 16.h),
+              padding: EdgeInsets.symmetric(horizontal: context.w(18), vertical: context.h(16)),
               decoration: BoxDecoration(
                 gradient: CustomColors.purpleBlueGradient,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(24))),
               ),
               child: Column(
                 children: [
@@ -255,18 +254,18 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                             Row(
                               children: [
                                 const Icon(Icons.calendar_today_rounded, size: 16, color: Colors.white),
-                                SizedBox(width: 8.w),
+                                SizedBox(width: context.w(8)),
                                 Text(dateStr, style: CustomFonts.white14w700),
                               ],
                             ),
                             if (appointment.appointmentKey != null) ...[
-                              SizedBox(height: 4.h),
+                              SizedBox(height: context.h(4)),
                               Text(
                                 appointment.appointmentKey!,
                                 style: CustomFonts.white10w600.copyWith(color: Colors.white70),
                               ),
                             ],
-                            SizedBox(height: 10.h),
+                            SizedBox(height: context.h(10)),
                             Row(
                               children: [
                                 const Icon(
@@ -274,10 +273,10 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                                   size: 14,
                                   color: Colors.white70,
                                 ),
-                                SizedBox(width: 8.w),
+                                SizedBox(width: context.w(8)),
                                 Text(
                                   timeString,
-                                  style: CustomFonts.white14w600.copyWith(fontSize: 13.sp),
+                                  style: CustomFonts.white14w600.copyWith(fontSize: context.sp(13)),
                                 ),
                               ],
                             ),
@@ -289,19 +288,19 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                         children: [
                           _buildTypeBadge(type, Colors.white, timeStyle.copyWith(color: typeColor)),
                           if (appointment.status != null) ...[
-                            SizedBox(height: 10.h),
+                            SizedBox(height: context.h(10)),
                             Container(
-                              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 5.h),
+                              padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(5)),
                               decoration: BoxDecoration(
                                 color: Colors.white.withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(20.r),
+                                borderRadius: BorderRadius.circular(context.r(20)),
                                 border: Border.all(color: Colors.white24),
                               ),
                               child: Text(
                                 appointment.status!.toUpperCase(),
                                 style: CustomFonts.white10w600.copyWith(
                                   letterSpacing: 1.2,
-                                  fontSize: 8.5.sp,
+                                  fontSize: context.sp(8.5),
                                   fontWeight: FontWeight.w800,
                                 ),
                               ),
@@ -317,7 +316,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
 
             // 2. Middle Section: Clinic & Doctor
             Padding(
-              padding: EdgeInsets.all(18.w),
+              padding: EdgeInsets.all(context.w(18)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -332,8 +331,8 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                               ClipOval(
                                 child: CachedNetworkImage(
                                   imageUrl: appointment.clinic?.clinicImage ?? "",
-                                  height: 32.w,
-                                  width: 32.w,
+                                  height: context.w(32),
+                                  width: context.w(32),
                                   fit: BoxFit.cover,
                                   placeholder: (context, url) => Container(color: Colors.grey.shade100),
                                   errorWidget: (context, url, error) => Container(
@@ -342,11 +341,11 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 10.w),
+                              SizedBox(width: context.w(10)),
                               Expanded(
                                 child: Text(
                                   appointment.clinic!.clinicName ?? "N/A",
-                                  style: CustomFonts.black14w600.copyWith(fontSize: 12.sp),
+                                  style: CustomFonts.black14w600.copyWith(fontSize: context.sp(12)),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -354,7 +353,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                             ],
                           ),
                         ),
-                      SizedBox(width: 12.w),
+                      SizedBox(width: context.w(12)),
                       // Doctor Info
                       if (appointment.doctor != null)
                         Expanded(
@@ -363,8 +362,8 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                               ClipOval(
                                 child: CachedNetworkImage(
                                   imageUrl: appointment.doctor?.doctorImage ?? "",
-                                  height: 32.w,
-                                  width: 32.w,
+                                  height: context.w(32),
+                                  width: context.w(32),
                                   fit: BoxFit.cover,
                                   placeholder: (context, url) => Container(color: Colors.grey.shade100),
                                   errorWidget: (context, url, error) => Container(
@@ -373,11 +372,11 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                                   ),
                                 ),
                               ),
-                              SizedBox(width: 10.w),
+                              SizedBox(width: context.w(10)),
                               Expanded(
                                 child: Text(
                                   appointment.doctor!.doctorName ?? "N/A",
-                                  style: CustomFonts.black14w600.copyWith(fontSize: 12.sp),
+                                  style: CustomFonts.black14w600.copyWith(fontSize: context.sp(12)),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -389,26 +388,26 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                   ),
 
                   if (appointment.treatments != null && appointment.treatments!.isNotEmpty) ...[
-                    SizedBox(height: 18.h),
+                    SizedBox(height: context.h(18)),
                     const Divider(height: 1, color: Colors.black12),
-                    SizedBox(height: 18.h),
+                    SizedBox(height: context.h(18)),
 
                     // 3. Treatments List
                     Row(
                       children: [
                         const Icon(Icons.medical_services_rounded, size: 14, color: CustomColors.darkPurple),
-                        SizedBox(width: 8.w),
+                        SizedBox(width: context.w(8)),
                         Text("Selected Treatments", style: CustomFonts.darkPurple12w600),
                       ],
                     ),
-                    SizedBox(height: 14.h),
+                    SizedBox(height: context.h(14)),
                     for (var t in appointment.treatments!)
                       Container(
-                        margin: EdgeInsets.only(bottom: 12.h),
-                        padding: EdgeInsets.all(12.w),
+                        margin: EdgeInsets.only(bottom: context.h(12)),
+                        padding: EdgeInsets.all(context.w(12)),
                         decoration: BoxDecoration(
                           color: CustomColors.lightPurpleColor.withValues(alpha: 0.05),
-                          borderRadius: BorderRadius.circular(16.r),
+                          borderRadius: BorderRadius.circular(context.r(16)),
                           border: Border.all(
                             color: CustomColors.lightPurpleColor.withValues(alpha: 0.1),
                             width: 1,
@@ -417,11 +416,11 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                         child: Row(
                           children: [
                             ClipRRect(
-                              borderRadius: BorderRadius.circular(12.r),
+                              borderRadius: BorderRadius.circular(context.r(12)),
                               child: CachedNetworkImage(
                                 imageUrl: t.treatmentImage ?? "",
-                                height: 40.w,
-                                width: 40.w,
+                                height: context.w(40),
+                                width: context.w(40),
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
                                   color: Colors.white,
@@ -429,16 +428,16 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                                 ),
                                 errorWidget: (context, url, error) => Container(
                                   color: Colors.white,
-                                  padding: EdgeInsets.all(8.w),
+                                  padding: EdgeInsets.all(context.w(8)),
                                   child: Icon(
                                     Icons.auto_awesome_rounded,
-                                    size: 14.sp,
+                                    size: context.sp(14),
                                     color: CustomColors.purpleColor,
                                   ),
                                 ),
                               ),
                             ),
-                            SizedBox(width: 14.w),
+                            SizedBox(width: context.w(14)),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -448,7 +447,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                                       Expanded(
                                         child: Text(
                                           t.treatmentName ?? "N/A",
-                                          style: CustomFonts.black14w600.copyWith(fontSize: 13.sp),
+                                          style: CustomFonts.black14w600.copyWith(fontSize: context.sp(13)),
                                         ),
                                       ),
                                       if (t.status != null)
@@ -456,49 +455,49 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                                           t.status!.toUpperCase(),
                                           style: TextStyle(
                                             color: _getTreatmentStatusColor(t.status!),
-                                            fontSize: 9.sp,
+                                            fontSize: context.sp(9),
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
                                     ],
                                   ),
-                                  SizedBox(height: 4.h),
+                                  SizedBox(height: context.h(4)),
                                   Row(
                                     children: [
                                       Text(
                                         "Area: ${t.areaName ?? 'N/A'}",
-                                        style: CustomFonts.grey700_10w400.copyWith(fontSize: 11.sp),
+                                        style: CustomFonts.grey700_10w400.copyWith(fontSize: context.sp(11)),
                                       ),
                                       if (t.material != null) ...[
                                         Padding(
-                                          padding: EdgeInsets.symmetric(horizontal: 6.w),
-                                          child: Text("•", style: TextStyle(color: Colors.grey.shade300, fontSize: 10.sp)),
+                                          padding: EdgeInsets.symmetric(horizontal: context.w(6)),
+                                          child: Text("•", style: TextStyle(color: Colors.grey.shade300, fontSize: context.sp(10))),
                                         ),
                                         Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                                          padding: EdgeInsets.symmetric(horizontal: context.w(6), vertical: context.h(2)),
                                           decoration: BoxDecoration(
                                             color: CustomColors.darkPurple.withValues(alpha: 0.08),
-                                            borderRadius: BorderRadius.circular(4.r),
+                                            borderRadius: BorderRadius.circular(context.r(4)),
                                           ),
                                           child: Text(
                                             "${t.material!.selectedQuantity} ${t.material!.name ?? 'Syringes'}",
-                                            style: CustomFonts.darkPurple10w700.copyWith(fontSize: 9.sp),
+                                            style: CustomFonts.darkPurple10w700.copyWith(fontSize: context.sp(9)),
                                           ),
                                         ),
                                       ],
                                     ],
                                   ),
                                   if (t.startTime != null || t.endTime != null) ...[
-                                    SizedBox(height: 4.h),
+                                    SizedBox(height: context.h(4)),
                                     Text(
                                       "${t.startTime != null ? DateTimeUtils.formatTimestampToTime(t.startTime!) : '--:--'} - ${t.endTime != null ? DateTimeUtils.formatTimestampToTime(t.endTime!) : '--:--'}",
-                                      style: CustomFonts.grey700_10w400.copyWith(fontSize: 10.sp),
+                                      style: CustomFonts.grey700_10w400.copyWith(fontSize: context.sp(10)),
                                     ),
                                   ],
                                 ],
                               ),
                             ),
-                            Icon(Icons.chevron_right_rounded, size: 18.sp, color: Colors.grey.shade300),
+                            Icon(Icons.chevron_right_rounded, size: context.sp(18), color: Colors.grey.shade300),
                           ],
                         ),
                       ),
@@ -539,15 +538,15 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
 
   Widget _buildTypeBadge(String type, Color color, TextStyle textStyle) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+      padding: EdgeInsets.symmetric(horizontal: context.w(8), vertical: context.h(3)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(context.r(20)),
         border: Border.all(color: Colors.black12, width: 0.5),
       ),
       child: Text(
         type,
-        style: textStyle.copyWith(fontSize: 8.sp), // permitted copyWith for dynamic auto font size only
+        style: textStyle.copyWith(fontSize: context.sp(8)), // permitted copyWith for dynamic auto font size only
       ),
     );
   }
@@ -555,21 +554,21 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
   Widget _buildEmptyState() {
     return Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 40.w),
+        padding: EdgeInsets.symmetric(horizontal: context.w(40)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.event_busy_rounded,
-              size: 64.sp,
+              size: context.sp(64),
               color: Colors.grey.shade300,
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: context.h(16)),
             Text(
               "No Appointments Found",
               style: CustomFonts.grey800_20w600,
             ),
-            SizedBox(height: 6.h),
+            SizedBox(height: context.h(6)),
             Text(
               "Try adjusting your filters, modifying your search, or booking a new clinical slot.",
               textAlign: TextAlign.center,

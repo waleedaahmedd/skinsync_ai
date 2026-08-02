@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../treatments_screen.dart';
 import '../treatment_category_screen.dart';
 import '../../utills/custom_fonts.dart';
@@ -21,17 +21,17 @@ class TreatmentExploreScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(20)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Text("Skinsync AI", style: CustomFonts.grey20w500),
-                  // SizedBox(height: 6.h),
+                  // SizedBox(height: context.h(6)),
                   Text(
                     "Explore Treatments",
-                    style: CustomFonts.black30w600.copyWith(fontSize: 28.sp),
+                    style: CustomFonts.black30w600.copyWith(fontSize: context.sp(28)),
                   ),
-                  SizedBox(height: 8.h),
+                  SizedBox(height: context.h(8)),
                   Text(
                     "Select how you would like to browse our elite clinical skin and body therapies.",
                     style: CustomFonts.grey14w400.copyWith(height: 1.3),
@@ -39,11 +39,11 @@ class TreatmentExploreScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            SizedBox(height: 25.h),
+            SizedBox(height: context.h(25)),
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.fromLTRB(20.w, 0, 20.w, 80.h),
+                padding: EdgeInsets.fromLTRB(context.w(20), 0, context.w(20), context.h(80)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -67,7 +67,7 @@ class TreatmentExploreScreen extends ConsumerWidget {
                         );
                       },
                     ),
-                    SizedBox(height: 4.h),
+                    SizedBox(height: context.h(4)),
                     // CARD 2: CATEGORIES (Reusing TreatmentContainer adaptively!)
                     TreatmentContainer(
                       customTitle: "By Category",
