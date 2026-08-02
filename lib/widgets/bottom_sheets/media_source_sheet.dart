@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
@@ -17,7 +17,7 @@ class MediaSourceSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 20.h),
+      padding: EdgeInsets.symmetric(vertical: context.h(20)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -25,11 +25,12 @@ class MediaSourceSheet extends StatelessWidget {
             isVideo ? "Select Video Source" : "Select Image Source",
             style: CustomFonts.black16w600,
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.h(20)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildPickerOption(
+                context: context,
                 onTap: () {
                   Navigator.pop(context);
                   onSourceSelected(ImageSource.camera);
@@ -38,6 +39,7 @@ class MediaSourceSheet extends StatelessWidget {
                 label: "Camera",
               ),
               _buildPickerOption(
+                context: context,
                 onTap: () {
                   Navigator.pop(context);
                   onSourceSelected(ImageSource.gallery);
@@ -47,13 +49,14 @@ class MediaSourceSheet extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.h(20)),
         ],
       ),
     );
   }
 
   Widget _buildPickerOption({
+    required BuildContext context,
     required VoidCallback onTap,
     required IconData icon,
     required String label,
@@ -63,14 +66,14 @@ class MediaSourceSheet extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(15.r),
+            padding: EdgeInsets.all(context.r(15)),
             decoration: BoxDecoration(
-              color: CustomColors.purpleColor.withOpacity(0.1),
+              color: CustomColors.purpleColor.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: CustomColors.purpleColor, size: 30.sp),
+            child: Icon(icon, color: CustomColors.purpleColor, size: context.sp(30)),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: context.h(8)),
           Text(label, style: CustomFonts.black14w500),
         ],
       ),

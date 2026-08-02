@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../models/responses/practitioner_list_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -25,11 +25,11 @@ class DoctorCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: width ?? 165.w,
-        margin: margin ?? EdgeInsets.only(right: 16.w, bottom: 8.h, top: 4.h),
+        width: width ?? context.w(165),
+        margin: margin ?? EdgeInsets.only(right: context.w(16), bottom: context.h(8), top: context.h(4)),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(context.r(16)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.04),
@@ -45,10 +45,10 @@ class DoctorCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(16))),
               child: CachedNetworkImage(
                 imageUrl: doctor.doctorImage ?? '',
-                height: 100.h,
+                height: context.h(100),
                 width: double.infinity,
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Container(
@@ -66,7 +66,7 @@ class DoctorCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(10.w),
+              padding: EdgeInsets.all(context.w(10)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -88,7 +88,7 @@ class DoctorCard extends StatelessWidget {
                             color: Colors.amber,
                             size: 14,
                           ),
-                          SizedBox(width: 2.w),
+                          SizedBox(width: context.w(2)),
                           Text(
                             doctor.doctorRating?.toString() ?? "4.5", 
                             style: CustomFonts.black10w600,
@@ -97,14 +97,14 @@ class DoctorCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 4.h),
+                  SizedBox(height: context.h(4)),
                   Text(
                     doctor.specialization ?? '',
                     style: CustomFonts.grey700_10w400,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 6.h),
+                  SizedBox(height: context.h(6)),
                   Text(
                     doctor.clinic?.clinicName ?? "Premium Specialist",
                     style: CustomFonts.darkPurple12w600,

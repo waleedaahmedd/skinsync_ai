@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
 import '../../view_models/explore_view_model.dart';
@@ -21,7 +21,7 @@ class CommunityScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+            padding: EdgeInsets.symmetric(horizontal: context.w(20), vertical: context.h(10)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -31,9 +31,9 @@ class CommunityScreen extends ConsumerWidget {
                     children: [
                       Text(
                         "Community",
-                        style: CustomFonts.black30w600.copyWith(fontSize: 28.sp),
+                        style: CustomFonts.black30w600.copyWith(fontSize: context.sp(28)),
                       ),
-                      SizedBox(height: 4.h),
+                      SizedBox(height: context.h(4)),
                       Text(
                         "Share your journey and connect with others.",
                         style: CustomFonts.grey14w400.copyWith(height: 1.3),
@@ -48,7 +48,7 @@ class CommunityScreen extends ConsumerWidget {
                       icon: Icons.play_circle_outline_rounded,
                       isReels: false,
                     ),
-                    SizedBox(width: 12.w),
+                    SizedBox(width: context.w(12)),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -57,7 +57,7 @@ class CommunityScreen extends ConsumerWidget {
                         );
                       },
                       child: Container(
-                        padding: EdgeInsets.all(8.w),
+                        padding: EdgeInsets.all(context.w(8)),
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: CustomColors.purpleColor,
@@ -74,7 +74,7 @@ class CommunityScreen extends ConsumerWidget {
             child: state.loading
                 ? const Center(child: CircularProgressIndicator())
                 : ListView.builder(
-                    padding: EdgeInsets.only(bottom: 120.h),
+                    padding: EdgeInsets.only(bottom: context.h(120)),
                     physics: const BouncingScrollPhysics(),
                     itemCount: state.posts.length,
                     itemBuilder: (context, index) {

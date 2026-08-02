@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../../models/responses/auth_response.dart';
 import '../../utills/color_constant.dart';
@@ -59,13 +59,13 @@ class HomeScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 22.h),
+              SizedBox(height: context.h(22)),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                 child: Column(
                   children: [
                     const PointsEarnCard(),
-                    SizedBox(height: 28.h),
+                    SizedBox(height: context.h(28)),
                     HeadingWithRightArrow(
                       title: "Upcoming Appointments",
                       onTap: () {
@@ -75,22 +75,23 @@ class HomeScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: context.h(16)),
 
               // Upcoming Appointments Empty State Check
               appointments.isEmpty
                   ? _buildHorizontalEmptyState(
-                      height: 100.h,
+                      context: context,
+                      height: context.h(100),
                       icon: Icons.calendar_today_rounded,
                       title: "No Upcoming Appointments",
                       subtitle:
                           "Your scheduled clinical treatments and session details will appear here.",
                     )
                   : SizedBox(
-                      height: 195.h,
+                      height: context.h(195),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                         scrollDirection: Axis.horizontal,
                         itemCount: sortedDateKeys.length,
                         itemBuilder: (context, dateIndex) {
@@ -105,11 +106,11 @@ class HomeScreen extends ConsumerWidget {
                         },
                       ),
                     ),
-              SizedBox(height: 28.h),
+              SizedBox(height: context.h(28)),
 
               // Suggested Treatments Section
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                 child: HeadingWithRightArrow(
                   title: "Suggested Treatments",
                   onTap: () {
@@ -117,9 +118,9 @@ class HomeScreen extends ConsumerWidget {
                   },
                 ),
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: context.h(16)),
               SizedBox(
-                height: 180.h,
+                height: context.h(180),
                 child: Consumer(
                   builder: (context, ref, _) {
                     final suggestedTreatments =
@@ -127,7 +128,8 @@ class HomeScreen extends ConsumerWidget {
 
                     if (suggestedTreatments.isEmpty) {
                       return _buildHorizontalEmptyState(
-                        height: 100.h,
+                        context: context,
+                        height: context.h(100),
                         icon: Icons.auto_awesome_rounded,
                         title: "No Suggested Treatments",
                         subtitle:
@@ -143,14 +145,14 @@ class HomeScreen extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: EdgeInsets.only(
-                            left: index == 0 ? 24.w : 16.w,
+                            left: index == 0 ? context.w(24) : context.w(16),
                             right: index == suggestedTreatments.length - 1
-                                ? 24.w
-                                : 0.w,
+                                ? context.w(24)
+                                : context.w(0),
                           ),
                           child: TreatmentContainer(
-                            imageHeight: 145.h,
-                            width: 310.w,
+                            imageHeight: context.h(145),
+                            width: context.w(310),
                             treatments: suggestedTreatments[index],
                           ),
                         );
@@ -159,11 +161,11 @@ class HomeScreen extends ConsumerWidget {
                   },
                 ),
               ),
-              SizedBox(height: 28.h),
+              SizedBox(height: context.h(28)),
 
               // Top Doctors Section
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                 child: HeadingWithRightArrow(
                   title: "Top Doctors",
                   onTap: () {
@@ -175,22 +177,23 @@ class HomeScreen extends ConsumerWidget {
                   },
                 ),
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: context.h(16)),
 
               // Top Doctors Empty State Check
               (dashboard?.topDoctors?.isEmpty ?? true)
                   ? _buildHorizontalEmptyState(
-                      height: 100.h,
+                      context: context,
+                      height: context.h(100),
                       icon: Icons.badge_outlined,
                       title: "No Specialists Available",
                       subtitle:
                           "Specialist dermatologists and clinical practitioners will be listed here soon.",
                     )
                   : SizedBox(
-                      height: 200.h,
+                      height: context.h(200),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                         scrollDirection: Axis.horizontal,
                         itemCount: dashboard!.topDoctors!.length,
                         itemBuilder: (context, index) =>
@@ -199,11 +202,11 @@ class HomeScreen extends ConsumerWidget {
                             ),
                       ),
                     ),
-              SizedBox(height: 28.h),
+              SizedBox(height: context.h(28)),
 
               // Top Clinics Section
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                 child: HeadingWithRightArrow(
                   title: "Top Clinics",
                   onTap: () {
@@ -214,22 +217,23 @@ class HomeScreen extends ConsumerWidget {
                   },
                 ),
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: context.h(16)),
 
               // Top Clinics Empty State Check
               (dashboard?.topClinics?.isEmpty ?? true)
                   ? _buildHorizontalEmptyState(
-                      height: 100.h,
+                      context: context,
+                      height: context.h(100),
                       icon: Icons.storefront_rounded,
                       title: "No Clinics Available",
                       subtitle:
                           "Top-rated aesthetic clinics and wellness spas will be listed here soon.",
                     )
                   : SizedBox(
-                      height: 180.h,
+                      height: context.h(180),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                         scrollDirection: Axis.horizontal,
                         itemCount: dashboard!.topClinics!.length,
                         itemBuilder: (context, index) =>
@@ -238,29 +242,30 @@ class HomeScreen extends ConsumerWidget {
                             ),
                       ),
                     ),
-              SizedBox(height: 28.h),
+              SizedBox(height: context.h(28)),
 
               // Promotions & Discounts Section
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                 child: Text(
                   "Promotions & Discounts",
                   style: CustomFonts.black22w600,
                 ),
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: context.h(16)),
 
               // Promotions Empty State Check
               promotionsCount == 0
                   ? _buildHorizontalEmptyState(
-                      height: 100.h,
+                      context: context,
+                      height: context.h(100),
                       icon: Icons.local_offer_outlined,
                       title: "No Promotions Available",
                       subtitle:
                           "Exclusive clinical deals, seasonal discounts, and special offers are on their way.",
                     )
                   : SizedBox(
-                      height: 144.h,
+                      height: context.h(144),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         shrinkWrap: true,
@@ -269,15 +274,17 @@ class HomeScreen extends ConsumerWidget {
                         itemBuilder: (context, index) {
                           return Padding(
                             padding: EdgeInsets.only(
-                              left: index == 0 ? 24.w : 16.w,
-                              right: index == promotionsCount - 1 ? 24.w : 0.w,
+                              left: index == 0 ? context.w(24) : context.w(16),
+                              right: index == promotionsCount - 1
+                                  ? context.w(24)
+                                  : context.w(0),
                             ),
                             child: const DiscountCard(),
                           );
                         },
                       ),
                     ),
-              SizedBox(height: 100.h),
+              SizedBox(height: context.h(100)),
             ],
           ),
         ),
@@ -286,6 +293,7 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _buildHorizontalEmptyState({
+    required BuildContext context,
     required double height,
     required IconData icon,
     required String title,
@@ -298,12 +306,12 @@ class HomeScreen extends ConsumerWidget {
     );
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w),
+      padding: EdgeInsets.symmetric(horizontal: context.w(24)),
       child: Container(
         height: height,
         width: double.infinity,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24.r),
+          borderRadius: BorderRadius.circular(context.r(24)),
           gradient: myLocalGradient, // Solid brand gradient background
           border: Border.all(
             color: CustomColors.lightPurpleColor.withValues(alpha: 0.4),
@@ -318,7 +326,7 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(22.r),
+          borderRadius: BorderRadius.circular(context.r(22)),
           child: Stack(
             children: [
               // 1. Translucent White Mask Tint Overlay
@@ -332,13 +340,14 @@ class HomeScreen extends ConsumerWidget {
 
               // 2. High-Contrast Content Layer (Sizes the parent container)
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                padding: EdgeInsets.symmetric(
+                    horizontal: context.w(16), vertical: context.h(12)),
                 child: Row(
                   children: [
                     // Glowing semi-transparent white circular badge icon
                     Container(
-                      height: 48.w,
-                      width: 48.w,
+                      height: context.w(48),
+                      width: context.w(48),
                       decoration: BoxDecoration(
                         color: CustomColors.purpleColor.withValues(alpha: 0.12),
                         shape: BoxShape.circle,
@@ -346,18 +355,18 @@ class HomeScreen extends ConsumerWidget {
                           color: CustomColors.purpleColor.withValues(
                             alpha: 0.15,
                           ),
-                          width: 1.w,
+                          width: context.w(1),
                         ),
                       ),
                       child: Center(
                         child: Icon(
                           icon,
                           color: CustomColors.purpleColor,
-                          size: 22.sp,
+                          size: context.sp(22),
                         ),
                       ),
                     ),
-                    SizedBox(width: 14.w),
+                    SizedBox(width: context.w(14)),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -369,7 +378,7 @@ class HomeScreen extends ConsumerWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          SizedBox(height: 4.h),
+                          SizedBox(height: context.h(4)),
                           Text(
                             subtitle,
                             style: CustomFonts.textGrey13w400,

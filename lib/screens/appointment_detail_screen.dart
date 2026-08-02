@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../models/responses/appointments_list_response.dart';
@@ -36,9 +36,9 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32.r)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(context.r(32))),
         child: Padding(
-          padding: EdgeInsets.all(24.w),
+          padding: EdgeInsets.all(context.w(24)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -46,17 +46,17 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                 "Check-in QR Code",
                 style: CustomFonts.black18w600,
               ),
-              SizedBox(height: 4.h),
+              SizedBox(height: context.h(4)),
               Text(
                 "Appointment ID: #${id ?? 'N/A'}",
                 style: CustomFonts.grey700_12w400,
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: context.h(24)),
               Container(
-                padding: EdgeInsets.all(16.w),
+                padding: EdgeInsets.all(context.w(16)),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(24.r),
+                  borderRadius: BorderRadius.circular(context.r(24)),
                   boxShadow: [
                     BoxShadow(
                       color: CustomColors.darkPurple.withValues(alpha: 0.1),
@@ -66,8 +66,8 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                   ],
                 ),
                 child: SizedBox(
-                  width: 180.w,
-                  height: 180.w,
+                  width: context.w(180),
+                  height: context.w(180),
                   child: PrettyQrView.data(
                     data: id?.toString() ?? "N/A",
                     decoration: const PrettyQrDecoration(
@@ -83,21 +83,21 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                   ),
                 ),
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: context.h(24)),
               Text(
                 "Please scan this code at the clinic reception to confirm your arrival.",
                 textAlign: TextAlign.center,
                 style: CustomFonts.textGrey13w400.copyWith(height: 1.4),
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: context.h(24)),
               GestureDetector(
                 onTap: () => Navigator.pop(context),
                 child: Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 14.h),
+                  padding: EdgeInsets.symmetric(vertical: context.h(14)),
                   decoration: BoxDecoration(
                     gradient: CustomColors.purpleBlueGradient,
-                    borderRadius: BorderRadius.circular(16.r),
+                    borderRadius: BorderRadius.circular(context.r(16)),
                   ),
                   child: Center(
                     child: Text(
@@ -136,24 +136,24 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
         elevation: 0,
         centerTitle: false,
         leading: IconButton(
-          icon: const Icon(CupertinoIcons.arrow_left, color: Colors.black, size: 22),
+          icon: Icon(CupertinoIcons.arrow_left, color: Colors.black, size: context.sp(22)),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text("Appointment Detail", style: CustomFonts.black22w600),
         actions: [
           IconButton(
             onPressed: () => _showQrDialog(context, detail?.appointmentId ?? widget.appointment.appointmentId),
-            icon: Icon(Icons.qr_code_scanner_rounded, color: CustomColors.darkPurple, size: 24.sp),
+            icon: Icon(Icons.qr_code_scanner_rounded, color: CustomColors.darkPurple, size: context.sp(24)),
             tooltip: "Generate QR",
           ),
-          SizedBox(width: 12.w),
+          SizedBox(width: context.w(12)),
         ],
       ),
       body: isLoading
           ? const Center(child: CupertinoActivityIndicator())
           : SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+              padding: EdgeInsets.symmetric(horizontal: context.w(20), vertical: context.h(20)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -167,7 +167,7 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                       _buildDetailRow("Status", detail?.status ?? widget.appointment.status ?? "Confirmed", isStatus: true),
                     ],
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: context.h(20)),
                   _buildInfoSection(
                     title: "Financial Summary",
                     icon: Icons.account_balance_wallet_rounded,
@@ -185,7 +185,7 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                       ),
                     ],
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: context.h(20)),
                   _buildInfoSection(
                     title: "Clinic & Specialist",
                     icon: Icons.local_hospital_rounded,
@@ -194,9 +194,9 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                       _buildDetailRow("Specialist", detail?.doctor?.doctorName ?? widget.appointment.doctor?.doctorName ?? "N/A", icon: Icons.person_outline),
                     ],
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: context.h(20)),
                   _buildTreatmentSection(detail?.treatments),
-                  SizedBox(height: 40.h),
+                  SizedBox(height: context.h(40)),
                 ],
               ),
             ),
@@ -206,10 +206,10 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
   Widget _buildInfoSection({required String title, required List<Widget> children, required IconData icon}) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(context.w(20)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24.r),
+        borderRadius: BorderRadius.circular(context.r(24)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -223,15 +223,15 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
         children: [
           Row(
             children: [
-              Icon(icon, size: 18.sp, color: CustomColors.darkPurple),
-              SizedBox(width: 10.w),
+              Icon(icon, size: context.sp(18), color: CustomColors.darkPurple),
+              SizedBox(width: context.w(10)),
               Text(
                 title.toUpperCase(),
                 style: CustomFonts.darkPurple12w600.copyWith(letterSpacing: 1.1),
               ),
             ],
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: context.h(16)),
           ...children,
         ],
       ),
@@ -243,7 +243,7 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: 4.w, bottom: 12.h),
+          padding: EdgeInsets.only(left: context.w(4), bottom: context.h(12)),
           child: Text("TREATMENT DETAILS", style: CustomFonts.darkPurple12w600.copyWith(letterSpacing: 1.1)),
         ),
         if (treatments == null || treatments.isEmpty)
@@ -262,11 +262,11 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
             }
 
             return Container(
-              margin: EdgeInsets.only(bottom: 16.h),
-              padding: EdgeInsets.all(20.w),
+              margin: EdgeInsets.only(bottom: context.h(16)),
+              padding: EdgeInsets.all(context.w(20)),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(24.r),
+                borderRadius: BorderRadius.circular(context.r(24)),
                 boxShadow: [
                   BoxShadow(
                     color: CustomColors.purpleColor.withValues(alpha: 0.12),
@@ -282,40 +282,40 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                   Row(
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(16.r),
+                        borderRadius: BorderRadius.circular(context.r(16)),
                         child: CachedNetworkImage(
                           imageUrl: t.treatmentImage ?? "",
-                          height: 50.w,
-                          width: 50.w,
+                          height: context.w(50),
+                          width: context.w(50),
                           fit: BoxFit.cover,
                           placeholder: (context, url) => Container(
                             color: CustomColors.purpleColor.withValues(alpha: 0.1),
                             child: const Center(child: CupertinoActivityIndicator(radius: 8)),
                           ),
                           errorWidget: (context, url, error) => Container(
-                            padding: EdgeInsets.all(10.w),
+                            padding: EdgeInsets.all(context.w(10)),
                             decoration: BoxDecoration(
                               color: CustomColors.purpleColor.withValues(alpha: 0.1),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
                               Icons.auto_awesome_rounded,
-                              size: 18.sp,
+                              size: context.sp(18),
                               color: CustomColors.purpleColor,
                             ),
                           ),
                         ),
                       ),
-                      SizedBox(width: 16.w),
+                      SizedBox(width: context.w(16)),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               t.treatmentName ?? "N/A",
-                              style: CustomFonts.black16w700.copyWith(fontSize: 16.sp),
+                              style: CustomFonts.black16w700.copyWith(fontSize: context.sp(16)),
                             ),
-                            SizedBox(height: 4.h),
+                            SizedBox(height: context.h(4)),
                             Text(
                               "Area: ${t.areaName ?? 'N/A'}",
                               style: CustomFonts.grey700_12w400,
@@ -325,25 +325,25 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                       ),
                       if (t.status != null)
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                          padding: EdgeInsets.symmetric(horizontal: context.w(10), vertical: context.h(4)),
                           decoration: BoxDecoration(
                             color: statusColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8.r),
+                            borderRadius: BorderRadius.circular(context.r(8)),
                           ),
                           child: Text(
                             t.status!.toUpperCase(),
                             style: TextStyle(
                               color: statusColor,
-                              fontSize: 9.sp,
+                              fontSize: context.sp(9),
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
                     ],
                   ),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: context.h(16)),
                   const Divider(color: Colors.black12),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: context.h(16)),
                   if (t.startTime != null || t.endTime != null) ...[
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -352,7 +352,7 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                         _buildTimeInfo("End", t.endTime),
                       ],
                     ),
-                    SizedBox(height: 12.h),
+                    SizedBox(height: context.h(12)),
                   ],
                   if (t.material != null)
                     Row(
@@ -360,17 +360,17 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                       children: [
                         Text(
                           "Dosage/Material",
-                          style: CustomFonts.grey700_10w400.copyWith(fontSize: 12.sp),
+                          style: CustomFonts.grey700_10w400.copyWith(fontSize: context.sp(12)),
                         ),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                          padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(6)),
                           decoration: BoxDecoration(
                             color: CustomColors.darkPurple.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8.r),
+                            borderRadius: BorderRadius.circular(context.r(8)),
                           ),
                           child: Text(
                             "${t.material!.selectedQuantity} ${t.material!.name ?? 'Syringes'}",
-                            style: CustomFonts.darkPurple10w700.copyWith(fontSize: 11.sp),
+                            style: CustomFonts.darkPurple10w700.copyWith(fontSize: context.sp(11)),
                           ),
                         ),
                       ],
@@ -388,7 +388,7 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: CustomFonts.grey700_10w400),
-        SizedBox(height: 2.h),
+        SizedBox(height: context.h(2)),
         Text(
           timestamp != null ? DateTimeUtils.formatTimestampToTime(timestamp) : "--:--",
           style: CustomFonts.black13w600,
@@ -439,44 +439,44 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
     }
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 10.h),
+      padding: EdgeInsets.symmetric(vertical: context.h(10)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 16.sp, color: Colors.grey.shade400),
-            SizedBox(width: 10.w),
+            Icon(icon, size: context.sp(16), color: Colors.grey.shade400),
+            SizedBox(width: context.w(10)),
           ],
           Text(
             "$label:",
-            style: CustomFonts.grey700_10w400.copyWith(fontSize: 12.sp),
+            style: CustomFonts.grey700_10w400.copyWith(fontSize: context.sp(12)),
           ),
           const Spacer(),
           if (isType || isStatus)
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+              padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(6)),
               decoration: BoxDecoration(
                 color: badgeBgColor,
-                borderRadius: BorderRadius.circular(20.r),
+                borderRadius: BorderRadius.circular(context.r(20)),
               ),
               child: Text(
                 value,
                 style: isStatus
                     ? TextStyle(
                         color: accentColor,
-                        fontSize: 10.sp,
+                        fontSize: context.sp(10),
                         fontWeight: FontWeight.bold,
                         fontFamily: 'Degular',
                       )
-                    : badgeStyle.copyWith(fontSize: 10.sp),
+                    : badgeStyle.copyWith(fontSize: context.sp(10)),
               ),
             )
           else
             Text(
               value,
               style: isBold
-                ? CustomFonts.black14w700.copyWith(color: accentColor ?? Colors.black, fontSize: 14.sp)
-                : CustomFonts.black13w600.copyWith(color: accentColor ?? Colors.black87, fontSize: 13.sp),
+                ? CustomFonts.black14w700.copyWith(color: accentColor ?? Colors.black, fontSize: context.sp(14))
+                : CustomFonts.black13w600.copyWith(color: accentColor ?? Colors.black87, fontSize: context.sp(13)),
             ),
         ],
       ),

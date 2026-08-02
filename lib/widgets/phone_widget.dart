@@ -1,7 +1,7 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 
@@ -60,7 +60,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 10.h,
+      spacing: context.h(10),
       children: [
         TextFormField(
           validator: (value) {
@@ -103,19 +103,19 @@ class _PhoneWidgetState extends State<PhoneWidget> {
             onTap: () {
               // Open country picker dialog
               showCountryPicker(
-                // countryCodeWidth: 45.w,
+                // countryCodeWidth: context.w(45),
                 moveAlongWithKeyboard: true,
                 countryListTheme: CountryListThemeData(
                   bottomSheetWidth: MediaQuery.sizeOf(context).width,
-                  bottomSheetHeight: 560.h,
-                  textStyle: TextStyle(fontSize: 14.sp, color: Colors.black),
-                  searchTextStyle: TextStyle(fontSize: 14.sp),
+                  bottomSheetHeight: context.h(560),
+                  textStyle: TextStyle(fontSize: context.sp(14), color: Colors.black),
+                  searchTextStyle: TextStyle(fontSize: context.sp(14)),
                   margin: EdgeInsets.zero,
                   padding: EdgeInsets.only(
-                    top: 15.h,
-                    bottom: 27.h,
-                    left: 20.w,
-                    right: 20.w,
+                    top: context.h(15),
+                    bottom: context.h(27),
+                    left: context.w(20),
+                    right: context.w(20),
                   ),
                 ),
                 context: context,
@@ -134,12 +134,12 @@ class _PhoneWidgetState extends State<PhoneWidget> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 12.w, right: 4.w),
+                  padding: EdgeInsets.only(left: context.w(12), right: context.w(4)),
                   child: Center(
                     child: Text(
                       _selectedCountry.flagEmoji,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 14.sp),
+                      style: TextStyle(fontSize: context.sp(14)),
                     ),
                   ),
                 ),
@@ -149,7 +149,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: CustomColors.blackColor,
-                      fontSize: 14.sp,
+                      fontSize: context.sp(14),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -158,7 +158,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 14.3.h),
+            padding: EdgeInsets.symmetric(vertical: context.h(14.3)),
             child: const VerticalDivider(
               color: Color(0xffE2E5E8),
               thickness: 1,

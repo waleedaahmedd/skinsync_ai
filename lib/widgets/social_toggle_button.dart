@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/color_constant.dart';
 
 class SocialToggleButton extends StatelessWidget {
@@ -20,7 +20,7 @@ class SocialToggleButton extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        padding: EdgeInsets.all(10.w),
+        padding: EdgeInsets.all(context.w(10)),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: isReels ? Colors.black.withValues(alpha: 0.2) : CustomColors.purpleColor.withValues(alpha: 0.1),
@@ -39,7 +39,7 @@ class SocialToggleButton extends StatelessWidget {
         child: Icon(
           icon,
           color: isReels ? Colors.white : CustomColors.purpleColor,
-          size: 20.sp,
+          size: context.sp(20),
         ),
       ),
     );

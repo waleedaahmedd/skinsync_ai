@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
@@ -12,15 +12,15 @@ class AppointmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return   Container(
                         padding: EdgeInsets.symmetric(
-                          vertical: 13.29.h,
-                          horizontal: 15.51.w,
+                          vertical: context.h(13.29),
+                          horizontal: context.w(15.51),
                         ),
-                        height: 150.h,
+                        height: context.h(150),
                         decoration: BoxDecoration(
                           color: CustomColors.lightBlueColor.withValues(
                             alpha: 0.5,
                           ),
-                          borderRadius: BorderRadius.circular(15.r),
+                          borderRadius: BorderRadius.circular(context.r(15)),
                         ),
                         child: Column(
                           children: [
@@ -31,12 +31,12 @@ class AppointmentCard extends StatelessWidget {
                                     child: Image.asset(
                                       DummyAssets.acen,
                                       fit: BoxFit.cover,
-                                      height: 64.w,
-                                      width: 64.w,
+                                      height: context.w(64),
+                                      width: context.w(64),
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 9.w),
+                                SizedBox(width: context.w(9)),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -52,14 +52,14 @@ class AppointmentCard extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 13.39.h),
+                            SizedBox(height: context.h(13.39)),
                             Container(
                               padding: EdgeInsets.symmetric(
-                                vertical: 8.86.h,
-                                horizontal: 26.w,
+                                vertical: context.h(8.86),
+                                horizontal: context.w(26),
                               ),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12.r),
+                                borderRadius: BorderRadius.circular(context.r(12)),
                                 color: CustomColors.lightBlueColor.withValues(
                                   alpha: 0.5,
                                 ),
@@ -70,9 +70,9 @@ class AppointmentCard extends StatelessWidget {
                                   Icon(
                                     Iconsax.calendar_2,
                                     color: Colors.black,
-                                    size: 11.sp,
+                                    size: context.sp(11),
                                   ),
-                                  SizedBox(width: 11.71.w),
+                                  SizedBox(width: context.w(11.71)),
                                   Text(
                                     "Monday,july25",
                                     style: CustomFonts.black12w400,
@@ -83,7 +83,7 @@ class AppointmentCard extends StatelessWidget {
                                     size: 11,
                                     color: Colors.black,
                                   ),
-                                  SizedBox(width: 11.71.w),
+                                  SizedBox(width: context.w(11.71)),
                                   Text(
                                     "10:30 am - 12:30 pm",
                                     style: CustomFonts.black12w400,

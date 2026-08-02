@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../../utills/custom_fonts.dart';
 import '../../widgets/app_bar_with_action_icon.dart';
 import '../../widgets/custom_search_field.dart';
@@ -28,9 +28,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
 
       body: Column(
         children: [
-          SizedBox(height: 15.h),
+          SizedBox(height: context.h(15)),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 30.0.w),
+            padding: EdgeInsets.symmetric(horizontal: context.w(30.0)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -38,9 +38,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 const CustomSearchField(
                   hintText: "Search Progress",
                 ),
-                SizedBox(height: 15.h),
+                SizedBox(height: context.h(15)),
                 Text("Progress", style: CustomFonts.black24w600),
-                SizedBox(height: 200.h),
+                SizedBox(height: context.h(200)),
                 Center(
                   child: Text(
                     'No treatment progress recorded',
@@ -60,7 +60,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                         });
                       },
                     ),
-                    SizedBox(width: 11.w),
+                    SizedBox(width: context.w(11)),
                     ProgressFillterButton(
                       isSelected: selectedFilter == 'ongoing',
                       label: 'Ongoing',
@@ -73,13 +73,13 @@ class _ProgressScreenState extends State<ProgressScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 22.h),*/
+                SizedBox(height: context.h(22)),*/
               ],
             ),
           ),
           /* Expanded(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.0.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(30.0)),
               child: ListView.builder(
                 itemCount: 4,
                 itemBuilder: (context, index) {
@@ -88,7 +88,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               ),
             ),
           ),*/
-          SizedBox(height: 70.h),
+          SizedBox(height: context.h(70)),
         ],
       ),
     );

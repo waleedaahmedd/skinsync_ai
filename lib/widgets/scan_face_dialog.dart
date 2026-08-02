@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../screens/face_pose_capture_screen.dart';
 import '../screens/treatment_area_screen.dart';
@@ -17,17 +17,17 @@ void showMScanFaceDialog(BuildContext context) {
       return Dialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24.r),
+          borderRadius: BorderRadius.circular(context.r(24)),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
+          padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(32)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // Beautiful Branded Icon Badge
               Container(
-                height: 72.w,
-                width: 72.w,
+                height: context.w(72),
+                width: context.w(72),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: CustomColors.purpleColor.withValues(alpha: 0.15),
@@ -35,15 +35,15 @@ void showMScanFaceDialog(BuildContext context) {
                 child: Center(
                   child: Icon(
                     Icons.face_retouching_natural_rounded,
-                    size: 32.sp,
+                    size: context.sp(32),
                     color: CustomColors.darkPurple,
                   ),
                 ),
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: context.h(24)),
 
               Text("Get Started", style: CustomFonts.black24w600),
-              SizedBox(height: 12.h),
+              SizedBox(height: context.h(12)),
 
               // Description
               Text(
@@ -51,12 +51,12 @@ void showMScanFaceDialog(BuildContext context) {
                 textAlign: TextAlign.center,
                 style: CustomFonts.textGrey14w400,
               ),
-              SizedBox(height: 28.h),
+              SizedBox(height: context.h(28)),
 
               // Button 1: Scan Face (Primary Black Button)
               CustomButton(
                 text: "Scan Your Face",
-                borderRadius: 26.r,
+                borderRadius: context.r(26),
                 backgroundColor: Colors.black,
                 textColor: Colors.white,
                 onPressed: () {
@@ -66,14 +66,14 @@ void showMScanFaceDialog(BuildContext context) {
                   ).pushNamed(FacePoseCaptureScreen.routeName);
                 },
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: context.h(12)),
 
               // Button 2: Select Treatment Areas (Secondary Button)
               Consumer(
                 builder: (consumerContext, ref, _) {
                   return Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(25.r),
+                      borderRadius: BorderRadius.circular(context.r(25)),
                       border: Border.all(
                         color: CustomColors.darkPurple,
                         width: 1.5,
@@ -83,7 +83,7 @@ void showMScanFaceDialog(BuildContext context) {
                       text: "Select Treatment Areas",
                       backgroundColor: Colors.transparent,
                       textColor: CustomColors.darkPurple,
-                      borderRadius: 25.r,
+                      borderRadius: context.r(25),
                       onPressed: () {
                         Navigator.pop(dialogContext); // close dialog
 

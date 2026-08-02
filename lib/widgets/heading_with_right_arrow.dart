@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 
@@ -22,14 +22,14 @@ class HeadingWithRightArrow extends StatelessWidget {
         GestureDetector(
           onTap: onTap,
           child: Container(
-            padding: EdgeInsets.all(7.w),
+            padding: EdgeInsets.all(context.w(7)),
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
               color: CustomColors.greyColor,
             ),
             child: Icon(
               CupertinoIcons.arrow_right,
-              size: 16.sp,
+              size: context.sp(16),
               color: Colors.black,
             ),
           ),

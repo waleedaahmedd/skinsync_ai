@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../models/bottom_nav.dart';
 import '../utills/assets.dart';
@@ -54,16 +54,18 @@ class BottomNavBar extends StatelessWidget {
           builder: (context, ref, child) {
             final int currentPage = ref.watch(bottomNavViewModel);
             return SizedBox(
-              height: 98.h,
+              height: context.h(98),
               child: Row(
                 children: [
                   _buildNavBarItem(
+                    context: context,
                     ref: ref,
                     item: _items[0],
                     index: 0,
                     isSelected: currentPage == 0,
                   ),
                   _buildNavBarItem(
+                    context: context,
                     ref: ref,
                     item: _items[1],
                     index: 1,
@@ -71,18 +73,21 @@ class BottomNavBar extends StatelessWidget {
                   ),
 
                   _buildNavBarItem(
+                    context: context,
                     ref: ref,
                     item: _items[2],
                     index: 2,
                     isSelected: currentPage == 2,
                   ),
                   _buildNavBarItem(
+                    context: context,
                     ref: ref,
                     item: _items[3],
                     index: 3,
                     isSelected: currentPage == 3,
                   ),
                   _buildNavBarItem(
+                    context: context,
                     ref: ref,
                     item: _items[4],
                     index: 4,
@@ -98,6 +103,7 @@ class BottomNavBar extends StatelessWidget {
   }
 
   Expanded _buildNavBarItem({
+    required BuildContext context,
     required WidgetRef ref,
     required BottomNavItem item,
     required bool isSelected,
@@ -118,14 +124,14 @@ class BottomNavBar extends StatelessWidget {
               SvgPicture.asset(
                 isSelected ? item.selectedIcon : item.unselectedIcon,
                 //  color: isSelected ? Colors.pink : null,
-                height: 24.h,
-                width: 24.h,
+                height: context.h(24),
+                width: context.h(24),
               ),
-              SizedBox(height: 8.h),
+              SizedBox(height: context.h(8)),
               Text(
                 item.label,
                 style: TextStyle(
-                  fontSize: 12.sp,
+                  fontSize: context.sp(12),
                   color: isSelected
                       ? CustomColors.blackColor
                       : CustomColors.bottomNavText,

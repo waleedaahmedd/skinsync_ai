@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import '../utills/assets.dart';
@@ -94,14 +94,14 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
       appBar: const CustomAppBar(showTitle: true, title: "Settings"),
       body: Column(
         children: [
-          Divider(color: CustomColors.greyColor.withValues(alpha: 0.6), height: 1.h),
-          SizedBox(height: 24.h),
+          Divider(color: CustomColors.greyColor.withValues(alpha: 0.6), height: context.h(1)),
+          SizedBox(height: context.h(24)),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            padding: EdgeInsets.symmetric(horizontal: context.w(24)),
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(24.r),
+                borderRadius: BorderRadius.circular(context.r(24)),
                 border: Border.all(
                   color: CustomColors.greyColor.withValues(alpha: 0.5),
                   width: 1,
@@ -118,22 +118,22 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                 children: [
                   // Push Notifications Setting Option
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                    padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(12)),
                     child: Row(
                       children: [
                         Container(
-                          padding: EdgeInsets.all(8.w),
+                          padding: EdgeInsets.all(context.w(8)),
                           decoration: BoxDecoration(
                             color: unifiedColor.withValues(alpha: 0.08),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Iconsax.notification,
-                            size: 18.sp,
+                            size: context.sp(18),
                             color: unifiedColor,
                           ),
                         ),
-                        SizedBox(width: 14.w),
+                        SizedBox(width: context.w(14)),
                         Expanded(
                           child: Text(
                             "Push Notifications",
@@ -152,32 +152,32 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(left: 54.w, right: 16.w),
+                    padding: EdgeInsets.only(left: context.w(54), right: context.w(16)),
                     child: Divider(
                       color: Colors.grey.shade100,
-                      height: 1.h,
+                      height: context.h(1),
                     ),
                   ),
 
                   // Biometric Authentication Setting Option
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                    padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(12)),
                     child: Row(
                       children: [
                         Container(
-                          padding: EdgeInsets.all(8.w),
+                          padding: EdgeInsets.all(context.w(8)),
                           decoration: BoxDecoration(
                             color: unifiedColor.withValues(alpha: 0.08),
                             shape: BoxShape.circle,
                           ),
                           child: SvgPicture.asset(
                             SvgAssets.biometric,
-                            height: 18.w,
-                            width: 18.w,
+                            height: context.w(18),
+                            width: context.w(18),
                             colorFilter: const ColorFilter.mode(unifiedColor, BlendMode.srcIn),
                           ),
                         ),
-                        SizedBox(width: 14.w),
+                        SizedBox(width: context.w(14)),
                         Expanded(
                           child: Text(
                             "Biometric Authentication",

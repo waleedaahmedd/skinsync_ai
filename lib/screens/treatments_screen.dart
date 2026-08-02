@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
@@ -34,11 +34,11 @@ class _TreatmentsScreenState extends ConsumerState<TreatmentsScreen> {
           children: [
             // Premium MedSpa Header
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(30)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 8.h),
+                  SizedBox(height: context.h(8)),
                   Text(
                     "Explore and select from our complete clinical suite of advanced aesthetic therapies.",
                     style: CustomFonts.textGrey14w400,
@@ -127,7 +127,7 @@ class _TreatmentMainScreenState extends ConsumerState<TreatmentMainScreen> {
     return Column(
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+          padding: EdgeInsets.symmetric(horizontal: context.w(20), vertical: context.h(20)),
           child: CustomSearchField(
             controller: _searchController,
             hintText: "Search Treatments...",
@@ -153,18 +153,18 @@ class _TreatmentMainScreenState extends ConsumerState<TreatmentMainScreen> {
                     state: state,
                     fetchNextPage: fetchNextPage,
                     scrollDirection: Axis.vertical,
-                    padding: EdgeInsets.symmetric(horizontal: 30.w),
+                    padding: EdgeInsets.symmetric(horizontal: context.w(30)),
                     physics: const AlwaysScrollableScrollPhysics(
                       parent: BouncingScrollPhysics(),
                     ),
                     builderDelegate: PagedChildBuilderDelegate(
                       noItemsFoundIndicatorBuilder: (_) => _buildEmpty(),
                       firstPageProgressIndicatorBuilder: (_) => Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20.h),
+                        padding: EdgeInsets.symmetric(vertical: context.h(20)),
                         child: const Center(child: AppLoader()),
                       ),
                       newPageProgressIndicatorBuilder: (_) => Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20.h),
+                        padding: EdgeInsets.symmetric(vertical: context.h(20)),
                         child: const Center(child: AppLoader()),
                       ),
                       itemBuilder: (context, treatment, index) {
@@ -175,7 +175,7 @@ class _TreatmentMainScreenState extends ConsumerState<TreatmentMainScreen> {
                             verticalOffset: 50.0,
                             child: FadeInAnimation(
                               child: Padding(
-                                padding: EdgeInsets.only(bottom: 16.h),
+                                padding: EdgeInsets.only(bottom: context.h(16)),
                                 child: TreatmentContainer(
                                   treatments: treatment,
                                 ),
@@ -198,18 +198,18 @@ class _TreatmentMainScreenState extends ConsumerState<TreatmentMainScreen> {
   Center _buildEmpty() {
     return Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 40.w),
+        padding: EdgeInsets.symmetric(horizontal: context.w(40)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.search_off_rounded,
-              size: 70.sp,
+              size: context.sp(70),
               color: Colors.grey.shade400,
             ),
-            SizedBox(height: 15.h),
+            SizedBox(height: context.h(15)),
             Text("No treatments found.", style: CustomFonts.grey800_20w600),
-            SizedBox(height: 5.h),
+            SizedBox(height: context.h(5)),
             Text(
               "Try refining your search keyword or checking back later.",
               textAlign: TextAlign.center,

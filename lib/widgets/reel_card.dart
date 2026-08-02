@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:video_player/video_player.dart';
 import '../models/reel_model.dart';
 import '../view_models/reels_view_model.dart';
@@ -104,16 +104,16 @@ class _ReelCardState extends ConsumerState<ReelCard> {
             Center(
               child: Icon(
                 Icons.play_arrow_rounded,
-                size: 80.sp,
+                size: context.sp(80),
                 color: Colors.white.withValues(alpha: 0.5),
               ),
             ),
 
           // Bottom Content
           Positioned(
-            bottom: 100.h,
-            left: 16.w,
-            right: 80.w,
+            bottom: context.h(100),
+            left: context.w(16),
+            right: context.w(80),
             child: ReelContentOverlay(
               userName: widget.reel.userName,
               userProfileImage: widget.reel.userProfileImage,
@@ -124,8 +124,8 @@ class _ReelCardState extends ConsumerState<ReelCard> {
 
           // Right Sidebar Actions
           Positioned(
-            bottom: 100.h,
-            right: 12.w,
+            bottom: context.h(100),
+            right: context.w(12),
             child: ReelSidebar(
               likesCount: widget.reel.likesCount,
               commentsCount: widget.reel.commentsCount,

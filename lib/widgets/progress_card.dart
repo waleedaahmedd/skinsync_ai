@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/svg.dart';
 import '../screens/progress_detail_screen.dart';
 import '../utills/assets.dart';
@@ -19,27 +19,27 @@ class ProgressCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: 248.h,
-            width: 379.w,
+            height: context.h(248),
+            width: context.w(379),
             decoration: BoxDecoration(
               image: const DecorationImage(
                 image: AssetImage(DummyAssets.treatmentimage),
                 fit: BoxFit.cover,
               ),
-              borderRadius: BorderRadius.circular(10.r),
+              borderRadius: BorderRadius.circular(context.r(10)),
             ),
             child: Stack(
               children: [
                 Positioned(
-                  top: 16.h,
-                  right: 16.w,
+                  top: context.h(16),
+                  right: context.w(16),
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 8.h,
+                      horizontal: context.w(12),
+                      vertical: context.h(8),
                     ),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50.r),
+                      borderRadius: BorderRadius.circular(context.r(50)),
                       color: Colors.black.withValues(alpha: 0.3),
                     ),
                     child: Text(
@@ -51,7 +51,7 @@ class ProgressCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 11.h),
+          SizedBox(height: context.h(11)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -61,21 +61,24 @@ class ProgressCard extends StatelessWidget {
                 children: [
                   SvgPicture.asset(
                     SvgAssets.progressfilled,
-                    color: CustomColors.lightBlueColor,
-                    height: 18.h,
-                    width: 18.w,
+                    colorFilter: const ColorFilter.mode(
+                      CustomColors.lightBlueColor,
+                      BlendMode.srcIn,
+                    ),
+                    height: context.h(18),
+                    width: context.w(18),
                   ),
-                  SizedBox(width: 7.w),
+                  SizedBox(width: context.w(7)),
                   Text("28%", style: CustomFonts.black17w500),
                 ],
               ),
             ],
           ),
-          SizedBox(height: 4.h),
+          SizedBox(height: context.h(4)),
           Text("Glow Skin Clinic", style: CustomFonts.grey14w400),
-          SizedBox(height: 1.h),
+          SizedBox(height: context.h(1)),
           Text("08 Sessions", style: CustomFonts.grey14w400),
-          SizedBox(height: 22.h),
+          SizedBox(height: context.h(22)),
         ],
       ),
     );

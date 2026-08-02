@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
 
@@ -20,12 +20,12 @@ class WalletConfirmationBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(context.w(20)),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.r),
-          topRight: Radius.circular(20.r),
+          topLeft: Radius.circular(context.r(20)),
+          topRight: Radius.circular(context.r(20)),
         ),
       ),
       child: Column(
@@ -41,18 +41,18 @@ class WalletConfirmationBottomSheet extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.h(20)),
           Container(
-            padding: EdgeInsets.all(20.w),
+            padding: EdgeInsets.all(context.w(20)),
             decoration: BoxDecoration(
               color: CustomColors.lightBlueColor.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(16.r),
+              borderRadius: BorderRadius.circular(context.r(16)),
               border: Border.all(color: CustomColors.lightBlueColor.withValues(alpha: 0.2)),
             ),
             child: Column(
               children: [
-                Icon(Icons.account_balance_wallet_outlined, size: 40.sp, color: CustomColors.darkPurple),
-                SizedBox(height: 15.h),
+                Icon(Icons.account_balance_wallet_outlined, size: context.sp(40), color: CustomColors.darkPurple),
+                SizedBox(height: context.h(15)),
                 Text(
                   "Please add \$100 to your wallet to proceed. This ensures that once the clinic is onboarded, your appointment and related charges can be automatically processed and updated.",
                   style: CustomFonts.black16w400.copyWith(height: 1.5),
@@ -61,7 +61,7 @@ class WalletConfirmationBottomSheet extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 30.h),
+          SizedBox(height: context.h(30)),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -72,7 +72,7 @@ class WalletConfirmationBottomSheet extends StatelessWidget {
               child: const Text("Add \$100 & Proceed"),
             ),
           ),
-          SizedBox(height: 10.h),
+          SizedBox(height: context.h(10)),
         ],
       ),
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/date_time_utills.dart';
@@ -77,24 +77,24 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+                padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(20)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("Select Booking Date", style: CustomFonts.black18w600),
-                    SizedBox(height: 12.h),
+                    SizedBox(height: context.h(12)),
 
                     // Beautiful Calendar picker trigger field
                     GestureDetector(
                       onTap: () => _selectDate(context),
                       child: Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 18.w,
-                          vertical: 16.h,
+                          horizontal: context.w(18),
+                          vertical: context.h(16),
                         ),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(16.r),
+                          borderRadius: BorderRadius.circular(context.r(16)),
                           border: Border.all(
                             color: _selectedDate != null
                                 ? CustomColors.pinkColor
@@ -117,7 +117,7 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                                   ? CustomColors.pinkColor
                                   : Colors.grey,
                             ),
-                            SizedBox(width: 14.w),
+                            SizedBox(width: context.w(14)),
                             Expanded(
                               child: Text(
                                 _selectedDate != null
@@ -128,27 +128,27 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                                     : CustomFonts.grey14w400,
                               ),
                             ),
-                            const Icon(
+                            Icon(
                               Icons.arrow_forward_ios_rounded,
-                              size: 14,
+                              size: context.sp(14),
                               color: Colors.grey,
                             ),
                           ],
                         ),
                       ),
                     ),
-                    SizedBox(height: 32.h),
+                    SizedBox(height: context.h(32)),
 
                     Text(
                       "Available Time Slots",
                       style: CustomFonts.black18w600,
                     ),
-                    SizedBox(height: 6.h),
+                    SizedBox(height: context.h(6)),
                     Text(
                       "Select an available 2-hour consultation slot below:",
                       style: CustomFonts.grey12w400,
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: context.h(16)),
 
                     // Grid or list of 2-hour slots
                     ListView.builder(
@@ -166,10 +166,10 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                             });
                           },
                           child: Container(
-                            margin: EdgeInsets.only(bottom: 12.h),
+                            margin: EdgeInsets.only(bottom: context.h(12)),
                             padding: EdgeInsets.symmetric(
-                              horizontal: 18.w,
-                              vertical: 16.h,
+                              horizontal: context.w(18),
+                              vertical: context.h(16),
                             ),
                             decoration: BoxDecoration(
                               color: isSelected
@@ -177,7 +177,7 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                                       alpha: 0.08,
                                     )
                                   : Colors.white,
-                              borderRadius: BorderRadius.circular(16.r),
+                              borderRadius: BorderRadius.circular(context.r(16)),
                               border: Border.all(
                                 color: isSelected
                                     ? CustomColors.purpleColor
@@ -199,14 +199,14 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                                   color: isSelected
                                       ? CustomColors.purpleColor
                                       : Colors.grey.shade400,
-                                  size: 18.sp,
+                                  size: context.sp(18),
                                 ),
-                                SizedBox(width: 14.w),
+                                SizedBox(width: context.w(14)),
                                 Text(
                                   slot,
                                   style: isSelected
                                       ? CustomFonts.darkPurple12w600.copyWith(
-                                          fontSize: 14.sp,
+                                          fontSize: context.sp(14),
                                         )
                                       : CustomFonts.black14w600.copyWith(
                                           color: Colors.grey.shade800,
@@ -214,8 +214,8 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                                 ),
                                 const Spacer(),
                                 Container(
-                                  height: 20.w,
-                                  width: 20.w,
+                                  height: context.w(20),
+                                  width: context.w(20),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     border: Border.all(
@@ -229,10 +229,10 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                                         : Colors.transparent,
                                   ),
                                   child: isSelected
-                                      ? const Center(
+                                      ? Center(
                                           child: Icon(
                                             Icons.check,
-                                            size: 12,
+                                            size: context.sp(12),
                                             color: Colors.white,
                                           ),
                                         )
@@ -251,10 +251,10 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
 
             // Continuous Button to Review Checkout Screen
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+              padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(20)),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(24))),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.05),
@@ -265,7 +265,7 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
               ),
               child: CustomButton(
                 text: "Continue to Review",
-                borderRadius: 26.r,
+                borderRadius: context.r(26),
                 backgroundColor: Colors.black,
                 textColor: Colors.white,
                 onPressed: canContinue

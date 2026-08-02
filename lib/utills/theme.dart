@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'custom_fonts.dart';
 
 import 'color_constant.dart';
 
 class AppTheme {
   // Light Theme
-  static ThemeData get lightTheme {
+  static ThemeData lightTheme(BuildContext context) {
     return ThemeData.from(
       colorScheme: ColorScheme.fromSeed(
         seedColor: CustomColors.lightPurpleColor,
@@ -26,7 +26,7 @@ class AppTheme {
         titleTextStyle: TextStyle(
           fontFamily: 'Degular',
           color: CustomColors.blackColor,
-          fontSize: 16.sp,
+          fontSize: context.sp(16),
         ),
         elevation: 0,
         // centerTitle: true,
@@ -57,31 +57,33 @@ class AppTheme {
 
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.symmetric(vertical: 19.h),
+          padding: EdgeInsets.symmetric(vertical: context.h(19)),
           textStyle: CustomFonts.white22w600,
           backgroundColor: Colors.black,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50.r),
+            borderRadius: BorderRadius.circular(context.r(50)),
           ),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
-        contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 15.h),
-        errorStyle: TextStyle(fontSize: 11.sp, overflow: TextOverflow.visible),
+        contentPadding:
+            EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(15)),
+        errorStyle:
+            TextStyle(fontSize: context.sp(11), overflow: TextOverflow.visible),
         errorMaxLines: 2,
 
         hintStyle: CustomFonts.grey18w400,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14.r),
+          borderRadius: BorderRadius.circular(context.r(14)),
           borderSide: const BorderSide(color: Color(0xffB5B5B5)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14.r),
+          borderRadius: BorderRadius.circular(context.r(14)),
           borderSide: const BorderSide(color: Color(0xffB5B5B5)),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14.r),
+          borderRadius: BorderRadius.circular(context.r(14)),
           borderSide: const BorderSide(color: Color(0xffB5B5B5)),
         ),
       ),

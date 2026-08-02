@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:intl/intl.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
@@ -103,16 +103,16 @@ class _PreBookingBottomSheetState extends State<PreBookingBottomSheet> {
 
     return Container(
       padding: EdgeInsets.fromLTRB(
-        20.w,
-        20.h,
-        20.w,
-        MediaQuery.of(context).viewInsets.bottom + 20.h,
+        context.w(20),
+        context.h(20),
+        context.w(20),
+        MediaQuery.of(context).viewInsets.bottom + context.h(20),
       ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.r),
-          topRight: Radius.circular(20.r),
+          topLeft: Radius.circular(context.r(20)),
+          topRight: Radius.circular(context.r(20)),
         ),
       ),
       child: Column(
@@ -129,7 +129,7 @@ class _PreBookingBottomSheetState extends State<PreBookingBottomSheet> {
               ),
             ],
           ),
-          SizedBox(height: 20.h),
+          SizedBox(height: context.h(20)),
           _buildPickerTile(
             label: "Required Date",
             value: _selectedDate?.formattedDate ?? "Select Date",
@@ -137,17 +137,17 @@ class _PreBookingBottomSheetState extends State<PreBookingBottomSheet> {
             onTap: _pickDate,
           ),
           if (_selectedDate != null) ...[
-            SizedBox(height: 25.h),
+            SizedBox(height: context.h(25)),
             Text(
               "Available Time Slots (3-Hour Window)",
               style: CustomFonts.grey15w400.copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: context.h(12)),
             if (slots.isEmpty)
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.h),
+                padding: EdgeInsets.symmetric(vertical: context.h(10)),
                 child: Text(
                   "No slots available for this day.",
                   style: CustomFonts.black14w400,
@@ -155,8 +155,8 @@ class _PreBookingBottomSheetState extends State<PreBookingBottomSheet> {
               )
             else
               Wrap(
-                spacing: 12.w,
-                runSpacing: 12.h,
+                spacing: context.w(12),
+                runSpacing: context.h(12),
                 children: List.generate(slots.length, (index) {
                   return TimeContainer(
                     onTap: () {
@@ -172,7 +172,7 @@ class _PreBookingBottomSheetState extends State<PreBookingBottomSheet> {
                 }),
               ),
           ],
-          SizedBox(height: 30.h),
+          SizedBox(height: context.h(30)),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -203,21 +203,21 @@ class _PreBookingBottomSheetState extends State<PreBookingBottomSheet> {
           label,
           style: CustomFonts.grey15w400.copyWith(fontWeight: FontWeight.w600),
         ),
-        SizedBox(height: 8.h),
+        SizedBox(height: context.h(8)),
         InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(10.r),
+          borderRadius: BorderRadius.circular(context.r(10)),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 12.h),
+            padding: EdgeInsets.symmetric(horizontal: context.w(15), vertical: context.h(12)),
             decoration: BoxDecoration(
               color: Colors.grey.shade50,
               border: Border.all(color: Colors.grey.shade200),
-              borderRadius: BorderRadius.circular(10.r),
+              borderRadius: BorderRadius.circular(context.r(10)),
             ),
             child: Row(
               children: [
-                Icon(icon, size: 20.sp, color: CustomColors.darkPurple),
-                SizedBox(width: 10.w),
+                Icon(icon, size: context.sp(20), color: CustomColors.darkPurple),
+                SizedBox(width: context.w(10)),
                 Text(value, style: CustomFonts.black16w400),
               ],
             ),

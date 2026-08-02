@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import '../main.dart';
@@ -83,10 +83,10 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
             length: isDeploymentMode ? 1 : 2,
             child: Column(
               children: [
-                SizedBox(height: 20.h),
+                SizedBox(height: context.h(20)),
                 // Premium Reusable Search Bar
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                   child: CustomSearchField(
                     controller: _searchController,
                     hintText: "Search Clinics...",
@@ -115,12 +115,12 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                     );
                   },
                 ),
-                SizedBox(height: 16.h),
+                SizedBox(height: context.h(16)),
 
                 // Premium Styled TabBar
                 if (!isDeploymentMode)
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                     child: TabBar(
                       indicatorColor: CustomColors.darkPurple,
                       indicatorSize: TabBarIndicatorSize.label,
@@ -150,7 +150,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                       ],
                     ),
                   ),
-                SizedBox(height: 16.h),
+                SizedBox(height: context.h(16)),
 
                 if (state.clinicLoading)
                   const Expanded(child: AppLoader())
@@ -182,11 +182,11 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
             Positioned(
               left: 0,
               right: 0,
-              bottom: MediaQuery.paddingOf(context).bottom + 20.h,
+              bottom: MediaQuery.paddingOf(context).bottom + context.h(20),
               child: Center(
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50.r),
+                    borderRadius: BorderRadius.circular(context.r(50)),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.15),
@@ -200,15 +200,15 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                     backgroundColor: Colors.black,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50.r),
+                      borderRadius: BorderRadius.circular(context.r(50)),
                     ),
                     icon: Image.asset(
                       switch (state.viewType) {
                         ViewType.grid => PngAssets.mapIcon,
                         ViewType.map => PngAssets.syringe,
                       },
-                      height: 20.h,
-                      width: 20.w,
+                      height: context.h(20),
+                      width: context.w(20),
                       color: Colors.white,
                     ),
                     label: Text(switch (state.viewType) {
@@ -229,12 +229,12 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
     required List<FlatSelectionModel> checkoutTreatmentsList,
   }) {
     return Container(
-      height: 38.h,
-      margin: EdgeInsets.only(top: 12.h),
+      height: context.h(38),
+      margin: EdgeInsets.only(top: context.h(12)),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        padding: EdgeInsets.symmetric(horizontal: context.w(24)),
         itemCount: checkoutTreatmentsList.length,
         itemBuilder: (context, index) {
           final selection = checkoutTreatmentsList[index];
@@ -244,9 +244,9 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
           final chipText = "${selection.treatmentName} - ${selection.areaName}$materialInfo";
 
           return Container(
-            margin: EdgeInsets.only(right: 8.w),
+            margin: EdgeInsets.only(right: context.w(8)),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16.r),
+              borderRadius: BorderRadius.circular(context.r(16)),
               gradient: CustomColors.purpleBlueGradient,
               boxShadow: [
                 BoxShadow(
@@ -257,7 +257,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
               ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(16.r),
+              borderRadius: BorderRadius.circular(context.r(16)),
               child: Stack(
                 children: [
                   // 1. White Tint Mask Overlay (Consistent with preview screen chips)
@@ -270,8 +270,8 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                   // 2. High-Contrast Content
                   Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 14.w,
-                      vertical: 8.h,
+                      horizontal: context.w(14),
+                      vertical: context.h(8),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -279,23 +279,23 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                         Icon(
                           Icons.insights_rounded,
                           color: CustomColors.purpleColor,
-                          size: 13.sp,
+                          size: context.sp(13),
                         ),
-                        SizedBox(width: 8.w),
+                        SizedBox(width: context.w(8)),
                         Text(
                           chipText,
                           style: CustomFonts.black10w600.copyWith(
-                            fontSize: 11.sp,
+                            fontSize: context.sp(11),
                           ),
                         ),
-                        SizedBox(width: 8.w),
+                        SizedBox(width: context.w(8)),
                         // Visual thin line divider
                         Container(
-                          width: 1.w,
-                          height: 14.h,
+                          width: context.w(1),
+                          height: context.h(14),
                           color: Colors.black12,
                         ),
-                        SizedBox(width: 8.w),
+                        SizedBox(width: context.w(8)),
                         // Clickable Cancel Cross Button
                         GestureDetector(
                           onTap: () {
@@ -335,7 +335,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                           },
                           child: Icon(
                             Icons.cancel_rounded,
-                            size: 14.sp,
+                            size: context.sp(14),
                             color: Colors.grey.shade600,
                           ),
                         ),
@@ -363,12 +363,12 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
 
     return switch (viewType) {
       ViewType.grid => Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        padding: EdgeInsets.symmetric(horizontal: context.w(24)),
         child: MasonryGridView.count(
           crossAxisCount: 2,
           itemCount: clinics.length,
-          crossAxisSpacing: 14.w,
-          mainAxisSpacing: 14.h,
+          crossAxisSpacing: context.w(14),
+          mainAxisSpacing: context.h(14),
           physics: const BouncingScrollPhysics(),
           itemBuilder: (context, index) {
             return CustomClinicGridViewTile(
@@ -409,8 +409,8 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                 position: clinic.location!,
                 icon: AssetMapBitmap(
                   PngAssets.customMarker,
-                  width: 50.w,
-                  height: 50.w,
+                  width: context.w(50),
+                  height: context.w(50),
                 ),
               );
             }).toSet(),
@@ -454,8 +454,8 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                 position: clinic.location!,
                 icon: AssetMapBitmap(
                   PngAssets.customMarker,
-                  width: 50.w,
-                  height: 50.w,
+                  width: context.w(50),
+                  height: context.w(50),
                 ),
               );
             }).toSet(),
@@ -475,14 +475,14 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
       controller: _pagingController,
       builder: (_, state, fetchNextPage) {
         return PagedGridView<int, Clinic>(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          padding: EdgeInsets.symmetric(horizontal: context.w(24)),
           state: state,
           fetchNextPage: fetchNextPage,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             childAspectRatio: 0.86,
-            crossAxisSpacing: 14.w,
-            mainAxisSpacing: 14.h,
+            crossAxisSpacing: context.w(14),
+            mainAxisSpacing: context.h(14),
           ),
           builderDelegate: PagedChildBuilderDelegate(
             noItemsFoundIndicatorBuilder: (_) => _buildEmptyClinicsView(),
@@ -511,18 +511,18 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
   Center _buildEmptyClinicsView() {
     return Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 40.w),
+        padding: EdgeInsets.symmetric(horizontal: context.w(40)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.storefront_rounded,
-              size: 64.sp,
+              size: context.sp(64),
               color: Colors.grey.shade300,
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: context.h(16)),
             Text("No Clinics Found", style: CustomFonts.grey800_20w600),
-            SizedBox(height: 6.h),
+            SizedBox(height: context.h(6)),
             Text(
               "Try searching for a different keyword or check back later.",
               textAlign: TextAlign.center,

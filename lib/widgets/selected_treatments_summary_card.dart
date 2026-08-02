@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../models/selected_treatment_and_areas_model.dart';
 import '../utills/custom_fonts.dart';
@@ -27,7 +27,7 @@ class SelectedTreatmentsSummaryCard extends StatelessWidget {
     }
 
     return SizedBox(
-      height: 230.h,
+      height: context.h(230),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
@@ -56,12 +56,12 @@ class SelectedTreatmentsSummaryCard extends StatelessWidget {
           // final materialsList = groupedMaterials.values.toList();
 
           return Container(
-            width: 260.w,
-            margin: EdgeInsets.only(right: 16.w, bottom: 16.h),
-            padding: EdgeInsets.all(16.w),
+            width: context.w(260),
+            margin: EdgeInsets.only(right: context.w(16), bottom: context.h(16)),
+            padding: EdgeInsets.all(context.w(16)),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(24.r),
+              borderRadius: BorderRadius.circular(context.r(24)),
               border: Border.all(
                 color: Colors.black.withValues(alpha: 0.12),
                 width: 1.5,
@@ -90,7 +90,7 @@ class SelectedTreatmentsSummaryCard extends StatelessWidget {
                               color: Colors.grey.shade500,
                             ),
                           ),
-                          SizedBox(height: 2.h),
+                          SizedBox(height: context.h(2)),
                           Text(
                             treatment.name ?? '-',
                             style: CustomFonts.black16w600,
@@ -124,7 +124,7 @@ class SelectedTreatmentsSummaryCard extends StatelessWidget {
                             color: Colors.grey.shade500,
                           ),
                         ),
-                        SizedBox(height: 6.h),
+                        SizedBox(height: context.h(6)),
                         areas.isEmpty
                             ? Center(
                                 child: Text(
@@ -133,8 +133,8 @@ class SelectedTreatmentsSummaryCard extends StatelessWidget {
                                 ),
                               )
                             : Wrap(
-                                spacing: 6.w,
-                                runSpacing: 6.h,
+                                spacing: context.w(6),
+                                runSpacing: context.h(6),
                                 children: areas.map((areaItem) {
                                   final materialInfo =
                                       areaItem.material != null

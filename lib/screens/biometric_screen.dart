@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'face_scan_screen.dart';
 import '../utills/assets.dart';
 import '../utills/biometric_helper.dart';
@@ -42,15 +42,15 @@ class _BiometricScreenState extends State<BiometricScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30.0.w),
+        padding: EdgeInsets.symmetric(horizontal: context.w(30.0)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Spacer(),
-            Image.asset(PngAssets.biometricImage, height: 400.h),
+            Image.asset(PngAssets.biometricImage, height: context.h(400)),
             const Spacer(),
             Text("Biometric Authentication", style: CustomFonts.black30w600),
-            SizedBox(height: 2.h),
+            SizedBox(height: context.h(2)),
             Center(
               child: Text(
                 "We’ll scan your face and create a cool model just for you to enhance your experience!",
@@ -58,7 +58,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
                 textAlign: TextAlign.center,
               ),
             ),
-            SizedBox(height: 49.h),
+            SizedBox(height: context.h(49)),
             Consumer(
               builder: (context, ref, _) {
                 return FutureBuilder(
@@ -142,7 +142,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
               },
             ),
 
-            SizedBox(height: 24.h),
+            SizedBox(height: context.h(24)),
             GestureDetector(
               onTap: () {
                 Navigator.pushNamedAndRemoveUntil(
@@ -155,7 +155,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
             ),
             Padding(
               padding: EdgeInsets.only(
-                bottom: MediaQuery.paddingOf(context).bottom + 60.h,
+                bottom: MediaQuery.paddingOf(context).bottom + context.h(60),
               ),
             ),
           ],

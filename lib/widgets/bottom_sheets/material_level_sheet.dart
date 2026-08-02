@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../../models/responses/materials_response.dart';
 import '../../models/responses/treatment_area_list_response.dart';
 import '../../models/responses/treatment_list_response.dart';
@@ -66,34 +66,34 @@ class _MaterialLevelSheetState extends ConsumerState<MaterialLevelSheet> {
     return SafeArea(
       top: false,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 24.h),
+        padding: EdgeInsets.fromLTRB(context.w(24), context.h(16), context.w(24), context.h(24)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Center(
               child: Container(
-                width: 44.w,
-                height: 5.h,
+                width: context.w(44),
+                height: context.h(5),
                 decoration: BoxDecoration(
                   color: Colors.black.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(100.r),
+                  borderRadius: BorderRadius.circular(context.r(100)),
                 ),
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: context.h(16)),
             Text("Adjust Material", style: CustomFonts.black18w600),
-            SizedBox(height: 4.h),
+            SizedBox(height: context.h(4)),
             Text(
               "Select quantity for ${widget.area.name ?? 'this area'}",
               style: CustomFonts.grey12w400,
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: context.h(20)),
             Container(
-              padding: EdgeInsets.all(16.w),
+              padding: EdgeInsets.all(context.w(16)),
               decoration: BoxDecoration(
                 color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(16.r),
+                borderRadius: BorderRadius.circular(context.r(16)),
                 border: Border.all(color: Colors.grey.shade200),
               ),
               child: Column(
@@ -110,14 +110,14 @@ class _MaterialLevelSheetState extends ConsumerState<MaterialLevelSheet> {
                       ),
                       Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                          vertical: 4.h,
+                          horizontal: context.w(12),
+                          vertical: context.h(4),
                         ),
                         decoration: BoxDecoration(
                           color: CustomColors.purpleColor.withValues(
                             alpha: 0.1,
                           ),
-                          borderRadius: BorderRadius.circular(12.r),
+                          borderRadius: BorderRadius.circular(context.r(12)),
                         ),
                         child: Text(
                           "Qty: $_selectedQuantity",
@@ -129,15 +129,15 @@ class _MaterialLevelSheetState extends ConsumerState<MaterialLevelSheet> {
                     ],
                   ),
                   if (!isFixed) ...[
-                    SizedBox(height: 8.h),
+                    SizedBox(height: context.h(8)),
                     SliderTheme(
                       data: SliderTheme.of(context).copyWith(
-                        trackHeight: 4.h,
+                        trackHeight: context.h(4),
                         thumbShape: RoundSliderThumbShape(
-                          enabledThumbRadius: 8.w,
+                          enabledThumbRadius: context.w(8),
                         ),
                         overlayShape: RoundSliderOverlayShape(
-                          overlayRadius: 16.w,
+                          overlayRadius: context.w(16),
                         ),
                       ),
                       child: Slider(
@@ -156,7 +156,7 @@ class _MaterialLevelSheetState extends ConsumerState<MaterialLevelSheet> {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.w),
+                      padding: EdgeInsets.symmetric(horizontal: context.w(8)),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -166,7 +166,7 @@ class _MaterialLevelSheetState extends ConsumerState<MaterialLevelSheet> {
                       ),
                     ),
                   ] else ...[
-                    SizedBox(height: 8.h),
+                    SizedBox(height: context.h(8)),
                     Text(
                       "Fixed quantity requirement",
                       style: CustomFonts.grey12w400.copyWith(
@@ -177,10 +177,10 @@ class _MaterialLevelSheetState extends ConsumerState<MaterialLevelSheet> {
                 ],
               ),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: context.h(24)),
             CustomButton(
               text: "Apply Selection",
-              borderRadius: 26.r,
+              borderRadius: context.r(26),
               backgroundColor: Colors.black,
               textColor: Colors.white,
               onPressed: () {

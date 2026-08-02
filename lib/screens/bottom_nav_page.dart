@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'bottom_nav_bar.dart';
 import 'bottom_nav_screens/appointments_screen.dart';
 import 'bottom_nav_screens/explore_screen.dart';
@@ -48,7 +48,7 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage> {
             children: [
               BottomNavPage._children[ref.watch(bottomNavViewModel)],
               Positioned(
-                bottom: 110.h + MediaQuery.paddingOf(context).bottom,
+                bottom: context.h(110) + MediaQuery.paddingOf(context).bottom,
                 child: const ScanFaceButton(),
               ),
             ],
@@ -57,8 +57,8 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage> {
           // floatingActionButton: Visibility(
           //   visible: MediaQuery.viewInsetsOf(context).bottom == 0,
           //   child: SizedBox(
-          //     height: 55.h,
-          //     width: 55.h,
+          //     height: context.h(55),
+          //     width: context.h(55),
           //     child: InkWell(
           //       onTap: () {
           //         Navigator.pushNamed(context, selectServiceScreen);
@@ -68,9 +68,9 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage> {
           //         elevation: 0,
           //         shape: RoundedRectangleBorder(
           //           borderRadius: BorderRadius.circular(100),
-          //           side: BorderSide(color: Colors.white, width: 3.r),
+          //           side: BorderSide(color: Colors.white, width: context.r(3)),
           //         ),
-          //         child: Icon(Icons.add, size: 24.sp, color: Colors.white),
+          //         child: Icon(Icons.add, size: context.sp(24), color: Colors.white),
           //       ),
           //     ),
           //   ),

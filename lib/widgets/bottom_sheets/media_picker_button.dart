@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../../utills/custom_fonts.dart';
 
 class MediaPickerButton extends StatelessWidget {
@@ -21,19 +21,19 @@ class MediaPickerButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+        padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(10)),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: color.withOpacity(0.2)),
+          color: color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(context.r(12)),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
         ),
         child: Row(
           children: [
-            Icon(icon, color: color, size: 20.sp),
-            SizedBox(width: 8.w),
+            Icon(icon, color: color, size: context.sp(20)),
+            SizedBox(width: context.w(8)),
             Text(
               label,
-              style: CustomFonts.black14w600.copyWith(color: color, fontSize: 13.sp),
+              style: CustomFonts.black14w600.copyWith(color: color, fontSize: context.sp(13)),
             ),
           ],
         ),

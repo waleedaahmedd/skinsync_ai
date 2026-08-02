@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:iconsax/iconsax.dart';
@@ -38,10 +38,10 @@ class ClinicsDetailScreen extends ConsumerWidget {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.vertical(
-                    bottom: Radius.circular(32.r),
+                    bottom: Radius.circular(context.r(32)),
                   ),
                   child: Container(
-                    height: 310.h,
+                    height: context.h(310),
                     width: double.infinity,
                     decoration: const BoxDecoration(
                       gradient: CustomColors.purpleBlueGradient,
@@ -83,7 +83,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                 Positioned.fill(
                   child: ClipRRect(
                     borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(32.r),
+                      bottom: Radius.circular(context.r(32)),
                     ),
                     child: Container(
                       decoration: BoxDecoration(
@@ -103,17 +103,17 @@ class ClinicsDetailScreen extends ConsumerWidget {
 
                 // Back and Favorite Buttons
                 Positioned(
-                  top: MediaQuery.paddingOf(context).top + 10.h,
-                  left: 24.w,
-                  right: 24.w,
+                  top: MediaQuery.paddingOf(context).top + context.h(10),
+                  left: context.w(24),
+                  right: context.w(24),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
                         onTap: () => Navigator.pop(context),
                         child: Container(
-                          height: 42.w,
-                          width: 42.w,
+                          height: context.w(42),
+                          width: context.w(42),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: Colors.black.withValues(alpha: 0.35),
@@ -125,15 +125,15 @@ class ClinicsDetailScreen extends ConsumerWidget {
                           child: Center(
                             child: Icon(
                               CupertinoIcons.arrow_left,
-                              size: 20.sp,
+                              size: context.sp(20),
                               color: Colors.white,
                             ),
                           ),
                         ),
                       ),
                       Container(
-                        height: 42.w,
-                        width: 42.w,
+                        height: context.w(42),
+                        width: context.w(42),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: Colors.black.withValues(alpha: 0.35),
@@ -145,7 +145,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
                         child: Center(
                           child: Icon(
                             Iconsax.heart,
-                            size: 20.sp,
+                            size: context.sp(20),
                             color: Colors.white,
                           ),
                         ),
@@ -156,11 +156,11 @@ class ClinicsDetailScreen extends ConsumerWidget {
               ],
             ),
 
-            SizedBox(height: 24.h),
+            SizedBox(height: context.h(24)),
 
             // 2. Clinic Name and Reviews Info Section
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(24)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -174,14 +174,14 @@ class ClinicsDetailScreen extends ConsumerWidget {
                           style: CustomFonts.black28w600,
                         ),
                       ),
-                      SizedBox(width: 12.w),
+                      SizedBox(width: context.w(12)),
                       Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                          vertical: 6.h,
+                          horizontal: context.w(10),
+                          vertical: context.h(6),
                         ),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30.r),
+                          borderRadius: BorderRadius.circular(context.r(30)),
                           color: CustomColors.lightBlueColor.withValues(
                             alpha: 0.15,
                           ),
@@ -191,41 +191,41 @@ class ClinicsDetailScreen extends ConsumerWidget {
                           children: [
                             SvgPicture.asset(
                               SvgAssets.flame,
-                              height: 12.h,
-                              width: 10.w,
+                              height: context.h(12),
+                              width: context.w(10),
                               colorFilter: const ColorFilter.mode(
                                 CustomColors.pinkColor,
                                 BlendMode.srcIn,
                               ),
                             ),
-                            SizedBox(width: 4.w),
+                            SizedBox(width: context.w(4)),
                             Text("Top Choice", style: CustomFonts.pink10w700),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 10.h),
+                  SizedBox(height: context.h(10)),
                   Row(
                     children: [
                       Icon(
                         Icons.star_rounded,
-                        size: 20.sp,
+                        size: context.sp(20),
                         color: Colors.amber,
                       ),
-                      SizedBox(width: 4.w),
+                      SizedBox(width: context.w(4)),
                       Text(
                         '${clinic?.place?.rating ?? 0}',
                         style: CustomFonts.black16w600,
                       ),
-                      SizedBox(width: 8.w),
+                      SizedBox(width: context.w(8)),
                       Text(
                         "(${clinic?.place?.userRatingCount ?? 0} Reviews) • 1M+ Booked",
                         style: CustomFonts.textGrey14w400,
                       ),
                     ],
                   ),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: context.h(16)),
                   Text(
                     clinic?.place?.primaryTypeDisplayName?.text ??
                         "Achieve a youthful appearance with our aesthetic treatments to highlight your features. Whether adding volume, smoothing lines, or redefining contours, our solutions help you look and feel your best.",
@@ -235,16 +235,16 @@ class ClinicsDetailScreen extends ConsumerWidget {
               ),
             ),
 
-            SizedBox(height: 24.h),
+            SizedBox(height: context.h(24)),
 
             // 3. Off-Peak Hours Card
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(24)),
               child: Container(
-                padding: EdgeInsets.all(20.w),
+                padding: EdgeInsets.all(context.w(20)),
                 decoration: BoxDecoration(
                   color: CustomColors.lightPurpleColor.withValues(alpha: 0.25),
-                  borderRadius: BorderRadius.circular(24.r),
+                  borderRadius: BorderRadius.circular(context.r(24)),
                   border: Border.all(
                     color: CustomColors.lightPurpleColor.withValues(alpha: 0.4),
                     width: 1,
@@ -258,16 +258,16 @@ class ClinicsDetailScreen extends ConsumerWidget {
                         Icon(
                           Iconsax.clock,
                           color: CustomColors.darkPurple,
-                          size: 20.sp,
+                          size: context.sp(20),
                         ),
-                        SizedBox(width: 8.w),
+                        SizedBox(width: context.w(8)),
                         Text(
                           "What Are Off-Peak Hours?",
                           style: CustomFonts.black18w600,
                         ),
                       ],
                     ),
-                    SizedBox(height: 10.h),
+                    SizedBox(height: context.h(10)),
                     Text(
                       "Book your appointment during quieter times and enjoy exclusive discounts.",
                       style: CustomFonts.black87_15w400,
@@ -277,23 +277,23 @@ class ClinicsDetailScreen extends ConsumerWidget {
               ),
             ),
 
-            SizedBox(height: 24.h),
+            SizedBox(height: context.h(24)),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(24)),
               child: Divider(
                 color: CustomColors.greyColor.withValues(alpha: 0.6),
-                height: 1.h,
+                height: context.h(1),
               ),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: context.h(24)),
 
             // 4. Map & Working Days Section
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(24)),
               child: Container(
-                padding: EdgeInsets.all(18.w),
+                padding: EdgeInsets.all(context.w(18)),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(24.r),
+                  borderRadius: BorderRadius.circular(context.r(24)),
                   color: Colors.white,
                   border: Border.all(color: CustomColors.greyColor, width: 1),
                   boxShadow: [
@@ -315,9 +315,9 @@ class ClinicsDetailScreen extends ConsumerWidget {
                             Icon(
                               Icons.calendar_today_outlined,
                               color: CustomColors.blueColor,
-                              size: 16.sp,
+                              size: context.sp(16),
                             ),
-                            SizedBox(width: 8.w),
+                            SizedBox(width: context.w(8)),
                             switch (clinic
                                     ?.place
                                     ?.currentOpeningHours
@@ -370,17 +370,17 @@ class ClinicsDetailScreen extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 18.h),
+                    SizedBox(height: context.h(18)),
                     Divider(
-                      height: 1.h,
+                      height: context.h(1),
                       color: CustomColors.greyColor.withValues(alpha: 0.6),
                     ),
-                    SizedBox(height: 18.h),
+                    SizedBox(height: context.h(18)),
                     if (clinic?.place?.location != null)
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(16.r),
+                        borderRadius: BorderRadius.circular(context.r(16)),
                         child: SizedBox(
-                          height: 240.h,
+                          height: context.h(240),
                           width: double.infinity,
                           child: GoogleMap(
                             initialCameraPosition: CameraPosition(
@@ -410,7 +410,7 @@ class ClinicsDetailScreen extends ConsumerWidget {
               ),
             ),
 
-            SizedBox(height: 160.h), // Provide padding for floating bottom bar
+            SizedBox(height: context.h(160)), // Provide padding for floating bottom bar
           ],
         ),
       ),
@@ -429,19 +429,19 @@ class ClinicsDetailScreen extends ConsumerWidget {
             bottom: MediaQuery.paddingOf(context).bottom,
           ),
           child: GlassMorphismContainer(
-            borderRadius: BorderRadius.all(Radius.circular(0.r)),
+            borderRadius: BorderRadius.all(Radius.circular(context.r(0))),
             blurIntensity: 25.0,
             opacity: 0.85,
             glassThickness: 1.0,
             enableBackgroundDistortion: true,
             enableGlassBorder: true,
-            height: 146.h,
+            height: context.h(146),
             child: Column(
               children: [
                 // Alert Banner inside the bar
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 8.h),
+                  padding: EdgeInsets.symmetric(vertical: context.h(8)),
                   color: CustomColors.lightPurpleColor.withValues(alpha: 0.4),
                   child: Center(
                     child: Text(
@@ -455,19 +455,19 @@ class ClinicsDetailScreen extends ConsumerWidget {
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 24.w,
-                      vertical: 12.h,
+                      horizontal: context.w(24),
+                      vertical: context.h(12),
                     ),
                     child: SizedBox(
                       width: double.infinity,
-                      height: 52.h,
+                      height: context.h(52),
                       child: CustomButton(
                         text: checkoutState.isInviteClinic
                             ? "Invite this Medical Spa"
                             : 'Book an Appointment',
                         backgroundColor: Colors.black,
                         textColor: Colors.white,
-                        borderRadius: 25.r,
+                        borderRadius: context.r(25),
                         onPressed: () {
                           // if (checkoutState.isInviteClinic) {
                           //   print("clinic is not null");

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../utills/assets.dart';
@@ -107,14 +107,14 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
           gradient: CustomColors.purpleWhiteBlueGradient,
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 30.w),
+          padding: EdgeInsets.symmetric(horizontal: context.w(30)),
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 104.h),
+                  SizedBox(height: context.h(104)),
                   Stack(
                     clipBehavior: Clip.none,
                     children: [
@@ -124,22 +124,22 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                             ? Image.file(
                                 File(profileImage.path),
                                 fit: BoxFit.cover,
-                                height: 75.w,
-                                width: 75.w,
+                                height: context.w(75),
+                                width: context.w(75),
                               )
                             : Image.asset(
                                 DummyAssets.profile,
                                 fit: BoxFit.cover,
-                                height: 75.w,
-                                width: 75.w,
+                                height: context.w(75),
+                                width: context.w(75),
                               ),
                       ),
                       Positioned(
                         bottom: -6, // or 0
                         right: -6,
                         child: Container(
-                          height: 35.w,
-                          width: 35.w,
+                          height: context.w(35),
+                          width: context.w(35),
                           decoration: const BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
@@ -151,7 +151,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                               icon: Icon(
                                 Icons.camera_alt_rounded,
                                 color: Colors.black,
-                                size: 21.w,
+                                size: context.w(21),
                               ),
                             ),
                           ),
@@ -159,14 +159,14 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 27.h),
+                  SizedBox(height: context.h(27)),
                   Text("Your Profile", style: CustomFonts.black30w600),
-                  SizedBox(height: 4.h),
+                  SizedBox(height: context.h(4)),
                   Text(
                     "Create your profile to personalize your SkinSync experience.",
                     style: CustomFonts.black18w400,
                   ),
-                  SizedBox(height: 22.h),
+                  SizedBox(height: context.h(22)),
                   TextFormField(
                     controller: _nameController,
                     style: CustomFonts.black18w400,
@@ -181,7 +181,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                       return null;
                     },
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: context.h(20)),
                   PhoneWidget(
                     controller: _phoneController,
                     initialCountryCode: _selectedCountry?.countryCode,
@@ -191,7 +191,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                       });
                     },
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: context.h(20)),
                   TextFormField(
                     readOnly: true,
                     controller: _emailController,
@@ -213,7 +213,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                       return null;
                     },
                   ),
-                  // SizedBox(height: 20.h),
+                  // SizedBox(height: context.h(20)),
                   // TextFormField(
                   //   controller: _locationController,
                   //   style: CustomFonts.black18w400,
@@ -225,7 +225,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   //     return null;
                   //   },
                   // ),
-                  // SizedBox(height: 20.h),
+                  // SizedBox(height: context.h(20)),
                   // TextFormField(
                   //   controller: _bioController,
                   //   style: CustomFonts.black18w400,
@@ -238,7 +238,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   //     return null;
                   //   },
                   // ),
-                  SizedBox(height: 35.h),
+                  SizedBox(height: context.h(35)),
                   SizedBox(
                     width: double.infinity,
                     child: ref.watch(authViewModel).loading

@@ -1,5 +1,5 @@
 // import 'package:flutter/material.dart';
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
+// import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 // import 'package:skinsync_ai/utills/assets.dart';
 // import 'package:skinsync_ai/utills/color_constant.dart';
 // import 'package:skinsync_ai/utills/custom_fonts.dart';
@@ -13,15 +13,15 @@
 //     isScrollControlled: true,
 //
 //     shape: RoundedRectangleBorder(
-//       borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+//       borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(20))),
 //     ),
 //     builder: (context) {
 //       return Container(
 //        color: Colors.transparent,
 //         padding: EdgeInsets.only(
-//           top: 10.h,
-//           left: 10.w,
-//           right: 10.w,
+//           top: context.h(10),
+//           left: context.w(10),
+//           right: context.w(10),
 //           bottom: MediaQuery.viewInsetsOf(context).bottom,
 //         ),
 //         child: Container(
@@ -29,13 +29,13 @@
 //           decoration: BoxDecoration(
 //               color: Colors.white,
 //             borderRadius: BorderRadius.only(
-//               topLeft: Radius.circular(44.r),
-//               topRight: Radius.circular(44.r),
-//               bottomLeft: Radius.circular(55.r),
-//               bottomRight: Radius.circular(55.r),
+//               topLeft: Radius.circular(context.r(44)),
+//               topRight: Radius.circular(context.r(44)),
+//               bottomLeft: Radius.circular(context.r(55)),
+//               bottomRight: Radius.circular(context.r(55)),
 //               )
 //           ),
-//           padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 28.h),
+//           padding: EdgeInsets.symmetric(horizontal: context.w(20),vertical: context.h(28)),
 //           child: SingleChildScrollView(
 //
 //             child:
@@ -52,60 +52,60 @@
 //                       "Get Started",
 //                       style: TextStyle(
 //                         fontWeight: FontWeight.w600,
-//                         fontSize: 30.sp,
+//                         fontSize: context.sp(30),
 //                         color: Colors.black,
 //                       ),
 //                     ),
 //
-//                  SizedBox(height: 4.h,),
+//                  SizedBox(height: context.h(4),),
 //
 //                     Text(
 //
 //                       "Sign in to continue your journey.\nAccess personalized care and exclusive features.",
 //                       style: TextStyle(
-//                         fontSize: 16.sp,
+//                         fontSize: context.sp(16),
 //                         fontWeight: FontWeight.w400,
 //                         color: Color(0xff494949)
 //                       ),
 //                     ),
-//                     SizedBox(height: 18.h),
+//                     SizedBox(height: context.h(18)),
 //                     SizedBox(
 //                       width: double.infinity,
 //                       child: Container(
-//                         padding: EdgeInsets.symmetric(vertical: 16.h),
+//                         padding: EdgeInsets.symmetric(vertical: context.h(16)),
 //                         decoration: BoxDecoration(
-//                           borderRadius: BorderRadius.circular(10.r),
+//                           borderRadius: BorderRadius.circular(context.r(10)),
 //                           color: Colors.black),
 //                       child: Center(child: Text("Continue With Phone",style:CustomFonts.white18w600,)),
 //                         ),
 //                     ),
-//                      SizedBox(height: 10.h),
+//                      SizedBox(height: context.h(10)),
 //                       SizedBox(
 //                       width: double.infinity,
 //                       child: Container(
-//                         padding: EdgeInsets.symmetric(vertical: 16.h),
+//                         padding: EdgeInsets.symmetric(vertical: context.h(16)),
 //                         decoration: BoxDecoration(
-//                           borderRadius: BorderRadius.circular(10.r),
+//                           borderRadius: BorderRadius.circular(context.r(10)),
 //                           color:CustomColors.greyColor
 //                           ),
 //                       child: Center(child: Text("Continue With Phone",style:CustomFonts.black18w600,)),
 //                         ),
 //                     ),
-//                     SizedBox(height: 10.h,),
+//                     SizedBox(height: context.h(10),),
 //                     Row(children: [
 //                       Expanded(
 //
 //                       child: Container(
-//                         padding: EdgeInsets.symmetric(vertical: 16.h),
+//                         padding: EdgeInsets.symmetric(vertical: context.h(16)),
 //                         decoration: BoxDecoration(
-//                           borderRadius: BorderRadius.circular(10.r),
+//                           borderRadius: BorderRadius.circular(context.r(10)),
 //                           color:CustomColors.greyColor
 //                           ),
 //                       child: Center(
 //                         child: Image.asset(
 //                           PngAssets.google,
-//                           height: 32.h,
-//                           width: 32.w,
+//                           height: context.h(32),
+//                           width: context.w(32),
 //                           fit: BoxFit.contain,
 //                         ),
 //                       ),
@@ -115,16 +115,16 @@
 //                      Expanded(
 //
 //                       child: Container(
-//                         padding: EdgeInsets.symmetric(vertical: 16.h),
+//                         padding: EdgeInsets.symmetric(vertical: context.h(16)),
 //                         decoration: BoxDecoration(
-//                           borderRadius: BorderRadius.circular(10.r),
+//                           borderRadius: BorderRadius.circular(context.r(10)),
 //                           color:CustomColors.greyColor
 //                           ),
 //                       child: Center(
 //                         child:Image.asset(
 //                           PngAssets.apple,
-//                           height: 32.h,
-//                           width: 32.w,
+//                           height: context.h(32),
+//                           width: context.w(32),
 //                           fit: BoxFit.contain,
 //                         ),
 //                       ),
@@ -134,18 +134,18 @@
 //
 //
 //
-//                     SizedBox(height: 30.h),
+//                     SizedBox(height: context.h(30)),
 //                   ],
 //                 ),
 //                 // Drag handle
 //                 // Center(
 //                 //   child: Container(
-//                 //     height: 5.h,
-//                 //     width: 48.w,
-//                 //     margin: EdgeInsets.only(bottom: 30.h),
+//                 //     height: context.h(5),
+//                 //     width: context.w(48),
+//                 //     margin: EdgeInsets.only(bottom: context.h(30)),
 //                 //     decoration: BoxDecoration(
 //                 //       color: Color(0xffCDCFD0),
-//                 //       borderRadius: BorderRadius.circular(100.r),
+//                 //       borderRadius: BorderRadius.circular(context.r(100)),
 //                 //     ),
 //                 //   ),
 //                 // ),
@@ -162,14 +162,14 @@
 //             //               },
 //             //               child: Container(
 //             //                 padding: EdgeInsets.symmetric(
-//             //                   // vertical: 19.h,
-//             //                   horizontal: 12.w,
+//             //                   // vertical: context.h(19),
+//             //                   horizontal: context.w(12),
 //             //                 ),
 //             //                 decoration: BoxDecoration(
-//             //                   borderRadius: BorderRadius.circular(10.r),
+//             //                   borderRadius: BorderRadius.circular(context.r(10)),
 //             //                   border: Border.all(
 //             //                     color: Colors.black,
-//             //                     width: 2.w,
+//             //                     width: context.w(2),
 //             //                   ),
 //             //                   color: Colors.transparent,
 //             //                 ),
@@ -178,7 +178,7 @@
 //             //                     "No, Go back",
 //             //                     style: TextStyle(
 //             //                       height: 0,
-//             //                       fontSize: 15.sp,
+//             //                       fontSize: context.sp(15),
 //             //                       fontWeight: FontWeight.w600,
 //             //                     ),
 //             //                   ),
@@ -186,7 +186,7 @@
 //             //               ),
 //             //             ),
 //             //           ),
-//             //           SizedBox(width: 16.w),
+//             //           SizedBox(width: context.w(16)),
 //             //           Expanded(
 //             //             child: GestureDetector(
 //             //               onTap: () {
@@ -194,11 +194,11 @@
 //             //               },
 //             //               child: Container(
 //             //                 padding: EdgeInsets.symmetric(
-//             //                   vertical: 19.h,
-//             //                   horizontal: 12.w,
+//             //                   vertical: context.h(19),
+//             //                   horizontal: context.w(12),
 //             //                 ),
 //             //                 decoration: BoxDecoration(
-//             //                   borderRadius: BorderRadius.circular(10.r),
+//             //                   borderRadius: BorderRadius.circular(context.r(10)),
 //
 //             //                   color: Color(0xffD72547),
 //             //                 ),
@@ -207,7 +207,7 @@
 //             //                     "Cancel Booking",
 //             //                     style: TextStyle(
 //             //                       height: 0,
-//             //                       fontSize: 15.sp,
+//             //                       fontSize: context.sp(15),
 //             //                       fontWeight: FontWeight.w600,
 //             //                       color: Colors.white,
 //             //                     ),
@@ -219,7 +219,7 @@
 //             //         ],
 //             //       ),
 //
-//                 // SizedBox(height: 20.h),
+//                 // SizedBox(height: context.h(20)),
 //             //   ],
 //             // ),
 //           ),
