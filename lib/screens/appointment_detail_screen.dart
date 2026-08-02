@@ -13,6 +13,7 @@ import '../utills/date_time_utills.dart';
 import '../view_models/appointment_view_model.dart';
 
 class AppointmentDetailScreen extends ConsumerStatefulWidget {
+  static const String routeName = '/AppointmentDetailScreen';
   final AppointmentItem appointment;
 
   const AppointmentDetailScreen({super.key, required this.appointment});
@@ -120,13 +121,14 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
     final detail = appointmentState.appointmentDetail;
     final isLoading = appointmentState.loading && detail == null;
 
-    final type = detail?.appointmentType ?? widget.appointment.appointmentType ?? "consultation";
+    final type = detail?.appointmentType?.title ?? widget.appointment.appointmentType ?? "consultation";
     final dateVal = detail?.date ?? widget.appointment.date;
     final dateStr = dateVal != null ? DateTimeUtils.formatTimestampToDayDate(dateVal) : "N/A";
 
-    final slot = detail?.slot ?? widget.appointment.slot;
-    final startTime = slot?.startTime != null ? DateTimeUtils.formatTimestampToTime(slot!.startTime!) : "--:--";
-    final endTime = slot?.endTime != null ? DateTimeUtils.formatTimestampToTime(slot!.endTime!) : "--:--";
+    final startTimeVal = detail?.startTime ?? widget.appointment.slot?.startTime;
+    final endTimeVal = detail?.endTime ?? widget.appointment.slot?.endTime;
+    final startTime = startTimeVal != null ? DateTimeUtils.formatTimestampToTime(startTimeVal) : "--:--";
+    final endTime = endTimeVal != null ? DateTimeUtils.formatTimestampToTime(endTimeVal) : "--:--";
     final timeString = "$startTime - $endTime";
 
     return Scaffold(
@@ -172,16 +174,19 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                     title: "Financial Summary",
                     icon: Icons.account_balance_wallet_rounded,
                     children: [
-                      _buildDetailRow("Payable Amount", "\$${detail?.payableAmount?.toStringAsFixed(2) ?? '0.00'}"),
-                      _buildDetailRow("Paid Amount", "\$${detail?.paidAmount?.toStringAsFixed(2) ?? '0.00'}", isPaid: true),
-                      if (detail?.discountAmount != null && detail!.discountAmount! > 0)
-                        _buildDetailRow("Discount", "-\$${detail.discountAmount!.toStringAsFixed(2)}", color: Colors.orange),
-                      const Divider(height: 24, color: Colors.black12),
+                      _buildDetailRow("Treatment Total", "\$${detail?.treatmentTotal?.toStringAsFixed(2) ?? '0.00'}"),
+                      if (detail?.discount != null && detail!.discount! > 0)
+                        _buildDetailRow(
+                          "Discount", 
+                          "${detail.discountType == 'percent' ? '-' : '-\$'}${detail.discount}${detail.discountType == 'percent' ? '%' : ''}", 
+                          color: Colors.orange
+                        ),
+                      _buildDetailRow("Payment Type", detail?.paymentType?.type?.toUpperCase() ?? "N/A"),
                       _buildDetailRow(
-                        "Balance Due",
-                        "\$${((detail?.payableAmount ?? 0) - (detail?.paidAmount ?? 0)).toStringAsFixed(2)}",
-                        isBold: true,
-                        color: Colors.redAccent,
+                        "Payment Status", 
+                        detail?.paymentType?.status?.toUpperCase() ?? "N/A", 
+                        isStatus: true,
+                        color: detail?.paymentType?.status == 'completed' ? Colors.green : Colors.orange,
                       ),
                     ],
                   ),
@@ -191,7 +196,9 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                     icon: Icons.local_hospital_rounded,
                     children: [
                       _buildDetailRow("Clinic", detail?.clinic?.clinicName ?? widget.appointment.clinic?.clinicName ?? "N/A", icon: Icons.business_outlined),
+                      _buildDetailRow("Address", detail?.clinic?.address ?? widget.appointment.clinic?.address ?? "N/A", icon: Icons.location_on_outlined),
                       _buildDetailRow("Specialist", detail?.doctor?.doctorName ?? widget.appointment.doctor?.doctorName ?? "N/A", icon: Icons.person_outline),
+                      _buildDetailRow("Specialization", detail?.doctor?.specialization ?? widget.appointment.doctor?.specialization ?? "N/A", icon: Icons.star_outline),
                     ],
                   ),
                   SizedBox(height: context.h(20)),
@@ -201,6 +208,7 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
               ),
             ),
     );
+
   }
 
   Widget _buildInfoSection({required String title, required List<Widget> children, required IconData icon}) {
@@ -320,6 +328,11 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                               "Area: ${t.areaName ?? 'N/A'}",
                               style: CustomFonts.grey700_12w400,
                             ),
+                            if (t.treatmentCost != null)
+                              Text(
+                                "Cost: \$${t.treatmentCost!.toStringAsFixed(2)}",
+                                style: CustomFonts.darkPurple10w700.copyWith(fontSize: context.sp(11)),
+                              ),
                           ],
                         ),
                       ),
@@ -362,15 +375,19 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                           "Dosage/Material",
                           style: CustomFonts.grey700_10w400.copyWith(fontSize: context.sp(12)),
                         ),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(6)),
-                          decoration: BoxDecoration(
-                            color: CustomColors.darkPurple.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(context.r(8)),
-                          ),
-                          child: Text(
-                            "${t.material!.selectedQuantity} ${t.material!.name ?? 'Syringes'}",
-                            style: CustomFonts.darkPurple10w700.copyWith(fontSize: context.sp(11)),
+                        SizedBox(width: context.w(10)),
+                        Flexible(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(6)),
+                            decoration: BoxDecoration(
+                              color: CustomColors.darkPurple.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(context.r(8)),
+                            ),
+                            child: Text(
+                              "${t.material!.selectedQuantity} ${t.material!.name ?? 'Syringes'}",
+                              textAlign: TextAlign.end,
+                              style: CustomFonts.darkPurple10w700.copyWith(fontSize: context.sp(11)),
+                            ),
                           ),
                         ),
                       ],
@@ -429,8 +446,8 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
     }
 
     if (isStatus) {
-      accentColor = Colors.green.shade700;
-      badgeBgColor = Colors.green.shade50;
+      accentColor = color ?? Colors.green.shade700;
+      badgeBgColor = (color ?? Colors.green).withValues(alpha: 0.1);
       badgeStyle = CustomFonts.darkPurple10w700; // fallback
     }
 
@@ -441,43 +458,51 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
     return Padding(
       padding: EdgeInsets.symmetric(vertical: context.h(10)),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: context.sp(16), color: Colors.grey.shade400),
+            Padding(
+              padding: EdgeInsets.only(top: context.h(2)),
+              child: Icon(icon, size: context.sp(16), color: Colors.grey.shade400),
+            ),
             SizedBox(width: context.w(10)),
           ],
           Text(
             "$label:",
             style: CustomFonts.grey700_10w400.copyWith(fontSize: context.sp(12)),
           ),
-          const Spacer(),
-          if (isType || isStatus)
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(6)),
-              decoration: BoxDecoration(
-                color: badgeBgColor,
-                borderRadius: BorderRadius.circular(context.r(20)),
-              ),
-              child: Text(
-                value,
-                style: isStatus
-                    ? TextStyle(
-                        color: accentColor,
-                        fontSize: context.sp(10),
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Degular',
-                      )
-                    : badgeStyle.copyWith(fontSize: context.sp(10)),
-              ),
-            )
-          else
-            Text(
-              value,
-              style: isBold
-                ? CustomFonts.black14w700.copyWith(color: accentColor ?? Colors.black, fontSize: context.sp(14))
-                : CustomFonts.black13w600.copyWith(color: accentColor ?? Colors.black87, fontSize: context.sp(13)),
+          SizedBox(width: context.w(10)),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: isType || isStatus
+                  ? Container(
+                      padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(6)),
+                      decoration: BoxDecoration(
+                        color: badgeBgColor,
+                        borderRadius: BorderRadius.circular(context.r(20)),
+                      ),
+                      child: Text(
+                        value,
+                        style: isStatus
+                            ? TextStyle(
+                                color: accentColor,
+                                fontSize: context.sp(10),
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Degular',
+                              )
+                            : badgeStyle.copyWith(fontSize: context.sp(10)),
+                      ),
+                    )
+                  : Text(
+                      value,
+                      textAlign: TextAlign.end,
+                      style: isBold
+                          ? CustomFonts.black14w700.copyWith(color: accentColor ?? Colors.black, fontSize: context.sp(14))
+                          : CustomFonts.black13w600.copyWith(color: accentColor ?? Colors.black87, fontSize: context.sp(13)),
+                    ),
             ),
+          ),
         ],
       ),
     );

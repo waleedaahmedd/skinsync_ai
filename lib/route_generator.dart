@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+import 'models/responses/appointments_list_response.dart';
 import 'models/responses/get_clinic_response.dart';
 import 'models/responses/treatment_area_list_response.dart';
 import 'models/responses/treatment_category_list_response.dart';
 import 'models/responses/treatment_list_response.dart';
 import 'screens/additional_info_screen.dart';
 import 'screens/allergy_and_medical_history.dart';
+import 'screens/appointment_detail_screen.dart';
 import 'screens/ar_face_model_preview_screen.dart';
 import 'screens/biometric_screen.dart';
 import 'screens/bottom_nav_page.dart';
@@ -133,6 +135,11 @@ class RouteGenerator {
             name: ArFaceModelPreviewScreen.routeName,
           ),
           builder: (_) => const ArFaceModelPreviewScreen(),
+        );
+      case AppointmentDetailScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: AppointmentDetailScreen.routeName),
+          builder: (_) => AppointmentDetailScreen(appointment: args as AppointmentItem),
         );
       case ExploreClinicsScreen.routeName:
         return MaterialPageRoute(

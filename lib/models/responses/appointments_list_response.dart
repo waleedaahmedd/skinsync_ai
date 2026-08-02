@@ -86,7 +86,7 @@ class AppointmentItem {
     appointmentId = json['id'];
     date = json['date'];
     slot = json['slot'] != null ? AppointmentSlot.fromJson(json['slot']) : null;
-    appointmentType = json['appointment_type'];
+    appointmentType = json['appointment_type'] is Map ? json['appointment_type']['title'] : json['appointment_type'];
     appointmentTypeId = json['appointment_type_id'];
     appointmentKey = json['appointment_key'];
     status = json['status'];
@@ -221,20 +221,23 @@ class AppointmentDoctor {
   int? doctorId;
   String? doctorName;
   String? doctorImage;
+  String? specialization;
 
-  AppointmentDoctor({this.doctorId, this.doctorName, this.doctorImage});
+  AppointmentDoctor({this.doctorId, this.doctorName, this.doctorImage, this.specialization});
 
   AppointmentDoctor.fromJson(Map<String, dynamic> json) {
-    doctorId = json['doctor_id'];
-    doctorName = json['doctor_name'];
-    doctorImage = json['doctor_image'];
+    doctorId = json['id'] ?? json['doctor_id'];
+    doctorName = json['name'] ?? json['doctor_name'];
+    doctorImage = json['image'] ?? json['doctor_image'];
+    specialization = json['specialization'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['doctor_id'] = doctorId;
-    data['doctor_name'] = doctorName;
-    data['doctor_image'] = doctorImage;
+    data['id'] = doctorId;
+    data['name'] = doctorName;
+    data['image'] = doctorImage;
+    data['specialization'] = specialization;
     return data;
   }
 }
@@ -243,20 +246,23 @@ class AppointmentClinic {
   int? clinicId;
   String? clinicName;
   String? clinicImage;
+  String? address;
 
-  AppointmentClinic({this.clinicId, this.clinicName, this.clinicImage});
+  AppointmentClinic({this.clinicId, this.clinicName, this.clinicImage, this.address});
 
   AppointmentClinic.fromJson(Map<String, dynamic> json) {
-    clinicId = json['clinic_id'];
-    clinicName = json['clinic_name'];
-    clinicImage = json['clinic_image'];
+    clinicId = json['id'] ?? json['clinic_id'];
+    clinicName = json['name'] ?? json['clinic_name'];
+    clinicImage = json['logo'] ?? json['clinic_image'];
+    address = json['address'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['clinic_id'] = clinicId;
-    data['clinic_name'] = clinicName;
-    data['clinic_image'] = clinicImage;
+    data['id'] = clinicId;
+    data['name'] = clinicName;
+    data['logo'] = clinicImage;
+    data['address'] = address;
     return data;
   }
 }

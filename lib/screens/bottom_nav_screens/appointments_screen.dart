@@ -213,11 +213,10 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Navigator.pushNamed(
           context,
-          MaterialPageRoute(
-            builder: (context) => AppointmentDetailScreen(appointment: appointment),
-          ),
+          AppointmentDetailScreen.routeName,
+          arguments: appointment,
         );
       },
       child: Container(

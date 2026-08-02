@@ -130,12 +130,10 @@ class DashboardAppointmentHomeCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Navigator.pushNamed(
           context,
-          MaterialPageRoute(
-            builder: (context) =>
-                AppointmentDetailScreen(appointment: appointment.toAppointmentItem()),
-          ),
+          AppointmentDetailScreen.routeName,
+          arguments: appointment.toAppointmentItem(),
         );
       },
       child: Container(
