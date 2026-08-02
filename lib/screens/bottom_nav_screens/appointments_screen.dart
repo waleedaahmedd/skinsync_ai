@@ -10,6 +10,7 @@ import '../../utills/custom_fonts.dart';
 import '../../utills/date_time_utills.dart';
 import '../../view_models/appointment_view_model.dart';
 import '../../widgets/app_loader.dart';
+import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_search_field.dart';
 import '../appointment_detail_screen.dart';
 
@@ -74,95 +75,62 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
     final filteredAppointments = _getFilteredAppointments(appointments);
 
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: context.w(20)),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (Navigator.of(context).canPop()) ...[
-                    SizedBox(height: context.h(16)),
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        height: context.w(42),
-                        width: context.w(42),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: CustomColors.greyColor,
-                            width: 1.5,
+      backgroundColor: Colors.white,
+      appBar: CustomAppBar(
+        title: "My Appointments",
+        showBackButton: Navigator.of(context).canPop(),
+        padding: EdgeInsets.symmetric(horizontal: context.w(20), vertical: context.h(10)),
+      ),
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: context.w(20)),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: context.h(10)),
+            CustomSearchField(
+              controller: _searchController,
+              hintText: "Search appointments...",
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+            ),
+            SizedBox(height: context.h(16)),
+            _buildDropdown<String>(
+              label: "Appointment Type Filter",
+              value: _selectedTypeFilter,
+              items: _appointmentTypes.map((e) {
+                return DropdownMenuItem(
+                  value: e,
+                  child: Text(e, style: CustomFonts.black14w600),
+                );
+              }).toList(),
+              onChanged: (val) {
+                if (val != null)
+                  setState(() => _selectedTypeFilter = val);
+              },
+            ),
+            Expanded(
+              child: appointmentState.loading
+                  ? const AppLoader()
+                  : filteredAppointments.isEmpty
+                      ? _buildEmptyState()
+                      : ListView.builder(
+                          padding: EdgeInsets.only(
+                            top: context.h(20),
+                            bottom: 80,
                           ),
+                          physics: const BouncingScrollPhysics(),
+                          itemCount: filteredAppointments.length,
+                          itemBuilder: (context, index) {
+                            return _buildAppointmentCard(
+                              filteredAppointments[index],
+                            );
+                          },
                         ),
-                        child: Center(
-                          child: Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            size: context.sp(18),
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                  SizedBox(height: context.h(20)),
-                  Text(
-                    "My Appointments",
-                    style: CustomFonts.black30w600.copyWith(
-                      fontSize: context.sp(28),
-                    ),
-                  ),
-                  SizedBox(height: context.h(20)),
-                  CustomSearchField(
-                    controller: _searchController,
-                    hintText: "Search appointments...",
-                    onChanged: (value) {
-                      setState(() {
-                        _searchQuery = value;
-                      });
-                    },
-                  ),
-                  SizedBox(height: context.h(16)),
-                  _buildDropdown<String>(
-                    label: "Appointment Type Filter",
-                    value: _selectedTypeFilter,
-                    items: _appointmentTypes.map((e) {
-                      return DropdownMenuItem(
-                        value: e,
-                        child: Text(e, style: CustomFonts.black14w600),
-                      );
-                    }).toList(),
-                    onChanged: (val) {
-                      if (val != null)
-                        setState(() => _selectedTypeFilter = val);
-                    },
-                  ),
-                ],
-              ),
-              Expanded(
-                child: appointmentState.loading
-                    ? const AppLoader()
-                    : filteredAppointments.isEmpty
-                    ? _buildEmptyState()
-                    : ListView.builder(
-                        padding: EdgeInsets.only(
-                          top: context.h(20),
-                          bottom: 80,
-                        ),
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: filteredAppointments.length,
-                        itemBuilder: (context, index) {
-                          return _buildAppointmentCard(
-                            filteredAppointments[index],
-                          );
-                        },
-                      ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

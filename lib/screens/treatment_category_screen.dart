@@ -9,6 +9,7 @@ import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_category_view_model.dart';
 import '../widgets/app_loader.dart';
+import '../widgets/custom_app_bar.dart';
 import '../widgets/treatment_container.dart';
 
 class TreatmentCategoryScreen extends ConsumerStatefulWidget {
@@ -58,47 +59,11 @@ class _TreatmentCategoryScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Professional MedSpa Header
+            CustomAppBar(title: widget.title),
+            // Premium Breadcrumb Selection Path Container
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.w(30), vertical: context.h(20)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          padding: EdgeInsets.all(context.w(8)),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.grey.shade300,
-                              width: 1,
-                            ),
-                          ),
-                          child: Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            size: context.sp(16),
-                            color: CustomColors.blackColor,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: context.w(15)),
-                      Expanded(
-                        child: Text(
-                          widget.title,
-                          style: CustomFonts.black24w600,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: context.h(15)),
-
-                  // Premium Breadcrumb Selection Path Container
-                  Container(
+              padding: EdgeInsets.symmetric(horizontal: context.w(30)),
+              child: Container(
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(
                       horizontal: context.w(16),
@@ -146,8 +111,6 @@ class _TreatmentCategoryScreenState
                       ],
                     ),
                   ),
-                ],
-              ),
             ),
 
             // Category Listing using Reusable Adaptive TreatmentContainer
