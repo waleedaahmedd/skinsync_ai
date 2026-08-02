@@ -14,6 +14,7 @@ import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/date_time_utills.dart';
 import '../view_models/appointment_view_model.dart';
+import '../widgets/app_loader.dart';
 
 class AppointmentDetailScreen extends ConsumerStatefulWidget {
   static const String routeName = '/AppointmentDetailScreen';
@@ -119,7 +120,7 @@ class _AppointmentDetailScreenState
   Widget build(BuildContext context) {
     final appointmentState = ref.watch(appointmentProvider);
     final detail = appointmentState.appointmentDetail;
-    final isLoading = appointmentState.loading && detail == null;
+    final isLoading = appointmentState.loading;
 
     final type =
         detail?.appointmentType?.title ??
@@ -183,7 +184,7 @@ class _AppointmentDetailScreenState
         ],
       ),
       body: isLoading
-          ? const Center(child: CupertinoActivityIndicator())
+          ? const AppLoader()
           : SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               padding: EdgeInsets.symmetric(
