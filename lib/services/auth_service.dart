@@ -34,29 +34,29 @@ class AuthService implements AuthRepository {
     // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
-      AuthResponse authResponse = AuthResponse.fromJson(parsed);
-      if (authResponse.status == true) {
-        // _secureStorage.saveSecureString(
-        //   key: SharedPreferencesKeys.accessTokenKey.name,
-        //   value: authResponse.data!.accessToken ?? '',
-        // );
-        if (authResponse.data != null) {
-          await _secureStorage.saveToken(authResponse.data!.accessToken!);
-          await _secureStorage.saveRefreshToken(
-            authResponse.data!.refreshToken!,
-          );
-          await _secureStorage.saveAccessTokenExpiry(
-            DateTime.fromMillisecondsSinceEpoch(
-              authResponse.data!.isActiveExpiry! * 1000,
-            ),
-          );
-          await _secureStorage.saveRefreshTokenExpiry(
-            DateTime.fromMillisecondsSinceEpoch(
-              authResponse.data!.refreshTokenExpiry! * 1000,
-            ),
-          );
-        }
-      }
+      final authResponse = AuthResponse.fromJson(parsed);
+      // if (authResponse.status == true) {
+      //   // _secureStorage.saveSecureString(
+      //   //   key: SharedPreferencesKeys.accessTokenKey.name,
+      //   //   value: authResponse.data!.accessToken ?? '',
+      //   // );
+      //   if (authResponse.data != null) {
+      //     await _secureStorage.saveToken(authResponse.data!.accessToken!);
+      //     await _secureStorage.saveRefreshToken(
+      //       authResponse.data!.refreshToken!,
+      //     );
+      //     await _secureStorage.saveAccessTokenExpiry(
+      //       DateTime.fromMillisecondsSinceEpoch(
+      //         authResponse.data!.isActiveExpiry! * 1000,
+      //       ),
+      //     );
+      //     await _secureStorage.saveRefreshTokenExpiry(
+      //       DateTime.fromMillisecondsSinceEpoch(
+      //         authResponse.data!.refreshTokenExpiry! * 1000,
+      //       ),
+      //     );
+      //   }
+      // }
       return authResponse;
     } else {
       // Handle HTTP error status codes

@@ -1,16 +1,17 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../exceptions/app_exception.dart';
 import '../models/base_state_model.dart';
 import '../models/responses/appointment_detail_response.dart';
 import '../models/responses/appointment_type_list_response.dart';
 import '../models/responses/appointments_list_response.dart';
+import '../models/responses/simulation_history_response.dart';
 import '../repositories/appointment_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/appointment_service.dart';
+import '../services/encryption_service.dart';
 import 'base_view_model.dart';
-
-import '../models/responses/simulation_history_response.dart';
 
 final appointmentProvider = NotifierProvider(
   () => AppointmentViewModel(
@@ -20,7 +21,7 @@ final appointmentProvider = NotifierProvider(
 
 class AppointmentViewModel extends BaseViewModel<AppointmentState> {
   AppointmentViewModel({required this.repo})
-      : super(initialState: const AppointmentState());
+    : super(initialState: const AppointmentState());
 
   final AppointmentRepository repo;
 
@@ -48,20 +49,34 @@ class AppointmentViewModel extends BaseViewModel<AppointmentState> {
     await runSafely(() async {
       state = state.copyWith(loading: true, errorMessage: null);
       final response = await repo.getAppointmentsApi(page: page, limit: limit);
-      state = state.copyWith(
-        loading: false,
-        appointmentsResponse: response,
-      );
+      state = state.copyWith(loading: false, appointmentsResponse: response);
     });
   }
 
   Future<void> getAppointmentDetail(int appointmentId) async {
     await runSafely(() async {
-      state = state.copyWith(loading: true, errorMessage: null, appointmentDetail: null);
-      final response = await repo.getAppointmentDetail(appointmentId: appointmentId);
       state = state.copyWith(
-        loading: false,
-        appointmentDetail: response.data,
+        loading: true,
+        errorMessage: null,
+        appointmentDetail: null,
+      );
+      final response = await repo.getAppointmentDetail(
+        appointmentId: appointmentId,
+      );
+      state = state.copyWith(loading: false, appointmentDetail: response.data);
+    });
+  }
+
+  Future<String?> encryptAppointmentData(AppointmentDetailData? data) async {
+    return await runSafely<String?>(() async {
+      final appointmentId = data?.appointmentId;
+      final doctorId = data?.doctor?.id;
+      final clinicId = data?.clinic?.id;
+      if (appointmentId == null || doctorId == null || clinicId == null) {
+        throw const AppException('Could not generate QR Code!');
+      }
+      return await EncryptionService().encrypt(
+        message: '$appointmentId/$doctorId/$clinicId',
       );
     });
   }

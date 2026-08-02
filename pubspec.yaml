@@ -48,7 +48,7 @@ dependencies:
   image: ^4.9.1
   dropdown_button2: ^3.1.0
   http: ^1.6.0
-  flutter_riverpod: ^3.4.1
+  flutter_riverpod: ^3.4.2
   flutter_staggered_animations: ^1.1.1
   image_picker: ^1.2.3
   percent_indicator: ^4.2.5
@@ -58,8 +58,8 @@ dependencies:
   firebase_core: ^4.12.1
   flutter_staggered_grid_view: ^0.7.0
   webview_flutter: ^4.14.1
-  video_player: ^2.8.2
-  permission_handler: ^12.0.3
+  video_player: ^2.13.0
+  permission_handler: ^13.0.0
   google_maps_flutter: ^2.18.0
   location: ^10.0.2
   infinite_scroll_pagination: ^5.1.1
@@ -77,9 +77,11 @@ dependencies:
   before_after: any
   flutter_image_compress: ^2.5.1
   file_picker: ^12.0.0-beta.7
-  dlibphonenumber: ^1.1.68
+  dlibphonenumber: ^1.1.69
   firebase_ai: ^3.14.1
   pretty_qr_code: ^3.6.0
+  cryptography: ^2.9.0
+  cryptography_flutter: ^2.3.4
 
 dependency_overrides:
   jni: 1.0.0
