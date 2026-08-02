@@ -25,100 +25,101 @@ class AppointmentDetailResponse extends BaseResponseModel {
 }
 
 class AppointmentDetailData {
-  int? appointmentId;
+  int? id;
   String? appointmentKey;
+  AppointmentClinic? clinic;
+  AppointmentDoctor? doctor;
+  AppointmentTypeData? appointmentType;
   int? date;
   int? startTime;
   int? endTime;
-  AppointmentTypeData? appointmentType;
-  String? status;
-  double? treatmentTotal;
-  double? discount;
-  String? discountType;
-  List<DetailedAppointmentTreatment>? treatments;
-  AppointmentDoctor? doctor;
-  AppointmentClinic? clinic;
-  PaymentType? paymentType;
+  bool? isInviteClinic;
   Simulations? simulations;
+  List<DetailedAppointmentTreatment>? treatments;
+  double? treatmentTotal;
+  PaymentType? paymentType;
+  String? discountType;
+  double? discount;
+  String? bookingType;
+  String? status;
   String? createdAt;
 
   AppointmentDetailData({
-    this.appointmentId,
+    this.id,
     this.appointmentKey,
+    this.clinic,
+    this.doctor,
+    this.appointmentType,
     this.date,
     this.startTime,
     this.endTime,
-    this.appointmentType,
-    this.status,
-    this.treatmentTotal,
-    this.discount,
-    this.discountType,
-    this.treatments,
-    this.doctor,
-    this.clinic,
-    this.paymentType,
+    this.isInviteClinic,
     this.simulations,
+    this.treatments,
+    this.treatmentTotal,
+    this.paymentType,
+    this.discountType,
+    this.discount,
+    this.bookingType,
+    this.status,
     this.createdAt,
   });
 
   AppointmentDetailData.fromJson(Map<String, dynamic> json) {
-    appointmentId = json['id'];
+    id = json['id'];
     appointmentKey = json['appointment_key'];
-    date = json['date'];
-    startTime = json['start_time'];
-    endTime = json['end_time'];
+    clinic = json['clinic'] != null ? AppointmentClinic.fromJson(json['clinic']) : null;
+    doctor = json['doctor'] != null ? AppointmentDoctor.fromJson(json['doctor']) : null;
     appointmentType = json['appointment_type'] != null
         ? AppointmentTypeData.fromJson(json['appointment_type'])
         : null;
-    status = json['status'];
-    treatmentTotal = (json['treatment_total'] as num?)?.toDouble();
-    discount = (json['discount'] as num?)?.toDouble();
-    discountType = json['discount_type'];
+    date = json['date'];
+    startTime = json['start_time'];
+    endTime = json['end_time'];
+    isInviteClinic = json['is_invite_clinic'];
+    simulations = json['simulations'] != null ? Simulations.fromJson(json['simulations']) : null;
     if (json['treatments'] != null) {
       treatments = <DetailedAppointmentTreatment>[];
       json['treatments'].forEach((v) {
         treatments!.add(DetailedAppointmentTreatment.fromJson(v));
       });
     }
-    doctor = json['doctor'] != null ? AppointmentDoctor.fromJson(json['doctor']) : null;
-    clinic = json['clinic'] != null ? AppointmentClinic.fromJson(json['clinic']) : null;
+    treatmentTotal = (json['treatment_total'] as num?)?.toDouble();
     paymentType = json['payment_type'] != null ? PaymentType.fromJson(json['payment_type']) : null;
-    simulations = json['simulations'] != null ? Simulations.fromJson(json['simulations']) : null;
+    discountType = json['discount_type'];
+    discount = (json['discount'] as num?)?.toDouble();
+    bookingType = json['booking_type'];
+    status = json['status'];
     createdAt = json['created_at'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = appointmentId;
+    data['id'] = id;
     data['appointment_key'] = appointmentKey;
+    if (clinic != null) data['clinic'] = clinic!.toJson();
+    if (doctor != null) data['doctor'] = doctor!.toJson();
+    if (appointmentType != null) data['appointment_type'] = appointmentType!.toJson();
     data['date'] = date;
     data['start_time'] = startTime;
     data['end_time'] = endTime;
-    if (appointmentType != null) {
-      data['appointment_type'] = appointmentType!.toJson();
-    }
-    data['status'] = status;
-    data['treatment_total'] = treatmentTotal;
-    data['discount'] = discount;
-    data['discount_type'] = discountType;
+    data['is_invite_clinic'] = isInviteClinic;
+    if (simulations != null) data['simulations'] = simulations!.toJson();
     if (treatments != null) {
       data['treatments'] = treatments!.map((v) => v.toJson()).toList();
     }
-    if (doctor != null) {
-      data['doctor'] = doctor!.toJson();
-    }
-    if (clinic != null) {
-      data['clinic'] = clinic!.toJson();
-    }
-    if (paymentType != null) {
-      data['payment_type'] = paymentType!.toJson();
-    }
-    if (simulations != null) {
-      data['simulations'] = simulations!.toJson();
-    }
+    data['treatment_total'] = treatmentTotal;
+    if (paymentType != null) data['payment_type'] = paymentType!.toJson();
+    data['discount_type'] = discountType;
+    data['discount'] = discount;
+    data['booking_type'] = bookingType;
+    data['status'] = status;
     data['created_at'] = createdAt;
     return data;
   }
+
+  // Compatibility getter
+  int? get appointmentId => id;
 }
 
 class PaymentType {
@@ -185,10 +186,8 @@ class DetailedAppointmentTreatment {
   int? areaId;
   String? areaName;
   double? treatmentCost;
+  String? treatmentStatus;
   AppointmentMaterial? material;
-  String? status; // pending, start, end
-  int? startTime;
-  int? endTime;
 
   DetailedAppointmentTreatment({
     this.treatmentId,
@@ -197,10 +196,8 @@ class DetailedAppointmentTreatment {
     this.areaId,
     this.areaName,
     this.treatmentCost,
+    this.treatmentStatus,
     this.material,
-    this.status,
-    this.startTime,
-    this.endTime,
   });
 
   DetailedAppointmentTreatment.fromJson(Map<String, dynamic> json) {
@@ -210,10 +207,8 @@ class DetailedAppointmentTreatment {
     areaId = json['area_id'];
     areaName = json['area_name'];
     treatmentCost = (json['treatment_cost'] as num?)?.toDouble();
+    treatmentStatus = json['treatment_status'];
     material = json['material'] != null ? AppointmentMaterial.fromJson(json['material']) : null;
-    status = json['status'];
-    startTime = json['start_time'];
-    endTime = json['end_time'];
   }
 
   Map<String, dynamic> toJson() {
@@ -224,12 +219,10 @@ class DetailedAppointmentTreatment {
     data['area_id'] = areaId;
     data['area_name'] = areaName;
     data['treatment_cost'] = treatmentCost;
+    data['treatment_status'] = treatmentStatus;
     if (material != null) {
       data['material'] = material!.toJson();
     }
-    data['status'] = status;
-    data['start_time'] = startTime;
-    data['end_time'] = endTime;
     return data;
   }
 }

@@ -218,51 +218,111 @@ class AppointmentMaterial {
 }
 
 class AppointmentDoctor {
-  int? doctorId;
-  String? doctorName;
-  String? doctorImage;
-  String? specialization;
+  int? id;
+  String? name;
+  String? email;
+  String? image;
+  String? title;
+  String? phone;
+  String? cc;
+  String? country;
 
-  AppointmentDoctor({this.doctorId, this.doctorName, this.doctorImage, this.specialization});
+  AppointmentDoctor({
+    this.id,
+    this.name,
+    this.email,
+    this.image,
+    this.title,
+    this.phone,
+    this.cc,
+    this.country,
+  });
 
   AppointmentDoctor.fromJson(Map<String, dynamic> json) {
-    doctorId = json['id'] ?? json['doctor_id'];
-    doctorName = json['name'] ?? json['doctor_name'];
-    doctorImage = json['image'] ?? json['doctor_image'];
-    specialization = json['specialization'];
+    id = json['id'] ?? json['doctor_id'];
+    name = json['name'] ?? json['doctor_name'];
+    email = json['email'];
+    image = json['image'] ?? json['doctor_image'];
+    title = json['title'];
+    phone = json['phone'];
+    cc = json['cc'];
+    country = json['country'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = doctorId;
-    data['name'] = doctorName;
-    data['image'] = doctorImage;
-    data['specialization'] = specialization;
+    data['id'] = id;
+    data['name'] = name;
+    data['email'] = email;
+    data['image'] = image;
+    data['title'] = title;
+    data['phone'] = phone;
+    data['cc'] = cc;
+    data['country'] = country;
     return data;
   }
+
+  // To maintain backward compatibility
+  int? get doctorId => id;
+  String? get doctorName => name;
+  String? get doctorImage => image;
 }
 
 class AppointmentClinic {
-  int? clinicId;
-  String? clinicName;
-  String? clinicImage;
+  int? id;
+  String? name;
+  String? email;
+  String? phone;
   String? address;
+  String? logo;
+  String? cc;
+  String? country;
+  double? latitude;
+  double? longitude;
 
-  AppointmentClinic({this.clinicId, this.clinicName, this.clinicImage, this.address});
+  AppointmentClinic({
+    this.id,
+    this.name,
+    this.email,
+    this.phone,
+    this.address,
+    this.logo,
+    this.cc,
+    this.country,
+    this.latitude,
+    this.longitude,
+  });
 
   AppointmentClinic.fromJson(Map<String, dynamic> json) {
-    clinicId = json['id'] ?? json['clinic_id'];
-    clinicName = json['name'] ?? json['clinic_name'];
-    clinicImage = json['logo'] ?? json['clinic_image'];
+    id = json['id'] ?? json['clinic_id'];
+    name = json['name'] ?? json['clinic_name'];
+    email = json['email'];
+    phone = json['phone'];
     address = json['address'];
+    logo = json['logo'] ?? json['clinic_image'];
+    cc = json['cc'];
+    country = json['country'];
+    latitude = (json['latitude'] as num?)?.toDouble();
+    longitude = (json['longitude'] as num?)?.toDouble();
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = clinicId;
-    data['name'] = clinicName;
-    data['logo'] = clinicImage;
+    data['id'] = id;
+    data['name'] = name;
+    data['email'] = email;
+    data['phone'] = phone;
     data['address'] = address;
+    data['logo'] = logo;
+    data['cc'] = cc;
+    data['country'] = country;
+    data['latitude'] = latitude;
+    data['longitude'] = longitude;
     return data;
   }
+
+  // To maintain backward compatibility
+  int? get clinicId => id;
+  String? get clinicName => name;
+  String? get clinicImage => logo;
 }
