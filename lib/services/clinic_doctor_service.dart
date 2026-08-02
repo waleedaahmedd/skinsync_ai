@@ -47,7 +47,7 @@ class ClinicDoctorService implements ClinicDoctorRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.practitionersList,
-      requestType: 'GET',
+      requestType: 'POST',
       requestBody: request.toJson(),
     );
 
