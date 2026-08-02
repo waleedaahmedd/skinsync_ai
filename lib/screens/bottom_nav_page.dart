@@ -16,8 +16,6 @@ class BottomNavPage extends ConsumerStatefulWidget {
   const BottomNavPage({super.key});
   static const String routeName = '/BottomNavPage';
 
-  static final List<Widget> _children = [];
-
   @override
   ConsumerState<BottomNavPage> createState() => _BottomNavPageState();
 }
@@ -53,7 +51,6 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage> {
                   };
                 },
               ),
-              BottomNavPage._children[ref.watch(bottomNavViewModel)],
               Positioned(
                 bottom: 110.h + MediaQuery.paddingOf(context).bottom,
                 child: const ScanFaceButton(),
