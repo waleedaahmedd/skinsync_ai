@@ -53,6 +53,15 @@ class DateTimeUtils {
   static String formatTimestampToTime(int timestamp) {
     return DateFormat('hh:mm a').format(fromTimestamp(timestamp));
   }
+
+  static String formatISOStringToDateTime(String isoString, {String pattern = 'dd MMM yyyy hh:mm a'}) {
+    try {
+      final dateTime = DateTime.parse(isoString).toLocal();
+      return DateFormat(pattern).format(dateTime);
+    } catch (e) {
+      return isoString;
+    }
+  }
 }
 
 extension DateTimeExtension on DateTime {

@@ -222,16 +222,16 @@ class DashboardAppointment {
       treatments: treatments,
       doctor: doctor != null
           ? AppointmentDoctor(
-            doctorId: doctor!.doctorId,
-            doctorName: doctor!.doctorName,
-            doctorImage: doctor!.doctorImage,
+            id: doctor!.doctorId,
+            name: doctor!.doctorName,
+            image: doctor!.doctorImage,
           )
           : null,
       clinic: clinic != null
           ? AppointmentClinic(
-            clinicId: clinic!.clinicId,
-            clinicName: clinic!.clinicName,
-            clinicImage: clinic!.clinicImage,
+            id: clinic!.clinicId,
+            name: clinic!.clinicName,
+            logo: clinic!.clinicImage,
           )
           : null,
     );
