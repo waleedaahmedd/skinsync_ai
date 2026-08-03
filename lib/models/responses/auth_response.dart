@@ -125,7 +125,7 @@ class User {
 }
 
 class DashboardData {
-  final List<DashboardAppointment>? appointments;
+  final List<AppointmentItem>? appointments;
   final List<TreatmentData>? suggestedTreatments;
   final List<TopDoctor>? topDoctors;
   final List<TopClinic>? topClinics;
@@ -140,8 +140,8 @@ class DashboardData {
   factory DashboardData.fromJson(Map<String, dynamic> json) => DashboardData(
     appointments: json["appointments"] == null
         ? []
-        : List<DashboardAppointment>.from(
-            json["appointments"]!.map((x) => DashboardAppointment.fromJson(x)),
+        : List<AppointmentItem>.from(
+            json["appointments"]!.map((x) => AppointmentItem.fromJson(x)),
           ),
     suggestedTreatments: json["suggested_treatments"] == null
         ? []
@@ -168,77 +168,80 @@ class DashboardData {
   };
 }
 
-class DashboardAppointment {
-  final int? date;
-  final String? appointmentType;
-  final int? appointmentTypeId;
-  final List<AppointmentTreatment>? treatments;
-  final DashboardDoctor? doctor;
-  final DashboardClinic? clinic;
+// class DashboardAppointment {
+//   final int? date;
+//   final String? appointmentType;
+//   final int? appointmentTypeId;
+//   final List<AppointmentTreatment>? treatments;
+//   final DashboardDoctor? doctor;
+//   final DashboardClinic? clinic;
+//   final AppointmentSlot? slot;
 
-  DashboardAppointment({
-    this.date,
-    this.appointmentType,
-    this.appointmentTypeId,
-    this.treatments,
-    this.doctor,
-    this.clinic,
-  });
+//   DashboardAppointment({
+//     this.date,
+//     this.appointmentType,
+//     this.appointmentTypeId,
+//     this.treatments,
+//     this.doctor,
+//     this.clinic,
+//     this.slot,
+//   });
 
-  factory DashboardAppointment.fromJson(Map<String, dynamic> json) =>
-      DashboardAppointment(
-        date: json["date"],
-        appointmentType: json["appointment_type"],
-        appointmentTypeId: json["appointment_type_id"],
-        treatments: json["treatments"] == null
-            ? []
-            : List<AppointmentTreatment>.from(
-                json["treatments"]!.map(
-                  (x) => AppointmentTreatment.fromJson(x),
-                ),
-              ),
-        doctor: json["doctor"] == null
-            ? null
-            : DashboardDoctor.fromJson(json["doctor"]),
-        clinic: json["clinic"] == null
-            ? null
-            : DashboardClinic.fromJson(json["clinic"]),
-      );
+//   factory DashboardAppointment.fromJson(Map<String, dynamic> json) =>
+//       DashboardAppointment(
+//         date: json["date"],
+//         appointmentType: json["appointment_type"],
+//         appointmentTypeId: json["appointment_type_id"],
+//          slot : json['slot'] != null ? AppointmentSlot.fromJson(json['slot']) : null,
+//         treatments: json["treatments"] == null
+//             ? []
+//             : List<AppointmentTreatment>.from(
+//                 json["treatments"]!.map(
+//                   (x) => AppointmentTreatment.fromJson(x),
+//                 ),
+//               ),
+//         doctor: json["doctor"] == null
+//             ? null
+//             : DashboardDoctor.fromJson(json["doctor"]),
+//         clinic: json["clinic"] == null
+//             ? null
+//             : DashboardClinic.fromJson(json["clinic"]),
+//       );
 
-  Map<String, dynamic> toJson() => {
-    "date": date,
-    "appointment_type": appointmentType,
-    "appointment_type_id": appointmentTypeId,
-    "treatments": treatments?.map((x) => x.toJson()).toList(),
-    "doctor": doctor?.toJson(),
-    "clinic": clinic?.toJson(),
-  };
+//   Map<String, dynamic> toJson() => {
+//     "date": date,
+//     "appointment_type": appointmentType,
+//     "appointment_type_id": appointmentTypeId,
+//     "treatments": treatments?.map((x) => x.toJson()).toList(),
+//     "doctor": doctor?.toJson(),
+//     "clinic": clinic?.toJson(),
+//   };
 
-  AppointmentItem toAppointmentItem() {
-    return AppointmentItem(
-      date: date,
-      appointmentType: appointmentType,
-      appointmentTypeId: appointmentTypeId,
-      treatments: treatments,
-      doctor: doctor != null
-          ? AppointmentDoctor(
-            id: doctor!.doctorId,
-            name: doctor!.doctorName,
-            image: doctor!.doctorImage,
-          )
-          : null,
-      clinic: clinic != null
-          ? AppointmentClinic(
-            id: clinic!.clinicId,
-            name: clinic!.clinicName,
-            logo: clinic!.clinicImage,
-          )
-          : null,
-    );
-  }
-}
+//   AppointmentItem toAppointmentItem() {
+//     return AppointmentItem(
+//       date: date,
+//       appointmentType: appointmentType,
+//       appointmentTypeId: appointmentTypeId,
+//       treatments: treatments,
+//       doctor: doctor != null
+//           ? AppointmentDoctor(
+//             id: doctor!.doctorId,
+//             name: doctor!.doctorName,
+//             image: doctor!.doctorImage,
+//           )
+//           : null,
+//       clinic: clinic != null
+//           ? AppointmentClinic(
+//             id: clinic!.clinicId,
+//             name: clinic!.clinicName,
+//             logo: clinic!.clinicImage,
+//           )
+//           : null,
+//     );
+//   }
+// }
 
-// Remove AppointmentTreatment and AppointmentMaterial here to use from get_appointment_response.dart
+// // Remove AppointmentTreatment and AppointmentMaterial here to use from get_appointment_response.dart
 
 class DashboardDoctor {
   final int? doctorId;

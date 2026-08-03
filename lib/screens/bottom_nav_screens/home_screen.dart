@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
-import '../../models/responses/auth_response.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
-import '../../utills/date_time_utills.dart';
 import '../../view_models/auth_view_model.dart';
 import '../../view_models/bottom_nav_view_model.dart';
 import '../../widgets/app_bar_with_action_icon.dart';
+import '../../widgets/appointment_card.dart';
 import '../../widgets/discount_card.dart';
 import '../../widgets/grey_container.dart';
 import '../../widgets/heading_with_right_arrow.dart';
 import '../../widgets/home_horizontal_sections.dart';
 import '../../widgets/points_earn_card.dart';
 import '../../widgets/treatment_container.dart';
+import '../appointment_detail_screen.dart';
 import '../doctors_screen.dart';
 import '../explore_clinics_screen.dart';
 import '../notification_screen.dart';
@@ -32,16 +32,6 @@ class HomeScreen extends ConsumerWidget {
     final authData = ref.watch(authViewModel).authData;
     final dashboard = authData?.dashboard;
     final appointments = dashboard?.appointments ?? [];
-
-    // Group appointments by date
-    final Map<String, List<DashboardAppointment>> groupedAppointments = {};
-    for (var appt in appointments) {
-      if (appt.date != null) {
-        final dateKey = DateTimeUtils.formatTimestamp(appt.date!);
-        groupedAppointments.putIfAbsent(dateKey, () => []).add(appt);
-      }
-    }
-    final sortedDateKeys = groupedAppointments.keys.toList();
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
@@ -88,20 +78,41 @@ class HomeScreen extends ConsumerWidget {
                           "Your scheduled clinical treatments and session details will appear here.",
                     )
                   : SizedBox(
-                      height: context.h(195),
+                      height: context.h(290),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                         scrollDirection: Axis.horizontal,
-                        itemCount: sortedDateKeys.length,
-                        itemBuilder: (context, dateIndex) {
-                          final dateTitle = sortedDateKeys[dateIndex];
-                          final dateAppointments =
-                              groupedAppointments[dateTitle]!;
+                        itemCount: appointments.length,
+                        itemBuilder: (context, index) {
+                          final appointment = appointments[index];
 
-                          return DashboardAppointmentDateSection(
-                            dateTitle: dateTitle,
-                            appointments: dateAppointments,
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              right: index == appointments.length - 1
+                                  ? 0
+                                  : context.w(12),
+                            ),
+                            child: IntrinsicWidth(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  minWidth: context.w(300),
+                                ),
+                                child: AppointmentCard(
+                                  isTreatmentListHorizontal: true,
+                                  appointment:
+                                      appointment,
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      AppointmentDetailScreen.routeName,
+                                      arguments:
+                                          appointment,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
                           );
                         },
                       ),

@@ -5,10 +5,8 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../models/responses/auth_response.dart';
 import '../models/responses/practitioner_list_response.dart';
-import '../screens/appointment_detail_screen.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
-import '../utills/date_time_utills.dart';
 import 'doctor_card.dart';
 
 class DoctorHomeCard extends StatelessWidget {
@@ -21,298 +19,298 @@ class DoctorHomeCard extends StatelessWidget {
   }
 }
 
-class DashboardAppointmentDateSection extends StatelessWidget {
-  final String dateTitle;
-  final List<DashboardAppointment> appointments;
-  const DashboardAppointmentDateSection({
-    super.key,
-    required this.dateTitle,
-    required this.appointments,
-  });
+// class DashboardAppointmentDateSection extends StatelessWidget {
+//   final String dateTitle;
+//   final List<DashboardAppointment> appointments;
+//   const DashboardAppointmentDateSection({
+//     super.key,
+//     required this.dateTitle,
+//     required this.appointments,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(right: context.w(16)),
-      padding: EdgeInsets.fromLTRB(context.w(16), context.h(10), context.w(10), context.h(10)),
-      decoration: BoxDecoration(
-        gradient: CustomColors.purpleBlueGradient,
-        borderRadius: BorderRadius.circular(context.r(22)),
-        border: Border.all(
-          color: CustomColors.greyColor.withValues(alpha: 0.6),
-          width: 1.2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.calendar_today_rounded,
-                color: CustomColors.blackColor,
-                size: 13,
-              ),
-              SizedBox(width: context.w(6)),
-              Text(dateTitle, style: CustomFonts.black13w600),
-            ],
-          ),
-          SizedBox(height: context.h(10)),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: appointments
-                .map(
-                  (appointment) =>
-                      DashboardAppointmentHomeCard(appointment: appointment),
-                )
-                .toList(),
-          ),
-        ],
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       margin: EdgeInsets.only(right: context.w(16)),
+//       padding: EdgeInsets.fromLTRB(context.w(16), context.h(10), context.w(10), context.h(10)),
+//       decoration: BoxDecoration(
+//         gradient: CustomColors.purpleBlueGradient,
+//         borderRadius: BorderRadius.circular(context.r(22)),
+//         border: Border.all(
+//           color: CustomColors.greyColor.withValues(alpha: 0.6),
+//           width: 1.2,
+//         ),
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.black.withValues(alpha: 0.02),
+//             blurRadius: 16,
+//             offset: const Offset(0, 6),
+//           ),
+//         ],
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         mainAxisSize: MainAxisSize.min,
+//         children: [
+//           Row(
+//             children: [
+//               const Icon(
+//                 Icons.calendar_today_rounded,
+//                 color: CustomColors.blackColor,
+//                 size: 13,
+//               ),
+//               SizedBox(width: context.w(6)),
+//               Text(dateTitle, style: CustomFonts.black13w600),
+//             ],
+//           ),
+//           SizedBox(height: context.h(10)),
+//           Row(
+//             mainAxisSize: MainAxisSize.min,
+//             children: appointments
+//                 .map(
+//                   (appointment) =>
+//                       DashboardAppointmentHomeCard(appointment: appointment),
+//                 )
+//                 .toList(),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
-class DashboardAppointmentHomeCard extends StatelessWidget {
-  final DashboardAppointment appointment;
-  const DashboardAppointmentHomeCard({super.key, required this.appointment});
+// class DashboardAppointmentHomeCard extends StatelessWidget {
+//   final DashboardAppointment appointment;
+//   const DashboardAppointmentHomeCard({super.key, required this.appointment});
 
-  Color _getTypeAccentColor(String? type) {
-    switch (type?.toLowerCase()) {
-      case "consultation":
-        return CustomColors.blueColor;
-      case "treatment session":
-      case "sessions":
-        return CustomColors.pinkColor;
-      default:
-        return CustomColors.purpleColor;
-    }
-  }
+//   Color _getTypeAccentColor(String? type) {
+//     switch (type?.toLowerCase()) {
+//       case "consultation":
+//         return CustomColors.blueColor;
+//       case "treatment session":
+//       case "sessions":
+//         return CustomColors.pinkColor;
+//       default:
+//         return CustomColors.purpleColor;
+//     }
+//   }
 
-  TextStyle _getTimeStyle(String? type) {
-    switch (type?.toLowerCase()) {
-      case "consultation":
-        return CustomFonts.blue10w700;
-      case "treatment session":
-      case "sessions":
-        return CustomFonts.pink10w700;
-      default:
-        return CustomFonts.blue10w700;
-    }
-  }
+//   TextStyle _getTimeStyle(String? type) {
+//     switch (type?.toLowerCase()) {
+//       case "consultation":
+//         return CustomFonts.blue10w700;
+//       case "treatment session":
+//       case "sessions":
+//         return CustomFonts.pink10w700;
+//       default:
+//         return CustomFonts.blue10w700;
+//     }
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    final type = appointment.appointmentType ?? "consultation";
-    final accentColor = _getTypeAccentColor(type);
-    final timeStyle = _getTimeStyle(type);
+//   @override
+//   Widget build(BuildContext context) {
+//     final type = appointment.appointmentType ?? "consultation";
+//     final accentColor = _getTypeAccentColor(type);
+//     final timeStyle = _getTimeStyle(type);
 
-    final treatment = appointment.treatments?.firstOrNull;
-    final treatmentName = treatment?.treatmentName ?? "Consultation";
-    final areaName = treatment?.areaName ?? "Full Face";
+//     final treatment = appointment.treatments?.firstOrNull;
+//     final treatmentName = treatment?.treatmentName ?? "Consultation";
+//     final areaName = treatment?.areaName ?? "Full Face";
 
-    final bgImage = treatmentName.toLowerCase().contains("botox")
-        ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl-cyJqFlcZav1TlRMEuajtrg2RJlWY3rTQA&s"
-        : "https://movelmedspa.com/storage/2024/05/Cheek-Filler-Treatment-at-Movel-Med-Spa.webp";
+//     final bgImage = treatmentName.toLowerCase().contains("botox")
+//         ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQl-cyJqFlcZav1TlRMEuajtrg2RJlWY3rTQA&s"
+//         : "https://movelmedspa.com/storage/2024/05/Cheek-Filler-Treatment-at-Movel-Med-Spa.webp";
 
-    final timeString = appointment.date != null
-        ? DateTimeUtils.formatTimestampToTime(appointment.date!)
-        : "--:--";
+//     final timeString = appointment.date != null
+//         ? DateTimeUtils.formatTimestampToTime(appointment.date!)
+//         : "--:--";
 
-    return GestureDetector(
-      onTap: () {
-        Navigator.pushNamed(
-          context,
-          AppointmentDetailScreen.routeName,
-          arguments: appointment.toAppointmentItem(),
-        );
-      },
-      child: Container(
-        width: context.w(245),
-        height: context.h(135),
-        margin: EdgeInsets.only(right: context.w(8)),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(context.r(16)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.08),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(context.r(16)),
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: CachedNetworkImage(
-                  imageUrl: bgImage,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: Colors.grey.shade100,
-                    child: const Center(child: CupertinoActivityIndicator()),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    color: Colors.grey.shade100,
-                    child: const Icon(
-                      Icons.broken_image_rounded,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-              ),
-              Positioned.fill(
-                child: Container(color: Colors.white.withValues(alpha: 0.75)),
-              ),
-              Positioned(
-                left: 0,
-                top: 0,
-                bottom: 0,
-                width: context.w(4),
-                child: Container(color: accentColor),
-              ),
-              Positioned.fill(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(context.w(14), context.h(10), context.w(10), context.h(10)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  treatmentName,
-                                  style: CustomFonts.black13w600,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                SizedBox(height: context.h(1)),
-                                Text(
-                                  areaName,
-                                  style: CustomFonts.grey700_10w400,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: context.w(6)),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: context.w(8),
-                              vertical: context.h(3),
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(context.r(20)),
-                              border: Border.all(
-                                color: Colors.black12,
-                                width: 0.5,
-                              ),
-                            ),
-                            child: Text(
-                              type,
-                              style: timeStyle.copyWith(fontSize: context.sp(8)),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.business_rounded,
-                                size: 12,
-                                color: Colors.grey.shade600,
-                              ),
-                              SizedBox(width: context.w(6)),
-                              Expanded(
-                                child: Text(
-                                  appointment.clinic?.clinicName ??
-                                      "Awaiting Confirmation",
-                                  style: CustomFonts.textGrey13w400,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: context.h(2)),
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.person_rounded,
-                                size: 12,
-                                color: Colors.grey.shade600,
-                              ),
-                              SizedBox(width: context.w(6)),
-                              Expanded(
-                                child: Text(
-                                  appointment.doctor?.doctorName ?? "Pending",
-                                  style: CustomFonts.textGrey13w400,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: context.w(8),
-                          vertical: context.h(3),
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.05),
-                          borderRadius: BorderRadius.circular(context.r(20)),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.access_time_filled_rounded,
-                              size: 10,
-                              color: Colors.grey.shade600,
-                            ),
-                            SizedBox(width: context.w(4)),
-                            Text(
-                              timeString,
-                              style: CustomFonts.black10w600,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+//     return GestureDetector(
+//       onTap: () {
+//         Navigator.pushNamed(
+//           context,
+//           AppointmentDetailScreen.routeName,
+//           arguments: appointment.toAppointmentItem(),
+//         );
+//       },
+//       child: Container(
+//         width: context.w(245),
+//         height: context.h(135),
+//         margin: EdgeInsets.only(right: context.w(8)),
+//         decoration: BoxDecoration(
+//           color: Colors.white,
+//           borderRadius: BorderRadius.circular(context.r(16)),
+//           boxShadow: [
+//             BoxShadow(
+//               color: Colors.black.withValues(alpha: 0.08),
+//               blurRadius: 8,
+//               offset: const Offset(0, 4),
+//             ),
+//           ],
+//         ),
+//         child: ClipRRect(
+//           borderRadius: BorderRadius.circular(context.r(16)),
+//           child: Stack(
+//             children: [
+//               Positioned.fill(
+//                 child: CachedNetworkImage(
+//                   imageUrl: bgImage,
+//                   fit: BoxFit.cover,
+//                   placeholder: (context, url) => Container(
+//                     color: Colors.grey.shade100,
+//                     child: const Center(child: CupertinoActivityIndicator()),
+//                   ),
+//                   errorWidget: (context, url, error) => Container(
+//                     color: Colors.grey.shade100,
+//                     child: const Icon(
+//                       Icons.broken_image_rounded,
+//                       color: Colors.grey,
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               Positioned.fill(
+//                 child: Container(color: Colors.white.withValues(alpha: 0.75)),
+//               ),
+//               Positioned(
+//                 left: 0,
+//                 top: 0,
+//                 bottom: 0,
+//                 width: context.w(4),
+//                 child: Container(color: accentColor),
+//               ),
+//               Positioned.fill(
+//                 child: Padding(
+//                   padding: EdgeInsets.fromLTRB(context.w(14), context.h(10), context.w(10), context.h(10)),
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                     children: [
+//                       Row(
+//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           Expanded(
+//                             child: Column(
+//                               crossAxisAlignment: CrossAxisAlignment.start,
+//                               children: [
+//                                 Text(
+//                                   treatmentName,
+//                                   style: CustomFonts.black13w600,
+//                                   maxLines: 1,
+//                                   overflow: TextOverflow.ellipsis,
+//                                 ),
+//                                 SizedBox(height: context.h(1)),
+//                                 Text(
+//                                   areaName,
+//                                   style: CustomFonts.grey700_10w400,
+//                                   maxLines: 1,
+//                                   overflow: TextOverflow.ellipsis,
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                           SizedBox(width: context.w(6)),
+//                           Container(
+//                             padding: EdgeInsets.symmetric(
+//                               horizontal: context.w(8),
+//                               vertical: context.h(3),
+//                             ),
+//                             decoration: BoxDecoration(
+//                               color: Colors.white,
+//                               borderRadius: BorderRadius.circular(context.r(20)),
+//                               border: Border.all(
+//                                 color: Colors.black12,
+//                                 width: 0.5,
+//                               ),
+//                             ),
+//                             child: Text(
+//                               type,
+//                               style: timeStyle.copyWith(fontSize: context.sp(8)),
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                       Column(
+//                         crossAxisAlignment: CrossAxisAlignment.start,
+//                         children: [
+//                           Row(
+//                             children: [
+//                               Icon(
+//                                 Icons.business_rounded,
+//                                 size: 12,
+//                                 color: Colors.grey.shade600,
+//                               ),
+//                               SizedBox(width: context.w(6)),
+//                               Expanded(
+//                                 child: Text(
+//                                   appointment.clinic?.clinicName ??
+//                                       "Awaiting Confirmation",
+//                                   style: CustomFonts.textGrey13w400,
+//                                   maxLines: 1,
+//                                   overflow: TextOverflow.ellipsis,
+//                                 ),
+//                               ),
+//                             ],
+//                           ),
+//                           SizedBox(height: context.h(2)),
+//                           Row(
+//                             children: [
+//                               Icon(
+//                                 Icons.person_rounded,
+//                                 size: 12,
+//                                 color: Colors.grey.shade600,
+//                               ),
+//                               SizedBox(width: context.w(6)),
+//                               Expanded(
+//                                 child: Text(
+//                                   appointment.doctor?.doctorName ?? "Pending",
+//                                   style: CustomFonts.textGrey13w400,
+//                                   maxLines: 1,
+//                                   overflow: TextOverflow.ellipsis,
+//                                 ),
+//                               ),
+//                             ],
+//                           ),
+//                         ],
+//                       ),
+//                       Container(
+//                         padding: EdgeInsets.symmetric(
+//                           horizontal: context.w(8),
+//                           vertical: context.h(3),
+//                         ),
+//                         decoration: BoxDecoration(
+//                           color: Colors.black.withValues(alpha: 0.05),
+//                           borderRadius: BorderRadius.circular(context.r(20)),
+//                         ),
+//                         child: Row(
+//                           mainAxisSize: MainAxisSize.min,
+//                           children: [
+//                             Icon(
+//                               Icons.access_time_filled_rounded,
+//                               size: 10,
+//                               color: Colors.grey.shade600,
+//                             ),
+//                             SizedBox(width: context.w(4)),
+//                             Text(
+//                               timeString,
+//                               style: CustomFonts.black10w600,
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class DashboardDoctorHomeCard extends StatelessWidget {
   final TopDoctor doctor;
