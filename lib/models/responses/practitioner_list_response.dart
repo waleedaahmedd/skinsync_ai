@@ -23,19 +23,25 @@ class PractitionerListResponse extends BaseResponseModel {
 }
 
 class PractitionerListData {
-  List<PractitionerDoctor>? doctors;
+  List<PractitionerDoctor>? practitioners;
   int? limit;
   int? page;
   int? total;
   int? totalPages;
 
-  PractitionerListData({this.doctors, this.limit, this.page, this.total, this.totalPages});
+  PractitionerListData({this.practitioners, this.limit, this.page, this.total, this.totalPages});
 
   PractitionerListData.fromJson(Map<String, dynamic> json) {
-    if (json['doctors'] != null) {
-      doctors = <PractitionerDoctor>[];
+    if (json['practitioners'] != null) {
+      practitioners = <PractitionerDoctor>[];
+      json['practitioners'].forEach((v) {
+        practitioners!.add(PractitionerDoctor.fromJson(v));
+      });
+    } else if (json['doctors'] != null) {
+       // fallback for older versions if any
+      practitioners = <PractitionerDoctor>[];
       json['doctors'].forEach((v) {
-        doctors!.add(PractitionerDoctor.fromJson(v));
+        practitioners!.add(PractitionerDoctor.fromJson(v));
       });
     }
     limit = json['limit'];
@@ -46,8 +52,8 @@ class PractitionerListData {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    if (doctors != null) {
-      data['doctors'] = doctors!.map((v) => v.toJson()).toList();
+    if (practitioners != null) {
+      data['practitioners'] = practitioners!.map((v) => v.toJson()).toList();
     }
     data['limit'] = limit;
     data['page'] = page;
@@ -55,46 +61,59 @@ class PractitionerListData {
     data['total_pages'] = totalPages;
     return data;
   }
+
+  // Backward compatibility getter
+  List<PractitionerDoctor>? get doctors => practitioners;
 }
 
 class PractitionerDoctor {
-  int? doctorId;
-  String? doctorImage;
-  num? doctorRating;
-  String? doctorName;
+  int? id;
+  String? image;
+  num? rating;
+  String? name;
+  String? practitionerType;
   String? specialization;
   PractitionerClinic? clinic;
 
   PractitionerDoctor({
-    this.doctorId,
-    this.doctorImage,
-    this.doctorRating,
-    this.doctorName,
+    this.id,
+    this.image,
+    this.rating,
+    this.name,
+    this.practitionerType,
     this.specialization,
     this.clinic,
   });
 
   PractitionerDoctor.fromJson(Map<String, dynamic> json) {
-    doctorId = json['doctor_id'];
-    doctorImage = json['doctor_image'];
-    doctorRating = json['doctor_rating'];
-    doctorName = json['doctor_name'];
+    id = json['practitioner_id'] ?? json['doctor_id'];
+    image = json['practitioner_image'] ?? json['doctor_image'];
+    rating = json['practitioner_rating'] ?? json['doctor_rating'];
+    name = json['practitioner_name'] ?? json['doctor_name'];
+    practitionerType = json['practitioner_type'];
     specialization = json['specialization'];
     clinic = json['clinic'] != null ? PractitionerClinic.fromJson(json['clinic']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['doctor_id'] = doctorId;
-    data['doctor_image'] = doctorImage;
-    data['doctor_rating'] = doctorRating;
-    data['doctor_name'] = doctorName;
+    data['practitioner_id'] = id;
+    data['practitioner_image'] = image;
+    data['practitioner_rating'] = rating;
+    data['practitioner_name'] = name;
+    data['practitioner_type'] = practitionerType;
     data['specialization'] = specialization;
     if (clinic != null) {
       data['clinic'] = clinic!.toJson();
     }
     return data;
   }
+
+  // Backward compatibility getters
+  int? get doctorId => id;
+  String? get doctorImage => image;
+  num? get doctorRating => rating;
+  String? get doctorName => name;
 }
 
 class PractitionerClinic {

@@ -43,7 +43,7 @@ enum EndPoints {
   onBoardingProfile("v1/onboarding/profile"),
   getClinic("clinics/filter"),
   getDoctor("doctors/by-side-area?"),
-  practitionersList("doctors/list"),
+  practitionersList("practitioners/list"),
   getMe("v1/me"),
   appVersion("admin/app-version/customer"),
   refreshToken('v1/auth/refresh'),
