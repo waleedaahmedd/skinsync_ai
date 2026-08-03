@@ -25,6 +25,8 @@ import '../services/api_base_helper.dart';
 import '../services/appointment_service.dart';
 import '../services/clinic_doctor_service.dart';
 import '../utills/date_time_utills.dart';
+import '../utills/simulation_utils.dart';
+import 'auth_view_model.dart';
 import 'base_view_model.dart';
 import 'doctor_view_model.dart';
 import 'treatment_view_model.dart';
@@ -354,7 +356,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   // API Methods
   // ---------------------------------------------------------------------------
 
-  AppointmentRequest? buildAppointmentRequest() {
+  Future<AppointmentRequest?> buildAppointmentRequest() async {
     final state = this.state;
     final clinicId = state.selectedClinic?.id;
     final doctorId =
@@ -375,12 +377,19 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     }
 
     final treatmentViewModelState = ref.read(treatmentViewModel);
-    final frontImageBefore = treatmentViewModelState.frontPoseImage?.path;
-    final frontImageAfter = treatmentViewModelState.frontAiImage?.path;
-    final rightImageBefore = treatmentViewModelState.rightPoseImage?.path;
-    final rightImageAfter = treatmentViewModelState.rightAiImage?.path;
-    final leftImageBefore = treatmentViewModelState.leftPoseImage?.path;
-    final leftImageAfter = treatmentViewModelState.leftAiImage?.path;
+    final userId = ref.read(authViewModel).authData?.user?.id ?? 0;
+
+    final uploadResults = await uploadSimulationImages(
+      userId: userId,
+      images: SimulationImages(
+        frontBefore: treatmentViewModelState.frontPoseImage,
+        frontAfter: treatmentViewModelState.frontAiImage,
+        rightBefore: treatmentViewModelState.rightPoseImage,
+        rightAfter: treatmentViewModelState.rightAiImage,
+        leftBefore: treatmentViewModelState.leftPoseImage,
+        leftAfter: treatmentViewModelState.leftAiImage,
+      ),
+    );
 
     int treatmentTotal = 0;
     List<TreatmentRequest> treatmentRequests = [];
@@ -418,12 +427,12 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       appointmentTypeId: appointmentType.id!,
       isInviteClinic: state.isInviteClinic,
       simulations: SimulationsRequest(
-        frontImageBefore: frontImageBefore,
-        frontImageAfter: frontImageAfter,
-        rightImageBefore: rightImageBefore,
-        rightImageAfter: rightImageAfter,
-        leftImageBefore: leftImageBefore,
-        leftImageAfter: leftImageAfter,
+        frontImageBefore: uploadResults.frontBefore,
+        frontImageAfter: uploadResults.frontAfter,
+        rightImageBefore: uploadResults.rightBefore,
+        rightImageAfter: uploadResults.rightAfter,
+        leftImageBefore: uploadResults.leftBefore,
+        leftImageAfter: uploadResults.leftAfter,
       ),
       treatment: treatmentRequests,
       treatmentTotal: treatmentTotal,
@@ -443,8 +452,9 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   Future<void> createAppointment() async {
     return await runSafely(() async {
       state = state.copyWith(loading: true);
+      EasyLoading.show(status: 'Uploading images and securing appointment...');
 
-      final request = buildAppointmentRequest();
+      final request = await buildAppointmentRequest();
       if (request == null) {
         throw Exception(
           'Incomplete appointment details. Please check selection.',
@@ -458,6 +468,8 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
         request: request,
       );
       state = state.copyWith(loading: false, appointment: data);
+      debugPrint("Appointment created successfully: ${data.appointmentId}");
+      EasyLoading.dismiss();
     });
   }
 
@@ -579,7 +591,6 @@ class CheckoutState extends BaseStateModel {
   final List<TreatmentCategoryModel>? selectedCategories;
   final TreatmentData? selectedTreatments;
   final TreatmentAreaModel? selectedAreas;
-  final XFile? capturedImage;
   final AppointmentData? appointment;
 
   final Clinic? selectedClinic;
@@ -595,7 +606,6 @@ class CheckoutState extends BaseStateModel {
   const CheckoutState({
     super.loading = false,
     super.errorMessage,
-    this.capturedImage,
     this.selectedTreatmentsAndAreas = const [],
     this.checkoutTreatmentsList = const [],
     this.selectedCategories = const [],
@@ -637,7 +647,6 @@ class CheckoutState extends BaseStateModel {
     return CheckoutState(
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
-      capturedImage: capturedImage ?? this.capturedImage,
       selectedTreatmentsAndAreas:
           selectedTreatmentsAndAreas ?? this.selectedTreatmentsAndAreas,
       checkoutTreatmentsList:
@@ -664,7 +673,6 @@ class CheckoutState extends BaseStateModel {
     return CheckoutState(
       loading: loading,
       errorMessage: errorMessage,
-      capturedImage: capturedImage,
       selectedTreatmentsAndAreas: selectedTreatmentsAndAreas,
       checkoutTreatmentsList: checkoutTreatmentsList,
       selectedCategories: selectedCategories,
@@ -702,7 +710,6 @@ class CheckoutState extends BaseStateModel {
     return CheckoutState(
       loading: loading,
       errorMessage: errorMessage ? null : this.errorMessage,
-      capturedImage: capturedImage ? null : this.capturedImage,
       selectedTreatmentsAndAreas: selectedTreatmentsAndAreas,
       checkoutTreatmentsList: checkoutTreatmentsList,
       selectedCategories: selectedCategories ? null : this.selectedCategories,

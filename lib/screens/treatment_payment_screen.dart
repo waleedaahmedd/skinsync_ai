@@ -64,7 +64,7 @@ class _TreatmentPaymentScreenState
           borderRadius: context.r(25),
           backgroundColor: Colors.black,
           textColor: Colors.white,
-          onPressed: () {
+          onPressed: () async {
             if (selectedMode == null) {
               EasyLoading.showError('Select a payment option!');
               return;
@@ -75,7 +75,7 @@ class _TreatmentPaymentScreenState
             checkoutNotifier.setSelectedPaymentOption(selectedMode!);
             // checkoutNotifier.setSelectedDoctorObject(widget.doctor);
 
-            final request = checkoutNotifier.buildAppointmentRequest();
+            final request = await checkoutNotifier.buildAppointmentRequest();
             if (request != null) {
               debugPrint(
                 const JsonEncoder.withIndent('  ').convert(request.toJson()),

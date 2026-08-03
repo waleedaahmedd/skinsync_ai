@@ -13,7 +13,7 @@ import '../services/appointment_service.dart';
 import '../services/encryption_service.dart';
 import 'base_view_model.dart';
 
-final appointmentProvider = NotifierProvider(
+final appointmentProvider = NotifierProvider<AppointmentViewModel, AppointmentState>(
   () => AppointmentViewModel(
     repo: AppointmentService(apiClient: ApiBaseHelper()),
   ),
@@ -51,6 +51,10 @@ class AppointmentViewModel extends BaseViewModel<AppointmentState> {
       final response = await repo.getAppointmentsApi(page: page, limit: limit);
       state = state.copyWith(loading: false, appointmentsResponse: response);
     });
+  }
+
+  void clearAppointmentDetail() {
+    state = state.copyWith(appointmentDetail: null, loading: true);
   }
 
   Future<void> getAppointmentDetail(int appointmentId) async {

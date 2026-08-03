@@ -20,6 +20,7 @@ import '../services/treatment_services.dart';
 import '../utills/image_utills.dart';
 import '../utills/list_utils.dart';
 import '../utills/simulation_generator.dart';
+import '../utills/simulation_utils.dart';
 import 'auth_view_model.dart';
 import 'base_view_model.dart';
 import 'checkout_view_model.dart';
@@ -387,50 +388,19 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
           throw Exception('No AI image captured for left Pose!');
         }
       }
-      final mediaService = MediaService();
+
       final userId = ref.read(authViewModel).authData!.user!.id!;
 
-
-      Future<String?> uploadImageToFirebase({
-        required XFile? file,
-        required String path,
-      }) async {
-        if (file == null) {
-          return null;
-        }
-        final url = await mediaService.uploadImage(path, file);
-        if (url == null) {
-          EasyLoading.showError('Failed to upload image');
-          return null;
-        }
-        return url;
-      }
-
-      final frontImageBefore = await uploadImageToFirebase(
-        file: state.frontPoseImage,
-        path: '$userId/appointments/front/before/',
-      );
-      final frontImageAfter = await uploadImageToFirebase(
-        file: state.frontAiImage,
-        path: '$userId/appointments/front/after/',
-      );
-
-      final rightImageBefore = await uploadImageToFirebase(
-        file: state.rightPoseImage,
-        path: '$userId/appointments/before/right/',
-      );
-      final rightImageAfter = await uploadImageToFirebase(
-        file: state.rightAiImage,
-        path: '$userId/appointments/after/right/',
-      );
-
-      final leftImageBefore = await uploadImageToFirebase(
-        file: state.leftPoseImage,
-        path: '$userId/appointments/before/left/',
-      );
-      final leftImageAfter = await uploadImageToFirebase(
-        file: state.leftAiImage,
-        path: '$userId/appointments/after/left/',
+      final uploadResults = await uploadSimulationImages(
+        userId: userId,
+        images: SimulationImages(
+          frontBefore: state.frontPoseImage,
+          frontAfter: state.frontAiImage,
+          rightBefore: state.rightPoseImage,
+          rightAfter: state.rightAiImage,
+          leftBefore: state.leftPoseImage,
+          leftAfter: state.leftAiImage,
+        ),
       );
 
       final historyTreatments = selectedTreatmentsAndAreas.map((item) {
@@ -459,12 +429,12 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       }).toList();
 
       final request = SaveHistoryRequest(
-        frontImageBefore: frontImageBefore,
-        frontImageAfter: frontImageAfter,
-        rightImageBefore: rightImageBefore,
-        rightImageAfter: rightImageAfter,
-        leftImageBefore: leftImageBefore,
-        leftImageAfter: leftImageAfter,
+        frontImageBefore: uploadResults.frontBefore,
+        frontImageAfter: uploadResults.frontAfter,
+        rightImageBefore: uploadResults.rightBefore,
+        rightImageAfter: uploadResults.rightAfter,
+        leftImageBefore: uploadResults.leftBefore,
+        leftImageAfter: uploadResults.leftAfter,
         treatments: historyTreatments,
       );
       await _repo.saveAiHistory(request);

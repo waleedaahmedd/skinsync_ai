@@ -29,7 +29,7 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    Future.microtask(() {
       if (widget.appointment.appointmentId != null) {
         ref.read(appointmentProvider.notifier).getAppointmentDetail(widget.appointment.appointmentId!);
       }
@@ -116,7 +116,9 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
   Widget build(BuildContext context) {
     final appointmentState = ref.watch(appointmentProvider);
     final detail = appointmentState.appointmentDetail;
-    final isLoading = appointmentState.loading && detail == null;
+
+    final isStale = detail == null || detail.id != widget.appointment.appointmentId;
+    final isLoading = (appointmentState.loading || isStale) && appointmentState.errorMessage == null;
 
     final type = detail?.appointmentType?.title ?? widget.appointment.appointmentType ?? "consultation";
     final dateVal = detail?.date ?? widget.appointment.date;
@@ -491,9 +493,19 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                   width: double.infinity,
                   fit: BoxFit.cover,
                   placeholder: (_, __) => const Center(child: CupertinoActivityIndicator()),
-                  errorWidget: (_, __, ___) => Container(color: Colors.grey.shade100, child: const Icon(Icons.image_not_supported_outlined)),
+                  errorWidget: (_, __, ___) => Container(
+                    height: context.h(100),
+                    width: double.infinity,
+                    color: Colors.grey.shade100,
+                    child: const Icon(Icons.image_not_supported_outlined),
+                  ),
                 )
-              : Container(height: context.h(100), color: Colors.grey.shade100, child: const Icon(Icons.image_not_supported_outlined, color: Colors.grey)),
+              : Container(
+                  height: context.h(100),
+                  width: double.infinity,
+                  color: Colors.grey.shade100,
+                  child: const Icon(Icons.image_not_supported_outlined, color: Colors.grey),
+                ),
         ),
         SizedBox(height: context.h(4)),
         Text(label, style: CustomFonts.grey700_10w400),
