@@ -232,7 +232,7 @@ class AuthService implements AuthRepository {
 
   @override
   Future<AuthResponse> googleSignInApi({
-    required SignInWithGoogleRequest request,
+    required SocialLoginRequest request,
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.socialLogin,
@@ -272,7 +272,7 @@ class AuthService implements AuthRepository {
 
   @override
   Future<AuthResponse> appleSignInApi({
-    required SignInWithAppleRequest request,
+    required SocialLoginRequest request,
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.socialLogin,

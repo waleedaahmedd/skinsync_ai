@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -312,18 +314,20 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   }
 
   Future<bool?> callGoogleSignInApi() async {
+      String type = Platform.isIOS ? 'ios' : 'android';
     return await runSafely<bool>(() async {
       state = state.copyWith(loading: true);
       final savedEmail = await SecureStorage().getUserEmail();
       final user = await GoogleAuthService().signIn();
+        final idToken = await user.getIdToken();
+      String? fcmToken = await FirebaseMessaging.instance.getToken();
+
+      log("google sign IDToken ${idToken.toString}");
       final AuthResponse response = await _authRepository.googleSignInApi(
-        request: SignInWithGoogleRequest(
-          email: user.email!,
-          googleUid: user.uid,
-          provider: LoginProviders.google,
-          deviceInfo: '',
-          ipAddress: '',
-          userName: user.displayName ?? '',
+        request: SocialLoginRequest(
+          deviceType: type,
+          idToken: idToken.toString(),
+          fcmToken: fcmToken ?? '',
         ),
       );
       if (response.isSuccess ?? false) {
@@ -339,18 +343,18 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   }
 
   Future<bool?> callAppleSignInApi() async {
+    String type = Platform.isIOS ? 'ios' : 'android';
     return await runSafely<bool>(() async {
       state = state.copyWith(loading: true);
       final savedEmail = await SecureStorage().getUserEmail();
       final user = await AppleAuthService().signIn();
+       final idToken = await user.getIdToken();
+      String? fcmToken = await FirebaseMessaging.instance.getToken();
       final response = await _authRepository.appleSignInApi(
-        request: SignInWithAppleRequest(
-          email: user.email ?? '',
-          appleUid: user.uid,
-          provider: LoginProviders.apple,
-          deviceInfo: '',
-          ipAddress: '',
-          userName: user.displayName ?? '',
+       request: SocialLoginRequest(
+          deviceType: type,
+          idToken: idToken.toString(),
+          fcmToken: fcmToken ?? '',
         ),
       );
       if (response.isSuccess ?? false) {

@@ -19,10 +19,10 @@ abstract class AuthRepository {
   Future<AuthData> getMe();
 
   Future<AuthResponse> googleSignInApi({
-    required SignInWithGoogleRequest request,
+    required SocialLoginRequest request,
   });
 
   Future<AuthResponse> appleSignInApi({
-    required SignInWithAppleRequest request,
+    required SocialLoginRequest request,
   });
 }

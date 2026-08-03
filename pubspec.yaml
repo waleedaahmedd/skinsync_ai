@@ -82,6 +82,7 @@ dependencies:
   qr_flutter: ^4.1.0
   cryptography: ^2.9.0
   cryptography_flutter: ^2.3.4
+  firebase_messaging: ^16.4.3
 
 dependency_overrides:
   jni: 1.0.0
