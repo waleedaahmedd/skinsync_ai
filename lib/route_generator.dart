@@ -51,6 +51,8 @@ import 'screens/treatments_screen.dart';
 import 'screens/your_profile_screen.dart';
 import 'utills/enums.dart';
 
+import 'widgets/custom_app_bar.dart';
+
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final args = settings.arguments;
@@ -318,9 +320,9 @@ class RouteGenerator {
   static Route<dynamic> _errorRoute() {
     return MaterialPageRoute(
       builder: (_) {
-        return Scaffold(
-          appBar: AppBar(title: const Text('Error')),
-          body: const Center(child: Text('ERROR')),
+        return const Scaffold(
+          appBar:  CustomAppBar(title: 'Error'),
+          body:  Center(child: Text('ERROR')),
         );
       },
     );
