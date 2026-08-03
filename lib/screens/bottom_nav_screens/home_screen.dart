@@ -67,7 +67,6 @@ class HomeScreen extends ConsumerWidget {
               ),
               SizedBox(height: context.h(16)),
 
-              // Upcoming Appointments Empty State Check
               appointments.isEmpty
                   ? _buildHorizontalEmptyState(
                       context: context,
@@ -78,7 +77,7 @@ class HomeScreen extends ConsumerWidget {
                           "Your scheduled clinical treatments and session details will appear here.",
                     )
                   : SizedBox(
-                      height: context.h(290),
+                      height: context.h(310),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(horizontal: context.w(24)),

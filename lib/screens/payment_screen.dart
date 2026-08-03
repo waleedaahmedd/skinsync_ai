@@ -32,9 +32,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   Future<void> _bookAppointment() async {
     final checkoutState = ref.read(checkoutViewModel);
     final clinicName =
-        checkoutState.selectedClinic?.name ?? "Aesthetic Wellness Clinic";
+        checkoutState.selectedClinic?.name ?? "N/A";
     final doctorName =
-        checkoutState.selectedDoctorObject?.doctorName ?? checkoutState.selectedDoctor?.doctorName ?? "Specialist Doctor";
+        checkoutState.selectedDoctorObject?.doctorName ?? checkoutState.selectedDoctor?.doctorName ?? "N/A";
     final dateStr = checkoutState.selectedDate != null
         ? checkoutState.selectedDate!.formattedDayDate
         : "Not Selected";

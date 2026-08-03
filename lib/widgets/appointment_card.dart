@@ -41,7 +41,7 @@ class AppointmentCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.only(bottom:context.h(22)),
+        margin: EdgeInsets.only(bottom: isTreatmentListHorizontal ? context.h(12) : context.h(22)),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(context.r(24)),
@@ -55,6 +55,7 @@ class AppointmentCard extends StatelessWidget {
           ],
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             // 1. Top Section: Date, Slot & Status (Gradient background)
             Container(
@@ -160,6 +161,7 @@ class AppointmentCard extends StatelessWidget {
             Padding(
               padding: EdgeInsets.all(context.w(18)),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Doctor & Clinic Row

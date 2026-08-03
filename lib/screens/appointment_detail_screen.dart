@@ -55,10 +55,10 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
             children: [
               Text("Check-in QR Code", style: CustomFonts.black18w600),
               SizedBox(height: context.h(4)),
-              Text(
-                "Appointment ID: #$appointmentId",
-                style: CustomFonts.grey700_12w400,
-              ),
+              // Text(
+              //   "Appointment ID: #$appointmentId",
+              //   style: CustomFonts.grey700_12w400,
+              // ),
               SizedBox(height: context.h(24)),
               Container(
                 padding: EdgeInsets.all(context.w(16)),
