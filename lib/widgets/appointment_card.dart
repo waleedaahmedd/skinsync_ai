@@ -423,7 +423,7 @@ class AppointmentCard extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            "${t.material!.selectedQuantity} ${t.material!.name ?? 'Syringes'}",
+                            "${t.material!.selectedQuantity} ${t.material!.name}",
                             style: CustomFonts.darkPurple10w700.copyWith(
                               fontSize: context.sp(10),
                             ),

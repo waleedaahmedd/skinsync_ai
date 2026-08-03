@@ -103,7 +103,8 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                 Consumer(
                   builder: (context, ref, _) {
                     final checkoutState = ref.watch(checkoutViewModel);
-                    final checkoutTreatmentsList = checkoutState.checkoutTreatmentsList;
+                    final checkoutTreatmentsList =
+                        checkoutState.checkoutTreatmentsList;
 
                     if (checkoutTreatmentsList.isEmpty) {
                       return const SizedBox.shrink();
@@ -241,7 +242,8 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
           final materialInfo = selection.material != null
               ? " (${selection.material!.selectedQuantity} ${selection.material!.name})"
               : "";
-          final chipText = "${selection.treatmentName} - ${selection.areaName}$materialInfo";
+          final chipText =
+              "${selection.treatmentName} - ${selection.areaName}$materialInfo";
 
           return Container(
             margin: EdgeInsets.only(right: context.w(8)),
@@ -299,15 +301,13 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                         // Clickable Cancel Cross Button
                         GestureDetector(
                           onTap: () {
-
-
                             // 2. Sync checkoutViewModel — remove just this flat entry
                             ref
                                 .read(checkoutViewModel.notifier)
                                 .removeFlatSelection(
-                              treatmentId: selection.treatmentId,
-                              areaId: selection.areaId,
-                            );
+                                  treatmentId: selection.treatmentId,
+                                  areaId: selection.areaId,
+                                );
                             // final subAreaId = subArea.id!;
                             // // 1. Remove from treatmentViewModel
                             // ref
@@ -365,6 +365,12 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
       ViewType.grid => Padding(
         padding: EdgeInsets.symmetric(horizontal: context.w(24)),
         child: MasonryGridView.count(
+          padding: EdgeInsets.only(
+            left: context.w(24),
+            right: context.w(24),
+            top: context.h(8),
+            bottom: context.h(MediaQuery.paddingOf(context).bottom + 100),
+          ),
           crossAxisCount: 2,
           itemCount: clinics.length,
           crossAxisSpacing: context.w(14),
@@ -475,7 +481,12 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
       controller: _pagingController,
       builder: (_, state, fetchNextPage) {
         return PagedGridView<int, Clinic>(
-          padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+          padding: EdgeInsets.only(
+            left: context.w(24),
+            right: context.w(24),
+            top: context.h(8),
+            bottom: context.h(MediaQuery.paddingOf(context).bottom + 100),
+          ),
           state: state,
           fetchNextPage: fetchNextPage,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

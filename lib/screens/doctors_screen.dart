@@ -171,7 +171,9 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                             padding: EdgeInsets.all(context.w(12)),
                             decoration: BoxDecoration(
                               color: Colors.red.shade50,
-                              borderRadius: BorderRadius.circular(context.r(12)),
+                              borderRadius: BorderRadius.circular(
+                                context.r(12),
+                              ),
                               border: Border.all(color: Colors.red.shade100),
                             ),
                             child: Icon(
@@ -207,7 +209,9 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                                   : CustomColors.lightPurpleColor.withValues(
                                       alpha: 0.3,
                                     ),
-                              borderRadius: BorderRadius.circular(context.r(20)),
+                              borderRadius: BorderRadius.circular(
+                                context.r(20),
+                              ),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -335,7 +339,9 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
                       return Column(
                         children: [
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: context.w(24),
+                            ),
                             child: TabBar(
                               controller: _tabController,
                               indicatorColor: CustomColors.pinkColor,
@@ -406,7 +412,12 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
 
     return MasonryGridView.builder(
       itemCount: doctors.length,
-      padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(8)),
+      padding: EdgeInsets.only(
+        left: context.w(24),
+        right: context.w(24),
+        top: context.h(8),
+        bottom: context.h(MediaQuery.paddingOf(context).bottom + 24),
+      ),
       physics: const BouncingScrollPhysics(),
       crossAxisSpacing: context.w(14),
       mainAxisSpacing: context.h(14),
