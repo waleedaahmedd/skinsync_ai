@@ -306,18 +306,28 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       final timestamp = DateTime.now().millisecondsSinceEpoch;
 
       if (results.images.containsKey('front')) {
-        imageFront = await bytesToXFile(results.images['front']!, 'ai_front_$timestamp.jpg');
+        imageFront = await bytesToXFile(
+          results.images['front']!,
+          'ai_front_$timestamp.jpg',
+        );
       }
       if (results.images.containsKey('right')) {
-        imageRight = await bytesToXFile(results.images['right']!, 'ai_right_$timestamp.jpg');
+        imageRight = await bytesToXFile(
+          results.images['right']!,
+          'ai_right_$timestamp.jpg',
+        );
       }
       if (results.images.containsKey('left')) {
-        imageLeft = await bytesToXFile(results.images['left']!, 'ai_left_$timestamp.jpg');
+        imageLeft = await bytesToXFile(
+          results.images['left']!,
+          'ai_left_$timestamp.jpg',
+        );
       }
 
       if (imageFront == null && imageRight == null && imageLeft == null) {
         String errorMsg = results.errors.join('\n');
-        if (errorMsg.isEmpty) errorMsg = 'AI failed to generate valid images. Please try again.';
+        if (errorMsg.isEmpty)
+          errorMsg = 'AI failed to generate valid images. Please try again.';
         log('SIMULATION FAILED: $errorMsg');
         throw Exception(errorMsg);
       }
@@ -333,7 +343,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         leftAiImage: imageLeft,
       );
       EasyLoading.dismiss();
-      
+
       String successMsg = 'Simulations generated successfully!';
       if (results.errors.isNotEmpty) {
         successMsg += '\nNote: Some poses failed to generate.';
@@ -379,6 +389,8 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       }
       final mediaService = MediaService();
       final userId = ref.read(authViewModel).authData!.user!.id!;
+
+
       Future<String?> uploadImageToFirebase({
         required XFile? file,
         required String path,

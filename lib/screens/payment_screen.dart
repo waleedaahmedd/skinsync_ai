@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
-import '../models/responses/payment_options_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/date_time_utills.dart';
@@ -30,61 +29,29 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   final double _consultationFee = 150.00;
 
   Future<void> _bookAppointment() async {
-    final checkoutState = ref.read(checkoutViewModel);
-    final clinicName =
-        checkoutState.selectedClinic?.name ?? "N/A";
-    final doctorName =
-        checkoutState.selectedDoctorObject?.doctorName ?? checkoutState.selectedDoctor?.doctorName ?? "N/A";
-    final dateStr = checkoutState.selectedDate != null
-        ? checkoutState.selectedDate!.formattedDayDate
-        : "Not Selected";
-    final slotStr = checkoutState.selectedSlot ?? "Not Selected";
-
-    double paidAmount = 0.0;
-    String paymentMethodName = "";
-
-    if (_selectedPaymentType == 'deposit') {
-      paidAmount = _consultationFee * 0.10;
-      paymentMethodName = "10% Security Deposit";
-    } else if (_selectedPaymentType == 'full') {
-      paidAmount = _consultationFee;
-      paymentMethodName = "Full Payment Pre-paid";
-    } else {
-      paidAmount = _consultationFee;
-      paymentMethodName = "Paid via Skinsync Wallet";
-    }
-
     final checkoutNotifier = ref.read(checkoutViewModel.notifier);
 
-    // Set payment option in ViewModel
-    final dummyOption = PaymentOption(
-      id: _selectedPaymentType == 'deposit'
-          ? 1
-          : (_selectedPaymentType == 'full' ? 2 : 3),
-      title: _selectedPaymentType,
-      amount: paidAmount.toInt(),
-      description: paymentMethodName,
+    final bool isSuccess = await checkoutNotifier.bookAppointment(
+      selectedPaymentType: _selectedPaymentType,
+      consultationFee: _consultationFee,
     );
-    checkoutNotifier.setSelectedPaymentOption(dummyOption);
-
-    bool isSuccess = false;
-
-    if (checkoutState.isInviteClinic) {
-      final clinic = ref.read(checkoutViewModel).selectedClinic;
-      final success = await checkoutNotifier.inviteClinic(
-        clinic: clinic!,
-        consultationFees: _consultationFee,
-        initialDeposit: paidAmount,
-        availability: [],
-      );
-      isSuccess = success ?? false;
-    } else {
-      // Regular booking via unified API
-      await checkoutNotifier.createAppointment();
-      isSuccess = ref.read(checkoutViewModel).appointment != null;
-    }
 
     if (isSuccess) {
+      final checkoutState = ref.read(checkoutViewModel);
+      final clinicName = checkoutState.selectedClinic?.name ?? "N/A";
+      final doctorName = checkoutState.selectedDoctorObject?.doctorName ??
+          checkoutState.selectedDoctor?.doctorName ??
+          "N/A";
+      final dateStr = checkoutState.selectedDate != null
+          ? checkoutState.selectedDate!.formattedDayDate
+          : "Not Selected";
+      final slotStr = checkoutState.selectedSlot ?? "Not Selected";
+
+      final paidAmount =
+          (checkoutState.selectedPaymentOption?.amount ?? 0).toDouble();
+      final paymentMethodName =
+          checkoutState.selectedPaymentOption?.description ?? "";
+
       if (!mounted) return;
       showDialog(
         context: context,
@@ -98,7 +65,10 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(30)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(24),
+                  vertical: context.h(30),
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [

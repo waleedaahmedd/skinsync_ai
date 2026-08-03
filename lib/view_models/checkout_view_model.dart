@@ -461,6 +461,53 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     });
   }
 
+  Future<bool> bookAppointment({
+    required String selectedPaymentType,
+    required double consultationFee,
+  }) async {
+    double paidAmount = 0.0;
+    String paymentMethodName = "";
+
+    if (selectedPaymentType == 'deposit') {
+      paidAmount = consultationFee * 0.10;
+      paymentMethodName = "10% Security Deposit";
+    } else if (selectedPaymentType == 'full') {
+      paidAmount = consultationFee;
+      paymentMethodName = "Full Payment Pre-paid";
+    } else {
+      paidAmount = consultationFee;
+      paymentMethodName = "Paid via Skinsync Wallet";
+    }
+
+    // Set payment option in ViewModel
+    final dummyOption = PaymentOption(
+      id: selectedPaymentType == 'deposit'
+          ? 1
+          : (selectedPaymentType == 'full' ? 2 : 3),
+      title: selectedPaymentType,
+      amount: paidAmount.toInt(),
+      description: paymentMethodName,
+    );
+    setSelectedPaymentOption(dummyOption);
+
+    bool isSuccess = false;
+
+    if (state.isInviteClinic) {
+      final success = await inviteClinic(
+        clinic: state.selectedClinic!,
+        consultationFees: consultationFee,
+        initialDeposit: paidAmount,
+        availability: [],
+      );
+      isSuccess = success ?? false;
+    } else {
+      // Regular booking via unified API
+      await createAppointment();
+      isSuccess = state.appointment != null;
+    }
+    return isSuccess;
+  }
+
   Future<bool?> inviteClinic({
     required Clinic clinic,
     required num consultationFees,
