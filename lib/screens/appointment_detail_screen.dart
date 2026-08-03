@@ -1,14 +1,13 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../models/responses/appointments_list_response.dart';
 import '../models/responses/appointment_detail_response.dart';
-import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/date_time_utills.dart';
@@ -45,16 +44,16 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
     showDialog(
       context: context,
       builder: (context) => Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(context.r(32))),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(context.r(32)),
+        ),
         child: Padding(
           padding: EdgeInsets.all(context.w(24)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: .center,
             children: [
-              Text(
-                "Check-in QR Code",
-                style: CustomFonts.black18w600,
-              ),
+              Text("Check-in QR Code", style: CustomFonts.black18w600),
               SizedBox(height: context.h(4)),
               Text(
                 "Appointment ID: #$appointmentId",
@@ -75,20 +74,22 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                   ],
                 ),
                 child: SizedBox(
-                  width: context.w(180),
-                  height: context.w(180),
-                  child: Center(
-                    child: QrImageView(
-                      data: encryptedData,
-                      version: QrVersions.auto,
-                      size: context.w(180),
-                      gapless: false,
-                      embeddedImage: const AssetImage(PngAssets.splashLogo),
-                      embeddedImageStyle: QrEmbeddedImageStyle(
-                        size: Size(context.w(40), context.w(40)),
-                      ),
-                    ),
-                  ),
+                  width: context.w(220),
+                  height: context.w(220),
+                  child: QrImageView(data: encryptedData, size: context.w(220)),
+                  // child: PrettyQrView.data(
+                  //   data: encryptedData,
+                  //   decoration: const PrettyQrDecoration(
+                  //     shape: PrettyQrSmoothSymbol(
+                  //       color: CustomColors.darkPurple,
+                  //       roundFactor: 1,
+                  //     ),
+                  //     image: PrettyQrDecorationImage(
+                  //       image: AssetImage(PngAssets.splashLogo),
+                  //       scale: 0.25,
+                  //     ),
+                  //   ),
+                  // ),
                 ),
               ),
               SizedBox(height: context.h(24)),
@@ -98,21 +99,10 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                 style: CustomFonts.textGrey13w400.copyWith(height: 1.4),
               ),
               SizedBox(height: context.h(24)),
-              GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: context.h(14)),
-                  decoration: BoxDecoration(
-                    gradient: CustomColors.purpleBlueGradient,
-                    borderRadius: BorderRadius.circular(context.r(16)),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "Dismiss",
-                      style: CustomFonts.white14w700,
-                    ),
-                  ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                child: Center(
+                  child: Text("Dismiss", style: CustomFonts.white14w700),
                 ),
               ),
             ],
