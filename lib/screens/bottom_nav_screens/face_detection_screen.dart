@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:volume_controller/volume_controller.dart';
 
 import '../../utills/assets.dart';
 import '../../utills/color_constant.dart';
@@ -34,6 +36,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
   // Store ref for use in callbacks
   WidgetRef? _storedRef;
+  late double initialVolume;
 
   @override
   void initState() {
@@ -46,6 +49,23 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
         MedicalDisclaimerBottomSheet.show(context);
       }
     });
+    _listenToVolume();
+  }
+
+  Future<void> _listenToVolume() async {
+    initialVolume = await VolumeController.instance.getVolume();
+    VolumeController.instance.showSystemUI = false;
+    VolumeController.instance.addListener((newVolume) async {
+      log('VOLUME: $newVolume $initialVolume');
+      if (newVolume < initialVolume) {
+        if (!_isCapturing) {
+          await _captureAndNavigate(ref);
+        }
+        initialVolume = newVolume;
+      } else {
+        initialVolume = newVolume;
+      }
+    }, fetchInitialVolume: false);
   }
 
   Future<void> _initCamera(WidgetRef ref) async {
@@ -178,7 +198,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
               SizedBox(height: context.h(30)),
               // Buttons
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.w(20), vertical: context.h(20)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(20),
+                  vertical: context.h(20),
+                ),
                 child: Row(
                   children: [
                     // Recapture button
@@ -192,7 +215,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                           });
                         },
                         style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: context.h(16)),
+                          padding: EdgeInsets.symmetric(
+                            vertical: context.h(16),
+                          ),
                           side: const BorderSide(
                             color: CustomColors.purpleColor,
                             width: 2,
@@ -228,7 +253,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: context.h(16)),
+                          padding: EdgeInsets.symmetric(
+                            vertical: context.h(16),
+                          ),
                           backgroundColor: Colors.black,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(context.r(12)),
@@ -249,6 +276,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
   @override
   void dispose() {
+    VolumeController.instance.removeListener();
     _cameraController?.dispose();
     super.dispose();
   }
@@ -327,7 +355,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
             alignment: Alignment.bottomCenter,
             child: SafeArea(
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: context.w(30), vertical: context.h(5)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(30),
+                  vertical: context.h(5),
+                ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -425,7 +456,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                                   },
                             borderRadius: BorderRadius.circular(context.r(12)),
                             child: Container(
-                              padding: EdgeInsets.symmetric(vertical: context.h(18)),
+                              padding: EdgeInsets.symmetric(
+                                vertical: context.h(18),
+                              ),
                               alignment: Alignment.center,
                               child: _isCapturing
                                   ? SizedBox(
