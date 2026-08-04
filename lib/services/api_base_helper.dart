@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 
 import '../app_init.dart';
 import '../exceptions/app_exception.dart';
+import '../main.dart';
 import '../models/responses/refresh_token_response.dart';
 import '../screens/get_started_screen.dart';
 import '../utills/enums.dart';
@@ -27,7 +28,7 @@ class ApiBaseHelper {
     authToken = await _secureStorage.getToken();
 
     try {
-      final baseUrl = BaseUrls.api.url;
+      final baseUrl = isDeploymentMode ? BaseUrls.api.url : BaseUrls.apiQa.url;
       final url = '$baseUrl${endPoint.path}${params ?? ''}';
       log('URL: $url');
       log('BODY: $requestBody');
@@ -144,7 +145,7 @@ class ApiBaseHelper {
     log('EXPIRY: $expiry');
     log('REFRESH EXPIRY: $refreshExpiry');
     log('ACCESS TOKEN: $token');
-    final uri = Uri.parse('${BaseUrls.api.url}${EndPoints.refreshToken.path}');
+    final uri = Uri.parse('${BaseUrls.apiQa.url}${EndPoints.refreshToken.path}');
     log('URL: $uri');
     final request = {'refresh_token': refreshToken};
     log('REQUEST: $request');
