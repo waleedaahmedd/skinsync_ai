@@ -54,16 +54,27 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
   Future<void> _listenToVolume() async {
     initialVolume = await VolumeController.instance.getVolume();
+
+    // If volume is already at max, set it slightly lower so we can detect an "up" press
+    if (initialVolume >= 1.0) {
+      initialVolume = 0.9;
+      VolumeController.instance.setVolume(0.9);
+    }
+
     VolumeController.instance.showSystemUI = false;
     VolumeController.instance.addListener((newVolume) async {
       log('VOLUME: $newVolume $initialVolume');
-      if (newVolume < initialVolume) {
+      if (newVolume >= initialVolume) {
         if (!_isCapturing) {
           await _captureAndNavigate(ref);
         }
-        initialVolume = newVolume;
-      } else {
-        initialVolume = newVolume;
+      }
+      initialVolume = newVolume;
+
+      // If we've reached max volume, reset it slightly so we can detect the next 'Up' press
+      if (newVolume >= 1.0) {
+        VolumeController.instance.setVolume(0.9);
+        initialVolume = 0.9;
       }
     }, fetchInitialVolume: false);
   }
