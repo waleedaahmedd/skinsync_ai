@@ -314,13 +314,13 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   }
 
   Future<bool?> callGoogleSignInApi() async {
-      String type = Platform.isIOS ? 'ios' : 'android';
+      String type = Platform.isIOS ? 'apple' : 'android';
     return await runSafely<bool>(() async {
       state = state.copyWith(loading: true);
       final savedEmail = await SecureStorage().getUserEmail();
       final user = await GoogleAuthService().signIn();
         final idToken = await user.getIdToken();
-      String? fcmToken = await FirebaseMessaging.instance.getToken();
+      String? fcmToken = await _getFcmToken();
 
       log("google sign IDToken ${idToken.toString}");
       final AuthResponse response = await _authRepository.googleSignInApi(
@@ -343,13 +343,13 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   }
 
   Future<bool?> callAppleSignInApi() async {
-    String type = Platform.isIOS ? 'ios' : 'android';
+    String type = Platform.isIOS ? 'apple' : 'android';
     return await runSafely<bool>(() async {
       state = state.copyWith(loading: true);
       final savedEmail = await SecureStorage().getUserEmail();
       final user = await AppleAuthService().signIn();
        final idToken = await user.getIdToken();
-      String? fcmToken = await FirebaseMessaging.instance.getToken();
+      String? fcmToken = await _getFcmToken();
       final response = await _authRepository.appleSignInApi(
        request: SocialLoginRequest(
           deviceType: type,
@@ -373,6 +373,22 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     emailController.clear();
     otpController.clear();
     clearProfileImage();
+  }
+
+  Future<String?> _getFcmToken() async {
+    try {
+      if (Platform.isIOS) {
+        final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+        if (apnsToken == null) {
+          log("APNS token not available yet, FCM token will be fetched later.");
+          return null;
+        }
+      }
+      return await FirebaseMessaging.instance.getToken();
+    } catch (e) {
+      log("Error getting FCM token: $e");
+      return null;
+    }
   }
 
   @override

@@ -213,7 +213,7 @@ class AuthService implements AuthRepository {
 
   @override
   Future<AuthData> getMe() async {
-    String type = Platform.isIOS ? 'ios' : 'android';
+    String type = Platform.isIOS ? 'apple' : 'android';
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.getMe,
       requestType: 'GET',
