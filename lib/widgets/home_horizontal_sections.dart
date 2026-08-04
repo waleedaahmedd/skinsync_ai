@@ -318,73 +318,9 @@ class DashboardDoctorHomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return DoctorCard(
+      doctor: doctor.toPractitionerDoctor(),
       width: context.w(160),
-      margin: EdgeInsets.only(right: context.w(16), bottom: context.h(8), top: context.h(4)),
-      padding: EdgeInsets.all(context.w(12)),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(context.r(16)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(
-          color: CustomColors.greyColor.withValues(alpha: 0.6),
-        ),
-      ),
-      child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(context.r(12)),
-            child: CachedNetworkImage(
-              imageUrl: doctor.doctorImage ?? "",
-              height: context.h(100),
-              width: double.infinity,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
-                color: Colors.grey.shade100,
-                child: const Center(child: CupertinoActivityIndicator()),
-              ),
-              errorWidget: (context, url, error) => Container(
-                color: Colors.grey.shade100,
-                child: const Icon(Icons.person, color: Colors.grey),
-              ),
-            ),
-          ),
-          SizedBox(height: context.h(8)),
-          Text(
-            doctor.doctorName ?? "Unknown Doctor",
-            style: CustomFonts.black14w600,
-            maxLines: 1,
-            textAlign: TextAlign.center,
-            overflow: TextOverflow.ellipsis,
-          ),
-          SizedBox(height: context.h(2)),
-          Text(
-            doctor.specialization ?? "Specialist",
-            style: CustomFonts.grey700_10w400,
-            maxLines: 1,
-            textAlign: TextAlign.center,
-            overflow: TextOverflow.ellipsis,
-          ),
-          SizedBox(height: context.h(4)),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.star_rounded, color: Colors.amber, size: 14),
-              SizedBox(width: context.w(2)),
-              Text(
-                (doctor.doctorRating ?? 0.0).toStringAsFixed(1),
-                style: CustomFonts.black12w600,
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 }

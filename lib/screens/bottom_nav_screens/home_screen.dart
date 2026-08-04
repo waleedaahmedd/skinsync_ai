@@ -200,7 +200,7 @@ class HomeScreen extends ConsumerWidget {
                           "Specialist dermatologists and clinical practitioners will be listed here soon.",
                     )
                   : SizedBox(
-                      height: context.h(200),
+                      height: context.h(220),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(horizontal: context.w(24)),
@@ -240,7 +240,7 @@ class HomeScreen extends ConsumerWidget {
                           "Top-rated aesthetic clinics and wellness spas will be listed here soon.",
                     )
                   : SizedBox(
-                      height: context.h(180),
+                      height: context.h(200),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(horizontal: context.w(24)),

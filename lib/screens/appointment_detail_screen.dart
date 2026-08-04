@@ -237,7 +237,7 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                   height: context.w(40),
                   width: context.w(40),
                   fit: BoxFit.cover,
-                  errorWidget: (_, __, ___) => const Icon(Icons.business_rounded),
+                  errorWidget: (_, _, _) => const Icon(Icons.business_rounded),
                 ),
               ),
             if (clinic.logo != null && clinic.logo!.isNotEmpty) SizedBox(width: context.w(12)),
@@ -273,7 +273,7 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                   height: context.w(40),
                   width: context.w(40),
                   fit: BoxFit.cover,
-                  errorWidget: (_, __, ___) => const Icon(Icons.person_rounded),
+                  errorWidget: (_, _, _) => const Icon(Icons.person_rounded),
                 ),
               ),
             if (doctor.image != null && doctor.image!.isNotEmpty) SizedBox(width: context.w(12)),
@@ -493,7 +493,7 @@ class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScree
                   width: double.infinity,
                   fit: BoxFit.cover,
                   placeholder: (_, __) => const Center(child: CupertinoActivityIndicator()),
-                  errorWidget: (_, __, ___) => Container(
+                  errorWidget: (_, _, _) => Container(
                     height: context.h(100),
                     width: double.infinity,
                     color: Colors.grey.shade100,

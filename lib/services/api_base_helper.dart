@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 
 import '../app_init.dart';
 import '../exceptions/app_exception.dart';
-import '../main.dart';
 import '../models/responses/refresh_token_response.dart';
 import '../screens/get_started_screen.dart';
 import '../utills/enums.dart';
@@ -28,7 +27,7 @@ class ApiBaseHelper {
     authToken = await _secureStorage.getToken();
 
     try {
-      final baseUrl = isDeploymentMode ? BaseUrls.api.url : BaseUrls.apiQa.url;
+      final baseUrl = BaseUrls.api.url;
       final url = '$baseUrl${endPoint.path}${params ?? ''}';
       log('URL: $url');
       log('BODY: $requestBody');

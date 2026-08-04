@@ -1,6 +1,7 @@
 import 'base_response_model.dart';
 import 'appointments_list_response.dart';
 import 'treatment_list_response.dart';
+import 'practitioner_list_response.dart';
 
 class AuthResponse extends BaseResponseModel {
   final AuthData? data;
@@ -321,6 +322,22 @@ class TopDoctor {
     "specaialization": specialization,
     "clinic": clinic?.toJson(),
   };
+
+  PractitionerDoctor toPractitionerDoctor() {
+    return PractitionerDoctor(
+      id: doctorId,
+      image: doctorImage,
+      rating: doctorRating,
+      name: doctorName,
+      specialization: specialization,
+      clinic: clinic != null
+          ? PractitionerClinic(
+              clinicId: clinic!.clinicId,
+              clinicName: clinic!.clinicName,
+            )
+          : null,
+    );
+  }
 }
 
 class TopClinic {
