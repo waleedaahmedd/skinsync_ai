@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import 'bottom_nav_page.dart';
+
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
-
-import 'face_pose_capture_screen.dart';
+import 'bottom_nav_page.dart';
 import 'bottom_nav_screens/face_detection_screen.dart';
+import 'face_pose_capture_screen.dart';
 
 class FaceScanScreen extends StatelessWidget {
   final String pose;
@@ -21,20 +21,20 @@ class FaceScanScreen extends StatelessWidget {
     final String faceAsset = isFront
         ? PngAssets.face
         : isLeft
-            ? PngAssets.leftFace
-            : PngAssets.rightFace;
+        ? PngAssets.leftFace
+        : PngAssets.rightFace;
 
     final String titleText = isFront
         ? "Face Scan"
         : isLeft
-            ? "Left Profile Scan"
-            : "Right Profile Scan";
+        ? "Left Profile Scan"
+        : "Right Profile Scan";
 
     final String subTitleText = isFront
         ? "We’ll scan your face and create a cool model just for you to enhance your experience!"
         : isLeft
-            ? "Capturing your left profile helps our AI understand your facial structure from every angle."
-            : "Capturing your right profile completes your 3D model for the most accurate simulation.";
+        ? "Capturing your left profile helps our AI understand your facial structure from every angle."
+        : "Capturing your right profile completes your 3D model for the most accurate simulation.";
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -94,7 +94,10 @@ class FaceScanScreen extends StatelessWidget {
                 child: Image.asset(PngAssets.blur, height: context.h(564)),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.w(20), vertical: context.h(20)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(20),
+                  vertical: context.h(20),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -143,7 +146,10 @@ class FaceScanScreen extends StatelessWidget {
                             vertical: context.h(19),
                           ),
                           decoration: BoxDecoration(
-                            border: Border.all(width: context.w(1), color: Colors.black),
+                            border: Border.all(
+                              width: context.w(1),
+                              color: Colors.black,
+                            ),
                             borderRadius: BorderRadius.circular(context.r(50)),
                           ),
                           child: Center(

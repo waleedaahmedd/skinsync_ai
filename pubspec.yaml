@@ -83,6 +83,7 @@ dependencies:
   cryptography: ^2.9.0
   cryptography_flutter: ^2.3.4
   firebase_messaging: ^16.5.0
+  volume_controller: ^3.6.0
 
 dependency_overrides:
   jni: 1.0.0
