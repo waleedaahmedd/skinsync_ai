@@ -77,40 +77,34 @@ class HomeScreen extends ConsumerWidget {
                           "Your scheduled clinical treatments and session details will appear here.",
                     )
                   : SizedBox(
-                      height: context.h(310),
+                      height: context.h(300),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.w(24),
+                        ),
                         scrollDirection: Axis.horizontal,
                         itemCount: appointments.length,
                         itemBuilder: (context, index) {
                           final appointment = appointments[index];
 
-                          return Padding(
+                          return Container(
+                            width: 0.8.sw,
                             padding: EdgeInsets.only(
                               right: index == appointments.length - 1
                                   ? 0
                                   : context.w(12),
                             ),
-                            child: IntrinsicWidth(
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  minWidth: context.w(300),
-                                ),
-                                child: AppointmentCard(
-                                  isTreatmentListHorizontal: true,
-                                  appointment:
-                                      appointment,
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      AppointmentDetailScreen.routeName,
-                                      arguments:
-                                          appointment,
-                                    );
-                                  },
-                                ),
-                              ),
+                            child: AppointmentCard(
+                              isTreatmentListHorizontal: true,
+                              appointment: appointment,
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  AppointmentDetailScreen.routeName,
+                                  arguments: appointment,
+                                );
+                              },
                             ),
                           );
                         },
@@ -203,7 +197,9 @@ class HomeScreen extends ConsumerWidget {
                       height: context.h(220),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.w(24),
+                        ),
                         scrollDirection: Axis.horizontal,
                         itemCount: dashboard!.topDoctors!.length,
                         itemBuilder: (context, index) =>
@@ -243,7 +239,9 @@ class HomeScreen extends ConsumerWidget {
                       height: context.h(200),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.w(24),
+                        ),
                         scrollDirection: Axis.horizontal,
                         itemCount: dashboard!.topClinics!.length,
                         itemBuilder: (context, index) =>
@@ -351,7 +349,9 @@ class HomeScreen extends ConsumerWidget {
               // 2. High-Contrast Content Layer (Sizes the parent container)
               Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: context.w(16), vertical: context.h(12)),
+                  horizontal: context.w(16),
+                  vertical: context.h(12),
+                ),
                 child: Row(
                   children: [
                     // Glowing semi-transparent white circular badge icon

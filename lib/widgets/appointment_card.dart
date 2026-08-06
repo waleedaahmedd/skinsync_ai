@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
@@ -41,7 +40,9 @@ class AppointmentCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.only(bottom: isTreatmentListHorizontal ? context.h(12) : context.h(22)),
+        margin: EdgeInsets.only(
+          bottom: isTreatmentListHorizontal ? context.h(12) : context.h(22),
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(context.r(24)),
@@ -271,25 +272,41 @@ class AppointmentCard extends StatelessWidget {
                                 ),
                             ],
                           )
-                        : Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                        :
+                          // Row(
+                          //         crossAxisAlignment: CrossAxisAlignment.start,
+                          //         children: [
+                          //           for (
+                          //             var i = 0;
+                          //             i < appointment.treatments!.length;
+                          //             i++
+                          //           ) ...[
+                          Row(
+                            spacing: 10.w,
                             children: [
-                              for (
-                                var i = 0;
-                                i < appointment.treatments!.length;
-                                i++
-                              ) ...[
-                                _buildTreatmentTile(
+                              Expanded(
+                                child: _buildTreatmentTile(
                                   context,
-                                  appointment.treatments![i],
+                                  appointment.treatments![0],
                                   isHorizontal: true,
-                                  width: context.w(200),
+                                  // width: context.w(300),
                                 ),
-                                if (i != appointment.treatments!.length - 1)
-                                  SizedBox(width: context.w(12)),
-                              ],
+                              ),
+                              CircleAvatar(
+                                child: Padding(
+                                  padding: .all(5.w),
+                                  child: Text(
+                                    '+${appointment.treatments!.length - 1}',
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
+                    //       if (i != appointment.treatments!.length - 1)
+                    //         SizedBox(width: context.w(12)),
+                    //     ],
+                    //   ],
+                    // ),
                   ],
                 ],
               ),
@@ -399,9 +416,7 @@ class AppointmentCard extends StatelessWidget {
                     ),
                     if (t.material != null) ...[
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: context.w(6),
-                        ),
+                        padding: EdgeInsets.symmetric(horizontal: context.w(6)),
                         child: Text(
                           "•",
                           style: TextStyle(
@@ -420,9 +435,7 @@ class AppointmentCard extends StatelessWidget {
                             color: CustomColors.darkPurple.withValues(
                               alpha: 0.08,
                             ),
-                            borderRadius: BorderRadius.circular(
-                              context.r(4),
-                            ),
+                            borderRadius: BorderRadius.circular(context.r(4)),
                           ),
                           child: Text(
                             "${t.material!.selectedQuantity} ${t.material!.name}",
@@ -510,12 +523,7 @@ class AppointmentCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(context.r(20)),
         border: Border.all(color: Colors.black12, width: 0.5),
       ),
-      child: Text(
-        type,
-        style: textStyle.copyWith(
-          fontSize: context.sp(10),
-        ), 
-      ),
+      child: Text(type, style: textStyle.copyWith(fontSize: context.sp(10))),
     );
   }
 }

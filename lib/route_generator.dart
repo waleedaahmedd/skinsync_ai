@@ -48,6 +48,7 @@ import 'screens/treatment_category_screen.dart';
 import 'screens/treatment_detail_screen.dart';
 import 'screens/treatment_payment_screen.dart';
 import 'screens/treatments_screen.dart';
+import 'screens/update_version_screen.dart';
 import 'screens/your_profile_screen.dart';
 import 'utills/enums.dart';
 
@@ -311,6 +312,13 @@ class RouteGenerator {
             name: SimulationHistoryScreen.routeName,
           ),
           builder: (_) => const SimulationHistoryScreen(),
+        );
+      case UpdateVersionScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(
+            name: UpdateVersionScreen.routeName,
+          ),
+          builder: (_) => const UpdateVersionScreen(),
         );
       default:
         return _errorRoute();

@@ -1,0 +1,101 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+
+import '../utills/assets.dart';
+import '../utills/color_constant.dart';
+import '../utills/custom_fonts.dart';
+
+class UpdateVersionScreen extends StatelessWidget {
+  const UpdateVersionScreen({super.key});
+  static const String routeName = '/UpdateVersionScreen';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        top: false,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: CustomColors.blueWithWhiteGradient,
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                top: context.h(70),
+                right: context.w(0),
+                left: context.w(0),
+                child: Image.asset(
+                  PngAssets.vector2,
+                  height: context.h(552),
+                  fit: BoxFit.fill,
+                ),
+              ),
+              Positioned(
+                top: context.h(70),
+                right: context.w(0),
+                left: context.w(0),
+                child: Image.asset(
+                  PngAssets.vector,
+                  height: context.h(376),
+                  fit: BoxFit.fill,
+                  color: const Color(0xff88E3FB).withValues(alpha: 0.7),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(20),
+                  vertical: context.h(40),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: context.h(80)),
+                    Image.asset(
+                      PngAssets.splashLogo,
+                      height: context.h(120),
+                      width: context.w(120),
+                    ),
+                    SizedBox(height: context.h(40)),
+                    Text(
+                      "New Version Available!",
+                      style: CustomFonts.black30w600,
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: context.h(20)),
+                    Text(
+                      "To continue using Skinsync Ai, please update to the latest version. This update includes important improvements and bug fixes.",
+                      style: CustomFonts.grey18w400,
+                      textAlign: TextAlign.center,
+                    ),
+                    const Spacer(),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                            vertical: context.h(19),
+                          ),
+                          textStyle: CustomFonts.white22w600,
+                          backgroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(context.r(50)),
+                          ),
+                        ),
+                        onPressed: () {
+                          // TODO: Implement update logic (e.g., launch Store URL)
+                        },
+                        child: const Text("Update Now"),
+                      ),
+                    ),
+                    SizedBox(height: context.h(20)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

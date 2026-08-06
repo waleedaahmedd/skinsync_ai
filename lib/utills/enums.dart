@@ -45,7 +45,6 @@ enum EndPoints {
   getDoctor("doctors/by-side-area?"),
   practitionersList("practitioners/list"),
   getMe("v1/me"),
-  appVersion("admin/app-version/customer"),
   refreshToken('v1/auth/refresh'),
   getAvailability('v1/appointments/availability'),
   paymentOptions('v1/appointments/payment-options'),
@@ -72,3 +71,5 @@ enum BaseUrls {
 }
 
 enum ViewType { grid, map }
+
+enum ApplicationType { clinic, patient }

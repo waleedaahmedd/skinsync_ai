@@ -20,7 +20,10 @@ void showMScanFaceDialog(BuildContext context) {
           borderRadius: BorderRadius.circular(context.r(24)),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(32)),
+          padding: EdgeInsets.symmetric(
+            horizontal: context.w(24),
+            vertical: context.h(32),
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
