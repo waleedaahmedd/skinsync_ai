@@ -28,6 +28,8 @@ class AuthData {
   final String? refreshToken;
   final int? isActiveExpiry;
   final int? refreshTokenExpiry;
+  final AppVersionInfo? android;
+  final AppVersionInfo? ios;
   final List<TreatmentData>? treatment;
   final User? user;
   final DashboardData? dashboard;
@@ -42,6 +44,8 @@ class AuthData {
     this.user,
     this.dashboard,
     this.treatment,
+    this.android,
+    this.ios,
   });
 
   factory AuthData.fromJson(Map<String, dynamic> json) => AuthData(
@@ -60,6 +64,10 @@ class AuthData {
     dashboard: json["dashboard"] == null || json["dashboard"] is String
         ? null
         : DashboardData.fromJson(json["dashboard"]),
+    android: json["android"] == null
+        ? null
+        : AppVersionInfo.fromJson(json["android"]),
+    ios: json["ios"] == null ? null : AppVersionInfo.fromJson(json["ios"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -75,6 +83,18 @@ class AuthData {
     "user": user?.toJson(),
     "dashboard": dashboard?.toJson(),
   };
+}
+
+class AppVersionInfo {
+  final String? version;
+  final int? build;
+
+  AppVersionInfo({this.version, this.build});
+
+  factory AppVersionInfo.fromJson(Map<String, dynamic> json) =>
+      AppVersionInfo(version: json["version"], build: json["build"]);
+
+  Map<String, dynamic> toJson() => {"version": version, "build": build};
 }
 
 class User {
@@ -163,7 +183,9 @@ class DashboardData {
 
   Map<String, dynamic> toJson() => {
     "appointments": appointments?.map((x) => x.toJson()).toList(),
-    "suggested_treatments": suggestedTreatments?.map((x) => x.toJson()).toList(),
+    "suggested_treatments": suggestedTreatments
+        ?.map((x) => x.toJson())
+        .toList(),
     "top_doctors": topDoctors?.map((x) => x.toJson()).toList(),
     "top_clinics": topClinics?.map((x) => x.toJson()).toList(),
   };

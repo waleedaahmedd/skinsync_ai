@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
+import '../app_init.dart';
 import '../exceptions/app_exception.dart';
 import '../models/base_state_model.dart';
 import '../models/requests/onboarding_profile_request.dart';
@@ -16,6 +18,7 @@ import '../models/responses/address_data.dart';
 import '../models/responses/auth_response.dart';
 import '../models/responses/base_response_model.dart';
 import '../repositories/auth_repository.dart';
+import '../screens/update_version_screen.dart';
 import '../services/api_base_helper.dart';
 import '../services/apple_auth_service.dart';
 import '../services/auth_service.dart';
@@ -195,6 +198,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       final AuthResponse response = await _authRepository.biometricLoginApi();
       if (response.isSuccess == true) {
         state = state.copyWith(authData: response.data);
+        await _checkAppUpdate(response);
         //  _fetchLocationInBackground();
         state = state.copyWith(loading: false);
         return true;
@@ -220,6 +224,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 
       if (response.isSuccess == true) {
         otpController.clear();
+        await _checkAppUpdate(response);
         await callBiometricUnregisterApi(
           showLoader: false,
           currentEmail: response.data?.user?.primaryEmail,
@@ -314,12 +319,12 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   }
 
   Future<bool?> callGoogleSignInApi() async {
-      String type = Platform.isIOS ? 'apple' : 'android';
+    String type = Platform.isIOS ? 'apple' : 'android';
     return await runSafely<bool>(() async {
       state = state.copyWith(loading: true);
       final savedEmail = await SecureStorage().getUserEmail();
       final user = await GoogleAuthService().signIn();
-        final idToken = await user.getIdToken();
+      final idToken = await user.getIdToken();
       String? fcmToken = await _getFcmToken();
 
       log("google sign IDToken ${idToken.toString}");
@@ -331,6 +336,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         ),
       );
       if (response.isSuccess ?? false) {
+        await _checkAppUpdate(response);
         await callBiometricUnregisterApi(
           showLoader: false,
           currentEmail: response.data?.user?.primaryEmail,
@@ -348,10 +354,10 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       state = state.copyWith(loading: true);
       final savedEmail = await SecureStorage().getUserEmail();
       final user = await AppleAuthService().signIn();
-       final idToken = await user.getIdToken();
+      final idToken = await user.getIdToken();
       String? fcmToken = await _getFcmToken();
       final response = await _authRepository.appleSignInApi(
-       request: SocialLoginRequest(
+        request: SocialLoginRequest(
           deviceType: type,
           idToken: idToken.toString(),
           fcmToken: fcmToken ?? '',
@@ -388,6 +394,27 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     } catch (e) {
       log("Error getting FCM token: $e");
       return null;
+    }
+  }
+
+  Future<void> _checkAppUpdate(AuthResponse response) async {
+    if (response.data == null) return;
+
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    final int currentBuildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;
+    int? serverBuildNumber;
+
+    if (Platform.isAndroid) {
+      serverBuildNumber = response.data!.android?.build;
+    } else if (Platform.isIOS) {
+      serverBuildNumber = response.data!.ios?.build;
+    }
+
+    if (serverBuildNumber != null && serverBuildNumber > currentBuildNumber) {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        UpdateVersionScreen.routeName,
+        (route) => false,
+      );
     }
   }
 
