@@ -6,7 +6,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/base_state_model.dart';
-import '../models/dummy_list_model.dart';
 import '../models/flat_selection_model.dart';
 import '../models/requests/appointment_request.dart';
 import '../models/requests/invite_clinic_request.dart';
@@ -14,8 +13,8 @@ import '../models/responses/appointment_response.dart';
 import '../models/responses/appointment_type_list_response.dart';
 import '../models/responses/availability_response.dart';
 import '../models/responses/get_clinic_response.dart';
-import '../models/responses/get_doctor_response.dart';
 import '../models/responses/payment_options_response.dart';
+import '../models/responses/practitioner_list_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
 import '../models/responses/treatment_category_list_response.dart';
 import '../models/responses/treatment_list_response.dart';
@@ -25,6 +24,9 @@ import '../repositories/clinic_doctor_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/appointment_service.dart';
 import '../services/clinic_doctor_service.dart';
+import '../utills/date_time_utills.dart';
+import '../utills/simulation_utils.dart';
+import 'auth_view_model.dart';
 import 'base_view_model.dart';
 import 'doctor_view_model.dart';
 import 'treatment_view_model.dart';
@@ -63,11 +65,11 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     state = state.copyWith(selectedAppointmentType: type);
   }
 
-  void setSelectedDoctor(DummyDoctor doctor) {
+  void setSelectedDoctor(PractitionerDoctor doctor) {
     state = state.copyWith(selectedDoctor: doctor);
   }
 
-  void setSelectedDoctorObject(Doctor? doctor) {
+  void setSelectedDoctorObject(PractitionerDoctor? doctor) {
     state = state.copyWith(selectedDoctorObject: doctor);
   }
 
@@ -296,6 +298,14 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     state = state.clearSelectedAreas();
   }
 
+  void clearDateAndSlot() {
+    state = state.copyWithNull(
+      selectedDate: true,
+      selectedDoctorObject: true,
+      selectedSlot: true,
+    );
+  }
+
   void onTapTreatmentSubArea({required TreatmentAreaModel subArea}) {
     final activeArea = state.selectedAreas;
     final parentId = activeArea?.id ?? subArea.areaId ?? subArea.id ?? 0;
@@ -346,13 +356,13 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   // API Methods
   // ---------------------------------------------------------------------------
 
-  AppointmentRequest? buildAppointmentRequest() {
+  Future<AppointmentRequest?> buildAppointmentRequest() async {
     final state = this.state;
     final clinicId = state.selectedClinic?.id;
     final doctorId =
-        state.selectedDoctorObject?.id ??
-        int.tryParse(state.selectedDoctor?.id ?? '') ??
-        ref.read(doctorProvider).selectedDoctor?.id;
+        state.selectedDoctorObject?.doctorId ??
+        state.selectedDoctor?.doctorId ??
+        ref.read(doctorProvider).selectedDoctor?.doctorId;
     final date = state.selectedDate;
     final slot = state.selectedSlotObject;
     final appointmentType = state.selectedAppointmentType;
@@ -367,12 +377,19 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     }
 
     final treatmentViewModelState = ref.read(treatmentViewModel);
-    final frontImageBefore = treatmentViewModelState.frontPoseImage?.path;
-    final frontImageAfter = treatmentViewModelState.frontAiImage?.path;
-    final rightImageBefore = treatmentViewModelState.rightPoseImage?.path;
-    final rightImageAfter = treatmentViewModelState.rightAiImage?.path;
-    final leftImageBefore = treatmentViewModelState.leftPoseImage?.path;
-    final leftImageAfter = treatmentViewModelState.leftAiImage?.path;
+    final userId = ref.read(authViewModel).authData?.user?.id ?? 0;
+
+    final uploadResults = await uploadSimulationImages(
+      userId: userId,
+      images: SimulationImages(
+        frontBefore: treatmentViewModelState.frontPoseImage,
+        frontAfter: treatmentViewModelState.frontAiImage,
+        rightBefore: treatmentViewModelState.rightPoseImage,
+        rightAfter: treatmentViewModelState.rightAiImage,
+        leftBefore: treatmentViewModelState.leftPoseImage,
+        leftAfter: treatmentViewModelState.leftAiImage,
+      ),
+    );
 
     int treatmentTotal = 0;
     List<TreatmentRequest> treatmentRequests = [];
@@ -404,18 +421,18 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
     return AppointmentRequest(
       clinicId: clinicId,
       doctorId: doctorId,
-      date: date.millisecondsSinceEpoch ~/ 1000,
-      startTime: slot.startTime.millisecondsSinceEpoch ~/ 1000,
-      endTime: slot.endTime.millisecondsSinceEpoch ~/ 1000,
+      date: date.secondsSinceEpoch,
+      startTime: slot.startTime.secondsSinceEpoch,
+      endTime: slot.endTime.secondsSinceEpoch,
       appointmentTypeId: appointmentType.id!,
       isInviteClinic: state.isInviteClinic,
       simulations: SimulationsRequest(
-        frontImageBefore: frontImageBefore,
-        frontImageAfter: frontImageAfter,
-        rightImageBefore: rightImageBefore,
-        rightImageAfter: rightImageAfter,
-        leftImageBefore: leftImageBefore,
-        leftImageAfter: leftImageAfter,
+        frontImageBefore: uploadResults.frontBefore,
+        frontImageAfter: uploadResults.frontAfter,
+        rightImageBefore: uploadResults.rightBefore,
+        rightImageAfter: uploadResults.rightAfter,
+        leftImageBefore: uploadResults.leftBefore,
+        leftImageAfter: uploadResults.leftAfter,
       ),
       treatment: treatmentRequests,
       treatmentTotal: treatmentTotal,
@@ -435,8 +452,9 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   Future<void> createAppointment() async {
     return await runSafely(() async {
       state = state.copyWith(loading: true);
+      EasyLoading.show(status: 'Uploading images and securing appointment...');
 
-      final request = buildAppointmentRequest();
+      final request = await buildAppointmentRequest();
       if (request == null) {
         throw Exception(
           'Incomplete appointment details. Please check selection.',
@@ -450,7 +468,56 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
         request: request,
       );
       state = state.copyWith(loading: false, appointment: data);
+      debugPrint("Appointment created successfully: ${data.appointmentId}");
+      EasyLoading.dismiss();
     });
+  }
+
+  Future<bool> bookAppointment({
+    required String selectedPaymentType,
+    required double consultationFee,
+  }) async {
+    double paidAmount = 0.0;
+    String paymentMethodName = "";
+
+    if (selectedPaymentType == 'deposit') {
+      paidAmount = consultationFee * 0.10;
+      paymentMethodName = "10% Security Deposit";
+    } else if (selectedPaymentType == 'full') {
+      paidAmount = consultationFee;
+      paymentMethodName = "Full Payment Pre-paid";
+    } else {
+      paidAmount = consultationFee;
+      paymentMethodName = "Paid via Skinsync Wallet";
+    }
+
+    // Set payment option in ViewModel
+    final dummyOption = PaymentOption(
+      id: selectedPaymentType == 'deposit'
+          ? 1
+          : (selectedPaymentType == 'full' ? 2 : 3),
+      title: selectedPaymentType,
+      amount: paidAmount.toInt(),
+      description: paymentMethodName,
+    );
+    setSelectedPaymentOption(dummyOption);
+
+    bool isSuccess = false;
+
+    if (state.isInviteClinic) {
+      final success = await inviteClinic(
+        clinic: state.selectedClinic!,
+        consultationFees: consultationFee,
+        initialDeposit: paidAmount,
+        availability: [],
+      );
+      isSuccess = success ?? false;
+    } else {
+      // Regular booking via unified API
+      await createAppointment();
+      isSuccess = state.appointment != null;
+    }
+    return isSuccess;
   }
 
   Future<bool?> inviteClinic({
@@ -524,13 +591,12 @@ class CheckoutState extends BaseStateModel {
   final List<TreatmentCategoryModel>? selectedCategories;
   final TreatmentData? selectedTreatments;
   final TreatmentAreaModel? selectedAreas;
-  final XFile? capturedImage;
   final AppointmentData? appointment;
 
   final Clinic? selectedClinic;
   final AppointmentTypeData? selectedAppointmentType;
-  final DummyDoctor? selectedDoctor;
-  final Doctor? selectedDoctorObject;
+  final PractitionerDoctor? selectedDoctor;
+  final PractitionerDoctor? selectedDoctorObject;
   final DateTime? selectedDate;
   final String? selectedSlot;
   final Slot? selectedSlotObject;
@@ -540,7 +606,6 @@ class CheckoutState extends BaseStateModel {
   const CheckoutState({
     super.loading = false,
     super.errorMessage,
-    this.capturedImage,
     this.selectedTreatmentsAndAreas = const [],
     this.checkoutTreatmentsList = const [],
     this.selectedCategories = const [],
@@ -571,8 +636,8 @@ class CheckoutState extends BaseStateModel {
     AppointmentData? appointment,
     Clinic? selectedClinic,
     AppointmentTypeData? selectedAppointmentType,
-    DummyDoctor? selectedDoctor,
-    Doctor? selectedDoctorObject,
+    PractitionerDoctor? selectedDoctor,
+    PractitionerDoctor? selectedDoctorObject,
     DateTime? selectedDate,
     String? selectedSlot,
     Slot? selectedSlotObject,
@@ -582,7 +647,6 @@ class CheckoutState extends BaseStateModel {
     return CheckoutState(
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
-      capturedImage: capturedImage ?? this.capturedImage,
       selectedTreatmentsAndAreas:
           selectedTreatmentsAndAreas ?? this.selectedTreatmentsAndAreas,
       checkoutTreatmentsList:
@@ -609,7 +673,6 @@ class CheckoutState extends BaseStateModel {
     return CheckoutState(
       loading: loading,
       errorMessage: errorMessage,
-      capturedImage: capturedImage,
       selectedTreatmentsAndAreas: selectedTreatmentsAndAreas,
       checkoutTreatmentsList: checkoutTreatmentsList,
       selectedCategories: selectedCategories,
@@ -624,6 +687,49 @@ class CheckoutState extends BaseStateModel {
       selectedSlot: selectedSlot,
       selectedSlotObject: selectedSlotObject,
       selectedPaymentOption: selectedPaymentOption,
+      isInviteClinic: isInviteClinic,
+    );
+  }
+
+  CheckoutState copyWithNull({
+    bool errorMessage = false,
+    bool capturedImage = false,
+    bool selectedCategories = false,
+    bool selectedTreatments = false,
+    bool selectedAreas = false,
+    bool appointment = false,
+    bool selectedClinic = false,
+    bool selectedAppointmentType = false,
+    bool selectedDoctor = false,
+    bool selectedDoctorObject = false,
+    bool selectedDate = false,
+    bool selectedSlot = false,
+    bool selectedSlotObject = false,
+    bool selectedPaymentOption = false,
+  }) {
+    return CheckoutState(
+      loading: loading,
+      errorMessage: errorMessage ? null : this.errorMessage,
+      selectedTreatmentsAndAreas: selectedTreatmentsAndAreas,
+      checkoutTreatmentsList: checkoutTreatmentsList,
+      selectedCategories: selectedCategories ? null : this.selectedCategories,
+      selectedTreatments: selectedTreatments ? null : this.selectedTreatments,
+      selectedAreas: selectedAreas ? null : this.selectedAreas,
+      appointment: appointment ? null : this.appointment,
+      selectedClinic: selectedClinic ? null : this.selectedClinic,
+      selectedAppointmentType: selectedAppointmentType
+          ? null
+          : this.selectedAppointmentType,
+      selectedDoctor: selectedDoctor ? null : this.selectedDoctor,
+      selectedDoctorObject: selectedDoctorObject
+          ? null
+          : this.selectedDoctorObject,
+      selectedDate: selectedDate ? null : this.selectedDate,
+      selectedSlot: selectedSlot ? null : this.selectedSlot,
+      selectedSlotObject: selectedSlotObject ? null : this.selectedSlotObject,
+      selectedPaymentOption: selectedPaymentOption
+          ? null
+          : this.selectedPaymentOption,
       isInviteClinic: isInviteClinic,
     );
   }

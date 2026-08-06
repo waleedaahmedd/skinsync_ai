@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
@@ -12,7 +12,7 @@ import '../view_models/treatment_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/treatment_container.dart';
-import 'ar_face_model_Preview_screen.dart';
+import 'ar_face_model_preview_screen.dart';
 import 'bottom_nav_screens/face_detection_screen.dart';
 
 class FacePoseCaptureScreen extends ConsumerWidget {
@@ -24,41 +24,50 @@ class FacePoseCaptureScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(treatmentViewModel);
 
-    final bool allCaptured = state.frontPoseImage != null &&
+    final bool allCaptured =
+        state.frontPoseImage != null &&
         state.leftPoseImage != null &&
         state.rightPoseImage != null;
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const CustomAppBar(showTitle: true, title: "Capture Your Profile"),
+      appBar: const CustomAppBar(
+        showTitle: true,
+        title: "Capture Your Profile",
+      ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(24)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 20.h),
+                  SizedBox(height: context.h(20)),
                   Text(
                     "Clear photos from multiple angles ensure our AI provides the most precise treatment recommendations for your unique features.",
-                    style: CustomFonts.grey14w400.copyWith(
-                      height: 1.4,
-                    ),
+                    style: CustomFonts.grey14w400.copyWith(height: 1.4),
                   ),
-                  SizedBox(height: 24.h),
+                  SizedBox(height: context.h(24)),
                   Row(
                     children: [
-                      _buildIndicator(active: true, color: CustomColors.purpleColor),
-                      SizedBox(width: 8.w),
                       _buildIndicator(
+                        context: context,
+                        active: true,
+                        color: CustomColors.purpleColor,
+                      ),
+                      SizedBox(width: context.w(8)),
+                      _buildIndicator(
+                        context: context,
                         active: state.frontPoseImage != null,
                         color: CustomColors.purpleColor,
                       ),
-                      SizedBox(width: 8.w),
+                      SizedBox(width: context.w(8)),
                       _buildIndicator(
-                        active: state.leftPoseImage != null &&
+                        context: context,
+                        active:
+                            state.leftPoseImage != null &&
                             state.rightPoseImage != null,
                         color: CustomColors.purpleColor,
                       ),
@@ -67,10 +76,10 @@ class FacePoseCaptureScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: context.h(24)),
             Expanded(
               child: ListView(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                 children: [
                   _buildPoseContainer(
                     context: context,
@@ -93,23 +102,26 @@ class FacePoseCaptureScreen extends ConsumerWidget {
                     image: state.rightPoseImage,
                     onTap: () => _capturePose(context, 'right'),
                   ),
-                  SizedBox(height: 40.h),
+                  SizedBox(height: context.h(40)),
                 ],
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(24.w),
+              padding: EdgeInsets.all(context.w(24)),
               child: CustomButton(
                 text: "Proceed to AI Preview",
                 onPressed: allCaptured
                     ? () {
+                        ref.read(treatmentViewModel.notifier).clearAiImage();
                         Navigator.pushNamed(
                           context,
                           ArFaceModelPreviewScreen.routeName,
                         );
                       }
                     : null,
-                backgroundColor: allCaptured ? Colors.black : Colors.grey.shade300,
+                backgroundColor: allCaptured
+                    ? Colors.black
+                    : Colors.grey.shade300,
                 textColor: allCaptured ? Colors.white : Colors.grey.shade500,
               ),
             ),
@@ -119,20 +131,24 @@ class FacePoseCaptureScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildIndicator({required bool active, required Color color}) {
+  Widget _buildIndicator({required BuildContext context, required bool active, required Color color}) {
     return Expanded(
       child: Container(
-        height: 3.h,
+        height: context.h(3),
         decoration: BoxDecoration(
           color: active ? color : Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(2.r),
+          borderRadius: BorderRadius.circular(context.r(2)),
         ),
       ),
     );
   }
 
   void _capturePose(BuildContext context, String pose) {
-    Navigator.pushNamed(context, FaceDetectionScreen.routeName, arguments: pose);
+    Navigator.pushNamed(
+      context,
+      FaceDetectionScreen.routeName,
+      arguments: pose,
+    );
   }
 
   Widget _buildPoseContainer({
@@ -145,35 +161,32 @@ class FacePoseCaptureScreen extends ConsumerWidget {
     final String poseLabel = title.toLowerCase().contains("front")
         ? "front pose"
         : title.toLowerCase().contains("left")
-            ? "side pose (left)"
-            : "side pose (right)";
+        ? "side pose (left)"
+        : "side pose (right)";
 
     final String placeholderAsset = title.toLowerCase().contains("front")
         ? PngAssets.frontFace
         : title.toLowerCase().contains("left")
-            ? PngAssets.leftFace
-            : PngAssets.rightFace;
+        ? PngAssets.leftFace
+        : PngAssets.rightFace;
 
     return TreatmentContainer(
-      imageHeight: 300.h,
+      imageHeight: context.h(300),
       customTitle: title,
       customSubtitle: subtitle,
       customOnTap: onTap,
       backgroundWidget: image != null
           ? Image.file(File(image.path), fit: BoxFit.cover)
-          : Image.asset(
-              placeholderAsset,
-              fit: BoxFit.cover,
-            ),
+          : Image.asset(placeholderAsset, fit: BoxFit.cover),
       topRightWidget: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+        padding: EdgeInsets.symmetric(horizontal: context.w(10), vertical: context.h(4)),
         decoration: BoxDecoration(
           color: Colors.black.withValues(alpha: 0.6),
-          borderRadius: BorderRadius.circular(4.r),
+          borderRadius: BorderRadius.circular(context.r(4)),
         ),
         child: Text(
           poseLabel,
-          style: CustomFonts.white10w600.copyWith(fontSize: 10.sp),
+          style: CustomFonts.white10w600.copyWith(fontSize: context.sp(10)),
         ),
       ),
     );

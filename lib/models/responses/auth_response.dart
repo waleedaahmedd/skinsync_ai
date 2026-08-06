@@ -1,5 +1,7 @@
 import 'base_response_model.dart';
+import 'appointments_list_response.dart';
 import 'treatment_list_response.dart';
+import 'practitioner_list_response.dart';
 
 class AuthResponse extends BaseResponseModel {
   final AuthData? data;
@@ -28,7 +30,7 @@ class AuthData {
   final int? refreshTokenExpiry;
   final List<TreatmentData>? treatment;
   final User? user;
-  final String? dashboard;
+  final DashboardData? dashboard;
 
   AuthData({
     this.isFirstLogin,
@@ -55,7 +57,9 @@ class AuthData {
             json["treatment"]!.map((x) => TreatmentData.fromJson(x)),
           ),
     user: json["user"] == null ? null : User.fromJson(json["user"]),
-    dashboard: json["dashboard"],
+    dashboard: json["dashboard"] == null || json["dashboard"] is String
+        ? null
+        : DashboardData.fromJson(json["dashboard"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -69,7 +73,7 @@ class AuthData {
         ? []
         : List<dynamic>.from(treatment!.map((x) => x.toJson())),
     "user": user?.toJson(),
-    "dashboard": dashboard,
+    "dashboard": dashboard?.toJson(),
   };
 }
 
@@ -118,5 +122,256 @@ class User {
     "phone_number": phoneNumber,
     "location": location,
     "bio": bio,
+  };
+}
+
+class DashboardData {
+  final List<AppointmentItem>? appointments;
+  final List<TreatmentData>? suggestedTreatments;
+  final List<TopDoctor>? topDoctors;
+  final List<TopClinic>? topClinics;
+
+  DashboardData({
+    this.appointments,
+    this.suggestedTreatments,
+    this.topDoctors,
+    this.topClinics,
+  });
+
+  factory DashboardData.fromJson(Map<String, dynamic> json) => DashboardData(
+    appointments: json["appointments"] == null
+        ? []
+        : List<AppointmentItem>.from(
+            json["appointments"]!.map((x) => AppointmentItem.fromJson(x)),
+          ),
+    suggestedTreatments: json["suggested_treatments"] == null
+        ? []
+        : List<TreatmentData>.from(
+            json["suggested_treatments"]!.map((x) => TreatmentData.fromJson(x)),
+          ),
+    topDoctors: json["top_doctors"] == null
+        ? []
+        : List<TopDoctor>.from(
+            json["top_doctors"]!.map((x) => TopDoctor.fromJson(x)),
+          ),
+    topClinics: json["top_clinics"] == null
+        ? []
+        : List<TopClinic>.from(
+            json["top_clinics"]!.map((x) => TopClinic.fromJson(x)),
+          ),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "appointments": appointments?.map((x) => x.toJson()).toList(),
+    "suggested_treatments": suggestedTreatments?.map((x) => x.toJson()).toList(),
+    "top_doctors": topDoctors?.map((x) => x.toJson()).toList(),
+    "top_clinics": topClinics?.map((x) => x.toJson()).toList(),
+  };
+}
+
+// class DashboardAppointment {
+//   final int? date;
+//   final String? appointmentType;
+//   final int? appointmentTypeId;
+//   final List<AppointmentTreatment>? treatments;
+//   final DashboardDoctor? doctor;
+//   final DashboardClinic? clinic;
+//   final AppointmentSlot? slot;
+
+//   DashboardAppointment({
+//     this.date,
+//     this.appointmentType,
+//     this.appointmentTypeId,
+//     this.treatments,
+//     this.doctor,
+//     this.clinic,
+//     this.slot,
+//   });
+
+//   factory DashboardAppointment.fromJson(Map<String, dynamic> json) =>
+//       DashboardAppointment(
+//         date: json["date"],
+//         appointmentType: json["appointment_type"],
+//         appointmentTypeId: json["appointment_type_id"],
+//          slot : json['slot'] != null ? AppointmentSlot.fromJson(json['slot']) : null,
+//         treatments: json["treatments"] == null
+//             ? []
+//             : List<AppointmentTreatment>.from(
+//                 json["treatments"]!.map(
+//                   (x) => AppointmentTreatment.fromJson(x),
+//                 ),
+//               ),
+//         doctor: json["doctor"] == null
+//             ? null
+//             : DashboardDoctor.fromJson(json["doctor"]),
+//         clinic: json["clinic"] == null
+//             ? null
+//             : DashboardClinic.fromJson(json["clinic"]),
+//       );
+
+//   Map<String, dynamic> toJson() => {
+//     "date": date,
+//     "appointment_type": appointmentType,
+//     "appointment_type_id": appointmentTypeId,
+//     "treatments": treatments?.map((x) => x.toJson()).toList(),
+//     "doctor": doctor?.toJson(),
+//     "clinic": clinic?.toJson(),
+//   };
+
+//   AppointmentItem toAppointmentItem() {
+//     return AppointmentItem(
+//       date: date,
+//       appointmentType: appointmentType,
+//       appointmentTypeId: appointmentTypeId,
+//       treatments: treatments,
+//       doctor: doctor != null
+//           ? AppointmentDoctor(
+//             id: doctor!.doctorId,
+//             name: doctor!.doctorName,
+//             image: doctor!.doctorImage,
+//           )
+//           : null,
+//       clinic: clinic != null
+//           ? AppointmentClinic(
+//             id: clinic!.clinicId,
+//             name: clinic!.clinicName,
+//             logo: clinic!.clinicImage,
+//           )
+//           : null,
+//     );
+//   }
+// }
+
+// // Remove AppointmentTreatment and AppointmentMaterial here to use from get_appointment_response.dart
+
+class DashboardDoctor {
+  final int? doctorId;
+  final String? doctorName;
+  final String? doctorImage;
+
+  DashboardDoctor({this.doctorId, this.doctorName, this.doctorImage});
+
+  factory DashboardDoctor.fromJson(Map<String, dynamic> json) =>
+      DashboardDoctor(
+        doctorId: json["doctor_id"],
+        doctorName: json["doctor_name"],
+        doctorImage: json["doctor_image"],
+      );
+
+  Map<String, dynamic> toJson() => {
+    "doctor_id": doctorId,
+    "doctor_name": doctorName,
+    "doctor_image": doctorImage,
+  };
+}
+
+class DashboardClinic {
+  final int? clinicId;
+  final String? clinicName;
+  final String? clinicImage;
+
+  DashboardClinic({this.clinicId, this.clinicName, this.clinicImage});
+
+  factory DashboardClinic.fromJson(Map<String, dynamic> json) =>
+      DashboardClinic(
+        clinicId: json["clinic_id"],
+        clinicName: json["clinic_name"],
+        clinicImage: json["clinic_image"],
+      );
+
+  Map<String, dynamic> toJson() => {
+    "clinic_id": clinicId,
+    "clinic_name": clinicName,
+    "clinic_image": clinicImage,
+  };
+}
+
+class TopDoctor {
+  final int? doctorId;
+  final String? doctorImage;
+  final num? doctorRating;
+  final String? doctorName;
+  final String? specialization;
+  final DashboardClinic? clinic;
+
+  TopDoctor({
+    this.doctorId,
+    this.doctorImage,
+    this.doctorRating,
+    this.doctorName,
+    this.specialization,
+    this.clinic,
+  });
+
+  factory TopDoctor.fromJson(Map<String, dynamic> json) => TopDoctor(
+    doctorId: json["doctor_id"],
+    doctorImage: json["doctor_image"],
+    doctorRating: json["doctor_rating"],
+    doctorName: json["doctor_name"],
+    specialization: json["specialization"],
+    clinic: json["clinic"] == null
+        ? null
+        : DashboardClinic.fromJson(json["clinic"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "doctor_id": doctorId,
+    "doctor_image": doctorImage,
+    "doctor_rating": doctorRating,
+    "doctor_name": doctorName,
+    "specaialization": specialization,
+    "clinic": clinic?.toJson(),
+  };
+
+  PractitionerDoctor toPractitionerDoctor() {
+    return PractitionerDoctor(
+      id: doctorId,
+      image: doctorImage,
+      rating: doctorRating,
+      name: doctorName,
+      specialization: specialization,
+      clinic: clinic != null
+          ? PractitionerClinic(
+              clinicId: clinic!.clinicId,
+              clinicName: clinic!.clinicName,
+            )
+          : null,
+    );
+  }
+}
+
+class TopClinic {
+  final int? clinicId;
+  final String? clinicImage;
+  final num? clinicRating;
+  final String? clinicName;
+  final String? address;
+  final int? doctorCount;
+
+  TopClinic({
+    this.clinicId,
+    this.clinicImage,
+    this.clinicRating,
+    this.clinicName,
+    this.address,
+    this.doctorCount,
+  });
+
+  factory TopClinic.fromJson(Map<String, dynamic> json) => TopClinic(
+    clinicId: json["clinic_id"],
+    clinicImage: json["clinic_image"],
+    clinicRating: json["clinic_rating"],
+    clinicName: json["clinic_name"],
+    address: json["address"],
+    doctorCount: json["doctor_count"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "clinic_id": clinicId,
+    "clinic_image": clinicImage,
+    "clinic_rating": clinicRating,
+    "clinic_name": clinicName,
+    "address": address,
+    "doctor_count": doctorCount,
   };
 }

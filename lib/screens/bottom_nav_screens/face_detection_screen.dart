@@ -1,11 +1,13 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:volume_controller/volume_controller.dart';
 
 import '../../utills/assets.dart';
 import '../../utills/color_constant.dart';
@@ -34,6 +36,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
   // Store ref for use in callbacks
   WidgetRef? _storedRef;
+  late double initialVolume;
 
   @override
   void initState() {
@@ -46,6 +49,34 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
         MedicalDisclaimerBottomSheet.show(context);
       }
     });
+    _listenToVolume();
+  }
+
+  Future<void> _listenToVolume() async {
+    initialVolume = await VolumeController.instance.getVolume();
+
+    // If volume is already at max, set it slightly lower so we can detect an "up" press
+    if (initialVolume >= 1.0) {
+      initialVolume = 0.9;
+      VolumeController.instance.setVolume(0.9);
+    }
+
+    VolumeController.instance.showSystemUI = false;
+    VolumeController.instance.addListener((newVolume) async {
+      log('VOLUME: $newVolume $initialVolume');
+      if (newVolume >= initialVolume) {
+        if (!_isCapturing) {
+          await _captureAndNavigate(ref);
+        }
+      }
+      initialVolume = newVolume;
+
+      // If we've reached max volume, reset it slightly so we can detect the next 'Up' press
+      if (newVolume >= 1.0) {
+        VolumeController.instance.setVolume(0.9);
+        initialVolume = 0.9;
+      }
+    }, fetchInitialVolume: false);
   }
 
   Future<void> _initCamera(WidgetRef ref) async {
@@ -137,18 +168,18 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       barrierDismissible: false,
       builder: (context) => Dialog(
         backgroundColor: Colors.transparent,
-        insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
+        insetPadding: EdgeInsets.symmetric(horizontal: context.w(20)),
         child: Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20.r),
+            borderRadius: BorderRadius.circular(context.r(20)),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // Header
               Padding(
-                padding: EdgeInsets.all(20.w),
+                padding: EdgeInsets.all(context.w(20)),
                 child: Text(
                   "Verify your image",
                   style: CustomFonts.black24w600,
@@ -157,17 +188,17 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
               ),
               // Captured image
               Container(
-                margin: EdgeInsets.symmetric(horizontal: 20.w),
-                height: 300.h,
+                margin: EdgeInsets.symmetric(horizontal: context.w(20)),
+                height: context.h(300),
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15.r),
+                  borderRadius: BorderRadius.circular(context.r(15)),
                   border: Border.all(
                     color: CustomColors.lightPurpleColor.withValues(alpha: 0.3),
                     width: 2,
                   ),
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(13.r),
+                  borderRadius: BorderRadius.circular(context.r(13)),
                   child: Image.file(
                     File(capturedImage.path),
                     fit: BoxFit.cover,
@@ -175,10 +206,13 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 30.h),
+              SizedBox(height: context.h(30)),
               // Buttons
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(20),
+                  vertical: context.h(20),
+                ),
                 child: Row(
                   children: [
                     // Recapture button
@@ -192,13 +226,15 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                           });
                         },
                         style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          padding: EdgeInsets.symmetric(
+                            vertical: context.h(16),
+                          ),
                           side: const BorderSide(
                             color: CustomColors.purpleColor,
                             width: 2,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
+                            borderRadius: BorderRadius.circular(context.r(12)),
                           ),
                         ),
                         child: Text(
@@ -209,7 +245,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 16.w),
+                    SizedBox(width: context.w(16)),
                     // Submit button
                     Expanded(
                       child: ElevatedButton(
@@ -228,10 +264,12 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                           }
                         },
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                          padding: EdgeInsets.symmetric(
+                            vertical: context.h(16),
+                          ),
                           backgroundColor: Colors.black,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.r),
+                            borderRadius: BorderRadius.circular(context.r(12)),
                           ),
                         ),
                         child: Text("Submit", style: CustomFonts.white18w600),
@@ -249,6 +287,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
   @override
   void dispose() {
+    VolumeController.instance.removeListener();
     _cameraController?.dispose();
     super.dispose();
   }
@@ -314,8 +353,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
             ),
           ),
           Positioned(
-            top: 40.h,
-            left: 15.w,
+            top: context.h(40),
+            left: context.w(15),
             child: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
@@ -327,7 +366,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
             alignment: Alignment.bottomCenter,
             child: SafeArea(
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 5.h),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(30),
+                  vertical: context.h(5),
+                ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -344,24 +386,24 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    SizedBox(height: 24.h),
+                    SizedBox(height: context.h(24)),
                     Text(
                       "Face Scan",
                       style: CustomFonts.white22w600.copyWith(
-                        fontSize: 24.sp,
+                        fontSize: context.sp(24),
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(height: 4.h),
+                    SizedBox(height: context.h(4)),
                     Text(
                       "We'll scan your face and create a cool model just for you to enhance your experience!",
                       style: CustomFonts.white22w600.copyWith(
-                        fontSize: 14.sp,
+                        fontSize: context.sp(14),
                         color: Colors.white.withValues(alpha: 0.9),
                         fontWeight: FontWeight.w400,
                       ),
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: context.h(20)),
                     _buildInstructionRow(
                       icon: SvgAssets.eye,
                       text: widget.pose == 'front'
@@ -369,49 +411,49 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                           : widget.pose == 'left'
                           ? "Turn your face to the left so your profile is clearly visible."
                           : "Turn your face to the right so your profile is clearly visible.",
-                      iconHeight: 24.h,
-                      iconWidth: 26.w,
+                      iconHeight: context.h(24),
+                      iconWidth: context.w(26),
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: context.h(16)),
                     _buildInstructionRow(
                       icon: SvgAssets.profileIcon,
-                      text: "Align your face within the circular frame.",
-                      iconHeight: 24.h,
-                      iconWidth: 24.w,
+                      text: "Align your face within the frame.",
+                      iconHeight: context.h(24),
+                      iconWidth: context.w(24),
                       iconColor: CustomColors.purpleColor,
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: context.h(16)),
                     _buildInstructionRow(
                       icon: SvgAssets.glasses,
                       text:
                           "Remove anything that covers your face eg: Eye glasses, Cap etc",
-                      iconHeight: 8.h,
-                      iconWidth: 22.w,
+                      iconHeight: context.h(8),
+                      iconWidth: context.w(22),
                     ),
-                    SizedBox(height: 16.h),
-                    _buildInstructionRow(
-                      icon: SvgAssets.face,
-                      text: "Move Your Face Inside The Border",
-                      iconHeight: 24.h,
-                      iconWidth: 22.w,
-                    ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: context.h(16)),
+                    // _buildInstructionRow(
+                    //   icon: SvgAssets.face,
+                    //   text: "Move Your Face Inside The Border",
+                    //   iconHeight: context.h(24),
+                    //   iconWidth: context.w(22),
+                    // ),
+                    // SizedBox(height: context.h(16)),
                     _buildInstructionRow(
                       icon: Icons.warning,
                       iconColor: CustomColors.purpleColor,
                       text:
                           "The app is not a medical device. Any results provided are for informational and aesthetic purposes only.",
-                      iconHeight: 24.h,
-                      iconWidth: 22.w,
+                      iconHeight: context.h(24),
+                      iconWidth: context.w(22),
                     ),
-                    SizedBox(height: 30.h),
+                    SizedBox(height: context.h(30)),
                     // Capture button
                     SizedBox(
                       width: double.infinity,
                       child: Container(
                         decoration: BoxDecoration(
                           color: CustomColors.purpleColor,
-                          borderRadius: BorderRadius.circular(12.r),
+                          borderRadius: BorderRadius.circular(context.r(12)),
                         ),
                         child: Material(
                           color: Colors.transparent,
@@ -423,14 +465,16 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                                       _captureAndNavigate(_storedRef!);
                                     }
                                   },
-                            borderRadius: BorderRadius.circular(12.r),
+                            borderRadius: BorderRadius.circular(context.r(12)),
                             child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 18.h),
+                              padding: EdgeInsets.symmetric(
+                                vertical: context.h(18),
+                              ),
                               alignment: Alignment.center,
                               child: _isCapturing
                                   ? SizedBox(
-                                      height: 20.h,
-                                      width: 20.w,
+                                      height: context.h(20),
+                                      width: context.w(20),
                                       child: const CircularProgressIndicator(
                                         strokeWidth: 2,
                                         valueColor:
@@ -448,7 +492,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: context.h(20)),
                   ],
                 ),
               ),
@@ -480,12 +524,12 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
           )
         else
           Icon(icon, size: iconHeight, color: iconColor),
-        SizedBox(width: 17.w),
+        SizedBox(width: context.w(17)),
         Flexible(
           child: Text(
             text,
             style: CustomFonts.white22w600.copyWith(
-              fontSize: 14.sp,
+              fontSize: context.sp(14),
               color: Colors.white.withValues(alpha: 0.9),
               fontWeight: FontWeight.w400,
             ),

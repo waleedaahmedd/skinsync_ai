@@ -2,9 +2,10 @@ import 'dart:convert';
 
 import '../exceptions/app_exception.dart';
 import '../models/requests/appointment_request.dart';
+import '../models/responses/appointment_detail_response.dart';
 import '../models/responses/appointment_response.dart';
 import '../models/responses/appointment_type_list_response.dart';
-import '../models/responses/get_appointment_response.dart';
+import '../models/responses/appointments_list_response.dart';
 import '../repositories/appointment_repository.dart';
 import 'api_base_helper.dart';
 import '../utills/enums.dart';
@@ -34,7 +35,7 @@ class AppointmentService implements AppointmentRepository {
   }
 
   @override
-  Future<GetAppointmentResponse> getAppointmentsApi({
+  Future<AppointmentsListResponse> getAppointmentsApi({
     required int page,
     required int limit,
   }) async {
@@ -46,14 +47,34 @@ class AppointmentService implements AppointmentRepository {
     // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
-      GetAppointmentResponse appointmentResponse =
-          GetAppointmentResponse.fromJson(parsed);
+      AppointmentsListResponse appointmentResponse =
+          AppointmentsListResponse.fromJson(parsed);
       return appointmentResponse;
     } else {
       // Handle HTTP error status codes
       final parsed = json.decode(response.body);
       throw AppException(
-        GetAppointmentResponse.fromJson(parsed).message as String,
+        AppointmentsListResponse.fromJson(parsed).message ?? "Something went wrong",
+      );
+    }
+  }
+
+  @override
+  Future<AppointmentDetailResponse> getAppointmentDetail({
+    required int appointmentId,
+  }) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.appointments,
+      requestType: 'GET',
+      params: '/$appointmentId',
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      return AppointmentDetailResponse.fromJson(parsed);
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(
+        AppointmentDetailResponse.fromJson(parsed).message ?? "Failed to fetch appointment detail",
       );
     }
   }
@@ -73,7 +94,7 @@ class AppointmentService implements AppointmentRepository {
       // Handle HTTP error status codes
       final parsed = json.decode(response.body);
       throw AppException(
-        GetAppointmentResponse.fromJson(parsed).message as String,
+        parsed['message'] ?? "Something went wrong",
       );
     }
   }

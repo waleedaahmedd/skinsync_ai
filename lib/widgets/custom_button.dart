@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/custom_fonts.dart';
 
 class CustomButton extends StatelessWidget {
@@ -28,7 +28,7 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: height ?? 52.h,
+      height: height ?? context.h(52),
       width: width ?? double.infinity,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
@@ -37,7 +37,7 @@ class CustomButton extends StatelessWidget {
           foregroundColor: textColor,
           elevation: backgroundColor == Colors.transparent ? 0 : 1,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius ?? 25.r),
+            borderRadius: BorderRadius.circular(borderRadius ?? context.r(25)),
           ),
           padding: EdgeInsets.zero,
         ),

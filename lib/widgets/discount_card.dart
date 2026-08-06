@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -12,7 +12,7 @@ class DiscountCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF1FAFE), // Soft luxury pastel blue/grey
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(context.r(20)),
         border: Border.all(
           color: Colors.black.withValues(alpha: 0.08),
           width: 1.5,
@@ -25,15 +25,15 @@ class DiscountCard extends StatelessWidget {
           ),
         ],
       ),
-      height: 144.h,
-      width: 360.w, // Slightly adjusted width for better fitting on smaller screen widths
+      height: context.h(144),
+      width: context.w(360), // Slightly adjusted width for better fitting on smaller screen widths
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(context.r(20)),
         child: Row(
           children: [
             Expanded(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(16.w, 16.h, 12.w, 16.h),
+                padding: EdgeInsets.fromLTRB(context.w(16), context.h(16), context.w(12), context.h(16)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -47,7 +47,7 @@ class DiscountCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        SizedBox(height: 2.h),
+                        SizedBox(height: context.h(2)),
                         Text(
                           "Glow Skin Clinic",
                           style: CustomFonts.grey700_10w400,
@@ -57,10 +57,10 @@ class DiscountCard extends StatelessWidget {
                       ],
                     ),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                      padding: EdgeInsets.symmetric(horizontal: context.w(10), vertical: context.h(4)),
                       decoration: BoxDecoration(
                         color: CustomColors.pinkColor.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(20.r),
+                        borderRadius: BorderRadius.circular(context.r(20)),
                       ),
                       child: Text(
                         "20% Off",
@@ -78,11 +78,11 @@ class DiscountCard extends StatelessWidget {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.horizontal(right: Radius.circular(20.r)),
+                  borderRadius: BorderRadius.horizontal(right: Radius.circular(context.r(20))),
                   child: Image.asset(
                     DummyAssets.treatmentimage,
-                    width: 150.w,
-                    height: 144.h,
+                    width: context.w(150),
+                    height: context.h(144),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -102,11 +102,11 @@ class DiscountCard extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  top: 12.h,
-                  right: 12.w,
+                  top: context.h(12),
+                  right: context.w(12),
                   child: Container(
-                    height: 40.w,
-                    width: 40.w,
+                    height: context.w(40),
+                    width: context.w(40),
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: CustomColors.pinkColor,
@@ -117,7 +117,7 @@ class DiscountCard extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 10.sp,
+                          fontSize: context.sp(10),
                           fontWeight: FontWeight.bold,
                           fontFamily: 'Degular',
                           height: 1.1,

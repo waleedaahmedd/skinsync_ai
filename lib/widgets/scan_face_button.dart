@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import '../screens/face_pose_capture_screen.dart';
 import '../utills/assets.dart';
+import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_view_model.dart';
-
-import '../utills/color_constant.dart';
 
 class ScanFaceButton extends ConsumerWidget {
   // final VoidCallback onTap;
@@ -27,9 +27,12 @@ class ScanFaceButton extends ConsumerWidget {
         Navigator.of(context).pushNamed(FacePoseCaptureScreen.routeName);
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 14.h),
+        padding: EdgeInsets.symmetric(
+          horizontal: context.w(22),
+          vertical: context.h(14),
+        ),
         decoration: BoxDecoration(
-         // color: CustomColors.lightBlueColor,
+          // color: CustomColors.lightBlueColor,
           gradient: CustomColors.purpleBlueGradient,
           borderRadius: BorderRadius.circular(40),
           boxShadow: [
@@ -50,12 +53,15 @@ class ScanFaceButton extends ConsumerWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SvgPicture.asset(SvgAssets.faceId,color: CustomColors.blackColor,),
-            const SizedBox(width: 8),
-            Text(
-              "Scan Your Face",
-              style: CustomFonts.black18w600,
+            SvgPicture.asset(
+              SvgAssets.faceId,
+              colorFilter: const ColorFilter.mode(
+                CustomColors.blackColor,
+                BlendMode.srcIn,
+              ),
             ),
+            const SizedBox(width: 8),
+            Text("Scan Your Face", style: CustomFonts.black18w600),
           ],
         ),
       ),

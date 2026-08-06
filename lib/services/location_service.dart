@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
-
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
-import 'package:location/location.dart';
 import '../exceptions/app_exception.dart';
 import '../models/responses/address_data.dart';
 import '../models/responses/geocoding_response.dart';
@@ -23,23 +22,55 @@ class LocationService {
   static const String _url =
       'https://maps.googleapis.com/maps/api/geocode/json';
 
+  // Future<AddressData?> fetchAddress() async {
+  //   final service = Location();
+  //   final permission = await service.requestPermission();
+  //   if (permission != PermissionStatus.granted) {
+  //     throw const AppException('Location permission denied!');
+  //   }
+  //   final granted = await service.requestService();
+  //   if (!granted) {
+  //     throw const AppException('Location service denied!');
+  //   }
+  //   final data = await service.getLocation();
+  //   if (data.latitude == null || data.longitude == null) {
+  //     throw const AppException('Could not fetch location!');
+  //   }
+  //   final address = await getAddressFromLatLng(data.latitude!, data.longitude!);
+  //   return AddressData(
+  //     latLng: LatLng(data.latitude!, data.longitude!),
+  //     address: address,
+  //   );
+  // }
+
   Future<AddressData?> fetchAddress() async {
-    final service = Location();
-    final permission = await service.requestPermission();
-    if (permission != PermissionStatus.granted) {
-      throw const AppException('Location permission denied!');
-    }
-    final granted = await service.requestService();
-    if (!granted) {
+    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
       throw const AppException('Location service denied!');
     }
-    final data = await service.getLocation();
-    if (data.latitude == null || data.longitude == null) {
-      throw const AppException('Could not fetch location!');
+
+    // Check/request permission
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw const AppException('Location permission denied!');
+      }
     }
-    final address = await getAddressFromLatLng(data.latitude!, data.longitude!);
+    if (permission == LocationPermission.deniedForever) {
+      throw const AppException('Location permission denied!');
+    }
+
+    // Fetch position
+    final position = await Geolocator.getCurrentPosition(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+      ),
+    );
+
+    final address = await getAddressFromLatLng(position.latitude, position.longitude);
     return AddressData(
-      latLng: LatLng(data.latitude!, data.longitude!),
+      latLng: LatLng(position.latitude, position.longitude),
       address: address,
     );
   }

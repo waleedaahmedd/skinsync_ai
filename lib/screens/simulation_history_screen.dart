@@ -2,8 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../models/responses/simulation_history_response.dart';
 import '../utills/color_constant.dart';
@@ -14,7 +13,7 @@ import '../view_models/treatment_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
-import 'ar_face_model_Preview_screen.dart';
+import 'ar_face_model_preview_screen.dart';
 import 'face_pose_capture_screen.dart';
 
 class SimulationHistoryScreen extends ConsumerStatefulWidget {
@@ -41,10 +40,9 @@ class _SimulationHistoryScreenState
     final state = ref.watch(appointmentProvider);
     final simulations = state.simulations;
     final Map<String, List<SimulationData>> groupedSimulations = {};
-    final dateFormat = DateFormat('MMMM dd, yyyy');
     for (var sim in simulations) {
       if (sim.createdAt != null) {
-        final dateKey = dateFormat.format(sim.createdAt!);
+        final dateKey = sim.createdAt!.formattedFullDate;
         if (groupedSimulations.containsKey(dateKey)) {
           groupedSimulations[dateKey]!.add(sim);
         } else {
@@ -68,7 +66,7 @@ class _SimulationHistoryScreenState
               ),
             )
           : ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+              padding: EdgeInsets.symmetric(horizontal: context.w(20), vertical: context.h(10)),
               itemCount: sortedKeys.length,
               itemBuilder: (context, index) {
                 final date = sortedKeys[index];
@@ -78,7 +76,7 @@ class _SimulationHistoryScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(vertical: 15.h),
+                      padding: EdgeInsets.symmetric(vertical: context.h(15)),
                       child: Text(date, style: CustomFonts.black18w600),
                     ),
                     ...sims.map((sim) => _buildSimulationCard(sim)),
@@ -87,7 +85,7 @@ class _SimulationHistoryScreenState
               },
             ),
       bottomNavigationBar: Padding(
-        padding: .all(20.w),
+        padding: .all(context.w(20)),
         child: CustomButton(
           text: 'Try another pose',
           onPressed: () => Navigator.pushReplacementNamed(
@@ -101,11 +99,11 @@ class _SimulationHistoryScreenState
 
   Widget _buildSimulationCard(SimulationData sim) {
     return Container(
-      margin: EdgeInsets.only(bottom: 20.h),
-      padding: EdgeInsets.all(15.w),
+      margin: EdgeInsets.only(bottom: context.h(20)),
+      padding: EdgeInsets.all(context.w(15)),
       decoration: BoxDecoration(
         color: CustomColors.whiteColor,
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(context.r(20)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -137,7 +135,7 @@ class _SimulationHistoryScreenState
                 ),
             ],
           ),
-          SizedBox(height: 15.h),
+          SizedBox(height: context.h(15)),
           _buildImagePair(
             "Front View",
             sim.frontImageBefore,
@@ -150,10 +148,10 @@ class _SimulationHistoryScreenState
           ),
           _buildImagePair("Left View", sim.leftImageBefore, sim.leftImageAfter),
           if (sim.treatments != null && sim.treatments!.isNotEmpty) ...[
-            SizedBox(height: 12.h),
+            SizedBox(height: context.h(12)),
             Wrap(
-              spacing: 8.w,
-              runSpacing: 5.h,
+              spacing: context.w(8),
+              runSpacing: context.h(5),
               children: sim.treatments!
                   .expand((t) => t.areas ?? <SimulationArea>[])
                   .map((area) {
@@ -163,12 +161,12 @@ class _SimulationHistoryScreenState
                         : "";
                     return Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 10.w,
-                        vertical: 4.h,
+                        horizontal: context.w(10),
+                        vertical: context.h(4),
                       ),
                       decoration: BoxDecoration(
                         color: CustomColors.greyColor.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(20.r),
+                        borderRadius: BorderRadius.circular(context.r(20)),
                       ),
                       child: Text(
                         "${area.name}$materialText",
@@ -179,7 +177,7 @@ class _SimulationHistoryScreenState
                   .toList(),
             ),
           ],
-          SizedBox(height: 10.h),
+          SizedBox(height: context.h(10)),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -209,7 +207,7 @@ class _SimulationHistoryScreenState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(bottom: 8.h, top: 5.h),
+          padding: EdgeInsets.only(bottom: context.h(8), top: context.h(5)),
           child: Text(label, style: CustomFonts.black14w600),
         ),
         Row(
@@ -219,25 +217,25 @@ class _SimulationHistoryScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Before", style: CustomFonts.grey12w400),
-                  SizedBox(height: 6.h),
+                  SizedBox(height: context.h(6)),
                   _buildImage(before),
                 ],
               ),
             ),
-            SizedBox(width: 15.w),
+            SizedBox(width: context.w(15)),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("After", style: CustomFonts.grey12w400),
-                  SizedBox(height: 6.h),
+                  SizedBox(height: context.h(6)),
                   _buildImage(after),
                 ],
               ),
             ),
           ],
         ),
-        SizedBox(height: 10.h),
+        SizedBox(height: context.h(10)),
       ],
     );
   }
@@ -245,16 +243,16 @@ class _SimulationHistoryScreenState
   Widget _buildImage(String? imageUrl) {
     final image = CachedNetworkImage(
       imageUrl: imageUrl ?? '',
-      // height: 140.h,
+      // height: context.h(140),
       width: double.infinity,
       fit: BoxFit.cover,
       placeholder: (context, url) => Container(
-        height: 140.h,
+        height: context.h(140),
         color: CustomColors.greyColor.withValues(alpha: 0.2),
         child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
       ),
       errorWidget: (context, url, error) => Container(
-        height: 140.h,
+        height: context.h(140),
         color: CustomColors.greyColor.withValues(alpha: 0.2),
         child: const Icon(
           Icons.broken_image,
@@ -265,14 +263,14 @@ class _SimulationHistoryScreenState
     );
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(context.r(12)),
         border: Border.all(
           color: CustomColors.greyColor.withValues(alpha: 0.3),
         ),
       ),
-      height: 140.h,
+      height: context.h(140),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(context.r(12)),
         child: InkWell(
           onTap: () => Navigator.push(
             context,

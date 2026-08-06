@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 
@@ -9,9 +9,9 @@ class PointsEarnCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20.w),
+      padding: EdgeInsets.all(context.w(20)),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24.r),
+        borderRadius: BorderRadius.circular(context.r(24)),
         gradient: CustomColors.purpleBlueGradient,
         border: Border.all(
           color: CustomColors.greyColor.withValues(alpha: 0.6),
@@ -34,8 +34,8 @@ class PointsEarnCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    width: 44.w,
-                    height: 44.w,
+                    width: context.w(44),
+                    height: context.w(44),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: CustomColors.purpleColor.withValues(alpha: 0.1),
@@ -46,7 +46,7 @@ class PointsEarnCard extends StatelessWidget {
                       size: 24,
                     ),
                   ),
-                  SizedBox(width: 12.w),
+                  SizedBox(width: context.w(12)),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -64,10 +64,10 @@ class PointsEarnCard extends StatelessWidget {
               ),
               // Redeem Button
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
+                padding: EdgeInsets.symmetric(horizontal: context.w(14), vertical: context.h(8)),
                 decoration: BoxDecoration(
                   color: CustomColors.purpleColor,
-                  borderRadius: BorderRadius.circular(30.r),
+                  borderRadius: BorderRadius.circular(context.r(30)),
                 ),
                 child: Text(
                   "Redeem",
@@ -76,12 +76,12 @@ class PointsEarnCard extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 18.h),
+          SizedBox(height: context.h(18)),
           Container(
-            padding: EdgeInsets.all(12.w),
+            padding: EdgeInsets.all(context.w(12)),
             decoration: BoxDecoration(
               color: CustomColors.purpleColor.withValues(alpha: 0.06),
-              borderRadius: BorderRadius.circular(16.r),
+              borderRadius: BorderRadius.circular(context.r(16)),
             ),
             child: Row(
               children: [
@@ -90,7 +90,7 @@ class PointsEarnCard extends StatelessWidget {
                   color: CustomColors.blueColor,
                   size: 16,
                 ),
-                SizedBox(width: 8.w),
+                SizedBox(width: context.w(8)),
                 Expanded(
                   child: Text(
                     'Every \$1 spent earns 10 points. Accumulate points to unlock free clinical treatments!',

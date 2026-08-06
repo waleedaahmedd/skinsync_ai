@@ -2,14 +2,16 @@ import 'dart:convert';
 
 import '../exceptions/app_exception.dart';
 import '../models/requests/get_clinic_request.dart';
+import '../models/requests/get_practitioners_request.dart';
 import '../models/requests/invite_clinic_request.dart';
 import '../models/responses/availability_response.dart';
 import '../models/responses/base_response_model.dart';
 import '../models/responses/get_clinic_response.dart';
-import '../models/responses/get_doctor_response.dart';
+import '../models/responses/practitioner_list_response.dart';
 import '../models/responses/payment_options_response.dart';
 import '../models/responses/treatment_pricing_response.dart';
 import '../repositories/clinic_doctor_repository.dart';
+import '../utills/date_time_utills.dart';
 import '../utills/enums.dart';
 import 'api_base_helper.dart';
 
@@ -40,7 +42,26 @@ class ClinicDoctorService implements ClinicDoctorRepository {
   }
 
   @override
-  Future<GetDoctorResponse> getDoctors({
+  Future<PractitionerListResponse> getPractitioners({
+    required GetPractitionersRequest request,
+  }) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.practitionersList,
+      requestType: 'POST',
+      requestBody: request.toJson(),
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      return PractitionerListResponse.fromJson(parsed);
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(PractitionerListResponse.fromJson(parsed).message ?? 'Error fetching practitioners');
+    }
+  }
+
+  @override
+  Future<PractitionerListResponse> getDoctors({
     required int clinicId,
     required int treatmentId,
     required String sideAreaIdsList,
@@ -54,12 +75,11 @@ class ClinicDoctorService implements ClinicDoctorRepository {
     // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
-      GetDoctorResponse getDoctorResponse = GetDoctorResponse.fromJson(parsed);
-      return getDoctorResponse;
+      return PractitionerListResponse.fromJson(parsed);
     } else {
       // Handle HTTP error status codes
       final parsed = json.decode(response.body);
-      throw AppException(GetDoctorResponse.fromJson(parsed).message as String);
+      throw AppException(PractitionerListResponse.fromJson(parsed).message as String);
     }
   }
 
@@ -73,7 +93,7 @@ class ClinicDoctorService implements ClinicDoctorRepository {
       endPoint: EndPoints.getAvailability,
       requestType: 'GET',
       params:
-          '?doctor_id=$doctorId&clinic_id=$clinicId&date=${date.millisecondsSinceEpoch ~/ 1000}',
+          '?doctor_id=$doctorId&clinic_id=$clinicId&date=${date.secondsSinceEpoch}',
     );
     final data = AvailabilityResponse.fromJson(jsonDecode(response.body));
     if (data.status == false) {

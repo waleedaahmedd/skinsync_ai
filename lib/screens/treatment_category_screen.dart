@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../models/responses/treatment_category_list_response.dart';
-import 'bottom_nav_screens/treatments_screen.dart';
+import 'treatments_screen.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_category_view_model.dart';
 import '../widgets/app_loader.dart';
+import '../widgets/custom_app_bar.dart';
 import '../widgets/treatment_container.dart';
 
 class TreatmentCategoryScreen extends ConsumerStatefulWidget {
@@ -58,55 +59,19 @@ class _TreatmentCategoryScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Professional MedSpa Header
+            CustomAppBar(title: widget.title),
+            // Premium Breadcrumb Selection Path Container
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 30.w, vertical: 20.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          padding: EdgeInsets.all(8.w),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.grey.shade300,
-                              width: 1,
-                            ),
-                          ),
-                          child: Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            size: 16.sp,
-                            color: CustomColors.blackColor,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 15.w),
-                      Expanded(
-                        child: Text(
-                          widget.title,
-                          style: CustomFonts.black24w600,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 15.h),
-
-                  // Premium Breadcrumb Selection Path Container
-                  Container(
+              padding: EdgeInsets.symmetric(horizontal: context.w(30)),
+              child: Container(
                     width: double.infinity,
                     padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 12.h,
+                      horizontal: context.w(16),
+                      vertical: context.h(12),
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(15.r),
+                      borderRadius: BorderRadius.circular(context.r(15)),
                       border: Border.all(
                         color: CustomColors.lightPurpleColor.withValues(
                           alpha: 0.3,
@@ -125,15 +90,15 @@ class _TreatmentCategoryScreenState
                       children: [
                         Icon(
                           Icons.insights_rounded,
-                          size: 14.sp,
+                          size: context.sp(14),
                           color: CustomColors.purpleColor,
                         ),
-                        SizedBox(width: 8.w),
+                        SizedBox(width: context.w(8)),
                         Expanded(
                           child: Text(
                             widget.selectionPath,
                             style: TextStyle(
-                              fontSize: 12.sp,
+                              fontSize: context.sp(12),
                               fontWeight: FontWeight.w500,
                               color: CustomColors.textGreyColor,
                               fontFamily: 'Degular',
@@ -146,8 +111,6 @@ class _TreatmentCategoryScreenState
                       ],
                     ),
                   ),
-                ],
-              ),
             ),
 
             // Category Listing using Reusable Adaptive TreatmentContainer
@@ -160,13 +123,13 @@ class _TreatmentCategoryScreenState
                       key: ValueKey('category_list_${widget.title}'),
                       child: ListView.builder(
                         scrollDirection: Axis.vertical,
-                        padding: EdgeInsets.symmetric(horizontal: 30.w),
+                        padding: EdgeInsets.symmetric(horizontal: context.w(30)),
                         physics: const BouncingScrollPhysics(),
                         itemCount: displayedCategories.length + 1,
                         itemBuilder: (context, index) {
                           if (index == displayedCategories.length) {
                             return SizedBox(
-                              height: 110.h,
+                              height: context.h(110),
                             ); // Provide padding for floating items
                           }
 
@@ -179,7 +142,7 @@ class _TreatmentCategoryScreenState
                               verticalOffset: 50.0,
                               child: FadeInAnimation(
                                 child: Padding(
-                                  padding: EdgeInsets.only(bottom: 16.h),
+                                  padding: EdgeInsets.only(bottom: context.h(16)),
                                   child: TreatmentContainer(
                                     customTitle: category.name,
                                     customSubtitle:
@@ -235,23 +198,23 @@ class _TreatmentCategoryScreenState
   Widget _buildEmptyResultsPlaceholder() {
     return Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 40.w),
+        padding: EdgeInsets.symmetric(horizontal: context.w(40)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.category_outlined,
-              size: 70.sp,
+              size: context.sp(70),
               color: Colors.grey.shade400,
             ),
-            SizedBox(height: 15.h),
+            SizedBox(height: context.h(15)),
             Text(
               "No Categories Found",
               style: CustomFonts.black20w600.copyWith(
                 color: Colors.grey.shade700,
               ),
             ),
-            SizedBox(height: 5.h),
+            SizedBox(height: context.h(5)),
             Text(
               "We couldn't find any categories under this section.",
               textAlign: TextAlign.center,

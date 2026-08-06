@@ -60,7 +60,6 @@ dependencies:
   webview_flutter: ^4.14.1
   permission_handler: ^12.0.3
   google_maps_flutter: ^2.18.0
-  location: ^10.0.2
   infinite_scroll_pagination: ^5.1.1
   firebase_storage: ^13.4.5
   device_info_plus: ^13.2.0
@@ -75,7 +74,8 @@ dependencies:
   before_after: any
   flutter_image_compress: ^2.5.1
   file_picker: ^12.0.0-beta.7
-  dlibphonenumber: ^1.1.68
+  dlibphonenumber: ^1.1.69
+  geolocator: ^14.0.3
 
 dependency_overrides:
   jni: 1.0.0

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'bottom_nav_page.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
-
-import 'face_pose_capture_screen.dart';
+import 'bottom_nav_page.dart';
 import 'bottom_nav_screens/face_detection_screen.dart';
+import 'face_pose_capture_screen.dart';
 
 class FaceScanScreen extends StatelessWidget {
   final String pose;
@@ -21,20 +21,20 @@ class FaceScanScreen extends StatelessWidget {
     final String faceAsset = isFront
         ? PngAssets.face
         : isLeft
-            ? PngAssets.leftFace
-            : PngAssets.rightFace;
+        ? PngAssets.leftFace
+        : PngAssets.rightFace;
 
     final String titleText = isFront
         ? "Face Scan"
         : isLeft
-            ? "Left Profile Scan"
-            : "Right Profile Scan";
+        ? "Left Profile Scan"
+        : "Right Profile Scan";
 
     final String subTitleText = isFront
         ? "We’ll scan your face and create a cool model just for you to enhance your experience!"
         : isLeft
-            ? "Capturing your left profile helps our AI understand your facial structure from every angle."
-            : "Capturing your right profile completes your 3D model for the most accurate simulation.";
+        ? "Capturing your left profile helps our AI understand your facial structure from every angle."
+        : "Capturing your right profile completes your 3D model for the most accurate simulation.";
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -47,63 +47,66 @@ class FaceScanScreen extends StatelessWidget {
           child: Stack(
             children: [
               Positioned(
-                top: 70.h,
-                right: 0.w,
-                left: 0.w,
+                top: context.h(70),
+                right: context.w(0),
+                left: context.w(0),
                 child: Image.asset(
                   PngAssets.vector2,
-                  height: 552.h,
+                  height: context.h(552),
                   fit: BoxFit.fill,
                 ),
               ),
               Positioned(
-                top: 70.h,
-                right: 0.w,
-                left: 0.w,
+                top: context.h(70),
+                right: context.w(0),
+                left: context.w(0),
                 child: Image.asset(
                   PngAssets.vector,
-                  height: 376.h,
+                  height: context.h(376),
                   fit: BoxFit.fill,
                   color: const Color(0xff88E3FB).withValues(alpha: 0.7),
                 ),
               ),
               Positioned(
-                top: 92.h,
+                top: context.h(92),
                 right: 0,
                 left: 0,
                 child: Image.asset(
                   faceAsset,
-                  height: 599.h,
+                  height: context.h(599),
                   fit: isFront ? BoxFit.fitWidth : BoxFit.contain,
                   alignment: Alignment.topCenter,
                 ),
               ),
               if (isFront)
                 Positioned(
-                  top: 215.h,
-                  left: 0.w,
-                  right: 0.w,
+                  top: context.h(215),
+                  left: context.w(0),
+                  right: context.w(0),
                   child: Image.asset(
                     PngAssets.faceMarks,
-                    height: 300.w,
+                    height: context.w(300),
                     fit: BoxFit.fitHeight,
                   ),
                 ),
               Positioned(
-                top: 432.h,
-                child: Image.asset(PngAssets.blur, height: 564.h),
+                top: context.h(432),
+                child: Image.asset(PngAssets.blur, height: context.h(564)),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(20),
+                  vertical: context.h(20),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    SizedBox(height: 60.h),
+                    SizedBox(height: context.h(60)),
                     Text(titleText, style: CustomFonts.black30w600),
-                    SizedBox(height: 2.h),
+                    SizedBox(height: context.h(2)),
                     Text(subTitleText, style: CustomFonts.grey16w400),
-                    SizedBox(height: 37.5.h),
+                    SizedBox(height: context.h(37.5)),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -126,7 +129,7 @@ class FaceScanScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20.h),
+                    SizedBox(height: context.h(20)),
                     if (isFront && pose == 'front')
                       InkWell(
                         onTap: () {
@@ -139,12 +142,15 @@ class FaceScanScreen extends StatelessWidget {
                         child: Container(
                           width: double.infinity,
                           padding: EdgeInsets.symmetric(
-                            horizontal: 121.w,
-                            vertical: 19.h,
+                            horizontal: context.w(121),
+                            vertical: context.h(19),
                           ),
                           decoration: BoxDecoration(
-                            border: Border.all(width: 1.w, color: Colors.black),
-                            borderRadius: BorderRadius.circular(50.r),
+                            border: Border.all(
+                              width: context.w(1),
+                              color: Colors.black,
+                            ),
+                            borderRadius: BorderRadius.circular(context.r(50)),
                           ),
                           child: Center(
                             child: Text(

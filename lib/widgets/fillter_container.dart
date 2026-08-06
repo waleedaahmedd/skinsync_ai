@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/svg.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -22,10 +22,10 @@ class FillterContainer extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(16.w),
+        padding: EdgeInsets.all(context.w(16)),
         decoration: BoxDecoration(
           color: isSelected ? Colors.black : CustomColors.greyColor,
-          borderRadius: BorderRadius.circular(10.r),
+          borderRadius: BorderRadius.circular(context.r(10)),
         ),
         child: Row(
           children: [
@@ -34,15 +34,15 @@ class FillterContainer extends StatelessWidget {
                 svgImage != null
                     ? SvgPicture.asset(
                         svgImage ?? "",
-                        height: 21.h,
-                        width: 21.w,
+                        height: context.h(21),
+                        width: context.w(21),
                         colorFilter: ColorFilter.mode(
                           isSelected ? Colors.white : Colors.black,
                           BlendMode.srcIn,
                         ),
                       )
                     : const SizedBox(),
-                svgImage != null ? SizedBox(width: 7.w) : const SizedBox(),
+                svgImage != null ? SizedBox(width: context.w(7)) : const SizedBox(),
                 Text(
                   title,
                   style: isSelected

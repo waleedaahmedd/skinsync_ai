@@ -10,4 +10,6 @@ class BottomNavViewModel extends BaseViewModel<int> {
   void changePage(int newPage) {
     state = newPage;
   }
+
+  bool get isScanButtonVisible => state != 2;
 }

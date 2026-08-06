@@ -5,7 +5,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
@@ -56,8 +56,9 @@ class _ArFaceModelPreviewScreenState
   late final PagingController<int, TreatmentData> _pagingController =
       PagingController<int, TreatmentData>(
         getNextPageKey: (state) {
-          if (state.items == null) return 1;
-          return state.items!.length < 10 ? null : state.nextIntPageKey;
+          final lastPageLength = state.pages?.lastOrNull?.length;
+          if (lastPageLength == null) return 1;
+          return lastPageLength < 10 ? null : state.nextIntPageKey;
         },
         fetchPage: (nextPage) async {
           final data = await ref
@@ -165,27 +166,27 @@ class _ArFaceModelPreviewScreenState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 20.h),
+                        SizedBox(height: context.h(20)),
                         _buildPoseSelector(),
-                        SizedBox(height: 12.h),
+                        SizedBox(height: context.h(12)),
                         _buildFacePreview(),
-                        SizedBox(height: 10.h),
+                        SizedBox(height: context.h(10)),
                         _buildSimulationBanner(),
-                        SizedBox(height: 30.h),
+                        SizedBox(height: context.h(30)),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          padding: EdgeInsets.symmetric(horizontal: context.w(20)),
                           child: _buildTreatmentHeader(),
                         ),
-                        SizedBox(height: 8.h),
+                        SizedBox(height: context.h(8)),
                         _buildTreatmentsList(),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 20.w),
+                          padding: EdgeInsets.symmetric(horizontal: context.w(20)),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(height: 30.h),
+                              SizedBox(height: context.h(30)),
                               _buildAreaSelectionSection(),
-                              SizedBox(height: 20.h),
+                              SizedBox(height: context.h(20)),
                               _buildSummarySection(),
                             ],
                           ),
@@ -226,11 +227,11 @@ class _ArFaceModelPreviewScreenState
   Widget _buildSimulationBanner() {
     return Container(
       width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: 20.w),
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      margin: EdgeInsets.symmetric(horizontal: context.w(20)),
+      padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(12)),
       decoration: BoxDecoration(
         color: CustomColors.greyColor.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(context.r(20)),
         border: Border.all(
           color: CustomColors.textFeildBoaderColor.withValues(alpha: 0.3),
         ),
@@ -240,15 +241,15 @@ class _ArFaceModelPreviewScreenState
           Icon(
             Icons.info_outline_rounded,
             color: CustomColors.textGreyColor,
-            size: 20.sp,
+            size: context.sp(20),
           ),
-          SizedBox(width: 12.w),
+          SizedBox(width: context.w(12)),
           Expanded(
             child: Text(
               "This is an AI-generated Simulation for Visualization Purpose only. Actual results may vary.",
               style: CustomFonts.black12w600.copyWith(
                 color: CustomColors.textGreyColor,
-                fontSize: 11.sp,
+                fontSize: context.sp(11),
                 height: 1.3,
               ),
             ),
@@ -282,7 +283,7 @@ class _ArFaceModelPreviewScreenState
 
   Widget _buildTreatmentsList() {
     return SizedBox(
-      height: 50.h,
+      height: context.h(50),
       child: PagingListener(
         controller: _pagingController,
         builder: (context, state, fetchNextPage) {
@@ -292,11 +293,11 @@ class _ArFaceModelPreviewScreenState
               state: state,
               fetchNextPage: fetchNextPage,
               scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(20)),
               physics: const BouncingScrollPhysics(),
               builderDelegate: PagedChildBuilderDelegate(
-                newPageProgressIndicatorBuilder: (_) => AppLoader(size: 50.h),
-                firstPageProgressIndicatorBuilder: (_) => AppLoader(size: 40.h),
+                newPageProgressIndicatorBuilder: (_) => AppLoader(size: context.h(50)),
+                firstPageProgressIndicatorBuilder: (_) => AppLoader(size: context.h(40)),
                 itemBuilder: (context, treatment, index) {
                   final isSelected = ref
                       .watch(checkoutViewModel)
@@ -310,7 +311,7 @@ class _ArFaceModelPreviewScreenState
                       horizontalOffset: 50.0,
                       child: FadeInAnimation(
                         child: Padding(
-                          padding: EdgeInsets.only(right: 12.w),
+                          padding: EdgeInsets.only(right: context.w(12)),
                           child: ServiceTypeButton(
                             imageUrl: treatment.image ?? treatment.imageUrl,
                             icon: treatment.icon ?? PngAssets.syringe,
@@ -421,10 +422,10 @@ class _ArFaceModelPreviewScreenState
 
         return Container(
           padding: EdgeInsets.fromLTRB(
-            20.w,
-            16.h,
-            20.w,
-            MediaQuery.paddingOf(context).bottom + 16.h,
+            context.w(20),
+            context.h(16),
+            context.w(20),
+            MediaQuery.paddingOf(context).bottom + context.h(16),
           ),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -443,22 +444,22 @@ class _ArFaceModelPreviewScreenState
                   scale: _pulseAnimation,
                   child: CustomBorderedButton(
                     text: "Generate Ai Image",
-                    borderRadius: 30.r,
+                    borderRadius: context.r(30),
                     borderColor: CustomColors.blackColor,
                     textColor: CustomColors.blackColor,
-                    height: 58.h,
+                    height: context.h(58),
                     onPressed: () {
                       ref.read(treatmentViewModel.notifier).callPredictAPI();
                     },
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
+              SizedBox(width: context.w(16)),
               Expanded(
                 child: CustomButton(
                   text: 'Explore Clinics',
-                  borderRadius: 30.r,
-                  height: 58.h,
+                  borderRadius: context.r(30),
+                  height: context.h(58),
                   onPressed: () {
                     final checkoutState = ref.read(checkoutViewModel);
                     final treatment = checkoutState.selectedTreatments;
@@ -496,7 +497,7 @@ class _ArFaceModelPreviewScreenState
   Widget _buildFacePreview() {
     const cardRadius = 20.0;
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      padding: EdgeInsets.symmetric(horizontal: context.w(10)),
       child: Card(
         elevation: 10,
         shape: RoundedRectangleBorder(
@@ -546,15 +547,15 @@ class _ArFaceModelPreviewScreenState
                       before: _buildPreviewImage(beforeImage.path),
                       after: _buildPreviewImage(afterImage.path),
                       trackColor: Colors.white,
-                      trackWidth: 2.w,
+                      trackWidth: context.w(2),
                       thumbDecoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage(PngAssets.customMarker),
                           fit: BoxFit.contain,
                         ),
                       ),
-                      thumbWidth: 32.w,
-                      thumbHeight: 32.w,
+                      thumbWidth: context.w(32),
+                      thumbHeight: context.w(32),
                     );
                   }
 
@@ -581,7 +582,7 @@ class _ArFaceModelPreviewScreenState
         final state = ref.watch(treatmentViewModel);
 
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          padding: EdgeInsets.symmetric(horizontal: context.w(20)),
           child: Row(
             children: [
               Expanded(
@@ -592,7 +593,7 @@ class _ArFaceModelPreviewScreenState
                   Icons.face_unlock_rounded,
                 ),
               ),
-              SizedBox(width: 10.w),
+              SizedBox(width: context.w(10)),
               Expanded(
                 child: _poseChip(
                   "Left Profile",
@@ -601,7 +602,7 @@ class _ArFaceModelPreviewScreenState
                   Icons.person_pin_circle_outlined,
                 ),
               ),
-              SizedBox(width: 10.w),
+              SizedBox(width: context.w(10)),
               Expanded(
                 child: _poseChip(
                   "Right Profile",
@@ -626,12 +627,12 @@ class _ArFaceModelPreviewScreenState
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeInOut,
-        padding: EdgeInsets.symmetric(vertical: 12.h),
+        padding: EdgeInsets.symmetric(vertical: context.h(12)),
         decoration: BoxDecoration(
           color: isSelected
               ? CustomColors.purpleColor
               : CustomColors.lightPurpleColor.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(context.r(16)),
           border: Border.all(
             color: isSelected ? CustomColors.purpleColor : Colors.transparent,
             width: 1.5,
@@ -651,17 +652,17 @@ class _ArFaceModelPreviewScreenState
           children: [
             Icon(
               icon,
-              size: 20.sp,
+              size: context.sp(20),
               color: isSelected
                   ? Colors.white
                   : (canTap ? Colors.black54 : Colors.grey.shade300),
             ),
-            SizedBox(height: 6.h),
+            SizedBox(height: context.h(6)),
             Text(
               label,
               textAlign: TextAlign.center,
               style: CustomFonts.black12w600.copyWith(
-                fontSize: 10.sp,
+                fontSize: context.sp(10),
                 letterSpacing: 0.5,
                 color: isSelected
                     ? Colors.white
@@ -679,15 +680,15 @@ class _ArFaceModelPreviewScreenState
       File(path),
       fit: BoxFit.cover,
       width: double.infinity,
-      height: 326.h,
+      height: context.h(326),
     );
   }
 
   Widget _buildErrorState(String message, double radius) {
     return Container(
       width: double.infinity,
-      height: 326.h,
-      padding: EdgeInsets.all(16.w),
+      height: context.h(326),
+      padding: EdgeInsets.all(context.w(16)),
       decoration: BoxDecoration(
         color: Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(radius.r),
@@ -696,12 +697,12 @@ class _ArFaceModelPreviewScreenState
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, color: Colors.red, size: 48.sp),
-            SizedBox(height: 16.h),
+            Icon(Icons.error_outline, color: Colors.red, size: context.sp(48)),
+            SizedBox(height: context.h(16)),
             Text('Error', style: CustomFonts.red20w600),
-            SizedBox(height: 8.h),
+            SizedBox(height: context.h(8)),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(16)),
               child: Text(
                 message,
                 textAlign: TextAlign.center,
@@ -717,7 +718,7 @@ class _ArFaceModelPreviewScreenState
   Widget _buildNoImageState() {
     return Container(
       width: double.infinity,
-      height: 326.h,
+      height: context.h(326),
       color: CustomColors.greyColor.withValues(alpha: 0.3),
       child: Center(
         child: Text('No image available', style: CustomFonts.black16w400),
@@ -741,8 +742,8 @@ class _ArFaceModelPreviewScreenState
         if (afterImage == null) return const SizedBox.shrink();
 
         return Positioned(
-          top: 12.h,
-          right: 12.w,
+          top: context.h(12),
+          right: context.w(12),
           child: _buildBadge("AFTER", Colors.black.withValues(alpha: 0.6)),
         );
       },
@@ -765,8 +766,8 @@ class _ArFaceModelPreviewScreenState
         if (beforeImage == null) return const SizedBox.shrink();
 
         return Positioned(
-          top: 12.h,
-          left: 12.w,
+          top: context.h(12),
+          left: context.w(12),
           child: _buildBadge("BEFORE", Colors.black.withValues(alpha: 0.6)),
         );
       },
@@ -775,16 +776,16 @@ class _ArFaceModelPreviewScreenState
 
   Widget _buildBadge(String text, Color bgColor) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+      padding: EdgeInsets.symmetric(horizontal: context.w(10), vertical: context.h(4)),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(4.r),
+        borderRadius: BorderRadius.circular(context.r(4)),
       ),
       child: Text(
         text,
         style: CustomFonts.white12w600.copyWith(
           letterSpacing: 0.8,
-          fontSize: 10.sp,
+          fontSize: context.sp(10),
         ),
       ),
     );
@@ -792,8 +793,8 @@ class _ArFaceModelPreviewScreenState
 
   Widget _buildDownloadButton() {
     return Positioned(
-      bottom: 12.h,
-      right: 12.w,
+      bottom: context.h(12),
+      right: context.w(12),
       child: Consumer(
         builder: (context, ref, _) {
           final afterImage = ref.watch(
@@ -807,7 +808,7 @@ class _ArFaceModelPreviewScreenState
           return GestureDetector(
             onTap: () => ref.read(treatmentViewModel.notifier).saveAiImage(),
             child: Container(
-              padding: EdgeInsets.all(8.w),
+              padding: EdgeInsets.all(context.w(8)),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.9),
                 shape: BoxShape.circle,
@@ -822,7 +823,7 @@ class _ArFaceModelPreviewScreenState
               child: Icon(
                 Icons.file_download_outlined,
                 color: Colors.black,
-                size: 20.sp,
+                size: context.sp(20),
               ),
             ),
           );
@@ -885,22 +886,22 @@ class _ArFaceModelPreviewScreenState
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 24.h),
+              SizedBox(height: context.h(24)),
               Text(
                 entry.key.toUpperCase(),
                 style: TextStyle(
-                  fontSize: 12.sp,
+                  fontSize: context.sp(12),
                   fontWeight: FontWeight.w600,
                   color: CustomColors.textGreyColor,
                   letterSpacing: 1.2,
                   fontFamily: 'Degular',
                 ),
               ),
-              SizedBox(height: 12.h),
+              SizedBox(height: context.h(12)),
               Wrap(
                 direction: Axis.horizontal,
-                spacing: 12.w,
-                runSpacing: 12.h,
+                spacing: context.w(12),
+                runSpacing: context.h(12),
                 children: entry.value.map((area) {
                   final isSelected = selectedAreaIds.contains(area.id);
                   return ServiceTypeButton(
@@ -990,7 +991,7 @@ class _ArFaceModelPreviewScreenState
       backgroundColor: Colors.white,
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(24))),
       ),
       builder: (context) {
         return MaterialLevelSheet(

@@ -3,8 +3,8 @@
 //
 // import 'package:flutter/material.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
-// import 'package:skinsync_ai/screens/ar_face_model_Preview_screen.dart';
+// import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+// import 'package:skinsync_ai/screens/ar_face_model_preview_screen.dart';
 // import 'package:skinsync_ai/utills/color_constant.dart';
 // import 'package:skinsync_ai/widgets/grey_container.dart';
 // import 'package:skinsync_ai/widgets/service_type_button.dart';
@@ -66,14 +66,14 @@
 //                 File(image.path),
 //                 fit: BoxFit.cover,
 //                 width: double.infinity,
-//                 height: 326.h,
+//                 height: context.h(326),
 //               );
 //             },
 //           ),
 //           Positioned(
-//             top: 30.h,
-//             left: 16.w,
-//             right: 16.w,
+//             top: context.h(30),
+//             left: context.w(16),
+//             right: context.w(16),
 //             child: SafeArea(
 //               child: Row(
 //                 children: [
@@ -84,16 +84,16 @@
 //                       Navigator.pop(context);
 //                     },
 //                   ),
-//                   SizedBox(width: 16.w),
+//                   SizedBox(width: context.w(16)),
 //                   ServiceTypeButton(
-//                     icon: Image.asset(PngAssets.syringe, width: 21.w),
+//                     icon: Image.asset(PngAssets.syringe, width: context.w(21)),
 //                     text: "Dermal Fillers",
 //                     selected: true,
 //                     frosted: true,
 //                   ),
-//                   SizedBox(width: 10.w),
+//                   SizedBox(width: context.w(10)),
 //                   ServiceTypeButton(
-//                     icon: Image.asset(PngAssets.hand, width: 21.w),
+//                     icon: Image.asset(PngAssets.hand, width: context.w(21)),
 //                     text: "Botox",
 //                     selected: false,
 //                   ),
@@ -105,21 +105,21 @@
 //           Align(
 //             alignment: Alignment.bottomCenter,
 //             child: SizedBox(
-//               height: 440.h,
+//               height: context.h(440),
 //               child: ClipRRect(
 //                 borderRadius: BorderRadius.only(
-//                   topLeft: Radius.circular(30.r),
-//                   topRight: Radius.circular(30.r),
+//                   topLeft: Radius.circular(context.r(30)),
+//                   topRight: Radius.circular(context.r(30)),
 //                 ),
 //                 child: BackdropFilter(
 //                   filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
 //
 //                   child: Container(
-//                     // height: 440.h,
+//                     // height: context.h(440),
 //                     padding: EdgeInsets.only(
-//                       top: 22.h,
-//                       left: 30.h,
-//                       right: 30.h,
+//                       top: context.h(22),
+//                       left: context.h(30),
+//                       right: context.h(30),
 //                     ),
 //                     width: double.infinity,
 //                     decoration: BoxDecoration(
@@ -138,19 +138,19 @@
 //                             children: [
 //                               ...List.generate(skinServices.length, (index) {
 //                                 return Container(
-//                                   margin: EdgeInsets.only(right: 10.w),
+//                                   margin: EdgeInsets.only(right: context.w(10)),
 //                                   padding: EdgeInsets.symmetric(
-//                                     horizontal: 14.w,
+//                                     horizontal: context.w(14),
 //                                   ),
 //                                   alignment: Alignment.center,
 //                                   decoration: BoxDecoration(
 //                                     color: index.isEven
 //                                         ? Colors.transparent
 //                                         : CustomColors.purpleColor,
-//                                     borderRadius: BorderRadius.circular(15.r),
+//                                     borderRadius: BorderRadius.circular(context.r(15)),
 //                                   ),
-//                                   height: 85.h,
-//                                   width: 76.w,
+//                                   height: context.h(85),
+//                                   width: context.w(76),
 //                                   child: Column(
 //                                     mainAxisAlignment: MainAxisAlignment.center,
 //                                     children: [
@@ -173,9 +173,9 @@
 //                           ),
 //                         ),
 //
-//                         SizedBox(height: 25.h),
+//                         SizedBox(height: context.h(25)),
 //                         Text('Area Selection', style: CustomFonts.black18w600),
-//                         SizedBox(height: 10.h),
+//                         SizedBox(height: context.h(10)),
 //                         DropdownButtonFormField(
 //                           value: skinServices[0],
 //                           items: skinServices
@@ -197,16 +197,16 @@
 //                               borderSide: BorderSide(
 //                                 color: CustomColors.blackColor,
 //                               ),
-//                               borderRadius: BorderRadius.circular(12.r),
+//                               borderRadius: BorderRadius.circular(context.r(12)),
 //                             ),
 //                           ),
 //                         ),
-//                         SizedBox(height: 25.h),
+//                         SizedBox(height: context.h(25)),
 //                         Text(
 //                           'Select no of syringes',
 //                           style: CustomFonts.black18w600,
 //                         ),
-//                         SizedBox(height: 10.h),
+//                         SizedBox(height: context.h(10)),
 //                         DropdownButtonFormField(
 //                           value: 1,
 //                           items: List.generate(10, (index) => index + 1)
@@ -228,11 +228,11 @@
 //                               borderSide: BorderSide(
 //                                 color: CustomColors.blackColor,
 //                               ),
-//                               borderRadius: BorderRadius.circular(12.r),
+//                               borderRadius: BorderRadius.circular(context.r(12)),
 //                             ),
 //                           ),
 //                         ),
-//                         SizedBox(height: 22.h),
+//                         SizedBox(height: context.h(22)),
 //                         SizedBox(
 //                           width: double.infinity,
 //                           child: ElevatedButton(
@@ -245,11 +245,11 @@
 //                             style: ElevatedButton.styleFrom(
 //                               backgroundColor: CustomColors.blackColor,
 //                               padding: EdgeInsets.symmetric(
-//                                 horizontal: 100.w,
-//                                 vertical: 15.h,
+//                                 horizontal: context.w(100),
+//                                 vertical: context.h(15),
 //                               ),
 //                               shape: RoundedRectangleBorder(
-//                                 borderRadius: BorderRadius.circular(30.r),
+//                                 borderRadius: BorderRadius.circular(context.r(30)),
 //                               ),
 //                             ),
 //                             child: Text(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'additional_info_screen.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
@@ -19,11 +19,11 @@ class SelectProductScreen extends ConsumerWidget {
     return Scaffold(
       appBar: const CustomAppBar(showTitle: false),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30.w),
+        padding: EdgeInsets.symmetric(horizontal: context.w(30)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 10.h),
+            SizedBox(height: context.h(10)),
 
             Text.rich(
               TextSpan(
@@ -38,13 +38,13 @@ class SelectProductScreen extends ConsumerWidget {
               ),
             ),
 
-            SizedBox(height: 11.h),
+            SizedBox(height: context.h(11)),
 
             Text(
               "Choose the product best suited for your treatment.\nEach option is selected to enhance your results.",
               style: CustomFonts.black16w400,
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: context.h(16)),
 
             Expanded(
               child: ListView.builder(
@@ -53,7 +53,7 @@ class SelectProductScreen extends ConsumerWidget {
                    final selectedIndex = ref.watch(selectedProductProvider);
       final isSelected = selectedIndex == index;
                   return Padding(
-                    padding: EdgeInsets.only(bottom: 15.h),
+                    padding: EdgeInsets.only(bottom: context.h(15)),
                     child: GestureDetector(
                       onTap: (){
                           ref.read(selectedProductProvider.notifier).state = index;
@@ -61,20 +61,20 @@ class SelectProductScreen extends ConsumerWidget {
                       child: Container(
                       
                         padding: EdgeInsets.symmetric(
-                            horizontal: 12.w, vertical: 12.h),
+                            horizontal: context.w(12), vertical: context.h(12)),
                         decoration: BoxDecoration(
                           color: isSelected ? CustomColors.lightPurpleColor.withValues(alpha: 0.2): Colors.white,
-                          borderRadius: BorderRadius.circular(10.r),
+                          borderRadius: BorderRadius.circular(context.r(10)),
                           border: Border.all(color:isSelected ? CustomColors.lightPurpleColor:  Colors.grey.shade300),
                         ),
                         child: Row(
                           children: [
                             Image.asset(
                               DummyAssets.productImage,
-                              height: 48.h,
-                              width: 48.w,
+                              height: context.h(48),
+                              width: context.w(48),
                             ),
-                            SizedBox(width: 10.w),
+                            SizedBox(width: context.w(10)),
                       
                             /// Prevent overflow
                             Expanded(
@@ -86,7 +86,7 @@ class SelectProductScreen extends ConsumerWidget {
                                     "Product Name",
                                     style: CustomFonts.black14w700,
                                   ),
-                                  SizedBox(height: 4.h),
+                                  SizedBox(height: context.h(4)),
                                   Text(
                                     "\$ 40",
                                     style: CustomFonts.red13w500,
@@ -110,17 +110,17 @@ class SelectProductScreen extends ConsumerWidget {
       bottomNavigationBar: Padding(
         padding: EdgeInsets.only(
         
-          top: 20.h,
-          bottom: MediaQuery.paddingOf(context).bottom + 20.h,
+          top: context.h(20),
+          bottom: MediaQuery.paddingOf(context).bottom + context.h(20),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: 30.w),
+            Padding(padding: EdgeInsetsGeometry.symmetric(horizontal: context.w(30)),
             child: Column(
               children: [
                 const Divider(height: 0,),
-            SizedBox(height: 14.h),
+            SizedBox(height: context.h(14)),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -131,16 +131,16 @@ class SelectProductScreen extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                SizedBox(width: 10.w),
+                SizedBox(width: context.w(10)),
                 Text(
                   "\$ 550",
                   style: CustomFonts.black14w600,
                 ),
               ],
             ),
-            SizedBox(height: 14.h),
+            SizedBox(height: context.h(14)),
             const Divider(height: 0,),
-             SizedBox(height: 14.h),
+             SizedBox(height: context.h(14)),
              Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -151,18 +151,18 @@ class SelectProductScreen extends ConsumerWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                SizedBox(width: 10.w),
+                SizedBox(width: context.w(10)),
                 Text(
                   "\$ 550",
                   style: CustomFonts.black14w600,
                 ),
               ],
             ),
-            SizedBox(height: 14.h,),
+            SizedBox(height: context.h(14),),
               ],
             ),),
                 Container(
-                padding: EdgeInsets.symmetric(vertical: 12.h),
+                padding: EdgeInsets.symmetric(vertical: context.h(12)),
                 color: CustomColors.lightPurpleColor,
                 child: Center(
                   child: Text(
@@ -172,7 +172,7 @@ class SelectProductScreen extends ConsumerWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 10.h),
+                padding: EdgeInsets.only(top: context.h(10)),
                 child: Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -187,7 +187,7 @@ class SelectProductScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      SizedBox(width: 47.h),
+                      SizedBox(width: context.h(47)),
                       GestureDetector(
                         onTap: () {
                           Navigator.pushNamed(
@@ -196,12 +196,12 @@ class SelectProductScreen extends ConsumerWidget {
                           );
                         },
                         child: Container(
-                          width: 187.w,
-                          height: 60.h,
+                          width: context.w(187),
+                          height: context.h(60),
                           alignment: Alignment.center,
 
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50.r),
+                            borderRadius: BorderRadius.circular(context.r(50)),
                             color: Colors.black,
                           ),
                           child: Center(

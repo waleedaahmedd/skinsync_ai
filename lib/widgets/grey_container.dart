@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/color_constant.dart';
 
 class GreyContainer extends StatelessWidget {
@@ -19,7 +19,7 @@ class GreyContainer extends StatelessWidget {
         decoration: BoxDecoration(
           shape: shape,
           color: CustomColors.greyColor,
-          borderRadius: shape != BoxShape.circle ? BorderRadius.circular(8.r) : null,
+          borderRadius: shape != BoxShape.circle ? BorderRadius.circular(context.r(8)) : null,
         ),
         height: height.h,
         width: width.w,

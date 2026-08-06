@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
@@ -155,8 +155,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             child: Center(
               child: Image.asset(
                 PngAssets.splashLogo,
-                height: 169.h,
-                width: 169.w,
+                height: context.h(169),
+                width: context.w(169),
               ),
             ),
           ),
@@ -164,9 +164,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           AnimatedPositioned(
             duration: Duration(milliseconds: _duration),
             top: _animate ? screenHeight : -screenHeight,
-            left: _animate ? screenWidth : -362.r,
+            left: _animate ? screenWidth : -context.r(362),
             child: CircleAvatar(
-              radius: 362.r,
+              radius: context.r(362),
               backgroundColor: CustomColors.lightBlueColor,
             ),
           ),
@@ -174,9 +174,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           AnimatedPositioned(
             duration: Duration(milliseconds: _duration),
             bottom: _animate ? screenHeight : -screenHeight,
-            right: _animate ? screenWidth : -362.r,
+            right: _animate ? screenWidth : -context.r(362),
             child: CircleAvatar(
-              radius: 362.r,
+              radius: context.r(362),
               backgroundColor: CustomColors.lightPurpleColor,
             ),
           ),

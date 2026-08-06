@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'biometric_screen.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
@@ -14,14 +14,14 @@ class GetNotifiedScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: CustomColors.lightPurpleColor,
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30.w),
+        padding: EdgeInsets.symmetric(horizontal: context.w(30)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 123.h),
+            SizedBox(height: context.h(123)),
             Container(
-              height: 79.h,
-              width: 79.w,
+              height: context.h(79),
+              width: context.w(79),
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
@@ -29,21 +29,21 @@ class GetNotifiedScreen extends StatelessWidget {
               child: Center(
                 child: Image.asset(
                   PngAssets.notification,
-                  height: 50.h,
-                  width: 50.w,
+                  height: context.h(50),
+                  width: context.w(50),
                 ),
               ),
             ),
-            SizedBox(height: 27.h),
+            SizedBox(height: context.h(27)),
             Text("Get Notified", style: CustomFonts.black30w600),
-            SizedBox(height: 5.h),
+            SizedBox(height: context.h(5)),
             Text(
               "Get timely reminders, skincare tips, promotions, and last-minute updates—all in one place.",
               style: CustomFonts.black18w400,
             ),
-            SizedBox(height: 64.h),
-            Image.asset(PngAssets.getNotified, height: 320.h),
-            SizedBox(height: 79.h),
+            SizedBox(height: context.h(64)),
+            Image.asset(PngAssets.getNotified, height: context.h(320)),
+            SizedBox(height: context.h(79)),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -57,7 +57,7 @@ class GetNotifiedScreen extends StatelessWidget {
                 child: const Text("Turn On Notifications"),
               ),
             ),
-            SizedBox(height: 19.h),
+            SizedBox(height: context.h(19)),
             GestureDetector(
               onTap: () {
                 Navigator.pushNamedAndRemoveUntil(

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
-import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/appointment_view_model.dart';
@@ -11,15 +10,12 @@ import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/treatment_container.dart';
 import 'doctors_screen.dart';
-
 import 'select_date_time_screen.dart';
 
 class SelectAppointmentTypeScreen extends ConsumerStatefulWidget {
   static const routeName = '/select_appointment_type_screen';
 
-  final Clinic clinic;
-
-  const SelectAppointmentTypeScreen({super.key, required this.clinic});
+  const SelectAppointmentTypeScreen({super.key});
 
   @override
   ConsumerState<SelectAppointmentTypeScreen> createState() =>
@@ -48,87 +44,84 @@ class _SelectAppointmentTypeScreenState
           gradient: CustomColors.whiteBlueGradient,
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          padding: EdgeInsets.symmetric(horizontal: context.w(24)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 24.h),
+              SizedBox(height: context.h(24)),
               Text("Choose Appointment Type", style: CustomFonts.black22w600),
-              SizedBox(height: 8.h),
+              SizedBox(height: context.h(8)),
               Text(
                 "Select whether you want to book a direct treatment or schedule a general medical spa consultation.",
                 style: CustomFonts.grey14w400,
               ),
-              SizedBox(height: 24.h),
+              SizedBox(height: context.h(24)),
               Expanded(
-                child:
-                    appointmentState.loading
-                        ? const AppLoader()
-                        : appointmentState.errorMessage != null
-                        ? Center(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 20.w),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  appointmentState.errorMessage!,
-                                  style: CustomFonts.red16w400,
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(height: 16.h),
-                                ElevatedButton(
-                                  onPressed: () => ref
-                                      .read(appointmentProvider.notifier)
-                                      .getAppointmentTypes(),
-                                  child: const Text("Retry"),
-                                ),
-                              ],
-                            ),
+                child: appointmentState.loading
+                    ? const AppLoader()
+                    : appointmentState.errorMessage != null
+                    ? Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: context.w(20)),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                appointmentState.errorMessage!,
+                                style: CustomFonts.red16w400,
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: context.h(16)),
+                              ElevatedButton(
+                                onPressed: () => ref
+                                    .read(appointmentProvider.notifier)
+                                    .getAppointmentTypes(),
+                                child: const Text("Retry"),
+                              ),
+                            ],
                           ),
-                        )
-                        : appointmentState.appointmentTypes.isEmpty
-                        ? Center(
-                          child: Text(
-                            "No appointment types found",
-                            style: CustomFonts.grey14w400,
-                          ),
-                        )
-                        : ListView.builder(
-                          itemCount: appointmentState.appointmentTypes.length,
-                          physics: const BouncingScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            final typeData =
-                                appointmentState.appointmentTypes[index];
-
-                            return TreatmentContainer(
-                              imageHeight: 180.h,
-                              customTitle: typeData.title ?? '',
-                              customSubtitle: typeData.description ?? '',
-                              customImageUrl: typeData.image ?? '',
-                              customOnTap: () {
-                                // Save selection in CheckoutState
-                                ref
-                                    .read(checkoutViewModel.notifier)
-                                    .setSelectedAppointmentType(typeData);
-
-                                if (ref.read(checkoutViewModel).isInviteClinic) {
-                                  Navigator.pushNamed(
-                                    context,
-                                    SelectDateTimeScreen.routeName,
-                                    arguments: widget.clinic,
-                                  );
-                                } else {
-                                  Navigator.pushNamed(
-                                    context,
-                                    DoctorsScreen.routeName,
-                                    arguments: widget.clinic,
-                                  );
-                                }
-                              },
-                            );
-                          },
                         ),
+                      )
+                    : appointmentState.appointmentTypes.isEmpty
+                    ? Center(
+                        child: Text(
+                          "No appointment types found",
+                          style: CustomFonts.grey14w400,
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: appointmentState.appointmentTypes.length,
+                        physics: const BouncingScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          final typeData =
+                              appointmentState.appointmentTypes[index];
+
+                          return TreatmentContainer(
+                            imageHeight: context.h(180),
+                            customTitle: typeData.title ?? '',
+                            customSubtitle: typeData.description ?? '',
+                            customImageUrl: typeData.image ?? '',
+                            customOnTap: () async {
+                              // Save selection in CheckoutState
+                              ref
+                                  .read(checkoutViewModel.notifier)
+                                  .setSelectedAppointmentType(typeData);
+
+                              if (ref.read(checkoutViewModel).isInviteClinic) {
+                                Navigator.pushNamed(
+                                  context,
+                                  SelectDateTimeScreen.routeName,
+                                );
+                              } else {
+                                Navigator.pushNamed(
+                                  context,
+                                  DoctorsScreen.routeName,
+                                );
+                              }
+                            },
+                          );
+                        },
+                      ),
               ),
             ],
           ),

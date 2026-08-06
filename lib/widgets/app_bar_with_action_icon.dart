@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
 
@@ -13,7 +13,8 @@ class AppBarWithActionIcon extends StatelessWidget
   const AppBarWithActionIcon({super.key, this.action});
 
   @override
-  Size get preferredSize => Size.fromHeight(100.h);
+  Size get preferredSize =>
+      Size.fromHeight(ScreenUtilPlus().setHeight(100));
 
   final Widget? action;
 
@@ -21,10 +22,10 @@ class AppBarWithActionIcon extends StatelessWidget
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
+        padding: EdgeInsets.symmetric(horizontal: context.w(24)),
         child: Column(
           children: [
-            SizedBox(height: 12.h),
+            SizedBox(height: context.h(12)),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -45,31 +46,31 @@ class AppBarWithActionIcon extends StatelessWidget
                                 color: CustomColors.purpleColor.withValues(
                                   alpha: 0.5,
                                 ),
-                                width: 2.w,
+                                width: context.w(2),
                               ),
                             ),
                             child: ClipOval(
                               child: CachedNetworkImage(
                                 imageUrl: userDetails?.profileImageUrl ?? "",
-                                height: 48.w,
-                                width: 48.w,
+                                height: context.w(48),
+                                width: context.w(48),
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) =>
                                     const CupertinoActivityIndicator(),
                                 errorWidget: (context, url, error) => Container(
-                                  height: 48.w,
-                                  width: 48.w,
+                                  height: context.w(48),
+                                  width: context.w(48),
                                   color: Colors.grey.shade100,
                                   child: Icon(
                                     Icons.person_outline_rounded,
-                                    size: 24.sp,
+                                    size: context.sp(24),
                                     color: Colors.grey,
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                          SizedBox(width: 12.w),
+                          SizedBox(width: context.w(12)),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,7 +82,7 @@ class AppBarWithActionIcon extends StatelessWidget
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                 ),
-                                SizedBox(height: 2.h),
+                                SizedBox(height: context.h(2)),
                                 Text(
                                   'Your skin health journey starts here.',
                                   style: CustomFonts.grey12w400,
@@ -96,14 +97,14 @@ class AppBarWithActionIcon extends StatelessWidget
                     },
                   ),
                 ),
-                SizedBox(width: 12.w),
+                SizedBox(width: context.w(12)),
                 action ?? const SizedBox.shrink(),
               ],
             ),
             const Spacer(),
             Divider(
               color: CustomColors.greyColor.withValues(alpha: 0.5),
-              height: 1.h,
+              height: context.h(1),
             ),
           ],
         ),

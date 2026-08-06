@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../models/requests/sign_in_request.dart';
 import 'otp_screen.dart';
 import '../utills/assets.dart';
@@ -97,7 +97,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
           );
 
-      _radiusAnim = Tween<double>(begin: 10.r.toDouble(), end: 40.r.toDouble())
+      _radiusAnim = Tween<double>(begin: context.r(10).toDouble(), end: context.r(40).toDouble())
           .animate(
             CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
           );
@@ -152,34 +152,34 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     return Scaffold(
       appBar: const CustomAppBar(showTitle: false),
       body: Padding(
-        padding: EdgeInsets.only(left: 30.w, right: 30.w),
+        padding: EdgeInsets.only(left: context.w(30), right: context.w(30)),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 43.h),
+              SizedBox(height: context.h(43)),
               Container(
-                padding: EdgeInsets.all(14.w),
-                height: 79.h,
-                width: 79.w,
+                padding: EdgeInsets.all(context.w(14)),
+                height: context.h(79),
+                width: context.w(79),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: CustomColors.lightBlueColor.withValues(alpha: 0.4),
                 ),
-                child: Image.asset(PngAssets.email, height: 50.h, width: 50.w),
+                child: Image.asset(PngAssets.email, height: context.h(50), width: context.w(50)),
               ),
-              SizedBox(height: 27.h),
+              SizedBox(height: context.h(27)),
               Text(
                 loginWithEmail ? "Continue with Email" : "Continue with Phone",
                 style: CustomFonts.black30w600,
               ),
-              SizedBox(height: 4.h),
+              SizedBox(height: context.h(4)),
               Text(
                 "Sign in or sign up with your email.",
                 style: CustomFonts.grey18w400,
               ),
-              SizedBox(height: 22.h),
+              SizedBox(height: context.h(22)),
               loginWithEmail
                   ? TextFormField(
                       controller: ref
@@ -212,7 +212,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(30.w),
+          padding: EdgeInsets.all(context.w(30)),
           child: SizedBox(
             key: _buttonKey, // Required for animation target
             width: double.infinity,

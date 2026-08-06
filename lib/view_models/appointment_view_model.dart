@@ -1,32 +1,34 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../exceptions/app_exception.dart';
 import '../models/base_state_model.dart';
+import '../models/responses/appointment_detail_response.dart';
 import '../models/responses/appointment_type_list_response.dart';
+import '../models/responses/appointments_list_response.dart';
+import '../models/responses/simulation_history_response.dart';
 import '../repositories/appointment_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/appointment_service.dart';
+import '../services/encryption_service.dart';
 import 'base_view_model.dart';
 
-import '../models/responses/simulation_history_response.dart';
-
-final appointmentProvider = NotifierProvider(
+final appointmentProvider = NotifierProvider<AppointmentViewModel, AppointmentState>(
   () => AppointmentViewModel(
     repo: AppointmentService(apiClient: ApiBaseHelper()),
   ),
 );
 
 class AppointmentViewModel extends BaseViewModel<AppointmentState> {
-  AppointmentViewModel({required AppointmentRepository repo})
-      : _repo = repo,
-        super(initialState: const AppointmentState());
+  AppointmentViewModel({required this.repo})
+    : super(initialState: const AppointmentState());
 
-  final AppointmentRepository _repo;
+  final AppointmentRepository repo;
 
   Future<List<AppointmentTypeData>?> getAppointmentTypes() async {
     return await runSafely(() async {
       state = state.copyWith(loading: true, errorMessage: null);
-      final response = await _repo.getAppointmentTypes();
+      final response = await repo.getAppointmentTypes();
       state = state.copyWith(
         loading: false,
         appointmentTypes: response.data ?? [],
@@ -38,8 +40,48 @@ class AppointmentViewModel extends BaseViewModel<AppointmentState> {
   Future<void> fetchSimulationHistory() async {
     await runSafely(() async {
       state = state.copyWith(loading: true, errorMessage: null);
-      final data = await _repo.getSimulationHistory();
+      final data = await repo.getSimulationHistory();
       state = state.copyWith(loading: false, simulations: data);
+    });
+  }
+
+  Future<void> getAppointments({int page = 1, int limit = 10}) async {
+    await runSafely(() async {
+      state = state.copyWith(loading: true, errorMessage: null);
+      final response = await repo.getAppointmentsApi(page: page, limit: limit);
+      state = state.copyWith(loading: false, appointmentsResponse: response);
+    });
+  }
+
+  void clearAppointmentDetail() {
+    state = state.copyWith(appointmentDetail: null, loading: true);
+  }
+
+  Future<void> getAppointmentDetail(int appointmentId) async {
+    await runSafely(() async {
+      state = state.copyWith(
+        loading: true,
+        errorMessage: null,
+        appointmentDetail: null,
+      );
+      final response = await repo.getAppointmentDetail(
+        appointmentId: appointmentId,
+      );
+      state = state.copyWith(loading: false, appointmentDetail: response.data);
+    });
+  }
+
+  Future<String?> encryptAppointmentData(AppointmentDetailData? data) async {
+    return await runSafely<String?>(() async {
+      final appointmentId = data?.id;
+      final doctorId = data?.doctor?.id;
+      final clinicId = data?.clinic?.id;
+      if (appointmentId == null || doctorId == null || clinicId == null) {
+        throw const AppException('Could not generate QR Code!');
+      }
+      return await EncryptionService().encrypt(
+        message: '$appointmentId/$doctorId/$clinicId',
+      );
     });
   }
 
@@ -54,12 +96,16 @@ class AppointmentViewModel extends BaseViewModel<AppointmentState> {
 class AppointmentState extends BaseStateModel {
   final List<AppointmentTypeData> appointmentTypes;
   final List<SimulationData> simulations;
+  final AppointmentsListResponse? appointmentsResponse;
+  final AppointmentDetailData? appointmentDetail;
 
   const AppointmentState({
     super.loading = false,
     super.errorMessage,
     this.appointmentTypes = const [],
     this.simulations = const [],
+    this.appointmentsResponse,
+    this.appointmentDetail,
   });
 
   @override
@@ -68,12 +114,16 @@ class AppointmentState extends BaseStateModel {
     String? errorMessage,
     List<AppointmentTypeData>? appointmentTypes,
     List<SimulationData>? simulations,
+    AppointmentsListResponse? appointmentsResponse,
+    AppointmentDetailData? appointmentDetail,
   }) {
     return AppointmentState(
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
       appointmentTypes: appointmentTypes ?? this.appointmentTypes,
       simulations: simulations ?? this.simulations,
+      appointmentsResponse: appointmentsResponse ?? this.appointmentsResponse,
+      appointmentDetail: appointmentDetail ?? this.appointmentDetail,
     );
   }
 }

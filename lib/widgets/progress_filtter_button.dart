@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/svg.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -24,21 +24,24 @@ class ProgressFillterButton extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 16.h),
+          padding: EdgeInsets.symmetric(vertical: context.h(16)),
           decoration: BoxDecoration(
             color: isSelected ? Colors.black : CustomColors.greyColor,
-            borderRadius: BorderRadius.circular(10.r),
+            borderRadius: BorderRadius.circular(context.r(10)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SvgPicture.asset(
                 icon,
-                height: 18.h,
-                width: 18.w,
-                color: isSelected ? Colors.white : Colors.black,
+                height: context.h(18),
+                width: context.w(18),
+                colorFilter: ColorFilter.mode(
+                  isSelected ? Colors.white : Colors.black,
+                  BlendMode.srcIn,
+                ),
               ),
-              SizedBox(width: 7.w),
+              SizedBox(width: context.w(7)),
               Text(
                 label,
                 style: isSelected

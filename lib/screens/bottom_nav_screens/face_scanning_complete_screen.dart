@@ -2,7 +2,7 @@
 //
 // import 'package:flutter/material.dart';
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
+// import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 //
 // import '../../utills/custom_fonts.dart';
 // import '../../view_models/treatment_view_model.dart';
@@ -25,7 +25,7 @@
 //                     final image = ref.watch(
 //                       treatmentViewModel.select((state) => state.capturedImage),
 //                     );
-//                     return Image.file(File(image!.path), height: 300.h);
+//                     return Image.file(File(image!.path), height: context.h(300));
 //                   },
 //                 ),
 //                 Text("Before", style: CustomFonts.black18w600),
@@ -39,7 +39,7 @@
 //                     final image = ref.watch(
 //                       treatmentViewModel.select((state) => state.capturedImage),
 //                     );
-//                     return Image.file(File(image!.path), height: 300.h);
+//                     return Image.file(File(image!.path), height: context.h(300));
 //                   },
 //                 ),
 //                 Text("After", style: CustomFonts.black18w600),

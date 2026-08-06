@@ -1,408 +1,576 @@
+import 'dart:developer';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
-import '../models/dummy_list_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import '../models/responses/appointments_list_response.dart';
+import '../models/responses/appointment_detail_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../utills/date_time_utills.dart';
+import '../view_models/appointment_view_model.dart';
+import '../widgets/app_loader.dart';
+import '../widgets/custom_app_bar.dart';
 
-class AppointmentDetailScreen extends StatelessWidget {
-  final DummyAppointment appointment;
+class AppointmentDetailScreen extends ConsumerStatefulWidget {
+  static const String routeName = '/AppointmentDetailScreen';
+  final AppointmentItem appointment;
 
   const AppointmentDetailScreen({super.key, required this.appointment});
 
   @override
-  Widget build(BuildContext context) {
-    final bool hasHistory = appointment.type != "Provisional Booking";
+  ConsumerState<AppointmentDetailScreen> createState() => _AppointmentDetailScreenState();
+}
 
-    return DefaultTabController(
-      length: hasHistory ? 2 : 1,
-      child: Scaffold(
-        backgroundColor: CustomColors.whiteColor,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          centerTitle: false,
-          leading: IconButton(
-            icon: const Icon(CupertinoIcons.arrow_left, color: Colors.black, size: 22),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: Text("Appointment Detail", style: CustomFonts.black24w600),
-          bottom: hasHistory
-              ? TabBar(
-                  indicatorColor: CustomColors.darkPurple,
-                  indicatorSize: TabBarIndicatorSize.label,
-                  labelColor: Colors.black,
-                  unselectedLabelColor: Colors.grey.shade500,
-                  labelStyle: CustomFonts.black13w600,
-                  unselectedLabelStyle: CustomFonts.grey700_10w400,
-                  dividerColor: Colors.transparent,
-                  tabs: const [
-                    Tab(text: "Details"),
-                    Tab(text: "Treatment History"),
-                  ],
-                )
-              : null,
-        ),
-        body: TabBarView(
-          physics: const BouncingScrollPhysics(),
-          children: [
-            _buildDetailsTab(),
-            if (hasHistory) _buildHistoryTab(),
-          ],
-        ),
-      ),
-    );
+class _AppointmentDetailScreenState extends ConsumerState<AppointmentDetailScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      if (widget.appointment.appointmentId != null) {
+        ref.read(appointmentProvider.notifier).getAppointmentDetail(widget.appointment.appointmentId!);
+      }
+    });
   }
 
-  Widget _buildDetailsTab() {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildInfoSection(
-            title: "Appointment Information",
+  void _showQrDialog({
+    required BuildContext context,
+    required int appointmentId,
+    required String encryptedData,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(context.r(32)),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(context.w(24)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: .center,
             children: [
-              _buildDetailRow("Type", appointment.type, isType: true),
-              _buildDetailRow("Date", DateFormat('EEEE, MMM d, yyyy').format(appointment.date)),
-              _buildDetailRow("Time Slot", appointment.time),
-              _buildDetailRow("Status", appointment.status, isStatus: true),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          _buildInfoSection(
-            title: "Treatment Details",
-            children: [
-              _buildDetailRow("Treatment", appointment.treatmentName),
-              _buildDetailRow("Target Area", appointment.area),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          _buildInfoSection(
-            title: "Clinic & Provider",
-            children: [
-              _buildDetailRow("Clinic", appointment.clinicName, icon: Icons.business_outlined),
-              _buildDetailRow("Doctor", appointment.doctorName, icon: Icons.person_outline),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          _buildInfoSection(
-            title: "Notes & Remarks",
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: 8.h),
-                child: Text(
-                  appointment.notes.isNotEmpty ? appointment.notes : "No special instructions or comments noted.",
-                  style: CustomFonts.textGrey14w400,
+              Text("Check-in QR Code", style: CustomFonts.black18w600),
+              SizedBox(height: context.h(4)),
+              // Text(
+              //   "Appointment ID: #$appointmentId",
+              //   style: CustomFonts.grey700_12w400,
+              // ),
+              SizedBox(height: context.h(24)),
+              Container(
+                padding: EdgeInsets.all(context.w(16)),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(context.r(24)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: CustomColors.darkPurple.withValues(alpha: 0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: SizedBox(
+                  width: context.w(220),
+                  height: context.w(220),
+                  child: QrImageView(data: encryptedData, size: context.w(220)),
+                  // child: PrettyQrView.data(
+                  //   data: encryptedData,
+                  //   decoration: const PrettyQrDecoration(
+                  //     shape: PrettyQrSmoothSymbol(
+                  //       color: CustomColors.darkPurple,
+                  //       roundFactor: 1,
+                  //     ),
+                  //     image: PrettyQrDecorationImage(
+                  //       image: AssetImage(PngAssets.splashLogo),
+                  //       scale: 0.25,
+                  //     ),
+                  //   ),
+                  // ),
+                ),
+              ),
+              SizedBox(height: context.h(24)),
+              Text(
+                "Please scan this code at the clinic reception to confirm your arrival.",
+                textAlign: TextAlign.center,
+                style: CustomFonts.textGrey13w400.copyWith(height: 1.4),
+              ),
+              SizedBox(height: context.h(24)),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context),
+                child: Center(
+                  child: Text("Dismiss", style: CustomFonts.white14w700),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 40.h),
-        ],
+        ),
       ),
     );
   }
 
-  Widget _buildHistoryTab() {
-    if (appointment.pastSessions.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40.w),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.history_toggle_off_rounded,
-                size: 64.sp,
-                color: Colors.grey.shade300,
-              ),
-              SizedBox(height: 16.h),
-              Text(
-                "No past treatment history found",
-                style: CustomFonts.grey800_20w600,
-              ),
-              SizedBox(height: 6.h),
-              Text(
-                "Completed treatment sessions or clinical records will appear on this timeline.",
-                textAlign: TextAlign.center,
-                style: CustomFonts.textGrey14w400,
-              ),
-            ],
+  @override
+  Widget build(BuildContext context) {
+    final appointmentState = ref.watch(appointmentProvider);
+    final detail = appointmentState.appointmentDetail;
+
+    final isStale = detail == null || detail.id != widget.appointment.appointmentId;
+    final isLoading = (appointmentState.loading || isStale) && appointmentState.errorMessage == null;
+
+    final type = detail?.appointmentType?.title ?? widget.appointment.appointmentType ?? "consultation";
+    final dateVal = detail?.date ?? widget.appointment.date;
+    final dateStr = dateVal != null ? DateTimeUtils.formatTimestampToDayDate(dateVal) : "N/A";
+
+    final startTimeVal = detail?.startTime ?? widget.appointment.slot?.startTime;
+    final endTimeVal = detail?.endTime ?? widget.appointment.slot?.endTime;
+    final startTime = startTimeVal != null ? DateTimeUtils.formatTimestampToTime(startTimeVal) : "--:--";
+    final endTime = endTimeVal != null ? DateTimeUtils.formatTimestampToTime(endTimeVal) : "--:--";
+    final timeString = "$startTime - $endTime";
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FE),
+      appBar: CustomAppBar(
+        title: "Appointment Detail",
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final encryptedText = await ref
+                  .read(appointmentProvider.notifier)
+                  .encryptAppointmentData(detail);
+              if (encryptedText == null) {
+                return;
+              }
+              log('Encrypted Text: $encryptedText');
+              _showQrDialog(
+                context: context,
+                appointmentId: detail!.id!,
+                encryptedData: encryptedText,
+              );
+            },
+            icon: Icon(
+              Icons.qr_code_scanner_rounded,
+              color: CustomColors.darkPurple,
+              size: context.sp(24),
+            ),
+            tooltip: "Generate QR",
           ),
-        ),
-      );
-    }
-
-    // Grouping for session timeline summary
-    int totalSessions = appointment.pastSessions.where((s) => s.type == "Session").length;
-    int totalFollowups = appointment.pastSessions.where((s) => s.type == "Follow-up").length;
-
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 18.h, horizontal: 16.w),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20.r),
-              border: Border.all(
-                color: CustomColors.lightPurpleColor.withValues(alpha: 0.4),
-                width: 1,
-              ),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  CustomColors.lightPurpleColor.withValues(alpha: 0.15),
-                  CustomColors.lightBlueColor.withValues(alpha: 0.08),
+          SizedBox(width: context.w(12)),
+        ],
+      ),
+      body: isLoading
+          ? const AppLoader()
+          : SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: context.w(20), vertical: context.h(20)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildInfoSection(
+                    title: "Appointment Info",
+                    icon: Icons.event_available_rounded,
+                    children: [
+                      _buildDetailRow("Key", detail?.appointmentKey ?? widget.appointment.appointmentKey ?? "N/A"),
+                      _buildDetailRow("Type", type, isType: true),
+                      _buildDetailRow("Date", dateStr),
+                      _buildDetailRow("Time Slot", timeString),
+                      _buildDetailRow("Status", detail?.status ?? widget.appointment.status ?? "Confirmed", isStatus: true),
+                      if (detail?.bookingType != null && detail!.bookingType!.isNotEmpty)
+                        _buildDetailRow("Booking Type", detail.bookingType!),
+                      if (detail?.createdAt != null)
+                        _buildDetailRow("Created At", DateTimeUtils.formatISOStringToDateTime(detail!.createdAt!)),
+                    ],
+                  ),
+                  SizedBox(height: context.h(20)),
+                  _buildInfoSection(
+                    title: "Financial Summary",
+                    icon: Icons.account_balance_wallet_rounded,
+                    children: [
+                      _buildDetailRow("Treatment Total", "\$${detail?.treatmentTotal?.toStringAsFixed(2) ?? '0.00'}"),
+                      if (detail?.discount != null && detail!.discount! > 0)
+                        _buildDetailRow(
+                          "Discount", 
+                          "${detail.discountType == 'percent' ? '-' : '-\$'}${detail.discount}${detail.discountType == 'percent' ? '%' : ''}", 
+                          color: Colors.orange
+                        ),
+                      _buildDetailRow("Payment Type", detail?.paymentType?.type?.toUpperCase() ?? "N/A"),
+                      _buildDetailRow(
+                        "Payment Status", 
+                        detail?.paymentType?.status?.toUpperCase() ?? "N/A", 
+                        isStatus: true,
+                        color: detail?.paymentType?.status == 'completed' ? Colors.green : Colors.orange,
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: context.h(20)),
+                  _buildClinicSection(detail?.clinic ?? widget.appointment.clinic),
+                  SizedBox(height: context.h(20)),
+                  _buildDoctorSection(detail?.doctor ?? widget.appointment.doctor),
+                  SizedBox(height: context.h(20)),
+                  _buildTreatmentSection(detail?.treatments),
+                  if (detail?.simulations != null) ...[
+                    SizedBox(height: context.h(20)),
+                    _buildSimulationSection(detail!.simulations!),
+                  ],
+                  SizedBox(height: context.h(40)),
                 ],
               ),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildSummaryStat("Sessions", totalSessions.toString()),
-                Container(
-                  width: 1.w,
-                  height: 32.h,
-                  color: CustomColors.lightPurpleColor.withValues(alpha: 0.5),
-                ),
-                _buildSummaryStat("Follow-ups", totalFollowups.toString()),
-              ],
-            ),
-          ),
-          SizedBox(height: 24.h),
-          Text(
-            "Timeline History",
-            style: CustomFonts.grey800_20w600,
-          ),
-          SizedBox(height: 16.h),
-          ...appointment.pastSessions.map((session) => _buildHistoryTimelineEntry(session)),
-          SizedBox(height: 40.h),
-        ],
-      ),
     );
   }
 
-  Widget _buildSummaryStat(String label, String value) {
-    return Column(
+  Widget _buildClinicSection(AppointmentClinic? clinic) {
+    if (clinic == null) return const SizedBox.shrink();
+    return _buildInfoSection(
+      title: "Clinic Details",
+      icon: Icons.business_rounded,
       children: [
-        Text(
-          value,
-          style: CustomFonts.black24w600,
+        Row(
+          children: [
+            if (clinic.logo != null && clinic.logo!.isNotEmpty)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(context.r(8)),
+                child: CachedNetworkImage(
+                  imageUrl: clinic.logo!,
+                  height: context.w(40),
+                  width: context.w(40),
+                  fit: BoxFit.cover,
+                  errorWidget: (_, _, _) => const Icon(Icons.business_rounded),
+                ),
+              ),
+            if (clinic.logo != null && clinic.logo!.isNotEmpty) SizedBox(width: context.w(12)),
+            Expanded(
+              child: Text(clinic.name ?? "N/A", style: CustomFonts.black16w700),
+            ),
+          ],
         ),
-        SizedBox(height: 2.h),
-        Text(
-          label,
-          style: CustomFonts.grey700_11w700,
-        ),
+        SizedBox(height: context.h(12)),
+        _buildDetailRow("Email", clinic.email ?? "N/A", icon: Icons.email_outlined),
+        _buildDetailRow("Phone", "${clinic.cc ?? ''} ${clinic.phone ?? 'N/A'}".trim(), icon: Icons.phone_outlined),
+        _buildDetailRow("Address", clinic.address ?? "N/A", icon: Icons.location_on_outlined),
+        _buildDetailRow("Country", clinic.country ?? "N/A", icon: Icons.public_outlined),
+        if (clinic.latitude != null && clinic.longitude != null)
+          _buildDetailRow("Location", "${clinic.latitude?.toStringAsFixed(4)}, ${clinic.longitude?.toStringAsFixed(4)}", icon: Icons.map_outlined),
       ],
     );
   }
 
-  Widget _buildHistoryTimelineEntry(DummySession session) {
-    bool isSession = session.type == "Session";
-    final accentColor = isSession ? CustomColors.darkPurple : Colors.orange.shade700;
-    final textStyle = isSession ? CustomFonts.darkPurple10w700 : CustomFonts.amber10w700;
-
-    return Container(
-      margin: EdgeInsets.only(bottom: 16.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(
-          color: CustomColors.greyColor.withValues(alpha: 0.5),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20.r),
-        child: Stack(
+  Widget _buildDoctorSection(AppointmentDoctor? doctor) {
+    if (doctor == null) return const SizedBox.shrink();
+    return _buildInfoSection(
+      title: "Doctor Details",
+      icon: Icons.person_rounded,
+      children: [
+        Row(
           children: [
-            // Vertical Left Colored Accent Bar matching home style
-            Positioned(
-              left: 0,
-              top: 0,
-              bottom: 0,
-              width: 4.w,
-              child: Container(color: accentColor),
+            if (doctor.image != null && doctor.image!.isNotEmpty)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(context.r(8)),
+                child: CachedNetworkImage(
+                  imageUrl: doctor.image!,
+                  height: context.w(40),
+                  width: context.w(40),
+                  fit: BoxFit.cover,
+                  errorWidget: (_, _, _) => const Icon(Icons.person_rounded),
+                ),
+              ),
+            if (doctor.image != null && doctor.image!.isNotEmpty) SizedBox(width: context.w(12)),
+            Expanded(
+              child: Text("${doctor.title ?? ''} ${doctor.name ?? 'N/A'}".trim(), style: CustomFonts.black16w700),
             ),
+          ],
+        ),
+        SizedBox(height: context.h(12)),
+        _buildDetailRow("Email", doctor.email ?? "N/A", icon: Icons.email_outlined),
+        _buildDetailRow("Phone", "${doctor.cc ?? ''} ${doctor.phone ?? 'N/A'}".trim(), icon: Icons.phone_outlined),
+        _buildDetailRow("Country", doctor.country ?? "N/A", icon: Icons.public_outlined),
+      ],
+    );
+  }
 
-            // Content
-            Padding(
-              padding: EdgeInsets.fromLTRB(18.w, 14.h, 14.w, 14.h),
+  Widget _buildTreatmentSection(List<DetailedAppointmentTreatment>? treatments) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: context.w(4), bottom: context.h(12)),
+          child: Text("TREATMENT DETAILS", style: CustomFonts.darkPurple12w600.copyWith(letterSpacing: 1.1)),
+        ),
+        if (treatments == null || treatments.isEmpty)
+          _buildInfoSection(
+            title: "General",
+            icon: Icons.medical_services_rounded,
+            children: [_buildDetailRow("Treatment", "General Consultation")],
+          )
+        else
+          ...treatments.map((t) {
+            Color statusColor = Colors.grey;
+            switch (t.treatmentStatus?.toLowerCase()) {
+              case 'pending': statusColor = Colors.orange; break;
+              case 'completed': statusColor = Colors.green; break;
+              default: statusColor = Colors.blue; break;
+            }
+
+            return Container(
+              margin: EdgeInsets.only(bottom: context.h(16)),
+              padding: EdgeInsets.all(context.w(20)),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(context.r(24)),
+                boxShadow: [
+                  BoxShadow(
+                    color: CustomColors.purpleColor.withValues(alpha: 0.12),
+                    blurRadius: 25,
+                    offset: const Offset(0, 12),
+                  ),
+                ],
+                border: Border.all(color: CustomColors.purpleColor.withValues(alpha: 0.05)),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        DateFormat('dd MMM yyyy').format(session.date),
-                        style: CustomFonts.black13w600,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(context.r(16)),
+                        child: CachedNetworkImage(
+                          imageUrl: t.treatmentImage ?? "",
+                          height: context.w(50),
+                          width: context.w(50),
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            color: CustomColors.purpleColor.withValues(alpha: 0.1),
+                            child: const Center(child: CupertinoActivityIndicator(radius: 8)),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            padding: EdgeInsets.all(context.w(10)),
+                            decoration: BoxDecoration(
+                              color: CustomColors.purpleColor.withValues(alpha: 0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.auto_awesome_rounded,
+                              size: context.sp(18),
+                              color: CustomColors.purpleColor,
+                            ),
+                          ),
+                        ),
                       ),
-                      _buildSmallBadge(session.type, accentColor, textStyle),
+                      SizedBox(width: context.w(16)),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              t.treatmentName ?? "N/A",
+                              style: CustomFonts.black16w700.copyWith(fontSize: context.sp(16)),
+                            ),
+                            SizedBox(height: context.h(4)),
+                            Text(
+                              "Area: ${t.areaName ?? 'N/A'}",
+                              style: CustomFonts.grey700_12w400,
+                            ),
+                            if (t.treatmentCost != null)
+                              Text(
+                                "Cost: \$${t.treatmentCost!.toStringAsFixed(2)}",
+                                style: CustomFonts.darkPurple10w700.copyWith(fontSize: context.sp(11)),
+                              ),
+                          ],
+                        ),
+                      ),
+                      if (t.treatmentStatus != null)
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: context.w(10), vertical: context.h(4)),
+                          decoration: BoxDecoration(
+                            color: statusColor.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(context.r(8)),
+                          ),
+                          child: Text(
+                            t.treatmentStatus!.toUpperCase(),
+                            style: TextStyle(
+                              color: statusColor,
+                              fontSize: context.sp(9),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                     ],
                   ),
-                  SizedBox(height: 12.h),
-                  _buildHistoryInfoRow(Icons.business_rounded, session.clinicName),
-                  SizedBox(height: 4.h),
-                  _buildHistoryInfoRow(Icons.person_rounded, session.doctorName),
-                  SizedBox(height: 12.h),
-                  Divider(color: Colors.grey.shade100, height: 1.h),
-                  SizedBox(height: 12.h),
-                  Text(
-                    "Outcome:",
-                    style: CustomFonts.grey700_11w700,
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    session.outcome,
-                    style: CustomFonts.textGrey13w400,
-                  ),
-                  if (isSession) ...[
-                    SizedBox(height: 12.h),
+                  if (t.material != null) ...[
+                    SizedBox(height: context.h(16)),
+                    const Divider(color: Colors.black12),
+                    SizedBox(height: context.h(12)),
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildProductDetail("Products Used", session.products.join(", ")),
-                        SizedBox(width: 16.w),
-                        _buildProductDetail("Materials", session.materials),
+                        Text(
+                          "Dosage/Material",
+                          style: CustomFonts.grey700_10w400.copyWith(fontSize: context.sp(12)),
+                        ),
+                        SizedBox(width: context.w(10)),
+                        Flexible(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(6)),
+                            decoration: BoxDecoration(
+                              color: CustomColors.darkPurple.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(context.r(8)),
+                            ),
+                            child: Text(
+                              "${t.material!.selectedQuantity} ${t.material!.name ?? 'Syringes'}",
+                              textAlign: TextAlign.end,
+                              style: CustomFonts.darkPurple10w700.copyWith(fontSize: context.sp(11)),
+                            ),
+                          ),
+                        ),
                       ],
-                    ),
-                    SizedBox(height: 12.h),
-                    Text(
-                      "Post-Care Instructions:",
-                      style: CustomFonts.grey700_11w700,
-                    ),
-                    SizedBox(height: 2.h),
-                    Text(
-                      session.postCare,
-                      style: CustomFonts.textGrey13w400,
                     ),
                   ],
                 ],
               ),
-            ),
-          ],
+            );
+          }),
+      ],
+    );
+  }
+
+  Widget _buildSimulationSection(Simulations simulations) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: context.w(4), bottom: context.h(12)),
+          child: Text("SIMULATIONS", style: CustomFonts.darkPurple12w600.copyWith(letterSpacing: 1.1)),
         ),
-      ),
+        _buildSimulationPair("Front View", simulations.frontImageBefore, simulations.frontImageAfter),
+        SizedBox(height: context.h(12)),
+        _buildSimulationPair("Right View", simulations.rightImageBefore, simulations.rightImageAfter),
+        SizedBox(height: context.h(12)),
+        _buildSimulationPair("Left View", simulations.leftImageBefore, simulations.leftImageAfter),
+      ],
     );
   }
 
-  Widget _buildProductDetail(String label, String value) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: CustomFonts.grey700_11w700,
-          ),
-          SizedBox(height: 2.h),
-          Text(
-            value,
-            style: CustomFonts.textGrey13w400,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHistoryInfoRow(IconData icon, String text) {
-    return Padding(
-      padding: EdgeInsets.only(top: 4.h),
-      child: Row(
-        children: [
-          Icon(icon, size: 14.sp, color: Colors.grey.shade500),
-          SizedBox(width: 8.w),
-          Expanded(
-            child: Text(
-              text,
-              style: CustomFonts.grey700_10w400,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoSection({required String title, required List<Widget> children}) {
+  Widget _buildSimulationPair(String label, String? before, String? after) {
+    bool hasBefore = before != null && before.isNotEmpty;
+    bool hasAfter = after != null && after.isNotEmpty;
+    if (!hasBefore && !hasAfter) return const SizedBox.shrink();
+    
     return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(18.w),
+      padding: EdgeInsets.all(context.w(16)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20.r),
-        border: Border.all(
-          color: CustomColors.greyColor.withValues(alpha: 0.5),
-          width: 1,
+        borderRadius: BorderRadius.circular(context.r(24)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 15, offset: const Offset(0, 8))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: CustomFonts.black14w700),
+          SizedBox(height: context.h(12)),
+          Row(
+            children: [
+              Expanded(child: _buildSimulationImage("Before", before)),
+              SizedBox(width: context.w(12)),
+              Expanded(child: _buildSimulationImage("After", after)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSimulationImage(String label, String? url) {
+    return Column(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(context.r(12)),
+          child: url != null && url.isNotEmpty
+              ? CachedNetworkImage(
+                  imageUrl: url,
+                  height: context.h(100),
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  placeholder: (_, __) => const Center(child: CupertinoActivityIndicator()),
+                  errorWidget: (_, _, _) => Container(
+                    height: context.h(100),
+                    width: double.infinity,
+                    color: Colors.grey.shade100,
+                    child: const Icon(Icons.image_not_supported_outlined),
+                  ),
+                )
+              : Container(
+                  height: context.h(100),
+                  width: double.infinity,
+                  color: Colors.grey.shade100,
+                  child: const Icon(Icons.image_not_supported_outlined, color: Colors.grey),
+                ),
         ),
+        SizedBox(height: context.h(4)),
+        Text(label, style: CustomFonts.grey700_10w400),
+      ],
+    );
+  }
+
+  Widget _buildInfoSection({required String title, required List<Widget> children, required IconData icon}) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(context.w(20)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(context.r(24)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 25,
+            offset: const Offset(0, 12),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: CustomFonts.darkPurple12w600,
+          Row(
+            children: [
+              Icon(icon, size: context.sp(18), color: CustomColors.darkPurple),
+              SizedBox(width: context.w(10)),
+              Text(
+                title.toUpperCase(),
+                style: CustomFonts.darkPurple12w600.copyWith(letterSpacing: 1.1),
+              ),
+            ],
           ),
-          SizedBox(height: 10.h),
-          Divider(color: Colors.grey.shade100, height: 1.h),
-          SizedBox(height: 6.h),
+          SizedBox(height: context.h(16)),
           ...children,
         ],
       ),
     );
   }
 
-  Widget _buildDetailRow(String label, String value, {bool isType = false, bool isStatus = false, IconData? icon}) {
-    Color? accentColor;
+  Widget _buildDetailRow(String label, String value, {
+    bool isType = false,
+    bool isStatus = false,
+    bool isPaid = false,
+    bool isBold = false,
+    Color? color,
+    IconData? icon
+  }) {
+    Color? accentColor = color;
     Color? badgeBgColor;
     TextStyle badgeStyle = CustomFonts.darkPurple10w700;
 
     if (isType) {
-      switch (value) {
-        case "Consultation":
+      switch (value.toLowerCase()) {
+        case "consultation":
           accentColor = CustomColors.blueColor;
           badgeBgColor = CustomColors.blueColor.withValues(alpha: 0.08);
           badgeStyle = CustomFonts.blue10w700;
           break;
-        case "Sessions":
+        case "treatment session":
           accentColor = CustomColors.pinkColor;
           badgeBgColor = CustomColors.pinkColor.withValues(alpha: 0.08);
           badgeStyle = CustomFonts.pink10w700;
-          break;
-        case "Follow-Up / Touch-Up":
-          accentColor = CustomColors.darkPurple;
-          badgeBgColor = CustomColors.darkPurple.withValues(alpha: 0.08);
-          badgeStyle = CustomFonts.darkPurple10w700;
-          break;
-        case "Provisional Booking":
-          accentColor = CustomColors.yellow;
-          badgeBgColor = CustomColors.yellow.withValues(alpha: 0.12);
-          badgeStyle = CustomFonts.amber10w700;
           break;
         default:
           accentColor = CustomColors.purpleColor;
@@ -412,68 +580,64 @@ class AppointmentDetailScreen extends StatelessWidget {
     }
 
     if (isStatus) {
-      accentColor = Colors.green.shade700;
-      badgeBgColor = Colors.green.shade50;
+      accentColor = color ?? Colors.green.shade700;
+      badgeBgColor = (color ?? Colors.green).withValues(alpha: 0.1);
       badgeStyle = CustomFonts.darkPurple10w700; // fallback
     }
 
+    if (isPaid) {
+      accentColor = Colors.green.shade600;
+    }
+
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.h),
+      padding: EdgeInsets.symmetric(vertical: context.h(10)),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 16.sp, color: Colors.grey.shade400),
-            SizedBox(width: 8.w),
+            Padding(
+              padding: EdgeInsets.only(top: context.h(2)),
+              child: Icon(icon, size: context.sp(16), color: Colors.grey.shade400),
+            ),
+            SizedBox(width: context.w(10)),
           ],
           Text(
             "$label:",
-            style: CustomFonts.grey700_10w400,
+            style: CustomFonts.grey700_10w400.copyWith(fontSize: context.sp(12)),
           ),
-          const Spacer(),
-          if (isType || isStatus)
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
-              decoration: BoxDecoration(
-                color: badgeBgColor,
-                borderRadius: BorderRadius.circular(20.r),
-              ),
-              child: Text(
-                value,
-                style: isStatus
-                    ? TextStyle(
-                        color: accentColor,
-                        fontSize: 8.sp,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Degular',
-                      )
-                    : badgeStyle.copyWith(fontSize: 8.sp),
-              ),
-            )
-          else
-            Expanded(
-              flex: 2,
-              child: Text(
-                value,
-                textAlign: TextAlign.right,
-                style: CustomFonts.black13w600,
-              ),
+          SizedBox(width: context.w(10)),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: isType || isStatus
+                  ? Container(
+                      padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(6)),
+                      decoration: BoxDecoration(
+                        color: badgeBgColor,
+                        borderRadius: BorderRadius.circular(context.r(20)),
+                      ),
+                      child: Text(
+                        value,
+                        style: isStatus
+                            ? TextStyle(
+                                color: accentColor,
+                                fontSize: context.sp(10),
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Degular',
+                              )
+                            : badgeStyle.copyWith(fontSize: context.sp(10)),
+                      ),
+                    )
+                  : Text(
+                      value,
+                      textAlign: TextAlign.end,
+                      style: isBold
+                          ? CustomFonts.black14w700.copyWith(color: accentColor ?? Colors.black, fontSize: context.sp(14))
+                          : CustomFonts.black13w600.copyWith(color: accentColor ?? Colors.black87, fontSize: context.sp(13)),
+                    ),
             ),
+          ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSmallBadge(String text, Color color, TextStyle style) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(20.r),
-      ),
-      child: Text(
-        text,
-        style: style.copyWith(fontSize: 8.sp),
       ),
     );
   }

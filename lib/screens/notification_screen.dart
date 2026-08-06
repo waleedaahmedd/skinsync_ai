@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../utills/custom_fonts.dart';
 
@@ -15,8 +15,8 @@ class NotificationScreen extends StatelessWidget {
       appBar: const CustomAppBar(showTitle: true, title: "Notification"),
       body: Padding(
         padding: EdgeInsets.only(
-          left: 30.w,
-          right: 30.w,
+          left: context.w(30),
+          right: context.w(30),
           bottom: MediaQuery.paddingOf(context).bottom,
         ),
         child: Center(

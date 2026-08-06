@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 
@@ -16,13 +16,13 @@ class TimeContainer extends StatelessWidget {
     return GestureDetector(
       onTap:onTap ,
       child: Container(
-                  height: 44.17.h,
-                  width: 175.72.w,
-                 //padding: EdgeInsets.symmetric(horizontal: 26.w,vertical: 13.h),
+                  height: context.h(44.17),
+                  width: context.w(175.72),
+                 //padding: EdgeInsets.symmetric(horizontal: context.w(26),vertical: context.h(13)),
                   decoration: BoxDecoration(
                     color: isBooked? CustomColors.greyColor : isSelected ? Colors.green:null,
-                    border: Border.all(width: 0.63.w,color: isAvailable && !isSelected?  CustomColors.blackColor : Colors.transparent ),
-                    borderRadius: BorderRadius.circular(10.r)
+                    border: Border.all(width: context.w(0.63),color: isAvailable && !isSelected?  CustomColors.blackColor : Colors.transparent ),
+                    borderRadius: BorderRadius.circular(context.r(10))
                   ),
                   child: Center(child: Text(time,style:isBooked? CustomFonts.grey15w400: isSelected? CustomFonts.white15w400:CustomFonts.black15w400
             )),

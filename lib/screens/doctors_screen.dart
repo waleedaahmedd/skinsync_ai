@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
-import '../models/dummy_list_model.dart';
-import '../models/responses/get_clinic_response.dart';
+import '../models/responses/practitioner_list_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../utills/date_time_utills.dart';
 import '../view_models/checkout_view_model.dart';
+import '../view_models/doctor_view_model.dart';
+import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_search_field.dart';
 import '../widgets/doctor_card.dart';
@@ -15,9 +17,9 @@ import 'doctor_detail_screen.dart';
 
 class DoctorsScreen extends ConsumerStatefulWidget {
   static const routeName = '/doctors_screen';
-  final Clinic clinic;
+  final bool isFromHome;
 
-  const DoctorsScreen({super.key, required this.clinic});
+  const DoctorsScreen({super.key, this.isFromHome = false});
 
   @override
   ConsumerState<DoctorsScreen> createState() => _DoctorsScreenState();
@@ -48,6 +50,9 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
         _searchQuery = _searchController.text.trim().toLowerCase();
       });
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(doctorProvider.notifier).loadPractitioners();
+    });
   }
 
   @override
@@ -66,6 +71,7 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
     });
     ref.read(checkoutViewModel.notifier).setSelectedDate(null);
     ref.read(checkoutViewModel.notifier).setSelectedSlot(null);
+    ref.read(doctorProvider.notifier).loadPractitioners();
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -97,54 +103,23 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
         _selectedDate = picked;
       });
       ref.read(checkoutViewModel.notifier).setSelectedDate(picked);
+      ref.read(doctorProvider.notifier).loadPractitioners();
     }
   }
 
-  List<DummyDoctor> _getFilteredDoctors(bool isVirtual) {
-    return dummyDoctors.where((doctor) {
-      // 1. Filter by Tab (In-Person: Even-indexed id; Virtual: Odd-indexed id)
-      final int idNum = int.tryParse(doctor.id) ?? 0;
-      final bool isDocVirtual = idNum % 2 == 0;
-      if (isVirtual != isDocVirtual) return false;
+  List<PractitionerDoctor> _getFilteredDoctors(bool isVirtual) {
+    final apiDoctors =
+        ref
+            .watch(doctorProvider.select((s) => s.doctorResponse))
+            ?.data
+            ?.doctors ??
+        [];
+    if (apiDoctors.isNotEmpty) {
+      return apiDoctors; // Assuming server-side filtering as per request params
+    }
 
-      // 2. Filter by Search Query
-      if (_searchQuery.isNotEmpty) {
-        final matchesName = doctor.name.toLowerCase().contains(_searchQuery);
-        final matchesSpec = doctor.specialization.toLowerCase().contains(
-          _searchQuery,
-        );
-        final matchesClinic = doctor.clinicName.toLowerCase().contains(
-          _searchQuery,
-        );
-        if (!matchesName && !matchesSpec && !matchesClinic) return false;
-      }
-
-      // 3. Filter by Date (Simulated availability matching)
-      if (_selectedDate != null) {
-        final day = _selectedDate!.weekday;
-        if (doctor.id == "1" && ![1, 3, 5].contains(day)) return false;
-        if (doctor.id == "2" && ![2, 4, 6].contains(day)) return false;
-        if (doctor.id == "3" && ![3, 5, 7].contains(day)) return false;
-      }
-
-      // 4. Filter by Slot (Simulated availability matching)
-      if (_selectedSlot != null) {
-        if (_selectedSlot == "09:00 AM - 11:00 AM" && doctor.id == "2") {
-          return false;
-        }
-        if (_selectedSlot == "11:00 AM - 01:00 PM" && doctor.id == "3") {
-          return false;
-        }
-        if (_selectedSlot == "01:00 PM - 03:00 PM" && doctor.id == "1") {
-          return false;
-        }
-        if (_selectedSlot == "03:00 PM - 05:00 PM" && doctor.id == "1") {
-          return false;
-        }
-      }
-
-      return true;
-    }).toList();
+    // Fallback to dummy for now if API returns nothing (optional, maybe better to show empty)
+    return [];
   }
 
   @override
@@ -157,222 +132,250 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
         _selectedSlot != null ||
         _searchQuery.isNotEmpty;
 
-    return Scaffold(
-      backgroundColor: CustomColors.whiteColor,
-      appBar: const CustomAppBar(showTitle: true, title: "Select Doctor"),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: CustomColors.whiteBlueGradient,
+    return PopScope(
+      onPopInvokedWithResult: (_, _) {
+        ref.read(checkoutViewModel.notifier).clearDateAndSlot();
+      },
+      child: Scaffold(
+        backgroundColor: CustomColors.whiteColor,
+        appBar: CustomAppBar(
+          showTitle: true,
+          title: widget.isFromHome ? "Our Specialists" : "Select Doctor",
         ),
-        child: Column(
-          children: [
-            SizedBox(height: 16.h),
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: CustomColors.whiteBlueGradient,
+          ),
+          child: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: context.h(16)),
 
-            // Search Bar & Filter Clear Button Row
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: CustomSearchField(
-                      controller: _searchController,
-                      hintText: "Search Doctors...",
-                    ),
-                  ),
-                  if (hasActiveFilters) ...[
-                    SizedBox(width: 8.w),
-                    GestureDetector(
-                      onTap: _clearFilters,
-                      child: Container(
-                        padding: EdgeInsets.all(12.w),
-                        decoration: BoxDecoration(
-                          color: Colors.red.shade50,
-                          borderRadius: BorderRadius.circular(12.r),
-                          border: Border.all(color: Colors.red.shade100),
-                        ),
-                        child: Icon(
-                          Icons.filter_alt_off_rounded,
-                          color: Colors.red.shade400,
-                          size: 20.sp,
+                // Search Bar & Filter Clear Button Row
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CustomSearchField(
+                          controller: _searchController,
+                          hintText: "Search Doctors...",
                         ),
                       ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            SizedBox(height: 16.h),
-
-            // Premium Date Selector Card & Slot Selector Slider Horizontal Row
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Row(
-                children: [
-                  // Premium Calendar Date Picker Trigger
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => _selectDate(context),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 14.w,
-                          vertical: 10.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: _selectedDate != null
-                              ? CustomColors.pinkColor
-                              : CustomColors.lightPurpleColor.withValues(
-                                  alpha: 0.3,
-                                ),
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.calendar_month_rounded,
-                              color: _selectedDate != null
-                                  ? Colors.white
-                                  : Colors.black87,
-                              size: 16.sp,
-                            ),
-                            SizedBox(width: 6.w),
-                            Expanded(
-                              child: Text(
-                                _selectedDate != null
-                                    ? DateFormat(
-                                        'MMM dd, yyyy',
-                                      ).format(_selectedDate!)
-                                    : "Select Date",
-                                style: _selectedDate != null
-                                    ? CustomFonts.white14w600.copyWith(
-                                        fontSize: 13.sp,
-                                      )
-                                    : CustomFonts.black14w600.copyWith(
-                                        color: Colors.black87,
-                                        fontSize: 13.sp,
-                                      ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                textAlign: TextAlign.center,
+                      if (hasActiveFilters) ...[
+                        SizedBox(width: context.w(8)),
+                        GestureDetector(
+                          onTap: _clearFilters,
+                          child: Container(
+                            padding: EdgeInsets.all(context.w(12)),
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade50,
+                              borderRadius: BorderRadius.circular(
+                                context.r(12),
                               ),
+                              border: Border.all(color: Colors.red.shade100),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 12.h),
-
-            // Time Slots Header / Horizontal Scrolling List
-            SizedBox(
-              height: 38.h,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                itemCount: _slots.length,
-                physics: const BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  final slot = _slots[index];
-                  final isSelected = _selectedSlot == slot;
-
-                  return GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (isSelected) {
-                          _selectedSlot = null;
-                        } else {
-                          _selectedSlot = slot;
-                        }
-                      });
-                      ref
-                          .read(checkoutViewModel.notifier)
-                          .setSelectedSlot(_selectedSlot);
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(right: 8.w),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 14.w,
-                        vertical: 8.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? CustomColors.purpleColor
-                            : CustomColors.lightPurpleColor.withValues(
-                                alpha: 0.2,
-                              ),
-                        borderRadius: BorderRadius.circular(20.r),
-                        border: Border.all(
-                          color: isSelected
-                              ? CustomColors.purpleColor
-                              : Colors.transparent,
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.access_time_filled_rounded,
-                            size: 12.sp,
-                            color: isSelected
-                                ? Colors.white
-                                : Colors.grey.shade700,
+                            child: Icon(
+                              Icons.filter_alt_off_rounded,
+                              color: Colors.red.shade400,
+                              size: context.sp(20),
+                            ),
                           ),
-                          SizedBox(width: 4.w),
-                          Text(
-                            slot,
-                            style: isSelected
-                                ? CustomFonts.white12w600
-                                : CustomFonts.black12w600.copyWith(
-                                    color: Colors.grey.shade700,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                SizedBox(height: context.h(16)),
+
+                // Premium Date Selector Card & Slot Selector Slider Horizontal Row
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                  child: Row(
+                    children: [
+                      // Premium Calendar Date Picker Trigger
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => _selectDate(context),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: context.w(14),
+                              vertical: context.h(10),
+                            ),
+                            decoration: BoxDecoration(
+                              color: _selectedDate != null
+                                  ? CustomColors.pinkColor
+                                  : CustomColors.lightPurpleColor.withValues(
+                                      alpha: 0.3,
+                                    ),
+                              borderRadius: BorderRadius.circular(
+                                context.r(20),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.calendar_month_rounded,
+                                  color: _selectedDate != null
+                                      ? Colors.white
+                                      : Colors.black87,
+                                  size: context.sp(16),
+                                ),
+                                SizedBox(width: context.w(6)),
+                                Expanded(
+                                  child: Text(
+                                    _selectedDate != null
+                                        ? _selectedDate!.formattedDate
+                                        : "Select Date",
+                                    style: _selectedDate != null
+                                        ? CustomFonts.white14w600.copyWith(
+                                            fontSize: context.sp(13),
+                                          )
+                                        : CustomFonts.black14w600.copyWith(
+                                            color: Colors.black87,
+                                            fontSize: context.sp(13),
+                                          ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
                                   ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: context.h(12)),
+
+                // Time Slots Header / Horizontal Scrolling List
+                SizedBox(
+                  height: context.h(38),
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                    itemCount: _slots.length,
+                    physics: const BouncingScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      final slot = _slots[index];
+                      final isSelected = _selectedSlot == slot;
+
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            if (isSelected) {
+                              _selectedSlot = null;
+                            } else {
+                              _selectedSlot = slot;
+                            }
+                          });
+                          ref
+                              .read(checkoutViewModel.notifier)
+                              .setSelectedSlot(_selectedSlot);
+                          ref.read(doctorProvider.notifier).loadPractitioners();
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(right: context.w(8)),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: context.w(14),
+                            vertical: context.h(8),
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? CustomColors.purpleColor
+                                : CustomColors.lightPurpleColor.withValues(
+                                    alpha: 0.2,
+                                  ),
+                            borderRadius: BorderRadius.circular(context.r(20)),
+                            border: Border.all(
+                              color: isSelected
+                                  ? CustomColors.purpleColor
+                                  : Colors.transparent,
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.access_time_filled_rounded,
+                                size: context.sp(12),
+                                color: isSelected
+                                    ? Colors.white
+                                    : Colors.grey.shade700,
+                              ),
+                              SizedBox(width: context.w(4)),
+                              Text(
+                                slot,
+                                style: isSelected
+                                    ? CustomFonts.white12w600
+                                    : CustomFonts.black12w600.copyWith(
+                                        color: Colors.grey.shade700,
+                                      ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(height: context.h(16)),
+                Expanded(
+                  child: Consumer(
+                    builder: (_, ref, _) {
+                      final loading = ref.watch(
+                        doctorProvider.select((s) => s.doctorLoading),
+                      );
+                      if (loading) {
+                        return const AppLoader();
+                      }
+                      if (isTreatment) {
+                        _buildDoctorGrid(isVirtual: false);
+                      }
+                      return Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: context.w(24),
+                            ),
+                            child: TabBar(
+                              controller: _tabController,
+                              indicatorColor: CustomColors.pinkColor,
+                              labelColor: Colors.black,
+                              unselectedLabelColor: Colors.grey.shade400,
+                              labelStyle: CustomFonts.black16w600,
+                              unselectedLabelStyle: CustomFonts.grey16w500,
+                              dividerColor: Colors.transparent,
+                              tabs: const [
+                                Tab(text: "In-Person"),
+                                Tab(text: "Virtual Consultation"),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: context.h(12)),
+
+                          // Tab Views Grid List
+                          Expanded(
+                            child: TabBarView(
+                              controller: _tabController,
+                              children: [
+                                _buildDoctorGrid(isVirtual: false),
+                                _buildDoctorGrid(isVirtual: true),
+                              ],
+                            ),
                           ),
                         ],
-                      ),
-                    ),
-                  );
-                },
-              ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 16.h),
-
-            // Treatment restriction logic - hide tab bar if direct Treatment is booked
-            if (isTreatment) ...[
-              Expanded(child: _buildDoctorGrid(isVirtual: false)),
-            ] else ...[
-              // Tabs Header: In-Person vs Virtual
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                child: TabBar(
-                  controller: _tabController,
-                  indicatorColor: CustomColors.pinkColor,
-                  labelColor: Colors.black,
-                  unselectedLabelColor: Colors.grey.shade400,
-                  labelStyle: CustomFonts.black16w600,
-                  unselectedLabelStyle: CustomFonts.grey16w500,
-                  dividerColor: Colors.transparent,
-                  tabs: const [
-                    Tab(text: "In-Person"),
-                    Tab(text: "Virtual Consultation"),
-                  ],
-                ),
-              ),
-              SizedBox(height: 12.h),
-
-              // Tab Views Grid List
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildDoctorGrid(isVirtual: false),
-                    _buildDoctorGrid(isVirtual: true),
-                  ],
-                ),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );
@@ -384,18 +387,18 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
     if (doctors.isEmpty) {
       return Center(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 40.w),
+          padding: EdgeInsets.symmetric(horizontal: context.w(40)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 Icons.people_alt_rounded,
-                size: 64.sp,
+                size: context.sp(64),
                 color: Colors.grey.shade300,
               ),
-              SizedBox(height: 16.h),
+              SizedBox(height: context.h(16)),
               Text("No Doctors Found", style: CustomFonts.grey800_20w600),
-              SizedBox(height: 6.h),
+              SizedBox(height: context.h(6)),
               Text(
                 "Try modifying your filter selections, resetting parameters, or check back later.",
                 textAlign: TextAlign.center,
@@ -407,15 +410,22 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
       );
     }
 
-    return GridView.builder(
+    return MasonryGridView.builder(
       itemCount: doctors.length,
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
+      padding: EdgeInsets.only(
+        left: context.w(24),
+        right: context.w(24),
+        top: context.h(8),
+        bottom: context.h(MediaQuery.paddingOf(context).bottom + 24),
+      ),
       physics: const BouncingScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisSpacing: context.w(14),
+      mainAxisSpacing: context.h(14),
+      gridDelegate: const SliverSimpleGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 0.76,
-        crossAxisSpacing: 14.w,
-        mainAxisSpacing: 14.h,
+        // childAspectRatio: 0.76,
+        // crossAxisSpacing: context.w(14),
+        // mainAxisSpacing: context.h(14),
       ),
       itemBuilder: (context, index) {
         final doctor = doctors[index];
@@ -426,12 +436,17 @@ class _DoctorsScreenState extends ConsumerState<DoctorsScreen>
           margin: EdgeInsets.zero,
           onTap: () {
             // Save selected Doctor into CheckoutState
-            ref.read(checkoutViewModel.notifier).setSelectedDoctor(doctor);
+            ref
+                .read(checkoutViewModel.notifier)
+                .setSelectedDoctorObject(doctor);
 
             Navigator.pushNamed(
               context,
               DoctorDetailScreen.routeName,
-              arguments: {'doctor': doctor, 'clinic': widget.clinic},
+              arguments: {
+                'doctor': doctor,
+                'clinic': ref.read(checkoutViewModel).selectedClinic,
+              },
             );
           },
         );

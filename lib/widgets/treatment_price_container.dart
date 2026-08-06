@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../models/responses/treatment_list_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
 import '../utills/color_constant.dart';
@@ -28,7 +28,7 @@ class TreatmentPriceContainer extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(15.r),
+          borderRadius: BorderRadius.circular(context.r(15)),
           border: Border.all(
             color: isSelected
                 ? CustomColors.lightPurpleColor
@@ -42,17 +42,17 @@ class TreatmentPriceContainer extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  height: 48.h,
-                  width: 48.w,
+                  height: context.h(48),
+                  width: context.w(48),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10.r)),
+                    borderRadius: BorderRadius.all(Radius.circular(context.r(10))),
                     image: DecorationImage(
                       image: AssetImage(image),
                       fit: BoxFit.fitHeight,
                     ),
                   ),
                 ),
-                SizedBox(width: 11.w),
+                SizedBox(width: context.w(11)),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,16 +67,16 @@ class TreatmentPriceContainer extends StatelessWidget {
                           Text("\$ 550", style: CustomFonts.red13w500),
                         ],
                       ),
-                      SizedBox(height: 2.h),
+                      SizedBox(height: context.h(2)),
 
-                      // SizedBox(height: 2.h),
+                      // SizedBox(height: context.h(2)),
                       Row(
                         children: [
                           Text(
                             "No Of Injectors:",
                             style: CustomFonts.grey13w400,
                           ),
-                          SizedBox(width: 2.w),
+                          SizedBox(width: context.w(2)),
                           Text("4", style: CustomFonts.red13w500),
                         ],
                       ),
@@ -85,17 +85,17 @@ class TreatmentPriceContainer extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 4.h),
+            SizedBox(height: context.h(4)),
             Wrap(
-              spacing: 8.w,
-              runSpacing: 8.h,
+              spacing: context.w(8),
+              runSpacing: context.h(8),
               children: selectedSubAreasList.map((e) {
                 final name = e.name ?? '-';
                 return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  padding: EdgeInsets.symmetric(horizontal: context.w(8), vertical: context.h(4)),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(999.r),
+                    borderRadius: BorderRadius.circular(context.r(999)),
                     border: Border.all(
                       color: Colors.black.withValues(alpha: 0.08),
                     ),

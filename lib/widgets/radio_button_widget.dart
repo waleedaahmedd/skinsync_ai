@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/color_constant.dart';
 
 class RadioButtonWidget extends StatelessWidget {
-   bool isSelected = false;
-  RadioButtonWidget({super.key, required this.isSelected});
+  final bool isSelected;
+  const RadioButtonWidget({super.key, required this.isSelected});
  
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 29.h,
-      width: 29.w,
+      height: context.h(29),
+      width: context.w(29),
       decoration: BoxDecoration(
         color: isSelected ? CustomColors.lightBlueColor : Colors.white,
         shape: BoxShape.circle,
@@ -18,13 +18,13 @@ class RadioButtonWidget extends StatelessWidget {
           color: isSelected
               ?CustomColors.lightBlueColor
               : CustomColors.lightBlueColor.withValues(alpha: 0.4),
-          width: 3.w,
+          width: context.w(3),
         ),
       ),
       child: Center(
         child: Container(
-          height: 10.h,
-          width: 10.w,
+          height: context.h(10),
+          width: context.w(10),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: isSelected ? Colors.white : Colors.transparent,

@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
@@ -61,12 +61,12 @@ class _BeforeYouBookBottomSheetState extends State<BeforeYouBookBottomSheet> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Container(
-        padding: EdgeInsets.all(20.w),
+        padding: EdgeInsets.all(context.w(20)),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.r),
-            topRight: Radius.circular(20.r),
+            topLeft: Radius.circular(context.r(20)),
+            topRight: Radius.circular(context.r(20)),
           ),
         ),
         child: Column(
@@ -75,30 +75,30 @@ class _BeforeYouBookBottomSheetState extends State<BeforeYouBookBottomSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(width: 28.w),
+                SizedBox(width: context.w(28)),
                 Text(widget.title, style: CustomFonts.black20w600),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
                   child: Container(
-                    width: 28.w,
-                    height: 28.w,
+                    width: context.w(28),
+                    height: context.w(28),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(color: CustomColors.blackColor),
                     ),
                     child: Icon(
                       Icons.close,
-                      size: 16.sp,
+                      size: context.sp(16),
                       color: CustomColors.blackColor,
                     ),
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: context.h(16)),
             ...widget.notes.map(
               (note) => Padding(
-                padding: EdgeInsets.only(bottom: 10.h),
+                padding: EdgeInsets.only(bottom: context.h(10)),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -108,23 +108,23 @@ class _BeforeYouBookBottomSheetState extends State<BeforeYouBookBottomSheet> {
                 ),
               ),
             ),
-            SizedBox(height: 12.h),
+            SizedBox(height: context.h(12)),
             Row(
               children: [
                 SizedBox(
-                  width: 20.w,
-                  height: 20.w,
+                  width: context.w(20),
+                  height: context.w(20),
                   child: Checkbox(
                     value: _isChecked,
                     onChanged: (value) => setState(() => _isChecked = value!),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4.r),
+                      borderRadius: BorderRadius.circular(context.r(4)),
                     ),
                     side: BorderSide(color: Colors.grey.shade400),
                     activeColor: CustomColors.purpleColor,
                   ),
                 ),
-                SizedBox(width: 8.w),
+                SizedBox(width: context.w(8)),
                 RichText(
                   text: TextSpan(
                     text: 'I have read the notes and agree to ',
@@ -146,10 +146,10 @@ class _BeforeYouBookBottomSheetState extends State<BeforeYouBookBottomSheet> {
                 ),
               ],
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: context.h(20)),
             SizedBox(
               width: double.infinity,
-              // height: 52.h,
+              // height: context.h(52),
               child: ElevatedButton(
                 onPressed: _isChecked
                     ? () {
@@ -164,7 +164,7 @@ class _BeforeYouBookBottomSheetState extends State<BeforeYouBookBottomSheet> {
                 child: Text(widget.buttonText),
               ),
             ),
-            SizedBox(height: 8.h),
+            SizedBox(height: context.h(8)),
           ],
         ),
       ),

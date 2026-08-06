@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../screens/bottom_nav_page.dart';
 import '../screens/face_scan_screen.dart';
@@ -20,29 +20,29 @@ void loginBottomSheet(BuildContext context) {
     isScrollControlled: true,
 
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(20))),
     ),
     builder: (context) {
       return SafeArea(
         child: Container(
           color: Colors.transparent,
           padding: EdgeInsets.only(
-            top: 10.h,
-            left: 10.w,
-            right: 10.w,
-            bottom: 10.h + MediaQuery.viewInsetsOf(context).bottom,
+            top: context.h(10),
+            left: context.w(10),
+            right: context.w(10),
+            bottom: context.h(10) + MediaQuery.viewInsetsOf(context).bottom,
           ),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(44.r),
-                topRight: Radius.circular(44.r),
-                bottomLeft: Radius.circular(55.r),
-                bottomRight: Radius.circular(55.r),
+                topLeft: Radius.circular(context.r(44)),
+                topRight: Radius.circular(context.r(44)),
+                bottomLeft: Radius.circular(context.r(55)),
+                bottomRight: Radius.circular(context.r(55)),
               ),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 28.h),
+            padding: EdgeInsets.symmetric(horizontal: context.w(20), vertical: context.h(28)),
             child: SingleChildScrollView(
               child: Consumer(
                 builder: (context, ref, _) {
@@ -54,22 +54,22 @@ void loginBottomSheet(BuildContext context) {
                         "Get Started",
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
-                          fontSize: 30.sp,
+                          fontSize: context.sp(30),
                           color: Colors.black,
                         ),
                       ),
 
-                      SizedBox(height: 4.h),
+                      SizedBox(height: context.h(4)),
 
                       Text(
                         "Smart skincare powered by AI.\nSign in to get personalized insights.",
                         style: TextStyle(
-                          fontSize: 16.sp,
+                          fontSize: context.sp(16),
                           fontWeight: FontWeight.w400,
                           color: const Color(0xff494949),
                         ),
                       ),
-                      SizedBox(height: 18.h),
+                      SizedBox(height: context.h(18)),
                       // SizedBox(
                       //   width: double.infinity,
                       //   child: InkWell(
@@ -108,9 +108,9 @@ void loginBottomSheet(BuildContext context) {
                       //       );
                       //     },
                       //     child: Container(
-                      //       padding: EdgeInsets.symmetric(vertical: 16.h),
+                      //       padding: EdgeInsets.symmetric(vertical: context.h(16)),
                       //       decoration: BoxDecoration(
-                      //         borderRadius: BorderRadius.circular(10.r),
+                      //         borderRadius: BorderRadius.circular(context.r(10)),
                       //         color: Colors.black,
                       //       ),
                       //       child: Center(
@@ -122,7 +122,7 @@ void loginBottomSheet(BuildContext context) {
                       //     ),
                       //   ),
                       // ),
-                      // SizedBox(height: 10.h),
+                      // SizedBox(height: context.h(10)),
                       Consumer(
                         builder: (_, ref, _) {
                           final loading = ref.watch(
@@ -152,10 +152,10 @@ void loginBottomSheet(BuildContext context) {
                                   },
                                   child: Container(
                                     padding: EdgeInsets.symmetric(
-                                      vertical: 16.h,
+                                      vertical: context.h(16),
                                     ),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10.r),
+                                      borderRadius: BorderRadius.circular(context.r(10)),
                                       color: CustomColors.greyColor,
                                     ),
                                     child: Center(
@@ -167,17 +167,17 @@ void loginBottomSheet(BuildContext context) {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 10.h),
-                              _buildSocialSignIns(ref),
-                              SizedBox(height: 20.h),
+                              SizedBox(height: context.h(10)),
+                              _buildSocialSignIns(context, ref),
+                              SizedBox(height: context.h(20)),
 
-                              _buildBiometricButton(ref),
+                              _buildBiometricButton(context, ref),
                             ],
                           );
                         },
                       ),
 
-                      SizedBox(height: 10.h),
+                      SizedBox(height: context.h(10)),
                     ],
                   );
                 },
@@ -190,7 +190,7 @@ void loginBottomSheet(BuildContext context) {
   );
 }
 
-Row _buildSocialSignIns(WidgetRef ref) {
+Row _buildSocialSignIns(BuildContext context, WidgetRef ref) {
   return Row(
     children: [
       Expanded(
@@ -201,23 +201,23 @@ Row _buildSocialSignIns(WidgetRef ref) {
                 .callGoogleSignInApi();
             if (success ?? false) {
               Navigator.pushNamedAndRemoveUntil(
-                ref.context,
+                context,
                 FaceScanScreen.routeName,
                 (Route<dynamic> route) => false,
               );
             }
           },
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 16.h),
+            padding: EdgeInsets.symmetric(vertical: context.h(16)),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.r),
+              borderRadius: BorderRadius.circular(context.r(10)),
               color: CustomColors.greyColor,
             ),
             child: Center(
               child: Image.asset(
                 PngAssets.google,
-                height: 32.h,
-                width: 32.w,
+                height: context.h(32),
+                width: context.w(32),
                 fit: BoxFit.contain,
               ),
             ),
@@ -244,23 +244,23 @@ Row _buildSocialSignIns(WidgetRef ref) {
                     )
                   : */
               Navigator.pushNamedAndRemoveUntil(
-                ref.context,
+                context,
                 FaceScanScreen.routeName,
                 (Route<dynamic> route) => false,
               );
             }
           },
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: 16.h),
+            padding: EdgeInsets.symmetric(vertical: context.h(16)),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10.r),
+              borderRadius: BorderRadius.circular(context.r(10)),
               color: CustomColors.greyColor,
             ),
             child: Center(
               child: Image.asset(
                 PngAssets.apple,
-                height: 32.h,
-                width: 32.w,
+                height: context.h(32),
+                width: context.w(32),
                 fit: BoxFit.contain,
               ),
             ),
@@ -273,7 +273,7 @@ Row _buildSocialSignIns(WidgetRef ref) {
 
 // lib/widgets/login_bottom_sheet.dart
 
-Widget _buildBiometricButton(WidgetRef ref) {
+Widget _buildBiometricButton(BuildContext context, WidgetRef ref) {
   final state = ref.watch(authViewModel);
 
   // Decides whether to show the button based on state
@@ -287,21 +287,21 @@ Widget _buildBiometricButton(WidgetRef ref) {
         bool authenticated = await BiometricHelper().authenticate(
           reason: 'Login with Biometrics',
         );
-        if (authenticated && ref.context.mounted) {
+        if (authenticated && context.mounted) {
           final success = await ref
               .read(authViewModel.notifier)
               .callBiometricLoginApi();
 
           if (success == true) {
             Navigator.pushNamedAndRemoveUntil(
-              ref.context,
+              context,
               BottomNavPage.routeName,
               (route) => false,
             );
           }
         }
       },
-      child: Icon(state.biometricIcon, size: 60.h),
+      child: Icon(state.biometricIcon, size: context.h(60)),
     ),
   );
 }

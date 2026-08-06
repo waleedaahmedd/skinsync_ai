@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'utills/assets.dart';
 import 'view_models/theme_view_model.dart';
 
@@ -12,29 +12,30 @@ import 'utills/theme.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
-void configLoading() {
+void configLoading(BuildContext context) {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
     ..loadingStyle = EasyLoadingStyle.custom
     ..indicatorType = EasyLoadingIndicatorType.fadingCircle
     // ..loadingStyle = EasyLoadingStyle.dark
-    ..indicatorSize = 50.w
+    ..indicatorSize = context.w(50)
     ..radius = 10.0
     ..progressColor = Colors.white
     ..backgroundColor = CustomColors.blackColor
     ..indicatorColor = Colors.white
     ..textColor = Colors.white
     ..indicatorWidget = SizedBox(
-      height: 60.w,
-      width: 60.w,
+      height: context.w(60),
+      width: context.w(60),
       child: Stack(
         children: [
           Center(
-            child: Image.asset(PngAssets.splashLogo, width: 50.w, height: 50.w),
+            child: Image.asset(PngAssets.splashLogo,
+                width: context.w(50), height: context.w(50)),
           ),
           SizedBox(
-            height: 60.w,
-            width: 60.w,
+            height: context.w(60),
+            width: context.w(60),
             child: const CircularProgressIndicator(),
           ),
         ],
@@ -50,13 +51,13 @@ class AppInit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
+    return ScreenUtilPlusInit(
       designSize: getDesignSize(context: context),
       ensureScreenSize: true,
       minTextAdapt: true,
       splitScreenMode: true,
-      builder: (_, child) {
-        configLoading();
+      builder: (context, child) {
+        configLoading(context);
         return Consumer(
           builder: (context, ref, child) {
             final ThemeMode themeMode = ref.watch(themeViewModel);
@@ -67,7 +68,7 @@ class AppInit extends StatelessWidget {
               initialRoute: '/',
               onGenerateRoute: RouteGenerator.generateRoute,
               themeMode: themeMode,
-              theme: AppTheme.lightTheme,
+              theme: AppTheme.lightTheme(context),
               darkTheme: AppTheme.darkTheme,
               builder: EasyLoading.init(),
             );

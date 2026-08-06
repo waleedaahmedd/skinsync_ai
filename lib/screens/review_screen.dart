@@ -1,12 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:intl/intl.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
-import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../utills/date_time_utills.dart';
 import '../view_models/checkout_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
@@ -14,16 +13,14 @@ import 'payment_screen.dart';
 
 class ReviewScreen extends ConsumerWidget {
   static const routeName = '/review_screen';
-  final Clinic clinic;
 
-  const ReviewScreen({super.key, required this.clinic});
+  const ReviewScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final checkoutState = ref.watch(checkoutViewModel);
-
-    // final clinic = checkoutState.selectedClinic;
-    final doctor = checkoutState.selectedDoctor;
+    final clinic = checkoutState.selectedClinic;
+    final doctor = checkoutState.selectedDoctorObject ?? checkoutState.selectedDoctor;
     final date = checkoutState.selectedDate;
     final slot = checkoutState.selectedSlot;
 
@@ -48,20 +45,20 @@ class ReviewScreen extends ConsumerWidget {
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+                padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(20)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("Appointment Summary", style: CustomFonts.black16w600),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: context.h(16)),
 
                     // 1. Doctor & Specialization Details
                     if (doctor != null) ...[
                       Container(
-                        padding: EdgeInsets.all(16.w),
+                        padding: EdgeInsets.all(context.w(16)),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(20.r),
+                          borderRadius: BorderRadius.circular(context.r(20)),
                           border: Border.all(color: Colors.grey.shade100),
                           boxShadow: [
                             BoxShadow(
@@ -74,11 +71,11 @@ class ReviewScreen extends ConsumerWidget {
                         child: Row(
                           children: [
                             ClipRRect(
-                              borderRadius: BorderRadius.circular(12.r),
+                              borderRadius: BorderRadius.circular(context.r(12)),
                               child: CachedNetworkImage(
-                                imageUrl: doctor.image,
-                                height: 60.w,
-                                width: 60.w,
+                                imageUrl: doctor.doctorImage ?? '',
+                                height: context.w(60),
+                                width: context.w(60),
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
                                   color: Colors.grey.shade50,
@@ -90,21 +87,21 @@ class ReviewScreen extends ConsumerWidget {
                                     const Icon(Icons.person),
                               ),
                             ),
-                            SizedBox(width: 16.w),
+                            SizedBox(width: context.w(16)),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    doctor.name,
+                                    doctor.doctorName ?? 'Unknown Specialist',
                                     style: CustomFonts.black14w600,
                                   ),
-                                  SizedBox(height: 4.h),
+                                  SizedBox(height: context.h(4)),
                                   Text(
-                                    doctor.specialization,
+                                    doctor.specialization ?? 'Aesthetic Medicine',
                                     style: CustomFonts.grey12w400,
                                   ),
-                                  SizedBox(height: 4.h),
+                                  SizedBox(height: context.h(4)),
                                   Row(
                                     children: [
                                       const Icon(
@@ -112,9 +109,9 @@ class ReviewScreen extends ConsumerWidget {
                                         color: Colors.amber,
                                         size: 14,
                                       ),
-                                      SizedBox(width: 2.w),
+                                      SizedBox(width: context.w(2)),
                                       Text(
-                                        doctor.rating.toString(),
+                                        doctor.doctorRating?.toString() ?? "4.5",
                                         style: CustomFonts.black10w600,
                                       ),
                                     ],
@@ -125,21 +122,21 @@ class ReviewScreen extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      SizedBox(height: 16.h),
+                      SizedBox(height: context.h(16)),
                     ],
 
                     // 2. Clinic Details
                     Container(
-                      padding: EdgeInsets.all(16.w),
+                      padding: EdgeInsets.all(context.w(16)),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20.r),
+                        borderRadius: BorderRadius.circular(context.r(20)),
                         border: Border.all(color: Colors.grey.shade100),
                       ),
                       child: Row(
                         children: [
                           Container(
-                            padding: EdgeInsets.all(8.w),
+                            padding: EdgeInsets.all(context.w(8)),
                             decoration: BoxDecoration(
                               color: CustomColors.lightPurpleColor.withValues(
                                 alpha: 0.1,
@@ -151,18 +148,18 @@ class ReviewScreen extends ConsumerWidget {
                               color: CustomColors.purpleColor,
                             ),
                           ),
-                          SizedBox(width: 16.w),
+                          SizedBox(width: context.w(16)),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  clinic.name ?? "Standard Clinic Name",
+                                  doctor?.clinic?.clinicName ?? clinic?.name ?? "Standard Clinic Name",
                                   style: CustomFonts.black14w600,
                                 ),
-                                SizedBox(height: 4.h),
+                                SizedBox(height: context.h(4)),
                                 Text(
-                                  clinic.address ?? "Standard Clinic Location",
+                                  clinic?.address ?? "Standard Clinic Location",
                                   style: CustomFonts.grey12w400,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -173,33 +170,34 @@ class ReviewScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: context.h(16)),
 
                     // 3. Appointment Date & Slot
                     Container(
-                      padding: EdgeInsets.all(16.w),
+                      padding: EdgeInsets.all(context.w(16)),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20.r),
+                        borderRadius: BorderRadius.circular(context.r(20)),
                         border: Border.all(color: Colors.grey.shade100),
                       ),
                       child: Column(
                         children: [
                           _buildSummaryRow(
+                            context,
                             Icons.calendar_today_rounded,
                             "Date",
-                            date != null
-                                ? DateFormat('EEEE, MMM dd, yyyy').format(date)
-                                : "Not Selected",
+                            date != null ? date.formattedDayDate : "Not Selected",
                           ),
                           const Divider(height: 24),
                           _buildSummaryRow(
+                            context,
                             Icons.access_time_rounded,
                             "Time Slot",
                             slot ?? "Not Selected",
                           ),
                           const Divider(height: 24),
                           _buildSummaryRow(
+                            context,
                             Icons.medical_services_outlined,
                             "Appointment Type",
                             checkoutState.selectedAppointmentType?.title ??
@@ -208,7 +206,7 @@ class ReviewScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: 24.h),
+                    SizedBox(height: context.h(24)),
 
                     // Selected Treatments & Areas Section
                     if (checkoutState.checkoutTreatmentsList.isNotEmpty) ...[
@@ -216,13 +214,13 @@ class ReviewScreen extends ConsumerWidget {
                         "Selected Treatments & Areas",
                         style: CustomFonts.black16w600,
                       ),
-                      SizedBox(height: 16.h),
+                      SizedBox(height: context.h(16)),
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.all(16.w),
+                        padding: EdgeInsets.all(context.w(16)),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(24.r),
+                          borderRadius: BorderRadius.circular(context.r(24)),
                           border: Border.all(color: Colors.grey.shade100),
                           boxShadow: [
                             BoxShadow(
@@ -247,22 +245,22 @@ class ReviewScreen extends ConsumerWidget {
                               return Column(
                                 children: [
                                   Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 4.h),
+                                    padding: EdgeInsets.symmetric(vertical: context.h(4)),
                                     child: Row(
                                       children: [
                                         Container(
-                                          padding: EdgeInsets.all(10.w),
+                                          padding: EdgeInsets.all(context.w(10)),
                                           decoration: BoxDecoration(
                                             color: CustomColors.purpleColor.withValues(alpha: 0.08),
-                                            borderRadius: BorderRadius.circular(14.r),
+                                            borderRadius: BorderRadius.circular(context.r(14)),
                                           ),
                                           child: Icon(
                                             Icons.auto_awesome_rounded,
                                             color: CustomColors.purpleColor,
-                                            size: 18.sp,
+                                            size: context.sp(18),
                                           ),
                                         ),
-                                        SizedBox(width: 16.w),
+                                        SizedBox(width: context.w(16)),
                                         Expanded(
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -280,7 +278,7 @@ class ReviewScreen extends ConsumerWidget {
                                                   ),
                                                 ],
                                               ),
-                                              SizedBox(height: 2.h),
+                                              SizedBox(height: context.h(2)),
                                               Text(
                                                 "${selection.areaName}$materialInfo",
                                                 style: CustomFonts.grey12w400.copyWith(
@@ -296,9 +294,9 @@ class ReviewScreen extends ConsumerWidget {
                                   ),
                                   if (!isLast)
                                     Padding(
-                                      padding: EdgeInsets.only(left: 52.w),
+                                      padding: EdgeInsets.only(left: context.w(52)),
                                       child: Divider(
-                                        height: 20.h,
+                                        height: context.h(20),
                                         thickness: 1,
                                         color: Colors.grey.shade50,
                                       ),
@@ -309,17 +307,17 @@ class ReviewScreen extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      SizedBox(height: 24.h),
+                      SizedBox(height: context.h(24)),
                     ],
 
                     // 4. Pricing Details Section
                     Text("Payment Summary", style: CustomFonts.black16w600),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: context.h(16)),
                     Container(
-                      padding: EdgeInsets.all(18.w),
+                      padding: EdgeInsets.all(context.w(18)),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20.r),
+                        borderRadius: BorderRadius.circular(context.r(20)),
                         border: Border.all(color: Colors.grey.shade100),
                       ),
                       child: Column(
@@ -377,10 +375,10 @@ class ReviewScreen extends ConsumerWidget {
 
             // Continuous to payments selection screen using CustomButton
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+              padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(20)),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(24))),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.05),
@@ -391,14 +389,13 @@ class ReviewScreen extends ConsumerWidget {
               ),
               child: CustomButton(
                 text: "Proceed to Payment",
-                borderRadius: 26.r,
+                borderRadius: context.r(26),
                 backgroundColor: Colors.black,
                 textColor: Colors.white,
                 onPressed: () {
                   Navigator.pushNamed(
                     context,
                     PaymentScreen.routeName,
-                    arguments: clinic,
                   );
                 },
               ),
@@ -409,11 +406,11 @@ class ReviewScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummaryRow(IconData icon, String label, String value) {
+  Widget _buildSummaryRow(BuildContext context, IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(icon, color: Colors.grey.shade400, size: 20.sp),
-        SizedBox(width: 12.w),
+        Icon(icon, color: Colors.grey.shade400, size: context.sp(20)),
+        SizedBox(width: context.w(12)),
         Text(label, style: CustomFonts.grey13w400),
         const Spacer(),
         Text(value, style: CustomFonts.black14w600),

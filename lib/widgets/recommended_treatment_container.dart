@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../screens/treatment_detail_screen.dart';
 import '../utills/custom_fonts.dart';
 
@@ -19,22 +19,22 @@ class RecommendedTreatmentContainer extends StatelessWidget {
         Navigator.pushNamed(context,TreatmentDetailScreen.routeName);
       },
       child: Container(
-        height: 299.h,
-        width: 279.w,
-        padding: EdgeInsets.only(bottom: 20.w),
+        height: context.h(299),
+        width: context.w(279),
+        padding: EdgeInsets.only(bottom: context.w(20)),
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(treatmentImage),
             fit: BoxFit.fill,
           ),
-          borderRadius: BorderRadius.circular(10.r),
+          borderRadius: BorderRadius.circular(context.r(10)),
         ),
         child: Align(
           alignment: Alignment.bottomCenter,
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 8.h),
+            padding: EdgeInsets.symmetric(horizontal: context.w(25), vertical: context.h(8)),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(50.r),
+              borderRadius: BorderRadius.circular(context.r(50)),
               color: Colors.transparent.withValues(alpha: 0.2),
             ),
             child: Text(treatmentName, style: CustomFonts.white14w600),

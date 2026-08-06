@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/svg.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
@@ -25,12 +25,12 @@ class SavedTreatmentScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Divider(color: CustomColors.greyColor.withValues(alpha: 0.6), height: 1.h),
-            SizedBox(height: 24.h),
+            Divider(color: CustomColors.greyColor.withValues(alpha: 0.6), height: context.h(1)),
+            SizedBox(height: context.h(24)),
 
             // Section 1: AI Model Treatment Section
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(24)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -42,14 +42,14 @@ class SavedTreatmentScreen extends StatelessWidget {
                         style: CustomFonts.black20w600,
                       ),
                       Container(
-                        padding: EdgeInsets.all(6.w),
+                        padding: EdgeInsets.all(context.w(6)),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           color: CustomColors.greyColor.withValues(alpha: 0.6),
                         ),
                         child: Icon(
                           CupertinoIcons.arrow_right,
-                          size: 14.sp,
+                          size: context.sp(14),
                           color: Colors.black,
                         ),
                       ),
@@ -58,11 +58,11 @@ class SavedTreatmentScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: context.h(16)),
 
             // Horizontal AI Models list
             SizedBox(
-              height: 225.h,
+              height: context.h(225),
               child: ListView.builder(
                 physics: const BouncingScrollPhysics(),
                 scrollDirection: Axis.horizontal,
@@ -70,15 +70,15 @@ class SavedTreatmentScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: EdgeInsets.only(
-                      left: index == 0 ? 24.w : 0,
-                      right: 12.w,
+                      left: index == 0 ? context.w(24) : 0,
+                      right: context.w(12),
                     ),
                     child: Container(
-                      width: 170.w,
-                      padding: EdgeInsets.all(8.w),
+                      width: context.w(170),
+                      padding: EdgeInsets.all(context.w(8)),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20.r),
+                        borderRadius: BorderRadius.circular(context.r(20)),
                         border: Border.all(
                           color: CustomColors.greyColor.withValues(alpha: 0.5),
                           width: 1,
@@ -95,15 +95,15 @@ class SavedTreatmentScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(14.r),
+                            borderRadius: BorderRadius.circular(context.r(14)),
                             child: Image.asset(
                               DummyAssets.doctorImage,
-                              height: 125.h,
+                              height: context.h(125),
                               width: double.infinity,
                               fit: BoxFit.cover,
                             ),
                           ),
-                          SizedBox(height: 8.h),
+                          SizedBox(height: context.h(8)),
                           Expanded(
                             child: Text(
                               "AI Model Session",
@@ -119,26 +119,26 @@ class SavedTreatmentScreen extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(height: 28.h),
+            SizedBox(height: context.h(28)),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Divider(color: Colors.grey.shade100, height: 1.h),
+              padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+              child: Divider(color: Colors.grey.shade100, height: context.h(1)),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: context.h(24)),
 
             // Section 2: Clinical Treatment List
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(24)),
               child: HeadingWithRightArrow(
                 title: "Your Saved Clinics & Treatments",
                 onTap: () {},
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: context.h(16)),
 
             // Saved Clinics List
             SizedBox(
-              height: 220.h,
+              height: context.h(220),
               child: ListView.builder(
                 physics: const BouncingScrollPhysics(),
                 scrollDirection: Axis.horizontal,
@@ -146,15 +146,15 @@ class SavedTreatmentScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: EdgeInsets.only(
-                      left: index == 0 ? 24.w : 0,
-                      right: 12.w,
+                      left: index == 0 ? context.w(24) : 0,
+                      right: context.w(12),
                     ),
                     child: Container(
-                      width: 290.w,
-                      padding: EdgeInsets.all(10.w),
+                      width: context.w(290),
+                      padding: EdgeInsets.all(context.w(10)),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20.r),
+                        borderRadius: BorderRadius.circular(context.r(20)),
                         border: Border.all(
                           color: CustomColors.greyColor.withValues(alpha: 0.5),
                           width: 1,
@@ -171,15 +171,15 @@ class SavedTreatmentScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(14.r),
+                            borderRadius: BorderRadius.circular(context.r(14)),
                             child: Image.asset(
                               DummyAssets.treatmentimage,
-                              height: 120.h,
+                              height: context.h(120),
                               width: double.infinity,
                               fit: BoxFit.cover,
                             ),
                           ),
-                          SizedBox(height: 10.h),
+                          SizedBox(height: context.h(10)),
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -193,7 +193,7 @@ class SavedTreatmentScreen extends StatelessWidget {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    SizedBox(height: 2.h),
+                                    SizedBox(height: context.h(2)),
                                     Text(
                                       "October 20, 3:00 PM",
                                       style: CustomFonts.grey700_10w400,
@@ -201,19 +201,19 @@ class SavedTreatmentScreen extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                              SizedBox(width: 8.w),
+                              SizedBox(width: context.w(8)),
                               Row(
                                 children: [
                                   SvgPicture.asset(
                                     SvgAssets.mappin,
-                                    height: 11.h,
-                                    width: 11.w,
+                                    height: context.h(11),
+                                    width: context.w(11),
                                     colorFilter: const ColorFilter.mode(
                                       CustomColors.pinkColor,
                                       BlendMode.srcIn,
                                     ),
                                   ),
-                                  SizedBox(width: 4.w),
+                                  SizedBox(width: context.w(4)),
                                   Text(
                                     "Glow Clinic",
                                     style: CustomFonts.pink10w700,
@@ -229,7 +229,7 @@ class SavedTreatmentScreen extends StatelessWidget {
                 },
               ),
             ),
-            SizedBox(height: 40.h),
+            SizedBox(height: context.h(40)),
           ],
         ),
       ),

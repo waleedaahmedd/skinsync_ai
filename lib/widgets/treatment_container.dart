@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../screens/treatment_detail_screen.dart';
 import '../screens/treatment_area_screen.dart';
 import '../utills/color_constant.dart';
@@ -41,12 +41,12 @@ class TreatmentContainer extends StatelessWidget {
     this.topRightWidget,
   });
 
-  Widget? _buildLeftIcon(String? iconKey) {
+  Widget? _buildLeftIcon(BuildContext context, String? iconKey) {
     // 1. If it's a network image URL, render it cleanly via AppNetworkImage
     return Container(
-      margin: EdgeInsets.only(bottom: 4.h),
+      margin: EdgeInsets.only(bottom: context.h(4)),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.r),
+        borderRadius: BorderRadius.circular(context.r(10)),
         border: Border.all(color: Colors.white, width: 1.5),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4),
@@ -54,10 +54,10 @@ class TreatmentContainer extends StatelessWidget {
       ),
       child: AppNetworkImage(
         imageUrl: iconKey ?? '',
-        width: 38.w,
-        height: 38.w,
+        width: context.w(38),
+        height: context.w(38),
         fit: BoxFit.cover,
-        borderRadius: BorderRadius.circular(10.r),
+        borderRadius: BorderRadius.circular(context.r(10)),
         errorIcon: Icons.broken_image,
       ),
     );
@@ -84,7 +84,7 @@ class TreatmentContainer extends StatelessWidget {
             treatments?.imageUrl ??
             "";
         final iconKey = customIcon ?? treatments?.icon;
-        final iconWidget = iconKey != null ? _buildLeftIcon(iconKey) : null;
+        final iconWidget = iconKey != null ? _buildLeftIcon(context, iconKey) : null;
         final globalSku = treatmentData?.globalSku ?? "";
         final useInAiSimulator = treatmentData?.useInAiSimulator ?? false;
 
@@ -119,12 +119,12 @@ class TreatmentContainer extends StatelessWidget {
                 }
               },
           child: Container(
-            height: imageHeight ?? 300.h,
+            height: imageHeight ?? context.h(300),
             width: width ?? MediaQuery.sizeOf(context).width,
-            margin: EdgeInsets.only(bottom: 16.h),
+            margin: EdgeInsets.only(bottom: context.h(16)),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20.r),
+              borderRadius: BorderRadius.circular(context.r(20)),
               boxShadow: [
                 BoxShadow(
                   color: CustomColors.purpleColor.withValues(alpha: 0.12),
@@ -140,7 +140,7 @@ class TreatmentContainer extends StatelessWidget {
               ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(20.r),
+              borderRadius: BorderRadius.circular(context.r(20)),
               child: Stack(
                 children: [
                   // 1. Full-Cover Image Background via AppNetworkImage or custom widget
@@ -177,7 +177,7 @@ class TreatmentContainer extends StatelessWidget {
                     left: 0,
                     top: 0,
                     bottom: 0,
-                    width: 220.w,
+                    width: context.w(220),
                     child: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -196,7 +196,7 @@ class TreatmentContainer extends StatelessWidget {
                   // 4. Elegant Content Layer (Title, Description, and Chevron aligned to bottom)
                   Positioned.fill(
                     child: Padding(
-                      padding: EdgeInsets.fromLTRB(22.w, 12.h, 22.w, 16.h),
+                      padding: EdgeInsets.fromLTRB(context.w(22), context.h(12), context.w(22), context.h(16)),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
@@ -212,7 +212,7 @@ class TreatmentContainer extends StatelessWidget {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 if (subtitleText.isNotEmpty) ...[
-                                  SizedBox(height: 6.h),
+                                  SizedBox(height: context.h(6)),
                                   Text(
                                     subtitleText,
                                     style: CustomFonts.grey12w400,
@@ -221,11 +221,11 @@ class TreatmentContainer extends StatelessWidget {
                                   ),
                                 ],
                                 if (globalSku.isNotEmpty) ...[
-                                  SizedBox(height: 6.h),
+                                  SizedBox(height: context.h(6)),
                                   Text(
                                     "SKU: $globalSku",
                                     style: CustomFonts.grey12w400.copyWith(
-                                      fontSize: 10.sp,
+                                      fontSize: context.sp(10),
                                       fontWeight: FontWeight.w600,
                                       color: Colors.grey.shade600,
                                     ),
@@ -236,11 +236,11 @@ class TreatmentContainer extends StatelessWidget {
                               ],
                             ),
                           ),
-                          SizedBox(width: 10.w),
+                          SizedBox(width: context.w(10)),
 
                           // Translucent Circular Action Arrow
                           Container(
-                            padding: EdgeInsets.all(10.w),
+                            padding: EdgeInsets.all(context.w(10)),
                             decoration: BoxDecoration(
                               color: Colors.black.withValues(alpha: 0.05),
                               shape: BoxShape.circle,
@@ -259,7 +259,7 @@ class TreatmentContainer extends StatelessWidget {
                             child: Icon(
                               Icons.chevron_right_rounded,
                               color: Colors.black87,
-                              size: 22.sp,
+                              size: context.sp(22),
                             ),
                           ),
                         ],
@@ -269,29 +269,29 @@ class TreatmentContainer extends StatelessWidget {
 
                   // 5. Left-hand Icon on Top Left
                   if (iconWidget != null)
-                    Positioned(top: 12.h, left: 12.w, child: iconWidget),
+                    Positioned(top: context.h(12), left: context.w(12), child: iconWidget),
 
                   // Custom Top Right Widget (e.g. Pose Label)
                   if (topRightWidget != null)
-                    Positioned(top: 12.h, right: 12.w, child: topRightWidget!),
+                    Positioned(top: context.h(12), right: context.w(12), child: topRightWidget!),
 
                   // AI Compatible Badge
                   if (useInAiSimulator)
                     Positioned(
-                      top: 12.h,
+                      top: context.h(12),
                       right: (treatments != null && !isDeploymentMode)
-                          ? 44.w
-                          : 12.w,
+                          ? context.w(44)
+                          : context.w(12),
                       child: Container(
                         padding: EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                          vertical: 5.h,
+                          horizontal: context.w(10),
+                          vertical: context.h(5),
                         ),
                         decoration: BoxDecoration(
                           color: CustomColors.purpleColor.withValues(
                             alpha: 0.9,
                           ),
-                          borderRadius: BorderRadius.circular(12.r),
+                          borderRadius: BorderRadius.circular(context.r(12)),
                           boxShadow: [
                             BoxShadow(
                               color: CustomColors.purpleColor.withValues(
@@ -308,14 +308,14 @@ class TreatmentContainer extends StatelessWidget {
                             Icon(
                               Icons.auto_awesome,
                               color: Colors.white,
-                              size: 10.sp,
+                              size: context.sp(10),
                             ),
-                            SizedBox(width: 4.w),
+                            SizedBox(width: context.w(4)),
                             Text(
                               "AI Compatible",
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 9.sp,
+                                fontSize: context.sp(9),
                                 fontWeight: FontWeight.bold,
                                 fontFamily: 'Degular',
                               ),
@@ -330,8 +330,8 @@ class TreatmentContainer extends StatelessWidget {
                     Visibility(
                       visible: !isDeploymentMode,
                       child: Positioned(
-                        top: 12.h,
-                        right: 12.w,
+                        top: context.h(12),
+                        right: context.w(12),
                         child: GestureDetector(
                           onTap: () {
                             Navigator.pushNamed(
@@ -342,7 +342,7 @@ class TreatmentContainer extends StatelessWidget {
                           },
                           behavior: HitTestBehavior.opaque,
                           child: Container(
-                            padding: EdgeInsets.all(6.w),
+                            padding: EdgeInsets.all(context.w(6)),
                             decoration: BoxDecoration(
                               color: Colors.black.withValues(alpha: 0.4),
                               shape: BoxShape.circle,
@@ -354,7 +354,7 @@ class TreatmentContainer extends StatelessWidget {
                             child: Icon(
                               Icons.info_outline,
                               color: Colors.white,
-                              size: 16.sp,
+                              size: context.sp(16),
                             ),
                           ),
                         ),

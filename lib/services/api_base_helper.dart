@@ -35,6 +35,15 @@ class ApiBaseHelper {
       await _refreshToken();
       switch (requestType) {
         case 'GET':
+          if (requestBody != null) {
+            final request = http.Request('GET', Uri.parse(url));
+            request.headers.addAll(getHeaders());
+            request.body = jsonEncode(requestBody);
+            final response = await http.Client().send(request);
+            final responseJson = await http.Response.fromStream(response);
+            log('RESPONSE: ${responseJson.body}');
+            return responseJson;
+          }
           final responseJson = await http.get(
             Uri.parse(url),
             headers: getHeaders(),
@@ -136,7 +145,7 @@ class ApiBaseHelper {
     log('EXPIRY: $expiry');
     log('REFRESH EXPIRY: $refreshExpiry');
     log('ACCESS TOKEN: $token');
-    final uri = Uri.parse('${BaseUrls.api.url}${EndPoints.refreshToken.path}');
+    final uri = Uri.parse('${BaseUrls.apiQa.url}${EndPoints.refreshToken.path}');
     log('URL: $uri');
     final request = {'refresh_token': refreshToken};
     log('REQUEST: $request');

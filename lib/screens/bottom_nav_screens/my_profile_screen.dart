@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import '../allergy_and_medical_history.dart';
@@ -21,6 +21,7 @@ import '../../widgets/logout_dialog_box.dart';
 import '../../main.dart';
 import '../../widgets/dialogs/delete_account_dialog.dart';
 import '../simulation_history_screen.dart';
+import 'appointments_screen.dart';
 
 class MyProfileScreen extends StatelessWidget {
   const MyProfileScreen({super.key});
@@ -28,15 +29,95 @@ class MyProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Wrapper for group options inside a Card
+    Widget buildOptionCard(List<Widget> children) {
+      return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(context.r(24)),
+          border: Border.all(
+            color: CustomColors.greyColor.withValues(alpha: 0.5),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.015),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(children: children),
+      );
+    }
+
+    // Individual list option row inside a Card with Unified Colors
+    Widget buildCardOption({
+      required dynamic icon,
+      required String title,
+      required VoidCallback callBack,
+      bool isLast = false,
+    }) {
+      // Single Unified Brand Color for all Icons (Consistent Aesthetic)
+      const Color unifiedColor = CustomColors.darkPurple;
+
+      return Column(
+        children: [
+          InkWell(
+            onTap: callBack,
+            borderRadius: BorderRadius.circular(context.r(24)),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(14)),
+              child: Row(
+                children: [
+                  // Unified soft background tint & icon color
+                  Container(
+                    padding: EdgeInsets.all(context.w(8)),
+                    decoration: BoxDecoration(
+                      color: unifiedColor.withValues(alpha: 0.08),
+                      shape: BoxShape.circle,
+                    ),
+                    child: icon is String
+                        ? SvgPicture.asset(
+                            icon,
+                            height: context.w(18),
+                            width: context.w(18),
+                            colorFilter: const ColorFilter.mode(
+                              unifiedColor,
+                              BlendMode.srcIn,
+                            ),
+                          )
+                        : Icon(icon as IconData, size: context.w(18), color: unifiedColor),
+                  ),
+                  SizedBox(width: context.w(14)),
+                  Expanded(child: Text(title, style: CustomFonts.black16w500)),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: Colors.grey.shade400,
+                    size: context.sp(20),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (!isLast)
+            Padding(
+              padding: EdgeInsets.only(left: context.w(54), right: context.w(16)),
+              child: Divider(color: Colors.grey.shade100, height: context.h(1)),
+            ),
+        ],
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-            SizedBox(height: 16.h),
+            SizedBox(height: context.h(16)),
             // Header: Title and Settings Button
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(24)),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -46,8 +127,8 @@ class MyProfileScreen extends StatelessWidget {
                       Navigator.pushNamed(context, SettingScreen.routeName);
                     },
                     child: Container(
-                      height: 42.w,
-                      width: 42.w,
+                      height: context.w(42),
+                      width: context.w(42),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         shape: BoxShape.circle,
@@ -59,7 +140,7 @@ class MyProfileScreen extends StatelessWidget {
                       child: Center(
                         child: Icon(
                           Iconsax.setting_2,
-                          size: 18.sp,
+                          size: context.sp(18),
                           color: Colors.black,
                         ),
                       ),
@@ -68,11 +149,11 @@ class MyProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 24.h),
+            SizedBox(height: context.h(24)),
 
             // Profile Avatar & Name Block
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(24)),
               child: Row(
                 children: [
                   Container(
@@ -80,7 +161,7 @@ class MyProfileScreen extends StatelessWidget {
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: CustomColors.purpleColor.withValues(alpha: 0.4),
-                        width: 4.w,
+                        width: context.w(4),
                       ),
                     ),
                     child: Consumer(
@@ -94,23 +175,23 @@ class MyProfileScreen extends StatelessWidget {
                           child: CachedNetworkImage(
                             imageUrl: image ?? "",
                             fit: BoxFit.cover,
-                            height: 80.w,
-                            width: 80.w,
+                            height: context.w(80),
+                            width: context.w(80),
                             placeholder: (context, url) => Container(
-                              height: 80.w,
-                              width: 80.w,
+                              height: context.w(80),
+                              width: context.w(80),
                               color: Colors.grey.shade100,
                               child: const Center(
                                 child: CupertinoActivityIndicator(),
                               ),
                             ),
                             errorWidget: (context, url, error) => Container(
-                              height: 80.w,
-                              width: 80.w,
+                              height: context.w(80),
+                              width: context.w(80),
                               color: Colors.grey.shade100,
                               child: Icon(
                                 Icons.person_outline_rounded,
-                                size: 36.sp,
+                                size: context.sp(36),
                                 color: Colors.grey.shade400,
                               ),
                             ),
@@ -119,7 +200,7 @@ class MyProfileScreen extends StatelessWidget {
                       },
                     ),
                   ),
-                  SizedBox(width: 18.w),
+                  SizedBox(width: context.w(18)),
                   Expanded(
                     child: Consumer(
                       builder: (context, ref, _) {
@@ -137,7 +218,7 @@ class MyProfileScreen extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            SizedBox(height: 2.h),
+                            SizedBox(height: context.h(2)),
                             Text(
                               "Platinum Glow Member",
                               style: CustomFonts.pink10w700,
@@ -150,12 +231,12 @@ class MyProfileScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 20.h),
+            SizedBox(height: context.h(20)),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              padding: EdgeInsets.symmetric(horizontal: context.w(24)),
               child: Divider(
                 color: CustomColors.greyColor.withValues(alpha: 0.6),
-                height: 1.h,
+                height: context.h(1),
               ),
             ),
 
@@ -163,11 +244,11 @@ class MyProfileScreen extends StatelessWidget {
             Expanded(
               child: ListView(
                 physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.fromLTRB(24.w, 20.h, 24.w, 100.h),
+                padding: EdgeInsets.fromLTRB(context.w(24), context.h(20), context.w(24), context.h(100)),
                 children: [
                   // CARD 1: Clinical Portal Section
-                  _buildOptionCard([
-                    _buildCardOption(
+                  buildOptionCard([
+                    buildCardOption(
                       callBack: () {
                         Navigator.pushNamed(
                           context,
@@ -177,8 +258,18 @@ class MyProfileScreen extends StatelessWidget {
                       icon: SvgAssets.profileIcon,
                       title: "Personal Details",
                     ),
+                    buildCardOption(
+                      callBack: () {
+                        Navigator.pushNamed(
+                          context,
+                          AppointmentsScreen.routeName,
+                        );
+                      },
+                      icon: SvgAssets.appointment,
+                      title: "Appointments",
+                    ),
                     if (!isDeploymentMode) ...[
-                      _buildCardOption(
+                      buildCardOption(
                         callBack: () {
                           Navigator.pushNamed(
                             context,
@@ -188,7 +279,7 @@ class MyProfileScreen extends StatelessWidget {
                         icon: SvgAssets.medical,
                         title: "Medical History",
                       ),
-                      _buildCardOption(
+                      buildCardOption(
                         callBack: () {
                           Navigator.pushNamed(
                             context,
@@ -200,12 +291,12 @@ class MyProfileScreen extends StatelessWidget {
                       ),
                     ],
                   ]),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: context.h(16)),
 
                   // CARD 2: Preferences & History Section
                   if (!isDeploymentMode) ...[
-                    _buildOptionCard([
-                      _buildCardOption(
+                    buildOptionCard([
+                      buildCardOption(
                         callBack: () {
                           Navigator.pushNamed(
                             context,
@@ -215,22 +306,22 @@ class MyProfileScreen extends StatelessWidget {
                         icon: SvgAssets.saveTreatment,
                         title: "Saved Treatments & Clinics",
                       ),
-                      _buildCardOption(
+                      buildCardOption(
                         callBack: () {},
                         icon: SvgAssets.loyalty,
                         title: "Loyalty & Rewards",
                       ),
-                      _buildCardOption(
+                      buildCardOption(
                         callBack: () {},
                         icon: SvgAssets.receipts,
                         title: "Treatment Receipts",
                       ),
                     ]),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: context.h(16)),
                   ] else ...[
                     // Legal and Policy Section
-                    _buildOptionCard([
-                      _buildCardOption(
+                    buildOptionCard([
+                      buildCardOption(
                         callBack: () {
                           WebviewPage.open(
                             context: context,
@@ -241,7 +332,7 @@ class MyProfileScreen extends StatelessWidget {
                         icon: Iconsax.document,
                         title: "Terms Of Service",
                       ),
-                      _buildCardOption(
+                      buildCardOption(
                         callBack: () {
                           WebviewPage.open(
                             context: context,
@@ -253,12 +344,12 @@ class MyProfileScreen extends StatelessWidget {
                         title: "Privacy Policy",
                       ),
                     ]),
-                    SizedBox(height: 16.h),
+                    SizedBox(height: context.h(16)),
                   ],
 
                   // CARD 3: Account Security Section
-                  _buildOptionCard([
-                    _buildCardOption(
+                  buildOptionCard([
+                    buildCardOption(
                       callBack: () {
                         showDeleteAccountDialog(
                           screenContext: context,
@@ -274,7 +365,7 @@ class MyProfileScreen extends StatelessWidget {
                       icon: Iconsax.user_remove,
                       title: "Delete Account",
                     ),
-                    _buildCardOption(
+                    buildCardOption(
                       callBack: () {
                         showLogoutDialog(
                           screenContext: context,
@@ -305,83 +396,4 @@ class MyProfileScreen extends StatelessWidget {
     );
   }
 
-  // Wrapper for group options inside a Card
-  Widget _buildOptionCard(List<Widget> children) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24.r),
-        border: Border.all(
-          color: CustomColors.greyColor.withValues(alpha: 0.5),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.015),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(children: children),
-    );
-  }
-
-  // Individual list option row inside a Card with Unified Colors
-  Widget _buildCardOption({
-    required dynamic icon,
-    required String title,
-    required VoidCallback callBack,
-    bool isLast = false,
-  }) {
-    // Single Unified Brand Color for all Icons (Consistent Aesthetic)
-    const Color unifiedColor = CustomColors.darkPurple;
-
-    return Column(
-      children: [
-        InkWell(
-          onTap: callBack,
-          borderRadius: BorderRadius.circular(24.r),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-            child: Row(
-              children: [
-                // Unified soft background tint & icon color
-                Container(
-                  padding: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(
-                    color: unifiedColor.withValues(alpha: 0.08),
-                    shape: BoxShape.circle,
-                  ),
-                  child: icon is String
-                      ? SvgPicture.asset(
-                          icon,
-                          height: 18.w,
-                          width: 18.w,
-                          colorFilter: const ColorFilter.mode(
-                            unifiedColor,
-                            BlendMode.srcIn,
-                          ),
-                        )
-                      : Icon(icon as IconData, size: 18.w, color: unifiedColor),
-                ),
-                SizedBox(width: 14.w),
-                Expanded(child: Text(title, style: CustomFonts.black16w500)),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: Colors.grey.shade400,
-                  size: 20.sp,
-                ),
-              ],
-            ),
-          ),
-        ),
-        if (!isLast)
-          Padding(
-            padding: EdgeInsets.only(left: 54.w, right: 16.w),
-            child: Divider(color: Colors.grey.shade100, height: 1.h),
-          ),
-      ],
-    );
-  }
 }
