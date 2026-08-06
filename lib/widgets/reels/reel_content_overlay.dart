@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+
 import '../../utills/custom_fonts.dart';
 
 class ReelContentOverlay extends StatelessWidget {
@@ -25,13 +26,10 @@ class ReelContentOverlay extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: context.r(18),
-              backgroundImage: AssetImage(userProfileImage),
+              backgroundImage: NetworkImage(userProfileImage),
             ),
             SizedBox(width: context.w(10)),
-            Text(
-              userName,
-              style: CustomFonts.white16w600,
-            ),
+            Text(userName, style: CustomFonts.white16w600),
             // SizedBox(width: context.w(10)),
             // Container(
             //   padding: EdgeInsets.symmetric(horizontal: context.w(8), vertical: context.h(2)),
@@ -58,7 +56,11 @@ class ReelContentOverlay extends StatelessWidget {
         if (musicTitle != null)
           Row(
             children: [
-              Icon(Icons.music_note_rounded, size: context.sp(14), color: Colors.white),
+              Icon(
+                Icons.music_note_rounded,
+                size: context.sp(14),
+                color: Colors.white,
+              ),
               SizedBox(width: context.w(4)),
               Expanded(
                 child: Text(

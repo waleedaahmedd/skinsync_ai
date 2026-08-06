@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-// import '../../utills/custom_fonts.dart';
-// import '../../utills/color_constant.dart';
+
 import '../../view_models/explore_view_model.dart';
 import '../../view_models/reels_view_model.dart';
 import '../../widgets/reel_card.dart';
@@ -12,7 +11,6 @@ class ReelsScreen extends ConsumerStatefulWidget {
   const ReelsScreen({super.key});
 
   static const String routeName = '/ReelsScreen';
-
 
   @override
   ConsumerState<ReelsScreen> createState() => _ReelsScreenState();
@@ -59,11 +57,13 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
             // Header with Icons and Tabs
             SafeArea(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(8)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(12),
+                  vertical: context.h(8),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-
                     // SocialToggleButton(
                     //   onTap: () => Navigator.pop(context),
                     //   icon: Icons.arrow_back_ios_new_rounded,
@@ -113,7 +113,9 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
                         // ),
                         SizedBox(width: context.w(4)),
                         SocialToggleButton(
-                          onTap: () => ref.read(exploreViewModel.notifier).toggleViewType(),
+                          onTap: () => ref
+                              .read(exploreViewModel.notifier)
+                              .toggleViewType(),
                           icon: Icons.grid_view_rounded,
                           isReels: true,
                         ),

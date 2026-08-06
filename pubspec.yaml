@@ -34,9 +34,9 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.9
-  flutter_screenutil: ^5.9.3
+  flutter_screenutil_plus: ^1.6.0
   shared_preferences: ^2.5.5
-  flutter_easyloading: ^3.0.5
+  flutter_easyloading: ^4.0.2
   flutter_secure_storage: ^10.3.1
   iconsax: ^0.0.8
   flutter_svg: ^2.3.0
@@ -48,23 +48,25 @@ dependencies:
   image: ^4.9.1
   dropdown_button2: ^3.1.0
   http: ^1.6.0
-  flutter_riverpod: ^3.4.1
+  flutter_riverpod: ^3.4.2
   flutter_staggered_animations: ^1.1.1
   image_picker: ^1.2.3
   percent_indicator: ^4.2.5
   path_provider: any
   cross_file: any
   intl: ^0.20.3
-  firebase_core: ^4.12.1
+  firebase_core: ^4.13.0
   flutter_staggered_grid_view: ^0.7.0
   webview_flutter: ^4.14.1
-  permission_handler: ^12.0.3
+  video_player: ^2.13.0
+  permission_handler: ^13.0.0
   google_maps_flutter: ^2.18.0
   infinite_scroll_pagination: ^5.1.1
-  firebase_storage: ^13.4.5
+  firebase_storage: ^13.4.6
   device_info_plus: ^13.2.0
   crypto: ^3.0.7
-  firebase_auth: ^6.5.6
+  firebase_auth: ^6.5.7
+  firebase_app_check: ^0.4.6
   google_sign_in: ^7.2.0
   sign_in_with_apple: ^8.1.0
   image_gallery_saver_plus: ^5.1.1
@@ -76,6 +78,12 @@ dependencies:
   file_picker: ^12.0.0-beta.7
   dlibphonenumber: ^1.1.69
   geolocator: ^14.0.3
+  firebase_ai: ^3.15.0
+  qr_flutter: ^4.1.0
+  cryptography: ^2.9.0
+  cryptography_flutter: ^2.3.4
+  firebase_messaging: ^16.5.0
+  volume_controller: ^3.6.0
 
 dependency_overrides:
   jni: 1.0.0

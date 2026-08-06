@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:video_player/video_player.dart';
+
 import '../models/reel_model.dart';
 import 'reels/reel_content_overlay.dart';
 
@@ -9,11 +10,7 @@ class ReelCard extends ConsumerStatefulWidget {
   final Reel reel;
   final bool isActive;
 
-  const ReelCard({
-    super.key,
-    required this.reel,
-    required this.isActive,
-  });
+  const ReelCard({super.key, required this.reel, required this.isActive});
 
   @override
   ConsumerState<ReelCard> createState() => _ReelCardState();
@@ -30,18 +27,19 @@ class _ReelCardState extends ConsumerState<ReelCard> {
   }
 
   void _initializeVideo() {
-    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.reel.videoUrl))
-      ..initialize().then((_) {
-        if (mounted) {
-          setState(() {
-            _initialized = true;
+    _controller =
+        VideoPlayerController.networkUrl(Uri.parse(widget.reel.videoUrl))
+          ..initialize().then((_) {
+            if (mounted) {
+              setState(() {
+                _initialized = true;
+              });
+              if (widget.isActive) {
+                _controller.play();
+                _controller.setLooping(true);
+              }
+            }
           });
-          if (widget.isActive) {
-            _controller.play();
-            _controller.setLooping(true);
-          }
-        }
-      });
   }
 
   @override
