@@ -19,7 +19,7 @@ val keystoreProperties = Properties().apply {
 android {
     namespace = "com.skinsyncaiinc.skinsyncai"
     compileSdk = 37
-    ndkVersion = "28.2.13676358"
+    ndkVersion = "29.0.13846066"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

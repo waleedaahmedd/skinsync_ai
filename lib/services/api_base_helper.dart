@@ -145,7 +145,8 @@ class ApiBaseHelper {
     log('EXPIRY: $expiry');
     log('REFRESH EXPIRY: $refreshExpiry');
     log('ACCESS TOKEN: $token');
-    final uri = Uri.parse('${BaseUrls.apiQa.url}${EndPoints.refreshToken.path}');
+    final baseUrl = isDeploymentMode ? BaseUrls.api.url : BaseUrls.apiQa.url;
+    final uri = Uri.parse('$baseUrl${EndPoints.refreshToken.path}');
     log('URL: $uri');
     final request = {'refresh_token': refreshToken};
     log('REQUEST: $request');
@@ -163,12 +164,12 @@ class ApiBaseHelper {
     await _secureStorage.saveRefreshToken(response.data!.refreshToken!);
     await _secureStorage.saveAccessTokenExpiry(
       DateTime.fromMillisecondsSinceEpoch(
-        response.data!.accessExpiresAt! * 1000,
+        response.data!.isActiveExpiry! * 1000,
       ),
     );
     await _secureStorage.saveRefreshTokenExpiry(
       DateTime.fromMillisecondsSinceEpoch(
-        response.data!.refreshExpiresAt! * 1000,
+        response.data!.refreshTokenExpiry! * 1000,
       ),
     );
     log('TOKEN REFRESHED');

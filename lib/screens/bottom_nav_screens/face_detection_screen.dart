@@ -3,11 +3,13 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:face_detection_tflite/face_detection_tflite.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_litert/flutter_litert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:volume_controller/volume_controller.dart';
+import 'package:vibration/vibration.dart';
 
 import '../../utills/assets.dart';
 import '../../utills/color_constant.dart';
@@ -36,12 +38,15 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
   // Store ref for use in callbacks
   WidgetRef? _storedRef;
-  late double initialVolume;
+
+  FaceDetector? _faceDetector;
+  bool _isProcessingFrame = false;
 
   @override
   void initState() {
     super.initState();
     _storedRef = ref;
+    _initFaceDetector();
     _initCamera(ref);
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final show = await SecureStorage().getMedicalDisclaimer();
@@ -49,34 +54,81 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
         MedicalDisclaimerBottomSheet.show(context);
       }
     });
-    _listenToVolume();
   }
 
-  Future<void> _listenToVolume() async {
-    initialVolume = await VolumeController.instance.getVolume();
+  Future<void> _initFaceDetector() async {
+    _faceDetector = await FaceDetector.create(minScore: 0.5, minFaceSize: 0.1);
+  }
 
-    // If volume is already at max, set it slightly lower so we can detect an "up" press
-    if (initialVolume >= 1.0) {
-      initialVolume = 0.9;
-      VolumeController.instance.setVolume(0.9);
+  CameraFrameRotation? _getRotation(int sensorOrientation) {
+    switch (sensorOrientation) {
+      case 90:
+        return CameraFrameRotation.cw90;
+      case 180:
+        return CameraFrameRotation.cw180;
+      case 270:
+        return CameraFrameRotation.cw270;
+      default:
+        return null;
+    }
+  }
+
+  void _onFrameAvailable(CameraImage image) async {
+    if (_faceDetector == null ||
+        _isProcessingFrame ||
+        _isCapturing ||
+        _capturedImage != null) {
+      return;
     }
 
-    VolumeController.instance.showSystemUI = false;
-    VolumeController.instance.addListener((newVolume) async {
-      log('VOLUME: $newVolume $initialVolume');
-      if (newVolume >= initialVolume) {
-        if (!_isCapturing) {
-          await _captureAndNavigate(ref);
+    _isProcessingFrame = true;
+
+    try {
+      final faces = await _faceDetector!.detectFacesFromCameraImage(
+        image,
+        rotation: _getRotation(
+          _cameraController!.description.sensorOrientation,
+        ),
+      );
+
+      if (faces.isNotEmpty) {
+        final face = faces.first;
+        if (_isCorrectPose(face)) {
+          if (mounted) {
+            await _captureAndNavigate(ref);
+          }
         }
       }
-      initialVolume = newVolume;
+    } catch (e) {
+      log('Face detection error: $e');
+    } finally {
+      _isProcessingFrame = false;
+    }
+  }
 
-      // If we've reached max volume, reset it slightly so we can detect the next 'Up' press
-      if (newVolume >= 1.0) {
-        VolumeController.instance.setVolume(0.9);
-        initialVolume = 0.9;
-      }
-    }, fetchInitialVolume: false);
+  bool _isCorrectPose(Face face) {
+    final angles = face.headEulerAngles;
+    if (angles == null) return false;
+
+    final double yaw = angles.y;
+    final double pitch = angles.x;
+    final double roll = angles.z;
+
+    // Constraints for head stability
+    if (pitch.abs() > 15 || roll.abs() > 15) return false;
+
+    switch (widget.pose) {
+      case 'front':
+        return yaw.abs() < 10;
+      case 'left':
+        // Positive Y is turned to the right of camera (person's left)
+        return yaw > 18;
+      case 'right':
+        // Negative Y is turned to the left of camera (person's right)
+        return yaw < -18;
+      default:
+        return false;
+    }
   }
 
   Future<void> _initCamera(WidgetRef ref) async {
@@ -107,6 +159,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
       if (!mounted) return;
 
+      // Start face detection stream for automatic capture
+      _cameraController!.startImageStream(_onFrameAvailable);
+
       if (mounted) {
         setState(() {});
       }
@@ -136,30 +191,64 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       _isCapturing = true;
     });
 
+    // Stop image stream before capture to avoid potential camera freezes on some devices
+    try {
+      if (_cameraController!.value.isStreamingImages) {
+        await _cameraController!.stopImageStream();
+      }
+    } catch (e) {
+      log("Error stopping image stream: $e");
+    }
+
+    // Vibrate before capture as requested
+    try {
+      if (await Vibration.hasVibrator()) {
+        await Vibration.vibrate(duration: 200);
+        // Small delay to ensure vibration is felt before shutter
+        await Future.delayed(const Duration(milliseconds: 200));
+      }
+    } catch (e) {
+      log("Vibration error: $e");
+    }
+
     // Capture the image
-    final image = await _cameraController!.takePicture();
+    try {
+      final image = await _cameraController!.takePicture();
 
-    // Process image: flip (if front camera) and crop in a single operation for better performance
-    final finalImage = await cropImageToCircle(
-      image,
-      centerXPercent: 0.5, // Center horizontally
-      centerYPercent: 0.42, // Position at top (28% from top)
-      radiusPercent: 0.5, // 50% of image width
-      flipHorizontally:
-          _cameraController!.description.lensDirection ==
-          CameraLensDirection.front, // Flip if front camera
-    );
+      // Process image: flip (if front camera) and crop in a single operation for better performance
+      final finalImage = await cropImageToCircle(
+        image,
+        centerXPercent: 0.5, // Center horizontally
+        centerYPercent: 0.42, // Position at top (28% from top)
+        radiusPercent: 0.5, // 50% of image width
+        flipHorizontally:
+            _cameraController!.description.lensDirection ==
+            CameraLensDirection.front, // Flip if front camera
+      );
 
-    // Store captured image in state to show in dialog
-    if (!mounted) return;
+      // Store captured image in state to show in dialog
+      if (!mounted) return;
 
-    setState(() {
-      _capturedImage = finalImage;
-      _isCapturing = false;
-    });
+      setState(() {
+        _capturedImage = finalImage;
+        _isCapturing = false;
+      });
 
-    // Show dialog with captured image
-    _showImageVerificationDialog(ref, finalImage);
+      // Show dialog with captured image
+      if (mounted) {
+        _showImageVerificationDialog(ref, finalImage);
+      }
+    } catch (e) {
+      log("Capture error: $e");
+      setState(() {
+        _isCapturing = false;
+      });
+      // Restart stream if capture failed
+      if (_cameraController != null &&
+          !_cameraController!.value.isStreamingImages) {
+        _cameraController!.startImageStream(_onFrameAvailable);
+      }
+    }
   }
 
   void _showImageVerificationDialog(WidgetRef ref, XFile capturedImage) {
@@ -224,6 +313,13 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                             _capturedImage = null;
                             _isCapturing = false;
                           });
+                          // Restart image stream for detection
+                          if (_cameraController != null &&
+                              !_cameraController!.value.isStreamingImages) {
+                            _cameraController!.startImageStream(
+                              _onFrameAvailable,
+                            );
+                          }
                         },
                         style: OutlinedButton.styleFrom(
                           padding: EdgeInsets.symmetric(
@@ -287,8 +383,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
   @override
   void dispose() {
-    VolumeController.instance.removeListener();
     _cameraController?.dispose();
+    _faceDetector?.dispose();
     super.dispose();
   }
 
