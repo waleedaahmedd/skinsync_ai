@@ -43,6 +43,7 @@ class MediaService {
   }
 
   String? _imageContentType(String path, bool acceptAnyFormat) {
+    log('ACCEPT ANY: $acceptAnyFormat');
     if (acceptAnyFormat) {
       return lookupMimeType(path);
     }
