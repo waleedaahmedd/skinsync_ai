@@ -60,7 +60,6 @@ void showMScanFaceDialog(BuildContext context) {
               CustomButton(
                 text: "Scan Your Face",
                 borderRadius: context.r(26),
-                backgroundColor: Colors.black,
                 textColor: Colors.white,
                 onPressed: () {
                   Navigator.pop(dialogContext); // close dialog
@@ -84,7 +83,6 @@ void showMScanFaceDialog(BuildContext context) {
                     ),
                     child: CustomButton(
                       text: "Select Treatment Areas",
-                      backgroundColor: Colors.transparent,
                       textColor: CustomColors.darkPurple,
                       borderRadius: context.r(25),
                       onPressed: () {

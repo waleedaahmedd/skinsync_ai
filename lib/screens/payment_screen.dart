@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
@@ -39,7 +38,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     if (isSuccess) {
       final checkoutState = ref.read(checkoutViewModel);
       final clinicName = checkoutState.selectedClinic?.name ?? "N/A";
-      final doctorName = checkoutState.selectedDoctorObject?.doctorName ??
+      final doctorName =
+          checkoutState.selectedDoctorObject?.doctorName ??
           checkoutState.selectedDoctor?.doctorName ??
           "N/A";
       final dateStr = checkoutState.selectedDate != null
@@ -47,8 +47,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
           : "Not Selected";
       final slotStr = checkoutState.selectedSlot ?? "Not Selected";
 
-      final paidAmount =
-          (checkoutState.selectedPaymentOption?.amount ?? 0).toDouble();
+      final paidAmount = (checkoutState.selectedPaymentOption?.amount ?? 0)
+          .toDouble();
       final paymentMethodName =
           checkoutState.selectedPaymentOption?.description ?? "";
 
@@ -136,7 +136,6 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                     CustomButton(
                       text: "Return to Home",
                       borderRadius: context.r(26),
-                      backgroundColor: Colors.black,
                       textColor: Colors.white,
                       onPressed: () {
                         // Clear the checkoutState context completely
@@ -204,7 +203,10 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(20)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(24),
+                  vertical: context.h(20),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -252,7 +254,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                                 color: remainingWalletBalance >= 0
                                     ? Colors.green.shade50
                                     : Colors.red.shade50,
-                                borderRadius: BorderRadius.circular(context.r(10)),
+                                borderRadius: BorderRadius.circular(
+                                  context.r(10),
+                                ),
                               ),
                               child: Row(
                                 children: [
@@ -292,10 +296,15 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
 
             // Booking Execution Floating Bar
             Container(
-              padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(20)),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.w(24),
+                vertical: context.h(20),
+              ),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(24))),
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(context.r(24)),
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.05),
@@ -307,7 +316,6 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
               child: CustomButton(
                 text: "Confirm & Secure Consultation",
                 borderRadius: context.r(26),
-                backgroundColor: Colors.black,
                 textColor: Colors.white,
                 onPressed:
                     (_selectedPaymentType == 'wallet' &&

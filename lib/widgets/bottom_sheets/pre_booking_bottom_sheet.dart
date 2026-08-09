@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:intl/intl.dart';
-import '../../utills/color_constant.dart';
-import '../../utills/custom_fonts.dart';
-import '../../utills/date_time_utills.dart';
-import '../time_container.dart';
 
 import '../../models/responses/get_clinic_response.dart';
 import '../../models/responses/map_clinics_response.dart';
+import '../../utills/color_constant.dart';
+import '../../utills/custom_fonts.dart';
+import '../../utills/date_time_utills.dart';
+import '../custom_button.dart';
+import '../time_container.dart';
 
 class PreBookingBottomSheet extends StatefulWidget {
   final Clinic clinic;
@@ -175,14 +176,14 @@ class _PreBookingBottomSheetState extends State<PreBookingBottomSheet> {
           SizedBox(height: context.h(30)),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
+            child: CustomButton(
               onPressed: _validate(slots)
                   ? () {
                       Navigator.pop(context);
                       widget.onConfirm();
                     }
                   : null,
-              child: const Text("Next"),
+              text: "Next",
             ),
           ),
         ],
@@ -208,7 +209,10 @@ class _PreBookingBottomSheetState extends State<PreBookingBottomSheet> {
           onTap: onTap,
           borderRadius: BorderRadius.circular(context.r(10)),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: context.w(15), vertical: context.h(12)),
+            padding: EdgeInsets.symmetric(
+              horizontal: context.w(15),
+              vertical: context.h(12),
+            ),
             decoration: BoxDecoration(
               color: Colors.grey.shade50,
               border: Border.all(color: Colors.grey.shade200),
@@ -216,7 +220,11 @@ class _PreBookingBottomSheetState extends State<PreBookingBottomSheet> {
             ),
             child: Row(
               children: [
-                Icon(icon, size: context.sp(20), color: CustomColors.darkPurple),
+                Icon(
+                  icon,
+                  size: context.sp(20),
+                  color: CustomColors.darkPurple,
+                ),
                 SizedBox(width: context.w(10)),
                 Text(value, style: CustomFonts.black16w400),
               ],

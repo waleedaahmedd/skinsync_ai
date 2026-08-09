@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+
 import '../models/requests/save_answer_request.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/sign_up_onboarding_view_model.dart';
-import '../widgets/app_loader.dart';
+import '../widgets/custom_button.dart';
 import '../widgets/question_title.dart';
 
 class SkinType extends StatelessWidget {
@@ -13,14 +14,20 @@ class SkinType extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   int? questionID;
-   int? optionID;
+    int? questionID;
+    int? optionID;
     return Consumer(
       builder: (context, ref, _) {
-       final question = ref.watch(onBoardingViewModel).onBoardingQues?.data!.questions![ref.read(onBoardingViewModel).currentPage];
-       
-        if(ref.watch(onBoardingViewModel).loading){
-          return const Center(child: CircularProgressIndicator(color: CustomColors.purpleColor,));
+        final question = ref
+            .watch(onBoardingViewModel)
+            .onBoardingQues
+            ?.data!
+            .questions![ref.read(onBoardingViewModel).currentPage];
+
+        if (ref.watch(onBoardingViewModel).loading) {
+          return const Center(
+            child: CircularProgressIndicator(color: CustomColors.purpleColor),
+          );
         }
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: context.w(30)),
@@ -33,21 +40,29 @@ class SkinType extends StatelessWidget {
                 style: CustomFonts.black28w600,
               ),
               SizedBox(height: context.h(39)),
-        
-             
+
               Expanded(
                 child: ListView.builder(
                   itemCount: question?.options?.length ?? 0,
                   itemBuilder: (context, index) {
-                   final  option = question?.options?[index];
+                    final option = question?.options?[index];
 
                     return GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         questionID = question?.iD;
                         optionID = option?.iD;
-                        ref.read(onBoardingViewModel.notifier).setQuesAndOptID(questionID: questionID ?? 0, optionID: optionID ?? 0);
+                        ref
+                            .read(onBoardingViewModel.notifier)
+                            .setQuesAndOptID(
+                              questionID: questionID ?? 0,
+                              optionID: optionID ?? 0,
+                            );
                       },
-                      child: QuestionTitle(title: option?.optionText ?? "",isSelected: optionID == option?.iD,));
+                      child: QuestionTitle(
+                        title: option?.optionText ?? "",
+                        isSelected: optionID == option?.iD,
+                      ),
+                    );
                   },
                 ),
               ),
@@ -56,29 +71,34 @@ class SkinType extends StatelessWidget {
                 width: double.infinity,
                 child: Consumer(
                   builder: (_, ref, _) {
-                    return ref.watch(onBoardingViewModel).isSaveAnswerLoding
-                        ? const AppLoader()
-                        : ElevatedButton(
+                    return CustomButton(
+                      isLoading: ref
+                          .watch(onBoardingViewModel)
+                          .isSaveAnswerLoding,
                       onPressed: () {
-                        final onBoardingVM =    ref
-                            .read(onBoardingViewModel.notifier);
-                           
-                          final saveAnswer = SaveAnswerRequest(step: "onboarding", answers:[
-                            Answer(questionId: questionID ?? 0, optionId: optionID ?? 0)
-                          ]) ; 
-  
-                         if(questionID != null && optionID != null)
-                         {
-                          onBoardingVM.callSaveAnswerApi(saveAnswer: saveAnswer).then((value){
-                            
-                               onBoardingVM
-                            .onNextButton(context);
-                          });
-                         }
-                      
+                        final onBoardingVM = ref.read(
+                          onBoardingViewModel.notifier,
+                        );
+
+                        final saveAnswer = SaveAnswerRequest(
+                          step: "onboarding",
+                          answers: [
+                            Answer(
+                              questionId: questionID ?? 0,
+                              optionId: optionID ?? 0,
+                            ),
+                          ],
+                        );
+
+                        if (questionID != null && optionID != null) {
+                          onBoardingVM
+                              .callSaveAnswerApi(saveAnswer: saveAnswer)
+                              .then((value) {
+                                onBoardingVM.onNextButton(context);
+                              });
+                        }
                       },
-                      child: const Text("Next"),
-                     
+                      text: "Next",
                     );
                   },
                 ),
@@ -87,7 +107,7 @@ class SkinType extends StatelessWidget {
             ],
           ),
         );
-      }
+      },
     );
   }
 }

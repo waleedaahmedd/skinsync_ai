@@ -254,6 +254,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         imageUrl = await MediaService().uploadImage(
           state.authData?.user?.primaryEmail ?? '',
           state.profileImage!,
+          acceptAnyFormat: true,
         );
       }
 

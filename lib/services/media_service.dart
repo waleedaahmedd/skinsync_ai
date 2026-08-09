@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:http/http.dart';
+import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
 
 class MediaService {
@@ -21,11 +22,15 @@ class MediaService {
 
   MediaService._();
 
-  Future<String?> uploadImage(String path, XFile image) async {
+  Future<String?> uploadImage(
+    String path,
+    XFile image, {
+    bool acceptAnyFormat = false,
+  }) async {
     final storagePath = '$path/${image.name}';
     final ref = _storage.ref().child(storagePath);
     final metadata = SettableMetadata(
-      contentType: _imageContentType(image.name),
+      contentType: _imageContentType(image.path, acceptAnyFormat),
     );
     final bytes = await image.readAsBytes();
     final compressedBytes = await _compressImage(bytes);
@@ -37,8 +42,11 @@ class MediaService {
     return url;
   }
 
-  String _imageContentType(String fileName) {
-    final ext = fileName.split('.').last.toLowerCase();
+  String? _imageContentType(String path, bool acceptAnyFormat) {
+    if (acceptAnyFormat) {
+      return lookupMimeType(path);
+    }
+    final ext = path.split('.').last.toLowerCase();
     return switch (ext) {
       // 'png' => 'image/png',
       'jpg' || 'jpeg' => 'image/jpeg',

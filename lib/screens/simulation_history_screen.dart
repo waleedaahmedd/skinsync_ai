@@ -66,7 +66,10 @@ class _SimulationHistoryScreenState
               ),
             )
           : ListView.builder(
-              padding: EdgeInsets.symmetric(horizontal: context.w(20), vertical: context.h(10)),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.w(20),
+                vertical: context.h(10),
+              ),
               itemCount: sortedKeys.length,
               itemBuilder: (context, index) {
                 final date = sortedKeys[index];
@@ -178,22 +181,19 @@ class _SimulationHistoryScreenState
             ),
           ],
           SizedBox(height: context.h(10)),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () async {
-                await ref
-                    .read(treatmentViewModel.notifier)
-                    .initializeSimulation(sim);
-                if (context.mounted) {
-                  Navigator.pushNamed(
-                    context,
-                    ArFaceModelPreviewScreen.routeName,
-                  );
-                }
-              },
-              child: const Text('Use this simulation'),
-            ),
+          CustomButton(
+            onPressed: () async {
+              await ref
+                  .read(treatmentViewModel.notifier)
+                  .initializeSimulation(sim);
+              if (context.mounted) {
+                Navigator.pushNamed(
+                  context,
+                  ArFaceModelPreviewScreen.routeName,
+                );
+              }
+            },
+            text: 'Use this simulation',
           ),
         ],
       ),

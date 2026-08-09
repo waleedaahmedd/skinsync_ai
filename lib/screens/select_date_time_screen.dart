@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/date_time_utills.dart';
+import '../view_models/checkout_view_model.dart';
 import '../widgets/bottom_sheets/before_you_book_bottomsheet.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
-import '../view_models/checkout_view_model.dart';
 import 'review_screen.dart';
 
 class SelectDateTimeScreen extends ConsumerStatefulWidget {
@@ -77,7 +78,10 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(20)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(24),
+                  vertical: context.h(20),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -177,7 +181,9 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                                       alpha: 0.08,
                                     )
                                   : Colors.white,
-                              borderRadius: BorderRadius.circular(context.r(16)),
+                              borderRadius: BorderRadius.circular(
+                                context.r(16),
+                              ),
                               border: Border.all(
                                 color: isSelected
                                     ? CustomColors.purpleColor
@@ -251,10 +257,15 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
 
             // Continuous Button to Review Checkout Screen
             Container(
-              padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(20)),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.w(24),
+                vertical: context.h(20),
+              ),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(24))),
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(context.r(24)),
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.05),
@@ -266,7 +277,6 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
               child: CustomButton(
                 text: "Continue to Review",
                 borderRadius: context.r(26),
-                backgroundColor: Colors.black,
                 textColor: Colors.white,
                 onPressed: canContinue
                     ? () {
@@ -279,10 +289,7 @@ class _SelectDateTimeScreenState extends ConsumerState<SelectDateTimeScreen> {
                             .setSelectedSlot(_selectedSlot!);
 
                         if (!ref.read(checkoutViewModel).isInviteClinic) {
-                          Navigator.pushNamed(
-                            context,
-                            ReviewScreen.routeName,
-                          );
+                          Navigator.pushNamed(context, ReviewScreen.routeName);
                         } else {
                           BeforeYouBookBottomSheet.show(
                             context,

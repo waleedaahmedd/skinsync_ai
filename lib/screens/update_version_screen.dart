@@ -4,6 +4,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../widgets/custom_button.dart';
 
 class UpdateVersionScreen extends StatelessWidget {
   const UpdateVersionScreen({super.key});
@@ -71,21 +72,11 @@ class UpdateVersionScreen extends StatelessWidget {
                     const Spacer(),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                            vertical: context.h(19),
-                          ),
-                          textStyle: CustomFonts.white22w600,
-                          backgroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(context.r(50)),
-                          ),
-                        ),
+                      child: CustomButton(
                         onPressed: () {
                           // TODO: Implement update logic (e.g., launch Store URL)
                         },
-                        child: const Text("Update Now"),
+                        text: "Update Now",
                       ),
                     ),
                     SizedBox(height: context.h(20)),

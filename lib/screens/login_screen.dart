@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+
 import '../models/requests/sign_in_request.dart';
-import 'otp_screen.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/enums.dart';
 import '../view_models/auth_view_model.dart';
 import '../widgets/app_loader.dart';
-import '../widgets/phone_widget.dart';
-
 import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/phone_widget.dart';
+import 'otp_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   static const String routeName = '/LoginScreen';
@@ -97,8 +98,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
           );
 
-      _radiusAnim = Tween<double>(begin: context.r(10).toDouble(), end: context.r(40).toDouble())
-          .animate(
+      _radiusAnim =
+          Tween<double>(
+            begin: context.r(10).toDouble(),
+            end: context.r(40).toDouble(),
+          ).animate(
             CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
           );
 
@@ -167,7 +171,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   shape: BoxShape.circle,
                   color: CustomColors.lightBlueColor.withValues(alpha: 0.4),
                 ),
-                child: Image.asset(PngAssets.email, height: context.h(50), width: context.w(50)),
+                child: Image.asset(
+                  PngAssets.email,
+                  height: context.h(50),
+                  width: context.w(50),
+                ),
               ),
               SizedBox(height: context.h(27)),
               Text(
@@ -186,7 +194,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           .read(authViewModel.notifier)
                           .emailController,
                       style: CustomFonts.black18w400,
-                      decoration: const InputDecoration(hintText: "Email Address"),
+                      decoration: const InputDecoration(
+                        hintText: "Email Address",
+                      ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your email';
@@ -218,35 +228,35 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
             width: double.infinity,
             child: ref.watch(authViewModel).loading
                 ? const AppLoader()
-                : ElevatedButton(
-              onPressed: () async {
-                if (_formKey.currentState?.validate() ?? false) {
-                  final req = loginWithEmail
-                      ? SignInWithEmailRequest(
-                          email: ref
-                              .read(authViewModel.notifier)
-                              .emailController
-                              .text,
-                          provider: LoginProviders.email,
-                          deviceInfo: "devicefo",
-                          ipAddress: "ipAddr",
-                        )
-                      : SignInWithPhoneRequest(
-                          phone: _phoneController.value.text,
-                          provider: LoginProviders.phone,
-                          deviceInfo: "deviceInfo",
-                          ipAddress: "ipAddress",
-                        );
-                  final success = await ref
-                      .read(authViewModel.notifier)
-                      .callSignInApi(req);
-                  if (success == true) {
-                    Navigator.of(context).pushNamed(OtpScreen.routeName);
-                  }
-                }
-              },
-              child: const Text("Next"),
-            ),
+                : CustomButton(
+                    onPressed: () async {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        final req = loginWithEmail
+                            ? SignInWithEmailRequest(
+                                email: ref
+                                    .read(authViewModel.notifier)
+                                    .emailController
+                                    .text,
+                                provider: LoginProviders.email,
+                                deviceInfo: "devicefo",
+                                ipAddress: "ipAddr",
+                              )
+                            : SignInWithPhoneRequest(
+                                phone: _phoneController.value.text,
+                                provider: LoginProviders.phone,
+                                deviceInfo: "deviceInfo",
+                                ipAddress: "ipAddress",
+                              );
+                        final success = await ref
+                            .read(authViewModel.notifier)
+                            .callSignInApi(req);
+                        if (success == true) {
+                          Navigator.of(context).pushNamed(OtpScreen.routeName);
+                        }
+                      }
+                    },
+                    text: "Next",
+                  ),
           ),
         ),
       ),

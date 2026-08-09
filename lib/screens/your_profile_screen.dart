@@ -10,7 +10,7 @@ import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
-import '../widgets/app_loader.dart';
+import '../widgets/custom_button.dart';
 import '../widgets/phone_widget.dart';
 import 'get_notified_screen.dart';
 
@@ -241,38 +241,34 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   SizedBox(height: context.h(35)),
                   SizedBox(
                     width: double.infinity,
-                    child: ref.watch(authViewModel).loading
-                        ? const AppLoader()
-                        : ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState?.validate() ?? false) {
-                                ref
-                                    .read(authViewModel.notifier)
-                                    .callOnboardingProfileApi(
-                                      name: _nameController.text,
-                                      phoneNumber: _phoneController.text.trim(),
-                                      emailAddress: _emailController.text
-                                          .trim(),
-                                      // location: _locationController.text.trim(),
-                                      // bio: _bioController.text.trim(),
-                                      cc: _selectedCountry?.countryCode,
-                                      country: _selectedCountry?.name,
-                                    )
-                                    .then((value) {
-                                      if (value == true) {
-                                        Navigator.pushNamedAndRemoveUntil(
-                                          context,
-                                          GetNotifiedScreen.routeName,
-                                          (Route<dynamic> route) => false,
-                                        );
-                                      }
-                                    });
-                              }
-                            },
-                            child: ref.watch(authViewModel).loading
-                                ? const CircularProgressIndicator()
-                                : const Text("Next"),
-                          ),
+                    child: CustomButton(
+                      isLoading: ref.watch(authViewModel).loading,
+                      onPressed: () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          ref
+                              .read(authViewModel.notifier)
+                              .callOnboardingProfileApi(
+                                name: _nameController.text,
+                                phoneNumber: _phoneController.text.trim(),
+                                emailAddress: _emailController.text.trim(),
+                                // location: _locationController.text.trim(),
+                                // bio: _bioController.text.trim(),
+                                cc: _selectedCountry?.countryCode,
+                                country: _selectedCountry?.name,
+                              )
+                              .then((value) {
+                                if (value == true) {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    GetNotifiedScreen.routeName,
+                                    (Route<dynamic> route) => false,
+                                  );
+                                }
+                              });
+                        }
+                      },
+                      text: "Next",
+                    ),
                   ),
                 ],
               ),

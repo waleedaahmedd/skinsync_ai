@@ -119,9 +119,6 @@ class FacePoseCaptureScreen extends ConsumerWidget {
                         );
                       }
                     : null,
-                backgroundColor: allCaptured
-                    ? Colors.black
-                    : Colors.grey.shade300,
                 textColor: allCaptured ? Colors.white : Colors.grey.shade500,
               ),
             ),
@@ -131,7 +128,11 @@ class FacePoseCaptureScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildIndicator({required BuildContext context, required bool active, required Color color}) {
+  Widget _buildIndicator({
+    required BuildContext context,
+    required bool active,
+    required Color color,
+  }) {
     return Expanded(
       child: Container(
         height: context.h(3),
@@ -179,7 +180,10 @@ class FacePoseCaptureScreen extends ConsumerWidget {
           ? Image.file(File(image.path), fit: BoxFit.cover)
           : Image.asset(placeholderAsset, fit: BoxFit.cover),
       topRightWidget: Container(
-        padding: EdgeInsets.symmetric(horizontal: context.w(10), vertical: context.h(4)),
+        padding: EdgeInsets.symmetric(
+          horizontal: context.w(10),
+          vertical: context.h(4),
+        ),
         decoration: BoxDecoration(
           color: Colors.black.withValues(alpha: 0.6),
           borderRadius: BorderRadius.circular(context.r(4)),

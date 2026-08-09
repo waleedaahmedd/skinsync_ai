@@ -4,11 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'bottom_nav_page.dart';
+
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
-
+import '../widgets/custom_button.dart';
+import 'bottom_nav_page.dart';
 
 final selectedFilterProvider = StateProvider<int?>((ref) => 0);
 
@@ -39,7 +40,10 @@ class ProgressDetailScreen extends ConsumerWidget {
                 ),
               ),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.w(30), vertical: context.h(55)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(30),
+                  vertical: context.h(55),
+                ),
                 child: InkWell(
                   onTap: () => Navigator.pop(context),
                   child: Container(
@@ -186,10 +190,14 @@ class ProgressDetailScreen extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min, // 👈 add this
           children: [
             Padding(
-              padding: EdgeInsets.only(top: context.h(20), left: context.w(30), right: context.w(30)),
+              padding: EdgeInsets.only(
+                top: context.h(20),
+                left: context.w(30),
+                right: context.w(30),
+              ),
               child: SizedBox(
                 width: double.infinity,
-                child: ElevatedButton(
+                child: CustomButton(
                   onPressed: () {
                     Navigator.pushNamedAndRemoveUntil(
                       context,
@@ -197,7 +205,7 @@ class ProgressDetailScreen extends ConsumerWidget {
                       (_) => false,
                     );
                   },
-                  child: const Text("Post a Review"),
+                  text: "Post a Review",
                 ),
               ),
             ),
@@ -293,7 +301,11 @@ class TreatmentJourneyStepper extends StatelessWidget {
                             : Colors.grey.shade300,
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(Icons.check, size: context.w(14), color: Colors.white),
+                      child: Icon(
+                        Icons.check,
+                        size: context.w(14),
+                        color: Colors.white,
+                      ),
                     ),
                     if (!isLast)
                       Container(

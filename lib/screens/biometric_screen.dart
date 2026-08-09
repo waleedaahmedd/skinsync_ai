@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+
 import 'face_scan_screen.dart';
 import '../utills/assets.dart';
 import '../utills/biometric_helper.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/enums.dart';
-import '../view_models/auth_view_model.dart';
-
 import '../utills/secure_storage_service.dart';
+import '../view_models/auth_view_model.dart';
+import '../widgets/custom_button.dart';
 
 class BiometricScreen extends StatefulWidget {
   static const String routeName = '/biometricScreen';
@@ -69,7 +70,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
                     } else if (snapshot.hasData && snapshot.data == true) {
                       return SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
+                        child: CustomButton(
                           onPressed: () async {
                             if (isLoading) return;
                             if (isBiometricEnabled) {
@@ -131,7 +132,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
 
                             setState(() => isLoading = false);
                           },
-                          child: const Text("I understand and Agree"),
+                          text: "I understand and Agree",
                         ),
                       );
                     } else {

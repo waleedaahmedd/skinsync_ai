@@ -1,14 +1,14 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
+
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../widgets/custom_app_bar.dart';
-
+import '../widgets/custom_button.dart';
 import 'bottom_nav_page.dart';
 
 final notesAgreementProvider = StateProvider<bool>((ref) => false);
@@ -65,7 +65,10 @@ class NotesScreen extends ConsumerWidget {
                   "Please share any allergies, medications, or recent skin treatments.",
             ),
             SizedBox(height: context.h(30)),
-            _buildNotes(context: context, note: "Arrive with clean, product-free skin."),
+            _buildNotes(
+              context: context,
+              note: "Arrive with clean, product-free skin.",
+            ),
             SizedBox(height: context.h(30)),
             _buildNotes(
               context: context,
@@ -122,7 +125,7 @@ class NotesScreen extends ConsumerWidget {
                       ),
                     );
                   }
-                  return ElevatedButton(
+                  return CustomButton(
                     onPressed: agreed
                         ? () {
                             // final checkoutNotifier =
@@ -140,7 +143,7 @@ class NotesScreen extends ConsumerWidget {
                                 .createAppointment();
                           }
                         : null,
-                    child: const Text("Confirm Appointment"),
+                    text: "Confirm Appointment",
                   );
                 },
               ),
@@ -149,7 +152,9 @@ class NotesScreen extends ConsumerWidget {
             Center(
               child: Text("Powered By ARKit", style: CustomFonts.grey22w600),
             ),
-            SizedBox(height: MediaQuery.paddingOf(context).bottom + context.h(20)),
+            SizedBox(
+              height: MediaQuery.paddingOf(context).bottom + context.h(20),
+            ),
           ],
         ),
       ),

@@ -62,7 +62,6 @@ class _TreatmentPaymentScreenState
         child: CustomButton(
           text: "Pay Now",
           borderRadius: context.r(25),
-          backgroundColor: Colors.black,
           textColor: Colors.white,
           onPressed: () async {
             if (selectedMode == null) {
@@ -82,10 +81,7 @@ class _TreatmentPaymentScreenState
               );
             }
 
-            Navigator.pushNamed(
-              context,
-              NotesScreen.routeName,
-            );
+            Navigator.pushNamed(context, NotesScreen.routeName);
           },
         ),
       ),
@@ -215,7 +211,10 @@ class _TreatmentPaymentScreenState
         });
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: context.w(15), vertical: context.h(10)),
+        padding: EdgeInsets.symmetric(
+          horizontal: context.w(15),
+          vertical: context.h(10),
+        ),
         margin: EdgeInsets.only(bottom: context.h(15)),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(context.r(15)),

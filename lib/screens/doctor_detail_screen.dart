@@ -19,11 +19,7 @@ class DoctorDetailScreen extends ConsumerWidget {
   final Clinic? clinic;
   final PractitionerDoctor doctor;
 
-  const DoctorDetailScreen({
-    super.key,
-    required this.doctor,
-    this.clinic,
-  });
+  const DoctorDetailScreen({super.key, required this.doctor, this.clinic});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -44,7 +40,10 @@ class DoctorDetailScreen extends ConsumerWidget {
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(16)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(24),
+                  vertical: context.h(16),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -119,7 +118,7 @@ class DoctorDetailScreen extends ConsumerWidget {
                                     ),
                                     SizedBox(width: context.w(4)),
                                     Text(
-                                      doctor.doctorRating?.toString() ?? "4.5", 
+                                      doctor.doctorRating?.toString() ?? "4.5",
                                       style: CustomFonts.black14w600,
                                     ),
                                     SizedBox(width: context.w(16)),
@@ -179,20 +178,26 @@ class DoctorDetailScreen extends ConsumerWidget {
                       context,
                       Icons.business_center_rounded,
                       "Resident MedSpa Specialist",
-                      doctor.clinic?.clinicName ?? clinic?.name ?? "Premium Clinic",
+                      doctor.clinic?.clinicName ??
+                          clinic?.name ??
+                          "Premium Clinic",
                     ),
                   ],
                 ),
               ),
             ),
-          // Premium Floating Booking Button Container
+            // Premium Floating Booking Button Container
             if (clinic != null || doctor.clinic != null)
               Container(
-                padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(20)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(24),
+                  vertical: context.h(20),
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(context.r(24))),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(context.r(24)),
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.05),
@@ -206,10 +211,12 @@ class DoctorDetailScreen extends ConsumerWidget {
                       ? "Review Consultation Booking"
                       : "Select Date & Time Slot",
                   onPressed: () {
-                    final targetClinic = clinic ?? Clinic(
-                      id: doctor.clinic?.clinicId,
-                      name: doctor.clinic?.clinicName,
-                    );
+                    final targetClinic =
+                        clinic ??
+                        Clinic(
+                          id: doctor.clinic?.clinicId,
+                          name: doctor.clinic?.clinicName,
+                        );
 
                     if (hasDateTime) {
                       Navigator.pushNamed(
@@ -225,7 +232,6 @@ class DoctorDetailScreen extends ConsumerWidget {
                       );
                     }
                   },
-                  backgroundColor: Colors.black,
                   textColor: Colors.white,
                   borderRadius: context.r(26),
                 ),
@@ -236,7 +242,12 @@ class DoctorDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildQualificationItem(BuildContext context, IconData icon, String title, String subtitle) {
+  Widget _buildQualificationItem(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String subtitle,
+  ) {
     return Container(
       margin: EdgeInsets.only(bottom: context.h(12)),
       padding: EdgeInsets.all(context.w(14)),
@@ -253,7 +264,11 @@ class DoctorDetailScreen extends ConsumerWidget {
               color: CustomColors.lightPurpleColor.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: CustomColors.purpleColor, size: context.sp(20)),
+            child: Icon(
+              icon,
+              color: CustomColors.purpleColor,
+              size: context.sp(20),
+            ),
           ),
           SizedBox(width: context.w(14)),
           Expanded(

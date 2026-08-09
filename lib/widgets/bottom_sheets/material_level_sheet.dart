@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+
 import '../../models/responses/materials_response.dart';
 import '../../models/responses/treatment_area_list_response.dart';
 import '../../models/responses/treatment_list_response.dart';
@@ -66,7 +67,12 @@ class _MaterialLevelSheetState extends ConsumerState<MaterialLevelSheet> {
     return SafeArea(
       top: false,
       child: Padding(
-        padding: EdgeInsets.fromLTRB(context.w(24), context.h(16), context.w(24), context.h(24)),
+        padding: EdgeInsets.fromLTRB(
+          context.w(24),
+          context.h(16),
+          context.w(24),
+          context.h(24),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,7 +187,6 @@ class _MaterialLevelSheetState extends ConsumerState<MaterialLevelSheet> {
             CustomButton(
               text: "Apply Selection",
               borderRadius: context.r(26),
-              backgroundColor: Colors.black,
               textColor: Colors.white,
               onPressed: () {
                 final selectedMaterial = SelectedMaterialModel(
@@ -192,11 +197,13 @@ class _MaterialLevelSheetState extends ConsumerState<MaterialLevelSheet> {
                   maxQty: material.maxQty ?? 0,
                 );
 
-                ref.read(checkoutViewModel.notifier).saveMaterialForArea(
-                  treatment: widget.treatment,
-                  area: widget.area,
-                  material: selectedMaterial,
-                );
+                ref
+                    .read(checkoutViewModel.notifier)
+                    .saveMaterialForArea(
+                      treatment: widget.treatment,
+                      area: widget.area,
+                      material: selectedMaterial,
+                    );
 
                 Navigator.pop(context);
               },

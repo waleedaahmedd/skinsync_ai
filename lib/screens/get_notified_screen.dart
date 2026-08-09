@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import 'biometric_screen.dart';
+
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../widgets/custom_button.dart';
+import 'biometric_screen.dart';
 
 class GetNotifiedScreen extends StatelessWidget {
   const GetNotifiedScreen({super.key});
@@ -46,15 +48,15 @@ class GetNotifiedScreen extends StatelessWidget {
             SizedBox(height: context.h(79)),
             SizedBox(
               width: double.infinity,
-              child: ElevatedButton(
+              child: CustomButton(
                 onPressed: () {
-                 Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  BiometricScreen.routeName,
-                  (Route<dynamic> route) => false,
-                );
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    BiometricScreen.routeName,
+                    (Route<dynamic> route) => false,
+                  );
                 },
-                child: const Text("Turn On Notifications"),
+                text: "Turn On Notifications",
               ),
             ),
             SizedBox(height: context.h(19)),

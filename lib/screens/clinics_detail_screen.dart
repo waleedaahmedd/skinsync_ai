@@ -410,7 +410,9 @@ class ClinicsDetailScreen extends ConsumerWidget {
               ),
             ),
 
-            SizedBox(height: context.h(160)), // Provide padding for floating bottom bar
+            SizedBox(
+              height: context.h(160),
+            ), // Provide padding for floating bottom bar
           ],
         ),
       ),
@@ -465,7 +467,6 @@ class ClinicsDetailScreen extends ConsumerWidget {
                         text: checkoutState.isInviteClinic
                             ? "Invite this Medical Spa"
                             : 'Book an Appointment',
-                        backgroundColor: Colors.black,
                         textColor: Colors.white,
                         borderRadius: context.r(25),
                         onPressed: () {
@@ -477,17 +478,17 @@ class ClinicsDetailScreen extends ConsumerWidget {
                           //     arguments: clinic,
                           //   );
                           // } else {
-                            if (clinic != null) {
-                              ref
-                                  .read(checkoutViewModel.notifier)
-                                  .setSelectedClinic(clinic!);
-                            }
-                            Navigator.pushNamed(
-                              context,
-                              SelectAppointmentTypeScreen.routeName,
-                              arguments: clinic,
-                            );
-                          },
+                          if (clinic != null) {
+                            ref
+                                .read(checkoutViewModel.notifier)
+                                .setSelectedClinic(clinic!);
+                          }
+                          Navigator.pushNamed(
+                            context,
+                            SelectAppointmentTypeScreen.routeName,
+                            arguments: clinic,
+                          );
+                        },
                         // },
                       ),
                     ),

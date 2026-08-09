@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+
 import '../utills/assets.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/sign_up_onboarding_view_model.dart';
+import '../widgets/custom_button.dart';
 import '../widgets/question_title.dart';
 import '../widgets/radio_button_widget.dart';
 
@@ -37,7 +39,9 @@ class SkinAllergiesScreen extends StatelessWidget {
                             padding: EdgeInsets.all(context.w(8)),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(context.r(15)),
+                              borderRadius: BorderRadius.circular(
+                                context.r(15),
+                              ),
                             ),
                             margin: EdgeInsets.zero,
                             child: Column(
@@ -46,7 +50,9 @@ class SkinAllergiesScreen extends StatelessWidget {
                                   height: context.h(118),
 
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(context.r(15)),
+                                    borderRadius: BorderRadius.circular(
+                                      context.r(15),
+                                    ),
                                     image: const DecorationImage(
                                       fit: BoxFit.cover,
                                       image: AssetImage(DummyAssets.acen),
@@ -70,7 +76,9 @@ class SkinAllergiesScreen extends StatelessWidget {
                             padding: EdgeInsets.all(context.w(8)),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(context.r(15)),
+                              borderRadius: BorderRadius.circular(
+                                context.r(15),
+                              ),
                             ),
                             margin: EdgeInsets.zero,
                             child: Column(
@@ -79,7 +87,9 @@ class SkinAllergiesScreen extends StatelessWidget {
                                   height: context.h(118),
 
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(context.r(15)),
+                                    borderRadius: BorderRadius.circular(
+                                      context.r(15),
+                                    ),
                                     image: const DecorationImage(
                                       fit: BoxFit.cover,
                                       image: AssetImage(DummyAssets.acen),
@@ -107,7 +117,9 @@ class SkinAllergiesScreen extends StatelessWidget {
                             padding: EdgeInsets.all(context.w(8)),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(context.r(15)),
+                              borderRadius: BorderRadius.circular(
+                                context.r(15),
+                              ),
                             ),
                             margin: EdgeInsets.zero,
                             child: Column(
@@ -116,7 +128,9 @@ class SkinAllergiesScreen extends StatelessWidget {
                                   height: context.h(118),
 
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(context.r(15)),
+                                    borderRadius: BorderRadius.circular(
+                                      context.r(15),
+                                    ),
                                     image: const DecorationImage(
                                       fit: BoxFit.cover,
                                       image: AssetImage(DummyAssets.acen),
@@ -140,7 +154,9 @@ class SkinAllergiesScreen extends StatelessWidget {
                             padding: EdgeInsets.all(context.w(8)),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(context.r(15)),
+                              borderRadius: BorderRadius.circular(
+                                context.r(15),
+                              ),
                             ),
                             margin: EdgeInsets.zero,
                             child: Column(
@@ -149,7 +165,9 @@ class SkinAllergiesScreen extends StatelessWidget {
                                   height: context.h(118),
 
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(context.r(15)),
+                                    borderRadius: BorderRadius.circular(
+                                      context.r(15),
+                                    ),
                                     image: const DecorationImage(
                                       fit: BoxFit.cover,
                                       image: AssetImage(DummyAssets.acen),
@@ -170,7 +188,10 @@ class SkinAllergiesScreen extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: context.h(14)),
-                    const QuestionTitle(title: "None of the above ", isSelected: false),
+                    const QuestionTitle(
+                      title: "None of the above ",
+                      isSelected: false,
+                    ),
                     SizedBox(height: context.h(40)),
                     Text(
                       "Are you currently using any medications or treatments for your skin? ",
@@ -206,13 +227,13 @@ class SkinAllergiesScreen extends StatelessWidget {
             width: double.infinity,
             child: Consumer(
               builder: (_, ref, _) {
-                return ElevatedButton(
+                return CustomButton(
                   onPressed: () {
                     ref
                         .read(onBoardingViewModel.notifier)
                         .onNextButton(context);
                   },
-                  child: const Text("Next"),
+                  text: "Next",
                 );
               },
             ),

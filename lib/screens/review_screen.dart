@@ -20,7 +20,8 @@ class ReviewScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final checkoutState = ref.watch(checkoutViewModel);
     final clinic = checkoutState.selectedClinic;
-    final doctor = checkoutState.selectedDoctorObject ?? checkoutState.selectedDoctor;
+    final doctor =
+        checkoutState.selectedDoctorObject ?? checkoutState.selectedDoctor;
     final date = checkoutState.selectedDate;
     final slot = checkoutState.selectedSlot;
 
@@ -45,7 +46,10 @@ class ReviewScreen extends ConsumerWidget {
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(20)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(24),
+                  vertical: context.h(20),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -71,7 +75,9 @@ class ReviewScreen extends ConsumerWidget {
                         child: Row(
                           children: [
                             ClipRRect(
-                              borderRadius: BorderRadius.circular(context.r(12)),
+                              borderRadius: BorderRadius.circular(
+                                context.r(12),
+                              ),
                               child: CachedNetworkImage(
                                 imageUrl: doctor.doctorImage ?? '',
                                 height: context.w(60),
@@ -98,7 +104,8 @@ class ReviewScreen extends ConsumerWidget {
                                   ),
                                   SizedBox(height: context.h(4)),
                                   Text(
-                                    doctor.specialization ?? 'Aesthetic Medicine',
+                                    doctor.specialization ??
+                                        'Aesthetic Medicine',
                                     style: CustomFonts.grey12w400,
                                   ),
                                   SizedBox(height: context.h(4)),
@@ -111,7 +118,8 @@ class ReviewScreen extends ConsumerWidget {
                                       ),
                                       SizedBox(width: context.w(2)),
                                       Text(
-                                        doctor.doctorRating?.toString() ?? "4.5",
+                                        doctor.doctorRating?.toString() ??
+                                            "4.5",
                                         style: CustomFonts.black10w600,
                                       ),
                                     ],
@@ -154,7 +162,9 @@ class ReviewScreen extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  doctor?.clinic?.clinicName ?? clinic?.name ?? "Standard Clinic Name",
+                                  doctor?.clinic?.clinicName ??
+                                      clinic?.name ??
+                                      "Standard Clinic Name",
                                   style: CustomFonts.black14w600,
                                 ),
                                 SizedBox(height: context.h(4)),
@@ -186,7 +196,9 @@ class ReviewScreen extends ConsumerWidget {
                             context,
                             Icons.calendar_today_rounded,
                             "Date",
-                            date != null ? date.formattedDayDate : "Not Selected",
+                            date != null
+                                ? date.formattedDayDate
+                                : "Not Selected",
                           ),
                           const Divider(height: 24),
                           _buildSummaryRow(
@@ -233,10 +245,15 @@ class ReviewScreen extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ...checkoutState.checkoutTreatmentsList.asMap().entries.map((entry) {
+                            ...checkoutState.checkoutTreatmentsList.asMap().entries.map((
+                              entry,
+                            ) {
                               final index = entry.key;
                               final selection = entry.value;
-                              final isLast = index == checkoutState.checkoutTreatmentsList.length - 1;
+                              final isLast =
+                                  index ==
+                                  checkoutState.checkoutTreatmentsList.length -
+                                      1;
 
                               final materialInfo = selection.material != null
                                   ? " (${selection.material!.selectedQuantity} ${selection.material!.name})"
@@ -245,14 +262,21 @@ class ReviewScreen extends ConsumerWidget {
                               return Column(
                                 children: [
                                   Padding(
-                                    padding: EdgeInsets.symmetric(vertical: context.h(4)),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: context.h(4),
+                                    ),
                                     child: Row(
                                       children: [
                                         Container(
-                                          padding: EdgeInsets.all(context.w(10)),
+                                          padding: EdgeInsets.all(
+                                            context.w(10),
+                                          ),
                                           decoration: BoxDecoration(
-                                            color: CustomColors.purpleColor.withValues(alpha: 0.08),
-                                            borderRadius: BorderRadius.circular(context.r(14)),
+                                            color: CustomColors.purpleColor
+                                                .withValues(alpha: 0.08),
+                                            borderRadius: BorderRadius.circular(
+                                              context.r(14),
+                                            ),
                                           ),
                                           child: Icon(
                                             Icons.auto_awesome_rounded,
@@ -263,28 +287,36 @@ class ReviewScreen extends ConsumerWidget {
                                         SizedBox(width: context.w(16)),
                                         Expanded(
                                           child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
                                               Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
                                                 children: [
                                                   Text(
                                                     selection.treatmentName,
-                                                    style: CustomFonts.black14w600,
+                                                    style:
+                                                        CustomFonts.black14w600,
                                                   ),
                                                   Text(
                                                     "\$${selection.treatmentCost}",
-                                                    style: CustomFonts.black14w600,
+                                                    style:
+                                                        CustomFonts.black14w600,
                                                   ),
                                                 ],
                                               ),
                                               SizedBox(height: context.h(2)),
                                               Text(
                                                 "${selection.areaName}$materialInfo",
-                                                style: CustomFonts.grey12w400.copyWith(
-                                                  color: CustomColors.darkPurple,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
+                                                style: CustomFonts.grey12w400
+                                                    .copyWith(
+                                                      color: CustomColors
+                                                          .darkPurple,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
                                               ),
                                             ],
                                           ),
@@ -294,7 +326,9 @@ class ReviewScreen extends ConsumerWidget {
                                   ),
                                   if (!isLast)
                                     Padding(
-                                      padding: EdgeInsets.only(left: context.w(52)),
+                                      padding: EdgeInsets.only(
+                                        left: context.w(52),
+                                      ),
                                       child: Divider(
                                         height: context.h(20),
                                         thickness: 1,
@@ -375,10 +409,15 @@ class ReviewScreen extends ConsumerWidget {
 
             // Continuous to payments selection screen using CustomButton
             Container(
-              padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(20)),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.w(24),
+                vertical: context.h(20),
+              ),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(24))),
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(context.r(24)),
+                ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.05),
@@ -390,13 +429,9 @@ class ReviewScreen extends ConsumerWidget {
               child: CustomButton(
                 text: "Proceed to Payment",
                 borderRadius: context.r(26),
-                backgroundColor: Colors.black,
                 textColor: Colors.white,
                 onPressed: () {
-                  Navigator.pushNamed(
-                    context,
-                    PaymentScreen.routeName,
-                  );
+                  Navigator.pushNamed(context, PaymentScreen.routeName);
                 },
               ),
             ),
@@ -406,7 +441,12 @@ class ReviewScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummaryRow(BuildContext context, IconData icon, String label, String value) {
+  Widget _buildSummaryRow(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+  ) {
     return Row(
       children: [
         Icon(icon, color: Colors.grey.shade400, size: context.sp(20)),

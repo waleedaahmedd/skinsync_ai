@@ -18,6 +18,7 @@ import '../../utills/image_utills.dart';
 import '../../utills/secure_storage_service.dart';
 import '../../view_models/treatment_view_model.dart';
 import '../../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
+import '../../widgets/custom_button.dart';
 
 class FaceDetectionScreen extends ConsumerStatefulWidget {
   final String pose;
@@ -344,7 +345,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                     SizedBox(width: context.w(16)),
                     // Submit button
                     Expanded(
-                      child: ElevatedButton(
+                      child: CustomButton(
                         onPressed: () async {
                           // Store captured image in view model
                           ref
@@ -359,16 +360,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                             Navigator.pop(context, capturedImage);
                           }
                         },
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                            vertical: context.h(16),
-                          ),
-                          backgroundColor: Colors.black,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(context.r(12)),
-                          ),
-                        ),
-                        child: Text("Submit", style: CustomFonts.white18w600),
+                        text: "Submit",
                       ),
                     ),
                   ],

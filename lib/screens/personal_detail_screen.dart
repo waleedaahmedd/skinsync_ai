@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
+
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
@@ -81,7 +82,9 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
       context: context,
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(24))),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(context.r(24)),
+        ),
       ),
       builder: (BuildContext context) {
         return SafeArea(
@@ -139,7 +142,10 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(10)),
+          padding: EdgeInsets.symmetric(
+            horizontal: context.w(24),
+            vertical: context.h(10),
+          ),
           child: Form(
             key: _formKey,
             child: Column(
@@ -400,19 +406,25 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                                       vertical: context.h(12),
                                     ),
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(context.r(14)),
+                                      borderRadius: BorderRadius.circular(
+                                        context.r(14),
+                                      ),
                                       borderSide: const BorderSide(
                                         color: CustomColors.greyColor,
                                       ),
                                     ),
                                     enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(context.r(14)),
+                                      borderRadius: BorderRadius.circular(
+                                        context.r(14),
+                                      ),
                                       borderSide: BorderSide(
                                         color: Colors.grey.shade300,
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(context.r(14)),
+                                      borderRadius: BorderRadius.circular(
+                                        context.r(14),
+                                      ),
                                       borderSide: const BorderSide(
                                         color: CustomColors.purpleColor,
                                       ),
@@ -441,19 +453,25 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                                       vertical: context.h(12),
                                     ),
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(context.r(14)),
+                                      borderRadius: BorderRadius.circular(
+                                        context.r(14),
+                                      ),
                                       borderSide: const BorderSide(
                                         color: CustomColors.greyColor,
                                       ),
                                     ),
                                     enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(context.r(14)),
+                                      borderRadius: BorderRadius.circular(
+                                        context.r(14),
+                                      ),
                                       borderSide: BorderSide(
                                         color: Colors.grey.shade300,
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(context.r(14)),
+                                      borderRadius: BorderRadius.circular(
+                                        context.r(14),
+                                      ),
                                       borderSide: const BorderSide(
                                         color: CustomColors.purpleColor,
                                       ),

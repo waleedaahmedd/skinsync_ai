@@ -4,6 +4,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
+import '../custom_button.dart';
 
 class BeforeYouBookBottomSheet extends StatefulWidget {
   final String title;
@@ -150,18 +151,17 @@ class _BeforeYouBookBottomSheetState extends State<BeforeYouBookBottomSheet> {
             SizedBox(
               width: double.infinity,
               // height: context.h(52),
-              child: ElevatedButton(
+              child: CustomButton(
                 onPressed: _isChecked
                     ? () {
                         Navigator.pop(context);
                         widget.onConfirm?.call();
                       }
                     : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: CustomColors.blackColor,
-                  disabledBackgroundColor: Colors.grey.shade300,
-                ),
-                child: Text(widget.buttonText),
+                backgroundColor: _isChecked
+                    ? Colors.black
+                    : Colors.grey.shade300,
+                text: widget.buttonText,
               ),
             ),
             SizedBox(height: context.h(8)),

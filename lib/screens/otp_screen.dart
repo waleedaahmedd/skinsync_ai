@@ -9,6 +9,7 @@ import '../utills/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_button.dart';
 import 'face_scan_screen.dart';
 import 'login_screen.dart';
 import 'signup_onboarding.dart';
@@ -39,7 +40,11 @@ class OtpScreen extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: CustomColors.lightBlueColor,
               ),
-              child: Image.asset(PngAssets.email, height: context.h(50), width: context.w(50)),
+              child: Image.asset(
+                PngAssets.email,
+                height: context.h(50),
+                width: context.w(50),
+              ),
             ),
             SizedBox(height: context.h(27)),
             Text("Enter Your Code", style: CustomFonts.black30w600),
@@ -70,7 +75,8 @@ class OtpScreen extends StatelessWidget {
                             .read(authViewModel.notifier)
                             .otpController,
                         mainAxisAlignment: MainAxisAlignment.center,
-                        separatorBuilder: (index) => SizedBox(width: context.w(4)),
+                        separatorBuilder: (index) =>
+                            SizedBox(width: context.w(4)),
                         length: 6,
                         defaultPinTheme: PinTheme(
                           width: context.w(82),
@@ -140,7 +146,7 @@ class OtpScreen extends StatelessWidget {
                 width: double.infinity,
                 child: ref.watch(authViewModel).loading
                     ? const AppLoader()
-                    : ElevatedButton(
+                    : CustomButton(
                         onPressed: () async {
                           if (ref.read(authViewModel.notifier).validateOtp()) {
                             await ref
@@ -172,7 +178,7 @@ class OtpScreen extends StatelessWidget {
                                 });
                           }
                         },
-                        child: const Text("Next"),
+                        text: "Next",
                       ),
               ),
             ),

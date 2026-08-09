@@ -4,6 +4,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../widgets/custom_button.dart';
 import 'bottom_nav_page.dart';
 import 'bottom_nav_screens/face_detection_screen.dart';
 import 'face_pose_capture_screen.dart';
@@ -109,7 +110,7 @@ class FaceScanScreen extends StatelessWidget {
                     SizedBox(height: context.h(37.5)),
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
+                      child: CustomButton(
                         onPressed: () {
                           if (isFront && pose == 'front') {
                             Navigator.of(
@@ -122,11 +123,9 @@ class FaceScanScreen extends StatelessWidget {
                             );
                           }
                         },
-                        child: Text(
-                          isFront && pose == 'front'
-                              ? "Scan Your Face"
-                              : "Start $titleText",
-                        ),
+                        text: isFront && pose == 'front'
+                            ? "Scan Your Face"
+                            : "Start $titleText",
                       ),
                     ),
                     SizedBox(height: context.h(20)),

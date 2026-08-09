@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
+
 import '../services/google_auth_service.dart';
 import '../utills/custom_fonts.dart';
+import 'custom_button.dart';
 
 void showLogoutDialog({
   required BuildContext screenContext,
@@ -15,9 +17,14 @@ void showLogoutDialog({
     builder: (BuildContext context) {
       return Dialog(
         backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(context.r(24))),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(context.r(24)),
+        ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(32)),
+          padding: EdgeInsets.symmetric(
+            horizontal: context.w(24),
+            vertical: context.h(32),
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -56,29 +63,14 @@ void showLogoutDialog({
               SizedBox(height: context.h(28)),
 
               // Logout Action Button
-              SizedBox(
-                width: double.infinity,
-                height: context.h(52),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    Navigator.pop(context);
-                    await GoogleAuthService().logout();
-                    onSuccess();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xffD72547),
-                    padding: EdgeInsets.zero, // Zero padding prevents vertical text clipping
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(context.r(26)),
-                    ),
-                    elevation: 1,
-                  ),
-                  child: Text(
-                    "Logout",
-                    style: CustomFonts.white16w600,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
+              CustomButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  await GoogleAuthService().logout();
+                  onSuccess();
+                },
+                backgroundColor: const Color(0xffD72547),
+                text: "Logout",
               ),
               SizedBox(height: context.h(12)),
 
@@ -91,7 +83,8 @@ void showLogoutDialog({
                     Navigator.pop(context);
                   },
                   style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.zero, // Zero padding prevents vertical text clipping
+                    padding: EdgeInsets
+                        .zero, // Zero padding prevents vertical text clipping
                     side: BorderSide(color: Colors.grey.shade300),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(context.r(26)),
@@ -99,7 +92,9 @@ void showLogoutDialog({
                   ),
                   child: Text(
                     "Cancel",
-                    style: CustomFonts.black14w600.copyWith(color: Colors.black54),
+                    style: CustomFonts.black14w600.copyWith(
+                      color: Colors.black54,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ),

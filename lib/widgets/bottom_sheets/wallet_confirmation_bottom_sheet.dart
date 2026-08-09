@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
+import '../custom_button.dart';
 
 class WalletConfirmationBottomSheet extends StatelessWidget {
   final VoidCallback onConfirm;
@@ -47,11 +49,17 @@ class WalletConfirmationBottomSheet extends StatelessWidget {
             decoration: BoxDecoration(
               color: CustomColors.lightBlueColor.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(context.r(16)),
-              border: Border.all(color: CustomColors.lightBlueColor.withValues(alpha: 0.2)),
+              border: Border.all(
+                color: CustomColors.lightBlueColor.withValues(alpha: 0.2),
+              ),
             ),
             child: Column(
               children: [
-                Icon(Icons.account_balance_wallet_outlined, size: context.sp(40), color: CustomColors.darkPurple),
+                Icon(
+                  Icons.account_balance_wallet_outlined,
+                  size: context.sp(40),
+                  color: CustomColors.darkPurple,
+                ),
                 SizedBox(height: context.h(15)),
                 Text(
                   "Please add \$100 to your wallet to proceed. This ensures that once the clinic is onboarded, your appointment and related charges can be automatically processed and updated.",
@@ -64,12 +72,12 @@ class WalletConfirmationBottomSheet extends StatelessWidget {
           SizedBox(height: context.h(30)),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
+            child: CustomButton(
               onPressed: () {
                 Navigator.pop(context);
                 onConfirm();
               },
-              child: const Text("Add \$100 & Proceed"),
+              text: "Add \$100 & Proceed",
             ),
           ),
           SizedBox(height: context.h(10)),

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
+import '../widgets/custom_button.dart';
 import '../widgets/login_bottom_sheet.dart';
 
 class GetStartedScreen extends StatelessWidget {
@@ -73,7 +75,10 @@ class GetStartedScreen extends StatelessWidget {
                 child: Image.asset(PngAssets.blur, height: context.h(564)),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.w(20), vertical: context.h(20)),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(20),
+                  vertical: context.h(20),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -108,23 +113,14 @@ class GetStartedScreen extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: Consumer(
-                        builder: (_, ref, _) => ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: EdgeInsets.symmetric(vertical: context.h(19)),
-                            textStyle: CustomFonts.white22w600,
-                            backgroundColor: Colors.black,
-
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(context.r(50)),
-                            ),
-                          ),
+                        builder: (_, ref, _) => CustomButton(
                           onPressed: () {
                             ref
                                 .read(authViewModel.notifier)
                                 .checkBiometricAvailability();
                             loginBottomSheet(context);
                           },
-                          child: const Text("Get Started"),
+                          text: "Get Started",
                         ),
                       ),
                     ),

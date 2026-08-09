@@ -8,6 +8,7 @@ import '../view_models/appointment_view_model.dart';
 import '../view_models/checkout_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_button.dart';
 import '../widgets/treatment_container.dart';
 import 'doctors_screen.dart';
 import 'select_date_time_screen.dart';
@@ -62,7 +63,9 @@ class _SelectAppointmentTypeScreenState
                     : appointmentState.errorMessage != null
                     ? Center(
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: context.w(20)),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: context.w(20),
+                          ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -72,11 +75,11 @@ class _SelectAppointmentTypeScreenState
                                 textAlign: TextAlign.center,
                               ),
                               SizedBox(height: context.h(16)),
-                              ElevatedButton(
+                              CustomButton(
                                 onPressed: () => ref
                                     .read(appointmentProvider.notifier)
                                     .getAppointmentTypes(),
-                                child: const Text("Retry"),
+                                text: "Retry",
                               ),
                             ],
                           ),
