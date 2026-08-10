@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/base_state_model.dart';
 import '../models/responses/groups_list_response.dart';
+import '../models/responses/tj_options_list_response.dart';
+import '../models/responses/simulation_history_response.dart';
 import '../models/requests/create_group_request.dart';
 import 'base_view_model.dart';
 
@@ -70,9 +72,69 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     }) ?? false;
   }
 
+  Future<void> fetchOptions(int groupId) async {
+    state = state.copyWith(loading: true, errorMessage: null);
+
+    await Future.delayed(const Duration(milliseconds: 600));
+
+    final dummyOptions = [
+      const TJOption(id: 1, name: "Option 1"),
+      const TJOption(id: 2, name: "Option 2"),
+    ];
+
+    state = state.copyWith(loading: false, options: dummyOptions);
+    
+    if (dummyOptions.isNotEmpty) {
+      fetchSimulations(dummyOptions.first.id!);
+    }
+  }
+
+  Future<void> fetchSimulations(int optionId) async {
+    state = state.copyWith(isSimulationsLoading: true, selectedOptionId: optionId);
+
+    await Future.delayed(const Duration(milliseconds: 800));
+
+    final List<SimulationData> dummySims = [
+      SimulationData(
+        id: 101,
+        frontImageBefore: "https://picsum.photos/200/300?random=1",
+        frontImageAfter: "https://picsum.photos/200/300?random=2",
+        rightImageBefore: "https://picsum.photos/200/300?random=3",
+        rightImageAfter: "https://picsum.photos/200/300?random=4",
+        leftImageBefore: "https://picsum.photos/200/300?random=5",
+        leftImageAfter: "https://picsum.photos/200/300?random=6",
+        createdAt: DateTime.now(),
+        treatments: [
+          const SimulationTreatment(
+            id: 1,
+            name: "Full Facial Rejuvenation",
+            areas: [
+              SimulationArea(id: "1", name: "Cheeks", materials: [
+                SimulationMaterial(id: 1, name: "Hyaluronic Acid", selectedQuantity: 2)
+              ]),
+              SimulationArea(id: "2", name: "Forehead", materials: [
+                SimulationMaterial(id: 2, name: "Botox", selectedQuantity: 1)
+              ])
+            ],
+          )
+        ],
+      ),
+    ];
+
+    state = state.copyWith(
+      isSimulationsLoading: false,
+      simulations: dummySims,
+      price: optionId == 1 ? "\$500" : "\$850",
+    );
+  }
+
   @override
   void onError(String message) {
-    state = state.copyWith(loading: false, errorMessage: message);
+    state = state.copyWith(
+      loading: false,
+      errorMessage: message,
+      isSimulationsLoading: false,
+    );
     super.onError(message);
   }
 }
@@ -80,11 +142,21 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 @immutable
 class TreatmentJourneyState extends BaseStateModel {
   final List<TreatmentJourneyGroup> groups;
+  final List<TJOption> options;
+  final List<SimulationData> simulations;
+  final bool isSimulationsLoading;
+  final int? selectedOptionId;
+  final String? price;
 
   const TreatmentJourneyState({
     super.loading = false,
     super.errorMessage,
     this.groups = const [],
+    this.options = const [],
+    this.simulations = const [],
+    this.isSimulationsLoading = false,
+    this.selectedOptionId,
+    this.price,
   });
 
   @override
@@ -92,11 +164,21 @@ class TreatmentJourneyState extends BaseStateModel {
     bool? loading,
     String? errorMessage,
     List<TreatmentJourneyGroup>? groups,
+    List<TJOption>? options,
+    List<SimulationData>? simulations,
+    bool? isSimulationsLoading,
+    int? selectedOptionId,
+    String? price,
   }) {
     return TreatmentJourneyState(
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
       groups: groups ?? this.groups,
+      options: options ?? this.options,
+      simulations: simulations ?? this.simulations,
+      isSimulationsLoading: isSimulationsLoading ?? this.isSimulationsLoading,
+      selectedOptionId: selectedOptionId ?? this.selectedOptionId,
+      price: price ?? this.price,
     );
   }
 }

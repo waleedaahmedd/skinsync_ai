@@ -8,6 +8,7 @@ import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/date_time_utills.dart';
 import '../view_models/treatment_journey_view_model.dart';
+import 'treatment_journey_detail_screen.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
@@ -204,7 +205,14 @@ class _TreatmentJourneyScreenState extends ConsumerState<TreatmentJourneyScreen>
       ),
       child: InkWell(
         onTap: () {
-          // TODO: Navigate to group details
+          Navigator.pushNamed(
+            context,
+            TreatmentJourneyDetailScreen.routeName,
+            arguments: {
+              'groupId': group.id,
+              'groupName': group.name,
+            },
+          );
         },
         borderRadius: BorderRadius.circular(context.r(16)),
         child: Padding(

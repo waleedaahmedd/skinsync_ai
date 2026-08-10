@@ -28,6 +28,8 @@ import 'screens/face_pose_capture_screen.dart';
 import 'screens/face_scan_screen.dart';
 import 'screens/get_notified_screen.dart';
 import 'screens/get_started_screen.dart';
+import 'screens/journey_clinic_detail_screen.dart';
+import 'screens/journey_clinics_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/notes_screen.dart';
 import 'screens/notification_screen.dart';
@@ -47,6 +49,7 @@ import 'screens/splash_screen.dart';
 import 'screens/treatment_area_screen.dart';
 import 'screens/treatment_category_screen.dart';
 import 'screens/treatment_detail_screen.dart';
+import 'screens/treatment_journey_detail_screen.dart';
 import 'screens/treatment_journey_screen.dart';
 import 'screens/treatment_payment_screen.dart';
 import 'screens/treatments_screen.dart';
@@ -100,6 +103,16 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: const RouteSettings(name: GetNotifiedScreen.routeName),
           builder: (_) => const GetNotifiedScreen(),
+        );
+      case JourneyClinicsScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: JourneyClinicsScreen.routeName),
+          builder: (_) => const JourneyClinicsScreen(),
+        );
+      case JourneyClinicDetailScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: JourneyClinicDetailScreen.routeName),
+          builder: (_) => JourneyClinicDetailScreen(clinic: args as Clinic?),
         );
       case BottomNavPage.routeName:
         return MaterialPageRoute(
@@ -326,6 +339,17 @@ class RouteGenerator {
             name: TreatmentJourneyScreen.routeName,
           ),
           builder: (_) => const TreatmentJourneyScreen(),
+        );
+      case TreatmentJourneyDetailScreen.routeName:
+        final argsMap = args as Map<String, dynamic>;
+        return MaterialPageRoute(
+          settings: const RouteSettings(
+            name: TreatmentJourneyDetailScreen.routeName,
+          ),
+          builder: (_) => TreatmentJourneyDetailScreen(
+            groupId: argsMap['groupId'] as int,
+            groupName: argsMap['groupName'] as String,
+          ),
         );
       case UpdateVersionScreen.routeName:
         return MaterialPageRoute(
