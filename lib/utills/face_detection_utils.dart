@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:face_detection_tflite/face_detection_tflite.dart';
 
 extension FaceUtils on Face {
@@ -45,16 +47,19 @@ extension FaceUtils on Face {
 
     // Size check: Face shouldn't be too small (at least 25% of width)
     if ((nRight - nLeft) < 0.25) return false;
+    log('YAW: $yaw');
 
     switch (pose) {
       case 'front':
         return yaw.abs() < 10;
       case 'left':
-        // Positive Y is turned to the right of camera (person's left)
-        return yaw > 18;
+        // Positive Y is turned to the right of camera (person's left profile)
+        // Strict threshold for full side profile (100% side view)
+        return yaw > 42;
       case 'right':
-        // Negative Y is turned to the left of camera (person's right)
-        return yaw < -18;
+        // Negative Y is turned to the left of camera (person's right profile)
+        // Strict threshold for full side profile (100% side view)
+        return yaw < -42;
       default:
         return false;
     }
