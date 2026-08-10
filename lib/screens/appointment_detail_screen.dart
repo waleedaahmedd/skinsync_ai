@@ -634,7 +634,7 @@ class _AppointmentDetailScreenState
                   height: context.h(100),
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  placeholder: (_, __) =>
+                  placeholder: (_, _) =>
                       const Center(child: CupertinoActivityIndicator()),
                   errorWidget: (_, _, _) => Container(
                     height: context.h(100),

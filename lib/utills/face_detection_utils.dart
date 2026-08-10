@@ -53,13 +53,12 @@ extension FaceUtils on Face {
       case 'front':
         return yaw.abs() < 10;
       case 'left':
-        // Positive Y is turned to the right of camera (person's left profile)
-        // Strict threshold for full side profile (100% side view)
-        return yaw > 37;
-      case 'right':
-        // Negative Y is turned to the left of camera (person's right profile)
-        // Strict threshold for full side profile (100% side view)
+        // My Left (Looking Left) -> Camera Right (Mirrored)
+        // Usually negative yaw depends on sensor orientation, swapping to match requirement
         return yaw < -37;
+      case 'right':
+        // My Right (Looking Right) -> Camera Left (Mirrored)
+        return yaw > 37;
       default:
         return false;
     }

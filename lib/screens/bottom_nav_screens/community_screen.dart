@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import '../../models/social_post_model.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
 import '../../view_models/explore_view_model.dart';
@@ -139,7 +140,9 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                               ),
                             );
                           }
-                          return SocialPostCard(post: state.posts[index]);
+                          return SocialPostCard(
+                            post: SocialPost.fromCommunityPost(state.posts[index]),
+                          );
                         },
                       ),
           ),

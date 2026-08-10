@@ -193,19 +193,24 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       orElse: () => cameras.first,
     );
 
-    // Stop and dispose old controller
-    if (_cameraController!.value.isStreamingImages) {
-      await _cameraController!.stopImageStream();
-    }
-    await _cameraController!.dispose();
-
-    if (!mounted) return;
-
+    // 1. Capture the old controller and set the state controller to null immediately
+    final oldController = _cameraController;
     setState(() {
       _cameraController = null;
       _isPoseCorrect = false;
     });
 
+    // 2. Safely stop and dispose the old controller in the background
+    if (oldController != null) {
+      if (oldController.value.isStreamingImages) {
+        await oldController.stopImageStream();
+      }
+      await oldController.dispose();
+    }
+
+    if (!mounted) return;
+
+    // 3. Initialize the new camera
     _initCamera(_storedRef!, description: newDescription);
   }
 
@@ -225,11 +230,11 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       final target =
           description ??
           cameras.firstWhere(
-            (c) => c.lensDirection == .front,
+            (c) => c.lensDirection == CameraLensDirection.front,
             orElse: () => cameras.first,
           );
 
-      _cameraController = CameraController(
+      final controller = CameraController(
         target,
         ResolutionPreset.veryHigh, // HD quality
         enableAudio: false,
@@ -238,16 +243,19 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
             : ImageFormatGroup.yuv420,
       );
 
-      await _cameraController!.initialize();
+      await controller.initialize();
 
-      if (!mounted) return;
+      if (!mounted) {
+        await controller.dispose();
+        return;
+      }
 
       // Start face detection stream for automatic capture
-      _cameraController!.startImageStream(_onFrameAvailable);
+      controller.startImageStream(_onFrameAvailable);
 
-      if (mounted) {
-        setState(() {});
-      }
+      setState(() {
+        _cameraController = controller;
+      });
     } catch (e) {
       if (mounted) {
         _showError('Failed to initialize camera: $e');

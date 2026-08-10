@@ -96,7 +96,7 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
                     firstPageErrorIndicatorBuilder: (_) => _buildEmptyClinicsView(),
                     firstPageProgressIndicatorBuilder: (_) => const AppLoader(),
                     newPageProgressIndicatorBuilder: (_) => const AppLoader(),
-                    itemBuilder: (_, clinic, __) {
+                    itemBuilder: (_, clinic, _) {
                       return CustomClinicGridViewTile(
                         clinicData: clinic,
                         onTap: () {

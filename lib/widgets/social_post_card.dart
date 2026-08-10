@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:intl/intl.dart';
-import '../models/explore_models.dart';
+import '../models/social_post_model.dart';
+import '../view_models/social_view_model.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import 'app_network_image.dart';
 
 class SocialPostCard extends ConsumerStatefulWidget {
-  final CommunityPostModel post;
+  final SocialPost post;
 
   const SocialPostCard({super.key, required this.post});
 
@@ -21,9 +22,8 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
   @override
   Widget build(BuildContext context) {
     final post = widget.post;
-    final hasImage = post.imageUrl != null && post.imageUrl!.isNotEmpty;
-    final hasProfileLogo =
-        post.profileLogo != null && post.profileLogo!.isNotEmpty;
+    final hasImage = post.imageUrls.isNotEmpty;
+    final hasProfileLogo = post.userProfileImage.isNotEmpty;
 
     return Container(
       margin: EdgeInsets.symmetric(
@@ -84,8 +84,8 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                       radius: context.r(22),
                       backgroundColor: CustomColors.greyColor,
                       backgroundImage: hasProfileLogo
-                          ? NetworkImage(post.profileLogo!)
-                          : const AssetImage(PngAssets.splashLogo),
+                          ? NetworkImage(post.userProfileImage)
+                          : const AssetImage(PngAssets.splashLogo) as ImageProvider,
                     ),
                   ),
                 ),
@@ -95,9 +95,8 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        (post.profileName != null &&
-                                post.profileName!.isNotEmpty)
-                            ? post.profileName!
+                        post.userName.isNotEmpty
+                            ? post.userName
                             : 'Community Member',
                         style: CustomFonts.black16w600.copyWith(
                           letterSpacing: -0.3,
@@ -120,23 +119,6 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          if (post.category != null &&
-                              post.category!.isNotEmpty) ...[
-                            SizedBox(width: context.w(6)),
-                            Text(
-                              '·',
-                              style: TextStyle(color: Colors.grey.shade400),
-                            ),
-                            SizedBox(width: context.w(6)),
-                            Text(
-                              post.category!,
-                              style: CustomFonts.grey12w400.copyWith(
-                                fontSize: context.sp(11),
-                                color: CustomColors.purpleColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
                         ],
                       ),
                     ],
@@ -162,7 +144,7 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
           ),
 
           // Title
-          if (post.title.isNotEmpty)
+          if (post.title != null && post.title!.isNotEmpty)
             Padding(
               padding: EdgeInsets.fromLTRB(
                 context.w(16),
@@ -171,13 +153,13 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                 context.h(6),
               ),
               child: Text(
-                post.title,
+                post.title!,
                 style: CustomFonts.black16w600.copyWith(letterSpacing: -0.2),
               ),
             ),
 
           // Post Content Text
-          if (post.content.isNotEmpty)
+          if (post.contentText != null && post.contentText!.isNotEmpty)
             Padding(
               padding: EdgeInsets.fromLTRB(
                 context.w(16),
@@ -186,7 +168,7 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                 context.h(16),
               ),
               child: Text(
-                post.content,
+                post.contentText!,
                 style: CustomFonts.black14w400.copyWith(
                   height: 1.6,
                   color: Colors.black.withValues(alpha: 0.85),
@@ -205,47 +187,11 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                   height: context.h(300),
                   width: double.infinity,
                   child: AppNetworkImage(
-                    imageUrl: post.imageUrl!,
+                    imageUrl: post.imageUrls.first,
                     width: double.infinity,
                     fit: BoxFit.cover,
                   ),
                 ),
-              ),
-            ),
-
-          // Tags
-          if (post.tags.isNotEmpty)
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                context.w(16),
-                context.h(12),
-                context.w(16),
-                0,
-              ),
-              child: Wrap(
-                spacing: context.w(8),
-                runSpacing: context.h(8),
-                children: post.tags
-                    .map(
-                      (tag) => Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: context.w(10),
-                          vertical: context.h(4),
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(context.r(20)),
-                        ),
-                        child: Text(
-                          '#$tag',
-                          style: CustomFonts.grey12w400.copyWith(
-                            fontSize: context.sp(11),
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
               ),
             ),
 
@@ -255,13 +201,32 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
             child: Row(
               children: [
                 _buildSimpleIconButton(
-                  onTap: () {},
-                  icon: Icons.favorite_outline_rounded,
+                  onTap: () {
+                    ref.read(socialViewModel.notifier).toggleLike(post.id);
+                  },
+                  icon: post.isLiked
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_outline_rounded,
+                  iconColor: post.isLiked ? Colors.red : null,
                 ),
-                SizedBox(width: context.w(8)),
+                SizedBox(width: context.w(4)),
+                Text(
+                  '${post.likesCount}',
+                  style: CustomFonts.grey12w400.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(width: context.w(16)),
                 _buildSimpleIconButton(
                   onTap: () {},
                   icon: Icons.chat_bubble_outline_rounded,
+                ),
+                SizedBox(width: context.w(4)),
+                Text(
+                  '${post.commentsCount}',
+                  style: CustomFonts.grey12w400.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const Spacer(),
                 _buildSimpleIconButton(
@@ -284,6 +249,7 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
   Widget _buildSimpleIconButton({
     required VoidCallback onTap,
     required IconData icon,
+    Color? iconColor,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -297,7 +263,7 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
         child: Icon(
           icon,
           size: context.sp(20),
-          color: Colors.black.withValues(alpha: 0.7),
+          color: iconColor ?? Colors.black.withValues(alpha: 0.7),
         ),
       ),
     );

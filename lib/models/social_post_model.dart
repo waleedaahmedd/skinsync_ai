@@ -1,3 +1,4 @@
+import 'explore_models.dart';
 
 class SocialPost {
   final String id;
@@ -25,6 +26,22 @@ class SocialPost {
     required this.createdAt,
     this.isLiked = false,
   });
+
+  factory SocialPost.fromCommunityPost(CommunityPostModel model) {
+    return SocialPost(
+      id: model.id?.toString() ?? '',
+      userName: model.profileName ?? 'Community Member',
+      userProfileImage: model.profileLogo ?? '',
+      title: model.title,
+      contentText: model.content,
+      imageUrls: model.imageUrl != null && model.imageUrl!.isNotEmpty
+          ? [model.imageUrl!]
+          : [],
+      createdAt: model.createdAt ?? DateTime.now(),
+      likesCount: 0, // Placeholder as CommunityPostModel doesn't have it
+      commentsCount: 0,
+    );
+  }
 
   SocialPost copyWith({
     String? id,
