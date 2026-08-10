@@ -429,7 +429,7 @@ class ReviewScreen extends ConsumerWidget {
               child: CustomButton(
                 text: "Proceed to Payment",
                 borderRadius: context.r(26),
-                textColor: Colors.white,
+                
                 onPressed: () {
                   Navigator.pushNamed(context, PaymentScreen.routeName);
                 },

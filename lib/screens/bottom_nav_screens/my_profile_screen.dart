@@ -61,7 +61,7 @@ class MyProfileScreen extends StatelessWidget {
       bool isLast = false,
     }) {
       // Single Unified Brand Color for all Icons (Consistent Aesthetic)
-      const Color unifiedColor = CustomColors.darkPurple;
+      const Color unifiedColor = CustomColors.purpleColor;
 
       return Column(
         children: [

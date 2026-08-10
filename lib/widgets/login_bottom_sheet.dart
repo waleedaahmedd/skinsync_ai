@@ -11,6 +11,7 @@ import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/enums.dart';
 import '../view_models/auth_view_model.dart';
+import 'app_loader.dart';
 
 void loginBottomSheet(BuildContext context) {
   showModalBottomSheet(
@@ -130,9 +131,7 @@ void loginBottomSheet(BuildContext context) {
                           );
                           if (loading) {
                             return const Center(
-                              child: CircularProgressIndicator(
-                                color: CustomColors.pinkColor,
-                              ),
+                              child: AppLoader()
                             );
                           }
                           return Column(

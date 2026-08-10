@@ -445,7 +445,7 @@ class _ArFaceModelPreviewScreenState
                   child: CustomBorderedButton(
                     text: "Generate Ai Image",
                     borderRadius: context.r(30),
-                    borderColor: CustomColors.blackColor,
+                    //borderColor: CustomColors.blackColor,
                     textColor: CustomColors.blackColor,
                     height: context.h(58),
                     onPressed: () {

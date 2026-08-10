@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../screens/face_pose_capture_screen.dart';
-import '../screens/treatment_area_screen.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
-import '../view_models/checkout_view_model.dart';
 import 'custom_button.dart';
 
 void showMScanFaceDialog(BuildContext context) {
@@ -68,42 +65,43 @@ void showMScanFaceDialog(BuildContext context) {
                   ).pushNamed(FacePoseCaptureScreen.routeName);
                 },
               ),
-              SizedBox(height: context.h(12)),
+             // SizedBox(height: context.h(12)),
 
               // Button 2: Select Treatment Areas (Secondary Button)
-              Consumer(
-                builder: (consumerContext, ref, _) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(context.r(25)),
-                      border: Border.all(
-                        color: CustomColors.darkPurple,
-                        width: 1.5,
-                      ),
-                    ),
-                    child: CustomButton(
-                      text: "Select Treatment Areas",
-                      textColor: CustomColors.darkPurple,
-                      borderRadius: context.r(25),
-                      onPressed: () {
-                        Navigator.pop(dialogContext); // close dialog
+              // Consumer(
+              //   builder: (consumerContext, ref, _) {
+              //     return Container(
+              //       decoration: BoxDecoration(
+              //         borderRadius: BorderRadius.circular(context.r(25)),
+              //         border: Border.all(
+              //           color: CustomColors.darkPurple,
+              //           width: 1.5,
+              //         ),
+              //       ),
+              //       child: CustomButton(
+              //         text: "Select Treatment Areas",
+              //         textColor: Colors.white,
+              //         borderRadius: context.r(26),
+              //         onPressed: () {
+              //           Navigator.pop(dialogContext); // close dialog
 
-                        final treatment = ref
-                            .read(checkoutViewModel)
-                            .selectedTreatments;
-                        Navigator.pushNamed(
-                          context,
-                          TreatmentAreaScreen.routeName,
-                          arguments: {
-                            'title': treatment?.name ?? 'Focus Areas',
-                            'treatmentId': treatment?.id,
-                          },
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
+              //           final treatment = ref
+              //               .read(checkoutViewModel)
+              //               .selectedTreatments;
+              //           Navigator.pushNamed(
+              //             context,
+              //             TreatmentAreaScreen.routeName,
+              //             arguments: {
+              //               'title': treatment?.name ?? 'Focus Areas',
+              //               'treatmentId': treatment?.id,
+              //             },
+              //           );
+              //         },
+              //       ),
+              //     );
+              //   },
+              // ),
+           
             ],
           ),
         ),

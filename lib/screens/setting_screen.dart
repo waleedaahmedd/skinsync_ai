@@ -87,7 +87,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const Color unifiedColor = CustomColors.darkPurple;
+    const Color unifiedColor = CustomColors.purpleColor;
 
     return Scaffold(
       backgroundColor: Colors.white,

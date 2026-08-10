@@ -119,7 +119,7 @@ class FacePoseCaptureScreen extends ConsumerWidget {
                         );
                       }
                     : null,
-                textColor: allCaptured ? Colors.white : Colors.grey.shade500,
+               // textColor: allCaptured ? Colors.white : Colors.grey.shade500,
               ),
             ),
           ],
