@@ -16,6 +16,7 @@ import '../../utills/custom_fonts.dart';
 import '../../utills/face_detection_utils.dart';
 import '../../utills/image_utills.dart';
 import '../../utills/secure_storage_service.dart';
+import '../../utills/tts_utils.dart';
 import '../../view_models/treatment_view_model.dart';
 import '../../widgets/app_loader.dart';
 import '../../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
@@ -58,6 +59,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
     _storedRef = ref;
     _initFaceDetector();
     _initCamera(ref);
+    _initTts();
 
     _pulseController = AnimationController(
       vsync: this,
@@ -70,6 +72,35 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
         MedicalDisclaimerBottomSheet.show(context);
       }
     });
+  }
+
+  Future<void> _initTts() async {
+    await TtsUtils.init();
+    // Don't speak immediately, wait for camera initialization in _initCamera
+  }
+
+  void _speakInstruction() {
+    final isFrontCamera = _cameraController?.description.lensDirection == CameraLensDirection.front;
+    
+    String ttsText = "";
+    if (widget.pose == 'front') {
+      ttsText = "Please look straight and keep your face inside the circle.";
+    } else if (isFrontCamera) {
+      // In mirrored selfie mode, turning head to the right shows the left profile
+      if (widget.pose == 'left') {
+        ttsText = "Please turn your head to the right to capture your left profile.";
+      } else {
+        ttsText = "Please turn your head to the left to capture your right profile.";
+      }
+    } else {
+      // Rear camera (no mirror)
+      if (widget.pose == 'left') {
+        ttsText = "Please turn your head to the left.";
+      } else {
+        ttsText = "Please turn your head to the right.";
+      }
+    }
+    TtsUtils.speak(ttsText);
   }
 
   Future<void> _initFaceDetector() async {
@@ -120,7 +151,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
         if (_isPoseCorrect) {
           // if (await Vibration.hasVibrator()) {
           await Vibration.vibrate(duration: 200);
-          await Future.delayed(const Duration(milliseconds: 200));
+          TtsUtils.speak("Hold still");
+          // Give TTS time to say "hold still" before starting countdown numbers
+          await Future.delayed(const Duration(milliseconds: 1000));
           // }
           _startCountdown();
         } else {
@@ -142,6 +175,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
       _countdown = 3;
     });
 
+    TtsUtils.speak("$_countdown");
+
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) {
         timer.cancel();
@@ -152,9 +187,11 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
         setState(() {
           _countdown--;
         });
+        TtsUtils.speak("$_countdown");
       } else {
         _stopCountdown();
         if (_isPoseCorrect && _storedRef != null) {
+          TtsUtils.speak("Perfect");
           _captureAndNavigate(_storedRef!);
         }
       }
@@ -205,6 +242,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
 
     // 3. Initialize the new camera
     _initCamera(_storedRef!, description: newDescription);
+    _speakInstruction();
   }
 
   Future<void> _initCamera(
@@ -249,6 +287,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
       setState(() {
         _cameraController = controller;
       });
+
+      _speakInstruction();
     } catch (e) {
       if (mounted) {
         _showError('Failed to initialize camera: $e');
@@ -453,6 +493,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
     _cameraController?.dispose();
     _faceDetector?.dispose();
     _pulseController.dispose();
+    TtsUtils.stop();
     super.dispose();
   }
 
