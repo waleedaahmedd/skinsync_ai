@@ -232,7 +232,7 @@ class DoctorDetailScreen extends ConsumerWidget {
                       );
                     }
                   },
-                  textColor: Colors.white,
+                 
                   borderRadius: context.r(26),
                 ),
               ),

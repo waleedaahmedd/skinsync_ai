@@ -136,7 +136,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
                     CustomButton(
                       text: "Return to Home",
                       borderRadius: context.r(26),
-                      textColor: Colors.white,
+
                       onPressed: () {
                         // Clear the checkoutState context completely
                         ref.read(checkoutViewModel.notifier).clearState();
@@ -316,7 +316,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
               child: CustomButton(
                 text: "Confirm & Secure Consultation",
                 borderRadius: context.r(26),
-                textColor: Colors.white,
+
                 onPressed:
                     (_selectedPaymentType == 'wallet' &&
                         remainingWalletBalance < 0)

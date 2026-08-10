@@ -4,6 +4,7 @@ import 'package:iconsax/iconsax.dart';
 
 import '../services/google_auth_service.dart';
 import '../utills/custom_fonts.dart';
+import 'custom_bordered_button.dart';
 import 'custom_button.dart';
 
 void showLogoutDialog({
@@ -64,6 +65,7 @@ void showLogoutDialog({
 
               // Logout Action Button
               CustomButton(
+                textColor: Colors.white,
                 onPressed: () async {
                   Navigator.pop(context);
                   await GoogleAuthService().logout();
@@ -72,32 +74,38 @@ void showLogoutDialog({
                 backgroundColor: const Color(0xffD72547),
                 text: "Logout",
               ),
-              SizedBox(height: context.h(12)),
+              SizedBox(height: context.h(15)),
 
               // Cancel Button
               SizedBox(
                 width: double.infinity,
-                height: context.h(52),
-                child: OutlinedButton(
+                child:CustomBorderedButton(
+                  text: "Cancel",
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets
-                        .zero, // Zero padding prevents vertical text clipping
-                    side: BorderSide(color: Colors.grey.shade300),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(context.r(26)),
-                    ),
-                  ),
-                  child: Text(
-                    "Cancel",
-                    style: CustomFonts.black14w600.copyWith(
-                      color: Colors.black54,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
                 ),
+                //  OutlinedButton(
+                //   onPressed: () {
+                //     Navigator.pop(context);
+                //   },
+                //   style: OutlinedButton.styleFrom(
+                //     padding: EdgeInsets
+                //         .zero, // Zero padding prevents vertical text clipping
+                //     side: BorderSide(color: Colors.grey.shade300),
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(context.r(26)),
+                //     ),
+                //   ),
+                //   child: Text(
+                //     "Cancel",
+                //     style: CustomFonts.black14w600.copyWith(
+                //       color: Colors.black54,
+                //     ),
+                //     textAlign: TextAlign.center,
+                //   ),
+                // ),
+             
               ),
             ],
           ),

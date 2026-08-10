@@ -4,6 +4,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../widgets/custom_bordered_button.dart';
 import '../widgets/custom_button.dart';
 import 'bottom_nav_page.dart';
 import 'bottom_nav_screens/face_detection_screen.dart';
@@ -130,35 +131,46 @@ class FaceScanScreen extends StatelessWidget {
                     ),
                     SizedBox(height: context.h(20)),
                     if (isFront && pose == 'front')
-                      InkWell(
-                        onTap: () {
+                      CustomBorderedButton(
+                        text: " Explore Clinics",
+                        onPressed: () {
                           Navigator.pushNamedAndRemoveUntil(
                             context,
                             BottomNavPage.routeName,
                             (route) => false,
                           );
                         },
-                        child: Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: context.w(121),
-                            vertical: context.h(19),
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                              width: context.w(1),
-                              color: Colors.black,
-                            ),
-                            borderRadius: BorderRadius.circular(context.r(50)),
-                          ),
-                          child: Center(
-                            child: Text(
-                              " Explore Clinics",
-                              style: CustomFonts.black22w600,
-                            ),
-                          ),
-                        ),
                       ),
+
+                    // InkWell(
+                    //   onTap: () {
+                    //     Navigator.pushNamedAndRemoveUntil(
+                    //       context,
+                    //       BottomNavPage.routeName,
+                    //       (route) => false,
+                    //     );
+                    //   },
+                    //   child: Container(
+                    //     width: double.infinity,
+                    //     padding: EdgeInsets.symmetric(
+                    //       horizontal: context.w(121),
+                    //       vertical: context.h(19),
+                    //     ),
+                    //     decoration: BoxDecoration(
+                    //       border: Border.all(
+                    //         width: context.w(1),
+                    //         color: Colors.black,
+                    //       ),
+                    //       borderRadius: BorderRadius.circular(context.r(50)),
+                    //     ),
+                    //     child: Center(
+                    //       child: Text(
+                    //         " Explore Clinics",
+                    //         style: CustomFonts.black22w600,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import '../screens/face_pose_capture_screen.dart';
 import '../screens/treatment_detail_screen.dart';
 import '../screens/treatment_area_screen.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/treatment_view_model.dart';
 import 'app_network_image.dart';
-import 'scan_face_dialog.dart';
 
 import '../main.dart';
 import '../models/responses/treatment_list_response.dart';
@@ -106,7 +106,10 @@ class TreatmentContainer extends StatelessWidget {
                       );
                 }
                 if (useInAiSimulator) {
-                  showMScanFaceDialog(context);
+                  // showMScanFaceDialog(context);
+                   Navigator.of(
+                    context,
+                  ).pushNamed(FacePoseCaptureScreen.routeName);
                 } else {
                   Navigator.pushNamed(
                     context,
