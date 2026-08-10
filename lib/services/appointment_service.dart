@@ -6,11 +6,10 @@ import '../models/responses/appointment_detail_response.dart';
 import '../models/responses/appointment_response.dart';
 import '../models/responses/appointment_type_list_response.dart';
 import '../models/responses/appointments_list_response.dart';
-import '../repositories/appointment_repository.dart';
-import 'api_base_helper.dart';
-import '../utills/enums.dart';
-
 import '../models/responses/simulation_history_response.dart';
+import '../repositories/appointment_repository.dart';
+import '../utills/enums.dart';
+import 'api_base_helper.dart';
 
 class AppointmentService implements AppointmentRepository {
   final ApiBaseHelper _apiClient;
@@ -20,7 +19,7 @@ class AppointmentService implements AppointmentRepository {
   Future<AppointmentTypeListResponse> getAppointmentTypes() async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.appointmentTypes,
-      requestType: 'GET',
+      requestType: .get,
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
@@ -41,7 +40,7 @@ class AppointmentService implements AppointmentRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.appointments,
-      requestType: 'GET',
+      requestType: .get,
       params: '?page=$page&limit=$limit',
     );
     // Check HTTP status code
@@ -54,7 +53,8 @@ class AppointmentService implements AppointmentRepository {
       // Handle HTTP error status codes
       final parsed = json.decode(response.body);
       throw AppException(
-        AppointmentsListResponse.fromJson(parsed).message ?? "Something went wrong",
+        AppointmentsListResponse.fromJson(parsed).message ??
+            "Something went wrong",
       );
     }
   }
@@ -65,7 +65,7 @@ class AppointmentService implements AppointmentRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.appointments,
-      requestType: 'GET',
+      requestType: .get,
       params: '/$appointmentId',
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -74,7 +74,8 @@ class AppointmentService implements AppointmentRepository {
     } else {
       final parsed = json.decode(response.body);
       throw AppException(
-        AppointmentDetailResponse.fromJson(parsed).message ?? "Failed to fetch appointment detail",
+        AppointmentDetailResponse.fromJson(parsed).message ??
+            "Failed to fetch appointment detail",
       );
     }
   }
@@ -83,7 +84,7 @@ class AppointmentService implements AppointmentRepository {
   Future<List<SimulationData>> getSimulationHistory() async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.simulationHistory,
-      requestType: 'GET',
+      requestType: .get,
     );
     // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -93,9 +94,7 @@ class AppointmentService implements AppointmentRepository {
     } else {
       // Handle HTTP error status codes
       final parsed = json.decode(response.body);
-      throw AppException(
-        parsed['message'] ?? "Something went wrong",
-      );
+      throw AppException(parsed['message'] ?? "Something went wrong");
     }
   }
 
@@ -105,7 +104,7 @@ class AppointmentService implements AppointmentRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.appointments,
-      requestType: 'POST',
+      requestType: .post,
       requestBody: request.toJson(),
       params: '',
     );

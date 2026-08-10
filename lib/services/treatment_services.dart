@@ -1,14 +1,13 @@
 import 'dart:convert';
 
-import '../models/requests/save_history_request.dart';
-import '../models/responses/base_response_model.dart';
-import '../models/responses/treatment_list_response.dart';
-import '../models/responses/treatment_detail_response.dart';
-import '../models/responses/materials_response.dart';
-import '../repositories/treatment_repository.dart';
-
 import '../exceptions/app_exception.dart';
+import '../models/requests/save_history_request.dart';
 import '../models/responses/auth_response.dart';
+import '../models/responses/base_response_model.dart';
+import '../models/responses/materials_response.dart';
+import '../models/responses/treatment_detail_response.dart';
+import '../models/responses/treatment_list_response.dart';
+import '../repositories/treatment_repository.dart';
 import '../utills/enums.dart';
 import 'api_base_helper.dart';
 
@@ -46,13 +45,14 @@ class TreatmentService implements TreatmentRepository {
 
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.treatmentList,
-      requestType: 'GET',
+      requestType: .get,
       params: params,
     );
     // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
-      TreatmentListResponse treatmentListResponse = TreatmentListResponse.fromJson(parsed);
+      TreatmentListResponse treatmentListResponse =
+          TreatmentListResponse.fromJson(parsed);
       return treatmentListResponse;
     } else {
       // Handle HTTP error status codes
@@ -65,7 +65,7 @@ class TreatmentService implements TreatmentRepository {
   Future<void> saveAiHistory(SaveHistoryRequest request) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.simulationHistory,
-      requestType: 'POST',
+      requestType: .post,
       requestBody: request.toJson(),
     );
     // Check HTTP status code
@@ -85,13 +85,15 @@ class TreatmentService implements TreatmentRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.treatments,
-      requestType: 'GET',
+      requestType: .get,
       params: '/$treatmentId',
     );
     // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
-      TreatmentDetailResponse detailResponse = TreatmentDetailResponse.fromJson(parsed);
+      TreatmentDetailResponse detailResponse = TreatmentDetailResponse.fromJson(
+        parsed,
+      );
       return detailResponse;
     } else {
       // Handle HTTP error status codes
@@ -114,7 +116,7 @@ class TreatmentService implements TreatmentRepository {
 
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.materials,
-      requestType: 'GET',
+      requestType: .get,
       params: params,
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {

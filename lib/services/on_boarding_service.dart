@@ -5,8 +5,8 @@ import '../models/requests/save_answer_request.dart';
 import '../models/responses/base_response_model.dart';
 import '../models/responses/on_boarding_question_response.dart';
 import '../repositories/on_boarding_repository.dart';
-import 'api_base_helper.dart';
 import '../utills/enums.dart';
+import 'api_base_helper.dart';
 
 class OnBoardingService implements OnBoardingRepository {
   final ApiBaseHelper _apiClient;
@@ -15,7 +15,7 @@ class OnBoardingService implements OnBoardingRepository {
   Future<OnBoardingQuestionResponse> questionApi() async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.onBoardingQues,
-      requestType: 'GET',
+      requestType: .get,
       params: '',
     );
 
@@ -40,8 +40,7 @@ class OnBoardingService implements OnBoardingRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.saveAnswer,
-      requestType:'PATCH',
-      params: '',
+      requestType: .patch,
       requestBody: saveAnswerRequest,
     );
 

@@ -15,80 +15,88 @@ import '../utills/enums.dart';
 import '../utills/secure_storage_service.dart';
 
 class ApiBaseHelper {
-  String? authToken;
   final SecureStorage _secureStorage = SecureStorage();
 
   Future<http.Response> httpRequest({
     required EndPoints endPoint,
-    required String requestType,
+    required RequestType requestType,
     requestBody,
     String? params,
     String? imagePath,
   }) async {
-    authToken = await _secureStorage.getToken();
-
     try {
       final baseUrl = isDeploymentMode ? BaseUrls.api.url : BaseUrls.apiQa.url;
       final url = '$baseUrl${endPoint.path}${params ?? ''}';
       log('URL: $url');
       log('BODY: $requestBody');
       await _refreshToken();
+      final headers = await getHeaders();
       switch (requestType) {
-        case 'GET':
+        case .get:
           if (requestBody != null) {
-            final request = http.Request('GET', Uri.parse(url));
-            request.headers.addAll(getHeaders());
+            final request = http.Request(requestType.method, Uri.parse(url));
+            request.headers.addAll(headers);
             request.body = jsonEncode(requestBody);
             final response = await http.Client().send(request);
             final responseJson = await http.Response.fromStream(response);
             log('RESPONSE: ${responseJson.body}');
             return responseJson;
           }
-          final responseJson = await http.get(
-            Uri.parse(url),
-            headers: getHeaders(),
-          );
+          final responseJson = await http.get(Uri.parse(url), headers: headers);
           log('RESPONSE: ${responseJson.body}');
           return responseJson;
-        case 'POST':
+        case .post:
           final responseJson = await http.post(
             Uri.parse(url),
-            headers: getHeaders(),
+            headers: headers,
             body: jsonEncode(requestBody),
           );
           log('RESPONSE: ${responseJson.body}');
           return responseJson;
-        case 'PUT':
+        case .put:
           return await http.put(
             Uri.parse(url),
-            headers: getHeaders(),
+            headers: headers,
             body: requestBody != '' ? jsonEncode(requestBody) : null,
           );
-        case 'PATCH':
+        case .patch:
           final responseJson = await http.patch(
             Uri.parse(url),
-            headers: getHeaders(),
+            headers: headers,
             body: requestBody != '' ? jsonEncode(requestBody) : null,
           );
           return responseJson;
-        case 'DELETE':
+        case .delete:
           final responseJson = await http.delete(
             Uri.parse(url),
-            headers: getHeaders(),
+            headers: headers,
             body: requestBody != '' ? jsonEncode(requestBody) : null,
           );
           return responseJson;
-        case 'MULTIPART':
-          final request = http.MultipartRequest('POST', Uri.parse(url));
+        case .multipartPost:
+          final request = http.MultipartRequest(
+            requestType.method,
+            Uri.parse(url),
+          );
           request.fields.addAll(requestBody!.toJson());
           request.files.add(
             await http.MultipartFile.fromPath('image', imagePath!),
           );
-          request.headers.addAll(getHeaders());
+          request.headers.addAll(headers);
           final responseJson = await request.send();
           return http.Response.fromStream(responseJson);
-        default:
-          throw Exception('Unsupported request type: $requestType');
+        case .multipartPatch:
+          final request = http.MultipartRequest(
+            requestType.method,
+            Uri.parse(url),
+          );
+          request.fields.addAll(requestBody!.toJson());
+          request.files.add(
+            await http.MultipartFile.fromPath('image', imagePath!),
+          );
+          request.headers.addAll(headers);
+          final responseJson = await request.send();
+          return http.Response.fromStream(responseJson);
       }
     } on SocketException {
       throw const AppException('No Internet Connection');
@@ -111,7 +119,8 @@ class ApiBaseHelper {
     }
   }
 
-  Map<String, String> getHeaders() {
+  Future<Map<String, String>> getHeaders() async {
+    final authToken = await _secureStorage.getToken();
     log("Auth token $authToken");
     Map<String, String> headers = {};
     headers.putIfAbsent('Content-Type', () => 'application/json');

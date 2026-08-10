@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import '../exceptions/app_exception.dart';
 import '../models/responses/treatment_category_list_response.dart';
 import '../repositories/treatment_category_repository.dart';
@@ -13,7 +14,7 @@ class TreatmentCategoryService implements TreatmentCategoryRepository {
   Future<TreatmentCategoryListResponse> getCategoriesApi() async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.categories,
-      requestType: 'GET',
+      requestType: .get,
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
@@ -21,7 +22,8 @@ class TreatmentCategoryService implements TreatmentCategoryRepository {
     } else {
       final parsed = json.decode(response.body);
       throw AppException(
-        TreatmentCategoryListResponse.fromJson(parsed).message ?? "Failed to fetch categories",
+        TreatmentCategoryListResponse.fromJson(parsed).message ??
+            "Failed to fetch categories",
       );
     }
   }

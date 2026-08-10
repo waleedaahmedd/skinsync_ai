@@ -73,3 +73,17 @@ enum BaseUrls {
 enum ViewType { grid, map }
 
 enum ApplicationType { clinic, patient }
+
+enum RequestType {
+  get('GET'),
+  post('POST'),
+  put('PUT'),
+  patch('PATCH'),
+  delete('DELETE'),
+  multipartPost('POST'),
+  multipartPatch('PATCH');
+
+  final String method;
+
+  const RequestType(this.method);
+}

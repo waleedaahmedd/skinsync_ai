@@ -26,7 +26,7 @@ class AuthService implements AuthRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.signIn,
-      requestType: 'POST',
+      requestType: .post,
       requestBody: signInRequest,
       params: '',
     );
@@ -70,7 +70,7 @@ class AuthService implements AuthRepository {
     final req = await BiometricHelper.getDeviceSignature();
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.biometricRegister,
-      requestType: 'POST',
+      requestType: .post,
       requestBody: {"biometric_key": req.deviceHash},
       params: '',
     );
@@ -98,7 +98,7 @@ class AuthService implements AuthRepository {
     }
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.biometricLogin,
-      requestType: 'POST',
+      requestType: .post,
       requestBody: {"biometric_token": key},
       params: '',
     );
@@ -138,7 +138,7 @@ class AuthService implements AuthRepository {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.biometricUnregister,
       requestBody: {'biometric_key': key.deviceHash},
-      requestType: 'DELETE',
+      requestType: .delete,
     );
     final parsed = json.decode(response.body);
     final model = BaseResponseModel.fromJson(parsed);
@@ -153,7 +153,7 @@ class AuthService implements AuthRepository {
   Future<AuthResponse> verifyOTP({required OtpRequest otpRequest}) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.verifyOtp,
-      requestType: 'POST',
+      requestType: .post,
       requestBody: otpRequest,
       params: '',
     );
@@ -195,7 +195,7 @@ class AuthService implements AuthRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.onBoardingProfile,
-      requestType: 'PATCH',
+      requestType: .patch,
       requestBody: onBoardingProfileRequest,
       params: '',
     );
@@ -216,7 +216,7 @@ class AuthService implements AuthRepository {
     String type = Platform.isIOS ? 'apple' : 'android';
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.getMe,
-      requestType: 'GET',
+      requestType: .get,
       params: '?type=$type',
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -236,7 +236,7 @@ class AuthService implements AuthRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.socialLogin,
-      requestType: 'POST',
+      requestType: .post,
       requestBody: request,
       params: '',
     );
@@ -276,7 +276,7 @@ class AuthService implements AuthRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.socialLogin,
-      requestType: 'POST',
+      requestType: .post,
       requestBody: request,
       params: '',
     );

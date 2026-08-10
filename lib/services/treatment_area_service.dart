@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import '../exceptions/app_exception.dart';
 import '../models/responses/treatment_area_list_response.dart';
 import '../repositories/treatment_area_repository.dart';
@@ -13,7 +14,7 @@ class TreatmentAreaService implements TreatmentAreaRepository {
   Future<TreatmentAreaListResponse> getAreasApi({int? treatmentId}) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.areas,
-      requestType: 'GET',
+      requestType: .get,
       params: treatmentId != null ? '?treatment_id=$treatmentId' : null,
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -22,7 +23,8 @@ class TreatmentAreaService implements TreatmentAreaRepository {
     } else {
       final parsed = json.decode(response.body);
       throw AppException(
-        TreatmentAreaListResponse.fromJson(parsed).message ?? "Failed to fetch target areas",
+        TreatmentAreaListResponse.fromJson(parsed).message ??
+            "Failed to fetch target areas",
       );
     }
   }

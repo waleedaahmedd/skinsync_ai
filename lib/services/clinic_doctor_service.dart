@@ -7,8 +7,8 @@ import '../models/requests/invite_clinic_request.dart';
 import '../models/responses/availability_response.dart';
 import '../models/responses/base_response_model.dart';
 import '../models/responses/get_clinic_response.dart';
-import '../models/responses/practitioner_list_response.dart';
 import '../models/responses/payment_options_response.dart';
+import '../models/responses/practitioner_list_response.dart';
 import '../models/responses/treatment_pricing_response.dart';
 import '../repositories/clinic_doctor_repository.dart';
 import '../utills/date_time_utills.dart';
@@ -26,7 +26,7 @@ class ClinicDoctorService implements ClinicDoctorRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.getClinic,
-      requestType: 'POST',
+      requestType: .post,
       requestBody: request.toJson(),
     );
     // Check HTTP status code
@@ -47,7 +47,7 @@ class ClinicDoctorService implements ClinicDoctorRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.practitionersList,
-      requestType: 'POST',
+      requestType: .post,
       requestBody: request.toJson(),
     );
 
@@ -56,7 +56,10 @@ class ClinicDoctorService implements ClinicDoctorRepository {
       return PractitionerListResponse.fromJson(parsed);
     } else {
       final parsed = json.decode(response.body);
-      throw AppException(PractitionerListResponse.fromJson(parsed).message ?? 'Error fetching practitioners');
+      throw AppException(
+        PractitionerListResponse.fromJson(parsed).message ??
+            'Error fetching practitioners',
+      );
     }
   }
 
@@ -68,7 +71,7 @@ class ClinicDoctorService implements ClinicDoctorRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.getDoctor,
-      requestType: 'GET',
+      requestType: .get,
       params:
           'clinic_id=$clinicId&treatment_id=$treatmentId&side_area_ids=$sideAreaIdsList',
     );
@@ -79,7 +82,9 @@ class ClinicDoctorService implements ClinicDoctorRepository {
     } else {
       // Handle HTTP error status codes
       final parsed = json.decode(response.body);
-      throw AppException(PractitionerListResponse.fromJson(parsed).message as String);
+      throw AppException(
+        PractitionerListResponse.fromJson(parsed).message as String,
+      );
     }
   }
 
@@ -91,7 +96,7 @@ class ClinicDoctorService implements ClinicDoctorRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.getAvailability,
-      requestType: 'GET',
+      requestType: .get,
       params:
           '?doctor_id=$doctorId&clinic_id=$clinicId&date=${date.secondsSinceEpoch}',
     );
@@ -110,7 +115,7 @@ class ClinicDoctorService implements ClinicDoctorRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.paymentOptions,
-      requestType: 'GET',
+      requestType: .get,
       params:
           '?clinic_id=$clinicId&doctor_id=$doctorId&treatment_amount=$amount',
     );
@@ -129,7 +134,7 @@ class ClinicDoctorService implements ClinicDoctorRepository {
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.treatmentPricing,
-      requestType: 'GET',
+      requestType: .get,
       params:
           '?clinic_id=$clinicId&treatment_id=$treatmentId&treatment_subsection_ids=${treatmentSubsectionIds.join(',')}',
     );
@@ -144,7 +149,7 @@ class ClinicDoctorService implements ClinicDoctorRepository {
   Future<void> inviteClinic(InviteClinicRequest request) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.inviteClinic,
-      requestType: 'POST',
+      requestType: .post,
       requestBody: request.toJson(),
       params: '',
     );
