@@ -18,6 +18,7 @@ import '../../utills/face_detection_utils.dart';
 import '../../utills/image_utills.dart';
 import '../../utills/secure_storage_service.dart';
 import '../../view_models/treatment_view_model.dart';
+import '../../widgets/app_loader.dart';
 import '../../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
 import '../../widgets/custom_button.dart';
 
@@ -177,7 +178,40 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     }
   }
 
-  Future<void> _initCamera(WidgetRef ref) async {
+  Future<void> _toggleCamera() async {
+    if (_cameraController == null || _isCapturing || _capturedImage != null) {
+      return;
+    }
+
+    final cameras = await availableCameras();
+    if (cameras.length < 2) return;
+
+    final newDescription = cameras.firstWhere(
+      (camera) =>
+          camera.lensDirection != _cameraController!.description.lensDirection,
+      orElse: () => cameras.first,
+    );
+
+    // Stop and dispose old controller
+    if (_cameraController!.value.isStreamingImages) {
+      await _cameraController!.stopImageStream();
+    }
+    await _cameraController!.dispose();
+
+    if (!mounted) return;
+
+    setState(() {
+      _cameraController = null;
+      _isPoseCorrect = false;
+    });
+
+    _initCamera(_storedRef!, description: newDescription);
+  }
+
+  Future<void> _initCamera(
+    WidgetRef ref, {
+    CameraDescription? description,
+  }) async {
     try {
       final cameras = await availableCameras();
       if (cameras.isEmpty) {
@@ -187,13 +221,15 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
         return;
       }
 
-      final front = cameras.firstWhere(
-        (c) => c.lensDirection == .front,
-        orElse: () => cameras.first,
-      );
+      final target =
+          description ??
+          cameras.firstWhere(
+            (c) => c.lensDirection == .front,
+            orElse: () => cameras.first,
+          );
 
       _cameraController = CameraController(
-        front,
+        target,
         ResolutionPreset.veryHigh, // HD quality
         enableAudio: false,
         imageFormatGroup: Platform.isIOS
@@ -517,6 +553,17 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
               },
             ),
           ),
+          Positioned(
+            top: context.h(40),
+            right: context.w(15),
+            child: IconButton(
+              icon: const Icon(
+                Icons.flip_camera_ios_outlined,
+                color: Colors.white,
+              ),
+              onPressed: _toggleCamera,
+            ),
+          ),
           Align(
             alignment: Alignment.bottomCenter,
             child: SafeArea(
@@ -614,43 +661,47 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     );
   }
 
-  SizedBox _buildCaptureButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: Container(
-        decoration: BoxDecoration(
-          color: _isPoseCorrect ? CustomColors.purpleColor : Colors.grey,
-          borderRadius: BorderRadius.circular(context.r(12)),
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: (_isCapturing || !_isPoseCorrect)
-                ? null
-                : () {
-                    if (_storedRef != null) {
-                      _captureAndNavigate(_storedRef!);
-                    }
-                  },
-            borderRadius: BorderRadius.circular(context.r(12)),
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: context.h(18)),
-              alignment: Alignment.center,
-              child: _isCapturing
-                  ? SizedBox(
-                      height: context.h(20),
-                      width: context.w(20),
-                      child: const CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                      ),
-                    )
-                  : Text("Capture", style: CustomFonts.white18w600),
-            ),
-          ),
-        ),
-      ),
-    );
+  Widget _buildCaptureButton() {
+    if (_isCapturing) {
+      return const AppLoader();
+    }
+    return const SizedBox.shrink();
+    // return SizedBox(
+    //   width: double.infinity,
+    //   child: Container(
+    //     decoration: BoxDecoration(
+    //       color: _isPoseCorrect ? CustomColors.purpleColor : Colors.grey,
+    //       borderRadius: BorderRadius.circular(context.r(12)),
+    //     ),
+    //     child: Material(
+    //       color: Colors.transparent,
+    //       child: InkWell(
+    //         onTap: (_isCapturing || !_isPoseCorrect)
+    //             ? null
+    //             : () {
+    //                 if (_storedRef != null) {
+    //                   _captureAndNavigate(_storedRef!);
+    //                 }
+    //               },
+    //         borderRadius: BorderRadius.circular(context.r(12)),
+    //         child: Container(
+    //           padding: EdgeInsets.symmetric(vertical: context.h(18)),
+    //           alignment: Alignment.center,
+    //           child: _isCapturing
+    //               ? SizedBox(
+    //                   height: context.h(20),
+    //                   width: context.w(20),
+    //                   child: const CircularProgressIndicator(
+    //                     strokeWidth: 2,
+    //                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+    //                   ),
+    //                 )
+    //               : Text("Capture", style: CustomFonts.white18w600),
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 
   Widget _buildInstructionRow({
