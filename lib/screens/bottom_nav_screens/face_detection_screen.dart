@@ -463,9 +463,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: _cameraController != null
+      body: _cameraController != null && _cameraController!.value.isInitialized
           ? _buildCameraView()
-          : const SizedBox.shrink(),
+          : const Center(child: CircularProgressIndicator()),
     );
   }
 
@@ -477,7 +477,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       );
     }
 
-    final previewSize = _cameraController!.value.previewSize!;
+    final previewSize = _cameraController?.value.previewSize;
+    if (previewSize == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
     final aspectRatio = previewSize.height / previewSize.width;
     const circleRadiusPercent = 0.42;
     const circleCenterYPercent = 0.42;
