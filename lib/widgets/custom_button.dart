@@ -56,13 +56,13 @@ class CustomButton extends StatelessWidget {
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.5),
                         blurRadius: 30,
-                        spreadRadius: 10,
+                        spreadRadius: 1.r,
                       ),
                       // Soft white diffuse glow
                       BoxShadow(
                         color: Colors.white.withValues(alpha: 0.15),
                         blurRadius: 40,
-                        spreadRadius: 20,
+                        spreadRadius: 2.r,
                       ),
                     ],
             ),
