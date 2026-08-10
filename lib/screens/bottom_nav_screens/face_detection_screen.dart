@@ -10,6 +10,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:vibration/vibration.dart';
+// import 'package:vibration/vibration.dart';
+import 'package:volume_controller/volume_controller.dart';
 
 import '../../utills/assets.dart';
 import '../../utills/color_constant.dart';
@@ -36,6 +38,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   XFile? _capturedImage;
 
   bool _isCapturing = false;
+  bool _isPoseCorrect = false;
 
   // Store ref for use in callbacks
   WidgetRef? _storedRef;
@@ -49,6 +52,20 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     _storedRef = ref;
     _initFaceDetector();
     _initCamera(ref);
+
+    // Listen to volume button presses for capture
+    VolumeController.instance.showSystemUI = false;
+    VolumeController.instance.addListener((volume) {
+      if (_isPoseCorrect &&
+          !_isCapturing &&
+          _capturedImage == null &&
+          mounted) {
+        if (_storedRef != null) {
+          _captureAndNavigate(_storedRef!);
+        }
+      }
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final show = await SecureStorage().getMedicalDisclaimer();
       if (show) {
@@ -92,12 +109,21 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
         ),
       );
 
+      bool isPoseCorrect = false;
       if (faces.isNotEmpty) {
         final face = faces.first;
-        if (_isCorrectPose(face)) {
-          if (mounted) {
-            await _captureAndNavigate(ref);
-          }
+        isPoseCorrect = _isCorrectPose(face);
+      }
+
+      if (_isPoseCorrect != isPoseCorrect) {
+        setState(() {
+          _isPoseCorrect = isPoseCorrect;
+        });
+        if (_isPoseCorrect) {
+          // if (await Vibration.hasVibrator()) {
+          await Vibration.vibrate(duration: 200);
+          await Future.delayed(const Duration(milliseconds: 200));
+          // }
         }
       }
     } catch (e) {
@@ -190,6 +216,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
     setState(() {
       _isCapturing = true;
+      _isPoseCorrect = false;
     });
 
     // Stop image stream before capture to avoid potential camera freezes on some devices
@@ -201,18 +228,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       log("Error stopping image stream: $e");
     }
 
-    // Vibrate before capture as requested
-    try {
-      if (await Vibration.hasVibrator()) {
-        await Vibration.vibrate(duration: 200);
-        // Small delay to ensure vibration is felt before shutter
-        await Future.delayed(const Duration(milliseconds: 200));
-      }
-    } catch (e) {
-      log("Vibration error: $e");
-    }
-
-    // Capture the image
     try {
       final image = await _cameraController!.takePicture();
 
@@ -377,6 +392,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   void dispose() {
     _cameraController?.dispose();
     _faceDetector?.dispose();
+    VolumeController.instance.removeListener();
     super.dispose();
   }
 
@@ -535,51 +551,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                       iconWidth: context.w(22),
                     ),
                     SizedBox(height: context.h(30)),
-                    // Capture button
-                    SizedBox(
-                      width: double.infinity,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: CustomColors.purpleColor,
-                          borderRadius: BorderRadius.circular(context.r(12)),
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: _isCapturing
-                                ? null
-                                : () {
-                                    if (_storedRef != null) {
-                                      _captureAndNavigate(_storedRef!);
-                                    }
-                                  },
-                            borderRadius: BorderRadius.circular(context.r(12)),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: context.h(18),
-                              ),
-                              alignment: Alignment.center,
-                              child: _isCapturing
-                                  ? SizedBox(
-                                      height: context.h(20),
-                                      width: context.w(20),
-                                      child: const CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                              Colors.white,
-                                            ),
-                                      ),
-                                    )
-                                  : Text(
-                                      "Capture",
-                                      style: CustomFonts.white18w600,
-                                    ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                    _buildCaptureButton(),
                     SizedBox(height: context.h(20)),
                   ],
                 ),
@@ -587,6 +559,45 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  SizedBox _buildCaptureButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: Container(
+        decoration: BoxDecoration(
+          color: _isPoseCorrect ? CustomColors.purpleColor : Colors.grey,
+          borderRadius: BorderRadius.circular(context.r(12)),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: (_isCapturing || !_isPoseCorrect)
+                ? null
+                : () {
+                    if (_storedRef != null) {
+                      _captureAndNavigate(_storedRef!);
+                    }
+                  },
+            borderRadius: BorderRadius.circular(context.r(12)),
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: context.h(18)),
+              alignment: Alignment.center,
+              child: _isCapturing
+                  ? SizedBox(
+                      height: context.h(20),
+                      width: context.w(20),
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : Text("Capture", style: CustomFonts.white18w600),
+            ),
+          ),
+        ),
       ),
     );
   }
