@@ -87,19 +87,40 @@ class ExploreState extends BaseStateModel {
 
 class ExploreViewModel extends BaseViewModel<ExploreState> {
   final ExploreRepository _repository;
-  ExploreViewModel({required ExploreRepository repository})
-    : _repository = repository,
-      super(initialState: const ExploreState());
+  ExploreViewModel({required this._repository})
+    : super(initialState: const ExploreState());
   Future<void> fetchReels({int page = 1}) async {
+    state = state.copyWith(loading: true);
+
     await runSafely(() async {
       final response = await _repository.fetchReels(
         page: page,
         limit: state.pageSize,
       );
+
       state = state.copyWith(
         reels: response.data ?? [],
         reelsTotalPages: response.totalPages,
         reelsCurrentPage: response.page,
+        loading: false,
+      );
+    });
+  }
+
+  Future<void> fetchPosts({int page = 1}) async {
+    state = state.copyWith(loading: true);
+
+    await runSafely(() async {
+      final response = await _repository.fetchPosts(
+        page: page,
+        limit: state.pageSize,
+      );
+
+      state = state.copyWith(
+        posts: response.data ?? [],
+        postsTotalPages: response.totalPages,
+        postsCurrentPage: response.page,
+        loading: false,
       );
     });
   }
