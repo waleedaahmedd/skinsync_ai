@@ -16,6 +16,7 @@ abstract final class CustomColors {
   static const Color blueColor = Color(0xFF2480F9);
   static const Color yellow = Color(0xFFFFC72C);
   static const Color darkPurple = Color(0xFF7D69EB);
+  static const Color lightBlueBackground = Color(0xffDEF8FF);
 
   static const LinearGradient purpleBlueGradient = LinearGradient(
     begin: Alignment.topCenter,

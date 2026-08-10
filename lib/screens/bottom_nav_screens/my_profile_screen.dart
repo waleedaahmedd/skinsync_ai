@@ -21,10 +21,12 @@ import '../../widgets/logout_dialog_box.dart';
 import '../../main.dart';
 import '../../widgets/dialogs/delete_account_dialog.dart';
 import '../simulation_history_screen.dart';
+import '../treatment_journey_screen.dart';
 import 'appointments_screen.dart';
 
 class MyProfileScreen extends StatelessWidget {
   const MyProfileScreen({super.key});
+
   static const String routeName = "/MyProfileScreen";
 
   @override
@@ -67,7 +69,8 @@ class MyProfileScreen extends StatelessWidget {
             onTap: callBack,
             borderRadius: BorderRadius.circular(context.r(24)),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(14)),
+              padding: EdgeInsets.symmetric(
+                  horizontal: context.w(16), vertical: context.h(14)),
               child: Row(
                 children: [
                   // Unified soft background tint & icon color
@@ -79,15 +82,16 @@ class MyProfileScreen extends StatelessWidget {
                     ),
                     child: icon is String
                         ? SvgPicture.asset(
-                            icon,
-                            height: context.w(18),
-                            width: context.w(18),
-                            colorFilter: const ColorFilter.mode(
-                              unifiedColor,
-                              BlendMode.srcIn,
-                            ),
-                          )
-                        : Icon(icon as IconData, size: context.w(18), color: unifiedColor),
+                      icon,
+                      height: context.w(18),
+                      width: context.w(18),
+                      colorFilter: const ColorFilter.mode(
+                        unifiedColor,
+                        BlendMode.srcIn,
+                      ),
+                    )
+                        : Icon(icon as IconData, size: context.w(18),
+                        color: unifiedColor),
                   ),
                   SizedBox(width: context.w(14)),
                   Expanded(child: Text(title, style: CustomFonts.black16w500)),
@@ -102,7 +106,8 @@ class MyProfileScreen extends StatelessWidget {
           ),
           if (!isLast)
             Padding(
-              padding: EdgeInsets.only(left: context.w(54), right: context.w(16)),
+              padding: EdgeInsets.only(
+                  left: context.w(54), right: context.w(16)),
               child: Divider(color: Colors.grey.shade100, height: context.h(1)),
             ),
         ],
@@ -160,7 +165,8 @@ class MyProfileScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: CustomColors.purpleColor.withValues(alpha: 0.4),
+                        color: CustomColors.purpleColor.withValues(
+                            alpha: 0.4),
                         width: context.w(4),
                       ),
                     ),
@@ -177,24 +183,26 @@ class MyProfileScreen extends StatelessWidget {
                             fit: BoxFit.cover,
                             height: context.w(80),
                             width: context.w(80),
-                            placeholder: (context, url) => Container(
-                              height: context.w(80),
-                              width: context.w(80),
-                              color: Colors.grey.shade100,
-                              child: const Center(
-                                child: CupertinoActivityIndicator(),
-                              ),
-                            ),
-                            errorWidget: (context, url, error) => Container(
-                              height: context.w(80),
-                              width: context.w(80),
-                              color: Colors.grey.shade100,
-                              child: Icon(
-                                Icons.person_outline_rounded,
-                                size: context.sp(36),
-                                color: Colors.grey.shade400,
-                              ),
-                            ),
+                            placeholder: (context, url) =>
+                                Container(
+                                  height: context.w(80),
+                                  width: context.w(80),
+                                  color: Colors.grey.shade100,
+                                  child: const Center(
+                                    child: CupertinoActivityIndicator(),
+                                  ),
+                                ),
+                            errorWidget: (context, url, error) =>
+                                Container(
+                                  height: context.w(80),
+                                  width: context.w(80),
+                                  color: Colors.grey.shade100,
+                                  child: Icon(
+                                    Icons.person_outline_rounded,
+                                    size: context.sp(36),
+                                    color: Colors.grey.shade400,
+                                  ),
+                                ),
                           ),
                         );
                       },
@@ -244,7 +252,9 @@ class MyProfileScreen extends StatelessWidget {
             Expanded(
               child: ListView(
                 physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.fromLTRB(context.w(24), context.h(20), context.w(24), context.h(100)),
+                padding: EdgeInsets.fromLTRB(
+                    context.w(24), context.h(20), context.w(24),
+                    context.h(100)),
                 children: [
                   // CARD 1: Clinical Portal Section
                   buildOptionCard([
@@ -278,6 +288,16 @@ class MyProfileScreen extends StatelessWidget {
                         },
                         icon: SvgAssets.medical,
                         title: "Medical History",
+                      ),
+                      buildCardOption(
+                        callBack: () {
+                          Navigator.pushNamed(
+                            context,
+                            TreatmentJourneyScreen.routeName,
+                          );
+                        },
+                        icon: SvgAssets.progress,
+                        title: "Treatment Journey",
                       ),
                       buildCardOption(
                         callBack: () {
@@ -318,34 +338,35 @@ class MyProfileScreen extends StatelessWidget {
                       ),
                     ]),
                     SizedBox(height: context.h(16)),
-                  ] else ...[
-                    // Legal and Policy Section
-                    buildOptionCard([
-                      buildCardOption(
-                        callBack: () {
-                          WebviewPage.open(
-                            context: context,
-                            url: 'https://skinsyncai.com/terms-of-service/',
-                            title: 'Terms Of Service',
-                          );
-                        },
-                        icon: Iconsax.document,
-                        title: "Terms Of Service",
-                      ),
-                      buildCardOption(
-                        callBack: () {
-                          WebviewPage.open(
-                            context: context,
-                            url: 'https://skinsyncai.com/privacy-policy/',
-                            title: 'Privacy Policy',
-                          );
-                        },
-                        icon: Iconsax.security,
-                        title: "Privacy Policy",
-                      ),
-                    ]),
-                    SizedBox(height: context.h(16)),
-                  ],
+                  ] else
+                    ...[
+                      // Legal and Policy Section
+                      buildOptionCard([
+                        buildCardOption(
+                          callBack: () {
+                            WebviewPage.open(
+                              context: context,
+                              url: 'https://skinsyncai.com/terms-of-service/',
+                              title: 'Terms Of Service',
+                            );
+                          },
+                          icon: Iconsax.document,
+                          title: "Terms Of Service",
+                        ),
+                        buildCardOption(
+                          callBack: () {
+                            WebviewPage.open(
+                              context: context,
+                              url: 'https://skinsyncai.com/privacy-policy/',
+                              title: 'Privacy Policy',
+                            );
+                          },
+                          icon: Iconsax.security,
+                          title: "Privacy Policy",
+                        ),
+                      ]),
+                      SizedBox(height: context.h(16)),
+                    ],
 
                   // CARD 3: Account Security Section
                   buildOptionCard([
@@ -357,7 +378,7 @@ class MyProfileScreen extends StatelessWidget {
                             Navigator.pushNamedAndRemoveUntil(
                               context,
                               GetStartedScreen.routeName,
-                              (route) => false,
+                                  (route) => false,
                             );
                           },
                         );
@@ -377,7 +398,7 @@ class MyProfileScreen extends StatelessWidget {
 
                             navigator.pushNamedAndRemoveUntil(
                               GetStartedScreen.routeName,
-                              (route) => false,
+                                  (route) => false,
                             );
                           },
                         );
@@ -395,5 +416,4 @@ class MyProfileScreen extends StatelessWidget {
       ),
     );
   }
-
 }

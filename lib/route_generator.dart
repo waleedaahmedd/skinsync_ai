@@ -47,6 +47,7 @@ import 'screens/splash_screen.dart';
 import 'screens/treatment_area_screen.dart';
 import 'screens/treatment_category_screen.dart';
 import 'screens/treatment_detail_screen.dart';
+import 'screens/treatment_journey_screen.dart';
 import 'screens/treatment_payment_screen.dart';
 import 'screens/treatments_screen.dart';
 import 'screens/update_version_screen.dart';
@@ -318,6 +319,13 @@ class RouteGenerator {
             name: SimulationHistoryScreen.routeName,
           ),
           builder: (_) => const SimulationHistoryScreen(),
+        );
+      case TreatmentJourneyScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(
+            name: TreatmentJourneyScreen.routeName,
+          ),
+          builder: (_) => const TreatmentJourneyScreen(),
         );
       case UpdateVersionScreen.routeName:
         return MaterialPageRoute(
