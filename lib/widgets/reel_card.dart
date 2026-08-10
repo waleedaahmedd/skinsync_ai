@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:video_player/video_player.dart';
 
-import '../models/reel_model.dart';
+import '../models/explore_models.dart';
 import 'reels/reel_content_overlay.dart';
 
 class ReelCard extends ConsumerStatefulWidget {
-  final Reel reel;
+  final ReelModel reel;
   final bool isActive;
 
   const ReelCard({super.key, required this.reel, required this.isActive});
@@ -111,9 +111,9 @@ class _ReelCardState extends ConsumerState<ReelCard> {
             left: context.w(16),
             right: context.w(80),
             child: ReelContentOverlay(
-              userName: widget.reel.userName,
-              userProfileImage: widget.reel.userProfileImage,
-              caption: widget.reel.caption,
+              userName: widget.reel.profileName ?? 'N/A',
+              userProfileImage: widget.reel.profileLogo ??'',
+              caption: widget.reel.description,
               // musicTitle: widget.reel.musicTitle,
             ),
           ),
