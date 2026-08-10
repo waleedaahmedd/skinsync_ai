@@ -45,20 +45,21 @@ extension FaceUtils on Face {
       return false;
     }
 
-    // Size check: Face shouldn't be too small (at least 25% of width)
-    if ((nRight - nLeft) < 0.25) return false;
+    // Size check: Face shouldn't be too small (at least 35% of width for professional scan)
+    if ((nRight - nLeft) < 0.35) return false;
     log('YAW: $yaw');
 
     switch (pose) {
       case 'front':
-        return yaw.abs() < 10;
+        return yaw.abs() < 8; // Tighter front scan (8 degrees)
       case 'left':
         // My Left (Looking Left) -> Camera Right (Mirrored)
-        // Usually negative yaw depends on sensor orientation, swapping to match requirement
-        return yaw < -37;
+        // Strict threshold for perfect side profile (40+ degrees)
+        return yaw < -40;
       case 'right':
         // My Right (Looking Right) -> Camera Left (Mirrored)
-        return yaw > 37;
+        // Strict threshold for perfect side profile (40+ degrees)
+        return yaw > 40;
       default:
         return false;
     }

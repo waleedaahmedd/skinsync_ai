@@ -8,10 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_litert/flutter_litert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:vibration/vibration.dart';
 
-import '../../utills/assets.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
 import '../../utills/face_detection_utils.dart';
@@ -34,7 +33,7 @@ class FaceDetectionScreen extends ConsumerStatefulWidget {
       _FaceDetectionScreenState();
 }
 
-class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
+class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with SingleTickerProviderStateMixin {
   CameraController? _cameraController;
   XFile? _capturedImage;
 
@@ -51,6 +50,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   FaceDetector? _faceDetector;
   bool _isProcessingFrame = false;
 
+  late AnimationController _pulseController;
+
   @override
   void initState() {
     super.initState();
@@ -58,18 +59,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     _initFaceDetector();
     _initCamera(ref);
 
-    // Listen to volume button presses for capture
-    // VolumeController.instance.showSystemUI = false;
-    // VolumeController.instance.addListener((volume) {
-    //   if (_isPoseCorrect &&
-    //       !_isCapturing &&
-    //       _capturedImage == null &&
-    //       mounted) {
-    //     if (_storedRef != null) {
-    //       _captureAndNavigate(_storedRef!);
-    //     }
-    //   }
-    // });
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..repeat();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final show = await SecureStorage().getMedicalDisclaimer();
@@ -459,8 +452,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     _timer?.cancel();
     _cameraController?.dispose();
     _faceDetector?.dispose();
-    // VolumeController.instance.removeListener();
-    super.dispose();
+    _pulseController.dispose();
     super.dispose();
   }
 
@@ -510,17 +502,22 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                   return Stack(
                     children: [
                       CameraPreview(_cameraController!),
-                      // Face bounding box overlay - must be before dark overlay to be visible
-                      // if (_faceBoundingBoxPaint != null)
-                      //   Positioned.fill(child: _faceBoundingBoxPaint!),
-                      // White square (camera lens corners) - keep visible
-                      CustomPaint(
-                        painter: TintOverlayPainter(
-                          centerRadius: circleRadius,
-                          centerY: circleCenterY,
-                        ),
-                        child: const SizedBox.expand(),
+                      
+                      AnimatedBuilder(
+                        animation: _pulseController,
+                        builder: (context, child) {
+                          return CustomPaint(
+                            painter: TintOverlayPainter(
+                              centerRadius: circleRadius,
+                              centerY: circleCenterY,
+                              isPoseCorrect: _isPoseCorrect,
+                              pulseValue: _pulseController.value,
+                            ),
+                            child: const SizedBox.expand(),
+                          );
+                        },
                       ),
+                      
                       if (_isCountingDown)
                         Center(
                           child: AnimatedSwitcher(
@@ -556,117 +553,195 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
               ),
             ),
           ),
+          // Top Navigation and Progress
           Positioned(
-            top: context.h(40),
-            left: context.w(15),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ),
-          Positioned(
-            top: context.h(40),
-            right: context.w(15),
-            child: IconButton(
-              icon: const Icon(
-                Icons.flip_camera_ios_outlined,
-                color: Colors.white,
-              ),
-              onPressed: _toggleCamera,
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: SafeArea(
-              child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: context.w(30),
-                  vertical: context.h(5),
-                ),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withValues(alpha: 0.0),
-                      Colors.black.withValues(alpha: 0.8),
-                      Colors.black.withValues(alpha: 0.95),
-                      Colors.black,
+            top: MediaQuery.paddingOf(context).top + context.h(10),
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: context.w(20)),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildHeaderButton(
+                        icon: Icons.arrow_back_ios_new_rounded,
+                        onTap: () => Navigator.pop(context),
+                      ),
+                      _buildPoseIndicator(),
+                      _buildHeaderButton(
+                        icon: Icons.flip_camera_ios_outlined,
+                        onTap: _toggleCamera,
+                      ),
                     ],
                   ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(height: context.h(24)),
-                    Text(
-                      "Face Scan",
-                      style: CustomFonts.white22w600.copyWith(
-                        fontSize: context.sp(24),
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(height: context.h(4)),
-                    Text(
-                      "We'll scan your face and create a cool model just for you to enhance your experience!",
-                      style: CustomFonts.white22w600.copyWith(
-                        fontSize: context.sp(14),
-                        color: Colors.white.withValues(alpha: 0.9),
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    SizedBox(height: context.h(20)),
-                    _buildInstructionRow(
-                      icon: SvgAssets.eye,
-                      text: widget.pose == 'front'
-                          ? "Face forward and make sure your eyes are clearly visible."
-                          : widget.pose == 'left'
-                          ? "Turn your face to the left so your profile is clearly visible."
-                          : "Turn your face to the right so your profile is clearly visible.",
-                      iconHeight: context.h(24),
-                      iconWidth: context.w(26),
-                    ),
-                    SizedBox(height: context.h(16)),
-                    _buildInstructionRow(
-                      icon: SvgAssets.profileIcon,
-                      text: "Align your face within the frame.",
-                      iconHeight: context.h(24),
-                      iconWidth: context.w(24),
-                      iconColor: CustomColors.purpleColor,
-                    ),
-                    SizedBox(height: context.h(16)),
-                    _buildInstructionRow(
-                      icon: SvgAssets.glasses,
-                      text:
-                          "Remove anything that covers your face eg: Eye glasses, Cap etc",
-                      iconHeight: context.h(8),
-                      iconWidth: context.w(22),
-                    ),
-                    SizedBox(height: context.h(16)),
-                    // _buildInstructionRow(
-                    //   icon: SvgAssets.face,
-                    //   text: "Move Your Face Inside The Border",
-                    //   iconHeight: context.h(24),
-                    //   iconWidth: context.w(22),
-                    // ),
-                    // SizedBox(height: context.h(16)),
-                    _buildInstructionRow(
-                      icon: Icons.warning,
-                      iconColor: CustomColors.purpleColor,
-                      text:
-                          "The app is not a medical device. Any results provided are for informational and aesthetic purposes only.",
-                      iconHeight: context.h(24),
-                      iconWidth: context.w(22),
-                    ),
-                    SizedBox(height: context.h(30)),
-                    _buildCaptureButton(),
-                    SizedBox(height: context.h(20)),
-                  ],
+                ],
+              ),
+            ),
+          ),
+          
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: _buildInstructionOverlay(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeaderButton({required IconData icon, required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(context.w(10)),
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.4),
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+        ),
+        child: Icon(icon, color: Colors.white, size: context.sp(20)),
+      ),
+    );
+  }
+
+  Widget _buildPoseIndicator() {
+    final poses = ['front', 'left', 'right'];
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(8)),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(context.r(20)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: poses.map((p) {
+          final isCurrent = widget.pose == p;
+          return Container(
+            margin: EdgeInsets.symmetric(horizontal: context.w(4)),
+            width: context.w(8),
+            height: context.w(8),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isCurrent ? CustomColors.purpleColor : Colors.white.withValues(alpha: 0.3),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildInstructionOverlay() {
+    return SafeArea(
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: context.w(24),
+          vertical: context.h(24),
+        ),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.black.withValues(alpha: 0.0),
+              Colors.black.withValues(alpha: 0.9),
+              Colors.black,
+            ],
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(6)),
+              decoration: BoxDecoration(
+                color: _isPoseCorrect ? CustomColors.purpleColor.withValues(alpha: 0.2) : Colors.white10,
+                borderRadius: BorderRadius.circular(context.r(12)),
+                border: Border.all(color: _isPoseCorrect ? CustomColors.purpleColor : Colors.white24),
+              ),
+              child: Text(
+                _isPoseCorrect ? "POSE CORRECT" : "ALIGN YOUR FACE",
+                style: TextStyle(
+                  color: _isPoseCorrect ? CustomColors.purpleColor : Colors.white70,
+                  fontSize: context.sp(12),
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
                 ),
               ),
+            ),
+            SizedBox(height: context.h(16)),
+            Text(
+              _getInstructionText(),
+              style: CustomFonts.white22w600.copyWith(fontSize: context.sp(26)),
+            ),
+            SizedBox(height: context.h(8)),
+            Text(
+              "Keep your face within the frame for auto-capture",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: context.sp(14),
+              ),
+            ),
+            SizedBox(height: context.h(28)),
+
+            // Professional Tips Section
+            _buildProfessionalTips(),
+
+            SizedBox(height: context.h(24)),
+            if (_isCapturing) 
+              const AppLoader()
+            else 
+              SizedBox(height: context.h(52)), // Fixed height spacer
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfessionalTips() {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(child: _buildSmallTip(Iconsax.camera, "Clean lens")),
+            SizedBox(width: context.w(12)),
+            Expanded(child: _buildSmallTip(Iconsax.flash, "Bright light")),
+          ],
+        ),
+        SizedBox(height: context.h(12)),
+        Row(
+          children: [
+            Expanded(child: _buildSmallTip(Iconsax.frame_1, "Steady hand")),
+            SizedBox(width: context.w(12)),
+            Expanded(child: _buildSmallTip(Iconsax.user_square, "Clear face")),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSmallTip(IconData icon, String label) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(10)),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(context.r(16)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: context.sp(16), color: CustomColors.purpleColor),
+          SizedBox(width: context.w(8)),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.8),
+              fontSize: context.sp(12),
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -674,164 +749,119 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     );
   }
 
-  Widget _buildCaptureButton() {
-    if (_isCapturing) {
-      return const AppLoader();
+  String _getInstructionText() {
+    final isFrontCamera = _cameraController?.description.lensDirection == CameraLensDirection.front;
+    
+    if (widget.pose == 'front') return "Look Straight";
+    
+    if (isFrontCamera) {
+      // In mirrored selfie mode, turning head to the right shows the left profile
+      return widget.pose == 'left' ? "Turn Right" : "Turn Left";
+    } else {
+      // Rear camera (no mirror)
+      return widget.pose == 'left' ? "Turn Left" : "Turn Right";
     }
-    return const SizedBox.shrink();
-    // return SizedBox(
-    //   width: double.infinity,
-    //   child: Container(
-    //     decoration: BoxDecoration(
-    //       color: _isPoseCorrect ? CustomColors.purpleColor : Colors.grey,
-    //       borderRadius: BorderRadius.circular(context.r(12)),
-    //     ),
-    //     child: Material(
-    //       color: Colors.transparent,
-    //       child: InkWell(
-    //         onTap: (_isCapturing || !_isPoseCorrect)
-    //             ? null
-    //             : () {
-    //                 if (_storedRef != null) {
-    //                   _captureAndNavigate(_storedRef!);
-    //                 }
-    //               },
-    //         borderRadius: BorderRadius.circular(context.r(12)),
-    //         child: Container(
-    //           padding: EdgeInsets.symmetric(vertical: context.h(18)),
-    //           alignment: Alignment.center,
-    //           child: _isCapturing
-    //               ? SizedBox(
-    //                   height: context.h(20),
-    //                   width: context.w(20),
-    //                   child: const CircularProgressIndicator(
-    //                     strokeWidth: 2,
-    //                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-    //                   ),
-    //                 )
-    //               : Text("Capture", style: CustomFonts.white18w600),
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // );
-  }
-
-  Widget _buildInstructionRow({
-    required dynamic icon,
-    required String text,
-    required double iconHeight,
-    required double iconWidth,
-    Color? iconColor,
-  }) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        if (icon is String)
-          SvgPicture.asset(
-            icon,
-            height: iconHeight,
-            width: iconWidth,
-            colorFilter: iconColor != null
-                ? ColorFilter.mode(iconColor, BlendMode.srcIn)
-                : null,
-          )
-        else
-          Icon(icon, size: iconHeight, color: iconColor),
-        SizedBox(width: context.w(17)),
-        Flexible(
-          child: Text(
-            text,
-            style: CustomFonts.white22w600.copyWith(
-              fontSize: context.sp(14),
-              color: Colors.white.withValues(alpha: 0.9),
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ),
-      ],
-    );
   }
 }
 
 class TintOverlayPainter extends CustomPainter {
   final double centerRadius;
-  final double? centerY; // Optional Y position, defaults to center if null
+  final double? centerY;
+  final bool isPoseCorrect;
+  final double pulseValue;
 
-  TintOverlayPainter({required this.centerRadius, this.centerY});
+  TintOverlayPainter({
+    required this.centerRadius,
+    this.centerY,
+    required this.isPoseCorrect,
+    this.pulseValue = 0,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, centerY ?? size.height / 2);
-    // Square size is 50% of circle diameter - smaller and centered
-    final squareSize = centerRadius * 2 * 0.50;
-    final squareRect = Rect.fromCenter(
-      center: center,
-      width: squareSize,
-      height: squareSize,
-    );
 
-    // Corner indicator style - like camera viewfinder
-    final cornerLength =
-        squareSize * 0.20; // Longer corners for better visibility
-    final cornerPaint = Paint()
-      ..color = Colors.white
+    // 1. Create a darkened background with a circular hole
+    final backgroundPaint = Paint()..color = Colors.black.withValues(alpha: 0.7);
+    final cutoutPath = Path()
+      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height))
+      ..addOval(Rect.fromCircle(center: center, radius: centerRadius))
+      ..fillType = PathFillType.evenOdd;
+    canvas.drawPath(cutoutPath, backgroundPaint);
+
+    // 2. Draw the main circular guide border
+    final guideColor = isPoseCorrect
+        ? CustomColors.purpleColor
+        : Colors.white.withValues(alpha: 0.6);
+    
+    final borderPaint = Paint()
+      ..color = guideColor
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 3.0
+      ..strokeWidth = 3.0;
+    
+    canvas.drawCircle(center, centerRadius, borderPaint);
+
+    // 3. Draw a pulsing outer ring if pose is correct
+    if (isPoseCorrect) {
+      final pulsePaint = Paint()
+        ..color = guideColor.withValues(alpha: 0.3 * (1 - pulseValue))
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0 + (10 * pulseValue);
+      
+      canvas.drawCircle(center, centerRadius + (20 * pulseValue), pulsePaint);
+    }
+
+    // 4. Draw corner brackets for a technical "scanning" look
+    final bracketPaint = Paint()
+      ..color = guideColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4.0
       ..strokeCap = StrokeCap.round;
 
-    // Top-left corner (L-shaped)
-    canvas.drawLine(
-      Offset(squareRect.left, squareRect.top + cornerLength),
-      Offset(squareRect.left, squareRect.top),
-      cornerPaint,
-    );
-    canvas.drawLine(
-      Offset(squareRect.left, squareRect.top),
-      Offset(squareRect.left + cornerLength, squareRect.top),
-      cornerPaint,
-    );
+    const bracketPadding = 10.0;
+    const bracketWidth = 0.5;
+    final r = centerRadius + bracketPadding;
 
-    // Top-right corner (L-shaped)
-    canvas.drawLine(
-      Offset(squareRect.right - cornerLength, squareRect.top),
-      Offset(squareRect.right, squareRect.top),
-      cornerPaint,
+    // Technical brackets (corners of a square inscribed/circumscribed)
+    // Top Left
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: r),
+      3.14159 + 0.2, // 180 deg
+      bracketWidth,
+      false,
+      bracketPaint,
     );
-    canvas.drawLine(
-      Offset(squareRect.right, squareRect.top),
-      Offset(squareRect.right, squareRect.top + cornerLength),
-      cornerPaint,
+    // Top Right
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: r),
+      -0.7,
+      bracketWidth,
+      false,
+      bracketPaint,
     );
-
-    // Bottom-left corner (L-shaped)
-    canvas.drawLine(
-      Offset(squareRect.left, squareRect.bottom - cornerLength),
-      Offset(squareRect.left, squareRect.bottom),
-      cornerPaint,
+    // Bottom Left
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: r),
+      3.14159 / 2 + 0.2,
+      bracketWidth,
+      false,
+      bracketPaint,
     );
-    canvas.drawLine(
-      Offset(squareRect.left, squareRect.bottom),
-      Offset(squareRect.left + cornerLength, squareRect.bottom),
-      cornerPaint,
-    );
-
-    // Bottom-right corner (L-shaped)
-    canvas.drawLine(
-      Offset(squareRect.right - cornerLength, squareRect.bottom),
-      Offset(squareRect.right, squareRect.bottom),
-      cornerPaint,
-    );
-    canvas.drawLine(
-      Offset(squareRect.right, squareRect.bottom),
-      Offset(squareRect.right, squareRect.bottom - cornerLength),
-      cornerPaint,
+    // Bottom Right
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: r),
+      0.2,
+      bracketWidth,
+      false,
+      bracketPaint,
     );
   }
 
   @override
   bool shouldRepaint(TintOverlayPainter oldDelegate) {
     return oldDelegate.centerRadius != centerRadius ||
-        oldDelegate.centerY != centerY;
+        oldDelegate.centerY != centerY ||
+        oldDelegate.isPoseCorrect != isPoseCorrect ||
+        oldDelegate.pulseValue != pulseValue;
   }
 }
