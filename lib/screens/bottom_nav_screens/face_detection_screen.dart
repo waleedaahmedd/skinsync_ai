@@ -10,12 +10,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:vibration/vibration.dart';
-// import 'package:vibration/vibration.dart';
-import 'package:volume_controller/volume_controller.dart';
 
 import '../../utills/assets.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
+import '../../utills/face_detection_utils.dart';
 import '../../utills/image_utills.dart';
 import '../../utills/secure_storage_service.dart';
 import '../../view_models/treatment_view_model.dart';
@@ -40,6 +39,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   bool _isCapturing = false;
   bool _isPoseCorrect = false;
 
+  int _countdown = 3;
+  Timer? _timer;
+  bool _isCountingDown = false;
+
   // Store ref for use in callbacks
   WidgetRef? _storedRef;
 
@@ -54,17 +57,17 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     _initCamera(ref);
 
     // Listen to volume button presses for capture
-    VolumeController.instance.showSystemUI = false;
-    VolumeController.instance.addListener((volume) {
-      if (_isPoseCorrect &&
-          !_isCapturing &&
-          _capturedImage == null &&
-          mounted) {
-        if (_storedRef != null) {
-          _captureAndNavigate(_storedRef!);
-        }
-      }
-    });
+    // VolumeController.instance.showSystemUI = false;
+    // VolumeController.instance.addListener((volume) {
+    //   if (_isPoseCorrect &&
+    //       !_isCapturing &&
+    //       _capturedImage == null &&
+    //       mounted) {
+    //     if (_storedRef != null) {
+    //       _captureAndNavigate(_storedRef!);
+    //     }
+    //   }
+    // });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final show = await SecureStorage().getMedicalDisclaimer();
@@ -112,7 +115,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       bool isPoseCorrect = false;
       if (faces.isNotEmpty) {
         final face = faces.first;
-        isPoseCorrect = _isCorrectPose(face);
+        isPoseCorrect = face.isCorrectPose(widget.pose);
       }
 
       if (_isPoseCorrect != isPoseCorrect) {
@@ -124,6 +127,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
           await Vibration.vibrate(duration: 200);
           await Future.delayed(const Duration(milliseconds: 200));
           // }
+          _startCountdown();
+        } else {
+          _stopCountdown();
         }
       }
     } catch (e) {
@@ -133,28 +139,41 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
     }
   }
 
-  bool _isCorrectPose(Face face) {
-    final angles = face.headEulerAngles;
-    if (angles == null) return false;
+  void _startCountdown() {
+    if (_isCountingDown || _isCapturing || _capturedImage != null) return;
 
-    final double yaw = angles.y;
-    final double pitch = angles.x;
-    final double roll = angles.z;
+    setState(() {
+      _isCountingDown = true;
+      _countdown = 3;
+    });
 
-    // Constraints for head stability
-    if (pitch.abs() > 15 || roll.abs() > 15) return false;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
 
-    switch (widget.pose) {
-      case 'front':
-        return yaw.abs() < 10;
-      case 'left':
-        // Positive Y is turned to the right of camera (person's left)
-        return yaw > 18;
-      case 'right':
-        // Negative Y is turned to the left of camera (person's right)
-        return yaw < -18;
-      default:
-        return false;
+      if (_countdown > 1) {
+        setState(() {
+          _countdown--;
+        });
+      } else {
+        _stopCountdown();
+        if (_isPoseCorrect && _storedRef != null) {
+          _captureAndNavigate(_storedRef!);
+        }
+      }
+    });
+  }
+
+  void _stopCountdown() {
+    _timer?.cancel();
+    _timer = null;
+    if (mounted) {
+      setState(() {
+        _isCountingDown = false;
+        _countdown = 3;
+      });
     }
   }
 
@@ -169,7 +188,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
       }
 
       final front = cameras.firstWhere(
-        (c) => c.lensDirection == CameraLensDirection.front,
+        (c) => c.lensDirection == .front,
         orElse: () => cameras.first,
       );
 
@@ -214,6 +233,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
   Future<void> _captureAndNavigate(WidgetRef ref) async {
     if (_cameraController == null || _isCapturing) return;
 
+    _stopCountdown();
+
     setState(() {
       _isCapturing = true;
       _isPoseCorrect = false;
@@ -238,8 +259,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
         centerYPercent: 0.42, // Position at top (28% from top)
         radiusPercent: 0.5, // 50% of image width
         flipHorizontally:
-            _cameraController!.description.lensDirection ==
-            CameraLensDirection.front, // Flip if front camera
+            _cameraController!.description.lensDirection == .front,
       );
 
       // Store captured image in state to show in dialog
@@ -390,9 +410,11 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
 
   @override
   void dispose() {
+    _timer?.cancel();
     _cameraController?.dispose();
     _faceDetector?.dispose();
-    VolumeController.instance.removeListener();
+    // VolumeController.instance.removeListener();
+    super.dispose();
     super.dispose();
   }
 
@@ -450,6 +472,35 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> {
                         ),
                         child: const SizedBox.expand(),
                       ),
+                      if (_isCountingDown)
+                        Center(
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            transitionBuilder:
+                                (Widget child, Animation<double> animation) {
+                                  return ScaleTransition(
+                                    scale: animation,
+                                    child: child,
+                                  );
+                                },
+                            child: Text(
+                              '$_countdown',
+                              key: ValueKey<int>(_countdown),
+                              style: TextStyle(
+                                fontSize: context.sp(120),
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                shadows: const [
+                                  Shadow(
+                                    blurRadius: 10,
+                                    color: Colors.black54,
+                                    offset: Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                     ],
                   );
                 },
