@@ -29,6 +29,11 @@ class ExploreState extends BaseStateModel {
 
   final ExploreViewType viewType;
 
+  // Separate loading flags so Reels and Community fetches
+  // never clobber each other's spinner state.
+  final bool reelsLoading;
+  final bool postsLoading;
+
   const ExploreState({
     super.loading,
     super.errorMessage,
@@ -40,6 +45,8 @@ class ExploreState extends BaseStateModel {
     this.postsCurrentPage = 1,
     this.pageSize = 20,
     this.viewType = ExploreViewType.community,
+    this.reelsLoading = false,
+    this.postsLoading = false,
   });
 
   @override
@@ -54,6 +61,8 @@ class ExploreState extends BaseStateModel {
     int? postsCurrentPage,
     int? pageSize,
     ExploreViewType? viewType,
+    bool? reelsLoading,
+    bool? postsLoading,
   }) {
     return ExploreState(
       loading: loading ?? this.loading,
@@ -66,6 +75,8 @@ class ExploreState extends BaseStateModel {
       postsCurrentPage: postsCurrentPage ?? this.postsCurrentPage,
       pageSize: pageSize ?? this.pageSize,
       viewType: viewType ?? this.viewType,
+      reelsLoading: reelsLoading ?? this.reelsLoading,
+      postsLoading: postsLoading ?? this.postsLoading,
     );
   }
 
@@ -81,6 +92,8 @@ class ExploreState extends BaseStateModel {
       postsCurrentPage: postsCurrentPage,
       pageSize: pageSize,
       viewType: viewType,
+      reelsLoading: reelsLoading,
+      postsLoading: postsLoading,
     );
   }
 }
@@ -89,42 +102,61 @@ class ExploreViewModel extends BaseViewModel<ExploreState> {
   final ExploreRepository _repository;
   ExploreViewModel({required this._repository})
     : super(initialState: const ExploreState());
-  Future<void> fetchReels({int page = 1}) async {
-    state = state.copyWith(loading: true);
 
-    await runSafely(() async {
-      final response = await _repository.fetchReels(
-        page: page,
-        limit: state.pageSize,
-      );
+ Future<void> fetchReels({int page = 1}) async {
+  state = state.copyWith(reelsLoading: true);
 
-      state = state.copyWith(
-        reels: response.data ?? [],
-        reelsTotalPages: response.totalPages,
-        reelsCurrentPage: response.page,
-        loading: false,
-      );
-    });
+  await runSafely(() async {
+    final response = await _repository.fetchReels(
+      page: page,
+      limit: state.pageSize,
+    );
+
+    final List<ReelModel> newReels = page == 1
+        ? (response.data ?? <ReelModel>[])
+        : <ReelModel>[...state.reels, ...(response.data ?? <ReelModel>[])];
+
+    state = state.copyWith(
+      reels: newReels,
+      reelsTotalPages: response.totalPages,
+      reelsCurrentPage: response.page,
+      reelsLoading: false,
+    );
+  });
+
+  if (state.reelsLoading) {
+    state = state.copyWith(reelsLoading: false);
   }
+}
 
-  Future<void> fetchPosts({int page = 1}) async {
-    state = state.copyWith(loading: true);
+Future<void> fetchPosts({int page = 1}) async {
+  state = state.copyWith(postsLoading: true);
 
-    await runSafely(() async {
-      final response = await _repository.fetchPosts(
-        page: page,
-        limit: state.pageSize,
-      );
+  await runSafely(() async {
+    final response = await _repository.fetchPosts(
+      page: page,
+      limit: state.pageSize,
+    );
 
-      state = state.copyWith(
-        posts: response.data ?? [],
-        postsTotalPages: response.totalPages,
-        postsCurrentPage: response.page,
-        loading: false,
-      );
-    });
+    final List<CommunityPostModel> newPosts = page == 1
+        ? (response.data ?? <CommunityPostModel>[])
+        : <CommunityPostModel>[
+            ...state.posts,
+            ...(response.data ?? <CommunityPostModel>[]),
+          ];
+
+    state = state.copyWith(
+      posts: newPosts,
+      postsTotalPages: response.totalPages,
+      postsCurrentPage: response.page,
+      postsLoading: false,
+    );
+  });
+
+  if (state.postsLoading) {
+    state = state.copyWith(postsLoading: false);
   }
-
+}
   void setViewType(ExploreViewType type) {
     state = state.copyWith(viewType: type);
   }

@@ -55,8 +55,8 @@ enum EndPoints {
   areas('areas'),
   materials('materials'),
   simulationHistory('v1/simulation-history'),
-  explorerReels('admin/reels'),
-  explorerCommunity('admin/community-posts'),
+  explorerReels('v1/reels?'),
+  explorerCommunity('v1/community-posts?'),
   appointmentTypes('v1/appointment-types');
 
   final String path;

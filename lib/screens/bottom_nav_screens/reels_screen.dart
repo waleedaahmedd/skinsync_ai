@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../../view_models/explore_view_model.dart';
-import '../../view_models/reels_view_model.dart';
+import '../../widgets/app_loader.dart';
 import '../../widgets/reel_card.dart';
 import '../../widgets/social_toggle_button.dart';
 
@@ -19,7 +19,15 @@ class ReelsScreen extends ConsumerStatefulWidget {
 class _ReelsScreenState extends ConsumerState<ReelsScreen> {
   final PageController _pageController = PageController();
   int _currentIndex = 0;
-  // int _selectedTab = 1; // 0: Following, 1: For You, 2: Nearby
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch reels once the widget is mounted
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(exploreViewModel.notifier).fetchReels();
+    });
+  }
 
   @override
   void dispose() {
@@ -29,30 +37,75 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(reelsViewModel);
+    final state = ref.watch(exploreViewModel);
 
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Stack(
           children: [
+            // Loading state (initial load only)
+            if (state.reelsLoading && state.reels.isEmpty)
+              const Center(
+                child: AppLoader(),
+              )
+            // Empty state
+            else if (state.reels.isEmpty)
+              const Center(
+                child: Text(
+                  'No reels found',
+                  style: TextStyle(color: Colors.white70),
+                ),
+              )
             // Infinite Vertical PageView
-            PageView.builder(
-              controller: _pageController,
-              scrollDirection: Axis.vertical,
-              itemCount: state.reels.length,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
-              itemBuilder: (context, index) {
-                return ReelCard(
-                  reel: state.reels[index],
-                  isActive: _currentIndex == index,
-                );
-              },
-            ),
+            else
+              Stack(
+                children: [
+                  PageView.builder(
+                    controller: _pageController,
+                    scrollDirection: Axis.vertical,
+                    itemCount: state.reels.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+
+                      // Pagination: fetch next page when nearing the end
+                      if (index >= state.reels.length - 3 &&
+                          state.reelsCurrentPage < state.reelsTotalPages &&
+                          !state.reelsLoading) {
+                        ref
+                            .read(exploreViewModel.notifier)
+                            .fetchReels(page: state.reelsCurrentPage + 1);
+                      }
+                    },
+                    itemBuilder: (context, index) {
+                      return ReelCard(
+                        reel: state.reels[index],
+                        isActive: _currentIndex == index,
+                      );
+                    },
+                  ),
+
+                  // Pagination loading indicator (bottom overlay)
+                  if (state.reelsLoading)
+                    Positioned(
+                      bottom: context.h(24),
+                      left: 0,
+                      right: 0,
+                      child: const Center(
+                        child: SizedBox(
+                          width: 28,
+                          height: 28,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2.5,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
 
             // Header with Icons and Tabs
             SafeArea(
@@ -64,53 +117,8 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    // SocialToggleButton(
-                    //   onTap: () => Navigator.pop(context),
-                    //   icon: Icons.arrow_back_ios_new_rounded,
-                    //   isReels: true,
-                    // ),
-
-                    // Search Icon (Top Left)
-                    // GestureDetector(
-                    //   onTap: () {},
-                    //   child: Padding(
-                    //     padding: EdgeInsets.all(context.r(8)),
-                    //     child: Icon(Icons.search_rounded, color: Colors.white, size: context.sp(26)),
-                    //   ),
-                    // ),
-
-                    // Tabs (Center)
-                    // Row(
-                    //   children: [
-                    //     _buildTab("Following", 0),
-                    //     Padding(
-                    //       padding: EdgeInsets.symmetric(horizontal: context.w(8)),
-                    //       child: Text("|", style: CustomFonts.white14w400.copyWith(color: Colors.white38)),
-                    //     ),
-                    //     _buildTab("For You", 1),
-                    //     Padding(
-                    //       padding: EdgeInsets.symmetric(horizontal: context.w(8)),
-                    //       child: Text("|", style: CustomFonts.white14w400.copyWith(color: Colors.white38)),
-                    //     ),
-                    //     _buildTab("Nearby", 2),
-                    //   ],
-                    // ),
-
-                    // Right Actions (Plus & Toggle)
                     Row(
                       children: [
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(builder: (context) => const CreatePostScreen()),
-                        //     );
-                        //   },
-                        //   child: Padding(
-                        //     padding: EdgeInsets.all(context.r(8)),
-                        //     child: Icon(Icons.add_box_outlined, color: Colors.white, size: context.sp(26)),
-                        //   ),
-                        // ),
                         SizedBox(width: context.w(4)),
                         SocialToggleButton(
                           onTap: () => ref
@@ -130,37 +138,4 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
       ),
     );
   }
-
-  // Widget _buildTab(String title, int index) {
-  //   bool isSelected = _selectedTab == index;
-  //   return GestureDetector(
-  //     onTap: () {
-  //       setState(() {
-  //         _selectedTab = index;
-  //       });
-  //     },
-  //     child: Column(
-  //       mainAxisSize: MainAxisSize.min,
-  //       children: [
-  //         Text(
-  //           title,
-  //           style: CustomFonts.white16w600.copyWith(
-  //             color: isSelected ? Colors.white : Colors.white70,
-  //             fontSize: isSelected ? context.sp(16) : context.sp(15),
-  //           ),
-  //         ),
-  //         if (isSelected)
-  //           Container(
-  //             margin: EdgeInsets.only(top: context.h(4)),
-  //             height: context.h(2),
-  //             width: context.w(20),
-  //             decoration: BoxDecoration(
-  //               color: Colors.white,
-  //               borderRadius: BorderRadius.circular(context.r(2)),
-  //             ),
-  //           ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }

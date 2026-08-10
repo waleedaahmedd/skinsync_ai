@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
+import '../../utills/assets.dart';
 import '../../utills/custom_fonts.dart';
 
 class ReelContentOverlay extends StatelessWidget {
@@ -26,7 +27,10 @@ class ReelContentOverlay extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: context.r(18),
-              backgroundImage: NetworkImage(userProfileImage),
+              backgroundImage:
+                  userProfileImage != ''
+                  ? NetworkImage(userProfileImage)
+                  : const AssetImage(PngAssets.splashLogo) as ImageProvider,
             ),
             SizedBox(width: context.w(10)),
             Text(userName, style: CustomFonts.white16w600),
