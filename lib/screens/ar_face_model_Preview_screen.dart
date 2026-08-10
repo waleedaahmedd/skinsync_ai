@@ -23,10 +23,8 @@ import '../widgets/app_loader.dart';
 import '../widgets/bottom_sheets/material_level_sheet.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_bordered_button.dart';
-import '../widgets/custom_button.dart';
 import '../widgets/selected_treatments_summary_card.dart';
 import '../widgets/service_type_button.dart';
-import 'explore_clinics_screen.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
   const ArFaceModelPreviewScreen({super.key});
@@ -454,39 +452,39 @@ class _ArFaceModelPreviewScreenState
                   ),
                 ),
               ),
-              SizedBox(width: context.w(16)),
-              Expanded(
-                child: CustomButton(
-                  text: 'Explore Clinics',
-                  borderRadius: context.r(30),
-                  height: context.h(58),
-                  onPressed: () {
-                    final checkoutState = ref.read(checkoutViewModel);
-                    final treatment = checkoutState.selectedTreatments;
-                    final treatmentId = treatment?.id;
-
-                    final currentEntry = _entryForTreatment(
-                      checkoutState.selectedTreatmentsAndAreas,
-                      treatmentId,
-                    );
-                    final subAreaIds =
-                        currentEntry?.selectedAreas
-                            .map((e) => e.target.id)
-                            .whereType<int>()
-                            .toList() ??
-                        <int>[];
-
-                    Navigator.pushNamed(
-                      context,
-                      ExploreClinicsScreen.routeName,
-                      arguments: {
-                        'treatmentId': treatmentId,
-                        'sideAreaIds': subAreaIds,
-                      },
-                    );
-                  },
-                ),
-              ),
+              // SizedBox(width: context.w(16)),
+              // Expanded(
+              //   child: CustomButton(
+              //     text: 'Explore Clinics',
+              //     borderRadius: context.r(30),
+              //     height: context.h(58),
+              //     onPressed: () {
+              //       final checkoutState = ref.read(checkoutViewModel);
+              //       final treatment = checkoutState.selectedTreatments;
+              //       final treatmentId = treatment?.id;
+              //
+              //       final currentEntry = _entryForTreatment(
+              //         checkoutState.selectedTreatmentsAndAreas,
+              //         treatmentId,
+              //       );
+              //       final subAreaIds =
+              //           currentEntry?.selectedAreas
+              //               .map((e) => e.target.id)
+              //               .whereType<int>()
+              //               .toList() ??
+              //           <int>[];
+              //
+              //       Navigator.pushNamed(
+              //         context,
+              //         ExploreClinicsScreen.routeName,
+              //         arguments: {
+              //           'treatmentId': treatmentId,
+              //           'sideAreaIds': subAreaIds,
+              //         },
+              //       );
+              //     },
+              //   ),
+              // ),
             ],
           ),
         );
