@@ -4,7 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../app_init.dart';
 import '../exceptions/app_exception.dart';
+import '../screens/update_version_screen.dart';
 
 abstract class BaseViewModel<S> extends Notifier<S> {
   final S initialState;
@@ -28,9 +30,15 @@ abstract class BaseViewModel<S> extends Notifier<S> {
     log('$runtimeType DISPOSED', name: 'RIVERPOD');
   }
 
-  Future<T?> runSafely<T>(AsyncValueGetter<T> action) async {
+  Future<T?> runSafely<T>(AsyncValueGetter<T?> action) async {
     try {
       return await action.call();
+    } on UpdateAppException catch (_) {
+      navigatorKey.currentState?.pushNamedAndRemoveUntil(
+        UpdateVersionScreen.routeName,
+        (route) => false,
+      );
+      return null;
     } on AppException catch (e, s) {
       log(e.message, stackTrace: s);
       onError(e.message);

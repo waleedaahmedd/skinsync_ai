@@ -8,6 +8,7 @@ import '../utills/secure_storage_service.dart';
 import '../view_models/auth_view_model.dart';
 import 'bottom_nav_page.dart';
 import 'get_started_screen.dart';
+import 'update_version_screen.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -64,10 +65,19 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         final token = await SecureStorage().getToken();
 
         if (token != null) {
-          ref.read(authViewModel.notifier).callGetMe().then((value) {
-            if (value == true) {
-              final islogin = ref.read(authViewModel).authData?.isFirstLogin;
-              if (islogin ?? false) {
+          ref.read(authViewModel.notifier).callGetMe().then((authData) async {
+            if (authData != null) {
+              final isUpdateAvailable = await authData.isUpdateAvailable();
+              if (isUpdateAvailable) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  UpdateVersionScreen.routeName,
+                  (route) => false,
+                );
+                return;
+              }
+              final isLogin = authData.isFirstLogin;
+              if (isLogin ?? false) {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   GetStartedScreen.routeName,

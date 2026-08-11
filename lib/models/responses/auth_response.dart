@@ -1,7 +1,12 @@
-import 'base_response_model.dart';
+import 'dart:io';
+
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:version/version.dart';
+
 import 'appointments_list_response.dart';
-import 'treatment_list_response.dart';
+import 'base_response_model.dart';
 import 'practitioner_list_response.dart';
+import 'treatment_list_response.dart';
 
 class AuthResponse extends BaseResponseModel {
   final AuthData? data;
@@ -13,12 +18,6 @@ class AuthResponse extends BaseResponseModel {
     message: json["message"],
     data: json["data"] == null ? null : AuthData.fromJson(json["data"]),
   );
-
-  Map<String, dynamic> toJson() => {
-    "is_success": isSuccess,
-    "message": message,
-    "data": data?.toJson(),
-  };
 }
 
 class AuthData {
@@ -70,19 +69,31 @@ class AuthData {
     ios: json["ios"] == null ? null : AppVersionInfo.fromJson(json["ios"]),
   );
 
-  Map<String, dynamic> toJson() => {
-    "is_first_login": isFirstLogin,
-    "is_active": isActive,
-    "access_token": accessToken,
-    "refresh_token": refreshToken,
-    "is_active_expiry": isActiveExpiry,
-    "refresh_token_expiry": refreshTokenExpiry,
-    "treatment": treatment == null
-        ? []
-        : List<dynamic>.from(treatment!.map((x) => x.toJson())),
-    "user": user?.toJson(),
-    "dashboard": dashboard?.toJson(),
-  };
+  Future<bool> isUpdateAvailable() async {
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    final int currentBuildNumber = int.tryParse(packageInfo.buildNumber) ?? 0;
+    int? serverBuildNumber;
+    String? versionNumber;
+
+    if (Platform.isAndroid) {
+      serverBuildNumber = android?.build;
+      versionNumber = android?.version;
+    } else if (Platform.isIOS) {
+      serverBuildNumber = ios?.build;
+      versionNumber = ios?.version;
+    }
+    if (versionNumber != null) {
+      final serverVersion = Version.parse(versionNumber);
+      final currentVersion = Version.parse(packageInfo.version);
+      if (serverVersion > currentVersion) {
+        return true;
+      }
+    }
+    if (serverBuildNumber != null && serverBuildNumber > currentBuildNumber) {
+      return true;
+    }
+    return false;
+  }
 }
 
 class AppVersionInfo {

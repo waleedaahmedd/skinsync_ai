@@ -65,19 +65,14 @@ class UpdateVersionScreen extends StatelessWidget {
                     ),
                     SizedBox(height: context.h(20)),
                     Text(
-                      "To continue using Skinsync Ai, please update to the latest version. This update includes important improvements and bug fixes.",
+                      "To continue using Skinsync AI, please update to the latest version. This update includes important improvements and bug fixes.",
                       style: CustomFonts.grey18w400,
                       textAlign: TextAlign.center,
                     ),
                     const Spacer(),
                     SizedBox(
                       width: double.infinity,
-                      child: CustomButton(
-                        onPressed: () {
-                          // TODO: Implement update logic (e.g., launch Store URL)
-                        },
-                        text: "Update Now",
-                      ),
+                      child: CustomButton(onPressed: () {}, text: "Update Now"),
                     ),
                     SizedBox(height: context.h(20)),
                   ],
