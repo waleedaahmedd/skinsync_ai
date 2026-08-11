@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../../models/social_post_model.dart';
-import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
 import '../../view_models/explore_view_model.dart';
 import '../../widgets/app_loader.dart';
 import '../../widgets/social_post_card.dart';
 import '../../widgets/social_toggle_button.dart';
-import '../create_post_screen.dart';
 
 class CommunityScreen extends ConsumerStatefulWidget {
   const CommunityScreen({super.key});
@@ -90,25 +88,26 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                       icon: Icons.play_circle_outline_rounded,
                       isReels: false,
                     ),
-                    SizedBox(width: context.w(12)),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const CreatePostScreen(),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(context.w(8)),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: CustomColors.purpleColor,
-                        ),
-                        child: const Icon(Icons.add, color: Colors.white),
-                      ),
-                    ),
+                    // SizedBox(width: context.w(12)),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) => const CreatePostScreen(),
+                    //       ),
+                    //     );
+                    //   },
+                    //   child: Container(
+                    //     padding: EdgeInsets.all(context.w(8)),
+                    //     decoration: const BoxDecoration(
+                    //       shape: BoxShape.circle,
+                    //       color: CustomColors.purpleColor,
+                    //     ),
+                    //     child: const Icon(Icons.add, color: Colors.white),
+                    //   ),
+                    // ),
+               
                   ],
                 ),
               ],
