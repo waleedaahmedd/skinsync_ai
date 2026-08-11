@@ -12,10 +12,15 @@ extension FaceUtils on Face {
     final double roll = angles.z;
 
     // Constraints for head stability
-    if (pitch.abs() > 15 || roll.abs() > 15) return false;
+    // Increased leniency for roll as some devices report 90-degree offsets in portrait
+    final normalizedRoll = (roll.abs() > 45 && roll.abs() < 135) ? (roll.abs() - 90).abs() : roll.abs();
+    
+    if (pitch.abs() > 25 || normalizedRoll > 25) {
+      log('Pose rejected: instability (pitch: ${pitch.toStringAsFixed(1)}, roll: ${roll.toStringAsFixed(1)}, normRoll: ${normalizedRoll.toStringAsFixed(1)})');
+      return false;
+    }
 
     // Check if face falls within the specified crop dimensions
-    // Crop area: center (0.5, 0.42), radius 0.5 of width
     final double imageWidth = originalSize.width;
     final double imageHeight = originalSize.height;
 
@@ -24,42 +29,36 @@ extension FaceUtils on Face {
     final double nRight = boundingBox.right / imageWidth;
     final double nBottom = boundingBox.bottom / imageHeight;
 
-    // Specified dimensions boundaries (from cropImageToCircle: center 0.5, 0.42, radius 0.5)
-    const double targetLeft = 0.0; // 0.5 - 0.5
-    const double targetRight = 1.0; // 0.5 + 0.5
-    const double targetTop = -0.08; // 0.42 - 0.5
-    const double targetBottom = 0.92; // 0.42 + 0.5
-
-    // Ensure face bounding box is contained within the crop square
-    if (nLeft < targetLeft ||
-        nRight > targetRight ||
-        nTop < targetTop ||
-        nBottom > targetBottom) {
-      return false;
-    }
-
-    // Centering check: Face should be reasonably centered for the best crop
+    // Centering check
     final double nCenterX = (nLeft + nRight) / 2;
     final double nCenterY = (nTop + nBottom) / 2;
-    if ((nCenterX - 0.5).abs() > 0.15 || (nCenterY - 0.42).abs() > 0.15) {
+    
+    if ((nCenterX - 0.5).abs() > 0.25 || (nCenterY - 0.42).abs() > 0.25) {
+      log('Pose rejected: not centered (centerX: ${nCenterX.toStringAsFixed(2)}, centerY: ${nCenterY.toStringAsFixed(2)})');
       return false;
     }
 
-    // Size check: Face shouldn't be too small (at least 35% of width for professional scan)
-    if ((nRight - nLeft) < 0.35) return false;
-    log('YAW: $yaw');
+    // Size check
+    if ((nRight - nLeft) < 0.25) {
+      log('Pose rejected: face too small (${(nRight - nLeft).toStringAsFixed(2)})');
+      return false;
+    }
+
+    log('YAW: ${yaw.toStringAsFixed(1)}');
 
     switch (pose) {
       case 'front':
-        return yaw.abs() < 8; // Tighter front scan (8 degrees)
+        final isFront = yaw.abs() < 12;
+        if (!isFront) log('Pose rejected: yaw too high for front');
+        return isFront;
       case 'left':
-        // My Left (Looking Left) -> Camera Right (Mirrored)
-        // Strict threshold for perfect side profile (40+ degrees)
-        return yaw < -40;
+        final isLeft = yaw < -30;
+        if (!isLeft) log('Pose rejected: yaw not far enough left');
+        return isLeft;
       case 'right':
-        // My Right (Looking Right) -> Camera Left (Mirrored)
-        // Strict threshold for perfect side profile (40+ degrees)
-        return yaw > 40;
+        final isRight = yaw > 30;
+        if (!isRight) log('Pose rejected: yaw not far enough right');
+        return isRight;
       default:
         return false;
     }
