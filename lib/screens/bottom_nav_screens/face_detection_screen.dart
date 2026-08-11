@@ -6,13 +6,11 @@ import 'package:camera/camera.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:face_detection_tflite/face_detection_tflite.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_litert/flutter_litert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:vibration/vibration.dart';
-import 'package:volume_controller/volume_controller.dart';
 
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
@@ -48,9 +46,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
   Timer? _timer;
   bool _isCountingDown = false;
 
-  Timer? _manualCaptureTimer;
-  bool _showManualCaptureUI = false;
-
   // Store ref for use in callbacks
   WidgetRef? _storedRef;
 
@@ -72,9 +67,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
       vsync: this,
       duration: const Duration(seconds: 1),
     )..repeat();
-
-    _startManualCaptureTimer();
-    _listenToVolumeButtons();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final show = await SecureStorage().getMedicalDisclaimer();
@@ -136,19 +128,17 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
       if (shouldPreferCpu) {
         log('Legacy iOS device detected, skipping GPU to avoid errors');
         _faceDetector = await FaceDetector.create(
-          minScore: 0.35,
-          minFaceSize: 0.05,
+          minScore: 0.5,
+          minFaceSize: 0.1,
           performanceConfig: const PerformanceConfig.xnnpack(),
         );
-        log('FaceDetector initialized successfully (XNNPACK)');
       } else {
         // 1. Try GPU acceleration
         _faceDetector = await FaceDetector.create(
-          minScore: 0.35,
-          minFaceSize: 0.05,
+          minScore: 0.5,
+          minFaceSize: 0.1,
           performanceConfig: const PerformanceConfig.gpu(),
         );
-        log('FaceDetector initialized successfully (GPU)');
       }
       
       if (mounted) {
@@ -159,8 +149,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
       try {
         // 2. Fallback to CPU-optimized XNNPACK
         _faceDetector = await FaceDetector.create(
-          minScore: 0.35,
-          minFaceSize: 0.05,
+          minScore: 0.5,
+          minFaceSize: 0.1,
           performanceConfig: const PerformanceConfig.xnnpack(),
         );
         if (mounted) {
@@ -210,33 +200,17 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
     _isProcessingFrame = true;
 
     try {
-      final rotation = _getRotation(
-        _cameraController!.description.sensorOrientation,
-      );
-      
       final faces = await _faceDetector!.detectFacesFromCameraImage(
         image,
-        rotation: rotation,
+        rotation: _getRotation(
+          _cameraController!.description.sensorOrientation,
+        ),
       );
-
-      // log('Detected faces: ${faces.length}, Rotation: $rotation');
 
       bool isPoseCorrect = false;
       if (faces.isNotEmpty) {
         final face = faces.first;
-        isPoseCorrect = face.isCorrectPose(
-          widget.pose,
-          isFrontCamera: _cameraController?.description.lensDirection == CameraLensDirection.front,
-        );
-        log('Pose correct: $isPoseCorrect, Score: ${face.detectionData.score}');
-        
-        // If a face is detected and pose is becoming correct, we can hide the manual capture message
-        if (isPoseCorrect && _showManualCaptureUI) {
-          setState(() {
-            _showManualCaptureUI = false;
-          });
-          _startManualCaptureTimer(); // Reset the timer
-        }
+        isPoseCorrect = face.isCorrectPose(widget.pose);
       }
 
       if (_isPoseCorrect != isPoseCorrect) {
@@ -244,23 +218,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
           _isPoseCorrect = isPoseCorrect;
         });
         if (_isPoseCorrect) {
-          // Trigger vibration/haptics based on platform
-          if (Platform.isAndroid) {
-            try {
-              Vibration.vibrate(duration: 200);
-            } catch (e) {
-              log("Android vibration error: $e");
-            }
-          } else {
-            // iOS: Use robust HapticFeedback to avoid CoreHaptics engine errors
-            try {
-              HapticFeedback.vibrate(); 
-              HapticFeedback.mediumImpact();
-            } catch (e) {
-              log("iOS haptic feedback error: $e");
-            }
-          }
-          
+          // if (await Vibration.hasVibrator()) {
+          await Vibration.vibrate(duration: 200);
           TtsUtils.speak("Hold still");
           // Give TTS time to say "hold still" before starting countdown numbers
           await Future.delayed(const Duration(milliseconds: 1000));
@@ -379,7 +338,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
         target,
         ResolutionPreset.veryHigh, // HD quality
         enableAudio: false,
-        imageFormatGroup: ImageFormatGroup.yuv420,
+        imageFormatGroup: Platform.isIOS
+            ? ImageFormatGroup.bgra8888
+            : ImageFormatGroup.yuv420,
       );
 
       await controller.initialize();
@@ -390,7 +351,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
       }
 
       // Start face detection stream for automatic capture
-      log('Starting image stream. Sensor orientation: ${controller.description.sensorOrientation}');
       controller.startImageStream(_onFrameAvailable);
 
       setState(() {
@@ -596,30 +556,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
     );
   }
 
-  void _startManualCaptureTimer() {
-    _manualCaptureTimer?.cancel();
-    _manualCaptureTimer = Timer(const Duration(seconds: 5), () {
-      if (mounted && !_isCountingDown && !_isCapturing && _capturedImage == null) {
-        setState(() {
-          _showManualCaptureUI = true;
-        });
-      }
-    });
-  }
-
-  void _listenToVolumeButtons() {
-    VolumeController.instance.addListener((volume) {
-      if (mounted && _showManualCaptureUI && !_isCapturing && _capturedImage == null) {
-        _captureAndNavigate(_storedRef!);
-      }
-    });
-  }
-
   @override
   void dispose() {
     _timer?.cancel();
-    _manualCaptureTimer?.cancel();
-    VolumeController.instance.removeListener();
     _cameraController?.dispose();
     _faceDetector?.dispose();
     _pulseController.dispose();
@@ -833,11 +772,11 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
                 border: Border.all(color: _isPoseCorrect ? CustomColors.purpleColor : Colors.white24),
               ),
               child: Text(
-                _isFaceDetectorError || _showManualCaptureUI
+                _isFaceDetectorError
                     ? "MANUAL CAPTURE MODE"
                     : (_isPoseCorrect ? "POSE CORRECT" : "ALIGN YOUR FACE"),
                 style: TextStyle(
-                  color: _isPoseCorrect || _isFaceDetectorError || _showManualCaptureUI
+                  color: _isPoseCorrect || _isFaceDetectorError
                       ? CustomColors.purpleColor 
                       : Colors.white70,
                   fontSize: context.sp(12),
@@ -853,7 +792,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
             ),
             SizedBox(height: context.h(8)),
             Text(
-              _isFaceDetectorError || _showManualCaptureUI
+              _isFaceDetectorError
                   ? "Position your face and capture"
                   : "Keep your face within the frame for auto-capture",
               textAlign: TextAlign.center,
@@ -862,19 +801,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
                 fontSize: context.sp(14),
               ),
             ),
-            if (_showManualCaptureUI && !_isFaceDetectorError)
-              Padding(
-                padding: EdgeInsets.only(top: context.h(8)),
-                child: Text(
-                  "Tip: You can also press the Volume button to capture",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: CustomColors.purpleColor,
-                    fontSize: context.sp(12),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
             SizedBox(height: context.h(28)),
 
             // Professional Tips Section
@@ -883,7 +809,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
             SizedBox(height: context.h(24)),
             if (_isCapturing)
               const AppLoader()
-            else if (_isFaceDetectorError || _showManualCaptureUI)
+            else if (_isFaceDetectorError)
               Padding(
                 padding: EdgeInsets.only(bottom: context.h(20)),
                 child: CustomButton(
