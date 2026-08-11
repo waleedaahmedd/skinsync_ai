@@ -9,6 +9,8 @@ import 'package:http/http.dart';
 import 'package:mime/mime.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../main.dart';
+
 class MediaService {
   final _storage = FirebaseStorage.instance;
   static const int maxSizeBytes = 2 * 1024 * 1024;
@@ -28,7 +30,9 @@ class MediaService {
     bool acceptAnyFormat = false,
   }) async {
     final storagePath = '$path/${image.name}';
-    final ref = _storage.ref().child(storagePath);
+    final ref = _storage
+        .ref(isDeploymentMode ? 'production/' : 'staging/')
+        .child(storagePath);
     final metadata = SettableMetadata(
       contentType: _imageContentType(image.path, acceptAnyFormat),
     );
@@ -59,7 +63,9 @@ class MediaService {
 
   Future<String?> uploadFile(String path, PlatformFile file) async {
     final storagePath = '$path/${file.name}';
-    final ref = _storage.ref().child(storagePath);
+    final ref = _storage
+        .ref(isDeploymentMode ? 'production/' : 'staging/')
+        .child(storagePath);
     final metadata = SettableMetadata(
       contentType: file.extension == 'pdf'
           ? 'application/pdf'
@@ -123,7 +129,9 @@ class MediaService {
       log('UPLOAD STARTED');
       log('PATH: $storagePath');
 
-      final ref = _storage.ref().child(storagePath);
+      final ref = _storage
+          .ref(isDeploymentMode ? 'production/' : 'staging/')
+          .child(storagePath);
       if (storagePath.contains('/image/')) {
         bytes = await _compressImage(bytes);
       }
