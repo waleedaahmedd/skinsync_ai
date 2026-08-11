@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:pinput/pinput.dart';
 
+import '../main.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -10,6 +11,7 @@ import '../view_models/auth_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
+import 'bottom_nav_page.dart';
 import 'face_scan_screen.dart';
 import 'login_screen.dart';
 import 'signup_onboarding.dart';
@@ -169,9 +171,14 @@ class OtpScreen extends StatelessWidget {
                                                 route.settings.name ==
                                                 LoginScreen.routeName,
                                           )
-                                        : Navigator.pushNamedAndRemoveUntil(
+                                        : !isDeploymentMode ?
+                                         Navigator.pushNamedAndRemoveUntil(
                                             context,
                                             FaceScanScreen.routeName,
+                                            (Route<dynamic> route) => false,
+                                          ) :   Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            BottomNavPage.routeName,
                                             (Route<dynamic> route) => false,
                                           );
                                   }

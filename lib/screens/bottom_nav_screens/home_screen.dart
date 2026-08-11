@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
+import '../../main.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
 import '../../view_models/auth_view_model.dart';
@@ -50,6 +51,7 @@ class HomeScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: context.h(22)),
+              if(!isDeploymentMode)
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                 child: Column(
@@ -65,8 +67,9 @@ class HomeScreen extends ConsumerWidget {
                   ],
                 ),
               ),
+               if(!isDeploymentMode)
               SizedBox(height: context.h(16)),
-
+               if(!isDeploymentMode)
               appointments.isEmpty
                   ? _buildHorizontalEmptyState(
                       context: context,
@@ -110,9 +113,11 @@ class HomeScreen extends ConsumerWidget {
                         },
                       ),
                     ),
+                     if(!isDeploymentMode)
               SizedBox(height: context.h(28)),
 
               // Suggested Treatments Section
+             
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                 child: HeadingWithRightArrow(
@@ -122,7 +127,9 @@ class HomeScreen extends ConsumerWidget {
                   },
                 ),
               ),
+             
               SizedBox(height: context.h(16)),
+             
               SizedBox(
                 height: context.h(180),
                 child: Consumer(
@@ -165,9 +172,11 @@ class HomeScreen extends ConsumerWidget {
                   },
                 ),
               ),
+            
               SizedBox(height: context.h(28)),
 
               // Top Doctors Section
+              if(!isDeploymentMode)
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                 child: HeadingWithRightArrow(
@@ -181,9 +190,11 @@ class HomeScreen extends ConsumerWidget {
                   },
                 ),
               ),
+              if(!isDeploymentMode)
               SizedBox(height: context.h(16)),
 
               // Top Doctors Empty State Check
+               if(!isDeploymentMode)
               (dashboard?.topDoctors?.isEmpty ?? true)
                   ? _buildHorizontalEmptyState(
                       context: context,
@@ -208,9 +219,11 @@ class HomeScreen extends ConsumerWidget {
                             ),
                       ),
                     ),
+              if(!isDeploymentMode)
               SizedBox(height: context.h(28)),
 
               // Top Clinics Section
+               if(!isDeploymentMode)
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                 child: HeadingWithRightArrow(
@@ -223,9 +236,11 @@ class HomeScreen extends ConsumerWidget {
                   },
                 ),
               ),
+              if(!isDeploymentMode)
               SizedBox(height: context.h(16)),
 
               // Top Clinics Empty State Check
+               if(!isDeploymentMode)
               (dashboard?.topClinics?.isEmpty ?? true)
                   ? _buildHorizontalEmptyState(
                       context: context,
@@ -250,6 +265,7 @@ class HomeScreen extends ConsumerWidget {
                             ),
                       ),
                     ),
+               if(!isDeploymentMode)
               SizedBox(height: context.h(28)),
 
               // Promotions & Discounts Section

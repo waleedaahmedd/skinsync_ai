@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
+import '../main.dart';
 import '../screens/bottom_nav_page.dart';
 import '../screens/face_scan_screen.dart';
 import '../screens/login_screen.dart';
@@ -43,7 +44,10 @@ void loginBottomSheet(BuildContext context) {
                 bottomRight: Radius.circular(context.r(55)),
               ),
             ),
-            padding: EdgeInsets.symmetric(horizontal: context.w(20), vertical: context.h(28)),
+            padding: EdgeInsets.symmetric(
+              horizontal: context.w(20),
+              vertical: context.h(28),
+            ),
             child: SingleChildScrollView(
               child: Consumer(
                 builder: (context, ref, _) {
@@ -130,9 +134,7 @@ void loginBottomSheet(BuildContext context) {
                             authViewModel.select((s) => s.loading),
                           );
                           if (loading) {
-                            return const Center(
-                              child: AppLoader()
-                            );
+                            return const Center(child: AppLoader());
                           }
                           return Column(
                             children: [
@@ -154,7 +156,9 @@ void loginBottomSheet(BuildContext context) {
                                       vertical: context.h(16),
                                     ),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(context.r(10)),
+                                      borderRadius: BorderRadius.circular(
+                                        context.r(10),
+                                      ),
                                       color: CustomColors.greyColor,
                                     ),
                                     child: Center(
@@ -199,11 +203,19 @@ Row _buildSocialSignIns(BuildContext context, WidgetRef ref) {
                 .read(authViewModel.notifier)
                 .callGoogleSignInApi();
             if (success ?? false) {
+              if (isDeploymentMode) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  BottomNavPage.routeName,
+                  (Route<dynamic> route) => false,
+                );
+              } else{
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 FaceScanScreen.routeName,
                 (Route<dynamic> route) => false,
               );
+              }
             }
           },
           child: Container(
@@ -242,11 +254,19 @@ Row _buildSocialSignIns(BuildContext context, WidgetRef ref) {
                           route.settings.name == LoginScreen.routeName,
                     )
                   : */
+              if (isDeploymentMode) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  BottomNavPage.routeName,
+                  (Route<dynamic> route) => false,
+                );
+              } else{
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 FaceScanScreen.routeName,
                 (Route<dynamic> route) => false,
               );
+              }
             }
           },
           child: Container(
