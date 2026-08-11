@@ -1,10 +1,9 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:face_detection_tflite/face_detection_tflite.dart';
 
 extension FaceUtils on Face {
-  bool isCorrectPose(String pose, {bool isFrontCamera = true}) {
+  bool isCorrectPose(String pose) {
     final angles = headEulerAngles;
     if (angles == null) return false;
 
@@ -39,8 +38,8 @@ extension FaceUtils on Face {
       return false;
     }
 
-    // Size check: Lowered threshold from 0.25 to 0.15 to allow detection from further away
-    if ((nRight - nLeft) < 0.15) {
+    // Size check
+    if ((nRight - nLeft) < 0.25) {
       log('Pose rejected: face too small (${(nRight - nLeft).toStringAsFixed(2)})');
       return false;
     }
@@ -53,33 +52,13 @@ extension FaceUtils on Face {
         if (!isFront) log('Pose rejected: yaw too high for front');
         return isFront;
       case 'left':
-        // User behavior: Look RIGHT to capture Left Profile.
-        bool isLeftProfile;
-        if (Platform.isIOS) {
-          // iOS Selfie Right turn = Positive, iOS Back Right turn = Negative
-          isLeftProfile = isFrontCamera ? yaw > 30 : yaw < -30;
-        } else {
-          // Android Selfie Right turn = Negative, Android Back Right turn = Positive
-          // (Exactly opposite to iOS behavior)
-          isLeftProfile = isFrontCamera ? yaw < -30 : yaw > 30;
-        }
-        
-        if (!isLeftProfile) log('Pose rejected: yaw not correct for left profile (current: ${yaw.toStringAsFixed(1)})');
-        return isLeftProfile;
+        final isLeft = yaw < -30;
+        if (!isLeft) log('Pose rejected: yaw not far enough left');
+        return isLeft;
       case 'right':
-        // User behavior: Look LEFT to capture Right Profile.
-        bool isRightProfile;
-        if (Platform.isIOS) {
-          // iOS Selfie Left turn = Negative, iOS Back Left turn = Positive
-          isRightProfile = isFrontCamera ? yaw < -30 : yaw > 30;
-        } else {
-          // Android Selfie Left turn = Positive, Android Back Left turn = Negative
-          // (Exactly opposite to iOS behavior)
-          isRightProfile = isFrontCamera ? yaw > 30 : yaw < -30;
-        }
-        
-        if (!isRightProfile) log('Pose rejected: yaw not correct for right profile (current: ${yaw.toStringAsFixed(1)})');
-        return isRightProfile;
+        final isRight = yaw > 30;
+        if (!isRight) log('Pose rejected: yaw not far enough right');
+        return isRight;
       default:
         return false;
     }

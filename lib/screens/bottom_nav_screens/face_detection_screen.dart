@@ -11,7 +11,6 @@ import 'package:flutter_litert/flutter_litert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:vibration/vibration.dart';
 import 'package:volume_controller/volume_controller.dart';
 
 import '../../utills/color_constant.dart';
@@ -136,16 +135,16 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
       if (shouldPreferCpu) {
         log('Legacy iOS device detected, skipping GPU to avoid errors');
         _faceDetector = await FaceDetector.create(
-          minScore: 0.35,
-          minFaceSize: 0.05,
+          minScore: 0.4,
+          minFaceSize: 0.1,
           performanceConfig: const PerformanceConfig.xnnpack(),
         );
         log('FaceDetector initialized successfully (XNNPACK)');
       } else {
         // 1. Try GPU acceleration
         _faceDetector = await FaceDetector.create(
-          minScore: 0.35,
-          minFaceSize: 0.05,
+          minScore: 0.4,
+          minFaceSize: 0.1,
           performanceConfig: const PerformanceConfig.gpu(),
         );
         log('FaceDetector initialized successfully (GPU)');
@@ -159,8 +158,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
       try {
         // 2. Fallback to CPU-optimized XNNPACK
         _faceDetector = await FaceDetector.create(
-          minScore: 0.35,
-          minFaceSize: 0.05,
+          minScore: 0.5,
+          minFaceSize: 0.1,
           performanceConfig: const PerformanceConfig.xnnpack(),
         );
         if (mounted) {
@@ -224,11 +223,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
       bool isPoseCorrect = false;
       if (faces.isNotEmpty) {
         final face = faces.first;
-        isPoseCorrect = face.isCorrectPose(
-          widget.pose,
-          isFrontCamera: _cameraController?.description.lensDirection == CameraLensDirection.front,
-        );
-        log('Pose correct: $isPoseCorrect, Score: ${face.detectionData.score}');
+        isPoseCorrect = face.isCorrectPose(widget.pose);
+        // log('Pose correct: $isPoseCorrect, Score: ${face.detectionData.score}');
         
         // If a face is detected and pose is becoming correct, we can hide the manual capture message
         if (isPoseCorrect && _showManualCaptureUI) {
@@ -244,21 +240,12 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
           _isPoseCorrect = isPoseCorrect;
         });
         if (_isPoseCorrect) {
-          // Trigger vibration/haptics based on platform
-          if (Platform.isAndroid) {
-            try {
-              Vibration.vibrate(duration: 200);
-            } catch (e) {
-              log("Android vibration error: $e");
-            }
-          } else {
-            // iOS: Use robust HapticFeedback to avoid CoreHaptics engine errors
-            try {
-              HapticFeedback.vibrate(); 
-              HapticFeedback.mediumImpact();
-            } catch (e) {
-              log("iOS haptic feedback error: $e");
-            }
+          // Use robust HapticFeedback
+          try {
+            HapticFeedback.vibrate(); // Generic vibration for maximum compatibility
+            HapticFeedback.mediumImpact();
+          } catch (e) {
+            log("Haptic feedback error: $e");
           }
           
           TtsUtils.speak("Hold still");
