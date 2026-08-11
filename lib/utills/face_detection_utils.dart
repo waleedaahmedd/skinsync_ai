@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:face_detection_tflite/face_detection_tflite.dart';
 
 extension FaceUtils on Face {
-  bool isCorrectPose(String pose) {
+  bool isCorrectPose(String pose, {bool isFrontCamera = true}) {
     final angles = headEulerAngles;
     if (angles == null) return false;
 
@@ -52,13 +52,18 @@ extension FaceUtils on Face {
         if (!isFront) log('Pose rejected: yaw too high for front');
         return isFront;
       case 'left':
-        final isLeft = yaw < -30;
-        if (!isLeft) log('Pose rejected: yaw not far enough left');
-        return isLeft;
+        // For 'left' pose (Left Profile), the head should be turned to the RIGHT.
+        // In mirrored selfie camera, turned right usually results in positive yaw.
+        // If it's the front camera, we swap the threshold to match the mirrored view.
+        final isLeftProfile = isFrontCamera ? yaw > 30 : yaw < -30;
+        if (!isLeftProfile) log('Pose rejected: yaw not correct for left profile (current: ${yaw.toStringAsFixed(1)})');
+        return isLeftProfile;
       case 'right':
-        final isRight = yaw > 30;
-        if (!isRight) log('Pose rejected: yaw not far enough right');
-        return isRight;
+        // For 'right' pose (Right Profile), the head should be turned to the LEFT.
+        // In mirrored selfie camera, turned left usually results in negative yaw.
+        final isRightProfile = isFrontCamera ? yaw < -30 : yaw > 30;
+        if (!isRightProfile) log('Pose rejected: yaw not correct for right profile (current: ${yaw.toStringAsFixed(1)})');
+        return isRightProfile;
       default:
         return false;
     }
