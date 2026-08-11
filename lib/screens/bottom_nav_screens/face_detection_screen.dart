@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:face_detection_tflite/face_detection_tflite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_litert/flutter_litert.dart';
@@ -49,6 +50,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
   WidgetRef? _storedRef;
 
   FaceDetector? _faceDetector;
+  bool _isFaceDetectorError = false;
   bool _isProcessingFrame = false;
 
   late AnimationController _pulseController;
@@ -104,7 +106,74 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
   }
 
   Future<void> _initFaceDetector() async {
-    _faceDetector = await FaceDetector.create(minScore: 0.5, minFaceSize: 0.1);
+    setState(() {
+      _isFaceDetectorError = false;
+    });
+
+    try {
+      bool shouldPreferCpu = false;
+      
+      // Check for legacy iOS devices that don't support L2_NORMALIZATION on GPU
+      if (Platform.isIOS) {
+        final deviceInfo = DeviceInfoPlugin();
+        final iosInfo = await deviceInfo.iosInfo;
+        final model = iosInfo.utsname.machine; // e.g., "iPhone9,1"
+        
+        // iPhone 7 (9,1/9,3), 7 Plus (9,2/9,4), 6s (8,1), 6s Plus (8,2), SE 1st gen (8,4)
+        if (model.contains('iPhone8,') || model.contains('iPhone9,')) {
+          shouldPreferCpu = true;
+        }
+      }
+
+      if (shouldPreferCpu) {
+        log('Legacy iOS device detected, skipping GPU to avoid errors');
+        _faceDetector = await FaceDetector.create(
+          minScore: 0.5,
+          minFaceSize: 0.1,
+          performanceConfig: const PerformanceConfig.xnnpack(),
+        );
+      } else {
+        // 1. Try GPU acceleration
+        _faceDetector = await FaceDetector.create(
+          minScore: 0.5,
+          minFaceSize: 0.1,
+          performanceConfig: const PerformanceConfig.gpu(),
+        );
+      }
+      
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      log('Primary initialization failed, trying fallback: $e');
+      try {
+        // 2. Fallback to CPU-optimized XNNPACK
+        _faceDetector = await FaceDetector.create(
+          minScore: 0.5,
+          minFaceSize: 0.1,
+          performanceConfig: const PerformanceConfig.xnnpack(),
+        );
+        if (mounted) {
+          setState(() {});
+        }
+      } catch (e2) {
+        log('Initialization failed completely: $e2');
+        if (mounted) {
+          setState(() {
+            _isFaceDetectorError = true;
+          });
+        }
+      }
+    }
+
+    // Safety timeout: if still null after 10 seconds, show manual capture
+    Future.delayed(const Duration(seconds: 10), () {
+      if (mounted && _faceDetector == null) {
+        setState(() {
+          _isFaceDetectorError = true;
+        });
+      }
+    });
   }
 
   CameraFrameRotation? _getRotation(int sensorOrientation) {
@@ -703,9 +772,13 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
                 border: Border.all(color: _isPoseCorrect ? CustomColors.purpleColor : Colors.white24),
               ),
               child: Text(
-                _isPoseCorrect ? "POSE CORRECT" : "ALIGN YOUR FACE",
+                _isFaceDetectorError
+                    ? "MANUAL CAPTURE MODE"
+                    : (_isPoseCorrect ? "POSE CORRECT" : "ALIGN YOUR FACE"),
                 style: TextStyle(
-                  color: _isPoseCorrect ? CustomColors.purpleColor : Colors.white70,
+                  color: _isPoseCorrect || _isFaceDetectorError
+                      ? CustomColors.purpleColor 
+                      : Colors.white70,
                   fontSize: context.sp(12),
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
@@ -719,7 +792,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
             ),
             SizedBox(height: context.h(8)),
             Text(
-              "Keep your face within the frame for auto-capture",
+              _isFaceDetectorError
+                  ? "Position your face and capture"
+                  : "Keep your face within the frame for auto-capture",
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white70,
@@ -732,9 +807,17 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
             _buildProfessionalTips(),
 
             SizedBox(height: context.h(24)),
-            if (_isCapturing) 
+            if (_isCapturing)
               const AppLoader()
-            else 
+            else if (_isFaceDetectorError)
+              Padding(
+                padding: EdgeInsets.only(bottom: context.h(20)),
+                child: CustomButton(
+                  onPressed: () => _captureAndNavigate(_storedRef!),
+                  text: "Capture Image",
+                ),
+              )
+            else
               SizedBox(height: context.h(52)), // Fixed height spacer
           ],
         ),
