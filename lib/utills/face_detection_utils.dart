@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:face_detection_tflite/face_detection_tflite.dart';
 
@@ -52,16 +53,31 @@ extension FaceUtils on Face {
         if (!isFront) log('Pose rejected: yaw too high for front');
         return isFront;
       case 'left':
-        // For 'left' pose (Left Profile), the head should be turned to the RIGHT.
-        // In mirrored selfie camera, turned right usually results in positive yaw.
-        // If it's the front camera, we swap the threshold to match the mirrored view.
-        final isLeftProfile = isFrontCamera ? yaw > 30 : yaw < -30;
+        // User behavior: Look RIGHT to capture Left Profile.
+        bool isLeftProfile;
+        if (Platform.isIOS) {
+          // iOS Selfie Right turn = Positive, iOS Back Right turn = Negative
+          isLeftProfile = isFrontCamera ? yaw > 30 : yaw < -30;
+        } else {
+          // Android Selfie Right turn = Negative, Android Back Right turn = Positive
+          // (Exactly opposite to iOS behavior)
+          isLeftProfile = isFrontCamera ? yaw < -30 : yaw > 30;
+        }
+        
         if (!isLeftProfile) log('Pose rejected: yaw not correct for left profile (current: ${yaw.toStringAsFixed(1)})');
         return isLeftProfile;
       case 'right':
-        // For 'right' pose (Right Profile), the head should be turned to the LEFT.
-        // In mirrored selfie camera, turned left usually results in negative yaw.
-        final isRightProfile = isFrontCamera ? yaw < -30 : yaw > 30;
+        // User behavior: Look LEFT to capture Right Profile.
+        bool isRightProfile;
+        if (Platform.isIOS) {
+          // iOS Selfie Left turn = Negative, iOS Back Left turn = Positive
+          isRightProfile = isFrontCamera ? yaw < -30 : yaw > 30;
+        } else {
+          // Android Selfie Left turn = Positive, Android Back Left turn = Negative
+          // (Exactly opposite to iOS behavior)
+          isRightProfile = isFrontCamera ? yaw > 30 : yaw < -30;
+        }
+        
         if (!isRightProfile) log('Pose rejected: yaw not correct for right profile (current: ${yaw.toStringAsFixed(1)})');
         return isRightProfile;
       default:
