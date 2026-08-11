@@ -223,8 +223,11 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
       bool isPoseCorrect = false;
       if (faces.isNotEmpty) {
         final face = faces.first;
-        isPoseCorrect = face.isCorrectPose(widget.pose);
-        // log('Pose correct: $isPoseCorrect, Score: ${face.detectionData.score}');
+        isPoseCorrect = face.isCorrectPose(
+          widget.pose,
+          isFrontCamera: _cameraController?.description.lensDirection == CameraLensDirection.front,
+        );
+        log('Pose correct: $isPoseCorrect, Score: ${face.detectionData.score}');
         
         // If a face is detected and pose is becoming correct, we can hide the manual capture message
         if (isPoseCorrect && _showManualCaptureUI) {
