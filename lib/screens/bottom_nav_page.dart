@@ -6,11 +6,11 @@ import '../view_models/bottom_nav_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 import '../widgets/scan_face_button.dart';
 import 'bottom_nav_bar.dart';
-import 'bottom_nav_screens/appointments_screen.dart';
 import 'bottom_nav_screens/explore_screen.dart';
 import 'bottom_nav_screens/home_screen.dart';
 import 'bottom_nav_screens/my_profile_screen.dart';
 import 'bottom_nav_screens/treatment_explore_screen.dart';
+import 'treatment_journey_screen.dart';
 
 class BottomNavPage extends ConsumerStatefulWidget {
   const BottomNavPage({super.key});
@@ -43,7 +43,7 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage> {
                 0 => const HomeScreen(),
                 1 => const TreatmentExploreScreen(),
                 2 => const ExploreScreen(),
-                3 => const AppointmentsScreen(),
+                3 => const TreatmentJourneyScreen(),
                 4 => const MyProfileScreen(),
                 int() => throw UnimplementedError(),
               },

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
@@ -209,12 +211,12 @@ Row _buildSocialSignIns(BuildContext context, WidgetRef ref) {
                   BottomNavPage.routeName,
                   (Route<dynamic> route) => false,
                 );
-              } else{
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                FaceScanScreen.routeName,
-                (Route<dynamic> route) => false,
-              );
+              } else {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  FaceScanScreen.routeName,
+                  (Route<dynamic> route) => false,
+                );
               }
             }
           },
@@ -235,15 +237,16 @@ Row _buildSocialSignIns(BuildContext context, WidgetRef ref) {
           ),
         ),
       ),
-      const SizedBox(width: 8),
-      Expanded(
-        child: GestureDetector(
-          onTap: () async {
-            final success = await ref
-                .read(authViewModel.notifier)
-                .callAppleSignInApi();
-            if (success ?? false) {
-              /* bool? isLoggedIn =
+      if (Platform.isIOS) ...[
+        const SizedBox(width: 8),
+        Expanded(
+          child: GestureDetector(
+            onTap: () async {
+              final success = await ref
+                  .read(authViewModel.notifier)
+                  .callAppleSignInApi();
+              if (success ?? false) {
+                /* bool? isLoggedIn =
                   ref.read(authViewModel).authResponse?.data?.isFirstLogin ??
                   false;
               isLoggedIn
@@ -254,38 +257,39 @@ Row _buildSocialSignIns(BuildContext context, WidgetRef ref) {
                           route.settings.name == LoginScreen.routeName,
                     )
                   : */
-              if (isDeploymentMode) {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  BottomNavPage.routeName,
-                  (Route<dynamic> route) => false,
-                );
-              } else{
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                FaceScanScreen.routeName,
-                (Route<dynamic> route) => false,
-              );
+                if (isDeploymentMode) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    BottomNavPage.routeName,
+                    (Route<dynamic> route) => false,
+                  );
+                } else {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    FaceScanScreen.routeName,
+                    (Route<dynamic> route) => false,
+                  );
+                }
               }
-            }
-          },
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: context.h(16)),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(context.r(10)),
-              color: CustomColors.greyColor,
-            ),
-            child: Center(
-              child: Image.asset(
-                PngAssets.apple,
-                height: context.h(32),
-                width: context.w(32),
-                fit: BoxFit.contain,
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: context.h(16)),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(context.r(10)),
+                color: CustomColors.greyColor,
+              ),
+              child: Center(
+                child: Image.asset(
+                  PngAssets.apple,
+                  height: context.h(32),
+                  width: context.w(32),
+                  fit: BoxFit.contain,
+                ),
               ),
             ),
           ),
         ),
-      ),
+      ],
     ],
   );
 }

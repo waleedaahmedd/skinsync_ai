@@ -16,6 +16,7 @@ import '../../widgets/home_horizontal_sections.dart';
 import '../../widgets/points_earn_card.dart';
 import '../../widgets/treatment_container.dart';
 import '../appointment_detail_screen.dart';
+import 'appointments_screen.dart';
 import '../doctors_screen.dart';
 import '../explore_clinics_screen.dart';
 import '../notification_screen.dart';
@@ -61,7 +62,10 @@ class HomeScreen extends ConsumerWidget {
                     HeadingWithRightArrow(
                       title: "Upcoming Appointments",
                       onTap: () {
-                        ref.read(bottomNavViewModel.notifier).changePage(3);
+                        Navigator.pushNamed(
+                          context,
+                          AppointmentsScreen.routeName,
+                        );
                       },
                     ),
                   ],
