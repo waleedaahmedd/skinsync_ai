@@ -89,7 +89,6 @@ class _TreatmentJourneyScreenState
                 decoration: const InputDecoration(hintText: "Enter group name"),
               ),
               SizedBox(height: context.h(28)),
-
               // Action Button
               CustomButton(
                 onPressed: () async {
@@ -147,6 +146,7 @@ class _TreatmentJourneyScreenState
       appBar: CustomAppBar(
         showTitle: true,
         title: 'Treatment Journey',
+        showBackButton: Navigator.of(context).canPop(), // Sirf tab dikhega jab piche jane ki jagah ho
         actions: [
           IconButton(
             onPressed: _showCreateGroupDialog,
