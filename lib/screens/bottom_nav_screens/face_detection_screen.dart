@@ -11,6 +11,7 @@ import 'package:flutter_litert/flutter_litert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:vibration/vibration.dart';
 import 'package:volume_controller/volume_controller.dart';
 
 import '../../utills/color_constant.dart';
@@ -243,12 +244,21 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
           _isPoseCorrect = isPoseCorrect;
         });
         if (_isPoseCorrect) {
-          // Use robust HapticFeedback
-          try {
-            HapticFeedback.vibrate(); // Generic vibration for maximum compatibility
-            HapticFeedback.mediumImpact();
-          } catch (e) {
-            log("Haptic feedback error: $e");
+          // Trigger vibration/haptics based on platform
+          if (Platform.isAndroid) {
+            try {
+              Vibration.vibrate(duration: 200);
+            } catch (e) {
+              log("Android vibration error: $e");
+            }
+          } else {
+            // iOS: Use robust HapticFeedback to avoid CoreHaptics engine errors
+            try {
+              HapticFeedback.vibrate(); 
+              HapticFeedback.mediumImpact();
+            } catch (e) {
+              log("iOS haptic feedback error: $e");
+            }
           }
           
           TtsUtils.speak("Hold still");
