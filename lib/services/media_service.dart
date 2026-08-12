@@ -107,7 +107,7 @@ class MediaService {
         fileName = file.name;
         bytes = await file.readAsBytes();
 
-        if (bytes.isNotEmpty) {
+        if (bytes.isEmpty) {
           throw Exception('PlatformFile.bytes is null. Use withData:true');
         }
       } else {
