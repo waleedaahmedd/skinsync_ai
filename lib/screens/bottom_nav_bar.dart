@@ -30,9 +30,9 @@ class BottomNavBar extends StatelessWidget {
       unselectedIcon: SvgAssets.progress,
     ),
     BottomNavItem(
-      label: 'Progress',
-      selectedIcon: SvgAssets.appointmentfilled,
-      unselectedIcon: SvgAssets.appointment,
+      label: 'Journey',
+      selectedIcon: SvgAssets.progressfilled,
+      unselectedIcon: SvgAssets.progress,
     ),
     BottomNavItem(
       label: 'Profile',

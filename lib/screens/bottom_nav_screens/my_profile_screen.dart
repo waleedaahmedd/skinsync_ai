@@ -278,6 +278,16 @@ class MyProfileScreen extends StatelessWidget {
                       icon: SvgAssets.appointment,
                       title: "Appointments",
                     ),
+                    buildCardOption(
+                      callBack: () {
+                        Navigator.pushNamed(
+                          context,
+                          TreatmentJourneyScreen.routeName,
+                        );
+                      },
+                      icon: SvgAssets.progress,
+                      title: "Treatment Journey",
+                    ),
                     if (!isDeploymentMode) ...[
                       buildCardOption(
                         callBack: () {
@@ -289,16 +299,7 @@ class MyProfileScreen extends StatelessWidget {
                         icon: SvgAssets.medical,
                         title: "Medical History",
                       ),
-                      buildCardOption(
-                        callBack: () {
-                          Navigator.pushNamed(
-                            context,
-                            TreatmentJourneyScreen.routeName,
-                          );
-                        },
-                        icon: SvgAssets.progress,
-                        title: "Treatment Journey",
-                      ),
+
                       buildCardOption(
                         callBack: () {
                           Navigator.pushNamed(
