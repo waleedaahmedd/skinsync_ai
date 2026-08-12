@@ -77,19 +77,21 @@ Preserve eye shape and natural skin texture.
 
 Bunny Lines:
 Soften nasal bridge wrinkles naturally.
-Maintain nose anatomy.
+Maintain surrounding nose anatomy and nasal bridge contour completely untouched.
 
 Under Eye Jelly Roll:
 Reduce lower eyelid muscle prominence naturally.
 Preserve eye structure and texture.
 
 Nasal Tip Lift:
-Create a subtle nasal tip elevation effect.
-Do not reshape the nose.
+Create a subtle nasal tip elevation effect only.
+Do not reshape the nasal bridge, nostrils, or overall nose structure.
 
 Nose Flare Reduction:
-Reduce nasal flare appearance subtly.
-Maintain natural nostril anatomy.
+Strictly target only the alar dilator muscle action at the outer nostril walls.
+Subtly reduce dynamic nostril flaring and outward expansion upon expression.
+PRESERVE ANATOMY: Do NOT narrow, pinch, flatten, lengthen, or distort the nasal bridge, nasal tip, columella, or natural teardrop shape of the nostrils.
+The overall static structure, size, and shape of the nose MUST remain 100% anatomically intact and undistorted.
 
 Gummy Smile:
 Create a subtle reduction effect while preserving natural lips and teeth.
@@ -221,7 +223,7 @@ Preserve exactly:
 - Eyelashes
 - Eyes
 - Iris color
-- Nose (unless treated)
+- Nose structural anatomy (unless specifically targeted by a nose treatment without distortion)
 - Lips (unless treated)
 - Teeth
 - Neck
@@ -243,6 +245,7 @@ DO NOT:
 - Change hairstyle
 - Replace face
 - Modify untreated areas
+- Distort, pinch, or unnaturally alter the nose structure during nose treatments
 
 ==================================================
 FINAL QUALITY REQUIREMENTS
