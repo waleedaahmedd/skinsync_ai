@@ -1,96 +1,70 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/base_state_model.dart';
-import '../models/responses/groups_list_response.dart';
-import '../models/responses/tj_options_list_response.dart';
-import '../models/responses/simulation_history_response.dart';
 import '../models/requests/create_group_request.dart';
+import '../models/responses/groups_list_response.dart';
+import '../models/responses/simulation_history_response.dart';
+import '../models/responses/tj_options_list_response.dart';
+import '../repositories/treatment_journey_repository.dart';
+import '../services/api_base_helper.dart';
+import '../services/treatment_journey_service.dart';
 import 'base_view_model.dart';
 
 final treatmentJourneyProvider =
-    NotifierProvider<TreatmentJourneyViewModel, TreatmentJourneyState>(
-  () => TreatmentJourneyViewModel(),
-);
+    NotifierProvider.autoDispose<
+      TreatmentJourneyViewModel,
+      TreatmentJourneyState
+    >(() => TreatmentJourneyViewModel());
 
 class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
-  TreatmentJourneyViewModel()
-    : super(initialState: const TreatmentJourneyState());
+  final TreatmentJourneyRepository _repo;
 
-  Future<void> fetchTreatmentJourneyGroups() async {
-    state = state.copyWith(loading: true, errorMessage: null);
+  TreatmentJourneyViewModel({TreatmentJourneyRepository? repo})
+    : _repo = repo ?? TreatmentJourneyService(apiClient: ApiBaseHelper()),
+      super(initialState: const TreatmentJourneyState());
 
-    // Dummy data as requested
-    await Future.delayed(const Duration(milliseconds: 800));
-
-    final dummyGroups = [
-      TreatmentJourneyGroup(
-        id: 1,
-        name: "Face Scan",
-        createdAt: DateTime.now().subtract(const Duration(days: 2)),
-        simulationCount: 3,
-      ),
-      TreatmentJourneyGroup(
-        id: 2,
-        name: "Acne Treatment",
-        createdAt: DateTime.now().subtract(const Duration(days: 5)),
-        simulationCount: 5,
-      ),
-      TreatmentJourneyGroup(
-        id: 3,
-        name: "Anti-Aging Journey",
-        createdAt: DateTime.now().subtract(const Duration(days: 10)),
-        simulationCount: 2,
-      ),
-    ];
-
-    state = state.copyWith(loading: false, groups: dummyGroups);
+  Future<void> fetchTreatmentJourneyGroups([bool loading = true]) async {
+    await runSafely(() async {
+      if (loading) {
+        state = state.copyWith(loading: true, errorMessage: null);
+      }
+      final response = await _repo.getGroups();
+      state = state.copyWith(loading: false, groups: response.data ?? []);
+    });
   }
 
-  Future<bool> createGroup(String name) async {
+  Future<bool?> createGroup(String name) async {
     return await runSafely(() async {
-      state = state.copyWith(loading: true, errorMessage: null);
-      
-      // Simulate API call with request model
+      // state = state.copyWith(loading: true, errorMessage: null);
+      EasyLoading.show(status: 'Creating group...');
       final request = CreateGroupRequest(name: name);
-      debugPrint("Creating group with request: ${request.toJson()}");
-      
-      await Future.delayed(const Duration(seconds: 1));
-
-      final newGroup = TreatmentJourneyGroup(
-        id: state.groups.length + 1,
-        name: name,
-        createdAt: DateTime.now(),
-        simulationCount: 0,
-      );
-
-      state = state.copyWith(
-        loading: false,
-        groups: [newGroup, ...state.groups],
-      );
-      
+      await _repo.createGroup(request);
+      await fetchTreatmentJourneyGroups(false);
+      EasyLoading.dismiss();
       return true;
-    }) ?? false;
+    });
   }
 
-  Future<void> fetchOptions(int groupId) async {
-    state = state.copyWith(loading: true, errorMessage: null);
-
-    await Future.delayed(const Duration(milliseconds: 600));
-
-    final dummyOptions = [
-      const TJOption(id: 1, name: "Option 1"),
-      const TJOption(id: 2, name: "Option 2"),
-    ];
-
-    state = state.copyWith(loading: false, options: dummyOptions);
-    
-    if (dummyOptions.isNotEmpty) {
-      fetchSimulations(dummyOptions.first.id!);
-    }
+  Future<bool?> fetchOptions(int groupId) async {
+    return await runSafely(() async {
+      EasyLoading.show(status: 'Fetching Journey...');
+      final response = await _repo.getOptions(groupId);
+      if (state.options.isNotEmpty) {
+        fetchSimulations(state.options.first.id!);
+      }
+      state = state.copyWith(loading: false, options: response.data ?? []);
+      EasyLoading.dismiss();
+      return true;
+    });
   }
 
   Future<void> fetchSimulations(int optionId) async {
-    state = state.copyWith(isSimulationsLoading: true, selectedOptionId: optionId);
+    state = state.copyWith(
+      isSimulationsLoading: true,
+      selectedOptionId: optionId,
+    );
 
     await Future.delayed(const Duration(milliseconds: 800));
 
@@ -109,14 +83,26 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
             id: 1,
             name: "Full Facial Rejuvenation",
             areas: [
-              SimulationArea(id: "1", name: "Cheeks", materials: [
-                SimulationMaterial(id: 1, name: "Hyaluronic Acid", selectedQuantity: 2)
-              ]),
-              SimulationArea(id: "2", name: "Forehead", materials: [
-                SimulationMaterial(id: 2, name: "Botox", selectedQuantity: 1)
-              ])
+              SimulationArea(
+                id: "1",
+                name: "Cheeks",
+                materials: [
+                  SimulationMaterial(
+                    id: 1,
+                    name: "Hyaluronic Acid",
+                    selectedQuantity: 2,
+                  ),
+                ],
+              ),
+              SimulationArea(
+                id: "2",
+                name: "Forehead",
+                materials: [
+                  SimulationMaterial(id: 2, name: "Botox", selectedQuantity: 1),
+                ],
+              ),
             ],
-          )
+          ),
         ],
       ),
     ];
@@ -130,6 +116,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 
   @override
   void onError(String message) {
+    EasyLoading.dismiss();
     state = state.copyWith(
       loading: false,
       errorMessage: message,

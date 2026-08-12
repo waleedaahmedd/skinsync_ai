@@ -5,8 +5,8 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
-import '../view_models/treatment_view_model.dart';
 import '../view_models/treatment_journey_view_model.dart';
+import '../view_models/treatment_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/simulation_card.dart';
@@ -34,16 +34,6 @@ class _TreatmentJourneyDetailScreenState
     extends ConsumerState<TreatmentJourneyDetailScreen>
     with SingleTickerProviderStateMixin {
   TabController? _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref
-          .read(treatmentJourneyProvider.notifier)
-          .fetchOptions(widget.groupId);
-    });
-  }
 
   @override
   void dispose() {
@@ -85,11 +75,16 @@ class _TreatmentJourneyDetailScreenState
           IconButton(
             onPressed: () {
               ref.read(checkoutViewModel.notifier).clearState();
-              ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+              ref
+                  .read(treatmentViewModel.notifier)
+                  .clearAllSelectedTreatments();
               ref.read(treatmentViewModel.notifier).clearAiImage();
               Navigator.of(context).pushNamed(FacePoseCaptureScreen.routeName);
             },
-            icon: const Icon(Icons.add_circle_outline_rounded, color: Colors.black),
+            icon: const Icon(
+              Icons.add_circle_outline_rounded,
+              color: Colors.black,
+            ),
             tooltip: "Add More Options",
           ),
         ],
@@ -97,49 +92,53 @@ class _TreatmentJourneyDetailScreenState
       body: state.loading
           ? const Center(child: AppLoader())
           : state.options.isEmpty
-              ? Center(
-                  child: Text(
-                    state.errorMessage ?? "No options available",
-                    style: CustomFonts.grey16w400,
-                  ),
-                )
-              : Column(
-                  children: [
-                    TabBar(
-                      controller: _tabController,
-                      isScrollable: state.options.length > 3,
-                      indicatorColor: CustomColors.darkPurple,
-                      indicatorSize: TabBarIndicatorSize.label,
-                      labelColor: Colors.black,
-                      unselectedLabelColor: Colors.grey.shade500,
-                      labelStyle: CustomFonts.black16w600,
-                      unselectedLabelStyle: CustomFonts.grey16w500,
-                      dividerColor: Colors.transparent,
-                      tabs: state.options
-                          .map((opt) => Tab(text: opt.name))
-                          .toList(),
-                    ),
-                    Expanded(
-                      child: state.isSimulationsLoading
-                          ? const Center(child: AppLoader())
-                          : TabBarView(
-                              controller: _tabController,
-                              children: state.options.map((opt) {
-                                return _buildSimulationsList(context, state);
-                              }).toList(),
-                            ),
-                    ),
-                  ],
+          ? Center(
+              child: Text(
+                state.errorMessage ?? "No options available",
+                style: CustomFonts.grey16w400,
+              ),
+            )
+          : Column(
+              children: [
+                TabBar(
+                  controller: _tabController,
+                  isScrollable: state.options.length > 3,
+                  indicatorColor: CustomColors.darkPurple,
+                  indicatorSize: TabBarIndicatorSize.label,
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.grey.shade500,
+                  labelStyle: CustomFonts.black16w600,
+                  unselectedLabelStyle: CustomFonts.grey16w500,
+                  dividerColor: Colors.transparent,
+                  tabs: state.options
+                      .map((opt) => Tab(text: opt.name))
+                      .toList(),
                 ),
+                Expanded(
+                  child: state.isSimulationsLoading
+                      ? const Center(child: AppLoader())
+                      : TabBarView(
+                          controller: _tabController,
+                          children: state.options.map((opt) {
+                            return _buildSimulationsList(context, state);
+                          }).toList(),
+                        ),
+                ),
+              ],
+            ),
     );
   }
 
   Widget _buildSimulationsList(
-      BuildContext context, TreatmentJourneyState state) {
+    BuildContext context,
+    TreatmentJourneyState state,
+  ) {
     if (state.simulations.isEmpty) {
       return Center(
-        child: Text("No simulations for this option",
-            style: CustomFonts.grey16w400),
+        child: Text(
+          "No simulations for this option",
+          style: CustomFonts.grey16w400,
+        ),
       );
     }
 

@@ -8,20 +8,22 @@ import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/date_time_utills.dart';
 import '../view_models/treatment_journey_view_model.dart';
-import 'treatment_journey_detail_screen.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
+import 'treatment_journey_detail_screen.dart';
 
 class TreatmentJourneyScreen extends ConsumerStatefulWidget {
   const TreatmentJourneyScreen({super.key});
   static const String routeName = '/TreatmentJourneyScreen';
 
   @override
-  ConsumerState<TreatmentJourneyScreen> createState() => _TreatmentJourneyScreenState();
+  ConsumerState<TreatmentJourneyScreen> createState() =>
+      _TreatmentJourneyScreenState();
 }
 
-class _TreatmentJourneyScreenState extends ConsumerState<TreatmentJourneyScreen> {
+class _TreatmentJourneyScreenState
+    extends ConsumerState<TreatmentJourneyScreen> {
   final TextEditingController _groupNameController = TextEditingController();
 
   @override
@@ -84,9 +86,7 @@ class _TreatmentJourneyScreenState extends ConsumerState<TreatmentJourneyScreen>
               TextFormField(
                 controller: _groupNameController,
                 style: CustomFonts.black18w400,
-                decoration: const InputDecoration(
-                  hintText: "Enter group name",
-                ),
+                decoration: const InputDecoration(hintText: "Enter group name"),
               ),
               SizedBox(height: context.h(28)),
 
@@ -97,7 +97,7 @@ class _TreatmentJourneyScreenState extends ConsumerState<TreatmentJourneyScreen>
                     final success = await ref
                         .read(treatmentJourneyProvider.notifier)
                         .createGroup(_groupNameController.text.trim());
-                    if (success && mounted) {
+                    if (success ?? false) {
                       _groupNameController.clear();
                       Navigator.pop(context);
                     }
@@ -150,37 +150,34 @@ class _TreatmentJourneyScreenState extends ConsumerState<TreatmentJourneyScreen>
         actions: [
           IconButton(
             onPressed: _showCreateGroupDialog,
-            icon: const Icon(Icons.add_circle_outline_rounded, color: Colors.black),
+            icon: const Icon(
+              Icons.add_circle_outline_rounded,
+              color: Colors.black,
+            ),
             tooltip: "Create New Group",
           ),
         ],
       ),
-      body: state.loading && state.groups.isEmpty
+      body: state.loading
           ? const Center(child: AppLoader())
-          : Stack(
-              children: [
-                state.groups.isEmpty
-                    ? Center(
-                        child: Text(
-                          state.errorMessage ?? "No journeys found",
-                          style: CustomFonts.grey16w400,
-                        ),
-                      )
-                    : ListView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: context.w(24),
-                          vertical: context.h(20),
-                        ),
-                        itemCount: state.groups.length,
-                        itemBuilder: (context, index) {
-                          final group = state.groups[index];
-                          return _buildGroupCard(context, group);
-                        },
-                      ),
-                if (state.loading && state.groups.isNotEmpty)
-                  const Center(child: AppLoader()),
-              ],
+          : state.groups.isEmpty
+          ? Center(
+              child: Text(
+                state.errorMessage ?? "No journeys found",
+                style: CustomFonts.grey16w400,
+              ),
+            )
+          : ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.w(24),
+                vertical: context.h(20),
+              ),
+              itemCount: state.groups.length,
+              itemBuilder: (context, index) {
+                final group = state.groups[index];
+                return _buildGroupCard(context, group);
+              },
             ),
     );
   }
@@ -204,15 +201,20 @@ class _TreatmentJourneyScreenState extends ConsumerState<TreatmentJourneyScreen>
         ],
       ),
       child: InkWell(
-        onTap: () {
-          Navigator.pushNamed(
-            context,
-            TreatmentJourneyDetailScreen.routeName,
-            arguments: {
-              'groupId': group.id,
-              'groupName': group.name,
-            },
-          );
+        onTap: () async {
+          // EasyLoading.show(status: 'Loading options...');
+          final success = await ref
+              .read(treatmentJourneyProvider.notifier)
+              .fetchOptions(group.id!);
+          // EasyLoading.dismiss();
+
+          if (success ?? false) {
+            Navigator.pushNamed(
+              context,
+              TreatmentJourneyDetailScreen.routeName,
+              arguments: {'groupId': group.id, 'groupName': group.name},
+            );
+          }
         },
         borderRadius: BorderRadius.circular(context.r(16)),
         child: Padding(

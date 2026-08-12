@@ -57,7 +57,9 @@ enum EndPoints {
   simulationHistory('v1/simulation-history'),
   explorerReels('v1/reels?'),
   explorerCommunity('v1/community-posts?'),
-  appointmentTypes('v1/appointment-types');
+  appointmentTypes('v1/appointment-types'),
+  treatmentJourneyGroups('v1/treatment-journey-groups'),
+  treatmentJourneyOptions('v1/treatment-journey-options');
 
   final String path;
 
