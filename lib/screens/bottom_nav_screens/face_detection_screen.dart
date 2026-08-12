@@ -136,16 +136,16 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
       if (shouldPreferCpu) {
         log('Legacy iOS device detected, skipping GPU to avoid errors');
         _faceDetector = await FaceDetector.create(
-          minScore: 0.4,
-          minFaceSize: 0.1,
+          minScore: 0.35,
+          minFaceSize: 0.05,
           performanceConfig: const PerformanceConfig.xnnpack(),
         );
         log('FaceDetector initialized successfully (XNNPACK)');
       } else {
         // 1. Try GPU acceleration
         _faceDetector = await FaceDetector.create(
-          minScore: 0.4,
-          minFaceSize: 0.1,
+          minScore: 0.35,
+          minFaceSize: 0.05,
           performanceConfig: const PerformanceConfig.gpu(),
         );
         log('FaceDetector initialized successfully (GPU)');
@@ -159,8 +159,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
       try {
         // 2. Fallback to CPU-optimized XNNPACK
         _faceDetector = await FaceDetector.create(
-          minScore: 0.5,
-          minFaceSize: 0.1,
+          minScore: 0.35,
+          minFaceSize: 0.05,
           performanceConfig: const PerformanceConfig.xnnpack(),
         );
         if (mounted) {
