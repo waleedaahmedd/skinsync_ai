@@ -39,8 +39,8 @@ extension FaceUtils on Face {
       return false;
     }
 
-    // Size check
-    if ((nRight - nLeft) < 0.25) {
+    // Size check: Lowered threshold from 0.25 to 0.15 to allow detection from further away
+    if ((nRight - nLeft) < 0.15) {
       log('Pose rejected: face too small (${(nRight - nLeft).toStringAsFixed(2)})');
       return false;
     }
