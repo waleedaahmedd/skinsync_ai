@@ -14,7 +14,8 @@ import '../widgets/custom_button.dart';
 import 'treatment_journey_detail_screen.dart';
 
 class TreatmentJourneyScreen extends ConsumerStatefulWidget {
-  const TreatmentJourneyScreen({super.key});
+  final bool isFromBottomNav;
+  const TreatmentJourneyScreen({super.key, this.isFromBottomNav = false});
   static const String routeName = '/TreatmentJourneyScreen';
 
   @override
@@ -146,7 +147,7 @@ class _TreatmentJourneyScreenState
       appBar: CustomAppBar(
         showTitle: true,
         title: 'Treatment Journey',
-        showBackButton: Navigator.of(context).canPop(), // Sirf tab dikhega jab piche jane ki jagah ho
+        showBackButton: !widget.isFromBottomNav && Navigator.of(context).canPop(), 
         actions: [
           IconButton(
             onPressed: _showCreateGroupDialog,

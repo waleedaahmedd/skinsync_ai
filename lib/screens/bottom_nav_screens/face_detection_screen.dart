@@ -176,8 +176,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
       }
     }
 
-    // Safety timeout: if still null after 10 seconds, show manual capture
-    Future.delayed(const Duration(seconds: 10), () {
+    // Safety timeout: if still null after 5 seconds, show manual capture
+    Future.delayed(const Duration(seconds: 5), () {
       if (mounted && _faceDetector == null) {
         setState(() {
           _isFaceDetectorError = true;
@@ -299,10 +299,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
         });
         TtsUtils.speak("$_countdown");
       } else {
-        _stopCountdown();
         if (_isPoseCorrect && _storedRef != null) {
-          TtsUtils.speak("Perfect");
           _captureAndNavigate(_storedRef!);
+        } else {
+          _stopCountdown();
         }
       }
     });
@@ -316,6 +316,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
         _isCountingDown = false;
         _countdown = 3;
       });
+      // Restart manual capture timer when countdown stops without success
+      _startManualCaptureTimer();
     }
   }
 
@@ -421,6 +423,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
     if (_cameraController == null || _isCapturing) return;
 
     _stopCountdown();
+    TtsUtils.speak("Perfect");
 
     setState(() {
       _isCapturing = true;
@@ -598,11 +601,16 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
 
   void _startManualCaptureTimer() {
     _manualCaptureTimer?.cancel();
+    if (_showManualCaptureUI) return;
+
     _manualCaptureTimer = Timer(const Duration(seconds: 5), () {
       if (mounted && !_isCountingDown && !_isCapturing && _capturedImage == null) {
         setState(() {
           _showManualCaptureUI = true;
         });
+      } else if (mounted && _isCountingDown) {
+        // If it fires while counting down, we don't show it yet, 
+        // but _stopCountdown will restart this timer anyway.
       }
     });
   }
