@@ -42,7 +42,7 @@ void configLoading(BuildContext context) {
       ),
     )
     // ..maskColor = Colors.black.withOpacity(0.5)
-    ..userInteractions = true
+    ..userInteractions = false
     ..dismissOnTap = false;
 }
 

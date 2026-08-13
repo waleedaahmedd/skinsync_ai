@@ -32,7 +32,7 @@ class TreatmentJourneyDetailScreen extends ConsumerStatefulWidget {
 
 class _TreatmentJourneyDetailScreenState
     extends ConsumerState<TreatmentJourneyDetailScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   TabController? _tabController;
 
   @override
