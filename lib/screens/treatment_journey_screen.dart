@@ -14,13 +14,8 @@ import '../widgets/custom_button.dart';
 import 'treatment_journey_detail_screen.dart';
 
 class TreatmentJourneyScreen extends ConsumerStatefulWidget {
-  final bool isTreatmentJourney;
   final bool isFromBottomNav;
-  const TreatmentJourneyScreen({
-    super.key,
-    this.isTreatmentJourney = true,
-    this.isFromBottomNav = false,
-  });
+  const TreatmentJourneyScreen({super.key, this.isFromBottomNav = false});
   static const String routeName = '/TreatmentJourneyScreen';
 
   @override
@@ -31,11 +26,10 @@ class TreatmentJourneyScreen extends ConsumerStatefulWidget {
 class _TreatmentJourneyScreenState
     extends ConsumerState<TreatmentJourneyScreen> {
   final TextEditingController _groupNameController = TextEditingController();
-  late bool isTreatmentJourney;
+
   @override
   void initState() {
     super.initState();
-    isTreatmentJourney = widget.isTreatmentJourney;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(treatmentJourneyProvider.notifier).fetchTreatmentJourneyGroups();
@@ -217,6 +211,9 @@ class _TreatmentJourneyScreenState
       ),
       child: InkWell(
         onTap: () async {
+          final isTreatmentJourney = ref
+              .read(treatmentJourneyProvider)
+              .isTreatmentJourney;
           if (group.id != null) {
             ref.read(treatmentJourneyProvider.notifier).setGroupId(group.id!);
           }
@@ -225,12 +222,14 @@ class _TreatmentJourneyScreenState
                 .read(treatmentJourneyProvider.notifier)
                 .fetchOptions(group.id!);
             if (success ?? false) {
-              await ref
+              final result = await ref
                   .read(treatmentJourneyProvider.notifier)
                   .createTjOptions();
-              setState(() {
-                isTreatmentJourney = true;
-              });
+              if (result == true) {
+                ref
+                    .read(treatmentJourneyProvider.notifier)
+                    .setTreatmentJourney(true);
+              }
             }
           }
           // EasyLoading.show(status: 'Loading options...');
