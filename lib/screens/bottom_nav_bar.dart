@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../models/bottom_nav.dart';
-import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../view_models/bottom_nav_view_model.dart';
 
@@ -13,31 +12,31 @@ import '../view_models/checkout_view_model.dart';
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({super.key});
 
-  static const List<BottomNavItem> _items = [
-    BottomNavItem(
+  static final List<BottomNavItem> _items = [
+    const BottomNavItem(
       label: 'Home',
-      selectedIcon: SvgAssets.homefilled,
-      unselectedIcon: SvgAssets.home,
+      selectedIcon: FontAwesomeIcons.solidHouse,
+      unselectedIcon: FontAwesomeIcons.house,
     ),
-    BottomNavItem(
+    const BottomNavItem(
       label: 'Treatment',
-      selectedIcon: SvgAssets.treatmentfilled,
-      unselectedIcon: SvgAssets.treatment,
+      selectedIcon: FontAwesomeIcons.syringe,
+      unselectedIcon: FontAwesomeIcons.syringe,
     ),
-    BottomNavItem(
+    const BottomNavItem(
       label: 'Explore',
-      selectedIcon: SvgAssets.progressfilled,
-      unselectedIcon: SvgAssets.progress,
+      selectedIcon: FontAwesomeIcons.solidCompass,
+      unselectedIcon: FontAwesomeIcons.compass,
     ),
-    BottomNavItem(
+    const BottomNavItem(
       label: 'Journey',
-      selectedIcon: SvgAssets.progressfilled,
-      unselectedIcon: SvgAssets.progress,
+      selectedIcon: FontAwesomeIcons.route,
+      unselectedIcon: FontAwesomeIcons.route,
     ),
-    BottomNavItem(
+    const BottomNavItem(
       label: 'Profile',
-      selectedIcon: SvgAssets.profilefilled,
-      unselectedIcon: SvgAssets.profile,
+      selectedIcon: FontAwesomeIcons.solidUser,
+      unselectedIcon: FontAwesomeIcons.user,
     ),
   ];
 
@@ -121,11 +120,12 @@ class BottomNavBar extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SvgPicture.asset(
+              FaIcon(
                 isSelected ? item.selectedIcon : item.unselectedIcon,
-                //  color: isSelected ? Colors.pink : null,
-                height: context.h(24),
-                width: context.h(24),
+                size: context.h(24),
+                color: isSelected
+                    ? CustomColors.blackColor
+                    : CustomColors.bottomNavText,
               ),
               SizedBox(height: context.h(8)),
               Text(

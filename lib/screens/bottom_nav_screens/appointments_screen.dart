@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
@@ -105,8 +104,9 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
                 );
               }).toList(),
               onChanged: (val) {
-                if (val != null)
+                if (val != null) {
                   setState(() => _selectedTypeFilter = val);
+                }
               },
             ),
             Expanded(
