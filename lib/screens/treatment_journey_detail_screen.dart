@@ -153,6 +153,7 @@ Widget _buildSimulationsList(
       showActionButton: true,
       actionButtonText: "Select this Option",
       onActionButtonPressed: () {
+        ref.read(treatmentJourneyProvider.notifier).setOpitionId(sim.id!);
         Navigator.pushNamed(context, JourneyClinicsScreen.routeName);
       },
     ),

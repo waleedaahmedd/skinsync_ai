@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import '../exceptions/app_exception.dart';
 import '../models/requests/create_group_request.dart';
+import '../models/requests/share_treatment_request.dart';
 import '../models/requests/tj_options_request.dart';
 import '../models/responses/auth_response.dart';
 import '../models/responses/base_response_model.dart';
@@ -71,9 +72,10 @@ class TreatmentJourneyService implements TreatmentJourneyRepository {
       );
     }
   }
+
   @override
   Future<BaseResponseModel> createTjOptions(TjOptionsRequest request) async {
-      final response = await _apiClient.httpRequest(
+    final response = await _apiClient.httpRequest(
       endPoint: EndPoints.treatmentJourneyOptions,
       requestType: RequestType.post,
       requestBody: request.toJson(),
@@ -90,9 +92,9 @@ class TreatmentJourneyService implements TreatmentJourneyRepository {
     }
   }
 
-@override
+  @override
   Future<TJOptionSimulationsResponse> getOptionsDetail(int optionId) async {
-   final response = await _apiClient.httpRequest(
+    final response = await _apiClient.httpRequest(
       endPoint: EndPoints.treatmentJourneyOptions,
       requestType: RequestType.get,
       params: "/$optionId",
@@ -107,6 +109,26 @@ class TreatmentJourneyService implements TreatmentJourneyRepository {
         AuthResponse.fromJson(parsed).message ?? "Failed to fetch options",
       );
     }
-}
+  }
 
+  @override
+  Future<BaseResponseModel> shareTreatmentRequest({
+  required ShareTreatmentRequest request
+  }) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.shareTreatmentRequest,
+      requestType: RequestType.post,
+      requestBody: request.toJson()
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      return BaseResponseModel.fromJson(parsed);
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(
+        AuthResponse.fromJson(parsed).message ?? "Failed to create group",
+      );
+    }
+  }
 }

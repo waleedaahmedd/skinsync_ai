@@ -10,6 +10,7 @@ import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/bottom_nav_view_model.dart';
+import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/custom_button.dart';
 import 'bottom_nav_page.dart';
 
@@ -300,7 +301,14 @@ class JourneyClinicDetailScreen extends ConsumerWidget {
                   ),
                   child: CustomButton(
                     text: "Share Now",
-                    onPressed: () => _showSuccessDialog(context),
+                    onPressed: () async {
+                      final result = await ref
+                          .read(treatmentJourneyProvider.notifier)
+                          .callShareTreatmentRequest(clinic?.id);
+                      if (result == true) {
+                        _showSuccessDialog(context);
+                      }
+                    },
                   ),
                 ),
               ),

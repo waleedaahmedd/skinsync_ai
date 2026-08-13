@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/base_state_model.dart';
 import '../models/requests/create_group_request.dart';
 import '../models/requests/save_history_request.dart';
+import '../models/requests/share_treatment_request.dart';
 import '../models/requests/tj_options_request.dart';
 import '../models/responses/groups_list_response.dart';
 import '../models/responses/simulation_history_response.dart';
@@ -55,7 +56,29 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       return true;
     });
   }
+   Future<bool?> callShareTreatmentRequest(int? clinicId) async {
+  if (state.selectedOptionId == null || clinicId == null) {
+    return false;
+  }
 
+  return await runSafely(() async {
+    EasyLoading.show(status: 'Loading');
+
+    final request = ShareTreatmentRequest(
+      clinicId: clinicId,
+      optionId: state.selectedOptionId!,
+    );
+
+    await _repo.shareTreatmentRequest(request: request);
+
+    EasyLoading.dismiss();
+    return true;
+  });
+}
+
+void setOpitionId(int id){
+  state= state.copyWith(selectedOptionId: id);
+}
   Future<bool?> fetchOptions(int groupId) async {
     return await runSafely(() async {
       EasyLoading.show(status: 'Fetching Journey...');
