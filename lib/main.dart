@@ -20,8 +20,8 @@ Future<void> main() async {
     // Replace this string with the permanent token you generated in Step 1
 
     await FirebaseAppCheck.instance.activate(
-      androidProvider: AndroidProvider.debug,
-      appleProvider: AppleProvider.debug,
+      providerAndroid: const AndroidDebugProvider(),
+      providerApple: const AppleDebugProvider(),
     );
 
     // For native platforms, ensure the token is fed directly into the native layer.
@@ -30,8 +30,8 @@ Future<void> main() async {
   } else {
     // Production attestation providers
     await FirebaseAppCheck.instance.activate(
-      androidProvider: AndroidProvider.playIntegrity,
-      appleProvider: AppleProvider.appAttestWithDeviceCheckFallback,
+      providerAndroid: const AndroidPlayIntegrityProvider(),
+      providerApple: const AppleAppAttestWithDeviceCheckFallbackProvider(),
     );
   }
   await ScreenUtilPlus.ensureScreenSize();

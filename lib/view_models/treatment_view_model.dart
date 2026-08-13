@@ -327,8 +327,9 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
       if (imageFront == null && imageRight == null && imageLeft == null) {
         String errorMsg = results.errors.join('\n');
-        if (errorMsg.isEmpty)
+        if (errorMsg.isEmpty) {
           errorMsg = 'AI failed to generate valid images. Please try again.';
+        }
         log('SIMULATION FAILED: $errorMsg');
         throw Exception(errorMsg);
       }
