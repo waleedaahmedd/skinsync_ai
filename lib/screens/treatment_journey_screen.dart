@@ -16,7 +16,8 @@ import 'treatment_journey_detail_screen.dart';
 
 class TreatmentJourneyScreen extends ConsumerStatefulWidget {
   final bool isTreatmentJourney;
-  const TreatmentJourneyScreen({super.key, this.isTreatmentJourney = true});
+   final bool isFromBottomNav;
+  const TreatmentJourneyScreen({super.key,this.isFromBottomNav = false, this.isTreatmentJourney = true});
   static const String routeName = '/TreatmentJourneyScreen';
 
   @override
@@ -157,6 +158,7 @@ class _TreatmentJourneyScreenState
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
         showTitle: true,
+       showBackButton: !widget.isFromBottomNav,
         title: 'Treatment Journey',
         actions: [
           IconButton(
