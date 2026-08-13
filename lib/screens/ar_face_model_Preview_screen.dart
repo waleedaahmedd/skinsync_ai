@@ -491,17 +491,9 @@ class _ArFaceModelPreviewScreenState
                               arguments: false
                             );
                           } else {
-                            final result = await ref
+                            await ref
                                 .read(treatmentJourneyProvider.notifier)
                                 .createTjOptions();
-                            if (result == true) {
-                              Navigator.popUntil(
-                                context,
-                                (route) =>
-                                    route.settings.name ==
-                                    TreatmentJourneyScreen.routeName,
-                              );
-                            }
                           }
                         },
                         text: "Save Option",

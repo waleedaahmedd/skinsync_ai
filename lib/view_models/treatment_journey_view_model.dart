@@ -80,9 +80,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
   void setGroupId(int groupID) {
     state = state.copyWith(groupId: groupID);
   }
-  void setTreatmentJourney(bool bool) {
-    state = state.copyWith(isTreatmentJourney: bool);
-  }
+ 
 
   // Future<void> fetchSimulations(int optionId) async {
   //   state = state.copyWith(
@@ -220,7 +218,6 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
         await fetchTreatmentJourneyGroups();
         EasyLoading.showSuccess('Option created successfully');
       }
-
       return true;
     });
   }
@@ -240,7 +237,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 @immutable
 class TreatmentJourneyState extends BaseStateModel {
   final List<TreatmentJourneyGroup> groups;
-  final bool isTreatmentJourney;
+
   final List<TJOption> options;
   final SimulationData? simulations;
   final bool isSimulationsLoading;
@@ -252,7 +249,7 @@ class TreatmentJourneyState extends BaseStateModel {
     super.loading = false,
     super.errorMessage,
     this.groupId,
-    this.isTreatmentJourney = true,
+  
     this.groups = const [],
     this.options = const [],
     this.simulations ,
@@ -266,7 +263,7 @@ class TreatmentJourneyState extends BaseStateModel {
     bool? loading,
     String? errorMessage,
     int? groupId,
-    bool? isTreatmentJourney,
+   
     List<TreatmentJourneyGroup>? groups,
     List<TJOption>? options,
     SimulationData? simulations,
@@ -284,7 +281,7 @@ class TreatmentJourneyState extends BaseStateModel {
       isSimulationsLoading: isSimulationsLoading ?? this.isSimulationsLoading,
       selectedOptionId: selectedOptionId ?? this.selectedOptionId,
       price: price ?? this.price,
-      isTreatmentJourney :isTreatmentJourney ?? this.isTreatmentJourney
+   
     );
   }
 }

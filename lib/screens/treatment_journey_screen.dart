@@ -16,8 +16,12 @@ import 'treatment_journey_detail_screen.dart';
 
 class TreatmentJourneyScreen extends ConsumerStatefulWidget {
   final bool isTreatmentJourney;
-   final bool isFromBottomNav;
-  const TreatmentJourneyScreen({super.key,this.isFromBottomNav = false, this.isTreatmentJourney = true});
+  final bool isFromBottomNav;
+  const TreatmentJourneyScreen({
+    super.key,
+    this.isFromBottomNav = false,
+    this.isTreatmentJourney = true,
+  });
   static const String routeName = '/TreatmentJourneyScreen';
 
   @override
@@ -28,11 +32,11 @@ class TreatmentJourneyScreen extends ConsumerStatefulWidget {
 class _TreatmentJourneyScreenState
     extends ConsumerState<TreatmentJourneyScreen> {
   final TextEditingController _groupNameController = TextEditingController();
- late bool isTreatmentJourney;
+  late bool isTreatmentJourney;
   @override
   void initState() {
     super.initState();
-      isTreatmentJourney = widget.isTreatmentJourney;
+    isTreatmentJourney = widget.isTreatmentJourney;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(treatmentJourneyProvider.notifier).fetchTreatmentJourneyGroups();
@@ -158,7 +162,7 @@ class _TreatmentJourneyScreenState
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
         showTitle: true,
-       showBackButton: !widget.isFromBottomNav,
+        showBackButton: !widget.isFromBottomNav,
         title: 'Treatment Journey',
         actions: [
           IconButton(
@@ -223,30 +227,28 @@ class _TreatmentJourneyScreenState
                 .read(treatmentJourneyProvider.notifier)
                 .fetchOptions(group.id!);
             if (success ?? false) {
-              await ref
+              final result = await ref
                   .read(treatmentJourneyProvider.notifier)
                   .createTjOptions();
-                   setState(() {
-    isTreatmentJourney = true;
-    });
+              if (result == true) {
+                Navigator.pop(context);
+              }
             }
           } else {
- final success = await ref
-              .read(treatmentJourneyProvider.notifier)
-              .fetchOptions(group.id!);
-          // EasyLoading.dismiss();
+            final success = await ref
+                .read(treatmentJourneyProvider.notifier)
+                .fetchOptions(group.id!);
+            // EasyLoading.dismiss();
 
-          if (success ?? false) {
-            Navigator.pushNamed(
-              context,
-              TreatmentJourneyDetailScreen.routeName,
-              arguments: {'groupId': group.id, 'groupName': group.name},
-            );
-          }
+            if (success ?? false) {
+              Navigator.pushNamed(
+                context,
+                TreatmentJourneyDetailScreen.routeName,
+                arguments: {'groupId': group.id, 'groupName': group.name},
+              );
+            }
           }
           // EasyLoading.show(status: 'Loading options...');
-         
-          
         },
         borderRadius: BorderRadius.circular(context.r(16)),
         child: Padding(
@@ -256,7 +258,9 @@ class _TreatmentJourneyScreenState
               Container(
                 height: context.w(50),
                 width: context.w(50),
-                padding: EdgeInsets.all(context.w(1.5)), // Gradient Border thickness
+                padding: EdgeInsets.all(
+                  context.w(1.5),
+                ), // Gradient Border thickness
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: CustomColors.purpleBlueGradient,
@@ -267,10 +271,7 @@ class _TreatmentJourneyScreenState
                     color: CustomColors.whiteColor,
                     shape: BoxShape.circle,
                   ),
-                  child: Image.asset(
-                    PngAssets.splashLogo,
-                    fit: BoxFit.contain,
-                  ),
+                  child: Image.asset(PngAssets.splashLogo, fit: BoxFit.contain),
                 ),
               ),
               SizedBox(width: context.w(16)),
