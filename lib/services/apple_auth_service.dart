@@ -1,6 +1,7 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
-import 'dart:math';
+import 'dart:math' hide log;
 
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,8 +26,7 @@ class AppleAuthService extends BaseAuthService {
     try {
       await _auth.signOut(); // ✅ removed recursive call
     } catch (e, s) {
-      print(e.toString());
-      print(s);
+      log(e.toString(), stackTrace: s);
     }
   }
 

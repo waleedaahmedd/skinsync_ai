@@ -123,16 +123,19 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
     try {
       bool shouldPreferCpu = false;
       
-      // Check for legacy iOS devices that don't support L2_NORMALIZATION on GPU
+      // Check for legacy iOS or non-flagship Android devices
       if (Platform.isIOS) {
         final deviceInfo = DeviceInfoPlugin();
         final iosInfo = await deviceInfo.iosInfo;
-        final model = iosInfo.utsname.machine; // e.g., "iPhone9,1"
-        
-        // iPhone 7 (9,1/9,3), 7 Plus (9,2/9,4), 6s (8,1), 6s Plus (8,2), SE 1st gen (8,4)
+        final model = iosInfo.utsname.machine;
         if (model.contains('iPhone8,') || model.contains('iPhone9,')) {
           shouldPreferCpu = true;
         }
+      } else if (Platform.isAndroid) {
+        // Many Android devices (like POCO, Xiaomi, etc.) have buggy GPU drivers 
+        // that cause SIGSEGV crashes when using TFLite GPU delegate.
+        // For face detection, CPU (XNNPACK) is fast enough and much more stable.
+        shouldPreferCpu = true;
       }
 
       if (shouldPreferCpu) {
