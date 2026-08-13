@@ -334,12 +334,11 @@ class RouteGenerator {
           builder: (_) => const SimulationHistoryScreen(),
         );
       case TreatmentJourneyScreen.routeName:
-        final arg = args as bool? ?? true;
         return MaterialPageRoute(
           settings: const RouteSettings(
             name: TreatmentJourneyScreen.routeName,
           ),
-          builder: (_) => TreatmentJourneyScreen(isTreatmentJourney: arg),
+          builder: (_) =>const TreatmentJourneyScreen(),
         );
       case TreatmentJourneyDetailScreen.routeName:
         final argsMap = args as Map<String, dynamic>;
