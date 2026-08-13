@@ -11,12 +11,17 @@ import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
-import 'bottom_nav_page.dart';
+// import 'bottom_nav_page.dart';
 import 'treatment_journey_detail_screen.dart';
 
 class TreatmentJourneyScreen extends ConsumerStatefulWidget {
   final bool isTreatmentJourney;
-  const TreatmentJourneyScreen({super.key, this.isTreatmentJourney = true});
+  final bool isFromBottomNav;
+  const TreatmentJourneyScreen({
+    super.key,
+    this.isTreatmentJourney = true,
+    this.isFromBottomNav = false,
+  });
   static const String routeName = '/TreatmentJourneyScreen';
 
   @override
@@ -149,12 +154,13 @@ class _TreatmentJourneyScreenState
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        onBackTap: () {
-          Navigator.popUntil(
-            context,
-            (route) => route.settings.name == BottomNavPage.routeName,
-          );
-        },
+        // onBackTap: () {
+        //   Navigator.popUntil(
+        //     context,
+        //     (route) => route.settings.name == BottomNavPage.routeName,
+        //   );
+        // },
+        showBackButton: !widget.isFromBottomNav,
         showTitle: true,
         title: 'Treatment Journey',
         actions: [

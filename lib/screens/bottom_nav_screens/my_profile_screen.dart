@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
-import '../allergy_and_medical_history.dart';
 import '../get_started_screen.dart';
 import '../personal_detail_screen.dart';
 import '../saved_treatment_screen.dart';
