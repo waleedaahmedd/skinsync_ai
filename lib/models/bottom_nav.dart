@@ -1,7 +1,9 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 class BottomNavItem {
   final String label;
-  final String selectedIcon;
-  final String unselectedIcon;
+  final FaIconData selectedIcon;
+  final FaIconData unselectedIcon;
 
   const BottomNavItem({
     required this.label,

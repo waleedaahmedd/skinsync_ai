@@ -90,6 +90,7 @@ dependencies:
   volume_controller: ^3.6.0
   flutter_tts: ^4.2.5
   version: ^3.0.2
+  font_awesome_flutter: ^11.0.0
 
 dependency_overrides:
   camera_android_camerax: ^0.7.4+4
