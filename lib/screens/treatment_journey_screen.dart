@@ -4,6 +4,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../models/responses/groups_list_response.dart';
+import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../utills/date_time_utills.dart';
@@ -58,19 +59,26 @@ class _TreatmentJourneyScreenState
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Icon Container
+              // Icon Container with Gradient Border
               Container(
                 height: context.w(72),
                 width: context.w(72),
+                padding: EdgeInsets.all(context.w(2)),
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: CustomColors.lightBlueBackground,
+                  gradient: CustomColors.purpleBlueGradient,
                 ),
-                child: Center(
-                  child: Icon(
-                    Iconsax.add_square,
-                    size: context.sp(32),
-                    color: CustomColors.darkPurple,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: CustomColors.whiteColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Iconsax.add_square,
+                      size: context.sp(32),
+                      color: CustomColors.darkPurple,
+                    ),
                   ),
                 ),
               ),
@@ -253,15 +261,23 @@ class _TreatmentJourneyScreenState
           child: Row(
             children: [
               Container(
-                padding: EdgeInsets.all(context.w(12)),
+                height: context.w(50),
+                width: context.w(50),
+                padding: EdgeInsets.all(context.w(1.5)), // Gradient Border thickness
                 decoration: const BoxDecoration(
-                  color: CustomColors.lightBlueBackground,
                   shape: BoxShape.circle,
+                  gradient: CustomColors.purpleBlueGradient,
                 ),
-                child: Icon(
-                  Icons.auto_graph_rounded,
-                  color: CustomColors.darkPurple,
-                  size: context.w(24),
+                child: Container(
+                  padding: EdgeInsets.all(context.w(8)),
+                  decoration: const BoxDecoration(
+                    color: CustomColors.whiteColor,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Image.asset(
+                    PngAssets.splashLogo,
+                    fit: BoxFit.contain,
+                  ),
                 ),
               ),
               SizedBox(width: context.w(16)),
