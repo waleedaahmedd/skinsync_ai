@@ -293,6 +293,7 @@ class MyProfileScreen extends StatelessWidget {
                           Navigator.pushNamed(
                             context,
                             TreatmentJourneyScreen.routeName,
+                            arguments: true
                           );
                         },
                         icon: SvgAssets.medical,

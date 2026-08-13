@@ -43,7 +43,7 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage> {
                 0 => const HomeScreen(),
                 1 => const TreatmentExploreScreen(),
                 2 => const ExploreScreen(),
-                3 => const TreatmentJourneyScreen(isFromBottomNav: true),
+                3 => const TreatmentJourneyScreen(),
                 4 => const MyProfileScreen(),
                 int() => throw UnimplementedError(),
               },

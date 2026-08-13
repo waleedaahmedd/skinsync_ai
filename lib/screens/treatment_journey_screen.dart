@@ -14,8 +14,8 @@ import '../widgets/custom_button.dart';
 import 'treatment_journey_detail_screen.dart';
 
 class TreatmentJourneyScreen extends ConsumerStatefulWidget {
-  final bool isFromBottomNav;
-  const TreatmentJourneyScreen({super.key, this.isFromBottomNav = false});
+  final bool isTreatmentJourney;
+  const TreatmentJourneyScreen({super.key, this.isTreatmentJourney = true});
   static const String routeName = '/TreatmentJourneyScreen';
 
   @override
@@ -26,10 +26,11 @@ class TreatmentJourneyScreen extends ConsumerStatefulWidget {
 class _TreatmentJourneyScreenState
     extends ConsumerState<TreatmentJourneyScreen> {
   final TextEditingController _groupNameController = TextEditingController();
-
+ late bool isTreatmentJourney;
   @override
   void initState() {
     super.initState();
+      isTreatmentJourney = widget.isTreatmentJourney;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(treatmentJourneyProvider.notifier).fetchTreatmentJourneyGroups();
@@ -147,13 +148,6 @@ class _TreatmentJourneyScreenState
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
-        // onBackTap: () {
-        //   Navigator.popUntil(
-        //     context,
-        //     (route) => route.settings.name == BottomNavPage.routeName,
-        //   );
-        // },
-        showBackButton: !widget.isFromBottomNav,
         showTitle: true,
         title: 'Treatment Journey',
         actions: [
@@ -211,9 +205,6 @@ class _TreatmentJourneyScreenState
       ),
       child: InkWell(
         onTap: () async {
-          final isTreatmentJourney = ref
-              .read(treatmentJourneyProvider)
-              .isTreatmentJourney;
           if (group.id != null) {
             ref.read(treatmentJourneyProvider.notifier).setGroupId(group.id!);
           }
@@ -222,30 +213,30 @@ class _TreatmentJourneyScreenState
                 .read(treatmentJourneyProvider.notifier)
                 .fetchOptions(group.id!);
             if (success ?? false) {
-              final result = await ref
+              await ref
                   .read(treatmentJourneyProvider.notifier)
                   .createTjOptions();
-              if (result == true) {
-                ref
-                    .read(treatmentJourneyProvider.notifier)
-                    .setTreatmentJourney(true);
-              }
+                   setState(() {
+    isTreatmentJourney = true;
+    });
             }
           } else {
-            final success = await ref
-                .read(treatmentJourneyProvider.notifier)
-                .fetchOptions(group.id!);
-            // EasyLoading.dismiss();
+ final success = await ref
+              .read(treatmentJourneyProvider.notifier)
+              .fetchOptions(group.id!);
+          // EasyLoading.dismiss();
 
-            if (success ?? false) {
-              Navigator.pushNamed(
-                context,
-                TreatmentJourneyDetailScreen.routeName,
-                arguments: {'groupId': group.id, 'groupName': group.name},
-              );
-            }
+          if (success ?? false) {
+            Navigator.pushNamed(
+              context,
+              TreatmentJourneyDetailScreen.routeName,
+              arguments: {'groupId': group.id, 'groupName': group.name},
+            );
+          }
           }
           // EasyLoading.show(status: 'Loading options...');
+         
+          
         },
         borderRadius: BorderRadius.circular(context.r(16)),
         child: Padding(
