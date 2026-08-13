@@ -209,6 +209,10 @@ class _TreatmentJourneyScreenState
           // EasyLoading.dismiss();
 
           if (success ?? false) {
+            if(group.id != null){
+              ref.read(treatmentJourneyProvider.notifier).setGroupId(group.id!);
+            }
+            
             Navigator.pushNamed(
               context,
               TreatmentJourneyDetailScreen.routeName,

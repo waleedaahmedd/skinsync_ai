@@ -56,14 +56,14 @@ Future<SimulationUrls> uploadSimulationImages({
   // Uploading all images
   final results = await Future.wait([
     upload(images.frontAfter != null ? images.frontBefore : null,
-        '$userId/appointments/front/before/'),
-    upload(images.frontAfter, '$userId/appointments/front/after/'),
+        '$userId/treatment_option/front/before/'),
+    upload(images.frontAfter, '$userId/treatment_option/front/after/'),
     upload(images.rightAfter != null ? images.rightBefore : null,
-        '$userId/appointments/before/right/'),
-    upload(images.rightAfter, '$userId/appointments/after/right/'),
+        '$userId/treatment_option/before/right/'),
+    upload(images.rightAfter, '$userId/treatment_option/after/right/'),
     upload(images.leftAfter != null ? images.leftBefore : null,
-        '$userId/appointments/before/left/'),
-    upload(images.leftAfter, '$userId/appointments/after/left/'),
+        '$userId/treatment_option/before/left/'),
+    upload(images.leftAfter, '$userId/treatment_option/after/left/'),
   ]);
 
   return SimulationUrls(

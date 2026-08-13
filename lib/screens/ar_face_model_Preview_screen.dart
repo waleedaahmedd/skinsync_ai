@@ -18,6 +18,7 @@ import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_area_view_model.dart';
+import '../view_models/treatment_journey_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/bottom_sheets/material_level_sheet.dart';
@@ -25,6 +26,7 @@ import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_bordered_button.dart';
 import '../widgets/selected_treatments_summary_card.dart';
 import '../widgets/service_type_button.dart';
+import 'treatment_journey_screen.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
   const ArFaceModelPreviewScreen({super.key});
@@ -172,13 +174,17 @@ class _ArFaceModelPreviewScreenState
                         _buildSimulationBanner(),
                         SizedBox(height: context.h(30)),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: context.w(20)),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: context.w(20),
+                          ),
                           child: _buildTreatmentHeader(),
                         ),
                         SizedBox(height: context.h(8)),
                         _buildTreatmentsList(),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: context.w(20)),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: context.w(20),
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -226,7 +232,10 @@ class _ArFaceModelPreviewScreenState
     return Container(
       width: double.infinity,
       margin: EdgeInsets.symmetric(horizontal: context.w(20)),
-      padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(12)),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.w(16),
+        vertical: context.h(12),
+      ),
       decoration: BoxDecoration(
         color: CustomColors.greyColor.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(context.r(20)),
@@ -294,8 +303,10 @@ class _ArFaceModelPreviewScreenState
               padding: EdgeInsets.symmetric(horizontal: context.w(20)),
               physics: const BouncingScrollPhysics(),
               builderDelegate: PagedChildBuilderDelegate(
-                newPageProgressIndicatorBuilder: (_) => AppLoader(size: context.h(50)),
-                firstPageProgressIndicatorBuilder: (_) => AppLoader(size: context.h(40)),
+                newPageProgressIndicatorBuilder: (_) =>
+                    AppLoader(size: context.h(50)),
+                firstPageProgressIndicatorBuilder: (_) =>
+                    AppLoader(size: context.h(40)),
                 itemBuilder: (context, treatment, index) {
                   final isSelected = ref
                       .watch(checkoutViewModel)
@@ -452,6 +463,70 @@ class _ArFaceModelPreviewScreenState
                   ),
                 ),
               ),
+              context.horizontalSpace(10),
+              Consumer(
+                builder: (context, ref, _) {
+                  final afterImage = ref.watch(
+                    treatmentViewModel.select(
+                      (state) =>
+                          state.frontAiImage ??
+                          state.leftAiImage ??
+                          state.rightAiImage,
+                    ),
+                  );
+                  if (afterImage == null) return const SizedBox.shrink();
+
+                  return Expanded(
+                    child: ScaleTransition(
+                      scale: _pulseAnimation,
+                      child: CustomBorderedButton(
+                        onPressed: () async {
+                          final result = await ref
+                              .read(treatmentJourneyProvider.notifier)
+                              .createTjOptions();
+                          if (result == true) {
+                            Navigator.popUntil(
+                              context,
+                              (route) =>
+                                  route.settings.name ==
+                                  TreatmentJourneyScreen.routeName,
+                            );
+                          }
+                        },
+                        text: "Save Option",
+                        borderRadius: context.r(30),
+                        //borderColor: CustomColors.blackColor,
+                        textColor: CustomColors.blackColor,
+                        height: context.h(58),
+                      ),
+                    ),
+                  );
+
+                  //            GestureDetector(
+                  //             onTap: () => ref.read(treatmentViewModel.notifier).saveAiImage(),
+                  //             child: Container(
+                  // padding: EdgeInsets.all(context.w(8)),
+                  // decoration: BoxDecoration(
+                  //   color: Colors.white.withValues(alpha: 0.9),
+                  //   shape: BoxShape.circle,
+                  //   boxShadow: [
+                  //     BoxShadow(
+                  //       color: Colors.black.withValues(alpha: 0.1),
+                  //       blurRadius: 8,
+                  //       offset: const Offset(0, 2),
+                  //     ),
+                  //   ],
+                  // ),
+                  // child: Icon(
+                  //   Icons.file_download_outlined,
+                  //   color: Colors.black,
+                  //   size: context.sp(20),
+                  // ),
+                  //             ),
+                  //           );
+                },
+              ),
+
               // SizedBox(width: context.w(16)),
               // Expanded(
               //   child: CustomButton(
@@ -567,7 +642,7 @@ class _ArFaceModelPreviewScreenState
             ),
             _buildAfterLabel(),
             _buildBeforeLabel(),
-            _buildDownloadButton(),
+            //  _buildDownloadButton(),
           ],
         ),
       ),
@@ -774,7 +849,10 @@ class _ArFaceModelPreviewScreenState
 
   Widget _buildBadge(String text, Color bgColor) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: context.w(10), vertical: context.h(4)),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.w(10),
+        vertical: context.h(4),
+      ),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(context.r(4)),
@@ -789,46 +867,46 @@ class _ArFaceModelPreviewScreenState
     );
   }
 
-  Widget _buildDownloadButton() {
-    return Positioned(
-      bottom: context.h(12),
-      right: context.w(12),
-      child: Consumer(
-        builder: (context, ref, _) {
-          final afterImage = ref.watch(
-            treatmentViewModel.select(
-              (state) =>
-                  state.frontAiImage ?? state.leftAiImage ?? state.rightAiImage,
-            ),
-          );
-          if (afterImage == null) return const SizedBox.shrink();
+  // Widget _buildDownloadButton() {
+  //   return Positioned(
+  //     bottom: context.h(12),
+  //     right: context.w(12),
+  //     child: Consumer(
+  //       builder: (context, ref, _) {
+  //         final afterImage = ref.watch(
+  //           treatmentViewModel.select(
+  //             (state) =>
+  //                 state.frontAiImage ?? state.leftAiImage ?? state.rightAiImage,
+  //           ),
+  //         );
+  //         if (afterImage == null) return const SizedBox.shrink();
 
-          return GestureDetector(
-            onTap: () => ref.read(treatmentViewModel.notifier).saveAiImage(),
-            child: Container(
-              padding: EdgeInsets.all(context.w(8)),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.9),
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.file_download_outlined,
-                color: Colors.black,
-                size: context.sp(20),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
+  //         return GestureDetector(
+  //           onTap: () => ref.read(treatmentViewModel.notifier).saveAiImage(),
+  //           child: Container(
+  //             padding: EdgeInsets.all(context.w(8)),
+  //             decoration: BoxDecoration(
+  //               color: Colors.white.withValues(alpha: 0.9),
+  //               shape: BoxShape.circle,
+  //               boxShadow: [
+  //                 BoxShadow(
+  //                   color: Colors.black.withValues(alpha: 0.1),
+  //                   blurRadius: 8,
+  //                   offset: const Offset(0, 2),
+  //                 ),
+  //               ],
+  //             ),
+  //             child: Icon(
+  //               Icons.file_download_outlined,
+  //               color: Colors.black,
+  //               size: context.sp(20),
+  //             ),
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
   // ---------------------------------------------------------------------------
   // Helper Methods
@@ -989,7 +1067,9 @@ class _ArFaceModelPreviewScreenState
       backgroundColor: Colors.white,
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(24))),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(context.r(24)),
+        ),
       ),
       builder: (context) {
         return MaterialLevelSheet(

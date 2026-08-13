@@ -4,13 +4,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/base_state_model.dart';
 import '../models/requests/create_group_request.dart';
+import '../models/requests/save_history_request.dart';
+import '../models/requests/tj_options_request.dart';
 import '../models/responses/groups_list_response.dart';
 import '../models/responses/simulation_history_response.dart';
 import '../models/responses/tj_options_list_response.dart';
 import '../repositories/treatment_journey_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/treatment_journey_service.dart';
+import '../utills/simulation_utils.dart';
+import 'auth_view_model.dart';
 import 'base_view_model.dart';
+import 'checkout_view_model.dart';
+import 'treatment_view_model.dart';
 
 final treatmentJourneyProvider =
     NotifierProvider.autoDispose<
@@ -58,6 +64,10 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       EasyLoading.dismiss();
       return true;
     });
+  }
+
+  void setGroupId(int groupID) {
+    state = state.copyWith(groupId: groupID);
   }
 
   Future<void> fetchSimulations(int optionId) async {
@@ -114,6 +124,93 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     );
   }
 
+  Future<bool?> createTjOptions() async {
+    return await runSafely(() async {
+      EasyLoading.show(status: 'Please wait...');
+      final selectedTreatmentsAndAreas = ref
+          .read(checkoutViewModel)
+          .selectedTreatmentsAndAreas;
+      if (selectedTreatmentsAndAreas.isEmpty) {
+        EasyLoading.showError('No treatment selected');
+        return false;
+      }
+      final treatmentState = ref.read(treatmentViewModel);
+      if (treatmentState.frontPoseImage != null) {
+        if (treatmentState.frontAiImage == null) {
+          throw Exception('No AI image captured for front Pose!');
+        }
+      }
+      if (treatmentState.rightPoseImage != null) {
+        if (treatmentState.rightAiImage == null) {
+          throw Exception('No AI image captured for right Pose!');
+        }
+      }
+      if (treatmentState.leftPoseImage != null) {
+        if (treatmentState.leftAiImage == null) {
+          throw Exception('No AI image captured for left Pose!');
+        }
+      }
+
+      final userId = ref.read(authViewModel).authData!.user!.id!;
+
+      final uploadResults = await uploadSimulationImages(
+        userId: userId,
+        images: SimulationImages(
+          frontBefore: treatmentState.frontPoseImage,
+          frontAfter: treatmentState.frontAiImage,
+          rightBefore: treatmentState.rightPoseImage,
+          rightAfter: treatmentState.rightAiImage,
+          leftBefore: treatmentState.leftPoseImage,
+          leftAfter: treatmentState.leftAiImage,
+        ),
+      );
+
+      final historyTreatments = selectedTreatmentsAndAreas.map((item) {
+        return HistoryTreatmentRequest(
+          treatmentId: item.treatment.id ?? 0,
+          treatmentName: item.treatment.name ?? '',
+          areas: item.selectedAreas.map((areaItem) {
+            final area = areaItem.target;
+            final List<HistoryMaterialRequest> historyMaterials = [];
+            if (areaItem.material != null) {
+              historyMaterials.add(
+                HistoryMaterialRequest(
+                  id: areaItem.material!.id,
+                  name: areaItem.material!.name,
+                  selectedQuantity: areaItem.material!.selectedQuantity,
+                ),
+              );
+            }
+            return HistoryAreaRequest(
+              areaId: (area.id ?? 0),
+              areaName: area.name ?? '',
+              materials: historyMaterials,
+            );
+          }).toList(),
+        );
+      }).toList();
+      final opitionNumber = state.options.length + 1;
+      final request = TjOptionsRequest(
+        groupId: state.groupId,
+        name: 'Option $opitionNumber',
+        frontImageBefore: uploadResults.frontBefore,
+        frontImageAfter: uploadResults.frontAfter,
+        rightImageBefore: uploadResults.rightBefore,
+        rightImageAfter: uploadResults.rightAfter,
+        leftImageBefore: uploadResults.leftBefore,
+        leftImageAfter: uploadResults.leftAfter,
+        treatments: historyTreatments,
+      );
+      final reesponse = await _repo.createTjOptions(request);
+      if (reesponse.isSuccess == true) {
+        await fetchTreatmentJourneyGroups();
+        EasyLoading.showSuccess('Option created successfully');
+      }
+
+      return true;
+    });
+  }
+
   @override
   void onError(String message) {
     EasyLoading.dismiss();
@@ -133,11 +230,13 @@ class TreatmentJourneyState extends BaseStateModel {
   final List<SimulationData> simulations;
   final bool isSimulationsLoading;
   final int? selectedOptionId;
+  final int? groupId;
   final String? price;
 
   const TreatmentJourneyState({
     super.loading = false,
     super.errorMessage,
+    this.groupId,
     this.groups = const [],
     this.options = const [],
     this.simulations = const [],
@@ -150,6 +249,7 @@ class TreatmentJourneyState extends BaseStateModel {
   TreatmentJourneyState copyWith({
     bool? loading,
     String? errorMessage,
+    int? groupId,
     List<TreatmentJourneyGroup>? groups,
     List<TJOption>? options,
     List<SimulationData>? simulations,
@@ -161,6 +261,7 @@ class TreatmentJourneyState extends BaseStateModel {
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
       groups: groups ?? this.groups,
+      groupId: groupId ?? this.groupId,
       options: options ?? this.options,
       simulations: simulations ?? this.simulations,
       isSimulationsLoading: isSimulationsLoading ?? this.isSimulationsLoading,
