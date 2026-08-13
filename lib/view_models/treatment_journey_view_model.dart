@@ -57,10 +57,10 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     return await runSafely(() async {
       EasyLoading.show(status: 'Fetching Journey...');
       final response = await _repo.getOptions(groupId);
-     
+
       state = state.copyWith(loading: false, options: response.data ?? []);
-       if (state.options.isNotEmpty) {
-       await fetchOptionsDetail(state.options.first.id!);
+      if (state.options.isNotEmpty) {
+        await fetchOptionsDetail(state.options.first.id!);
       }
       EasyLoading.dismiss();
       return true;
@@ -80,7 +80,6 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
   void setGroupId(int groupID) {
     state = state.copyWith(groupId: groupID);
   }
- 
 
   // Future<void> fetchSimulations(int optionId) async {
   //   state = state.copyWith(
@@ -203,7 +202,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       }).toList();
       final opitionNumber = state.options.length + 1;
       final request = TjOptionsRequest(
-        groupId: state.groupId,
+        groupId: state.groupId!,
         name: 'Option $opitionNumber',
         frontImageBefore: uploadResults.frontBefore,
         frontImageAfter: uploadResults.frontAfter,
@@ -213,9 +212,8 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
         leftImageAfter: uploadResults.leftAfter,
         treatments: historyTreatments,
       );
-      final reesponse = await _repo.createTjOptions(request);
-      if (reesponse.isSuccess == true) {
-
+      final response = await _repo.createTjOptions(request);
+      if (response.isSuccess == true) {
         EasyLoading.showSuccess('Option created successfully');
       }
       return true;
@@ -249,10 +247,10 @@ class TreatmentJourneyState extends BaseStateModel {
     super.loading = false,
     super.errorMessage,
     this.groupId,
-  
+
     this.groups = const [],
     this.options = const [],
-    this.simulations ,
+    this.simulations,
     this.isSimulationsLoading = false,
     this.selectedOptionId,
     this.price,
@@ -263,7 +261,7 @@ class TreatmentJourneyState extends BaseStateModel {
     bool? loading,
     String? errorMessage,
     int? groupId,
-   
+
     List<TreatmentJourneyGroup>? groups,
     List<TJOption>? options,
     SimulationData? simulations,
@@ -281,7 +279,6 @@ class TreatmentJourneyState extends BaseStateModel {
       isSimulationsLoading: isSimulationsLoading ?? this.isSimulationsLoading,
       selectedOptionId: selectedOptionId ?? this.selectedOptionId,
       price: price ?? this.price,
-   
     );
   }
 }
