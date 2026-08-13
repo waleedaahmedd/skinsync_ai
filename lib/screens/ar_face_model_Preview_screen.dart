@@ -491,9 +491,13 @@ class _ArFaceModelPreviewScreenState
                               arguments: false
                             );
                           } else {
-                            await ref
+                         final result =    await ref
                                 .read(treatmentJourneyProvider.notifier)
                                 .createTjOptions();
+                                if(result == true){
+                                 await ref
+                                .read(treatmentJourneyProvider.notifier).fetchOptions()
+                                }
                           }
                         },
                         text: "Save Option",
