@@ -6,6 +6,7 @@ import '../models/requests/tj_options_request.dart';
 import '../models/responses/auth_response.dart';
 import '../models/responses/base_response_model.dart';
 import '../models/responses/groups_list_response.dart';
+import '../models/responses/tj_option_simulations_response.dart';
 import '../models/responses/tj_options_list_response.dart';
 import '../repositories/treatment_journey_repository.dart';
 import '../utills/enums.dart';
@@ -88,4 +89,24 @@ class TreatmentJourneyService implements TreatmentJourneyRepository {
       );
     }
   }
+
+@override
+  Future<TJOptionSimulationsResponse> getOptionsDetail(int optionId) async {
+   final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.treatmentJourneyOptions,
+      requestType: RequestType.get,
+      params: "/$optionId",
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      return TJOptionSimulationsResponse.fromJson(parsed);
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(
+        AuthResponse.fromJson(parsed).message ?? "Failed to fetch options",
+      );
+    }
+}
+
 }

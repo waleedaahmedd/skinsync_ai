@@ -57,10 +57,21 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     return await runSafely(() async {
       EasyLoading.show(status: 'Fetching Journey...');
       final response = await _repo.getOptions(groupId);
-      if (state.options.isNotEmpty) {
-        fetchSimulations(state.options.first.id!);
-      }
+     
       state = state.copyWith(loading: false, options: response.data ?? []);
+       if (state.options.isNotEmpty) {
+       await fetchOptionsDetail(state.options.first.id!);
+      }
+      EasyLoading.dismiss();
+      return true;
+    });
+  }
+
+  Future<bool?> fetchOptionsDetail(int optionId) async {
+    return await runSafely(() async {
+      EasyLoading.show(status: 'Fetching Journey...');
+      final response = await _repo.getOptionsDetail(optionId);
+      state = state.copyWith(loading: false, simulations: response.data);
       EasyLoading.dismiss();
       return true;
     });
@@ -70,59 +81,59 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     state = state.copyWith(groupId: groupID);
   }
 
-  Future<void> fetchSimulations(int optionId) async {
-    state = state.copyWith(
-      isSimulationsLoading: true,
-      selectedOptionId: optionId,
-    );
+  // Future<void> fetchSimulations(int optionId) async {
+  //   state = state.copyWith(
+  //     isSimulationsLoading: true,
+  //     selectedOptionId: optionId,
+  //   );
 
-    await Future.delayed(const Duration(milliseconds: 800));
+  //   await Future.delayed(const Duration(milliseconds: 800));
 
-    final List<SimulationData> dummySims = [
-      SimulationData(
-        id: 101,
-        frontImageBefore: "https://picsum.photos/200/300?random=1",
-        frontImageAfter: "https://picsum.photos/200/300?random=2",
-        rightImageBefore: "https://picsum.photos/200/300?random=3",
-        rightImageAfter: "https://picsum.photos/200/300?random=4",
-        leftImageBefore: "https://picsum.photos/200/300?random=5",
-        leftImageAfter: "https://picsum.photos/200/300?random=6",
-        createdAt: DateTime.now(),
-        treatments: [
-          const SimulationTreatment(
-            id: 1,
-            name: "Full Facial Rejuvenation",
-            areas: [
-              SimulationArea(
-                id: "1",
-                name: "Cheeks",
-                materials: [
-                  SimulationMaterial(
-                    id: 1,
-                    name: "Hyaluronic Acid",
-                    selectedQuantity: 2,
-                  ),
-                ],
-              ),
-              SimulationArea(
-                id: "2",
-                name: "Forehead",
-                materials: [
-                  SimulationMaterial(id: 2, name: "Botox", selectedQuantity: 1),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
-    ];
+  //   final List<SimulationData> dummySims = [
+  //     SimulationData(
+  //       id: 101,
+  //       frontImageBefore: "https://picsum.photos/200/300?random=1",
+  //       frontImageAfter: "https://picsum.photos/200/300?random=2",
+  //       rightImageBefore: "https://picsum.photos/200/300?random=3",
+  //       rightImageAfter: "https://picsum.photos/200/300?random=4",
+  //       leftImageBefore: "https://picsum.photos/200/300?random=5",
+  //       leftImageAfter: "https://picsum.photos/200/300?random=6",
+  //       createdAt: DateTime.now(),
+  //       treatments: [
+  //         const SimulationTreatment(
+  //           id: 1,
+  //           name: "Full Facial Rejuvenation",
+  //           areas: [
+  //             SimulationArea(
+  //               id: "1",
+  //               name: "Cheeks",
+  //               materials: [
+  //                 SimulationMaterial(
+  //                   id: 1,
+  //                   name: "Hyaluronic Acid",
+  //                   selectedQuantity: 2,
+  //                 ),
+  //               ],
+  //             ),
+  //             SimulationArea(
+  //               id: "2",
+  //               name: "Forehead",
+  //               materials: [
+  //                 SimulationMaterial(id: 2, name: "Botox", selectedQuantity: 1),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   ];
 
-    state = state.copyWith(
-      isSimulationsLoading: false,
-      simulations: dummySims,
-      price: optionId == 1 ? "\$500" : "\$850",
-    );
-  }
+  //   state = state.copyWith(
+  //     isSimulationsLoading: false,
+  //     simulations: dummySims,
+  //     price: optionId == 1 ? "\$500" : "\$850",
+  //   );
+  // }
 
   Future<bool?> createTjOptions() async {
     return await runSafely(() async {
@@ -227,7 +238,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 class TreatmentJourneyState extends BaseStateModel {
   final List<TreatmentJourneyGroup> groups;
   final List<TJOption> options;
-  final List<SimulationData> simulations;
+  final SimulationData? simulations;
   final bool isSimulationsLoading;
   final int? selectedOptionId;
   final int? groupId;
@@ -237,9 +248,10 @@ class TreatmentJourneyState extends BaseStateModel {
     super.loading = false,
     super.errorMessage,
     this.groupId,
+   
     this.groups = const [],
     this.options = const [],
-    this.simulations = const [],
+    this.simulations ,
     this.isSimulationsLoading = false,
     this.selectedOptionId,
     this.price,
@@ -252,7 +264,7 @@ class TreatmentJourneyState extends BaseStateModel {
     int? groupId,
     List<TreatmentJourneyGroup>? groups,
     List<TJOption>? options,
-    List<SimulationData>? simulations,
+    SimulationData? simulations,
     bool? isSimulationsLoading,
     int? selectedOptionId,
     String? price,

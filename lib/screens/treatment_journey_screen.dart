@@ -11,10 +11,12 @@ import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
+import 'bottom_nav_page.dart';
 import 'treatment_journey_detail_screen.dart';
 
 class TreatmentJourneyScreen extends ConsumerStatefulWidget {
-  const TreatmentJourneyScreen({super.key});
+  final bool isTreatmentJourney;
+  const TreatmentJourneyScreen({super.key, this.isTreatmentJourney = true});
   static const String routeName = '/TreatmentJourneyScreen';
 
   @override
@@ -25,10 +27,12 @@ class TreatmentJourneyScreen extends ConsumerStatefulWidget {
 class _TreatmentJourneyScreenState
     extends ConsumerState<TreatmentJourneyScreen> {
   final TextEditingController _groupNameController = TextEditingController();
-
+  late bool isTreatmentJourney;
   @override
   void initState() {
     super.initState();
+    isTreatmentJourney = widget.isTreatmentJourney;
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(treatmentJourneyProvider.notifier).fetchTreatmentJourneyGroups();
     });
@@ -145,6 +149,12 @@ class _TreatmentJourneyScreenState
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(
+        onBackTap: () {
+          Navigator.popUntil(
+            context,
+            (route) => route.settings.name == BottomNavPage.routeName,
+          );
+        },
         showTitle: true,
         title: 'Treatment Journey',
         actions: [
@@ -202,6 +212,22 @@ class _TreatmentJourneyScreenState
       ),
       child: InkWell(
         onTap: () async {
+          if (group.id != null) {
+            ref.read(treatmentJourneyProvider.notifier).setGroupId(group.id!);
+          }
+          if (!isTreatmentJourney) {
+            final success = await ref
+                .read(treatmentJourneyProvider.notifier)
+                .fetchOptions(group.id!);
+            if (success ?? false) {
+              await ref
+                  .read(treatmentJourneyProvider.notifier)
+                  .createTjOptions();
+              setState(() {
+                isTreatmentJourney = true;
+              });
+            }
+          }
           // EasyLoading.show(status: 'Loading options...');
           final success = await ref
               .read(treatmentJourneyProvider.notifier)
@@ -209,10 +235,6 @@ class _TreatmentJourneyScreenState
           // EasyLoading.dismiss();
 
           if (success ?? false) {
-            if(group.id != null){
-              ref.read(treatmentJourneyProvider.notifier).setGroupId(group.id!);
-            }
-            
             Navigator.pushNamed(
               context,
               TreatmentJourneyDetailScreen.routeName,

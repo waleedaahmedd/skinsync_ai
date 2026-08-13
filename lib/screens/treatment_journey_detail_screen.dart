@@ -51,7 +51,7 @@ class _TreatmentJourneyDetailScreenState
           if (options.isNotEmpty) {
             ref
                 .read(treatmentJourneyProvider.notifier)
-                .fetchSimulations(options[_tabController!.index].id!);
+                .fetchOptionsDetail(options[_tabController!.index].id!);
           }
         }
       });
@@ -128,39 +128,34 @@ class _TreatmentJourneyDetailScreenState
             ),
     );
   }
-
-  Widget _buildSimulationsList(
-    BuildContext context,
-    TreatmentJourneyState state,
-  ) {
-    if (state.simulations.isEmpty) {
-      return Center(
-        child: Text(
-          "No simulations for this option",
-          style: CustomFonts.grey16w400,
-        ),
-      );
-    }
-
-    return ListView.builder(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.w(24),
-        vertical: context.h(20),
+Widget _buildSimulationsList(
+  BuildContext context,
+  TreatmentJourneyState state,
+) {
+  final sim = state.simulations;
+  if (sim == null) {
+    return Center(
+      child: Text(
+        "No simulation for this option",
+        style: CustomFonts.grey16w400,
       ),
-      itemCount: state.simulations.length,
-      itemBuilder: (context, index) {
-        final sim = state.simulations[index];
-        final isLast = index == state.simulations.length - 1;
-        return SimulationCard(
-          sim: sim,
-          price: isLast ? state.price : null,
-          showActionButton: true,
-          actionButtonText: "Select this Option",
-          onActionButtonPressed: () {
-            Navigator.pushNamed(context, JourneyClinicsScreen.routeName);
-          },
-        );
-      },
     );
   }
+
+  return SingleChildScrollView(
+    padding: EdgeInsets.symmetric(
+      horizontal: context.w(24),
+      vertical: context.h(20),
+    ),
+    child: SimulationCard(
+      sim: sim,
+      price: state.price,
+      showActionButton: true,
+      actionButtonText: "Select this Option",
+      onActionButtonPressed: () {
+        Navigator.pushNamed(context, JourneyClinicsScreen.routeName);
+      },
+    ),
+  );
+}
 }

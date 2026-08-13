@@ -481,16 +481,27 @@ class _ArFaceModelPreviewScreenState
                       scale: _pulseAnimation,
                       child: CustomBorderedButton(
                         onPressed: () async {
-                          final result = await ref
-                              .read(treatmentJourneyProvider.notifier)
-                              .createTjOptions();
-                          if (result == true) {
-                            Navigator.popUntil(
+                          final groupId = ref
+                              .read(treatmentJourneyProvider)
+                              .groupId;
+                          if (groupId == null) {
+                            Navigator.pushNamed(
                               context,
-                              (route) =>
-                                  route.settings.name ==
-                                  TreatmentJourneyScreen.routeName,
+                              TreatmentJourneyScreen.routeName,
+                              arguments: false
                             );
+                          } else {
+                            final result = await ref
+                                .read(treatmentJourneyProvider.notifier)
+                                .createTjOptions();
+                            if (result == true) {
+                              Navigator.popUntil(
+                                context,
+                                (route) =>
+                                    route.settings.name ==
+                                    TreatmentJourneyScreen.routeName,
+                              );
+                            }
                           }
                         },
                         text: "Save Option",
