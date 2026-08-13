@@ -488,16 +488,22 @@ class _ArFaceModelPreviewScreenState
                             Navigator.pushNamed(
                               context,
                               TreatmentJourneyScreen.routeName,
-                              arguments: false
+                              arguments: false,
                             );
                           } else {
-                         final result =    await ref
+                            final result = await ref
                                 .read(treatmentJourneyProvider.notifier)
                                 .createTjOptions();
-                                if(result == true){
-                                 await ref
-                                .read(treatmentJourneyProvider.notifier).fetchOptions()
-                                }
+                            if (result == true) {
+                              final groupId = ref
+                                  .read(treatmentJourneyProvider)
+                                  .groupId;
+                              if (groupId != null) {
+                                await ref
+                                    .read(treatmentJourneyProvider.notifier)
+                                    .fetchOptions(groupId);
+                              }
+                            }
                           }
                         },
                         text: "Save Option",
