@@ -231,20 +231,21 @@ class _TreatmentJourneyScreenState
                     .setTreatmentJourney(true);
               }
             }
+          } else {
+            final success = await ref
+                .read(treatmentJourneyProvider.notifier)
+                .fetchOptions(group.id!);
+            // EasyLoading.dismiss();
+
+            if (success ?? false) {
+              Navigator.pushNamed(
+                context,
+                TreatmentJourneyDetailScreen.routeName,
+                arguments: {'groupId': group.id, 'groupName': group.name},
+              );
+            }
           }
           // EasyLoading.show(status: 'Loading options...');
-          final success = await ref
-              .read(treatmentJourneyProvider.notifier)
-              .fetchOptions(group.id!);
-          // EasyLoading.dismiss();
-
-          if (success ?? false) {
-            Navigator.pushNamed(
-              context,
-              TreatmentJourneyDetailScreen.routeName,
-              arguments: {'groupId': group.id, 'groupName': group.name},
-            );
-          }
         },
         borderRadius: BorderRadius.circular(context.r(16)),
         child: Padding(

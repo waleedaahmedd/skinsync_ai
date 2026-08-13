@@ -485,10 +485,12 @@ class _ArFaceModelPreviewScreenState
                               .read(treatmentJourneyProvider)
                               .groupId;
                           if (groupId == null) {
-ref.read(treatmentJourneyProvider.notifier).setTreatmentJourney(false);
+                            ref
+                                .read(treatmentJourneyProvider.notifier)
+                                .setTreatmentJourney(false);
                             Navigator.pushNamed(
                               context,
-                              TreatmentJourneyScreen.routeName,  
+                              TreatmentJourneyScreen.routeName,
                             );
                           } else {
                             final result = await ref

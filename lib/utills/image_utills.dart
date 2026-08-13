@@ -91,8 +91,8 @@ Future<XFile> cropImageToCircle(XFile xFile, {
   );
 
   // Create a new file with a unique name
-  final tempDir = await getTemporaryDirectory();
-  final timestamp = DateTime.now().millisecondsSinceEpoch;
+  // final tempDir = await getTemporaryDirectory();
+  // final timestamp = DateTime.now().millisecondsSinceEpoch;
   final newFilePath = '${tempDir.path}/cropped_$timestamp.jpg';
   final File newFile = File(newFilePath);
   await newFile.writeAsBytes(img.encodeJpg(cropped, quality: 95));
