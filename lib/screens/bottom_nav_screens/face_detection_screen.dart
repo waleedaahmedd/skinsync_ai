@@ -381,7 +381,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
 
       final controller = CameraController(
         target,
-        ResolutionPreset.veryHigh, // HD quality
+        ResolutionPreset.high, // Optimized for performance and memory
         enableAudio: false,
         imageFormatGroup: ImageFormatGroup.yuv420,
       );
@@ -434,12 +434,16 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
 
     // Stop image stream before capture to avoid potential camera freezes on some devices
     try {
-      if (_cameraController!.value.isStreamingImages) {
+      if (_cameraController != null && _cameraController!.value.isStreamingImages) {
         await _cameraController!.stopImageStream();
+        // Give the camera a moment to settle after stopping the stream
+        await Future.delayed(const Duration(milliseconds: 200));
       }
     } catch (e) {
       log("Error stopping image stream: $e");
     }
+
+    if (!mounted || _cameraController == null) return;
 
     try {
       final image = await _cameraController!.takePicture();
@@ -618,47 +622,55 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
   }
 
   void _listenToVolumeButtons() async {
-    _originalVolume = await VolumeController.instance.getVolume();
-    VolumeController.instance.showSystemUI = false;
-    
-    // Initial reset to middle
-    _isResettingVolume = true;
-    VolumeController.instance.setVolume(0.5);
-    await Future.delayed(const Duration(milliseconds: 500));
-    _isResettingVolume = false;
+    try {
+      _originalVolume = await VolumeController.instance.getVolume();
+      VolumeController.instance.showSystemUI = false;
+      
+      // Initial reset to middle
+      _isResettingVolume = true;
+      VolumeController.instance.setVolume(0.5);
+      await Future.delayed(const Duration(milliseconds: 500));
+      _isResettingVolume = false;
 
-    VolumeController.instance.addListener((volume) {
-      if (!mounted || _isResettingVolume) return;
+      VolumeController.instance.addListener((volume) {
+        if (!mounted || _isResettingVolume) return;
 
-      // If volume changed significantly from our base (0.5)
-      if ((volume - 0.5).abs() > 0.05) {
-        if (volume > 0.5) {
-          // Volume Up pressed
-          if (_showManualCaptureUI && !_isCapturing && _capturedImage == null) {
-            _captureAndNavigate(_storedRef!);
+        // If volume changed significantly from our base (0.5)
+        if ((volume - 0.5).abs() > 0.05) {
+          if (volume > 0.5) {
+            // Volume Up pressed
+            if (_showManualCaptureUI && !_isCapturing && _capturedImage == null) {
+              _captureAndNavigate(_storedRef!);
+            }
           }
-        }
 
-        // Always reset to 0.5 so we never hit 1.0 (Full) or 0.0 (Mute).
-        // This ensures the hardware buttons always have "room" to trigger a change event.
-        _isResettingVolume = true;
-        VolumeController.instance.setVolume(0.5);
-        
-        // Short debounce to ignore the event caused by our own setVolume
-        Future.delayed(const Duration(milliseconds: 400), () {
-          _isResettingVolume = false;
-        });
-      }
-    });
+          // Always reset to 0.5 so we never hit 1.0 (Full) or 0.0 (Mute).
+          // This ensures the hardware buttons always have "room" to trigger a change event.
+          _isResettingVolume = true;
+          VolumeController.instance.setVolume(0.5);
+          
+          // Short debounce to ignore the event caused by our own setVolume
+          Future.delayed(const Duration(milliseconds: 400), () {
+            _isResettingVolume = false;
+          });
+        }
+      });
+    } catch (e) {
+      log("VolumeController initialization error: $e");
+    }
   }
 
   @override
   void dispose() {
     _timer?.cancel();
     _manualCaptureTimer?.cancel();
-    VolumeController.instance.removeListener();
-    VolumeController.instance.showSystemUI = true;
-    VolumeController.instance.setVolume(_originalVolume);
+    try {
+      VolumeController.instance.removeListener();
+      VolumeController.instance.showSystemUI = true;
+      VolumeController.instance.setVolume(_originalVolume);
+    } catch (e) {
+      log("VolumeController dispose error: $e");
+    }
     _cameraController?.dispose();
     _faceDetector?.dispose();
     _pulseController.dispose();

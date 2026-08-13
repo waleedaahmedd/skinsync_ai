@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:image/image.dart' as img;
@@ -38,8 +39,22 @@ Future<XFile> cropImageToCircle(XFile xFile, {
   required double radiusPercent,
   bool flipHorizontally = false,
 }) async {
-  // Read image bytes
-  final bytes = await xFile.readAsBytes();
+  // 1. First, compress/resize the image natively to a manageable size (e.g., max 1080px)
+  // This prevents OutOfMemory crashes on high-res Android cameras (Android 12+)
+  final tempDir = await getTemporaryDirectory();
+  final timestamp = DateTime.now().millisecondsSinceEpoch;
+  final compressedPath = '${tempDir.path}/temp_capture_$timestamp.jpg';
+
+  final XFile? compressedXFile = await FlutterImageCompress.compressAndGetFile(
+    xFile.path,
+    compressedPath,
+    quality: 90,
+    minWidth: 1080,
+    minHeight: 1080,
+  );
+
+  final targetFile = compressedXFile ?? xFile;
+  final bytes = await targetFile.readAsBytes();
 
   // Decode image
   img.Image? original = img.decodeImage(bytes);
