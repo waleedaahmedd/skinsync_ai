@@ -24,6 +24,7 @@ import '../widgets/app_loader.dart';
 import '../widgets/bottom_sheets/material_level_sheet.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_bordered_button.dart';
+import '../widgets/dialogs/save_option_confirmation_dialog.dart';
 import '../widgets/selected_treatments_summary_card.dart';
 import '../widgets/service_type_button.dart';
 import 'treatment_journey_screen.dart';
@@ -107,6 +108,40 @@ class _ArFaceModelPreviewScreenState
             .fetchAreasByTreatment(selectedTreatment.id ?? 0);
       }
     });
+  }
+
+  Future<void> _onSaveOptionPressed() async {
+    final journeyState = ref.read(treatmentJourneyProvider);
+    final selectedGroup = journeyState.selectedGroup;
+
+    if (selectedGroup == null) {
+      Navigator.pushNamed(
+        context,
+        TreatmentJourneyScreen.routeName,
+        arguments: false,
+      );
+    } else {
+      showSaveOptionConfirmationDialog(
+        screenContext: context,
+        groupName: selectedGroup.name ?? 'Unknown Group',
+        onConfirm: () async {
+          final result = await ref
+              .read(treatmentJourneyProvider.notifier)
+              .createTjOptions();
+          if (result == true) {
+            final groupId = ref
+                .read(treatmentJourneyProvider)
+                .selectedGroup
+                ?.id;
+            if (groupId != null) {
+              await ref
+                  .read(treatmentJourneyProvider.notifier)
+                  .fetchOptions(groupId);
+            }
+          }
+        },
+      );
+    }
   }
 
   @override
@@ -480,99 +515,16 @@ class _ArFaceModelPreviewScreenState
                     child: ScaleTransition(
                       scale: _pulseAnimation,
                       child: CustomBorderedButton(
-                        onPressed: () async {
-                          final groupId = ref
-                              .read(treatmentJourneyProvider)
-                              .groupId;
-                          if (groupId == null) {
-                            Navigator.pushNamed(
-                              context,
-                              TreatmentJourneyScreen.routeName,
-                              arguments: false,
-                            );
-                          } else {
-                            final result = await ref
-                                .read(treatmentJourneyProvider.notifier)
-                                .createTjOptions();
-                            if (result == true) {
-                              final groupId = ref
-                                  .read(treatmentJourneyProvider)
-                                  .groupId;
-                              if (groupId != null) {
-                                await ref
-                                    .read(treatmentJourneyProvider.notifier)
-                                    .fetchOptions(groupId);
-                              }
-                            }
-                          }
-                        },
+                        onPressed: _onSaveOptionPressed,
                         text: "Save Option",
                         borderRadius: context.r(30),
-                        //borderColor: CustomColors.blackColor,
                         textColor: CustomColors.blackColor,
                         height: context.h(58),
                       ),
                     ),
                   );
-
-                  //            GestureDetector(
-                  //             onTap: () => ref.read(treatmentViewModel.notifier).saveAiImage(),
-                  //             child: Container(
-                  // padding: EdgeInsets.all(context.w(8)),
-                  // decoration: BoxDecoration(
-                  //   color: Colors.white.withValues(alpha: 0.9),
-                  //   shape: BoxShape.circle,
-                  //   boxShadow: [
-                  //     BoxShadow(
-                  //       color: Colors.black.withValues(alpha: 0.1),
-                  //       blurRadius: 8,
-                  //       offset: const Offset(0, 2),
-                  //     ),
-                  //   ],
-                  // ),
-                  // child: Icon(
-                  //   Icons.file_download_outlined,
-                  //   color: Colors.black,
-                  //   size: context.sp(20),
-                  // ),
-                  //             ),
-                  //           );
                 },
               ),
-
-              // SizedBox(width: context.w(16)),
-              // Expanded(
-              //   child: CustomButton(
-              //     text: 'Explore Clinics',
-              //     borderRadius: context.r(30),
-              //     height: context.h(58),
-              //     onPressed: () {
-              //       final checkoutState = ref.read(checkoutViewModel);
-              //       final treatment = checkoutState.selectedTreatments;
-              //       final treatmentId = treatment?.id;
-              //
-              //       final currentEntry = _entryForTreatment(
-              //         checkoutState.selectedTreatmentsAndAreas,
-              //         treatmentId,
-              //       );
-              //       final subAreaIds =
-              //           currentEntry?.selectedAreas
-              //               .map((e) => e.target.id)
-              //               .whereType<int>()
-              //               .toList() ??
-              //           <int>[];
-              //
-              //       Navigator.pushNamed(
-              //         context,
-              //         ExploreClinicsScreen.routeName,
-              //         arguments: {
-              //           'treatmentId': treatmentId,
-              //           'sideAreaIds': subAreaIds,
-              //         },
-              //       );
-              //     },
-              //   ),
-              // ),
             ],
           ),
         );

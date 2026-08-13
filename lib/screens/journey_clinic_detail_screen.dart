@@ -9,8 +9,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../view_models/bottom_nav_view_model.dart';
 import '../widgets/custom_button.dart';
-import 'treatment_journey_detail_screen.dart';
+import 'bottom_nav_page.dart';
 
 class JourneyClinicDetailScreen extends ConsumerWidget {
   final Clinic? clinic;
@@ -66,13 +67,19 @@ class JourneyClinicDetailScreen extends ConsumerWidget {
                     style: CustomFonts.textGrey14w400,
                   ),
                   SizedBox(height: context.h(28)),
-                  CustomButton(
-                    onPressed: () {
-                      Navigator.of(context).popUntil(
-                        (route) => route.settings.name == TreatmentJourneyDetailScreen.routeName,
+                  Consumer(
+                    builder: (_, ref, _) {
+                      return CustomButton(
+                        onPressed: () {
+                          ref.read(bottomNavViewModel.notifier).changePage(0);
+                          Navigator.of(context).popUntil(
+                            (route) =>
+                                route.settings.name == BottomNavPage.routeName,
+                          );
+                        },
+                        text: "Done",
                       );
                     },
-                    text: "Done",
                   ),
                 ],
               ),
@@ -112,13 +119,16 @@ class JourneyClinicDetailScreen extends ConsumerWidget {
                                   imageUrl: clinic!.logo!,
                                   fit: BoxFit.cover,
                                   placeholder: (context, url) => const Center(
-                                    child: CupertinoActivityIndicator(color: Colors.white),
+                                    child: CupertinoActivityIndicator(
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                  errorWidget: (context, url, error) => const Icon(
-                                    Icons.broken_image_rounded,
-                                    color: Colors.white38,
-                                    size: 40,
-                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(
+                                        Icons.broken_image_rounded,
+                                        color: Colors.white38,
+                                        size: 40,
+                                      ),
                                 )
                               : const Icon(
                                   Icons.storefront_rounded,
@@ -194,7 +204,11 @@ class JourneyClinicDetailScreen extends ConsumerWidget {
                         SizedBox(height: context.h(10)),
                         Row(
                           children: [
-                            const Icon(Icons.star_rounded, size: 20, color: Colors.amber),
+                            const Icon(
+                              Icons.star_rounded,
+                              size: 20,
+                              color: Colors.amber,
+                            ),
                             SizedBox(width: context.w(4)),
                             Text(
                               '${clinic?.place?.rating ?? 0}',
@@ -278,7 +292,8 @@ class JourneyClinicDetailScreen extends ConsumerWidget {
                 height: context.h(100) + MediaQuery.paddingOf(context).bottom,
                 child: Padding(
                   padding: EdgeInsets.only(
-                    bottom: MediaQuery.paddingOf(context).bottom + context.h(20),
+                    bottom:
+                        MediaQuery.paddingOf(context).bottom + context.h(20),
                     left: context.w(24),
                     right: context.w(24),
                     top: context.h(20),

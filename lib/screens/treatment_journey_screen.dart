@@ -38,8 +38,13 @@ class _TreatmentJourneyScreenState
     super.initState();
     isTreatmentJourney = widget.isTreatmentJourney;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(treatmentJourneyProvider.notifier).fetchTreatmentJourneyGroups();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final result = await ref
+          .read(treatmentJourneyProvider.notifier)
+          .fetchTreatmentJourneyGroups();
+      if (result == 'show') {
+        _showCreateGroupDialog();
+      }
     });
   }
 
@@ -220,7 +225,7 @@ class _TreatmentJourneyScreenState
       child: InkWell(
         onTap: () async {
           if (group.id != null) {
-            ref.read(treatmentJourneyProvider.notifier).setGroupId(group.id!);
+            ref.read(treatmentJourneyProvider.notifier).setGroup(group);
           }
           if (!isTreatmentJourney) {
             final success = await ref

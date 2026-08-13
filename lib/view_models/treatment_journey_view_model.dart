@@ -31,19 +31,22 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     : _repo = repo ?? TreatmentJourneyService(apiClient: ApiBaseHelper()),
       super(initialState: const TreatmentJourneyState());
 
-  Future<void> fetchTreatmentJourneyGroups([bool loading = true]) async {
-    await runSafely(() async {
+  Future<String?> fetchTreatmentJourneyGroups([bool loading = true]) async {
+    return await runSafely(() async {
       if (loading) {
         state = state.copyWith(loading: true, errorMessage: null);
       }
       final response = await _repo.getGroups();
       state = state.copyWith(loading: false, groups: response.data ?? []);
+      if (state.groups.isEmpty) {
+        return 'show';
+      }
+      return null;
     });
   }
 
   Future<bool?> createGroup(String name) async {
     return await runSafely(() async {
-      // state = state.copyWith(loading: true, errorMessage: null);
       EasyLoading.show(status: 'Creating group...');
       final request = CreateGroupRequest(name: name);
       await _repo.createGroup(request);
@@ -69,7 +72,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 
   Future<bool?> fetchOptionsDetail(int optionId) async {
     return await runSafely(() async {
-      EasyLoading.show(status: 'Fetching Journey...');
+      EasyLoading.show(status: 'Fetching Options...');
       final response = await _repo.getOptionsDetail(optionId);
       state = state.copyWith(loading: false, simulations: response.data);
       EasyLoading.dismiss();
@@ -77,67 +80,13 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     });
   }
 
-  void setGroupId(int groupID) {
-    state = state.copyWith(groupId: groupID);
+  void setGroup(TreatmentJourneyGroup group) {
+    state = state.copyWith(selectedGroup: group);
   }
-
-  // Future<void> fetchSimulations(int optionId) async {
-  //   state = state.copyWith(
-  //     isSimulationsLoading: true,
-  //     selectedOptionId: optionId,
-  //   );
-
-  //   await Future.delayed(const Duration(milliseconds: 800));
-
-  //   final List<SimulationData> dummySims = [
-  //     SimulationData(
-  //       id: 101,
-  //       frontImageBefore: "https://picsum.photos/200/300?random=1",
-  //       frontImageAfter: "https://picsum.photos/200/300?random=2",
-  //       rightImageBefore: "https://picsum.photos/200/300?random=3",
-  //       rightImageAfter: "https://picsum.photos/200/300?random=4",
-  //       leftImageBefore: "https://picsum.photos/200/300?random=5",
-  //       leftImageAfter: "https://picsum.photos/200/300?random=6",
-  //       createdAt: DateTime.now(),
-  //       treatments: [
-  //         const SimulationTreatment(
-  //           id: 1,
-  //           name: "Full Facial Rejuvenation",
-  //           areas: [
-  //             SimulationArea(
-  //               id: "1",
-  //               name: "Cheeks",
-  //               materials: [
-  //                 SimulationMaterial(
-  //                   id: 1,
-  //                   name: "Hyaluronic Acid",
-  //                   selectedQuantity: 2,
-  //                 ),
-  //               ],
-  //             ),
-  //             SimulationArea(
-  //               id: "2",
-  //               name: "Forehead",
-  //               materials: [
-  //                 SimulationMaterial(id: 2, name: "Botox", selectedQuantity: 1),
-  //               ],
-  //             ),
-  //           ],
-  //         ),
-  //       ],
-  //     ),
-  //   ];
-
-  //   state = state.copyWith(
-  //     isSimulationsLoading: false,
-  //     simulations: dummySims,
-  //     price: optionId == 1 ? "\$500" : "\$850",
-  //   );
-  // }
 
   Future<bool?> createTjOptions() async {
     return await runSafely(() async {
-      EasyLoading.show(status: 'Please wait...');
+      EasyLoading.show(status: 'Creating Option...');
       final selectedTreatmentsAndAreas = ref
           .read(checkoutViewModel)
           .selectedTreatmentsAndAreas;
@@ -202,7 +151,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       }).toList();
       final opitionNumber = state.options.length + 1;
       final request = TjOptionsRequest(
-        groupId: state.groupId!,
+        groupId: state.selectedGroup!.id!,
         name: 'Option $opitionNumber',
         frontImageBefore: uploadResults.frontBefore,
         frontImageAfter: uploadResults.frontAfter,
@@ -240,14 +189,13 @@ class TreatmentJourneyState extends BaseStateModel {
   final SimulationData? simulations;
   final bool isSimulationsLoading;
   final int? selectedOptionId;
-  final int? groupId;
+  final TreatmentJourneyGroup? selectedGroup;
   final String? price;
 
   const TreatmentJourneyState({
     super.loading = false,
     super.errorMessage,
-    this.groupId,
-
+    this.selectedGroup,
     this.groups = const [],
     this.options = const [],
     this.simulations,
@@ -260,8 +208,7 @@ class TreatmentJourneyState extends BaseStateModel {
   TreatmentJourneyState copyWith({
     bool? loading,
     String? errorMessage,
-    int? groupId,
-
+    TreatmentJourneyGroup? selectedGroup,
     List<TreatmentJourneyGroup>? groups,
     List<TJOption>? options,
     SimulationData? simulations,
@@ -273,7 +220,7 @@ class TreatmentJourneyState extends BaseStateModel {
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
       groups: groups ?? this.groups,
-      groupId: groupId ?? this.groupId,
+      selectedGroup: selectedGroup ?? this.selectedGroup,
       options: options ?? this.options,
       simulations: simulations ?? this.simulations,
       isSimulationsLoading: isSimulationsLoading ?? this.isSimulationsLoading,
