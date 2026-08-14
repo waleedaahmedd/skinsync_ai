@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../utills/enums.dart';
 import '../widgets/custom_button.dart';
 
 class UpdateVersionScreen extends StatelessWidget {
@@ -72,7 +76,15 @@ class UpdateVersionScreen extends StatelessWidget {
                     const Spacer(),
                     SizedBox(
                       width: double.infinity,
-                      child: CustomButton(onPressed: () {}, text: "Update Now"),
+                      child: CustomButton(
+                        onPressed: () async {
+                          final store = Platform.isAndroid
+                              ? Store.play
+                              : Store.appstore;
+                          await launchUrl(Uri.parse(store.link));
+                        },
+                        text: "Update Now",
+                      ),
                     ),
                     SizedBox(height: context.h(20)),
                   ],

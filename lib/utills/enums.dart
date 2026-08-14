@@ -92,3 +92,16 @@ enum RequestType {
 
   const RequestType(this.method);
 }
+
+enum Store {
+  play(
+    'https://play.google.com/store/apps/details?id=com.skinsyncaiinc.skinsyncai',
+  ),
+  appstore(
+    'https://apps.apple.com/us/app/skinsync-ai-botox-filler/id6761345816',
+  );
+
+  final String link;
+
+  const Store(this.link);
+}
