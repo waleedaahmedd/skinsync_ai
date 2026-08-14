@@ -338,7 +338,11 @@ class DashboardClinicHomeCard extends StatelessWidget {
         Navigator.pushNamed(
           context,
           JourneyClinicDetailScreen.routeName,
-          arguments: Clinic(name: clinic.clinicName, address: clinic.address),
+          arguments: Clinic(
+            id: clinic.clinicId,
+            name: clinic.clinicName,
+            address: clinic.address,
+          ),
         );
       },
       child: Padding(
