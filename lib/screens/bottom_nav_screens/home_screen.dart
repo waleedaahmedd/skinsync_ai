@@ -16,9 +16,9 @@ import '../../widgets/home_horizontal_sections.dart';
 import '../../widgets/points_earn_card.dart';
 import '../../widgets/treatment_container.dart';
 import '../appointment_detail_screen.dart';
+import '../journey_clinics_screen.dart';
 import 'appointments_screen.dart';
 import '../doctors_screen.dart';
-import '../explore_clinics_screen.dart';
 import '../notification_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -233,7 +233,7 @@ class HomeScreen extends ConsumerWidget {
                   onTap: () {
                     Navigator.pushNamed(
                       context,
-                      ExploreClinicsScreen.routeName,
+                      JourneyClinicsScreen.routeName,
                     );
                   },
                 ),
@@ -242,7 +242,6 @@ class HomeScreen extends ConsumerWidget {
               SizedBox(height: context.h(16)),
 
               // Top Clinics Empty State Check
-               if(!isDeploymentMode)
               (dashboard?.topClinics?.isEmpty ?? true)
                   ? _buildHorizontalEmptyState(
                       context: context,
@@ -267,7 +266,6 @@ class HomeScreen extends ConsumerWidget {
                             ),
                       ),
                     ),
-               if(!isDeploymentMode)
               SizedBox(height: context.h(28)),
 
               // Promotions & Discounts Section
