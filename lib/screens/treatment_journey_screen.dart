@@ -290,7 +290,7 @@ class _TreatmentJourneyScreenState
                     ),
                     SizedBox(height: context.h(4)),
                     Text(
-                      "${group.simulationCount ?? 0} Simulations • ${group.createdAt?.formattedDate ?? ''}",
+                      "${group.optionsCount ?? 0} Simulations • ${group.createdAt?.formattedDate ?? ''}",
                       style: CustomFonts.grey14w400,
                     ),
                   ],
