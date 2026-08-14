@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:http/http.dart' as http;
 
 import '../models/base_state_model.dart';
 import '../models/requests/save_history_request.dart';
@@ -19,7 +23,6 @@ import '../services/media_service.dart';
 import '../services/treatment_services.dart';
 import '../utills/image_utills.dart';
 import '../utills/list_utils.dart';
-import '../utills/simulation_generator.dart';
 import '../utills/simulation_utils.dart';
 import 'auth_view_model.dart';
 import 'base_view_model.dart';
@@ -293,12 +296,84 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     EasyLoading.show(status: 'Processing images with AI...');
 
     try {
-      final results = await SimulationGenerator().generateAllSimulations(
-        front: state.frontPoseImage,
-        left: state.leftPoseImage,
-        right: state.rightPoseImage,
-        ref: ref,
+      final checkoutState = ref.read(checkoutViewModel);
+      final selectedItems = checkoutState.selectedTreatmentsAndAreas;
+
+      // 1. Prepare JSON string for treatments as per curl requirement
+      final treatmentsList = selectedItems.map((item) {
+        return {
+          "treatment_sku": item.treatment.globalSku ?? "",
+          "areas": item.selectedAreas.map((areaItem) {
+            return {
+              "areas_sku": areaItem.target.globalSku ?? "",
+              "material_quantity": areaItem.material?.selectedQuantity ?? 1,
+            };
+          }).toList()
+        };
+      }).toList();
+
+      final treatmentsJson = jsonEncode(treatmentsList);
+      log('AI PREDICT JSON: $treatmentsJson');
+
+      // 2. Direct Multipart Request to AI Server
+      final url = Uri.parse('http://18.116.65.70/api_v2/');
+      final request = http.MultipartRequest('POST', url);
+
+      request.fields['treatments'] = treatmentsJson;
+
+      // Helper to add files with explicit content type
+      Future<void> addFile(String fieldName, XFile? xFile) async {
+        if (xFile != null) {
+          final file = File(xFile.path);
+          if (await file.exists()) {
+            final bytes = await file.length();
+            log('ATTACHING $fieldName: ${xFile.path} ($bytes bytes)');
+            request.files.add(
+              await http.MultipartFile.fromPath(
+                fieldName,
+                xFile.path,
+                contentType: MediaType('image', 'jpeg'),
+              ),
+            );
+          } else {
+            log('FILE NOT FOUND for $fieldName: ${xFile.path}');
+          }
+        }
+      }
+
+      await addFile('front_image', state.frontPoseImage);
+      await addFile('left_image', state.leftPoseImage);
+      await addFile('right_image', state.rightPoseImage);
+
+      log('SENDING AI REQUEST TO: $url');
+      
+      // Increase timeout for AI processing (e.g., 2 minutes)
+      final client = http.Client();
+      final streamedResponse = await client.send(request).timeout(
+        const Duration(minutes: 2),
       );
+      
+      final response = await http.Response.fromStream(streamedResponse);
+      log('AI RESPONSE STATUS: ${response.statusCode}');
+      log('AI RESPONSE BODY: ${response.body}');
+
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        throw Exception('AI Prediction failed with status: ${response.statusCode}. Body: ${response.body}');
+      }
+
+      final responseData = jsonDecode(response.body);
+
+      if (responseData == null ||
+          responseData is! Map<String, dynamic> ||
+          responseData['success'] != true) {
+        final errorMsg = responseData?['message'] ?? 'AI Prediction failed';
+        throw Exception(errorMsg);
+      }
+
+      final output = responseData['output'] as Map<String, dynamic>?;
+      if (output == null) {
+        throw Exception('AI Prediction returned no output');
+      }
 
       XFile? imageFront;
       XFile? imageRight;
@@ -306,32 +381,28 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
       final timestamp = DateTime.now().millisecondsSinceEpoch;
 
-      if (results.images.containsKey('front')) {
-        imageFront = await bytesToXFile(
-          results.images['front']!,
-          'ai_front_$timestamp.jpg',
+      // 3. Process generated images from response
+      if (output.containsKey('front_image') && output['front_image'] != null) {
+        imageFront = await base64ToXFile(
+          output['front_image'],
+          fileName: 'ai_front_$timestamp.jpg',
         );
       }
-      if (results.images.containsKey('right')) {
-        imageRight = await bytesToXFile(
-          results.images['right']!,
-          'ai_right_$timestamp.jpg',
+      if (output.containsKey('right_image') && output['right_image'] != null) {
+        imageRight = await base64ToXFile(
+          output['right_image'],
+          fileName: 'ai_right_$timestamp.jpg',
         );
       }
-      if (results.images.containsKey('left')) {
-        imageLeft = await bytesToXFile(
-          results.images['left']!,
-          'ai_left_$timestamp.jpg',
+      if (output.containsKey('left_image') && output['left_image'] != null) {
+        imageLeft = await base64ToXFile(
+          output['left_image'],
+          fileName: 'ai_left_$timestamp.jpg',
         );
       }
 
       if (imageFront == null && imageRight == null && imageLeft == null) {
-        String errorMsg = results.errors.join('\n');
-        if (errorMsg.isEmpty) {
-          errorMsg = 'AI failed to generate valid images. Please try again.';
-        }
-        log('SIMULATION FAILED: $errorMsg');
-        throw Exception(errorMsg);
+        throw Exception('AI failed to generate valid images. Please try again.');
       }
 
       if (wasBefore) toggleIsBefore();
@@ -345,15 +416,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         leftAiImage: imageLeft,
       );
       EasyLoading.dismiss();
-
-      String successMsg = 'Simulations generated successfully!';
-      if (results.errors.isNotEmpty) {
-        successMsg += '\nNote: Some poses failed to generate.';
-        log('SIMULATION PARTIAL SUCCESS. Errors: ${results.errors.join(', ')}');
-      } else {
-        log('SIMULATION FULL SUCCESS');
-      }
-      EasyLoading.showSuccess(successMsg);
+      EasyLoading.showSuccess('Simulations generated successfully!');
     } catch (e, s) {
       final errorMsg = e.toString().replaceFirst('Exception: ', '');
       log('SIMULATION ERROR: $errorMsg', stackTrace: s);
