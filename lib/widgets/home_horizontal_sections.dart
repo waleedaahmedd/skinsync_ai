@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../models/responses/auth_response.dart';
+import '../models/responses/get_clinic_response.dart';
 import '../models/responses/practitioner_list_response.dart';
+import '../screens/journey_clinic_detail_screen.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import 'doctor_card.dart';
@@ -331,102 +333,124 @@ class DashboardClinicHomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: context.w(245),
-      margin: EdgeInsets.only(right: context.w(16), bottom: context.h(8), top: context.h(4)),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(context.r(16)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(
-          color: CustomColors.greyColor.withValues(alpha: 0.6),
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          JourneyClinicDetailScreen.routeName,
+          arguments: Clinic(name: clinic.clinicName, address: clinic.address),
+        );
+      },
+      child: Padding(
+        padding: EdgeInsets.only(
+          right: context.w(16),
+          bottom: context.h(8),
+          top: context.h(4),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(16))),
-            child: CachedNetworkImage(
-              imageUrl: clinic.clinicImage ?? "",
-              height: context.h(100),
-              width: double.infinity,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
-                color: Colors.grey.shade100,
-                child: const Center(child: CupertinoActivityIndicator()),
+        child: Ink(
+          width: context.w(245),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(context.r(16)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
-              errorWidget: (context, url, error) => Container(
-                color: Colors.grey.shade100,
-                child: const Icon(
-                  Icons.storefront_rounded,
-                  size: 30,
-                  color: Colors.grey,
-                ),
-              ),
+            ],
+            border: Border.all(
+              color: CustomColors.greyColor.withValues(alpha: 0.6),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(8)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        clinic.clinicName ?? "Unknown Clinic",
-                        style: CustomFonts.black14w600,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: context.w(8),
-                        vertical: context.h(4),
-                      ),
-                      decoration: BoxDecoration(
-                        color: CustomColors.purpleColor.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(context.r(20)),
-                      ),
-                      child: Text(
-                        "${clinic.doctorCount ?? 0} Doctors",
-                        style: CustomFonts.darkPurple12w600,
-                      ),
-                    ),
-                  ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(context.r(16)),
                 ),
-                SizedBox(height: context.h(6)),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.location_on_outlined,
-                      size: context.sp(12),
+                child: CachedNetworkImage(
+                  imageUrl: clinic.clinicImage ?? "",
+                  height: context.h(100),
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey.shade100,
+                    child: const Center(child: CupertinoActivityIndicator()),
+                  ),
+                  errorWidget: (context, url, error) => Container(
+                    color: Colors.grey.shade100,
+                    child: const Icon(
+                      Icons.storefront_rounded,
+                      size: 30,
                       color: Colors.grey,
                     ),
-                    SizedBox(width: context.w(4)),
-                    Expanded(
-                      child: Text(
-                        clinic.address ?? "No address provided",
-                        style: CustomFonts.grey700_10w400,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(12),
+                  vertical: context.h(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            clinic.clinicName ?? "Unknown Clinic",
+                            style: CustomFonts.black14w600,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: context.w(8),
+                            vertical: context.h(4),
+                          ),
+                          decoration: BoxDecoration(
+                            color: CustomColors.purpleColor.withValues(
+                              alpha: 0.12,
+                            ),
+                            borderRadius: BorderRadius.circular(context.r(20)),
+                          ),
+                          child: Text(
+                            "${clinic.doctorCount ?? 0} Doctors",
+                            style: CustomFonts.darkPurple12w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: context.h(6)),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on_outlined,
+                          size: context.sp(12),
+                          color: Colors.grey,
+                        ),
+                        SizedBox(width: context.w(4)),
+                        Expanded(
+                          child: Text(
+                            clinic.address ?? "No address provided",
+                            style: CustomFonts.grey700_10w400,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
