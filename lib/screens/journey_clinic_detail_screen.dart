@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:intl/intl.dart';
 
 import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
@@ -263,26 +262,6 @@ class _JourneyClinicDetailScreenState
                               ],
                             ),
                           ],
-                          SizedBox(height: context.h(24)),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildInfoCard(
-                                  "Consultation Fee",
-                                  "\$${clinicDetail?.consultationFee ?? 0}",
-                                  Icons.attach_money_rounded,
-                                ),
-                              ),
-                              SizedBox(width: context.w(16)),
-                              Expanded(
-                                child: _buildInfoCard(
-                                  "Initial Deposit",
-                                  "\$${clinicDetail?.initialDeposit ?? 0}",
-                                  Icons.account_balance_wallet_outlined,
-                                ),
-                              ),
-                            ],
-                          ),
                         ],
                       ),
                     ),
@@ -332,33 +311,6 @@ class _JourneyClinicDetailScreenState
                           ],
                         ),
                       ),
-                    SizedBox(height: context.h(32)),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Other Details", style: CustomFonts.black18w600),
-                          SizedBox(height: context.h(12)),
-                          _buildDetailRow(
-                            "Country",
-                            clinicDetail?.country ?? 'N/A',
-                          ),
-                          _buildDetailRow(
-                            "Status",
-                            clinicDetail?.status?.toUpperCase() ?? 'N/A',
-                          ),
-                          _buildDetailRow(
-                            "Member Since",
-                            _formatDate(clinicDetail?.createdAt),
-                          ),
-                          _buildDetailRow(
-                            "Last Updated",
-                            _formatDate(clinicDetail?.updatedAt),
-                          ),
-                        ],
-                      ),
-                    ),
                     SizedBox(height: context.h(120)),
                   ],
                 ),
@@ -422,46 +374,5 @@ class _JourneyClinicDetailScreenState
         ],
       ),
     );
-  }
-
-  Widget _buildInfoCard(String label, String value, IconData icon) {
-    return Container(
-      padding: EdgeInsets.all(context.w(16)),
-      decoration: BoxDecoration(
-        color: CustomColors.lightPurpleColor.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(context.r(16)),
-        border: Border.all(
-          color: CustomColors.purpleColor.withValues(alpha: 0.1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 20, color: CustomColors.purpleColor),
-          SizedBox(height: context.h(8)),
-          Text(label, style: CustomFonts.grey12w400),
-          SizedBox(height: context.h(4)),
-          Text(value, style: CustomFonts.black16w600),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: context.h(12)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: CustomFonts.textGrey14w400),
-          Text(value, style: CustomFonts.black14w600),
-        ],
-      ),
-    );
-  }
-
-  String _formatDate(DateTime? date) {
-    if (date == null) return 'N/A';
-    return DateFormat('MMM dd, yyyy').format(date);
   }
 }
