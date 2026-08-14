@@ -226,37 +226,42 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
           child: SizedBox(
             key: _buttonKey, // Required for animation target
             width: double.infinity,
-            child: ref.watch(authViewModel).loading
-                ? const AppLoader()
-                : CustomButton(
-                    onPressed: () async {
-                      if (_formKey.currentState?.validate() ?? false) {
-                        final req = loginWithEmail
-                            ? SignInWithEmailRequest(
-                                email: ref
-                                    .read(authViewModel.notifier)
-                                    .emailController
-                                    .text,
-                                provider: LoginProviders.email,
-                                deviceInfo: "devicefo",
-                                ipAddress: "ipAddr",
-                              )
-                            : SignInWithPhoneRequest(
-                                phone: _phoneController.value.text,
-                                provider: LoginProviders.phone,
-                                deviceInfo: "deviceInfo",
-                                ipAddress: "ipAddress",
-                              );
-                        final success = await ref
-                            .read(authViewModel.notifier)
-                            .callSignInApi(req);
-                        if (success == true) {
-                          Navigator.of(context).pushNamed(OtpScreen.routeName);
+            height: 60.w,
+            child: Center(
+              child: ref.watch(authViewModel).loading
+                  ? const AppLoader()
+                  : CustomButton(
+                      onPressed: () async {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          final req = loginWithEmail
+                              ? SignInWithEmailRequest(
+                                  email: ref
+                                      .read(authViewModel.notifier)
+                                      .emailController
+                                      .text,
+                                  provider: LoginProviders.email,
+                                  deviceInfo: "devicefo",
+                                  ipAddress: "ipAddr",
+                                )
+                              : SignInWithPhoneRequest(
+                                  phone: _phoneController.value.text,
+                                  provider: LoginProviders.phone,
+                                  deviceInfo: "deviceInfo",
+                                  ipAddress: "ipAddress",
+                                );
+                          final success = await ref
+                              .read(authViewModel.notifier)
+                              .callSignInApi(req);
+                          if (success == true) {
+                            Navigator.of(
+                              context,
+                            ).pushNamed(OtpScreen.routeName);
+                          }
                         }
-                      }
-                    },
-                    text: "Next",
-                  ),
+                      },
+                      text: "Next",
+                    ),
+            ),
           ),
         ),
       ),

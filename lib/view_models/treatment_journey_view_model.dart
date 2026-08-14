@@ -56,29 +56,30 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       return true;
     });
   }
-   Future<bool?> callShareTreatmentRequest(int? clinicId) async {
-  if (state.selectedOptionId == null || clinicId == null) {
-    return false;
+
+  Future<bool?> callShareTreatmentRequest(int? clinicId) async {
+    return await runSafely(() async {
+      if (state.selectedOptionId == null || clinicId == null) {
+        EasyLoading.showError('Select a journey option to share!');
+        return false;
+      }
+      EasyLoading.show(status: 'Loading');
+      final request = ShareTreatmentRequest(
+        clinicId: clinicId,
+        optionId: state.selectedOptionId!,
+      );
+
+      await _repo.shareTreatmentRequest(request: request);
+
+      EasyLoading.dismiss();
+      return true;
+    });
   }
 
-  return await runSafely(() async {
-    EasyLoading.show(status: 'Loading');
+  void setOpitionId(int id) {
+    state = state.copyWith(selectedOptionId: id);
+  }
 
-    final request = ShareTreatmentRequest(
-      clinicId: clinicId,
-      optionId: state.selectedOptionId!,
-    );
-
-    await _repo.shareTreatmentRequest(request: request);
-
-    EasyLoading.dismiss();
-    return true;
-  });
-}
-
-void setOpitionId(int id){
-  state= state.copyWith(selectedOptionId: id);
-}
   Future<bool?> fetchOptions(int groupId) async {
     return await runSafely(() async {
       EasyLoading.show(status: 'Fetching Journey...');

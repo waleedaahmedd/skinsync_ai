@@ -143,50 +143,58 @@ class OtpScreen extends StatelessWidget {
               },
             ),
             const Spacer(),
-            Consumer(
-              builder: (context, ref, child) => SizedBox(
-                width: double.infinity,
-                child: ref.watch(authViewModel).loading
-                    ? const AppLoader()
-                    : CustomButton(
-                        onPressed: () async {
-                          if (ref.read(authViewModel.notifier).validateOtp()) {
-                            await ref
-                                .read(authViewModel.notifier)
-                                .callVerifyOtpApi()
-                                .then((value) async {
-                                  if (value == true) {
-                                    final isLoggedIn =
-                                        ref
-                                            .read(authViewModel)
-                                            .authData
-                                            ?.isFirstLogin ??
-                                        false;
+            SizedBox(
+              height: 60.w,
+              child: Center(
+                child: Consumer(
+                  builder: (context, ref, child) => SizedBox(
+                    width: double.infinity,
+                    child: ref.watch(authViewModel).loading
+                        ? const AppLoader()
+                        : CustomButton(
+                            onPressed: () async {
+                              if (ref
+                                  .read(authViewModel.notifier)
+                                  .validateOtp()) {
+                                await ref
+                                    .read(authViewModel.notifier)
+                                    .callVerifyOtpApi()
+                                    .then((value) async {
+                                      if (value == true) {
+                                        final isLoggedIn =
+                                            ref
+                                                .read(authViewModel)
+                                                .authData
+                                                ?.isFirstLogin ??
+                                            false;
 
-                                    isLoggedIn
-                                        ? Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            SignupOnboarding.routeName,
-                                            (Route<dynamic> route) =>
-                                                route.settings.name ==
-                                                LoginScreen.routeName,
-                                          )
-                                        : !isDeploymentMode ?
-                                         Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            FaceScanScreen.routeName,
-                                            (Route<dynamic> route) => false,
-                                          ) :   Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            BottomNavPage.routeName,
-                                            (Route<dynamic> route) => false,
-                                          );
-                                  }
-                                });
-                          }
-                        },
-                        text: "Next",
-                      ),
+                                        isLoggedIn
+                                            ? Navigator.pushNamedAndRemoveUntil(
+                                                context,
+                                                SignupOnboarding.routeName,
+                                                (Route<dynamic> route) =>
+                                                    route.settings.name ==
+                                                    LoginScreen.routeName,
+                                              )
+                                            : !isDeploymentMode
+                                            ? Navigator.pushNamedAndRemoveUntil(
+                                                context,
+                                                FaceScanScreen.routeName,
+                                                (Route<dynamic> route) => false,
+                                              )
+                                            : Navigator.pushNamedAndRemoveUntil(
+                                                context,
+                                                BottomNavPage.routeName,
+                                                (Route<dynamic> route) => false,
+                                              );
+                                      }
+                                    });
+                              }
+                            },
+                            text: "Next",
+                          ),
+                  ),
+                ),
               ),
             ),
             SizedBox(height: context.h(20)),

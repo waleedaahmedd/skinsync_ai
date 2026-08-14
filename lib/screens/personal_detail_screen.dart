@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
+import '../widgets/app_loader.dart';
 import '../widgets/app_network_image.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
@@ -135,7 +136,6 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final profileImage = ref.watch(authViewModel).profileImage;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const CustomAppBar(showTitle: true, title: "Personal Details"),
@@ -152,78 +152,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: context.h(10)),
-                // Premium Styled Avatar Stack
-                Center(
-                  child: Stack(
-                    alignment: Alignment.center,
-                    clipBehavior: Clip.none,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: CustomColors.purpleColor.withValues(
-                              alpha: 0.4,
-                            ),
-                            width: context.w(4),
-                          ),
-                        ),
-                        child: ClipOval(
-                          child: profileImage != null
-                              ? Image.file(
-                                  File(profileImage.path),
-                                  fit: BoxFit.cover,
-                                  height: context.w(90),
-                                  width: context.w(90),
-                                )
-                              : AppNetworkImage(
-                                  imageUrl:
-                                      ref
-                                          .read(authViewModel)
-                                          .authData
-                                          ?.user
-                                          ?.profileImageUrl ??
-                                      "",
-                                  fit: BoxFit.cover,
-                                  height: context.w(90),
-                                  width: context.w(90),
-                                  errorIcon: Icons.person_outline_rounded,
-                                  errorIconSize: context.sp(40),
-                                  errorIconColor: Colors.grey.shade400,
-                                ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: -2,
-                        right: -2,
-                        child: GestureDetector(
-                          onTap: _showImageSourceDialog,
-                          child: Container(
-                            height: context.w(32),
-                            width: context.w(32),
-                            decoration: BoxDecoration(
-                              color: CustomColors.darkPurple,
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 2),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.1),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Icon(
-                              Iconsax.camera,
-                              size: context.w(15),
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                _buildAvatar(context),
                 SizedBox(height: context.h(24)),
 
                 // Greeting Headers
@@ -564,6 +493,9 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                     final loading = ref.watch(
                       authViewModel.select((s) => s.loading),
                     );
+                    if (loading) {
+                      return const AppLoader();
+                    }
                     return CustomButton(
                       text: "Save Changes",
                       isLoading: loading,
@@ -576,6 +508,85 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Center _buildAvatar(BuildContext context) {
+    return Center(
+      child: Stack(
+        alignment: Alignment.center,
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: CustomColors.purpleColor.withValues(alpha: 0.4),
+                width: context.w(4),
+              ),
+            ),
+            child: ClipOval(
+              child: Consumer(
+                builder: (_, ref, _) {
+                  final profileImage = ref.watch(
+                    authViewModel.select((s) => s.profileImage),
+                  );
+                  if (profileImage != null) {
+                    return Image.file(
+                      File(profileImage.path),
+                      fit: BoxFit.cover,
+                      height: context.w(90),
+                      width: context.w(90),
+                    );
+                  }
+                  final profileUrl = ref
+                      .read(authViewModel)
+                      .authData
+                      ?.user
+                      ?.profileImageUrl;
+                  return AppNetworkImage(
+                    imageUrl: profileUrl ?? '',
+                    fit: BoxFit.cover,
+                    height: context.w(90),
+                    width: context.w(90),
+                    errorIcon: Icons.person_outline_rounded,
+                    errorIconSize: context.sp(40),
+                    errorIconColor: Colors.grey.shade400,
+                  );
+                },
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -2,
+            right: -2,
+            child: GestureDetector(
+              onTap: _showImageSourceDialog,
+              child: Container(
+                height: context.w(32),
+                width: context.w(32),
+                decoration: BoxDecoration(
+                  color: CustomColors.darkPurple,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white, width: 2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Iconsax.camera,
+                  size: context.w(15),
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

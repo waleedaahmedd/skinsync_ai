@@ -269,8 +269,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         bio: bio,
         cc: cc,
         country: country,
-        profileImageUrl:
-            imageUrl ?? state.authData?.user?.profileImageUrl ?? '',
+        profileImageUrl: imageUrl ?? state.authData?.user?.profileImageUrl,
       );
 
       final BaseResponseModel response = await _authRepository
@@ -278,6 +277,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 
       state = state.copyWith(loading: false);
       if (response.isSuccess == true) {
+        await callGetMe();
         clearProfileImage();
       }
       return response.isSuccess == true;
@@ -350,7 +350,11 @@ class AuthViewModel extends BaseViewModel<AuthState> {
           savedEmail: savedEmail,
         );
       }
-      state = state.copyWith(loading: false, authData: response.data);
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (ref.mounted) {
+          state = state.copyWith(loading: false, authData: response.data);
+        }
+      });
       return response.isSuccess ?? false;
     });
   }
