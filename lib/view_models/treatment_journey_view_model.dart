@@ -57,15 +57,15 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     });
   }
 
-  Future<bool?> callShareTreatmentRequest(int? clinicId) async {
+  Future<bool?> callShareTreatmentRequest() async {
     return await runSafely(() async {
-      if (state.selectedOptionId == null || clinicId == null) {
+      if (state.selectedOptionId == null || state.clinicId == null) {
         EasyLoading.showError('Select a journey option to share!');
         return false;
       }
       EasyLoading.show(status: 'Loading');
       final request = ShareTreatmentRequest(
-        clinicId: clinicId,
+        clinicId: state.clinicId!,
         optionId: state.selectedOptionId!,
       );
 
@@ -106,6 +106,10 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 
   void setGroup(TreatmentJourneyGroup group) {
     state = state.copyWith(selectedGroup: group);
+  }
+
+  void setClinicId(int? clinicId) {
+    state = state.copyWith(clinicId: clinicId);
   }
 
   Future<bool?> createTjOptions() async {
@@ -213,6 +217,7 @@ class TreatmentJourneyState extends BaseStateModel {
   final SimulationData? simulations;
   final bool isSimulationsLoading;
   final int? selectedOptionId;
+  final int? clinicId;
   final TreatmentJourneyGroup? selectedGroup;
   final String? price;
 
@@ -225,6 +230,7 @@ class TreatmentJourneyState extends BaseStateModel {
     this.simulations,
     this.isSimulationsLoading = false,
     this.selectedOptionId,
+    this.clinicId,
     this.price,
   });
 
@@ -238,6 +244,7 @@ class TreatmentJourneyState extends BaseStateModel {
     SimulationData? simulations,
     bool? isSimulationsLoading,
     int? selectedOptionId,
+    int? clinicId,
     String? price,
   }) {
     return TreatmentJourneyState(
@@ -249,6 +256,7 @@ class TreatmentJourneyState extends BaseStateModel {
       simulations: simulations ?? this.simulations,
       isSimulationsLoading: isSimulationsLoading ?? this.isSimulationsLoading,
       selectedOptionId: selectedOptionId ?? this.selectedOptionId,
+      clinicId: clinicId ?? this.clinicId,
       price: price ?? this.price,
     );
   }

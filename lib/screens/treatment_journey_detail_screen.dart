@@ -9,6 +9,7 @@ import '../view_models/treatment_journey_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/dialogs/success_dialogs.dart';
 import '../widgets/simulation_card.dart';
 import 'face_pose_capture_screen.dart';
 import 'journey_clinics_screen.dart';
@@ -72,20 +73,30 @@ class _TreatmentJourneyDetailScreenState
         showTitle: true,
         title: widget.groupName,
         actions: [
-          IconButton(
-            onPressed: () {
-              ref.read(checkoutViewModel.notifier).clearState();
-              ref
-                  .read(treatmentViewModel.notifier)
-                  .clearAllSelectedTreatments();
-              ref.read(treatmentViewModel.notifier).clearAiImage();
-              Navigator.of(context).pushNamed(FacePoseCaptureScreen.routeName);
+          Consumer(
+            builder: (_, ref, _) {
+              final state = ref.watch(treatmentViewModel);
+              if (!state.capturedImagesNull) {
+                return const SizedBox.shrink();
+              }
+              return IconButton(
+                onPressed: () {
+                  ref.read(checkoutViewModel.notifier).clearState();
+                  ref
+                      .read(treatmentViewModel.notifier)
+                      .clearAllSelectedTreatments();
+                  ref.read(treatmentViewModel.notifier).clearAiImage();
+                  Navigator.of(
+                    context,
+                  ).pushNamed(FacePoseCaptureScreen.routeName);
+                },
+                icon: const Icon(
+                  Icons.add_circle_outline_rounded,
+                  color: Colors.black,
+                ),
+                tooltip: "Add More Options",
+              );
             },
-            icon: const Icon(
-              Icons.add_circle_outline_rounded,
-              color: Colors.black,
-            ),
-            tooltip: "Add More Options",
           ),
         ],
       ),
@@ -128,35 +139,46 @@ class _TreatmentJourneyDetailScreenState
             ),
     );
   }
-Widget _buildSimulationsList(
-  BuildContext context,
-  TreatmentJourneyState state,
-) {
-  final sim = state.simulations;
-  if (sim == null) {
-    return Center(
-      child: Text(
-        "No simulation for this option",
-        style: CustomFonts.grey16w400,
+
+  Widget _buildSimulationsList(
+    BuildContext context,
+    TreatmentJourneyState state,
+  ) {
+    final sim = state.simulations;
+    if (sim == null) {
+      return Center(
+        child: Text(
+          "No simulation for this option",
+          style: CustomFonts.grey16w400,
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.w(24),
+        vertical: context.h(20),
+      ),
+      child: SimulationCard(
+        sim: sim,
+        price: state.price,
+        showActionButton: true,
+        actionButtonText: "Select this Option",
+        onActionButtonPressed: () async {
+          ref.read(treatmentJourneyProvider.notifier).setOpitionId(sim.id!);
+          final clinicId = ref.read(treatmentJourneyProvider).clinicId;
+          if (clinicId != null) {
+            final result = await ref
+                .read(treatmentJourneyProvider.notifier)
+                .callShareTreatmentRequest();
+            if (result == true) {
+              showShareJourneySuccessDialog(context);
+            }
+          } else {
+            Navigator.pushNamed(context, JourneyClinicsScreen.routeName);
+          }
+        },
       ),
     );
   }
-
-  return SingleChildScrollView(
-    padding: EdgeInsets.symmetric(
-      horizontal: context.w(24),
-      vertical: context.h(20),
-    ),
-    child: SimulationCard(
-      sim: sim,
-      price: state.price,
-      showActionButton: true,
-      actionButtonText: "Select this Option",
-      onActionButtonPressed: () {
-        ref.read(treatmentJourneyProvider.notifier).setOpitionId(sim.id!);
-        Navigator.pushNamed(context, JourneyClinicsScreen.routeName);
-      },
-    ),
-  );
-}
 }

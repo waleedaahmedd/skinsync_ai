@@ -7,6 +7,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../models/responses/materials_response.dart';
@@ -187,9 +188,18 @@ class _ArFaceModelPreviewScreenState
       child: AbsorbPointer(
         absorbing: isLoading,
         child: Scaffold(
-          appBar: const CustomAppBar(
+          appBar: CustomAppBar(
             showTitle: true,
             title: "AR Face Model Preview",
+            actions: [
+              IconButton(
+                onPressed: () => Navigator.pushNamed(
+                  context,
+                  TreatmentJourneyScreen.routeName,
+                ),
+                icon: const FaIcon(FontAwesomeIcons.route),
+              ),
+            ],
           ),
           body: SafeArea(
             child: Column(

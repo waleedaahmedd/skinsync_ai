@@ -8,6 +8,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
@@ -29,100 +30,107 @@ class FacePoseCaptureScreen extends ConsumerWidget {
         state.leftPoseImage != null &&
         state.rightPoseImage != null;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: const CustomAppBar(
-        showTitle: true,
-        title: "Capture Your Profile",
-      ),
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(height: context.h(20)),
-                  Text(
-                    "Clear photos from multiple angles ensure our AI provides the most precise treatment recommendations for your unique features.",
-                    style: CustomFonts.grey14w400.copyWith(height: 1.4),
-                  ),
-                  SizedBox(height: context.h(24)),
-                  Row(
-                    children: [
-                      _buildIndicator(
-                        context: context,
-                        active: true,
-                        color: CustomColors.purpleColor,
-                      ),
-                      SizedBox(width: context.w(8)),
-                      _buildIndicator(
-                        context: context,
-                        active: state.frontPoseImage != null,
-                        color: CustomColors.purpleColor,
-                      ),
-                      SizedBox(width: context.w(8)),
-                      _buildIndicator(
-                        context: context,
-                        active:
-                            state.leftPoseImage != null &&
-                            state.rightPoseImage != null,
-                        color: CustomColors.purpleColor,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: context.h(24)),
-            Expanded(
-              child: ListView(
+    return PopScope(
+      onPopInvokedWithResult: (_, _) {
+        ref.read(checkoutViewModel.notifier).clearState();
+        ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+        ref.read(treatmentViewModel.notifier).clearAiImage();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: const CustomAppBar(
+          showTitle: true,
+          title: "Capture Your Profile",
+        ),
+        body: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-                children: [
-                  _buildPoseContainer(
-                    context: context,
-                    title: "Front Profile",
-                    subtitle: "Look straight into the camera",
-                    image: state.frontPoseImage,
-                    onTap: () => _capturePose(context, 'front'),
-                  ),
-                  _buildPoseContainer(
-                    context: context,
-                    title: "Left Profile",
-                    subtitle: "Turn your face to the left",
-                    image: state.leftPoseImage,
-                    onTap: () => _capturePose(context, 'left'),
-                  ),
-                  _buildPoseContainer(
-                    context: context,
-                    title: "Right Profile",
-                    subtitle: "Turn your face to the right",
-                    image: state.rightPoseImage,
-                    onTap: () => _capturePose(context, 'right'),
-                  ),
-                  SizedBox(height: context.h(40)),
-                ],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: context.h(20)),
+                    Text(
+                      "Clear photos from multiple angles ensure our AI provides the most precise treatment recommendations for your unique features.",
+                      style: CustomFonts.grey14w400.copyWith(height: 1.4),
+                    ),
+                    SizedBox(height: context.h(24)),
+                    Row(
+                      children: [
+                        _buildIndicator(
+                          context: context,
+                          active: true,
+                          color: CustomColors.purpleColor,
+                        ),
+                        SizedBox(width: context.w(8)),
+                        _buildIndicator(
+                          context: context,
+                          active: state.frontPoseImage != null,
+                          color: CustomColors.purpleColor,
+                        ),
+                        SizedBox(width: context.w(8)),
+                        _buildIndicator(
+                          context: context,
+                          active:
+                              state.leftPoseImage != null &&
+                              state.rightPoseImage != null,
+                          color: CustomColors.purpleColor,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(context.w(24)),
-              child: CustomButton(
-                text: "Proceed to AI Preview",
-                onPressed: allCaptured
-                    ? () {
-                        ref.read(treatmentViewModel.notifier).clearAiImage();
-                        Navigator.pushNamed(
-                          context,
-                          ArFaceModelPreviewScreen.routeName,
-                        );
-                      }
-                    : null,
-               // textColor: allCaptured ? Colors.white : Colors.grey.shade500,
+              SizedBox(height: context.h(24)),
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                  children: [
+                    _buildPoseContainer(
+                      context: context,
+                      title: "Front Profile",
+                      subtitle: "Look straight into the camera",
+                      image: state.frontPoseImage,
+                      onTap: () => _capturePose(context, 'front'),
+                    ),
+                    _buildPoseContainer(
+                      context: context,
+                      title: "Left Profile",
+                      subtitle: "Turn your face to the left",
+                      image: state.leftPoseImage,
+                      onTap: () => _capturePose(context, 'left'),
+                    ),
+                    _buildPoseContainer(
+                      context: context,
+                      title: "Right Profile",
+                      subtitle: "Turn your face to the right",
+                      image: state.rightPoseImage,
+                      onTap: () => _capturePose(context, 'right'),
+                    ),
+                    SizedBox(height: context.h(40)),
+                  ],
+                ),
               ),
-            ),
-          ],
+              Padding(
+                padding: EdgeInsets.all(context.w(24)),
+                child: CustomButton(
+                  text: "Proceed to AI Preview",
+                  onPressed: allCaptured
+                      ? () {
+                          ref.read(treatmentViewModel.notifier).clearAiImage();
+                          Navigator.pushNamed(
+                            context,
+                            ArFaceModelPreviewScreen.routeName,
+                          );
+                        }
+                      : null,
+                  // textColor: allCaptured ? Colors.white : Colors.grey.shade500,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

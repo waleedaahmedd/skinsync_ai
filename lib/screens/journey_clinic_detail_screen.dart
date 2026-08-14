@@ -9,87 +9,16 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
-import '../view_models/bottom_nav_view_model.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/custom_button.dart';
-import 'bottom_nav_page.dart';
+import '../widgets/dialogs/success_dialogs.dart';
+import 'treatment_journey_screen.dart';
 
 class JourneyClinicDetailScreen extends ConsumerWidget {
   final Clinic? clinic;
   const JourneyClinicDetailScreen({super.key, this.clinic});
 
   static const String routeName = '/JourneyClinicDetailScreen';
-
-  void _showSuccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return PopScope(
-          canPop: false,
-          child: Dialog(
-            backgroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(context.r(24)),
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: context.w(24),
-                vertical: context.h(32),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    height: context.w(72),
-                    width: context.w(72),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0xffE7F9EF),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        Icons.check_circle_rounded,
-                        size: context.sp(42),
-                        color: const Color(0xff27AE60),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: context.h(24)),
-                  Text(
-                    "Request Shared!",
-                    textAlign: TextAlign.center,
-                    style: CustomFonts.black20w600,
-                  ),
-                  SizedBox(height: context.h(12)),
-                  Text(
-                    "Your request has been shared successfully with the clinic.",
-                    textAlign: TextAlign.center,
-                    style: CustomFonts.textGrey14w400,
-                  ),
-                  SizedBox(height: context.h(28)),
-                  Consumer(
-                    builder: (_, ref, _) {
-                      return CustomButton(
-                        onPressed: () {
-                          ref.read(bottomNavViewModel.notifier).changePage(0);
-                          Navigator.of(context).popUntil(
-                            (route) =>
-                                route.settings.name == BottomNavPage.routeName,
-                          );
-                        },
-                        text: "Done",
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -299,15 +228,34 @@ class JourneyClinicDetailScreen extends ConsumerWidget {
                     right: context.w(24),
                     top: context.h(20),
                   ),
-                  child: CustomButton(
-                    text: "Share Now",
-                    onPressed: () async {
-                      final result = await ref
-                          .read(treatmentJourneyProvider.notifier)
-                          .callShareTreatmentRequest(clinic?.id);
-                      if (result == true) {
-                        _showSuccessDialog(context);
-                      }
+                  child: Consumer(
+                    builder: (_, ref, _) {
+                      final optionId = ref.watch(
+                        treatmentJourneyProvider.select(
+                          (s) => s.selectedOptionId,
+                        ),
+                      );
+                      return CustomButton(
+                        text: optionId == null ? 'Select Option' : 'Share Now',
+                        onPressed: () async {
+                          if (optionId == null) {
+                            ref
+                                .read(treatmentJourneyProvider.notifier)
+                                .setClinicId(clinic?.id);
+                            Navigator.pushNamed(
+                              context,
+                              TreatmentJourneyScreen.routeName,
+                            );
+                            return;
+                          }
+                          final result = await ref
+                              .read(treatmentJourneyProvider.notifier)
+                              .callShareTreatmentRequest();
+                          if (result == true) {
+                            showShareJourneySuccessDialog(context);
+                          }
+                        },
+                      );
                     },
                   ),
                 ),
