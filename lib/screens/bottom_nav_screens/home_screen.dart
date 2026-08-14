@@ -223,11 +223,9 @@ class HomeScreen extends ConsumerWidget {
                             ),
                       ),
                     ),
-              if(!isDeploymentMode)
               SizedBox(height: context.h(28)),
 
               // Top Clinics Section
-               if(!isDeploymentMode)
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                 child: HeadingWithRightArrow(
