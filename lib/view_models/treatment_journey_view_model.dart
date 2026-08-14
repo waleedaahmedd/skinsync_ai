@@ -7,6 +7,7 @@ import '../models/requests/create_group_request.dart';
 import '../models/requests/save_history_request.dart';
 import '../models/requests/share_treatment_request.dart';
 import '../models/requests/tj_options_request.dart';
+import '../models/responses/clinic_detail_response.dart';
 import '../models/responses/groups_list_response.dart';
 import '../models/responses/simulation_history_response.dart';
 import '../models/responses/tj_options_list_response.dart';
@@ -110,6 +111,17 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 
   void setClinicId(int? clinicId) {
     state = state.copyWith(clinicId: clinicId);
+  }
+
+  Future<void> fetchClinicDetail(int? clinicId) async {
+    return await runSafely(() async {
+      if (clinicId == null) {
+        return;
+      }
+      state = state.copyWith(loading: true, errorMessage: null);
+      final response = await _repo.getClinicDetail(clinicId);
+      state = state.copyWith(loading: false, clinicDetail: response.data);
+    });
   }
 
   Future<bool?> createTjOptions() async {
@@ -218,6 +230,7 @@ class TreatmentJourneyState extends BaseStateModel {
   final bool isSimulationsLoading;
   final int? selectedOptionId;
   final int? clinicId;
+  final ClinicDetailData? clinicDetail;
   final TreatmentJourneyGroup? selectedGroup;
   final String? price;
 
@@ -231,6 +244,7 @@ class TreatmentJourneyState extends BaseStateModel {
     this.isSimulationsLoading = false,
     this.selectedOptionId,
     this.clinicId,
+    this.clinicDetail,
     this.price,
   });
 
@@ -245,6 +259,7 @@ class TreatmentJourneyState extends BaseStateModel {
     bool? isSimulationsLoading,
     int? selectedOptionId,
     int? clinicId,
+    ClinicDetailData? clinicDetail,
     String? price,
   }) {
     return TreatmentJourneyState(
@@ -257,6 +272,7 @@ class TreatmentJourneyState extends BaseStateModel {
       isSimulationsLoading: isSimulationsLoading ?? this.isSimulationsLoading,
       selectedOptionId: selectedOptionId ?? this.selectedOptionId,
       clinicId: clinicId ?? this.clinicId,
+      clinicDetail: clinicDetail ?? this.clinicDetail,
       price: price ?? this.price,
     );
   }

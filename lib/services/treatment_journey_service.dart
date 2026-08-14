@@ -6,6 +6,7 @@ import '../models/requests/share_treatment_request.dart';
 import '../models/requests/tj_options_request.dart';
 import '../models/responses/auth_response.dart';
 import '../models/responses/base_response_model.dart';
+import '../models/responses/clinic_detail_response.dart';
 import '../models/responses/groups_list_response.dart';
 import '../models/responses/tj_option_simulations_response.dart';
 import '../models/responses/tj_options_list_response.dart';
@@ -113,12 +114,12 @@ class TreatmentJourneyService implements TreatmentJourneyRepository {
 
   @override
   Future<BaseResponseModel> shareTreatmentRequest({
-  required ShareTreatmentRequest request
+    required ShareTreatmentRequest request,
   }) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.shareTreatmentRequest,
       requestType: RequestType.post,
-      requestBody: request.toJson()
+      requestBody: request.toJson(),
     );
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -128,6 +129,26 @@ class TreatmentJourneyService implements TreatmentJourneyRepository {
       final parsed = json.decode(response.body);
       throw AppException(
         AuthResponse.fromJson(parsed).message ?? "Failed to create group",
+      );
+    }
+  }
+
+  @override
+  Future<ClinicDetailResponse> getClinicDetail(int clinicId) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.clinic,
+      requestType: RequestType.get,
+      params: "/$clinicId",
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      return ClinicDetailResponse.fromJson(parsed);
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(
+        AuthResponse.fromJson(parsed).message ??
+            "Failed to fetch clinic detail",
       );
     }
   }
