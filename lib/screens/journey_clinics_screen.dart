@@ -7,6 +7,7 @@ import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/clinic_view_model.dart';
+import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_clinic_grid_view_title.dart';
@@ -100,7 +101,12 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
                       return CustomClinicGridViewTile(
                         clinicData: clinic,
                         onTap: () {
-                          ref.read(clinicProvider.notifier).setClinicId(clinic.id!);
+                          ref
+                              .read(clinicProvider.notifier)
+                              .setClinicId(clinic.id!);
+                          ref
+                              .read(treatmentJourneyProvider.notifier)
+                              .setClinicId(clinic.id!);
                           Navigator.pushNamed(
                             context,
                             JourneyClinicDetailScreen.routeName,

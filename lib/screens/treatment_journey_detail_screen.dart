@@ -165,7 +165,12 @@ class _TreatmentJourneyDetailScreenState
         showActionButton: true,
         actionButtonText: "Select this Option",
         onActionButtonPressed: () async {
-          ref.read(treatmentJourneyProvider.notifier).setOpitionId(sim.id!);
+          final currentOptionId = state.options[_tabController?.index ?? 0].id;
+          if (currentOptionId != null) {
+            ref
+                .read(treatmentJourneyProvider.notifier)
+                .setOptionId(currentOptionId);
+          }
           final clinicId = ref.read(treatmentJourneyProvider).clinicId;
           if (clinicId != null) {
             final result = await ref

@@ -77,7 +77,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     });
   }
 
-  void setOpitionId(int id) {
+  void setOptionId(int id) {
     state = state.copyWith(selectedOptionId: id);
   }
 
@@ -88,6 +88,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 
       state = state.copyWith(loading: false, options: response.data ?? []);
       if (state.options.isNotEmpty) {
+        setOptionId(state.options.first.id!);
         await fetchOptionsDetail(state.options.first.id!);
       }
       EasyLoading.dismiss();
@@ -118,7 +119,11 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       if (clinicId == null) {
         return;
       }
-      state = state.copyWith(loading: true, errorMessage: null);
+      state = state.copyWith(
+        loading: true,
+        errorMessage: null,
+        clinicId: clinicId,
+      );
       final response = await _repo.getClinicDetail(clinicId);
       state = state.copyWith(loading: false, clinicDetail: response.data);
     });
