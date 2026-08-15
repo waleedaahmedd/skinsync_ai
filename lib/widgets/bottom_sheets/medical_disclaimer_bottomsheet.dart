@@ -25,7 +25,7 @@ class MedicalDisclaimerBottomSheet extends StatelessWidget {
         title: title ?? 'Medical Disclaimer',
         description:
             description ??
-            'SkinSync AI Inc. does not provide medical advice, diagnosis, or treatment. All visualizations are AI-generated, illustrative, and for educational purposes only. They do not predict outcomes, guarantee results, or replace consultation with a licensed medical professional.',
+            'SkinSync AI Inc. does not provide medical advice, diagnosis, or treatment. All visualizations are AI-generated, illustrative, and for educational purposes only. They do not predict outcomes, guarantee results, or replace consultation with a licensed medical professional. Always consult a healthcare professional for medical advice, diagnosis, or treatment.',
       ),
     );
   }

@@ -26,6 +26,7 @@ import '../widgets/bottom_sheets/material_level_sheet.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_bordered_button.dart';
 import '../widgets/dialogs/save_option_confirmation_dialog.dart';
+import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/selected_treatments_summary_card.dart';
 import '../widgets/service_type_button.dart';
 import 'treatment_journey_screen.dart';
@@ -215,8 +216,7 @@ class _ArFaceModelPreviewScreenState
                         _buildPoseSelector(),
                         SizedBox(height: context.h(12)),
                         _buildFacePreview(),
-                        SizedBox(height: context.h(10)),
-                        _buildSimulationBanner(),
+                        const MedicalDisclaimerBanner(),
                         SizedBox(height: context.h(30)),
                         Padding(
                           padding: EdgeInsets.symmetric(
@@ -273,43 +273,6 @@ class _ArFaceModelPreviewScreenState
   // Widget Builders
   // ---------------------------------------------------------------------------
 
-  Widget _buildSimulationBanner() {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.symmetric(horizontal: context.w(20)),
-      padding: EdgeInsets.symmetric(
-        horizontal: context.w(16),
-        vertical: context.h(12),
-      ),
-      decoration: BoxDecoration(
-        color: CustomColors.greyColor.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(context.r(20)),
-        border: Border.all(
-          color: CustomColors.textFeildBoaderColor.withValues(alpha: 0.3),
-        ),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            Icons.info_outline_rounded,
-            color: CustomColors.textGreyColor,
-            size: context.sp(20),
-          ),
-          SizedBox(width: context.w(12)),
-          Expanded(
-            child: Text(
-              "This is an AI-generated Simulation for Visualization Purpose only. Actual results may vary.",
-              style: CustomFonts.black12w600.copyWith(
-                color: CustomColors.textGreyColor,
-                fontSize: context.sp(11),
-                height: 1.3,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildTreatmentHeader() {
     return Row(

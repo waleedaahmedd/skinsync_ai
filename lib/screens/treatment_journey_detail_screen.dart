@@ -10,6 +10,7 @@ import '../view_models/treatment_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/dialogs/success_dialogs.dart';
+import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/simulation_card.dart';
 import 'face_pose_capture_screen.dart';
 import 'journey_clinics_screen.dart';
@@ -159,32 +160,37 @@ class _TreatmentJourneyDetailScreenState
         horizontal: context.w(24),
         vertical: context.h(20),
       ),
-      child: SimulationCard(
-        sim: sim,
-        price: state.price,
-        showActionButton: true,
-        actionButtonText: ref.watch(treatmentJourneyProvider).clinicId != null
-            ? "Share this Option"
-            : "Select this Option",
-        onActionButtonPressed: () async {
-          final currentOptionId = state.options[_tabController?.index ?? 0].id;
-          if (currentOptionId != null) {
-            ref
-                .read(treatmentJourneyProvider.notifier)
-                .setOptionId(currentOptionId);
-          }
-          final clinicId = ref.read(treatmentJourneyProvider).clinicId;
-          if (clinicId != null) {
-            final result = await ref
-                .read(treatmentJourneyProvider.notifier)
-                .callShareTreatmentRequest();
-            if (result == true) {
-              showShareJourneySuccessDialog(context);
-            }
-          } else {
-            Navigator.pushNamed(context, JourneyClinicsScreen.routeName);
-          }
-        },
+      child: Column(
+        children: [
+          const MedicalDisclaimerBanner(),
+          SimulationCard(
+            sim: sim,
+            price: state.price,
+            showActionButton: true,
+            actionButtonText: ref.watch(treatmentJourneyProvider).clinicId != null
+                ? "Share this Option"
+                : "Select this Option",
+            onActionButtonPressed: () async {
+              final currentOptionId = state.options[_tabController?.index ?? 0].id;
+              if (currentOptionId != null) {
+                ref
+                    .read(treatmentJourneyProvider.notifier)
+                    .setOptionId(currentOptionId);
+              }
+              final clinicId = ref.read(treatmentJourneyProvider).clinicId;
+              if (clinicId != null) {
+                final result = await ref
+                    .read(treatmentJourneyProvider.notifier)
+                    .callShareTreatmentRequest();
+                if (result == true) {
+                  showShareJourneySuccessDialog(context);
+                }
+              } else {
+                Navigator.pushNamed(context, JourneyClinicsScreen.routeName);
+              }
+            },
+          ),
+        ],
       ),
     );
   }

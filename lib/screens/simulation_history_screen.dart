@@ -10,6 +10,7 @@ import '../view_models/appointment_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/simulation_card.dart';
 import 'face_pose_capture_screen.dart';
 
@@ -62,27 +63,36 @@ class _SimulationHistoryScreenState
                 style: CustomFonts.grey16w400,
               ),
             )
-          : ListView.builder(
-              padding: EdgeInsets.symmetric(
-                horizontal: context.w(20),
-                vertical: context.h(10),
-              ),
-              itemCount: sortedKeys.length,
-              itemBuilder: (context, index) {
-                final date = sortedKeys[index];
-                final sims = groupedSimulations[date]!;
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: context.h(15)),
-                      child: Text(date, style: CustomFonts.black18w600),
+          : Column(
+              children: [
+                const MedicalDisclaimerBanner(),
+                Expanded(
+                  child: ListView.builder(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.w(20),
+                      vertical: context.h(10),
                     ),
-                    ...sims.map((sim) => SimulationCard(sim: sim)),
-                  ],
-                );
-              },
+                    itemCount: sortedKeys.length,
+                    itemBuilder: (context, index) {
+                      final date = sortedKeys[index];
+                      final sims = groupedSimulations[date]!;
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: context.h(15),
+                            ),
+                            child: Text(date, style: CustomFonts.black18w600),
+                          ),
+                          ...sims.map((sim) => SimulationCard(sim: sim)),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
       bottomNavigationBar: Padding(
         padding: .all(context.w(20)),
