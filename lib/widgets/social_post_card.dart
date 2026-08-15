@@ -29,6 +29,7 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
         vertical: context.h(12),
         horizontal: context.w(16),
       ),
+      padding: EdgeInsets.all(context.w(16)),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(context.r(24)),
@@ -84,7 +85,8 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                       backgroundColor: CustomColors.greyColor,
                       backgroundImage: hasProfileLogo
                           ? NetworkImage(post.userProfileImage)
-                          : const AssetImage(PngAssets.splashLogo) as ImageProvider,
+                          : const AssetImage(PngAssets.splashLogo)
+                                as ImageProvider,
                     ),
                   ),
                 ),
