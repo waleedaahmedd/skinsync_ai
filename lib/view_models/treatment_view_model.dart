@@ -200,7 +200,16 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     required bool isCallPredictAPI,
   }) async {
     state = state.copyWith(areaNavigationStack: const []);
-    clearAiImage();
+
+    final isAlreadySelected = ref
+        .read(checkoutViewModel)
+        .selectedTreatmentsAndAreas
+        .any((item) => item.treatment.id == treatmentModel.id);
+
+    if (!isAlreadySelected) {
+      clearAiImage();
+    }
+
     ref.read(checkoutViewModel.notifier).setSelectedTreatments(treatmentModel);
     ref.read(checkoutViewModel.notifier).clearAreaSelection();
     state = state.copyWith(isBefore: true);
