@@ -9,6 +9,7 @@ class ReelContentOverlay extends StatelessWidget {
   final String userProfileImage;
   final String? caption;
   final String? musicTitle;
+  final bool isExpanded;
 
   const ReelContentOverlay({
     super.key,
@@ -16,6 +17,7 @@ class ReelContentOverlay extends StatelessWidget {
     required this.userProfileImage,
     this.caption,
     this.musicTitle,
+    this.isExpanded = false,
   });
 
   @override
@@ -53,8 +55,8 @@ class ReelContentOverlay extends StatelessWidget {
           Text(
             caption!,
             style: CustomFonts.white14w400,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
+            maxLines: isExpanded ? null : 2,
+            overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
           ),
         SizedBox(height: context.h(8)),
         if (musicTitle != null)

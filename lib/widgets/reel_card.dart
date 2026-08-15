@@ -4,6 +4,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:video_player/video_player.dart';
 
 import '../models/explore_models.dart';
+import '../utills/custom_fonts.dart';
 import 'reels/reel_content_overlay.dart';
 
 class ReelCard extends ConsumerStatefulWidget {
@@ -19,6 +20,7 @@ class ReelCard extends ConsumerStatefulWidget {
 class _ReelCardState extends ConsumerState<ReelCard> {
   late VideoPlayerController _controller;
   bool _initialized = false;
+  bool _isExpanded = false;
 
   @override
   void initState() {
@@ -105,16 +107,67 @@ class _ReelCardState extends ConsumerState<ReelCard> {
               ),
             ),
 
-          // Bottom Content
+          // Bottom Content with Gradient and Toggle
           Positioned(
-            bottom: context.h(10),
-            left: context.w(16),
-            right: context.w(80),
-            child: ReelContentOverlay(
-              userName: widget.reel.profileName ?? 'N/A',
-              userProfileImage: widget.reel.profileLogo ??'',
-              caption: widget.reel.description,
-              // musicTitle: widget.reel.musicTitle,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.fromLTRB(
+                context.w(16),
+                context.h(80),
+                context.w(16),
+                context.h(20),
+              ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.7),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: ReelContentOverlay(
+                      userName: widget.reel.profileName ?? 'N/A',
+                      userProfileImage: widget.reel.profileLogo ?? '',
+                      caption: widget.reel.description,
+                      isExpanded: _isExpanded,
+                      // musicTitle: widget.reel.musicTitle,
+                    ),
+                  ),
+                  SizedBox(width: context.w(40)),
+                  // Hide/Show Toggle Button
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isExpanded = !_isExpanded;
+                      });
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _isExpanded ? 'Hide' : 'Show',
+                          style: CustomFonts.white12w400,
+                        ),
+                        Icon(
+                          _isExpanded
+                              ? Icons.keyboard_arrow_down_rounded
+                              : Icons.keyboard_arrow_up_rounded,
+                          color: Colors.white,
+                          size: context.sp(20),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 
