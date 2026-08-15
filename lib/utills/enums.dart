@@ -70,7 +70,7 @@ enum EndPoints {
 
 enum BaseUrls {
   api('https://api.skinsyncai.com/api/'),
-  apiQa('https://api.skinsyncai.com/api/');
+  apiQa('https://api-dev.skinsyncai.com/api/');
 
   final String url;
   const BaseUrls(this.url);
