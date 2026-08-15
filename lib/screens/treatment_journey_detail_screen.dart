@@ -163,7 +163,9 @@ class _TreatmentJourneyDetailScreenState
         sim: sim,
         price: state.price,
         showActionButton: true,
-        actionButtonText: "Select this Option",
+        actionButtonText: ref.watch(treatmentJourneyProvider).clinicId != null
+            ? "Share this Option"
+            : "Select this Option",
         onActionButtonPressed: () async {
           final currentOptionId = state.options[_tabController?.index ?? 0].id;
           if (currentOptionId != null) {
