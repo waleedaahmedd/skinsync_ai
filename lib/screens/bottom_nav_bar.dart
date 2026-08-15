@@ -49,7 +49,7 @@ class BottomNavBar extends StatelessWidget {
           style: TabStyle.reactCircle,
           backgroundColor: Colors.white,
           color: CustomColors.bottomNavText,
-          activeColor: const Color(0xffE7C6E8),
+          activeColor: Colors.transparent,
           height: kBottomNavigationBarHeight + 15.h,
           elevation: 0.5,
           items: _items
@@ -60,11 +60,17 @@ class BottomNavBar extends StatelessWidget {
                     size: context.h(18),
                     color: CustomColors.bottomNavText,
                   ),
-                  activeIcon: Center(
-                    child: FaIcon(
-                      item.selectedIcon,
-                      size: context.h(25),
-                      color: CustomColors.whiteColor,
+                  activeIcon: Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: CustomColors.purpleBlueGradient,
+                    ),
+                    child: Center(
+                      child: FaIcon(
+                        item.selectedIcon,
+                        size: context.h(25),
+                        color: CustomColors.blackColor,
+                      ),
                     ),
                   ),
                   title: item.label,
