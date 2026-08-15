@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:intl/intl.dart';
 import '../models/social_post_model.dart';
-import '../view_models/social_view_model.dart';
+// import '../view_models/social_view_model.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -30,6 +30,7 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
         vertical: context.h(12),
         horizontal: context.w(16),
       ),
+      padding: EdgeInsets.all(context.w(16)),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(context.r(24)),
@@ -85,7 +86,8 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                       backgroundColor: CustomColors.greyColor,
                       backgroundImage: hasProfileLogo
                           ? NetworkImage(post.userProfileImage)
-                          : const AssetImage(PngAssets.splashLogo) as ImageProvider,
+                          : const AssetImage(PngAssets.splashLogo)
+                                as ImageProvider,
                     ),
                   ),
                 ),
@@ -246,28 +248,28 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
     );
   }
 
-  Widget _buildSimpleIconButton({
-    required VoidCallback onTap,
-    required IconData icon,
-    Color? iconColor,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: EdgeInsets.all(context.r(8)),
-        decoration: BoxDecoration(
-          color: Colors.grey.withValues(alpha: 0.05),
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          icon,
-          size: context.sp(20),
-          color: iconColor ?? Colors.black.withValues(alpha: 0.7),
-        ),
-      ),
-    );
-  }
+  // Widget _buildSimpleIconButton({
+  //   required VoidCallback onTap,
+  //   required IconData icon,
+  //   Color? iconColor,
+  // }) {
+  //   return GestureDetector(
+  //     onTap: onTap,
+  //     behavior: HitTestBehavior.opaque,
+  //     child: Container(
+  //       padding: EdgeInsets.all(context.r(8)),
+  //       decoration: BoxDecoration(
+  //         color: Colors.grey.withValues(alpha: 0.05),
+  //         shape: BoxShape.circle,
+  //       ),
+  //       child: Icon(
+  //         icon,
+  //         size: context.sp(20),
+  //         color: iconColor ?? Colors.black.withValues(alpha: 0.7),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   String _getRelativeTime(DateTime? dateTime) {
     if (dateTime == null) return '';
