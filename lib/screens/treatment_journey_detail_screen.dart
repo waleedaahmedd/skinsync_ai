@@ -5,6 +5,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
+import '../view_models/clinic_view_model.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 import '../widgets/app_loader.dart';
@@ -167,7 +168,7 @@ class _TreatmentJourneyDetailScreenState
             sim: sim,
             price: state.price,
             showActionButton: true,
-            actionButtonText: ref.watch(treatmentJourneyProvider).clinicId != null
+            actionButtonText: ref.watch(clinicProvider).clinicId != null
                 ? "Share this Option"
                 : "Select this Option",
             onActionButtonPressed: () async {
@@ -177,7 +178,7 @@ class _TreatmentJourneyDetailScreenState
                     .read(treatmentJourneyProvider.notifier)
                     .setOptionId(currentOptionId);
               }
-              final clinicId = ref.read(treatmentJourneyProvider).clinicId;
+              final clinicId = ref.read(clinicProvider).clinicId;
               if (clinicId != null) {
                 final result = await ref
                     .read(treatmentJourneyProvider.notifier)

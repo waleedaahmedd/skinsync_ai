@@ -7,7 +7,6 @@ import '../models/requests/create_group_request.dart';
 import '../models/requests/save_history_request.dart';
 import '../models/requests/share_treatment_request.dart';
 import '../models/requests/tj_options_request.dart';
-import '../models/responses/clinic_detail_response.dart';
 import '../models/responses/groups_list_response.dart';
 import '../models/responses/simulation_history_response.dart';
 import '../models/responses/tj_options_list_response.dart';
@@ -18,6 +17,7 @@ import '../utills/simulation_utils.dart';
 import 'auth_view_model.dart';
 import 'base_view_model.dart';
 import 'checkout_view_model.dart';
+import 'clinic_view_model.dart';
 import 'treatment_view_model.dart';
 
 final treatmentJourneyProvider =
@@ -60,13 +60,14 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 
   Future<bool?> callShareTreatmentRequest() async {
     return await runSafely(() async {
-      if (state.selectedOptionId == null || state.clinicId == null) {
+      final clinicId = ref.read(clinicProvider).clinicId;
+      if (state.selectedOptionId == null || clinicId == null) {
         EasyLoading.showError('Select a journey option to share!');
         return false;
       }
       EasyLoading.show(status: 'Loading');
       final request = ShareTreatmentRequest(
-        clinicId: state.clinicId!,
+        clinicId: clinicId,
         optionId: state.selectedOptionId!,
       );
 
@@ -108,25 +109,6 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 
   void setGroup(TreatmentJourneyGroup group) {
     state = state.copyWith(selectedGroup: group);
-  }
-
-  void setClinicId(int? clinicId) {
-    state = state.copyWith(clinicId: clinicId);
-  }
-
-  Future<void> fetchClinicDetail(int? clinicId) async {
-    return await runSafely(() async {
-      if (clinicId == null) {
-        return;
-      }
-      state = state.copyWith(
-        loading: true,
-        errorMessage: null,
-        clinicId: clinicId,
-      );
-      final response = await _repo.getClinicDetail(clinicId);
-      state = state.copyWith(loading: false, clinicDetail: response.data);
-    });
   }
 
   Future<bool?> createTjOptions() async {
@@ -234,8 +216,6 @@ class TreatmentJourneyState extends BaseStateModel {
   final SimulationData? simulations;
   final bool isSimulationsLoading;
   final int? selectedOptionId;
-  final int? clinicId;
-  final ClinicDetailData? clinicDetail;
   final TreatmentJourneyGroup? selectedGroup;
   final String? price;
 
@@ -248,8 +228,6 @@ class TreatmentJourneyState extends BaseStateModel {
     this.simulations,
     this.isSimulationsLoading = false,
     this.selectedOptionId,
-    this.clinicId,
-    this.clinicDetail,
     this.price,
   });
 
@@ -263,8 +241,6 @@ class TreatmentJourneyState extends BaseStateModel {
     SimulationData? simulations,
     bool? isSimulationsLoading,
     int? selectedOptionId,
-    int? clinicId,
-    ClinicDetailData? clinicDetail,
     String? price,
   }) {
     return TreatmentJourneyState(
@@ -276,8 +252,6 @@ class TreatmentJourneyState extends BaseStateModel {
       simulations: simulations ?? this.simulations,
       isSimulationsLoading: isSimulationsLoading ?? this.isSimulationsLoading,
       selectedOptionId: selectedOptionId ?? this.selectedOptionId,
-      clinicId: clinicId ?? this.clinicId,
-      clinicDetail: clinicDetail ?? this.clinicDetail,
       price: price ?? this.price,
     );
   }

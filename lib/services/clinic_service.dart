@@ -2,23 +2,21 @@ import 'dart:convert';
 
 import '../exceptions/app_exception.dart';
 import '../models/requests/get_clinic_request.dart';
-import '../models/requests/get_practitioners_request.dart';
 import '../models/requests/invite_clinic_request.dart';
-import '../models/responses/availability_response.dart';
+import '../models/responses/auth_response.dart';
 import '../models/responses/base_response_model.dart';
+import '../models/responses/clinic_detail_response.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../models/responses/payment_options_response.dart';
-import '../models/responses/practitioner_list_response.dart';
 import '../models/responses/treatment_pricing_response.dart';
-import '../repositories/clinic_doctor_repository.dart';
-import '../utills/date_time_utills.dart';
+import '../repositories/clinic_repository.dart';
 import '../utills/enums.dart';
 import 'api_base_helper.dart';
 
-class ClinicDoctorService implements ClinicDoctorRepository {
+class ClinicService implements ClinicRepository {
   final ApiBaseHelper _apiClient;
 
-  ClinicDoctorService({required this._apiClient});
+  ClinicService({required this._apiClient});
 
   @override
   Future<GetClinicResponse> getClinic({
@@ -29,82 +27,13 @@ class ClinicDoctorService implements ClinicDoctorRepository {
       requestType: .post,
       requestBody: request.toJson(),
     );
-    // Check HTTP status code
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
-      GetClinicResponse getClinicResponse = GetClinicResponse.fromJson(parsed);
-      return getClinicResponse;
+      return GetClinicResponse.fromJson(parsed);
     } else {
-      // Handle HTTP error status codes
       final parsed = json.decode(response.body);
       throw AppException(GetClinicResponse.fromJson(parsed).message as String);
     }
-  }
-
-  @override
-  Future<PractitionerListResponse> getPractitioners({
-    required GetPractitionersRequest request,
-  }) async {
-    final response = await _apiClient.httpRequest(
-      endPoint: EndPoints.practitionersList,
-      requestType: .post,
-      requestBody: request.toJson(),
-    );
-
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      final parsed = json.decode(response.body);
-      return PractitionerListResponse.fromJson(parsed);
-    } else {
-      final parsed = json.decode(response.body);
-      throw AppException(
-        PractitionerListResponse.fromJson(parsed).message ??
-            'Error fetching practitioners',
-      );
-    }
-  }
-
-  @override
-  Future<PractitionerListResponse> getDoctors({
-    required int clinicId,
-    required int treatmentId,
-    required String sideAreaIdsList,
-  }) async {
-    final response = await _apiClient.httpRequest(
-      endPoint: EndPoints.getDoctor,
-      requestType: .get,
-      params:
-          'clinic_id=$clinicId&treatment_id=$treatmentId&side_area_ids=$sideAreaIdsList',
-    );
-    // Check HTTP status code
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      final parsed = json.decode(response.body);
-      return PractitionerListResponse.fromJson(parsed);
-    } else {
-      // Handle HTTP error status codes
-      final parsed = json.decode(response.body);
-      throw AppException(
-        PractitionerListResponse.fromJson(parsed).message as String,
-      );
-    }
-  }
-
-  @override
-  Future<List<Slot>> getAvailability({
-    required int doctorId,
-    required int clinicId,
-    required DateTime date,
-  }) async {
-    final response = await _apiClient.httpRequest(
-      endPoint: EndPoints.getAvailability,
-      requestType: .get,
-      params:
-          '?doctor_id=$doctorId&clinic_id=$clinicId&date=${date.secondsSinceEpoch}',
-    );
-    final data = AvailabilityResponse.fromJson(jsonDecode(response.body));
-    if (data.status == false) {
-      throw Exception(data.message ?? 'Something went wrong!');
-    }
-    return data.slots;
   }
 
   @override
@@ -156,6 +85,26 @@ class ClinicDoctorService implements ClinicDoctorRepository {
     final data = BaseResponseModel.fromJson(jsonDecode(response.body));
     if (!(data.status ?? false)) {
       throw AppException(data.message ?? 'Something went wrong!');
+    }
+  }
+
+  @override
+  Future<ClinicDetailResponse> getClinicDetail(int clinicId) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.clinic,
+      requestType: RequestType.get,
+      params: "/$clinicId",
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      return ClinicDetailResponse.fromJson(parsed);
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(
+        AuthResponse.fromJson(parsed).message ??
+            "Failed to fetch clinic detail",
+      );
     }
   }
 }
