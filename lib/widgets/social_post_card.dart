@@ -124,21 +124,21 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                     ],
                   ),
                 ),
-                Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(context.r(20)),
-                    onTap: () {},
-                    child: Padding(
-                      padding: EdgeInsets.all(context.r(8)),
-                      child: Icon(
-                        Icons.more_horiz_rounded,
-                        color: Colors.grey.shade600,
-                        size: context.sp(22),
-                      ),
-                    ),
-                  ),
-                ),
+                // Material(
+                //   color: Colors.transparent,
+                //   child: InkWell(
+                //     borderRadius: BorderRadius.circular(context.r(20)),
+                //     onTap: () {},
+                //     child: Padding(
+                //       padding: EdgeInsets.all(context.r(8)),
+                //       child: Icon(
+                //         Icons.more_horiz_rounded,
+                //         color: Colors.grey.shade600,
+                //         size: context.sp(22),
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -196,51 +196,51 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
             ),
 
           // Interaction Bar
-          Padding(
-            padding: EdgeInsets.all(context.w(16)),
-            child: Row(
-              children: [
-                _buildSimpleIconButton(
-                  onTap: () {
-                    ref.read(socialViewModel.notifier).toggleLike(post.id);
-                  },
-                  icon: post.isLiked
-                      ? Icons.favorite_rounded
-                      : Icons.favorite_outline_rounded,
-                  iconColor: post.isLiked ? Colors.red : null,
-                ),
-                SizedBox(width: context.w(4)),
-                Text(
-                  '${post.likesCount}',
-                  style: CustomFonts.grey12w400.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(width: context.w(16)),
-                _buildSimpleIconButton(
-                  onTap: () {},
-                  icon: Icons.chat_bubble_outline_rounded,
-                ),
-                SizedBox(width: context.w(4)),
-                Text(
-                  '${post.commentsCount}',
-                  style: CustomFonts.grey12w400.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const Spacer(),
-                _buildSimpleIconButton(
-                  onTap: () {},
-                  icon: Icons.share_outlined,
-                ),
-                SizedBox(width: context.w(8)),
-                _buildSimpleIconButton(
-                  onTap: () {},
-                  icon: Icons.bookmark_border_rounded,
-                ),
-              ],
-            ),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.all(context.w(16)),
+          //   child: Row(
+          //     children: [
+          //       _buildSimpleIconButton(
+          //         onTap: () {
+          //           ref.read(socialViewModel.notifier).toggleLike(post.id);
+          //         },
+          //         icon: post.isLiked
+          //             ? Icons.favorite_rounded
+          //             : Icons.favorite_outline_rounded,
+          //         iconColor: post.isLiked ? Colors.red : null,
+          //       ),
+          //       SizedBox(width: context.w(4)),
+          //       Text(
+          //         '${post.likesCount}',
+          //         style: CustomFonts.grey12w400.copyWith(
+          //           fontWeight: FontWeight.w600,
+          //         ),
+          //       ),
+          //       SizedBox(width: context.w(16)),
+          //       _buildSimpleIconButton(
+          //         onTap: () {},
+          //         icon: Icons.chat_bubble_outline_rounded,
+          //       ),
+          //       SizedBox(width: context.w(4)),
+          //       Text(
+          //         '${post.commentsCount}',
+          //         style: CustomFonts.grey12w400.copyWith(
+          //           fontWeight: FontWeight.w600,
+          //         ),
+          //       ),
+          //       const Spacer(),
+          //       _buildSimpleIconButton(
+          //         onTap: () {},
+          //         icon: Icons.share_outlined,
+          //       ),
+          //       SizedBox(width: context.w(8)),
+          //       _buildSimpleIconButton(
+          //         onTap: () {},
+          //         icon: Icons.bookmark_border_rounded,
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );
