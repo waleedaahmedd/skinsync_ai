@@ -269,6 +269,7 @@ class HomeScreen extends ConsumerWidget {
               SizedBox(height: context.h(28)),
 
               // Promotions & Discounts Section
+              if(!isDeploymentMode)
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                 child: Text(
@@ -276,9 +277,11 @@ class HomeScreen extends ConsumerWidget {
                   style: CustomFonts.black22w600,
                 ),
               ),
+              if(!isDeploymentMode)
               SizedBox(height: context.h(16)),
 
               // Promotions Empty State Check
+              if(!isDeploymentMode)
               promotionsCount == 0
                   ? _buildHorizontalEmptyState(
                       context: context,

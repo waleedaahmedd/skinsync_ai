@@ -267,16 +267,7 @@ class MyProfileScreen extends StatelessWidget {
                       icon: SvgAssets.profileIcon,
                       title: "Personal Details",
                     ),
-                    buildCardOption(
-                      callBack: () {
-                        Navigator.pushNamed(
-                          context,
-                          AppointmentsScreen.routeName,
-                        );
-                      },
-                      icon: SvgAssets.appointment,
-                      title: "Appointments",
-                    ),
+
                     buildCardOption(
                       callBack: () {
                         Navigator.pushNamed(
@@ -288,6 +279,16 @@ class MyProfileScreen extends StatelessWidget {
                       title: "Treatment Journey",
                     ),
                     if (!isDeploymentMode) ...[
+                      buildCardOption(
+                        callBack: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppointmentsScreen.routeName,
+                          );
+                        },
+                        icon: SvgAssets.appointment,
+                        title: "Appointments",
+                      ),
                       buildCardOption(
                         callBack: () {
                           Navigator.pushNamed(
