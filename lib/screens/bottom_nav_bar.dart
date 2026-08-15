@@ -50,19 +50,20 @@ class BottomNavBar extends StatelessWidget {
           backgroundColor: Colors.white,
           color: CustomColors.bottomNavText,
           activeColor: const Color(0xffE7C6E8),
-          height: kBottomNavigationBarHeight + 10.h,
+          height: kBottomNavigationBarHeight + 15.h,
+          elevation: 0.5,
           items: _items
               .map(
                 (item) => TabItem(
                   icon: FaIcon(
                     item.unselectedIcon,
-                    size: context.h(24),
+                    size: context.h(18),
                     color: CustomColors.bottomNavText,
                   ),
                   activeIcon: Center(
                     child: FaIcon(
                       item.selectedIcon,
-                      size: context.h(30),
+                      size: context.h(25),
                       color: CustomColors.whiteColor,
                     ),
                   ),

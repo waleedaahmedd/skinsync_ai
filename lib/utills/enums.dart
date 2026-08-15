@@ -69,7 +69,7 @@ enum EndPoints {
 }
 
 enum BaseUrls {
-  api(''),
+  api('https://api.skinsyncai.com/api/'),
   apiQa('https://api-dev.skinsyncai.com/api/');
 
   final String url;
