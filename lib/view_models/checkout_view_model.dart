@@ -467,6 +467,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       final data = await _appointmentRepository.createAppointment(
         request: request,
       );
+      if (!ref.mounted) return;
       state = state.copyWith(loading: false, appointment: data);
       debugPrint("Appointment created successfully: ${data.appointmentId}");
       EasyLoading.dismiss();
@@ -533,7 +534,9 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
         initialDeposit: initialDeposit,
         availability: availability,
       );
+      if (!ref.mounted) return null;
       await _clinicRepository.inviteClinic(request);
+      if (!ref.mounted) return null;
       EasyLoading.dismiss();
       return true;
     });

@@ -42,6 +42,7 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
         clinicId: clinicId,
       );
       final response = await _repository.getClinicDetail(clinicId);
+      if (!ref.mounted) return;
       state = state.copyWith(loading: false, clinicDetail: response.data);
     });
   }
@@ -65,6 +66,7 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
         }).toList(),
       );
       final response = await _repository.getClinic(request: request);
+      if (!ref.mounted) return null;
       state = state.copyWith(
         clinicLoading: false,
         clinics: response.data ?? [],
@@ -84,6 +86,7 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
       final places = await LocationService().fetchNearbyClinics(
         location: location,
       );
+      if (!ref.mounted) return;
       final List<Clinic> clinics = [];
       for (final place in places) {
         clinics.add(
@@ -101,6 +104,7 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
           ),
         );
       }
+      if (!ref.mounted) return;
       state = state.copyWith(clinicLoading: false, clinicsToInvite: clinics);
     });
   }

@@ -52,6 +52,9 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Keep clinicProvider alive and reactive to state changes
+    ref.watch(clinicProvider);
+
     return Scaffold(
       backgroundColor: CustomColors.whiteColor,
       appBar: const CustomAppBar(showTitle: true, title: "Select Clinic"),
