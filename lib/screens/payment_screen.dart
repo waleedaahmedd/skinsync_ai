@@ -4,7 +4,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
-import '../utils/date_time_utills.dart';
+import '../utils/date_time_utils.dart';
 import '../view_models/checkout_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';

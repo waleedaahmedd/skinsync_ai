@@ -24,7 +24,7 @@ import '../repositories/clinic_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/appointment_service.dart';
 import '../services/clinic_service.dart';
-import '../utils/date_time_utills.dart';
+import '../utils/date_time_utils.dart';
 import '../utils/simulation_utils.dart';
 import 'auth_view_model.dart';
 import 'base_view_model.dart';

@@ -5,7 +5,7 @@ import '../models/requests/get_practitioners_request.dart';
 import '../models/responses/availability_response.dart';
 import '../models/responses/practitioner_list_response.dart';
 import '../repositories/doctor_repository.dart';
-import '../utils/date_time_utills.dart';
+import '../utils/date_time_utils.dart';
 import '../utils/enums.dart';
 import 'api_base_helper.dart';
 

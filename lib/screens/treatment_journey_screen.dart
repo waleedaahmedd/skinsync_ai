@@ -7,7 +7,7 @@ import '../models/responses/groups_list_response.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
-import '../utils/date_time_utills.dart';
+import '../utils/date_time_utils.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';

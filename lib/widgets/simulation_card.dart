@@ -8,7 +8,7 @@ import '../models/responses/simulation_history_response.dart';
 import '../screens/ar_face_model_Preview_screen.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
-import '../utils/date_time_utills.dart';
+import '../utils/date_time_utils.dart';
 import '../view_models/treatment_view_model.dart';
 import 'custom_app_bar.dart';
 import 'custom_button.dart';
@@ -95,25 +95,26 @@ class SimulationCard extends ConsumerWidget {
               children: sim.treatments!
                   .expand((t) => t.areas ?? <SimulationArea>[])
                   .map((area) {
-                final material = area.materials?.firstOrNull;
-                final materialText = material != null
-                    ? " (${material.selectedQuantity})"
-                    : "";
-                return Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.w(10),
-                    vertical: context.h(4),
-                  ),
-                  decoration: BoxDecoration(
-                    color: CustomColors.greyColor.withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(context.r(20)),
-                  ),
-                  child: Text(
-                    "${area.name}$materialText",
-                    style: CustomFonts.black12w500,
-                  ),
-                );
-              }).toList(),
+                    final material = area.materials?.firstOrNull;
+                    final materialText = material != null
+                        ? " (${material.selectedQuantity})"
+                        : "";
+                    return Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.w(10),
+                        vertical: context.h(4),
+                      ),
+                      decoration: BoxDecoration(
+                        color: CustomColors.greyColor.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(context.r(20)),
+                      ),
+                      child: Text(
+                        "${area.name}$materialText",
+                        style: CustomFonts.black12w500,
+                      ),
+                    );
+                  })
+                  .toList(),
             ),
           ],
           if (price != null) ...[
@@ -122,24 +123,31 @@ class SimulationCard extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("Total Price:", style: CustomFonts.grey14w400),
-                Text(price!, style: CustomFonts.black18w600.copyWith(color: CustomColors.darkPurple)),
+                Text(
+                  price!,
+                  style: CustomFonts.black18w600.copyWith(
+                    color: CustomColors.darkPurple,
+                  ),
+                ),
               ],
             ),
           ],
           if (showActionButton) ...[
             SizedBox(height: context.h(10)),
             CustomButton(
-              onPressed: onActionButtonPressed ?? () async {
-                await ref
-                    .read(treatmentViewModel.notifier)
-                    .initializeSimulation(sim);
-                if (context.mounted) {
-                  Navigator.pushNamed(
-                    context,
-                    ArFaceModelPreviewScreen.routeName,
-                  );
-                }
-              },
+              onPressed:
+                  onActionButtonPressed ??
+                  () async {
+                    await ref
+                        .read(treatmentViewModel.notifier)
+                        .initializeSimulation(sim);
+                    if (context.mounted) {
+                      Navigator.pushNamed(
+                        context,
+                        ArFaceModelPreviewScreen.routeName,
+                      );
+                    }
+                  },
               text: actionButtonText ?? 'Use this simulation',
             ),
           ],
@@ -148,7 +156,12 @@ class SimulationCard extends ConsumerWidget {
     );
   }
 
-  Widget _buildImagePair(BuildContext context, String label, String? before, String? after) {
+  Widget _buildImagePair(
+    BuildContext context,
+    String label,
+    String? before,
+    String? after,
+  ) {
     if (before == null && after == null) return const SizedBox.shrink();
 
     return Column(

@@ -11,7 +11,7 @@ import '../models/responses/practitioner_list_response.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
-import '../utils/date_time_utills.dart';
+import '../utils/date_time_utils.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/clinic_view_model.dart';
 import '../view_models/doctor_view_model.dart';
@@ -149,7 +149,8 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
                         final isSelected =
-                            doctors[index].doctorId == state.selectedDoctor?.doctorId;
+                            doctors[index].doctorId ==
+                            state.selectedDoctor?.doctorId;
                         return _buildDoctorCard(
                           doctors[index],
                           index,
@@ -245,7 +246,9 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                             child: Container(
                               padding: EdgeInsets.all(context.w(10)),
                               decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(context.r(10)),
+                                borderRadius: BorderRadius.circular(
+                                  context.r(10),
+                                ),
                                 color: Colors.lightBlue.withValues(alpha: 0.5),
                               ),
                               child: SvgPicture.asset(
@@ -409,8 +412,9 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                           // final selectedClinic =
                           //     ref.read(checkoutViewModel).selectedClinic;
 
-                          final checkoutNotifier =
-                              ref.read(checkoutViewModel.notifier);
+                          final checkoutNotifier = ref.read(
+                            checkoutViewModel.notifier,
+                          );
                           checkoutNotifier.setSelectedDoctorObject(
                             state.selectedDoctor!,
                           );
@@ -451,7 +455,11 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
     );
   }
 
-  Widget _buildDoctorCard(PractitionerDoctor doctor, int index, bool isSelected) {
+  Widget _buildDoctorCard(
+    PractitionerDoctor doctor,
+    int index,
+    bool isSelected,
+  ) {
     return GestureDetector(
       onTap: () {
         ref.read(doctorProvider.notifier).setSelectedDoctor(doctor);
@@ -469,7 +477,10 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
         });
       },
       child: Padding(
-        padding: EdgeInsets.only(left: index == 0 ? context.w(30) : 0, right: context.w(15)),
+        padding: EdgeInsets.only(
+          left: index == 0 ? context.w(30) : 0,
+          right: context.w(15),
+        ),
         child: Container(
           padding: EdgeInsets.only(
             top: context.h(21),

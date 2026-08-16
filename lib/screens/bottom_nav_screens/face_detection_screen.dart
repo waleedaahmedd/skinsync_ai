@@ -6,7 +6,6 @@ import 'package:camera/camera.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:face_detection_tflite/face_detection_tflite.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_litert/flutter_litert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
@@ -37,7 +36,8 @@ class FaceDetectionScreen extends ConsumerStatefulWidget {
       _FaceDetectionScreenState();
 }
 
-class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with SingleTickerProviderStateMixin {
+class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
+    with SingleTickerProviderStateMixin {
   CameraController? _cameraController;
   XFile? _capturedImage;
 
@@ -92,17 +92,21 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
   }
 
   void _speakInstruction() {
-    final isFrontCamera = _cameraController?.description.lensDirection == CameraLensDirection.front;
-    
+    final isFrontCamera =
+        _cameraController?.description.lensDirection ==
+        CameraLensDirection.front;
+
     String ttsText = "";
     if (widget.pose == 'front') {
       ttsText = "Please look straight and keep your face inside the circle.";
     } else if (isFrontCamera) {
       // In mirrored selfie mode, turning head to the right shows the left profile
       if (widget.pose == 'left') {
-        ttsText = "Please turn your head to the right to capture your left profile.";
+        ttsText =
+            "Please turn your head to the right to capture your left profile.";
       } else {
-        ttsText = "Please turn your head to the left to capture your right profile.";
+        ttsText =
+            "Please turn your head to the left to capture your right profile.";
       }
     } else {
       // Rear camera (no mirror)
@@ -122,7 +126,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
 
     try {
       bool shouldPreferCpu = false;
-      
+
       // Check for legacy iOS or non-flagship Android devices
       if (Platform.isIOS) {
         final deviceInfo = DeviceInfoPlugin();
@@ -132,7 +136,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
           shouldPreferCpu = true;
         }
       } else if (Platform.isAndroid) {
-        // Many Android devices (like POCO, Xiaomi, etc.) have buggy GPU drivers 
+        // Many Android devices (like POCO, Xiaomi, etc.) have buggy GPU drivers
         // that cause SIGSEGV crashes when using TFLite GPU delegate.
         // For face detection, CPU (XNNPACK) is fast enough and much more stable.
         shouldPreferCpu = true;
@@ -155,7 +159,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
         );
         log('FaceDetector initialized successfully (GPU)');
       }
-      
+
       if (mounted) {
         setState(() {});
       }
@@ -218,7 +222,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
       final rotation = _getRotation(
         _cameraController!.description.sensorOrientation,
       );
-      
+
       final faces = await _faceDetector!.detectFacesFromCameraImage(
         image,
         rotation: rotation,
@@ -231,10 +235,12 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
         final face = faces.first;
         isPoseCorrect = face.isCorrectPose(
           widget.pose,
-          isFrontCamera: _cameraController?.description.lensDirection == CameraLensDirection.front,
+          isFrontCamera:
+              _cameraController?.description.lensDirection ==
+              CameraLensDirection.front,
         );
         log('Pose correct: $isPoseCorrect, Score: ${face.detectionData.score}');
-        
+
         // If a face is detected and pose is becoming correct, we can hide the manual capture message
         if (isPoseCorrect && _showManualCaptureUI) {
           setState(() {
@@ -397,7 +403,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
       }
 
       // Start face detection stream for automatic capture
-      log('Starting image stream. Sensor orientation: ${controller.description.sensorOrientation}');
+      log(
+        'Starting image stream. Sensor orientation: ${controller.description.sensorOrientation}',
+      );
       controller.startImageStream(_onFrameAvailable);
 
       setState(() {
@@ -437,7 +445,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
 
     // Stop image stream before capture to avoid potential camera freezes on some devices
     try {
-      if (_cameraController != null && _cameraController!.value.isStreamingImages) {
+      if (_cameraController != null &&
+          _cameraController!.value.isStreamingImages) {
         await _cameraController!.stopImageStream();
         // Give the camera a moment to settle after stopping the stream
         await Future.delayed(const Duration(milliseconds: 200));
@@ -569,12 +578,12 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
                         //   ),
                         // ),
                         text:
-                        // Text(
-                          "Recapture",
-                          // style: CustomFonts.black18w600.copyWith(
-                          //   color: CustomColors.purpleColor,
-                          // ),
-                       // ),
+                            // Text(
+                            "Recapture",
+                        // style: CustomFonts.black18w600.copyWith(
+                        //   color: CustomColors.purpleColor,
+                        // ),
+                        // ),
                       ),
                     ),
                     SizedBox(width: context.w(16)),
@@ -613,12 +622,15 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
     if (_showManualCaptureUI) return;
 
     _manualCaptureTimer = Timer(const Duration(seconds: 5), () {
-      if (mounted && !_isCountingDown && !_isCapturing && _capturedImage == null) {
+      if (mounted &&
+          !_isCountingDown &&
+          !_isCapturing &&
+          _capturedImage == null) {
         setState(() {
           _showManualCaptureUI = true;
         });
       } else if (mounted && _isCountingDown) {
-        // If it fires while counting down, we don't show it yet, 
+        // If it fires while counting down, we don't show it yet,
         // but _stopCountdown will restart this timer anyway.
       }
     });
@@ -628,7 +640,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
     try {
       _originalVolume = await VolumeController.instance.getVolume();
       VolumeController.instance.showSystemUI = false;
-      
+
       // Initial reset to middle
       _isResettingVolume = true;
       VolumeController.instance.setVolume(0.5);
@@ -642,7 +654,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
         if ((volume - 0.5).abs() > 0.05) {
           if (volume > 0.5) {
             // Volume Up pressed
-            if (_showManualCaptureUI && !_isCapturing && _capturedImage == null) {
+            if (_showManualCaptureUI &&
+                !_isCapturing &&
+                _capturedImage == null) {
               _captureAndNavigate(_storedRef!);
             }
           }
@@ -651,7 +665,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
           // This ensures the hardware buttons always have "room" to trigger a change event.
           _isResettingVolume = true;
           VolumeController.instance.setVolume(0.5);
-          
+
           // Short debounce to ignore the event caused by our own setVolume
           Future.delayed(const Duration(milliseconds: 400), () {
             _isResettingVolume = false;
@@ -727,7 +741,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
                   return Stack(
                     children: [
                       CameraPreview(_cameraController!),
-                      
+
                       AnimatedBuilder(
                         animation: _pulseController,
                         builder: (context, child) {
@@ -742,7 +756,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
                           );
                         },
                       ),
-                      
+
                       if (_isCountingDown)
                         Center(
                           child: AnimatedSwitcher(
@@ -805,7 +819,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
               ),
             ),
           ),
-          
+
           Align(
             alignment: Alignment.bottomCenter,
             child: _buildInstructionOverlay(),
@@ -815,7 +829,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
     );
   }
 
-  Widget _buildHeaderButton({required IconData icon, required VoidCallback onTap}) {
+  Widget _buildHeaderButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -833,7 +850,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
   Widget _buildPoseIndicator() {
     final poses = ['front', 'left', 'right'];
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(8)),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.w(16),
+        vertical: context.h(8),
+      ),
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(context.r(20)),
@@ -849,7 +869,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
             height: context.w(8),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isCurrent ? CustomColors.purpleColor : Colors.white.withValues(alpha: 0.3),
+              color: isCurrent
+                  ? CustomColors.purpleColor
+                  : Colors.white.withValues(alpha: 0.3),
             ),
           );
         }).toList(),
@@ -880,19 +902,31 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(6)),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.w(16),
+                vertical: context.h(6),
+              ),
               decoration: BoxDecoration(
-                color: _isPoseCorrect ? CustomColors.purpleColor.withValues(alpha: 0.2) : Colors.white10,
+                color: _isPoseCorrect
+                    ? CustomColors.purpleColor.withValues(alpha: 0.2)
+                    : Colors.white10,
                 borderRadius: BorderRadius.circular(context.r(12)),
-                border: Border.all(color: _isPoseCorrect ? CustomColors.purpleColor : Colors.white24),
+                border: Border.all(
+                  color: _isPoseCorrect
+                      ? CustomColors.purpleColor
+                      : Colors.white24,
+                ),
               ),
               child: Text(
                 _isFaceDetectorError || _showManualCaptureUI
                     ? "MANUAL CAPTURE MODE"
                     : (_isPoseCorrect ? "POSE CORRECT" : "ALIGN YOUR FACE"),
                 style: TextStyle(
-                  color: _isPoseCorrect || _isFaceDetectorError || _showManualCaptureUI
-                      ? CustomColors.purpleColor 
+                  color:
+                      _isPoseCorrect ||
+                          _isFaceDetectorError ||
+                          _showManualCaptureUI
+                      ? CustomColors.purpleColor
                       : Colors.white70,
                   fontSize: context.sp(12),
                   fontWeight: FontWeight.bold,
@@ -911,10 +945,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
                   ? "Position your face and capture"
                   : "Keep your face within the frame for auto-capture",
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: context.sp(14),
-              ),
+              style: TextStyle(color: Colors.white70, fontSize: context.sp(14)),
             ),
             if (_showManualCaptureUI && !_isFaceDetectorError)
               Padding(
@@ -937,16 +968,17 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
             SizedBox(height: context.h(24)),
             if (_isCapturing)
               const AppLoader()
-            else if (_isFaceDetectorError || _showManualCaptureUI)
+            else
+              // if (_isFaceDetectorError || _showManualCaptureUI)
               Padding(
                 padding: EdgeInsets.only(bottom: context.h(20)),
                 child: CustomButton(
                   onPressed: () => _captureAndNavigate(_storedRef!),
                   text: "Capture Image",
                 ),
-              )
-            else
-              SizedBox(height: context.h(52)), // Fixed height spacer
+              ),
+            // else
+            //   SizedBox(height: context.h(52)), // Fixed height spacer
           ],
         ),
       ),
@@ -977,7 +1009,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
 
   Widget _buildSmallTip(IconData icon, String label) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: context.w(12), vertical: context.h(10)),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.w(12),
+        vertical: context.h(10),
+      ),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(context.r(16)),
@@ -1002,10 +1037,12 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
   }
 
   String _getInstructionText() {
-    final isFrontCamera = _cameraController?.description.lensDirection == CameraLensDirection.front;
-    
+    final isFrontCamera =
+        _cameraController?.description.lensDirection ==
+        CameraLensDirection.front;
+
     if (widget.pose == 'front') return "Look Straight";
-    
+
     if (isFrontCamera) {
       // In mirrored selfie mode, turning head to the right shows the left profile
       return widget.pose == 'left' ? "Turn Right" : "Turn Left";
@@ -1034,7 +1071,8 @@ class TintOverlayPainter extends CustomPainter {
     final center = Offset(size.width / 2, centerY ?? size.height / 2);
 
     // 1. Create a darkened background with a circular hole
-    final backgroundPaint = Paint()..color = Colors.black.withValues(alpha: 0.7);
+    final backgroundPaint = Paint()
+      ..color = Colors.black.withValues(alpha: 0.7);
     final cutoutPath = Path()
       ..addRect(Rect.fromLTWH(0, 0, size.width, size.height))
       ..addOval(Rect.fromCircle(center: center, radius: centerRadius))
@@ -1045,12 +1083,12 @@ class TintOverlayPainter extends CustomPainter {
     final guideColor = isPoseCorrect
         ? CustomColors.purpleColor
         : Colors.white.withValues(alpha: 0.6);
-    
+
     final borderPaint = Paint()
       ..color = guideColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0;
-    
+
     canvas.drawCircle(center, centerRadius, borderPaint);
 
     // 3. Draw a pulsing outer ring if pose is correct
@@ -1059,7 +1097,7 @@ class TintOverlayPainter extends CustomPainter {
         ..color = guideColor.withValues(alpha: 0.3 * (1 - pulseValue))
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.0 + (10 * pulseValue);
-      
+
       canvas.drawCircle(center, centerRadius + (20 * pulseValue), pulsePaint);
     }
 
