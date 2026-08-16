@@ -67,7 +67,7 @@ class MediaService {
         .ref(isDeploymentMode ? 'production/' : 'staging/')
         .child(storagePath);
     final metadata = SettableMetadata(
-      contentType: file.extension == 'pdf'
+      contentType: file.name.toLowerCase().endsWith('.pdf')
           ? 'application/pdf'
           : 'application/octet-stream',
     );
