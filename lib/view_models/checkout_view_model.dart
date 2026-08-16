@@ -20,10 +20,10 @@ import '../models/responses/treatment_category_list_response.dart';
 import '../models/responses/treatment_list_response.dart';
 import '../models/selected_treatment_and_areas_model.dart';
 import '../repositories/appointment_repository.dart';
-import '../repositories/clinic_doctor_repository.dart';
+import '../repositories/clinic_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/appointment_service.dart';
-import '../services/clinic_doctor_service.dart';
+import '../services/clinic_service.dart';
 import '../utills/date_time_utills.dart';
 import '../utills/simulation_utils.dart';
 import 'auth_view_model.dart';
@@ -35,16 +35,16 @@ final checkoutViewModel = NotifierProvider(() => CheckoutViewModel());
 
 class CheckoutViewModel extends BaseViewModel<CheckoutState> {
   CheckoutViewModel({
-    ClinicDoctorRepository? clinicRepository,
+    ClinicRepository? clinicRepository,
     AppointmentRepository? appointmentRepository,
   }) : _clinicRepository =
-           clinicRepository ?? ClinicDoctorService(apiClient: ApiBaseHelper()),
+           clinicRepository ?? ClinicService(apiClient: ApiBaseHelper()),
        _appointmentRepository =
            appointmentRepository ??
            AppointmentService(apiClient: ApiBaseHelper()),
        super(initialState: const CheckoutState());
 
-  final ClinicDoctorRepository _clinicRepository;
+  final ClinicRepository _clinicRepository;
   final AppointmentRepository _appointmentRepository;
 
   @override
@@ -467,6 +467,7 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
       final data = await _appointmentRepository.createAppointment(
         request: request,
       );
+      if (!ref.mounted) return;
       state = state.copyWith(loading: false, appointment: data);
       debugPrint("Appointment created successfully: ${data.appointmentId}");
       EasyLoading.dismiss();
@@ -533,7 +534,9 @@ class CheckoutViewModel extends BaseViewModel<CheckoutState> {
         initialDeposit: initialDeposit,
         availability: availability,
       );
+      if (!ref.mounted) return null;
       await _clinicRepository.inviteClinic(request);
+      if (!ref.mounted) return null;
       EasyLoading.dismiss();
       return true;
     });

@@ -21,13 +21,13 @@ class TreatmentJourneyGroup {
   final int? id;
   final String? name;
   final DateTime? createdAt;
-  final int? optionsCount;
+  final int? totalOptions;
 
   const TreatmentJourneyGroup({
     this.id,
     this.name,
     this.createdAt,
-    this.optionsCount,
+    this.totalOptions,
   });
 
   factory TreatmentJourneyGroup.fromJson(Map<String, dynamic> json) =>
@@ -37,6 +37,6 @@ class TreatmentJourneyGroup {
         createdAt: json["created_at"] == null
             ? null
             : DateTime.parse(json["created_at"]).toLocal(),
-        optionsCount: json["options_count"],
+        totalOptions: json["total_options"],
       );
 }

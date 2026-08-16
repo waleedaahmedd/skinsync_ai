@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'clinics_detail_screen.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/medical_disclaimer_banner.dart';
 import '../utills/assets.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
@@ -404,6 +405,9 @@ class TreatmentDetailScreen extends StatelessWidget {
                 ),
               ),
             ),
+
+            SizedBox(height: context.h(24)),
+            const MedicalDisclaimerBanner(),
 
             SizedBox(height: context.h(160)), // Provide padding for floating bottom bar
           ],

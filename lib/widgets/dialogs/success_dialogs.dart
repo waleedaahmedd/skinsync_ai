@@ -6,7 +6,6 @@ import 'package:iconsax/iconsax.dart';
 import '../../screens/bottom_nav_page.dart';
 import '../../utills/color_constant.dart';
 import '../../utills/custom_fonts.dart';
-import '../../view_models/bottom_nav_view_model.dart';
 import '../custom_button.dart';
 
 void showAppointmentSuccessDialog({
@@ -123,7 +122,7 @@ void showShareJourneySuccessDialog(BuildContext context) {
                   builder: (_, ref, _) {
                     return CustomButton(
                       onPressed: () {
-                        ref.read(bottomNavViewModel.notifier).changePage(0);
+                       // ref.read(bottomNavViewModel.notifier).changePage(0);
                         Navigator.of(context).popUntil(
                           (route) =>
                               route.settings.name == BottomNavPage.routeName,

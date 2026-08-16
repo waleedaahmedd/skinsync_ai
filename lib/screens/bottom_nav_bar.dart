@@ -1,16 +1,17 @@
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_glass_morphism/flutter_glass_morphism.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import '../models/bottom_nav.dart';
 import '../utills/color_constant.dart';
 import '../view_models/bottom_nav_view_model.dart';
-
 import '../view_models/checkout_view_model.dart';
 
 class BottomNavBar extends StatelessWidget {
-  const BottomNavBar({super.key});
+  final TabController? controller;
+  const BottomNavBar({super.key, this.controller});
 
   static final List<BottomNavItem> _items = [
     const BottomNavItem(
@@ -42,106 +43,50 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GlassMorphismMaterial(
-      blurIntensity: 30.0,
-      opacity: 0.10,
-      glassThickness: 1.0,
-      enableBackgroundDistortion: true,
-      enableGlassBorder: true,
-      child: SafeArea(
-        child: Consumer(
-          builder: (context, ref, child) {
-            final int currentPage = ref.watch(bottomNavViewModel);
-            return SizedBox(
-              height: context.h(98),
-              child: Row(
-                children: [
-                  _buildNavBarItem(
-                    context: context,
-                    ref: ref,
-                    item: _items[0],
-                    index: 0,
-                    isSelected: currentPage == 0,
+    return Consumer(
+      builder: (context, ref, child) {
+        return ConvexAppBar(
+          controller: controller,
+          style: TabStyle.reactCircle,
+          backgroundColor: Colors.white,
+          color: CustomColors.bottomNavText,
+          activeColor: Colors.transparent,
+          height: kBottomNavigationBarHeight + 15.h,
+          elevation: 0.5,
+          items: _items
+              .map(
+                (item) => TabItem(
+                  icon: FaIcon(
+                    item.unselectedIcon,
+                    size: context.h(18),
+                    color: CustomColors.bottomNavText,
                   ),
-                  _buildNavBarItem(
-                    context: context,
-                    ref: ref,
-                    item: _items[1],
-                    index: 1,
-                    isSelected: currentPage == 1,
+                  activeIcon: Container(
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: CustomColors.purpleBlueGradient,
+                    ),
+                    child: Center(
+                      child: FaIcon(
+                        item.selectedIcon,
+                        size: context.h(25),
+                        color: CustomColors.blackColor,
+                      ),
+                    ),
                   ),
-
-                  _buildNavBarItem(
-                    context: context,
-                    ref: ref,
-                    item: _items[2],
-                    index: 2,
-                    isSelected: currentPage == 2,
-                  ),
-                  _buildNavBarItem(
-                    context: context,
-                    ref: ref,
-                    item: _items[3],
-                    index: 3,
-                    isSelected: currentPage == 3,
-                  ),
-                  _buildNavBarItem(
-                    context: context,
-                    ref: ref,
-                    item: _items[4],
-                    index: 4,
-                    isSelected: currentPage == 4,
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Expanded _buildNavBarItem({
-    required BuildContext context,
-    required WidgetRef ref,
-    required BottomNavItem item,
-    required bool isSelected,
-    required int index,
-  }) {
-    return Expanded(
-      child: InkWell(
-        onTap: () {
-          ref.read(bottomNavViewModel.notifier).changePage(index);
-          if (index == 1) {
-            ref.read(checkoutViewModel.notifier).clearState();
-          }
-        },
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              FaIcon(
-                isSelected ? item.selectedIcon : item.unselectedIcon,
-                size: context.h(24),
-                color: isSelected
-                    ? CustomColors.blackColor
-                    : CustomColors.bottomNavText,
-              ),
-              SizedBox(height: context.h(8)),
-              Text(
-                item.label,
-                style: TextStyle(
-                  fontSize: context.sp(12),
-                  color: isSelected
-                      ? CustomColors.blackColor
-                      : CustomColors.bottomNavText,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  title: item.label,
                 ),
-              ),
-            ],
-          ),
-        ),
-      ),
+              )
+              .toList(),
+
+          onTap: (int index) {
+            ref.read(bottomNavViewModel.notifier).changePage(index);
+            if (index == 1) {
+              ref.read(checkoutViewModel.notifier).clearState();
+            }
+          },
+        );
+      },
     );
   }
 }

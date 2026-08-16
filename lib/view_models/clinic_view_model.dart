@@ -5,29 +5,46 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../models/base_state_model.dart';
 import '../models/requests/get_clinic_request.dart';
+import '../models/responses/clinic_detail_response.dart';
 import '../models/responses/get_clinic_response.dart';
-import '../repositories/clinic_doctor_repository.dart';
+import '../repositories/clinic_repository.dart';
 import '../services/api_base_helper.dart';
-import '../services/clinic_doctor_service.dart';
+import '../services/clinic_service.dart';
 import '../services/location_service.dart';
 import '../utills/enums.dart';
 import 'auth_view_model.dart';
 import 'base_view_model.dart';
 import 'checkout_view_model.dart';
 
-final clinicProvider = NotifierProvider(() {
+final clinicProvider = NotifierProvider.autoDispose<ClinicViewModel, ClinicState>(() {
   final apiBaseHelper = ApiBaseHelper();
-  final clinicService = ClinicDoctorService(apiClient: apiBaseHelper);
+  final clinicService = ClinicService(apiClient: apiBaseHelper);
   return ClinicViewModel(repository: clinicService);
 });
 
 class ClinicViewModel extends BaseViewModel<ClinicState> {
-  final ClinicDoctorRepository _repository;
+  final ClinicRepository _repository;
   ClinicViewModel({required this._repository})
     : super(initialState: const ClinicState());
 
-  void setClinicId(int id) {
+  void setClinicId(int? id) {
     state = state.copyWith(clinicId: id);
+  }
+
+  Future<void> fetchClinicDetail(int? clinicId) async {
+    return await runSafely(() async {
+      if (clinicId == null) {
+        return;
+      }
+      state = state.copyWith(
+        loading: true,
+        errorMessage: null,
+        clinicId: clinicId,
+      );
+      final response = await _repository.getClinicDetail(clinicId);
+      if (!ref.mounted) return;
+      state = state.copyWith(loading: false, clinicDetail: response.data);
+    });
   }
 
   Future<List<Clinic>?> getClinic({int? page, String? search}) async {
@@ -49,6 +66,7 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
         }).toList(),
       );
       final response = await _repository.getClinic(request: request);
+      if (!ref.mounted) return null;
       state = state.copyWith(
         clinicLoading: false,
         clinics: response.data ?? [],
@@ -68,6 +86,7 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
       final places = await LocationService().fetchNearbyClinics(
         location: location,
       );
+      if (!ref.mounted) return;
       final List<Clinic> clinics = [];
       for (final place in places) {
         clinics.add(
@@ -85,6 +104,7 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
           ),
         );
       }
+      if (!ref.mounted) return;
       state = state.copyWith(clinicLoading: false, clinicsToInvite: clinics);
     });
   }
@@ -113,6 +133,7 @@ class ClinicState extends BaseStateModel {
   final List<Clinic> clinics;
   final bool clinicLoading;
   final int? clinicId;
+  final ClinicDetailData? clinicDetail;
   final ViewType viewType;
 
   const ClinicState({
@@ -122,6 +143,7 @@ class ClinicState extends BaseStateModel {
     this.clinics = const [],
     this.clinicLoading = false,
     this.clinicId,
+    this.clinicDetail,
     this.viewType = ViewType.grid,
   });
 
@@ -133,6 +155,7 @@ class ClinicState extends BaseStateModel {
     List<Clinic>? clinics,
     bool? clinicLoading,
     int? clinicId,
+    ClinicDetailData? clinicDetail,
     ViewType? viewType,
   }) {
     return ClinicState(
@@ -142,6 +165,7 @@ class ClinicState extends BaseStateModel {
       clinicsToInvite: clinicsToInvite ?? this.clinicsToInvite,
       clinics: clinics ?? this.clinics,
       clinicId: clinicId ?? this.clinicId,
+      clinicDetail: clinicDetail ?? this.clinicDetail,
       viewType: viewType ?? this.viewType,
     );
   }

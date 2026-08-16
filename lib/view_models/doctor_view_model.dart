@@ -8,23 +8,32 @@ import '../models/responses/availability_response.dart';
 import '../models/responses/payment_options_response.dart';
 import '../models/responses/practitioner_list_response.dart';
 import '../models/responses/treatment_pricing_response.dart' hide Treatment;
-import '../repositories/clinic_doctor_repository.dart';
+import '../repositories/clinic_repository.dart';
+import '../repositories/doctor_repository.dart';
 import '../services/api_base_helper.dart';
-import '../services/clinic_doctor_service.dart';
+import '../services/clinic_service.dart';
+import '../services/doctor_service.dart';
 import 'base_view_model.dart';
 import 'checkout_view_model.dart';
 
 final doctorProvider = NotifierProvider.autoDispose(() {
   final apiBaseHelper = ApiBaseHelper();
-  final clinicService = ClinicDoctorService(apiClient: apiBaseHelper);
-  return DoctorViewModel(clinicRepository: clinicService);
+  final doctorService = DoctorService(apiClient: apiBaseHelper);
+  final clinicService = ClinicService(apiClient: apiBaseHelper);
+  return DoctorViewModel(
+    doctorRepository: doctorService,
+    clinicRepository: clinicService,
+  );
 });
 
 class DoctorViewModel extends BaseViewModel<DoctorState> {
-  DoctorViewModel({required this._clinicRepository})
-    : super(initialState: const DoctorState());
+  DoctorViewModel({
+    required this.doctorRepository,
+    required this.clinicRepository,
+  }) : super(initialState: const DoctorState());
 
-  final ClinicDoctorRepository _clinicRepository;
+  final DoctorRepository doctorRepository;
+  final ClinicRepository clinicRepository;
   PricingData? pricingData;
 
   void setSelectedDoctor(PractitionerDoctor doctor) {
@@ -67,9 +76,10 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
         treatments: treatments.isEmpty ? null : treatments,
       );
 
-      final response = await _clinicRepository.getPractitioners(
+      final response = await doctorRepository.getPractitioners(
         request: request,
       );
+      if (!ref.mounted) return;
       EasyLoading.dismiss();
       state = state.copyWith(doctorLoading: false, doctorResponse: response);
     });
@@ -84,7 +94,7 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
     return runSafely(() async {
       state = state.copyWith(doctorLoading: true);
       final String sideAreas = sideAreaIds.join(',');
-      final response = await _clinicRepository.getDoctors(
+      final response = await doctorRepository.getDoctors(
         clinicId: clinicId ?? 0,
         treatmentId: treatmentId,
         sideAreaIdsList: sideAreas,
@@ -92,7 +102,7 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
       final doctor = response.data?.doctors?.firstOrNull;
       List<Slot> availability = [];
       if (doctor != null && clinicId != null) {
-        availability = await _clinicRepository.getAvailability(
+        availability = await doctorRepository.getAvailability(
           doctorId: doctor.doctorId!,
           clinicId: clinicId,
           date: date,
@@ -118,11 +128,12 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
       }
       EasyLoading.show(status: 'Loading...');
       state = state.copyWith(loading: true);
-      final availability = await _clinicRepository.getAvailability(
+      final availability = await doctorRepository.getAvailability(
         doctorId: state.selectedDoctor!.doctorId!,
         clinicId: clinicId,
         date: date,
       );
+      if (!ref.mounted) return;
       state = state.copyWith(
         doctorLoading: false,
         loading: false,
@@ -143,20 +154,22 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
         return;
       }
       state = state.copyWith(loading: true);
-      final pricing = await _clinicRepository.getTreatmentPricing(
+      final pricing = await clinicRepository.getTreatmentPricing(
         clinicId: clinicId,
         treatmentId: checkoutState.selectedTreatments!.id!,
         treatmentSubsectionIds: checkoutState.selectedAreas!.subAreas!
             .map((area) => area.id!)
             .toList(),
       );
+      if (!ref.mounted) return;
       pricingData = pricing;
       final amount = pricing.treatment!.price! * pricing.subSections!.length;
-      final paymentOptions = await _clinicRepository.getPaymentOptions(
+      final paymentOptions = await clinicRepository.getPaymentOptions(
         clinicId: clinicId,
         doctorId: doctorId,
         amount: amount,
       );
+      if (!ref.mounted) return;
       state = state.copyWith(loading: false, paymentOptions: paymentOptions);
     });
   }

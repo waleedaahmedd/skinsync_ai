@@ -8,6 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../utills/color_constant.dart';
 import '../utills/custom_fonts.dart';
+import '../view_models/clinic_view_model.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_button.dart';
@@ -32,7 +33,7 @@ class _JourneyClinicDetailScreenState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => ref
-          .read(treatmentJourneyProvider.notifier)
+          .read(clinicProvider.notifier)
           .fetchClinicDetail(widget.clinic?.id),
     );
   }
@@ -40,10 +41,10 @@ class _JourneyClinicDetailScreenState
   @override
   Widget build(BuildContext context) {
     final clinicDetail = ref.watch(
-      treatmentJourneyProvider.select((s) => s.clinicDetail),
+      clinicProvider.select((s) => s.clinicDetail),
     );
     final isLoading = ref.watch(
-      treatmentJourneyProvider.select((s) => s.loading),
+      clinicProvider.select((s) => s.loading),
     );
 
     return Scaffold(
@@ -350,7 +351,7 @@ class _JourneyClinicDetailScreenState
                       onPressed: () async {
                         if (optionId == null) {
                           ref
-                              .read(treatmentJourneyProvider.notifier)
+                              .read(clinicProvider.notifier)
                               .setClinicId(widget.clinic?.id);
                           Navigator.pushNamed(
                             context,

@@ -67,7 +67,7 @@ class MediaService {
         .ref(isDeploymentMode ? 'production/' : 'staging/')
         .child(storagePath);
     final metadata = SettableMetadata(
-      contentType: file.extension == 'pdf'
+      contentType: file.name.toLowerCase().endsWith('.pdf')
           ? 'application/pdf'
           : 'application/octet-stream',
     );
@@ -200,16 +200,18 @@ class MediaService {
   }
 
   Future<Uint8List> _compressImage(Uint8List data) async {
-    Uint8List result = Uint8List.fromList(data);
-    int count = 0;
-    while (result.length > maxSizeBytes) {
+    Uint8List result = data;
+    int quality = 90;
+    log('ORIGINAL SIZE: ${data.length}');
+
+    while (result.length > maxSizeBytes && quality >= 10) {
       result = await FlutterImageCompress.compressWithList(
         data,
-        format: .jpeg,
-        quality: 90,
+        format: CompressFormat.jpeg,
+        quality: quality,
       );
-      count++;
-      log('ITERATION # $count, SIZE: ${result.length}');
+      log('COMPRESSION ITERATION - QUALITY: $quality, SIZE: ${result.length}');
+      quality -= 10;
     }
     return result;
   }
