@@ -5,7 +5,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../models/bottom_nav.dart';
-import '../utills/color_constant.dart';
+import '../utils/color_constant.dart';
 import '../view_models/bottom_nav_view_model.dart';
 import '../view_models/checkout_view_model.dart';
 

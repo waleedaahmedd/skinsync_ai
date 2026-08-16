@@ -4,9 +4,9 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../screens/face_pose_capture_screen.dart';
-import '../utills/assets.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
+import '../utils/assets.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 

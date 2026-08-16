@@ -6,13 +6,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
-import '../utills/assets.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
-import '../utills/secure_storage_service.dart';
+import '../utils/assets.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
+import '../utils/secure_storage_service.dart';
 
-import '../utills/biometric_helper.dart';
-import '../utills/enums.dart';
+import '../utils/biometric_helper.dart';
+import '../utils/enums.dart';
 import '../view_models/auth_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 

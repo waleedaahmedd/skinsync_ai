@@ -6,9 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../models/responses/payment_options_response.dart';
-import '../utills/assets.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
+import '../utils/assets.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/doctor_view_model.dart';
 import '../widgets/custom_app_bar.dart';

@@ -3,7 +3,7 @@ import 'dart:convert';
 import '../models/responses/community_posts_list_response.dart';
 import '../models/responses/reels_list_response.dart';
 import '../repositories/explore_repository.dart';
-import '../utills/enums.dart';
+import '../utils/enums.dart';
 import 'api_base_helper.dart';
 
 class ExploreService implements ExploreRepository {

@@ -5,12 +5,12 @@
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 // import 'package:skinsync_ai/screens/ar_face_model_preview_screen.dart';
-// import 'package:skinsync_ai/utills/color_constant.dart';
+// import 'package:skinsync_ai/utils/color_constant.dart';
 // import 'package:skinsync_ai/widgets/grey_container.dart';
 // import 'package:skinsync_ai/widgets/service_type_button.dart';
 //
-// import '../utills/assets.dart';
-// import '../utills/custom_fonts.dart';
+// import '../utils/assets.dart';
+// import '../utils/custom_fonts.dart';
 // import '../view_models/face_scan_provider.dart';
 //
 // class ServiceSelectionScreen extends StatelessWidget {

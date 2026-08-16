@@ -11,7 +11,7 @@ import '../models/responses/groups_list_response.dart';
 import '../models/responses/tj_option_simulations_response.dart';
 import '../models/responses/tj_options_list_response.dart';
 import '../repositories/treatment_journey_repository.dart';
-import '../utills/enums.dart';
+import '../utils/enums.dart';
 import 'api_base_helper.dart';
 
 class TreatmentJourneyService implements TreatmentJourneyRepository {

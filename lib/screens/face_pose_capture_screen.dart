@@ -5,15 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
-import '../utills/assets.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
+import '../utils/assets.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/treatment_container.dart';
-import 'ar_face_model_preview_screen.dart';
+import 'ar_face_model_Preview_screen.dart';
 import 'bottom_nav_screens/face_detection_screen.dart';
 
 class FacePoseCaptureScreen extends ConsumerWidget {

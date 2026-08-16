@@ -5,11 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../models/responses/simulation_history_response.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
-import '../utills/date_time_utills.dart';
+import '../screens/ar_face_model_Preview_screen.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
+import '../utils/date_time_utills.dart';
 import '../view_models/treatment_view_model.dart';
-import '../screens/ar_face_model_preview_screen.dart';
 import 'custom_app_bar.dart';
 import 'custom_button.dart';
 

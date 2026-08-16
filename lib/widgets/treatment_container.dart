@@ -4,8 +4,8 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../screens/face_pose_capture_screen.dart';
 import '../screens/treatment_detail_screen.dart';
 import '../screens/treatment_area_screen.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
 import '../view_models/treatment_view_model.dart';
 import 'app_network_image.dart';
 

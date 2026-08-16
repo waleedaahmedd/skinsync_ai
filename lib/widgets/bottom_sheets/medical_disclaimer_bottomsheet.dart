@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import '../../utills/custom_fonts.dart';
+import '../../utils/custom_fonts.dart';
 
-import '../../utills/color_constant.dart';
-import '../../utills/secure_storage_service.dart';
+import '../../utils/color_constant.dart';
+import '../../utils/secure_storage_service.dart';
 
 class MedicalDisclaimerBottomSheet extends StatelessWidget {
   final String title;

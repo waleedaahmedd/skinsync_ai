@@ -3,7 +3,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../services/google_auth_service.dart';
-import '../utills/custom_fonts.dart';
+import '../utils/custom_fonts.dart';
 import 'custom_bordered_button.dart';
 import 'custom_button.dart';
 

@@ -22,9 +22,9 @@ import '../services/auth_service.dart';
 import '../services/google_auth_service.dart';
 import '../services/location_service.dart';
 import '../services/media_service.dart';
-import '../utills/biometric_helper.dart';
-import '../utills/enums.dart';
-import '../utills/secure_storage_service.dart';
+import '../utils/biometric_helper.dart';
+import '../utils/enums.dart';
+import '../utils/secure_storage_service.dart';
 import 'base_view_model.dart';
 
 final authViewModel = NotifierProvider(() {

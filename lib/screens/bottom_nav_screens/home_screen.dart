@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../../main.dart';
-import '../../utills/color_constant.dart';
-import '../../utills/custom_fonts.dart';
+import '../../utils/color_constant.dart';
+import '../../utils/custom_fonts.dart';
 import '../../view_models/auth_view_model.dart';
 import '../../view_models/bottom_nav_view_model.dart';
 import '../../widgets/app_bar_with_action_icon.dart';

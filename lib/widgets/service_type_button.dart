@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
 import 'app_network_image.dart';
 
 class ServiceTypeButton extends StatelessWidget {

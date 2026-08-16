@@ -5,8 +5,8 @@ import '../models/requests/get_practitioners_request.dart';
 import '../models/responses/availability_response.dart';
 import '../models/responses/practitioner_list_response.dart';
 import '../repositories/doctor_repository.dart';
-import '../utills/date_time_utills.dart';
-import '../utills/enums.dart';
+import '../utils/date_time_utills.dart';
+import '../utils/enums.dart';
 import 'api_base_helper.dart';
 
 class DoctorService implements DoctorRepository {

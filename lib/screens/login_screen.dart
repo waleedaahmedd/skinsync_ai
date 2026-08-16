@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../models/requests/sign_in_request.dart';
-import '../utills/assets.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
-import '../utills/enums.dart';
+import '../utils/assets.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
+import '../utils/enums.dart';
 import '../view_models/auth_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';

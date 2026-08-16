@@ -5,7 +5,7 @@ import '../models/requests/save_answer_request.dart';
 import '../models/responses/base_response_model.dart';
 import '../models/responses/on_boarding_question_response.dart';
 import '../repositories/on_boarding_repository.dart';
-import '../utills/enums.dart';
+import '../utils/enums.dart';
 import 'api_base_helper.dart';
 
 class OnBoardingService implements OnBoardingRepository {

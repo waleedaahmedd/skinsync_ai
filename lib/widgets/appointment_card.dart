@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../models/responses/appointments_list_response.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
-import '../utills/date_time_utills.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
+import '../utils/date_time_utils.dart';
 
 class AppointmentCard extends StatelessWidget {
   final AppointmentItem appointment;

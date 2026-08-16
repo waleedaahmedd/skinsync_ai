@@ -8,8 +8,8 @@ import '../widgets/bottom_sheets/media_picker_button.dart';
 import '../widgets/bottom_sheets/media_source_sheet.dart';
 import '../widgets/post_image_preview.dart';
 import '../widgets/post_video_preview.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
 
 class CreatePostScreen extends ConsumerStatefulWidget {
   const CreatePostScreen({super.key});

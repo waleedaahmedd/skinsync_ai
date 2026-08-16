@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../models/responses/appointments_list_response.dart';
-import '../utills/assets.dart';
-import '../utills/custom_fonts.dart';
+import '../utils/assets.dart';
+import '../utils/custom_fonts.dart';
 
 class ScheduledAppointmentTile extends StatelessWidget {
   final AppointmentItem appointment;

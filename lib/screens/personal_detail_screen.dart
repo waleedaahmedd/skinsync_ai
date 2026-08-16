@@ -8,8 +8,8 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/app_network_image.dart';

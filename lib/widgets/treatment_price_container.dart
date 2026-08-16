@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../models/responses/treatment_list_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
 
 class TreatmentPriceContainer extends StatelessWidget {
   final List<TreatmentAreaModel> selectedSubAreasList;

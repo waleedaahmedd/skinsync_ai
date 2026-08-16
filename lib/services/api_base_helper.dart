@@ -11,8 +11,8 @@ import '../exceptions/app_exception.dart';
 import '../main.dart';
 import '../models/responses/refresh_token_response.dart';
 import '../screens/get_started_screen.dart';
-import '../utills/enums.dart';
-import '../utills/secure_storage_service.dart';
+import '../utils/enums.dart';
+import '../utils/secure_storage_service.dart';
 
 class ApiBaseHelper {
   final SecureStorage _secureStorage = SecureStorage();

@@ -9,9 +9,9 @@ import '../models/requests/sign_in_request.dart';
 import '../models/responses/auth_response.dart';
 import '../models/responses/base_response_model.dart';
 import '../repositories/auth_repository.dart';
-import '../utills/biometric_helper.dart';
-import '../utills/enums.dart';
-import '../utills/secure_storage_service.dart';
+import '../utils/biometric_helper.dart';
+import '../utils/enums.dart';
+import '../utils/secure_storage_service.dart';
 import 'api_base_helper.dart';
 
 class AuthService implements AuthRepository {

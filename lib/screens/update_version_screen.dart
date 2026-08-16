@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../utills/assets.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
-import '../utills/enums.dart';
+import '../utils/assets.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
+import '../utils/enums.dart';
 import '../widgets/custom_button.dart';
 
 class UpdateVersionScreen extends StatelessWidget {

@@ -4,7 +4,7 @@
 // import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 //
-// import '../../utills/custom_fonts.dart';
+// import '../../utils/custom_fonts.dart';
 // import '../../view_models/treatment_view_model.dart';
 //
 // class FaceScanningCompleteScreen extends StatelessWidget {

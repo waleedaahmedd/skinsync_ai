@@ -4,8 +4,8 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../screens/bottom_nav_page.dart';
-import '../../utills/color_constant.dart';
-import '../../utills/custom_fonts.dart';
+import '../../utils/color_constant.dart';
+import '../../utils/custom_fonts.dart';
 import '../custom_button.dart';
 
 void showAppointmentSuccessDialog({

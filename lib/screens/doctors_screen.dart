@@ -4,9 +4,9 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../models/responses/practitioner_list_response.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
-import '../utills/date_time_utills.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
+import '../utils/date_time_utills.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/doctor_view_model.dart';
 import '../widgets/app_loader.dart';

@@ -10,10 +10,10 @@ import '../personal_detail_screen.dart';
 import '../saved_treatment_screen.dart';
 import '../setting_screen.dart';
 import '../webview_page.dart';
-import '../../utills/assets.dart';
-import '../../utills/color_constant.dart';
-import '../../utills/custom_fonts.dart';
-import '../../utills/secure_storage_service.dart';
+import '../../utils/assets.dart';
+import '../../utils/color_constant.dart';
+import '../../utils/custom_fonts.dart';
+import '../../utils/secure_storage_service.dart';
 import '../../view_models/auth_view_model.dart';
 import '../../widgets/logout_dialog_box.dart';
 

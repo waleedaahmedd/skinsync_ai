@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../screens/treatment_detail_screen.dart';
-import '../utills/custom_fonts.dart';
+import '../utils/custom_fonts.dart';
 
 class RecommendedTreatmentContainer extends StatelessWidget {
   final String treatmentImage;

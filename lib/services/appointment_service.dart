@@ -8,7 +8,7 @@ import '../models/responses/appointment_type_list_response.dart';
 import '../models/responses/appointments_list_response.dart';
 import '../models/responses/simulation_history_response.dart';
 import '../repositories/appointment_repository.dart';
-import '../utills/enums.dart';
+import '../utils/enums.dart';
 import 'api_base_helper.dart';
 
 class AppointmentService implements AppointmentRepository {

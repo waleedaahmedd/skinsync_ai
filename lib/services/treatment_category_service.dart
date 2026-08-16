@@ -3,7 +3,7 @@ import 'dart:convert';
 import '../exceptions/app_exception.dart';
 import '../models/responses/treatment_category_list_response.dart';
 import '../repositories/treatment_category_repository.dart';
-import '../utills/enums.dart';
+import '../utils/enums.dart';
 import 'api_base_helper.dart';
 
 class TreatmentCategoryService implements TreatmentCategoryRepository {

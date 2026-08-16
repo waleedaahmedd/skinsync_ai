@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../treatments_screen.dart';
 import '../treatment_category_screen.dart';
-import '../../utills/custom_fonts.dart';
+import '../../utils/custom_fonts.dart';
 import '../../view_models/checkout_view_model.dart';
 import '../../view_models/treatment_view_model.dart';
 import '../../widgets/treatment_container.dart';

@@ -4,9 +4,9 @@ import 'package:intl/intl.dart';
 
 import '../../models/responses/get_clinic_response.dart';
 import '../../models/responses/map_clinics_response.dart';
-import '../../utills/color_constant.dart';
-import '../../utills/custom_fonts.dart';
-import '../../utills/date_time_utills.dart';
+import '../../utils/color_constant.dart';
+import '../../utils/custom_fonts.dart';
+import '../../utils/date_time_utils.dart';
 import '../custom_button.dart';
 import '../time_container.dart';
 

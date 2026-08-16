@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import '../utills/color_constant.dart';
+import '../utils/color_constant.dart';
 
 class SocialToggleButton extends StatelessWidget {
   final VoidCallback onTap;

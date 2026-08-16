@@ -6,8 +6,8 @@ import '../../models/responses/materials_response.dart';
 import '../../models/responses/treatment_area_list_response.dart';
 import '../../models/responses/treatment_list_response.dart';
 import '../../models/selected_treatment_and_areas_model.dart';
-import '../../utills/color_constant.dart';
-import '../../utills/custom_fonts.dart';
+import '../../utils/color_constant.dart';
+import '../../utils/custom_fonts.dart';
 import '../../view_models/checkout_view_model.dart';
 import '../custom_button.dart';
 

@@ -11,15 +11,15 @@ import 'package:flutter_litert/flutter_litert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:vibration/vibration.dart';
 import 'package:volume_controller/volume_controller.dart';
 
-import '../../utills/color_constant.dart';
-import '../../utills/custom_fonts.dart';
-import '../../utills/face_detection_utils.dart';
-import '../../utills/image_utills.dart';
-import '../../utills/secure_storage_service.dart';
-import '../../utills/tts_utils.dart';
+import '../../utils/color_constant.dart';
+import '../../utils/custom_fonts.dart';
+import '../../utils/face_detection_utils.dart';
+// import '../../utils/image_utils.dart';
+import '../../utils/image_utills.dart';
+import '../../utils/secure_storage_service.dart';
+import '../../utils/tts_utils.dart';
 import '../../view_models/treatment_view_model.dart';
 import '../../widgets/app_loader.dart';
 import '../../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
@@ -248,32 +248,32 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
         setState(() {
           _isPoseCorrect = isPoseCorrect;
         });
-        if (_isPoseCorrect) {
-          // Trigger vibration/haptics based on platform
-          if (Platform.isAndroid) {
-            try {
-              Vibration.vibrate(duration: 200);
-            } catch (e) {
-              log("Android vibration error: $e");
-            }
-          } else {
-            // iOS: Use robust HapticFeedback to avoid CoreHaptics engine errors
-            try {
-              HapticFeedback.vibrate(); 
-              HapticFeedback.mediumImpact();
-            } catch (e) {
-              log("iOS haptic feedback error: $e");
-            }
-          }
-          
-          TtsUtils.speak("Hold still");
-          // Give TTS time to say "hold still" before starting countdown numbers
-          await Future.delayed(const Duration(milliseconds: 1000));
-          // }
-          _startCountdown();
-        } else {
-          _stopCountdown();
-        }
+        // if (_isPoseCorrect) {
+        //   // Trigger vibration/haptics based on platform
+        //   if (Platform.isAndroid) {
+        //     try {
+        //       Vibration.vibrate(duration: 200);
+        //     } catch (e) {
+        //       log("Android vibration error: $e");
+        //     }
+        //   } else {
+        //     // iOS: Use robust HapticFeedback to avoid CoreHaptics engine errors
+        //     try {
+        //       HapticFeedback.vibrate();
+        //       HapticFeedback.mediumImpact();
+        //     } catch (e) {
+        //       log("iOS haptic feedback error: $e");
+        //     }
+        //   }
+        //
+        //   TtsUtils.speak("Hold still");
+        //   // Give TTS time to say "hold still" before starting countdown numbers
+        //   await Future.delayed(const Duration(milliseconds: 1000));
+        //   // }
+        //   _startCountdown();
+        // } else {
+        //   _stopCountdown();
+        // }
       }
     } catch (e) {
       log('Face detection error: $e');
@@ -282,36 +282,36 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
     }
   }
 
-  void _startCountdown() {
-    if (_isCountingDown || _isCapturing || _capturedImage != null) return;
-
-    setState(() {
-      _isCountingDown = true;
-      _countdown = 3;
-    });
-
-    TtsUtils.speak("$_countdown");
-
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-
-      if (_countdown > 1) {
-        setState(() {
-          _countdown--;
-        });
-        TtsUtils.speak("$_countdown");
-      } else {
-        if (_isPoseCorrect && _storedRef != null) {
-          _captureAndNavigate(_storedRef!);
-        } else {
-          _stopCountdown();
-        }
-      }
-    });
-  }
+  // void _startCountdown() {
+  //   if (_isCountingDown || _isCapturing || _capturedImage != null) return;
+  //
+  //   setState(() {
+  //     _isCountingDown = true;
+  //     _countdown = 3;
+  //   });
+  //
+  //   TtsUtils.speak("$_countdown");
+  //
+  //   _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+  //     if (!mounted) {
+  //       timer.cancel();
+  //       return;
+  //     }
+  //
+  //     if (_countdown > 1) {
+  //       setState(() {
+  //         _countdown--;
+  //       });
+  //       TtsUtils.speak("$_countdown");
+  //     } else {
+  //       if (_isPoseCorrect && _storedRef != null) {
+  //         _captureAndNavigate(_storedRef!);
+  //       } else {
+  //         _stopCountdown();
+  //       }
+  //     }
+  //   });
+  // }
 
   void _stopCountdown() {
     _timer?.cancel();

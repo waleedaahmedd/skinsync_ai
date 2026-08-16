@@ -8,7 +8,7 @@ import '../models/responses/materials_response.dart';
 import '../models/responses/treatment_detail_response.dart';
 import '../models/responses/treatment_list_response.dart';
 import '../repositories/treatment_repository.dart';
-import '../utills/enums.dart';
+import '../utils/enums.dart';
 import 'api_base_helper.dart';
 
 class TreatmentService implements TreatmentRepository {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
-import '../utills/custom_fonts.dart';
+import '../utils/custom_fonts.dart';
 import '../view_models/sign_up_onboarding_view_model.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/question_title.dart';

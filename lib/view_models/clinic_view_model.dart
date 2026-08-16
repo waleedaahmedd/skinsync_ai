@@ -11,7 +11,7 @@ import '../repositories/clinic_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/clinic_service.dart';
 import '../services/location_service.dart';
-import '../utills/enums.dart';
+import '../utils/enums.dart';
 import 'auth_view_model.dart';
 import 'base_view_model.dart';
 import 'checkout_view_model.dart';

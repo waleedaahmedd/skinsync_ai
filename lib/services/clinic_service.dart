@@ -10,7 +10,7 @@ import '../models/responses/get_clinic_response.dart';
 import '../models/responses/payment_options_response.dart';
 import '../models/responses/treatment_pricing_response.dart';
 import '../repositories/clinic_repository.dart';
-import '../utills/enums.dart';
+import '../utils/enums.dart';
 import 'api_base_helper.dart';
 
 class ClinicService implements ClinicRepository {

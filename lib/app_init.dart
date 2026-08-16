@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import 'utills/assets.dart';
+import 'utils/assets.dart';
 import 'view_models/theme_view_model.dart';
 
 import 'route_generator.dart';
-import 'utills/color_constant.dart';
-import 'utills/screen_size.dart';
-import 'utills/theme.dart';
+import 'utils/color_constant.dart';
+import 'utils/screen_size.dart';
+import 'utils/theme.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 

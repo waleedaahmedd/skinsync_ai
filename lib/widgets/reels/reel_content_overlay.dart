@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
-import '../../utills/assets.dart';
-import '../../utills/custom_fonts.dart';
+import '../../utils/assets.dart';
+import '../../utils/custom_fonts.dart';
 
 class ReelContentOverlay extends StatelessWidget {
   final String userName;

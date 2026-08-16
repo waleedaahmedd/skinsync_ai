@@ -1,8 +1,8 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-// import 'package:skinsync_ai/utills/assets.dart';
-// import 'package:skinsync_ai/utills/color_constant.dart';
-// import 'package:skinsync_ai/utills/custom_fonts.dart';
+// import 'package:skinsync_ai/utils/assets.dart';
+// import 'package:skinsync_ai/utils/color_constant.dart';
+// import 'package:skinsync_ai/utils/custom_fonts.dart';
 //
 //
 // void loginBottomSheet(BuildContext context) {

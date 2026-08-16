@@ -8,9 +8,9 @@ import 'package:iconsax/iconsax.dart';
 import 'clinics_detail_screen.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/medical_disclaimer_banner.dart';
-import '../utills/assets.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
+import '../utils/assets.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
 
 import '../models/responses/treatment_list_response.dart';
 

@@ -1,4 +1,4 @@
-import '../utills/assets.dart';
+import '../utils/assets.dart';
 
 class Treatments {
   final String svg;

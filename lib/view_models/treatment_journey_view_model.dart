@@ -13,7 +13,7 @@ import '../models/responses/tj_options_list_response.dart';
 import '../repositories/treatment_journey_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/treatment_journey_service.dart';
-import '../utills/simulation_utils.dart';
+import '../utils/simulation_utils.dart';
 import 'auth_view_model.dart';
 import 'base_view_model.dart';
 import 'checkout_view_model.dart';

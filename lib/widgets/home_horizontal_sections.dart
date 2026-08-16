@@ -7,8 +7,8 @@ import '../models/responses/auth_response.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../models/responses/practitioner_list_response.dart';
 import '../screens/journey_clinic_detail_screen.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
 import 'doctor_card.dart';
 
 class DoctorHomeCard extends StatelessWidget {

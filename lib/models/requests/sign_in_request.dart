@@ -1,4 +1,4 @@
-import '../../utills/enums.dart';
+import '../../utils/enums.dart';
 
 abstract class BaseSignInRequest {
   final LoginProviders provider;

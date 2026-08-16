@@ -6,11 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import 'face_scan_screen.dart';
-import '../utills/assets.dart';
-import '../utills/biometric_helper.dart';
-import '../utills/custom_fonts.dart';
-import '../utills/enums.dart';
-import '../utills/secure_storage_service.dart';
+import '../utils/assets.dart';
+import '../utils/biometric_helper.dart';
+import '../utils/custom_fonts.dart';
+import '../utils/enums.dart';
+import '../utils/secure_storage_service.dart';
 import '../view_models/auth_view_model.dart';
 import '../widgets/custom_button.dart';
 

@@ -1,5 +1,5 @@
 import 'base_response_model.dart';
-import '../../utills/date_time_utills.dart';
+import '../../utils/date_time_utils.dart';
 
 class AvailabilityResponse extends BaseResponseModel {
   final List<Slot> slots;

@@ -9,9 +9,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 import '../models/responses/appointment_detail_response.dart';
 import '../models/responses/appointments_list_response.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
-import '../utills/date_time_utills.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
+import '../utils/date_time_utills.dart';
 import '../view_models/appointment_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';

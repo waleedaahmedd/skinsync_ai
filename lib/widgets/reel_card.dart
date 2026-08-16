@@ -4,7 +4,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:video_player/video_player.dart';
 
 import '../models/explore_models.dart';
-import '../utills/custom_fonts.dart';
+import '../utils/custom_fonts.dart';
 import 'reels/reel_content_overlay.dart';
 
 class ReelCard extends ConsumerStatefulWidget {

@@ -8,11 +8,11 @@ import '../main.dart';
 import '../screens/bottom_nav_page.dart';
 import '../screens/face_scan_screen.dart';
 import '../screens/login_screen.dart';
-import '../utills/assets.dart';
-import '../utills/biometric_helper.dart';
-import '../utills/color_constant.dart';
-import '../utills/custom_fonts.dart';
-import '../utills/enums.dart';
+import '../utils/assets.dart';
+import '../utils/biometric_helper.dart';
+import '../utils/color_constant.dart';
+import '../utils/custom_fonts.dart';
+import '../utils/enums.dart';
 import '../view_models/auth_view_model.dart';
 import 'app_loader.dart';
 

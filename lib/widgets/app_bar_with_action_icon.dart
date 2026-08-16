@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import '../utills/custom_fonts.dart';
+import '../utils/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
 
-import '../utills/color_constant.dart';
+import '../utils/color_constant.dart';
 
 class AppBarWithActionIcon extends StatelessWidget
     implements PreferredSizeWidget {

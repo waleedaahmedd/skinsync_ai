@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import '../../utills/color_constant.dart';
-import '../../utills/custom_fonts.dart';
+import '../../utils/color_constant.dart';
+import '../../utils/custom_fonts.dart';
 import '../../view_models/social_view_model.dart';
 import '../../widgets/social_post_card.dart';
 import '../create_post_screen.dart';
