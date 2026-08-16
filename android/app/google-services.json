@@ -66,11 +66,19 @@
           }
         },
         {
-          "client_id": "55541632083-qvpl1guf5tus79v1bpfseo02mcsgvkgo.apps.googleusercontent.com",
+          "client_id": "55541632083-62q1dv5jd129j7obthpspol6dp4j827h.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.skinsyncaiinc.skinsyncai",
-            "certificate_hash": "348c1b217f2d2de8b8407688364beebe11f3d227"
+            "certificate_hash": "df3c0dbd01a360f69f9c68752fa2097cc293d621"
+          }
+        },
+        {
+          "client_id": "55541632083-7c4gfhc6vmhoo67q87ej1oe0hjqfjpsv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skinsyncaiinc.skinsyncai",
+            "certificate_hash": "62726c4d29a2b2b1492ca8678b4e7d196c5bb1e2"
           }
         },
         {

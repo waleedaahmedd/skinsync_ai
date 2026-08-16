@@ -20,10 +20,14 @@ class BottomNavPage extends ConsumerStatefulWidget {
   ConsumerState<BottomNavPage> createState() => _BottomNavPageState();
 }
 
-class _BottomNavPageState extends ConsumerState<BottomNavPage> {
+class _BottomNavPageState extends ConsumerState<BottomNavPage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 5, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(bottomNavViewModel.notifier).changePage(0);
       ref.read(treatmentViewModel.notifier).init();
@@ -31,7 +35,19 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage> {
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    ref.listen(bottomNavViewModel, (previous, next) {
+      if (_tabController.index != next) {
+        _tabController.animateTo(next);
+      }
+    });
+
     return Consumer(
       builder: (context, ref, child) {
         final index = ref.watch(bottomNavViewModel);
@@ -55,28 +71,7 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage> {
             ],
           ),
           extendBody: true,
-          // floatingActionButton: Visibility(
-          //   visible: MediaQuery.viewInsetsOf(context).bottom == 0,
-          //   child: SizedBox(
-          //     height: 55.h,
-          //     width: 55.h,
-          //     child: InkWell(
-          //       onTap: () {
-          //         Navigator.pushNamed(context, selectServiceScreen);
-          //       },
-          //       child: Card(
-          //         color: AppColors.kPrimaryColor,
-          //         elevation: 0,
-          //         shape: RoundedRectangleBorder(
-          //           borderRadius: BorderRadius.circular(100),
-          //           side: BorderSide(color: Colors.white, width: 3.r),
-          //         ),
-          //         child: Icon(Icons.add, size: 24.sp, color: Colors.white),
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          bottomNavigationBar: const BottomNavBar(),
+          bottomNavigationBar: BottomNavBar(controller: _tabController),
         );
       },
     );

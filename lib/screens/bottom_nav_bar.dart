@@ -10,7 +10,8 @@ import '../view_models/bottom_nav_view_model.dart';
 import '../view_models/checkout_view_model.dart';
 
 class BottomNavBar extends StatelessWidget {
-  const BottomNavBar({super.key});
+  final TabController? controller;
+  const BottomNavBar({super.key, this.controller});
 
   static final List<BottomNavItem> _items = [
     const BottomNavItem(
@@ -44,8 +45,8 @@ class BottomNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final int currentPage = ref.watch(bottomNavViewModel);
         return ConvexAppBar(
+          controller: controller,
           style: TabStyle.reactCircle,
           backgroundColor: Colors.white,
           color: CustomColors.bottomNavText,
@@ -78,7 +79,6 @@ class BottomNavBar extends StatelessWidget {
               )
               .toList(),
 
-          initialActiveIndex: currentPage,
           onTap: (int index) {
             ref.read(bottomNavViewModel.notifier).changePage(index);
             if (index == 1) {

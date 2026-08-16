@@ -28,14 +28,12 @@ final doctorProvider = NotifierProvider.autoDispose(() {
 
 class DoctorViewModel extends BaseViewModel<DoctorState> {
   DoctorViewModel({
-    required DoctorRepository doctorRepository,
-    required ClinicRepository clinicRepository,
-  }) : _doctorRepository = doctorRepository,
-       _clinicRepository = clinicRepository,
-       super(initialState: const DoctorState());
+    required this.doctorRepository,
+    required this.clinicRepository,
+  }) : super(initialState: const DoctorState());
 
-  final DoctorRepository _doctorRepository;
-  final ClinicRepository _clinicRepository;
+  final DoctorRepository doctorRepository;
+  final ClinicRepository clinicRepository;
   PricingData? pricingData;
 
   void setSelectedDoctor(PractitionerDoctor doctor) {
@@ -78,9 +76,10 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
         treatments: treatments.isEmpty ? null : treatments,
       );
 
-      final response = await _doctorRepository.getPractitioners(
+      final response = await doctorRepository.getPractitioners(
         request: request,
       );
+      if (!ref.mounted) return;
       EasyLoading.dismiss();
       state = state.copyWith(doctorLoading: false, doctorResponse: response);
     });
@@ -95,7 +94,7 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
     return runSafely(() async {
       state = state.copyWith(doctorLoading: true);
       final String sideAreas = sideAreaIds.join(',');
-      final response = await _doctorRepository.getDoctors(
+      final response = await doctorRepository.getDoctors(
         clinicId: clinicId ?? 0,
         treatmentId: treatmentId,
         sideAreaIdsList: sideAreas,
@@ -103,7 +102,7 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
       final doctor = response.data?.doctors?.firstOrNull;
       List<Slot> availability = [];
       if (doctor != null && clinicId != null) {
-        availability = await _doctorRepository.getAvailability(
+        availability = await doctorRepository.getAvailability(
           doctorId: doctor.doctorId!,
           clinicId: clinicId,
           date: date,
@@ -129,11 +128,12 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
       }
       EasyLoading.show(status: 'Loading...');
       state = state.copyWith(loading: true);
-      final availability = await _doctorRepository.getAvailability(
+      final availability = await doctorRepository.getAvailability(
         doctorId: state.selectedDoctor!.doctorId!,
         clinicId: clinicId,
         date: date,
       );
+      if (!ref.mounted) return;
       state = state.copyWith(
         doctorLoading: false,
         loading: false,
@@ -154,20 +154,22 @@ class DoctorViewModel extends BaseViewModel<DoctorState> {
         return;
       }
       state = state.copyWith(loading: true);
-      final pricing = await _clinicRepository.getTreatmentPricing(
+      final pricing = await clinicRepository.getTreatmentPricing(
         clinicId: clinicId,
         treatmentId: checkoutState.selectedTreatments!.id!,
         treatmentSubsectionIds: checkoutState.selectedAreas!.subAreas!
             .map((area) => area.id!)
             .toList(),
       );
+      if (!ref.mounted) return;
       pricingData = pricing;
       final amount = pricing.treatment!.price! * pricing.subSections!.length;
-      final paymentOptions = await _clinicRepository.getPaymentOptions(
+      final paymentOptions = await clinicRepository.getPaymentOptions(
         clinicId: clinicId,
         doctorId: doctorId,
         amount: amount,
       );
+      if (!ref.mounted) return;
       state = state.copyWith(loading: false, paymentOptions: paymentOptions);
     });
   }

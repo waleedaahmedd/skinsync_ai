@@ -39,6 +39,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
         state = state.copyWith(loading: true, errorMessage: null);
       }
       final response = await _repo.getGroups();
+      if (!ref.mounted) return null;
       state = state.copyWith(loading: false, groups: response.data ?? []);
       if (state.groups.isEmpty) {
         return 'show';
@@ -52,6 +53,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       EasyLoading.show(status: 'Creating group...');
       final request = CreateGroupRequest(name: name);
       await _repo.createGroup(request);
+      if (!ref.mounted) return null;
       await fetchTreatmentJourneyGroups(false);
       EasyLoading.dismiss();
       return true;
@@ -72,7 +74,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       );
 
       await _repo.shareTreatmentRequest(request: request);
-
+      if (!ref.mounted) return null;
       EasyLoading.dismiss();
       return true;
     });
@@ -87,6 +89,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       EasyLoading.show(status: 'Fetching Journey...');
       final response = await _repo.getOptions(groupId);
 
+      if (!ref.mounted) return null;
       state = state.copyWith(loading: false, options: response.data ?? []);
       if (state.options.isNotEmpty) {
         setOptionId(state.options.first.id!);
@@ -101,6 +104,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     return await runSafely(() async {
       EasyLoading.show(status: 'Fetching Options...');
       final response = await _repo.getOptionsDetail(optionId);
+      if (!ref.mounted) return null;
       state = state.copyWith(loading: false, simulations: response.data);
       EasyLoading.dismiss();
       return true;
@@ -189,6 +193,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
         treatments: historyTreatments,
       );
       final response = await _repo.createTjOptions(request);
+      if (!ref.mounted) return null;
       if (response.isSuccess == true) {
         EasyLoading.showSuccess('Option created successfully');
       }

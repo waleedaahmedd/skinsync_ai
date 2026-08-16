@@ -52,6 +52,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     if (state.treatments.isEmpty) {
       await loadTreatments();
     }
+    if (!ref.mounted) return;
 
     final simTreatments = simulation.treatments;
     if (simTreatments != null) {
@@ -69,6 +70,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
               .read(treatmentAreaProvider.notifier)
               .fetchAreasByTreatment(treatment.id!);
 
+          if (!ref.mounted) return;
           final treatmentAreas = ref.read(treatmentAreaProvider).areas;
 
           if (simTreatment.areas != null) {
@@ -151,6 +153,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         pose: 'left-after',
         simId: simulation.id,
       );
+      if (!ref.mounted) return;
       state = state.copyWith(
         loading: false,
         isAiImageGenerated: true,
@@ -267,6 +270,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         limit: 10,
         isSimulator: isSimulator,
       );
+      if (!ref.mounted) return null;
       state = state.copyWith(loading: false, treatments: response.data ?? []);
       return response.data ?? [];
     });
@@ -282,6 +286,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         treatmentSku: treatmentSku,
         areaSku: areaSku,
       );
+      if (!ref.mounted) return null;
       state = state.copyWith(materialsLoading: false, material: res.data);
       return res;
     });
@@ -363,6 +368,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       );
       
       final response = await http.Response.fromStream(streamedResponse);
+      if (!ref.mounted) return;
       log('AI RESPONSE STATUS: ${response.statusCode}');
       log('AI RESPONSE BODY: ${response.body}');
 
@@ -397,6 +403,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
           fileName: 'ai_front_$timestamp.jpg',
         );
       }
+      if (!ref.mounted) return;
       if (output.containsKey('right_image') && output['right_image'] != null) {
         imageRight = await base64ToXFile(
           output['right_image'],
@@ -409,6 +416,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
           fileName: 'ai_left_$timestamp.jpg',
         );
       }
+      if (!ref.mounted) return;
 
       if (imageFront == null && imageRight == null && imageLeft == null) {
         throw Exception('AI failed to generate valid images. Please try again.');
@@ -476,6 +484,8 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         ),
       );
 
+      if (!ref.mounted) return;
+
       final historyTreatments = selectedTreatmentsAndAreas.map((item) {
         return HistoryTreatmentRequest(
           treatmentId: item.treatment.id ?? 0,
@@ -511,6 +521,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         treatments: historyTreatments,
       );
       await _repo.saveAiHistory(request);
+      if (!ref.mounted) return;
       EasyLoading.showSuccess('Image saved!');
     });
   }
