@@ -30,8 +30,8 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _locationController = TextEditingController();
-  final TextEditingController _bioController = TextEditingController();
+  // final TextEditingController _locationController = TextEditingController();
+  // final TextEditingController _bioController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   Country? _selectedCountry;
 
@@ -44,8 +44,8 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
         _nameController.text = data.user?.name ?? "";
         _phoneController.text = data.user?.phoneNumber ?? "";
         _emailController.text = data.user?.primaryEmail ?? "";
-        _locationController.text = data.user?.location ?? "";
-        _bioController.text = data.user?.bio ?? "";
+        // _locationController.text = data.user?.location ?? "";
+        // _bioController.text = data.user?.bio ?? "";
       }
     });
   }
@@ -60,8 +60,8 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
           name: _nameController.text,
           phoneNumber: _phoneController.text.trim(),
           emailAddress: _emailController.text.trim(),
-          location: _locationController.text.trim(),
-          bio: _bioController.text.trim(),
+          location: '',
+          bio: '',
         );
     if (success ?? false) {
       EasyLoading.showSuccess('Profile updated!');
@@ -73,8 +73,8 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
     _nameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
-    _locationController.dispose();
-    _bioController.dispose();
+    // _locationController.dispose();
+    // _bioController.dispose();
     super.dispose();
   }
 
@@ -283,36 +283,36 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                       SizedBox(height: context.h(16)),
 
                       // Location
-                      Text("Location", style: CustomFonts.grey700_11w700),
-                      SizedBox(height: context.h(6)),
-                      TextField(
-                        controller: _locationController,
-                        style: CustomFonts.black13w600,
-                        decoration: InputDecoration(
-                          hintText: "New York",
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: context.w(14),
-                            vertical: context.h(12),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(context.r(14)),
-                            borderSide: const BorderSide(
-                              color: CustomColors.greyColor,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(context.r(14)),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(context.r(14)),
-                            borderSide: const BorderSide(
-                              color: CustomColors.purpleColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: context.h(16)),
+                      // Text("Location", style: CustomFonts.grey700_11w700),
+                      // SizedBox(height: context.h(6)),
+                      // TextField(
+                      //   controller: _locationController,
+                      //   style: CustomFonts.black13w600,
+                      //   decoration: InputDecoration(
+                      //     hintText: "New York",
+                      //     contentPadding: EdgeInsets.symmetric(
+                      //       horizontal: context.w(14),
+                      //       vertical: context.h(12),
+                      //     ),
+                      //     border: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(context.r(14)),
+                      //       borderSide: const BorderSide(
+                      //         color: CustomColors.greyColor,
+                      //       ),
+                      //     ),
+                      //     enabledBorder: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(context.r(14)),
+                      //       borderSide: BorderSide(color: Colors.grey.shade300),
+                      //     ),
+                      //     focusedBorder: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(context.r(14)),
+                      //       borderSide: const BorderSide(
+                      //         color: CustomColors.purpleColor,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      // SizedBox(height: context.h(16)),
 
                       // Skin Goals Row
                       Row(
@@ -449,39 +449,39 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                       SizedBox(height: context.h(16)),
 
                       // Bio
-                      Text(
-                        "Bio / Description",
-                        style: CustomFonts.grey700_11w700,
-                      ),
-                      SizedBox(height: context.h(6)),
-                      TextField(
-                        controller: _bioController,
-                        maxLines: 4,
-                        style: CustomFonts.black13w600,
-                        decoration: InputDecoration(
-                          hintText: "Introduce yourself...",
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: context.w(14),
-                            vertical: context.h(12),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(context.r(14)),
-                            borderSide: const BorderSide(
-                              color: CustomColors.greyColor,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(context.r(14)),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(context.r(14)),
-                            borderSide: const BorderSide(
-                              color: CustomColors.purpleColor,
-                            ),
-                          ),
-                        ),
-                      ),
+                      // Text(
+                      //   "Bio / Description",
+                      //   style: CustomFonts.grey700_11w700,
+                      // ),
+                      // SizedBox(height: context.h(6)),
+                      // TextField(
+                      //   controller: _bioController,
+                      //   maxLines: 4,
+                      //   style: CustomFonts.black13w600,
+                      //   decoration: InputDecoration(
+                      //     hintText: "Introduce yourself...",
+                      //     contentPadding: EdgeInsets.symmetric(
+                      //       horizontal: context.w(14),
+                      //       vertical: context.h(12),
+                      //     ),
+                      //     border: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(context.r(14)),
+                      //       borderSide: const BorderSide(
+                      //         color: CustomColors.greyColor,
+                      //       ),
+                      //     ),
+                      //     enabledBorder: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(context.r(14)),
+                      //       borderSide: BorderSide(color: Colors.grey.shade300),
+                      //     ),
+                      //     focusedBorder: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(context.r(14)),
+                      //       borderSide: const BorderSide(
+                      //         color: CustomColors.purpleColor,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
