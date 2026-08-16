@@ -42,6 +42,7 @@ class _TreatmentJourneyScreenState
       final result = await ref
           .read(treatmentJourneyProvider.notifier)
           .fetchTreatmentJourneyGroups();
+      if (!mounted) return;
       if (result == 'show') {
         _showCreateGroupDialog();
       }
@@ -118,6 +119,7 @@ class _TreatmentJourneyScreenState
                     final success = await ref
                         .read(treatmentJourneyProvider.notifier)
                         .createGroup(_groupNameController.text.trim());
+                    if (!mounted) return;
                     if (success ?? false) {
                       _groupNameController.clear();
                       Navigator.pop(context);
@@ -224,6 +226,7 @@ class _TreatmentJourneyScreenState
       ),
       child: InkWell(
         onTap: () async {
+          final messenger = ScaffoldMessenger.of(context);
           if (group.id != null) {
             ref.read(treatmentJourneyProvider.notifier).setGroup(group);
           }
@@ -231,14 +234,16 @@ class _TreatmentJourneyScreenState
             final success = await ref
                 .read(treatmentJourneyProvider.notifier)
                 .fetchOptions(group.id!);
+            if (!mounted) return;
             if (success ?? false) {
               final result = await ref
                   .read(treatmentJourneyProvider.notifier)
                   .createTjOptions();
+              if (!mounted) return;
               if (result == true) {
                 Navigator.pop(context);
 
-                ScaffoldMessenger.of(context).showSnackBar(
+                messenger.showSnackBar(
                   SnackBar(
                     content: const Text(
                       'Your journey is ready! Tap the Journey button in the top-right corner to view it.',
@@ -248,7 +253,7 @@ class _TreatmentJourneyScreenState
                     action: SnackBarAction(
                       label: '✕',
                       onPressed: () {
-                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                        messenger.hideCurrentSnackBar();
                       },
                     ),
                   ),
@@ -259,6 +264,7 @@ class _TreatmentJourneyScreenState
             final success = await ref
                 .read(treatmentJourneyProvider.notifier)
                 .fetchOptions(group.id!);
+            if (!mounted) return;
             // EasyLoading.dismiss();
 
             if (success ?? false) {
