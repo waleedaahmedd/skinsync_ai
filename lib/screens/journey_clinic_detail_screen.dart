@@ -6,6 +6,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../models/responses/get_clinic_response.dart';
+import '../utils/app_lunach_utils.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../view_models/clinic_view_model.dart';
@@ -43,9 +44,7 @@ class _JourneyClinicDetailScreenState
     final clinicDetail = ref.watch(
       clinicProvider.select((s) => s.clinicDetail),
     );
-    final isLoading = ref.watch(
-      clinicProvider.select((s) => s.loading),
-    );
+    final isLoading = ref.watch(clinicProvider.select((s) => s.loading));
 
     return Scaffold(
       backgroundColor: CustomColors.whiteColor,
@@ -195,72 +194,94 @@ class _JourneyClinicDetailScreenState
                           ),
                           if (clinicDetail?.address != null) ...[
                             SizedBox(height: context.h(16)),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.location_on_outlined,
-                                  size: 18,
-                                  color: CustomColors.purpleColor,
-                                ),
-                                SizedBox(width: context.w(8)),
-                                Expanded(
-                                  child: Text(
-                                    clinicDetail!.address!,
-                                    style: CustomFonts.textGrey14w400,
+                            InkWell(
+                              onTap:
+                                  clinicDetail?.latitude != null &&
+                                      clinicDetail?.longitude != null
+                                  ? () => launchMap(
+                                      clinicDetail!.latitude!,
+                                      clinicDetail!.longitude!,
+                                    )
+                                  : null,
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.location_on_outlined,
+                                    size: 18,
+                                    color: CustomColors.purpleColor,
                                   ),
-                                ),
-                              ],
+                                  SizedBox(width: context.w(8)),
+                                  Expanded(
+                                    child: Text(
+                                      clinicDetail!.address!,
+                                      style: CustomFonts.textGrey14w400,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                           if (clinicDetail?.phone != null) ...[
                             SizedBox(height: context.h(8)),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.phone_outlined,
-                                  size: 18,
-                                  color: CustomColors.purpleColor,
-                                ),
-                                SizedBox(width: context.w(8)),
-                                Text(
-                                  "${clinicDetail?.cc ?? ''} ${clinicDetail?.phone ?? ''}",
-                                  style: CustomFonts.textGrey14w400,
-                                ),
-                              ],
+                            InkWell(
+                              onTap: () => launchPhone(
+                                "${clinicDetail?.cc ?? ''}${clinicDetail?.phone ?? ''}",
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.phone_outlined,
+                                    size: 18,
+                                    color: CustomColors.purpleColor,
+                                  ),
+                                  SizedBox(width: context.w(8)),
+                                  Text(
+                                    "${clinicDetail?.cc ?? ''} ${clinicDetail?.phone ?? ''}",
+                                    style: CustomFonts.textGrey14w400,
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                           if (clinicDetail?.website != null) ...[
                             SizedBox(height: context.h(8)),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.language_outlined,
-                                  size: 18,
-                                  color: CustomColors.purpleColor,
-                                ),
-                                SizedBox(width: context.w(8)),
-                                Text(
-                                  clinicDetail!.website!,
-                                  style: CustomFonts.textGrey14w400,
-                                ),
-                              ],
+                            InkWell(
+                              onTap: () =>
+                                  launchWebsite(clinicDetail!.website!),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.language_outlined,
+                                    size: 18,
+                                    color: CustomColors.purpleColor,
+                                  ),
+                                  SizedBox(width: context.w(8)),
+                                  Text(
+                                    clinicDetail!.website!,
+                                    style: CustomFonts.textGrey14w400,
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                           if (clinicDetail?.email != null) ...[
                             SizedBox(height: context.h(8)),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.email_outlined,
-                                  size: 18,
-                                  color: CustomColors.purpleColor,
-                                ),
-                                SizedBox(width: context.w(8)),
-                                Text(
-                                  clinicDetail!.email!,
-                                  style: CustomFonts.textGrey14w400,
-                                ),
-                              ],
+                            InkWell(
+                              onTap: () => launchEmail(clinicDetail!.email!),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.email_outlined,
+                                    size: 18,
+                                    color: CustomColors.purpleColor,
+                                  ),
+                                  SizedBox(width: context.w(8)),
+                                  Text(
+                                    clinicDetail!.email!,
+                                    style: CustomFonts.textGrey14w400,
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ],
