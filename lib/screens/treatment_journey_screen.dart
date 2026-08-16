@@ -237,6 +237,22 @@ class _TreatmentJourneyScreenState
                   .createTjOptions();
               if (result == true) {
                 Navigator.pop(context);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text(
+                      'Your journey is ready! Tap the Journey button in the top-right corner to view it.',
+                    ),
+                    duration: const Duration(seconds: 30),
+                    behavior: SnackBarBehavior.floating,
+                    action: SnackBarAction(
+                      label: '✕',
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                      },
+                    ),
+                  ),
+                );
               }
             }
           } else {
