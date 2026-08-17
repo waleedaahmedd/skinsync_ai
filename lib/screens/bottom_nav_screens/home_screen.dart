@@ -19,6 +19,7 @@ import '../../widgets/requested_clinic_treatment_widget.dart';
 import '../../widgets/treatment_container.dart';
 import '../appointment_detail_screen.dart';
 import '../journey_clinics_screen.dart';
+import '../patient_treatment_requests_screen.dart';
 import 'appointments_screen.dart';
 import '../doctors_screen.dart';
 import '../notification_screen.dart';
@@ -313,7 +314,14 @@ class HomeScreen extends ConsumerWidget {
                 child: HeadingWithRightArrow(
                   title: "Treatment Requests",
                   onTap: () {
-                    // Navigate to treatment requests screen later
+                    final clinicId = dashboard?.requestTreatmentClinic?.firstOrNull?.id;
+                    if (clinicId != null) {
+                      Navigator.pushNamed(
+                        context,
+                        PatientTreatmentRequestsScreen.routeName,
+                        arguments: clinicId,
+                      );
+                    }
                   },
                 ),
               ),
@@ -349,7 +357,13 @@ class HomeScreen extends ConsumerWidget {
                             child: RequestClinicTreatmentCard(
                               data: request,
                               onTap: () {
-                                // Handle treatment request tap
+                                if (request.id != null) {
+                                  Navigator.pushNamed(
+                                    context,
+                                    PatientTreatmentRequestsScreen.routeName,
+                                    arguments: request.id,
+                                  );
+                                }
                               },
                             ),
                           );
