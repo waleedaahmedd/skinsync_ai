@@ -62,18 +62,33 @@ class SimulationData {
 class SimulationTreatment {
   final int? id;
   final String? name;
+  final String? description;
+  final String? image;
+  final String? icon;
   final List<SimulationArea>? areas;
 
-  const SimulationTreatment({this.id, this.name, this.areas});
+  const SimulationTreatment({
+    this.id,
+    this.name,
+    this.description,
+    this.image,
+    this.icon,
+    this.areas,
+  });
 
   factory SimulationTreatment.fromJson(Map<String, dynamic> json) =>
       SimulationTreatment(
         id: json["treatment_id"],
         name: json["treatment_name"],
+        description: json["treatment_desc"],
+        image: json["treatment_image"],
+        icon: json["treatment_icon"],
         areas: json["areas"] == null
             ? []
             : List<SimulationArea>.from(
-                json["areas"]!.map((x) => SimulationArea.fromJson(x)),
+                json["areas"].map(
+                  (x) => SimulationArea.fromJson(x),
+                ),
               ),
       );
 }
@@ -81,19 +96,32 @@ class SimulationTreatment {
 class SimulationArea {
   final String? id;
   final String? name;
+  final String? image;
+  final String? icon;
   final List<SimulationMaterial>? materials;
 
-  const SimulationArea({this.id, this.name, this.materials});
+  const SimulationArea({
+    this.id,
+    this.name,
+    this.image,
+    this.icon,
+    this.materials,
+  });
 
-  factory SimulationArea.fromJson(Map<String, dynamic> json) => SimulationArea(
-    id: json["area_id"]?.toString(),
-    name: json["area_name"],
-    materials: json["materials"] == null
-        ? []
-        : List<SimulationMaterial>.from(
-            json["materials"]!.map((x) => SimulationMaterial.fromJson(x)),
-          ),
-  );
+  factory SimulationArea.fromJson(Map<String, dynamic> json) =>
+      SimulationArea(
+        id: json["area_id"]?.toString(),
+        name: json["area_name"],
+        image: json["area_image"],
+        icon: json["area_icon"],
+        materials: json["materials"] == null
+            ? []
+            : List<SimulationMaterial>.from(
+                json["materials"].map(
+                  (x) => SimulationMaterial.fromJson(x),
+                ),
+              ),
+      );
 }
 
 class SimulationMaterial {
@@ -101,7 +129,11 @@ class SimulationMaterial {
   final String? name;
   final int? selectedQuantity;
 
-  const SimulationMaterial({this.id, this.name, this.selectedQuantity});
+  const SimulationMaterial({
+    this.id,
+    this.name,
+    this.selectedQuantity,
+  });
 
   factory SimulationMaterial.fromJson(Map<String, dynamic> json) =>
       SimulationMaterial(
