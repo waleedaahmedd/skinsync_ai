@@ -23,7 +23,7 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
   });
 
   Widget _buildIcon(BuildContext context) {
-    final size = context.w(20);
+    final size = context.w(32);
     final hasIcon = icon != null && icon!.isNotEmpty;
 
     if (!hasIcon) {
@@ -31,7 +31,7 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
         PngAssets.splashLogo,
         width: size,
         height: size,
-        fit: BoxFit.cover,
+        fit: BoxFit.contain,
       );
     }
 
@@ -39,30 +39,28 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
 
     if (isNetwork) {
       return ClipRRect(
-        borderRadius: BorderRadius.circular(context.r(5)),
+        borderRadius: BorderRadius.circular(context.r(8)),
         child: AppNetworkImage(
           imageUrl: icon!,
           width: size,
           height: size,
-          fit: BoxFit.cover,
-          borderRadius: BorderRadius.circular(context.r(5)),
-          // AppNetworkImage's own error state - falls back to splashLogo
+          fit: BoxFit.contain,
+          borderRadius: BorderRadius.circular(context.r(8)),
           errorIcon: Icons.broken_image,
         ),
       );
     }
 
-    // Local asset path - fall back to splashLogo if it fails/breaks.
     return Image.asset(
       icon!,
       width: size,
       height: size,
-      fit: BoxFit.cover,
+      fit: BoxFit.contain,
       errorBuilder: (context, error, stackTrace) => Image.asset(
         PngAssets.splashLogo,
         width: size,
         height: size,
-        fit: BoxFit.cover,
+        fit: BoxFit.contain,
       ),
     );
   }
@@ -70,8 +68,8 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
   Widget? _buildTrailing(BuildContext context) {
     if (isTreatment) {
       return Icon(
-        Icons.visibility_outlined,
-        size: context.sp(15),
+        Icons.info_outline_rounded,
+        size: context.sp(18),
         color: CustomColors.darkPurple,
       );
     }
@@ -107,22 +105,22 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
       borderRadius: BorderRadius.circular(context.r(20)),
       child: Container(
         padding: EdgeInsets.symmetric(
-         horizontal: context.w(12), // was 10
-          vertical: context.h(6),   
+         horizontal: context.w(20), 
+          vertical: context.h(12),   
         ),
         decoration: BoxDecoration(
           color: CustomColors.greyColor.withValues(alpha: 0.3),
-          borderRadius: BorderRadius.circular(context.r(20)),
+          borderRadius: BorderRadius.circular(context.r(24)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             _buildIcon(context),
-            SizedBox(width: context.w(6)),
+            SizedBox(width: context.w(12)),
             Flexible(
               child: Text(
                 label,
-                style: CustomFonts.black13w500,
+                style: CustomFonts.black16w600,
                 overflow: TextOverflow.ellipsis,
               ),
             ),

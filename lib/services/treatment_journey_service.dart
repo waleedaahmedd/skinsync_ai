@@ -175,7 +175,7 @@ class TreatmentJourneyService implements TreatmentJourneyRepository {
   @override
   Future<BaseResponseModel> deleteOption(int optionId) async {
     final response = await _apiClient.httpRequest(
-      endPoint: EndPoints.treatmentJourneyOptions,
+      endPoint: EndPoints.deleteTreatmentJourneyOptions,
       requestType: RequestType.delete,
       params: "/$optionId",
     );

@@ -170,16 +170,25 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
             SizedBox(height: context.h(12)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: widget.sim.treatments!.map((treatment) {
+              children: List.generate(widget.sim.treatments!.length, (index) {
+                final treatment = widget.sim.treatments![index];
                 return Padding(
-                  padding: EdgeInsets.only(bottom: context.h(12)),
+                  padding: EdgeInsets.only(bottom: context.h(16)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: context.h(8)),
+                        child: Text(
+                          "Treatment - ${index + 1}",
+                          style: CustomFonts.black18w600.copyWith(
+                            fontSize: context.sp(16),
+                          ),
+                        ),
+                      ),
                       // Treatment chip - visibility icon, tap opens TreatmentDetailScreen
                       SimulationTreatmentAreaChip(
-                        icon: treatment
-                            .icon, // adjust field name if different on your model
+                        icon: treatment.icon,
                         label: treatment.name ?? "Unnamed Treatment",
                         isTreatment: true,
                         onTap: () {
@@ -199,8 +208,21 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                           );
                         },
                       ),
-                      SizedBox(height: context.h(6)),
-                      if (treatment.areas != null)
+                      if (treatment.areas != null &&
+                          treatment.areas!.isNotEmpty) ...[
+                        SizedBox(height: context.h(16)),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: context.w(4),
+                            bottom: context.h(10),
+                          ),
+                          child: Text(
+                            "Selected Areas",
+                            style: CustomFonts.black14w600.copyWith(
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                        ),
                         Wrap(
                           spacing: context.w(8),
                           runSpacing: context.h(5),
@@ -214,18 +236,18 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                                 0;
 
                             return SimulationTreatmentAreaChip(
-                              icon: area
-                                  .icon, // adjust field name if different on your model
+                              icon: area.icon,
                               label: area.name ?? "",
                               isTreatment: false,
                               materialCount: materialCount,
                             );
                           }).toList(),
                         ),
+                      ],
                     ],
                   ),
                 );
-              }).toList(),
+              }),
             ),
           ],
           if (widget.price != null) ...[
