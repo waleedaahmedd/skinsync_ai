@@ -127,6 +127,19 @@ class _TreatmentJourneyDetailScreenState
                       .map((opt) => Tab(text: opt.name))
                       .toList(),
                 ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.w(24),
+                    vertical: context.h(12),
+                  ),
+                  child: Row(
+                    children: [
+                      _buildSubTabButton("Simulation"),
+                      SizedBox(width: context.w(12)),
+                      _buildSubTabButton("Treatments"),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: state.isSimulationsLoading
                       ? const Center(child: AppLoader())
@@ -139,6 +152,36 @@ class _TreatmentJourneyDetailScreenState
                 ),
               ],
             ),
+    );
+  }
+
+  String _selectedSubTab = "Simulation";
+
+  Widget _buildSubTabButton(String title) {
+    final isSelected = _selectedSubTab == title;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _selectedSubTab = title;
+          });
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: context.h(12)),
+          decoration: BoxDecoration(
+            color: isSelected ? CustomColors.darkPurple : Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: Center(
+            child: Text(
+              title,
+              style: isSelected
+                  ? CustomFonts.white16w600
+                  : CustomFonts.black16w600,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
