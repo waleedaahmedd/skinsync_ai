@@ -55,23 +55,20 @@ class SimulationCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  sim.treatments?.firstOrNull?.name ?? "Unnamed Treatment",
-                  style: CustomFonts.black16w600,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              if (sim.createdAt != null)
+          if (sim.createdAt != null)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
                 Text(
-                  sim.createdAt!.formattedTime,
+                  "Created at:",
                   style: CustomFonts.grey13w400,
                 ),
-            ],
-          ),
+                Text(
+                  sim.createdAt!.formattedDateTime,
+                  style: CustomFonts.grey13w400,
+                ),
+              ],
+            ),
           if (showImages) ...[
             SizedBox(height: context.h(15)),
             _buildImagePair(
@@ -97,32 +94,60 @@ class SimulationCard extends ConsumerWidget {
               sim.treatments != null &&
               sim.treatments!.isNotEmpty) ...[
             SizedBox(height: context.h(12)),
-            Wrap(
-              spacing: context.w(8),
-              runSpacing: context.h(5),
-              children: sim.treatments!
-                  .expand((t) => t.areas ?? <SimulationArea>[])
-                  .map((area) {
-                    final material = area.materials?.firstOrNull;
-                    final materialText = material != null
-                        ? " (${material.selectedQuantity})"
-                        : "";
-                    return Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: context.w(10),
-                        vertical: context.h(4),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: sim.treatments!.map((treatment) {
+                return Padding(
+                  padding: EdgeInsets.only(bottom: context.h(12)),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        treatment.name ?? "Unnamed Treatment",
+                        style: CustomFonts.black14w600,
                       ),
-                      decoration: BoxDecoration(
-                        color: CustomColors.greyColor.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(context.r(20)),
-                      ),
-                      child: Text(
-                        "${area.name}$materialText",
-                        style: CustomFonts.black12w500,
-                      ),
-                    );
-                  })
-                  .toList(),
+                      SizedBox(height: context.h(6)),
+                      if (treatment.areas != null)
+                        Wrap(
+                          spacing: context.w(8),
+                          runSpacing: context.h(5),
+                          children: treatment.areas!.map((area) {
+                            String materialInfo = "";
+                            if (area.materials != null &&
+                                area.materials!.isNotEmpty) {
+                              final filteredMaterials = area.materials!
+                                  .where((m) => (m.selectedQuantity ?? 0) > 0)
+                                  .toList();
+                              if (filteredMaterials.isNotEmpty) {
+                                materialInfo = filteredMaterials
+                                    .map((m) =>
+                                        "${m.name}: ${m.selectedQuantity}")
+                                    .join(", ");
+                                materialInfo = " ($materialInfo)";
+                              }
+                            }
+                            return Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: context.w(10),
+                                vertical: context.h(4),
+                              ),
+                              decoration: BoxDecoration(
+                                color: CustomColors.greyColor
+                                    .withValues(alpha: 0.3),
+                                borderRadius:
+                                    BorderRadius.circular(context.r(20)),
+                              ),
+                              child: Text(
+                                "${area.name}$materialInfo",
+                                style: CustomFonts.black12w500,
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                    ],
+                  ),
+                );
+              }).toList(),
             ),
           ],
           if (price != null) ...[

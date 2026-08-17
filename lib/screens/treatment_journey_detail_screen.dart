@@ -128,19 +128,6 @@ class _TreatmentJourneyDetailScreenState
                       .map((opt) => Tab(text: opt.name))
                       .toList(),
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.w(24),
-                    vertical: context.h(12),
-                  ),
-                  child: Row(
-                    children: [
-                      _buildSubTabButton("Simulation"),
-                      SizedBox(width: context.w(12)),
-                      _buildSubTabButton("Treatments"),
-                    ],
-                  ),
-                ),
                 Expanded(
                   child: state.isSimulationsLoading
                       ? const Center(child: AppLoader())
@@ -198,6 +185,19 @@ class _TreatmentJourneyDetailScreenState
       child: Column(
         children: [
           const MedicalDisclaimerBanner(),
+          Padding(
+            padding: EdgeInsets.only(
+              top: context.h(10),
+              bottom: context.h(20),
+            ),
+            child: Row(
+              children: [
+                _buildSubTabButton("Simulation"),
+                SizedBox(width: context.w(12)),
+                _buildSubTabButton("Treatments"),
+              ],
+            ),
+          ),
           SimulationCard(
             sim: sim,
             price: state.price,
