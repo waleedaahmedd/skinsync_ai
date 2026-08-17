@@ -75,10 +75,10 @@ class CustomBorderedButton extends StatelessWidget {
                     ? const CircularProgressIndicator.adaptive()
                     : Text(
                         text,
-                        style: CustomFonts.black18w600
-                        // .copyWith(
-                        //   color: textColor ?? CustomColors.darkPurple,
-                        // ),
+                        style: CustomFonts.black18w600.copyWith(
+                          color: textColor ?? CustomColors.darkPurple,
+                          fontSize: context.sp(16),
+                        ),
                       ),
               ),
             ),

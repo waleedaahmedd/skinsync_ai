@@ -19,6 +19,8 @@ class SimulationCard extends ConsumerWidget {
   final String? actionButtonText;
   final VoidCallback? onActionButtonPressed;
   final String? price;
+  final bool showImages;
+  final bool showTreatments;
 
   const SimulationCard({
     super.key,
@@ -27,6 +29,8 @@ class SimulationCard extends ConsumerWidget {
     this.actionButtonText,
     this.onActionButtonPressed,
     this.price,
+    this.showImages = true,
+    this.showTreatments = true,
   });
 
   @override
@@ -68,26 +72,30 @@ class SimulationCard extends ConsumerWidget {
                 ),
             ],
           ),
-          SizedBox(height: context.h(15)),
-          _buildImagePair(
-            context,
-            "Front View",
-            sim.frontImageBefore,
-            sim.frontImageAfter,
-          ),
-          _buildImagePair(
-            context,
-            "Right View",
-            sim.rightImageBefore,
-            sim.rightImageAfter,
-          ),
-          _buildImagePair(
-            context,
-            "Left View",
-            sim.leftImageBefore,
-            sim.leftImageAfter,
-          ),
-          if (sim.treatments != null && sim.treatments!.isNotEmpty) ...[
+          if (showImages) ...[
+            SizedBox(height: context.h(15)),
+            _buildImagePair(
+              context,
+              "Front View",
+              sim.frontImageBefore,
+              sim.frontImageAfter,
+            ),
+            _buildImagePair(
+              context,
+              "Right View",
+              sim.rightImageBefore,
+              sim.rightImageAfter,
+            ),
+            _buildImagePair(
+              context,
+              "Left View",
+              sim.leftImageBefore,
+              sim.leftImageAfter,
+            ),
+          ],
+          if (showTreatments &&
+              sim.treatments != null &&
+              sim.treatments!.isNotEmpty) ...[
             SizedBox(height: context.h(12)),
             Wrap(
               spacing: context.w(8),
