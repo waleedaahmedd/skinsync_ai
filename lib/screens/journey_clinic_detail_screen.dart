@@ -50,7 +50,7 @@ class _JourneyClinicDetailScreenState
       backgroundColor: CustomColors.whiteColor,
       body: Stack(
         children: [
-          if (isLoading)
+          if (isLoading || clinicDetail == null)
             const AppLoader()
           else
             Positioned.fill(
@@ -71,9 +71,9 @@ class _JourneyClinicDetailScreenState
                             decoration: const BoxDecoration(
                               gradient: CustomColors.purpleBlueGradient,
                             ),
-                            child: clinicDetail?.logo != null
+                            child: clinicDetail.logo != null
                                 ? CachedNetworkImage(
-                                    imageUrl: clinicDetail!.logo!,
+                                    imageUrl: clinicDetail.logo!,
                                     fit: BoxFit.cover,
                                     placeholder: (context, url) => const Center(
                                       child: CupertinoActivityIndicator(
@@ -158,7 +158,7 @@ class _JourneyClinicDetailScreenState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            clinicDetail?.name ?? 'N/A',
+                            clinicDetail.name ?? 'N/A',
                             style: CustomFonts.black28w600,
                           ),
                           SizedBox(height: context.h(10)),
@@ -183,7 +183,7 @@ class _JourneyClinicDetailScreenState
                           ),
                           SizedBox(height: context.h(16)),
                           Text(
-                            clinicDetail?.description ??
+                            clinicDetail.description ??
                                 widget
                                     .clinic
                                     ?.place
@@ -192,15 +192,15 @@ class _JourneyClinicDetailScreenState
                                 "Achieve a youthful appearance with our aesthetic treatments to highlight your features.",
                             style: CustomFonts.textGrey16w400,
                           ),
-                          if (clinicDetail?.address != null) ...[
+                          if (clinicDetail.address != null) ...[
                             SizedBox(height: context.h(16)),
                             InkWell(
                               onTap:
-                                  clinicDetail?.latitude != null &&
-                                      clinicDetail?.longitude != null
+                                  clinicDetail.latitude != null &&
+                                      clinicDetail.longitude != null
                                   ? () => launchMap(
-                                      clinicDetail!.latitude!,
-                                      clinicDetail!.longitude!,
+                                      clinicDetail.latitude!,
+                                      clinicDetail.longitude!,
                                     )
                                   : null,
                               child: Row(
@@ -213,7 +213,7 @@ class _JourneyClinicDetailScreenState
                                   SizedBox(width: context.w(8)),
                                   Expanded(
                                     child: Text(
-                                      clinicDetail!.address!,
+                                      clinicDetail.address!,
                                       style: CustomFonts.textGrey14w400,
                                     ),
                                   ),
@@ -221,11 +221,11 @@ class _JourneyClinicDetailScreenState
                               ),
                             ),
                           ],
-                          if (clinicDetail?.phone != null) ...[
+                          if (clinicDetail.phone != null) ...[
                             SizedBox(height: context.h(8)),
                             InkWell(
                               onTap: () => launchPhone(
-                                "${clinicDetail?.cc ?? ''}${clinicDetail?.phone ?? ''}",
+                                "${clinicDetail.cc ?? ''}${clinicDetail.phone ?? ''}",
                               ),
                               child: Row(
                                 children: [
@@ -236,18 +236,18 @@ class _JourneyClinicDetailScreenState
                                   ),
                                   SizedBox(width: context.w(8)),
                                   Text(
-                                    "${clinicDetail?.cc ?? ''} ${clinicDetail?.phone ?? ''}",
+                                    "${clinicDetail.cc ?? ''} ${clinicDetail.phone ?? ''}",
                                     style: CustomFonts.textGrey14w400,
                                   ),
                                 ],
                               ),
                             ),
                           ],
-                          if (clinicDetail?.website != null) ...[
+                          if (clinicDetail.website != null) ...[
                             SizedBox(height: context.h(8)),
                             InkWell(
                               onTap: () =>
-                                  launchWebsite(clinicDetail!.website!),
+                                  launchWebsite(clinicDetail.website!),
                               child: Row(
                                 children: [
                                   const Icon(
@@ -257,17 +257,17 @@ class _JourneyClinicDetailScreenState
                                   ),
                                   SizedBox(width: context.w(8)),
                                   Text(
-                                    clinicDetail!.website!,
+                                    clinicDetail.website!,
                                     style: CustomFonts.textGrey14w400,
                                   ),
                                 ],
                               ),
                             ),
                           ],
-                          if (clinicDetail?.email != null) ...[
+                          if (clinicDetail.email != null) ...[
                             SizedBox(height: context.h(8)),
                             InkWell(
-                              onTap: () => launchEmail(clinicDetail!.email!),
+                              onTap: () => launchEmail(clinicDetail.email!),
                               child: Row(
                                 children: [
                                   const Icon(
@@ -277,7 +277,7 @@ class _JourneyClinicDetailScreenState
                                   ),
                                   SizedBox(width: context.w(8)),
                                   Text(
-                                    clinicDetail!.email!,
+                                    clinicDetail.email!,
                                     style: CustomFonts.textGrey14w400,
                                   ),
                                 ],
@@ -288,8 +288,8 @@ class _JourneyClinicDetailScreenState
                       ),
                     ),
                     SizedBox(height: context.h(24)),
-                    if (clinicDetail?.latitude != null &&
-                        clinicDetail?.longitude != null)
+                    if (clinicDetail.latitude != null &&
+                        clinicDetail.longitude != null)
                       Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: context.w(24),
@@ -309,7 +309,7 @@ class _JourneyClinicDetailScreenState
                                 child: GoogleMap(
                                   initialCameraPosition: CameraPosition(
                                     target: LatLng(
-                                      clinicDetail!.latitude!,
+                                      clinicDetail.latitude!,
                                       clinicDetail.longitude!,
                                     ),
                                     zoom: 13,

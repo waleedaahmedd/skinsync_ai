@@ -84,7 +84,7 @@ class ApiBaseHelper {
           );
           request.headers.addAll(headers);
           final responseJson = await request.send();
-          return http.Response.fromStream(responseJson);
+          return await http.Response.fromStream(responseJson);
         case .multipartPatch:
           final request = http.MultipartRequest(
             requestType.method,
@@ -96,7 +96,7 @@ class ApiBaseHelper {
           );
           request.headers.addAll(headers);
           final responseJson = await request.send();
-          return http.Response.fromStream(responseJson);
+          return await http.Response.fromStream(responseJson);
       }
     } on SocketException {
       throw const AppException('No Internet Connection');

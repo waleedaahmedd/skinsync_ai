@@ -10,7 +10,7 @@ import 'models/responses/treatment_list_response.dart';
 import 'screens/additional_info_screen.dart';
 import 'screens/allergy_and_medical_history.dart';
 import 'screens/appointment_detail_screen.dart';
-import 'screens/ar_face_model_Preview_screen.dart';
+import 'screens/ar_face_model_preview_screen.dart';
 import 'screens/biometric_screen.dart';
 import 'screens/bottom_nav_page.dart';
 import 'screens/bottom_nav_screens/appointments_screen.dart';
