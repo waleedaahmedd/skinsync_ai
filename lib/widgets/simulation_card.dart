@@ -36,7 +36,7 @@ class SimulationCard extends ConsumerStatefulWidget {
     this.onActionButtonPressed,
     this.price,
     this.showImages = true,
-    this.showTreatments = true,
+    this.showTreatments = true, this.onDelete,
   });
 
   @override
@@ -384,8 +384,9 @@ class _ComparisonViewState extends State<_ComparisonView> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.before == null || widget.after == null)
+    if (widget.before == null || widget.after == null) {
       return const SizedBox.shrink();
+    }
 
     return Container(
       decoration: BoxDecoration(
