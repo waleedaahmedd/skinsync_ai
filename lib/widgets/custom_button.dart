@@ -35,7 +35,8 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isDisabled = onPressed == null;
-    final radius = BorderRadius.circular(borderRadius ?? 40);
+    final double radiusValue = borderRadius ?? 40;
+    final BorderRadius radius = BorderRadius.circular(radiusValue);
 
     return SizedBox(
       height: height ?? context.h(52),
@@ -45,116 +46,35 @@ class CustomButton extends StatelessWidget {
         child: InkWell(
           borderRadius: radius,
           onTap: isLoading || isDisabled ? null : onPressed,
-          child: isBorder
-              ? _buildBorderedButton(context, isDisabled, radius)
-              : _buildSolidButton(context, isDisabled, radius),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSolidButton(
-    BuildContext context,
-    bool isDisabled,
-    BorderRadius radius,
-  ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: isDisabled ? CustomColors.greyColor : backgroundColor,
-        gradient:
-            isDisabled
-                ? null
-                : (backgroundColor != null
-                    ? null
-                    : (gradient ?? CustomColors.purpleBlueGradient)),
-        borderRadius: radius,
-        boxShadow:
-            isDisabled
-                ? null
-                : [
-                  // Outer glow
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.5),
-                    blurRadius: 20,
-                    spreadRadius: 1.r,
-                  ),
-                  // Soft white diffuse glow
-                  BoxShadow(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    blurRadius: 20,
-                    spreadRadius: 1.r,
-                  ),
-                ],
-      ),
-      child: Center(
-        child:
-            isLoading
-                ? const CircularProgressIndicator.adaptive()
-                : Text(
-                  text,
-                  style: CustomFonts.black18w600.copyWith(
-                    color:
-                        isDisabled
-                            ? Colors.black.withValues(alpha: 0.45)
-                            : textColor,
-                    fontSize: context.sp(16),
-                  ),
-                ),
-      ),
-    );
-  }
-
-  Widget _buildBorderedButton(
-    BuildContext context,
-    bool isDisabled,
-    BorderRadius radius,
-  ) {
-    return Container(
-      padding: EdgeInsets.all(borderWidth),
-      decoration: BoxDecoration(
-        gradient:
-            isDisabled ? null : (gradient ?? CustomColors.purpleBlueGradient),
-        color: isDisabled ? CustomColors.greyColor : null,
-        borderRadius: radius,
-        boxShadow:
-            isDisabled
-                ? null
-                : [
-                  // Outer glow
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.5),
-                    blurRadius: 30,
-                    spreadRadius: 1.r,
-                  ),
-                  // Soft white diffuse glow
-                  BoxShadow(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    blurRadius: 40,
-                    spreadRadius: 2.r,
-                  ),
-                ],
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: backgroundColor ?? Colors.white,
-          borderRadius: BorderRadius.circular(
-            (borderRadius ?? 40) - borderWidth,
+          child: Container(
+            padding: isBorder ? EdgeInsets.all(borderWidth) : EdgeInsets.zero,
+            decoration: BoxDecoration(
+              borderRadius: radius,
+              color: isDisabled ? CustomColors.greyColor : (isBorder ? null : backgroundColor),
+              gradient: isDisabled ? null : (backgroundColor != null ? null : (gradient ?? CustomColors.purpleBlueGradient)),
+              boxShadow: isDisabled ? null : [
+                BoxShadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 10),
+                BoxShadow(color: Colors.white.withValues(alpha: 0.15), blurRadius: 10),
+              ],
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: isBorder ? (backgroundColor ?? Colors.white) : Colors.transparent,
+                borderRadius: isBorder ? BorderRadius.circular(radiusValue - borderWidth) : radius,
+              ),
+              child: Center(
+                child: isLoading
+                    ? const CircularProgressIndicator.adaptive()
+                    : Text(
+                        text,
+                        style: CustomFonts.black18w600.copyWith(
+                          fontSize: context.sp(16),
+                          color: isDisabled ? Colors.black.withValues(alpha: 0.45) : textColor,
+                        ),
+                      ),
+              ),
+            ),
           ),
-        ),
-        child: Center(
-          child:
-              isLoading
-                  ? const CircularProgressIndicator.adaptive()
-                  : Text(
-                    text,
-                    style: CustomFonts.black18w600.copyWith(
-                      color:
-                          isDisabled
-                              ? Colors.black.withValues(alpha: 0.45)
-                              : textColor,
-                      fontSize: context.sp(16),
-                    ),
-                  ),
         ),
       ),
     );
