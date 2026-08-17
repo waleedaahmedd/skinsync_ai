@@ -133,6 +133,7 @@ class _TreatmentJourneyDetailScreenState
                       ? const Center(child: AppLoader())
                       : TabBarView(
                           controller: _tabController,
+                          physics: const NeverScrollableScrollPhysics(),
                           children: state.options.map((opt) {
                             return _buildSimulationsList(context, state);
                           }).toList(),

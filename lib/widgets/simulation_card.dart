@@ -1,3 +1,4 @@
+import 'package:before_after/before_after.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../models/responses/simulation_history_response.dart';
 import '../screens/ar_face_model_preview_screen.dart';
+import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../utils/date_time_utils.dart';
@@ -13,7 +15,7 @@ import '../view_models/treatment_view_model.dart';
 import 'custom_app_bar.dart';
 import 'custom_button.dart';
 
-class SimulationCard extends ConsumerWidget {
+class SimulationCard extends ConsumerStatefulWidget {
   final SimulationData sim;
   final bool showActionButton;
   final String? actionButtonText;
@@ -34,7 +36,14 @@ class SimulationCard extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SimulationCard> createState() => _SimulationCardState();
+}
+
+class _SimulationCardState extends ConsumerState<SimulationCard> {
+  bool _isComparisonMode = false;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(bottom: context.h(20)),
       padding: EdgeInsets.all(context.w(15)),
@@ -55,7 +64,7 @@ class SimulationCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (sim.createdAt != null)
+          if (widget.sim.createdAt != null)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -64,39 +73,84 @@ class SimulationCard extends ConsumerWidget {
                   style: CustomFonts.grey13w400,
                 ),
                 Text(
-                  sim.createdAt!.formattedDateTime,
+                  widget.sim.createdAt!.formattedDateTime,
                   style: CustomFonts.grey13w400,
                 ),
               ],
             ),
-          if (showImages) ...[
-            SizedBox(height: context.h(15)),
+          if (widget.showImages) ...[
+            SizedBox(height: context.h(12)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.w(12),
+                    vertical: context.h(2),
+                  ),
+                  decoration: BoxDecoration(
+                    color: CustomColors.greyColor.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(context.r(12)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        _isComparisonMode ? "Slider View" : "Side by Side",
+                        style: CustomFonts.black14w600.copyWith(
+                          fontSize: context.sp(12),
+                          color: _isComparisonMode
+                              ? CustomColors.darkPurple
+                              : CustomColors.textGreyColor,
+                        ),
+                      ),
+                      SizedBox(width: context.w(4)),
+                      Transform.scale(
+                        scale: 0.7,
+                        child: Switch.adaptive(
+                          value: _isComparisonMode,
+                          activeTrackColor: CustomColors.purpleColor,
+                          activeThumbColor: Colors.white,
+                          inactiveTrackColor: Colors.grey.shade300,
+                          onChanged: (val) {
+                            setState(() {
+                              _isComparisonMode = val;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: context.h(10)),
             _buildImagePair(
               context,
               "Front View",
-              sim.frontImageBefore,
-              sim.frontImageAfter,
+              widget.sim.frontImageBefore,
+              widget.sim.frontImageAfter,
             ),
             _buildImagePair(
               context,
               "Right View",
-              sim.rightImageBefore,
-              sim.rightImageAfter,
+              widget.sim.rightImageBefore,
+              widget.sim.rightImageAfter,
             ),
             _buildImagePair(
               context,
               "Left View",
-              sim.leftImageBefore,
-              sim.leftImageAfter,
+              widget.sim.leftImageBefore,
+              widget.sim.leftImageAfter,
             ),
           ],
-          if (showTreatments &&
-              sim.treatments != null &&
-              sim.treatments!.isNotEmpty) ...[
+          if (widget.showTreatments &&
+              widget.sim.treatments != null &&
+              widget.sim.treatments!.isNotEmpty) ...[
             SizedBox(height: context.h(12)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: sim.treatments!.map((treatment) {
+              children: widget.sim.treatments!.map((treatment) {
                 return Padding(
                   padding: EdgeInsets.only(bottom: context.h(12)),
                   child: Column(
@@ -150,14 +204,14 @@ class SimulationCard extends ConsumerWidget {
               }).toList(),
             ),
           ],
-          if (price != null) ...[
+          if (widget.price != null) ...[
             SizedBox(height: context.h(15)),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text("Total Price:", style: CustomFonts.grey14w400),
                 Text(
-                  price!,
+                  widget.price!,
                   style: CustomFonts.black18w600.copyWith(
                     color: CustomColors.darkPurple,
                   ),
@@ -165,15 +219,15 @@ class SimulationCard extends ConsumerWidget {
               ],
             ),
           ],
-          if (showActionButton) ...[
+          if (widget.showActionButton) ...[
             SizedBox(height: context.h(10)),
             CustomButton(
               onPressed:
-                  onActionButtonPressed ??
+                  widget.onActionButtonPressed ??
                   () async {
                     await ref
                         .read(treatmentViewModel.notifier)
-                        .initializeSimulation(sim);
+                        .initializeSimulation(widget.sim);
                     if (context.mounted) {
                       Navigator.pushNamed(
                         context,
@@ -181,7 +235,7 @@ class SimulationCard extends ConsumerWidget {
                       );
                     }
                   },
-              text: actionButtonText ?? 'Use this simulation',
+              text: widget.actionButtonText ?? 'Use this simulation',
             ),
           ],
         ],
@@ -204,31 +258,34 @@ class SimulationCard extends ConsumerWidget {
           padding: EdgeInsets.only(bottom: context.h(8), top: context.h(5)),
           child: Text(label, style: CustomFonts.black14w600),
         ),
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Before", style: CustomFonts.grey12w400),
-                  SizedBox(height: context.h(6)),
-                  _buildImage(context, before),
-                ],
+        if (_isComparisonMode)
+          _ComparisonView(before: before, after: after)
+        else
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Before", style: CustomFonts.grey12w400),
+                    SizedBox(height: context.h(6)),
+                    _buildImage(context, before),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(width: context.w(15)),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("After", style: CustomFonts.grey12w400),
-                  SizedBox(height: context.h(6)),
-                  _buildImage(context, after),
-                ],
+              SizedBox(width: context.w(15)),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("After", style: CustomFonts.grey12w400),
+                    SizedBox(height: context.h(6)),
+                    _buildImage(context, after),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
         SizedBox(height: context.h(10)),
       ],
     );
@@ -282,6 +339,109 @@ class SimulationCard extends ConsumerWidget {
             ),
           ),
           child: image,
+        ),
+      ),
+    );
+  }
+}
+
+class _ComparisonView extends StatefulWidget {
+  final String? before;
+  final String? after;
+
+  const _ComparisonView({required this.before, required this.after});
+
+  @override
+  State<_ComparisonView> createState() => _ComparisonViewState();
+}
+
+class _ComparisonViewState extends State<_ComparisonView> {
+  double _sliderValue = 0.5;
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.before == null || widget.after == null) return const SizedBox.shrink();
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(context.r(12)),
+        border: Border.all(
+          color: CustomColors.greyColor.withValues(alpha: 0.3),
+        ),
+      ),
+      height: context.h(250),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(context.r(12)),
+        child: Stack(
+          children: [
+            BeforeAfter(
+              value: _sliderValue,
+              onValueChanged: (value) => setState(() => _sliderValue = value),
+              before: _buildComparisonImage(context, widget.before!),
+              after: _buildComparisonImage(context, widget.after!),
+              trackColor: Colors.white,
+              trackWidth: context.w(2),
+              thumbDecoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(PngAssets.customMarker),
+                  fit: BoxFit.contain,
+                ),
+              ),
+              thumbWidth: context.w(32),
+              thumbHeight: context.w(32),
+            ),
+            Positioned(
+              top: context.h(12),
+              left: context.w(12),
+              child: _buildBadge(context, "BEFORE", Colors.black.withValues(alpha: 0.6)),
+            ),
+            Positioned(
+              top: context.h(12),
+              right: context.w(12),
+              child: _buildBadge(context, "AFTER", Colors.black.withValues(alpha: 0.6)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildComparisonImage(BuildContext context, String imageUrl) {
+    return CachedNetworkImage(
+      imageUrl: imageUrl,
+      width: double.infinity,
+      height: context.h(250),
+      fit: BoxFit.cover,
+      placeholder: (context, url) => Container(
+        color: CustomColors.greyColor.withValues(alpha: 0.2),
+        child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      ),
+      errorWidget: (context, url, error) => Container(
+        color: CustomColors.greyColor.withValues(alpha: 0.2),
+        child: const Icon(
+          Icons.broken_image,
+          color: CustomColors.silverColor,
+          size: 30,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBadge(BuildContext context, String text, Color bgColor) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: context.w(10),
+        vertical: context.h(4),
+      ),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(context.r(4)),
+      ),
+      child: Text(
+        text,
+        style: CustomFonts.white12w600.copyWith(
+          letterSpacing: 0.8,
+          fontSize: context.sp(10),
         ),
       ),
     );
