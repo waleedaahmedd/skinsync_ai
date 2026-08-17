@@ -161,12 +161,14 @@ class DashboardData {
   final List<TreatmentData>? suggestedTreatments;
   final List<TopDoctor>? topDoctors;
   final List<TopClinic>? topClinics;
+  final List<RequestClinicTreatmentModel>? requestTreatmentClinic;
 
   DashboardData({
     this.appointments,
     this.suggestedTreatments,
     this.topDoctors,
     this.topClinics,
+    this.requestTreatmentClinic,
   });
 
   factory DashboardData.fromJson(Map<String, dynamic> json) => DashboardData(
@@ -190,6 +192,13 @@ class DashboardData {
         : List<TopClinic>.from(
             json["top_clinics"]!.map((x) => TopClinic.fromJson(x)),
           ),
+    requestTreatmentClinic: json["request_clinic_treatments"] == null
+        ? []
+        : List<RequestClinicTreatmentModel>.from(
+            json["request_clinic_treatments"].map(
+              (x) => RequestClinicTreatmentModel.fromJson(x),
+            ),
+          ),
   );
 
   Map<String, dynamic> toJson() => {
@@ -199,6 +208,47 @@ class DashboardData {
         .toList(),
     "top_doctors": topDoctors?.map((x) => x.toJson()).toList(),
     "top_clinics": topClinics?.map((x) => x.toJson()).toList(),
+    "request_clinic_treatments": requestTreatmentClinic
+        ?.map((x) => x.toJson())
+        .toList(),
+  };
+}
+
+class RequestClinicTreatmentModel {
+  final int? id;
+  final String? clinicName;
+  final String? clinicEmail;
+  final String? image;
+  final String? address;
+  final int? totalTreatmentCount;
+
+  RequestClinicTreatmentModel({
+    this.id,
+    this.clinicName,
+    this.clinicEmail,
+    this.image,
+    this.address,
+    this.totalTreatmentCount,
+  });
+
+  factory RequestClinicTreatmentModel.fromJson(Map<String, dynamic> json) {
+    return RequestClinicTreatmentModel(
+      id: json['id'],
+      clinicName: json['clinic_name'],
+      clinicEmail: json['clinic_email'],
+      image: json['image'],
+      address: json['address'],
+      totalTreatmentCount: json['total_treatment_count'],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'clinic_name': clinicName,
+    'clinic_email': clinicEmail,
+    'image': image,
+    'address': address,
+    'total_treatment_count': totalTreatmentCount,
   };
 }
 
