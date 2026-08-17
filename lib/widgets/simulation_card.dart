@@ -162,6 +162,7 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                             .icon, // adjust field name if different on your model
                         label: treatment.name ?? "Unnamed Treatment",
                         isTreatment: true,
+                        imageUrl: treatment.image,
                         onTap: () {
                           Navigator.pushNamed(
                             context,
@@ -199,6 +200,7 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                               label: area.name ?? "",
                               isTreatment: false,
                               materialCount: materialCount,
+                              imageUrl: area.image,
                             );
                           }).toList(),
                         ),
