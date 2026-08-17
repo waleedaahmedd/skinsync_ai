@@ -59,6 +59,7 @@ enum EndPoints {
   explorerCommunity('v1/community-posts?'),
   appointmentTypes('v1/appointment-types'),
   treatmentJourneyGroups('v1/treatment-journey-groups'),
+  updateTreatmentJourneyGroups('v1/treatment-journey-group'),
   shareTreatmentRequest('v1/share-treatment-request'),
   treatmentJourneyOptions('v1/treatment-journey-options'),
   clinic('v1/clinic');

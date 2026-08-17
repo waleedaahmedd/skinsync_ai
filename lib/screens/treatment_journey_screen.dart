@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../models/responses/groups_list_response.dart';
@@ -191,139 +192,164 @@ class _TreatmentJourneyScreenState
                 style: CustomFonts.grey16w400,
               ),
             )
-          : ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.symmetric(
-                horizontal: context.w(24),
-                vertical: context.h(20),
+          : SlidableAutoCloseBehavior(
+            child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(24),
+                  vertical: context.h(20),
+                ),
+                itemCount: state.groups.length,
+                itemBuilder: (context, index) {
+                  final group = state.groups[index];
+                  return _buildGroupCard(context, group,index);
+                },
               ),
-              itemCount: state.groups.length,
-              itemBuilder: (context, index) {
-                final group = state.groups[index];
-                return _buildGroupCard(context, group);
-              },
-            ),
+          ),
     );
   }
 
-  Widget _buildGroupCard(BuildContext context, TreatmentJourneyGroup group) {
-    return Container(
-      margin: EdgeInsets.only(bottom: context.h(16)),
-      decoration: BoxDecoration(
-        color: CustomColors.whiteColor,
-        borderRadius: BorderRadius.circular(context.r(16)),
-        border: Border.all(
-          color: CustomColors.greyColor.withValues(alpha: 0.5),
-          width: 1,
+  Widget _buildGroupCard(BuildContext context, TreatmentJourneyGroup group,int index) {
+    return Slidable(
+    key: ValueKey(group.id ?? 'group_$index'),
+     groupTag: 'treatment_journey_groups',  
+    endActionPane: ActionPane(
+      motion: const DrawerMotion(),
+      extentRatio: 0.22,
+      children: [
+        CustomSlidableAction(
+         alignment: .center,
+          onPressed: (_) {
+            if (group.id != null) {
+              ref.read(treatmentJourneyProvider.notifier).callDeleteGroup(group.id!);
+            }
+          },
+          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.white,
+         
+          padding: EdgeInsets.only(bottom: 10.h),
+          child:  Icon(Icons.delete_outline_rounded,color:Colors.red,size: 24.sp,),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+      ],
+    ),
+    child:  Container(
+        margin: EdgeInsets.only(bottom: context.h(16)),
+        decoration: BoxDecoration(
+          color: CustomColors.whiteColor,
+          borderRadius: BorderRadius.circular(context.r(16)),
+          border: Border.all(
+            color: CustomColors.greyColor.withValues(alpha: 0.5),
+            width: 1,
           ),
-        ],
-      ),
-      child: InkWell(
-        onTap: () async {
-          final messenger = ScaffoldMessenger.of(context);
-          if (group.id != null) {
-            ref.read(treatmentJourneyProvider.notifier).setGroup(group);
-          }
-          if (!isTreatmentJourney) {
-            final success = await ref
-                .read(treatmentJourneyProvider.notifier)
-                .fetchOptions(group.id!);
-            if (!mounted) return;
-            if (success ?? false) {
-              final result = await ref
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: InkWell(
+          onTap: () async {
+            final messenger = ScaffoldMessenger.of(context);
+            if (group.id != null) {
+              ref.read(treatmentJourneyProvider.notifier).setGroup(group);
+            }
+            if (!isTreatmentJourney) {
+              final success = await ref
                   .read(treatmentJourneyProvider.notifier)
-                  .createTjOptions();
+                  .fetchOptions(group.id!);
               if (!mounted) return;
-              if (result == true) {
-                Navigator.pop(context);
-
-                messenger.showSnackBar(
-                  SnackBar(
-                    content: const Text(
-                      'Your journey is ready! Tap the Journey button in the top-right corner to view it.',
+              if (success ?? false) {
+                final result = await ref
+                    .read(treatmentJourneyProvider.notifier)
+                    .createTjOptions();
+                if (!mounted) return;
+                if (result == true) {
+                  Navigator.pop(context);
+      
+                  messenger.showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                        'Your journey is ready! Tap the Journey button in the top-right corner to view it.',
+                      ),
+                      duration: const Duration(seconds: 30),
+                      behavior: SnackBarBehavior.floating,
+                      action: SnackBarAction(
+                        label: '✕',
+                        onPressed: () {
+                          messenger.hideCurrentSnackBar();
+                        },
+                      ),
                     ),
-                    duration: const Duration(seconds: 30),
-                    behavior: SnackBarBehavior.floating,
-                    action: SnackBarAction(
-                      label: '✕',
-                      onPressed: () {
-                        messenger.hideCurrentSnackBar();
-                      },
-                    ),
-                  ),
+                  );
+                }
+              }
+            } else {
+              final success = await ref
+                  .read(treatmentJourneyProvider.notifier)
+                  .fetchOptions(group.id!);
+              if (!mounted) return;
+              // EasyLoading.dismiss();
+      
+              if (success ?? false) {
+                Navigator.pushNamed(
+                  context,
+                  TreatmentJourneyDetailScreen.routeName,
+                  arguments: {'groupId': group.id, 'groupName': group.name},
                 );
               }
             }
-          } else {
-            final success = await ref
-                .read(treatmentJourneyProvider.notifier)
-                .fetchOptions(group.id!);
-            if (!mounted) return;
-            // EasyLoading.dismiss();
-
-            if (success ?? false) {
-              Navigator.pushNamed(
-                context,
-                TreatmentJourneyDetailScreen.routeName,
-                arguments: {'groupId': group.id, 'groupName': group.name},
-              );
-            }
-          }
-          // EasyLoading.show(status: 'Loading options...');
-        },
-        borderRadius: BorderRadius.circular(context.r(16)),
-        child: Padding(
-          padding: EdgeInsets.all(context.w(16)),
-          child: Row(
-            children: [
-              Container(
-                height: context.w(50),
-                width: context.w(50),
-                padding: EdgeInsets.all(
-                  context.w(1.5),
-                ), // Gradient Border thickness
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: CustomColors.purpleBlueGradient,
-                ),
-                child: Container(
-                  padding: EdgeInsets.all(context.w(8)),
+            // EasyLoading.show(status: 'Loading options...');
+          },
+          borderRadius: BorderRadius.circular(context.r(16)),
+          child: Padding(
+            padding: EdgeInsets.all(context.w(16)),
+            child: Row(
+              children: [
+                Container(
+                  height: context.w(50),
+                  width: context.w(50),
+                  padding: EdgeInsets.all(
+                    context.w(1.5),
+                  ), // Gradient Border thickness
                   decoration: const BoxDecoration(
-                    color: CustomColors.whiteColor,
                     shape: BoxShape.circle,
+                    gradient: CustomColors.purpleBlueGradient,
                   ),
-                  child: Image.asset(PngAssets.splashLogo, fit: BoxFit.contain),
-                ),
-              ),
-              SizedBox(width: context.w(16)),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      group.name ?? "Unnamed Journey",
-                      style: CustomFonts.black18w600,
+                  child: Container(
+                    padding: EdgeInsets.all(context.w(8)),
+                    decoration: const BoxDecoration(
+                      color: CustomColors.whiteColor,
+                      shape: BoxShape.circle,
                     ),
-                    SizedBox(height: context.h(4)),
-                    Text(
-                      "${group.totalOptions ?? 0} Simulations • ${group.createdAt?.formattedDate ?? ''}",
-                      style: CustomFonts.grey14w400,
-                    ),
-                  ],
+                    child: Image.asset(PngAssets.splashLogo, fit: BoxFit.contain),
+                  ),
                 ),
-              ),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: Colors.grey.shade400,
-                size: context.sp(24),
-              ),
-            ],
+                SizedBox(width: context.w(16)),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        group.name ?? "Unnamed Journey",
+                        style: CustomFonts.black18w600,
+                      ),
+                      SizedBox(height: context.h(4)),
+                      Text(
+                        "${group.totalOptions ?? 0} Simulations • ${group.createdAt?.formattedDate ?? ''}",
+                        style: CustomFonts.grey14w400,
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: Colors.grey.shade400,
+                  size: context.sp(24),
+                ),
+              ],
+            ),
           ),
         ),
       ),

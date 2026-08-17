@@ -17,4 +17,5 @@ abstract class TreatmentJourneyRepository {
     required ShareTreatmentRequest request,
   });
   Future<ClinicDetailResponse> getClinicDetail(int clinicId);
+  Future<BaseResponseModel> deleteGroup(int groupId);
 }
