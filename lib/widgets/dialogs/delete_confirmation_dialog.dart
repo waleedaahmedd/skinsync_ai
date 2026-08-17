@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
 
-import '../services/google_auth_service.dart';
-import '../utils/custom_fonts.dart';
-import 'custom_button.dart';
+import '../../utils/custom_fonts.dart';
+import '../custom_button.dart';
 
-void showLogoutDialog({
-  required BuildContext screenContext,
-  required String desc,
-  required Function onSuccess,
+void showDeleteConfirmationDialog({
+  required BuildContext context,
+  required String title,
+  required String description,
+  required VoidCallback onDelete,
+  String deleteButtonText = "Delete",
 }) {
   showDialog(
-    context: screenContext,
+    context: context,
     barrierDismissible: true,
     builder: (BuildContext context) {
       return Dialog(
@@ -28,7 +29,7 @@ void showLogoutDialog({
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Beautiful Red Warning Badge Icon
+              // Red Warning Badge Icon
               Container(
                 height: context.w(72),
                 width: context.w(72),
@@ -38,7 +39,7 @@ void showLogoutDialog({
                 ),
                 child: Center(
                   child: Icon(
-                    Iconsax.logout,
+                    Iconsax.trash,
                     size: context.sp(32),
                     color: const Color(0xffD72547),
                   ),
@@ -48,7 +49,7 @@ void showLogoutDialog({
 
               // Title
               Text(
-                "Logout?",
+                title,
                 textAlign: TextAlign.center,
                 style: CustomFonts.black20w600,
               ),
@@ -56,22 +57,21 @@ void showLogoutDialog({
 
               // Subtitle
               Text(
-                "Are you sure you want to log out from the application?",
+                description,
                 textAlign: TextAlign.center,
                 style: CustomFonts.textGrey14w400,
               ),
               SizedBox(height: context.h(28)),
 
-              // Logout Action Button
+              // Delete Action Button
               CustomButton(
                 textColor: Colors.white,
-                onPressed: () async {
+                onPressed: () {
                   Navigator.pop(context);
-                  await GoogleAuthService().logout();
-                  onSuccess();
+                  onDelete();
                 },
                 backgroundColor: const Color(0xffD72547),
-                text: "Logout",
+                text: deleteButtonText,
               ),
               SizedBox(height: context.h(15)),
 

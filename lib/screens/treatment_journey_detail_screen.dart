@@ -12,6 +12,7 @@ import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/dialogs/success_dialogs.dart';
 import '../widgets/medical_disclaimer_banner.dart';
+import '../widgets/custom_button.dart';
 import '../widgets/simulation_card.dart';
 import 'face_pose_capture_screen.dart';
 import 'journey_clinics_screen.dart';
@@ -132,6 +133,7 @@ class _TreatmentJourneyDetailScreenState
                       ? const Center(child: AppLoader())
                       : TabBarView(
                           controller: _tabController,
+                          physics: const NeverScrollableScrollPhysics(),
                           children: state.options.map((opt) {
                             return _buildSimulationsList(context, state);
                           }).toList(),
@@ -139,6 +141,26 @@ class _TreatmentJourneyDetailScreenState
                 ),
               ],
             ),
+    );
+  }
+
+  String _selectedSubTab = "Simulation";
+
+  Widget _buildSubTabButton(String title) {
+    final isSelected = _selectedSubTab == title;
+
+    return Expanded(
+      child: CustomButton(
+        text: title,
+        onPressed: () {
+          setState(() {
+            _selectedSubTab = title;
+          });
+        },
+        height: context.h(45),
+        borderRadius: context.r(100),
+        isBorder: !isSelected,
+      ),
     );
   }
 
@@ -164,10 +186,25 @@ class _TreatmentJourneyDetailScreenState
       child: Column(
         children: [
           const MedicalDisclaimerBanner(),
+          Padding(
+            padding: EdgeInsets.only(
+              top: context.h(10),
+              bottom: context.h(20),
+            ),
+            child: Row(
+              children: [
+                _buildSubTabButton("Simulation"),
+                SizedBox(width: context.w(12)),
+                _buildSubTabButton("Treatments"),
+              ],
+            ),
+          ),
           SimulationCard(
             sim: sim,
             price: state.price,
             showActionButton: true,
+            showImages: _selectedSubTab == "Simulation",
+            showTreatments: _selectedSubTab == "Treatments",
             actionButtonText: ref.watch(clinicProvider).clinicId != null
                 ? "Share this Option"
                 : "Select this Option",

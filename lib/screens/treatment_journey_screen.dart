@@ -13,6 +13,7 @@ import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/dialogs/delete_confirmation_dialog.dart';
 import 'treatment_journey_detail_screen.dart';
 
 class TreatmentJourneyScreen extends ConsumerStatefulWidget {
@@ -221,7 +222,14 @@ class _TreatmentJourneyScreenState
          alignment: .center,
           onPressed: (_) {
             if (group.id != null) {
-              ref.read(treatmentJourneyProvider.notifier).callDeleteGroup(group.id!);
+              showDeleteConfirmationDialog(
+                context: context,
+                title: "Delete Group?",
+                description: "Are you sure you want to delete '${group.name}'? This action cannot be undone.",
+                onDelete: () {
+                  ref.read(treatmentJourneyProvider.notifier).callDeleteGroup(group.id!);
+                },
+              );
             }
           },
           backgroundColor: Colors.transparent,

@@ -14,6 +14,8 @@ class CustomButton extends StatelessWidget {
   final double? height;
   final double? width;
   final double? borderRadius;
+  final bool isBorder;
+  final double borderWidth;
 
   const CustomButton({
     super.key,
@@ -26,79 +28,55 @@ class CustomButton extends StatelessWidget {
     this.height,
     this.width,
     this.borderRadius,
+    this.isBorder = false,
+    this.borderWidth = 2,
   });
 
   @override
   Widget build(BuildContext context) {
     final bool isDisabled = onPressed == null;
+    final double radiusValue = borderRadius ?? 40;
+    final BorderRadius radius = BorderRadius.circular(radiusValue);
 
     return SizedBox(
       height: height ?? context.h(52),
       width: width ?? double.infinity,
       child: Material(
-        type: .transparency,
+        type: MaterialType.transparency,
         child: InkWell(
-          borderRadius: BorderRadius.circular(borderRadius ?? 40),
-          onTap: isLoading ? null : onPressed,
+          borderRadius: radius,
+          onTap: isLoading || isDisabled ? null : onPressed,
           child: Container(
+            padding: isBorder ? EdgeInsets.all(borderWidth) : EdgeInsets.zero,
             decoration: BoxDecoration(
-              color: isDisabled ? CustomColors.greyColor : backgroundColor,
-              gradient: isDisabled
-                  ? null
-                  : (backgroundColor != null
-                        ? null
-                        : (gradient ?? CustomColors.purpleBlueGradient)),
-              borderRadius: BorderRadius.circular(borderRadius ?? 40),
-              boxShadow: isDisabled
-                  ? null
-                  : [
-                      // Outer glow
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.5),
-                        blurRadius: 30,
-                        spreadRadius: 1.r,
-                      ),
-                      // Soft white diffuse glow
-                      BoxShadow(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        blurRadius: 40,
-                        spreadRadius: 2.r,
-                      ),
-                    ],
+              borderRadius: radius,
+              color: isDisabled ? CustomColors.greyColor : (isBorder ? null : backgroundColor),
+              gradient: isDisabled ? null : (backgroundColor != null ? null : (gradient ?? CustomColors.purpleBlueGradient)),
+              boxShadow: isDisabled ? null : [
+                BoxShadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 10),
+                BoxShadow(color: Colors.white.withValues(alpha: 0.15), blurRadius: 10),
+              ],
             ),
-            child: Center(
-              child: isLoading
-                  ? const CircularProgressIndicator.adaptive()
-                  : Text(
-                      text,
-                      style: CustomFonts.black18w600.copyWith(
-                        color: isDisabled
-                            ? Colors.black.withValues(alpha: 0.45)
-                            : textColor,
+            child: Container(
+              decoration: BoxDecoration(
+                color: isBorder ? (backgroundColor ?? Colors.white) : Colors.transparent,
+                borderRadius: isBorder ? BorderRadius.circular(radiusValue - borderWidth) : radius,
+              ),
+              child: Center(
+                child: isLoading
+                    ? const CircularProgressIndicator.adaptive()
+                    : Text(
+                        text,
+                        style: CustomFonts.black18w600.copyWith(
+                          fontSize: context.sp(16),
+                          color: isDisabled ? Colors.black.withValues(alpha: 0.45) : textColor,
+                        ),
                       ),
-                    ),
+              ),
             ),
           ),
         ),
       ),
-      // child: ElevatedButton(
-      //   onPressed: isLoading ? null : onPressed,
-      //   style: ElevatedButton.styleFrom(
-      //     backgroundColor: backgroundColor,
-      //     foregroundColor: textColor,
-      //     elevation: backgroundColor == Colors.transparent ? 0 : 1,
-      //     shape: RoundedRectangleBorder(
-      //       borderRadius: BorderRadius.circular(borderRadius ?? context.r(25)),
-      //     ),
-      //     padding: EdgeInsets.zero,
-      //   ),
-      //   child: isLoading
-      //       ? CupertinoActivityIndicator(color: textColor)
-      //       : Text(
-      //           text,
-      //           style: CustomFonts.white16w600.copyWith(color: textColor),
-      //         ),
-      // ),
     );
   }
 }
