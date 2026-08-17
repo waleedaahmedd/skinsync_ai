@@ -63,7 +63,7 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage>
                 4 => const MyProfileScreen(),
                 int() => throw UnimplementedError(),
               },
-              if (index != 2)
+              if (index != 2 && index != 3)
                 Positioned(
                   bottom: 110.h + MediaQuery.paddingOf(context).bottom,
                   child: const ScanFaceButton(),
