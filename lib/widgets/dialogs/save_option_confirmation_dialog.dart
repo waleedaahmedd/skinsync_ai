@@ -4,7 +4,6 @@ import 'package:iconsax/iconsax.dart';
 
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
-import '../custom_bordered_button.dart';
 import '../custom_button.dart';
 
 void showSaveOptionConfirmationDialog({
@@ -81,8 +80,9 @@ void showSaveOptionConfirmationDialog({
               SizedBox(height: context.h(15)),
               SizedBox(
                 width: double.infinity,
-                child: CustomBorderedButton(
+                child: CustomButton(
                   text: "Cancel",
+                  isBorder: true,
                   onPressed: () {
                     Navigator.pop(context);
                   },

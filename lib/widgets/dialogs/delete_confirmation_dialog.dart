@@ -3,7 +3,6 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../utils/custom_fonts.dart';
-import '../custom_bordered_button.dart';
 import '../custom_button.dart';
 
 void showDeleteConfirmationDialog({
@@ -79,8 +78,9 @@ void showDeleteConfirmationDialog({
               // Cancel Button
               SizedBox(
                 width: double.infinity,
-                child: CustomBorderedButton(
+                child: CustomButton(
                   text: "Cancel",
+                  isBorder: true,
                   onPressed: () {
                     Navigator.pop(context);
                   },

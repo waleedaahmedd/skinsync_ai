@@ -24,7 +24,7 @@ import '../view_models/treatment_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/bottom_sheets/material_level_sheet.dart';
 import '../widgets/custom_app_bar.dart';
-import '../widgets/custom_bordered_button.dart';
+import '../widgets/custom_button.dart';
 import '../widgets/dialogs/save_option_confirmation_dialog.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/selected_treatments_summary_card.dart';
@@ -459,10 +459,10 @@ class _ArFaceModelPreviewScreenState
               Expanded(
                 child: ScaleTransition(
                   scale: _pulseAnimation,
-                  child: CustomBorderedButton(
+                  child: CustomButton(
                     text: "Generate Ai Image",
+                    isBorder: true,
                     borderRadius: context.r(30),
-                    //borderColor: CustomColors.blackColor,
                     textColor: CustomColors.blackColor,
                     height: context.h(58),
                     onPressed: () {
@@ -487,8 +487,9 @@ class _ArFaceModelPreviewScreenState
                   return Expanded(
                     child: ScaleTransition(
                       scale: _pulseAnimation,
-                      child: CustomBorderedButton(
+                      child: CustomButton(
                         onPressed: _onSaveOptionPressed,
+                        isBorder: true,
                         text: "Save Option",
                         borderRadius: context.r(30),
                         textColor: CustomColors.blackColor,

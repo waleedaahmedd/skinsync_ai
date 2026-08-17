@@ -22,7 +22,6 @@ import '../../utils/tts_utils.dart';
 import '../../view_models/treatment_view_model.dart';
 import '../../widgets/app_loader.dart';
 import '../../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
-import '../../widgets/custom_bordered_button.dart';
 import '../../widgets/custom_button.dart';
 
 class FaceDetectionScreen extends ConsumerStatefulWidget {
@@ -550,7 +549,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                   children: [
                     // Recapture button
                     Expanded(
-                      child: CustomBorderedButton(
+                      child: CustomButton(
+                        isBorder: true,
                         onPressed: () {
                           Navigator.pop(context);
                           setState(() {
@@ -565,25 +565,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                             );
                           }
                         },
-                        // style: OutlinedButton.styleFrom(
-                        //   padding: EdgeInsets.symmetric(
-                        //     vertical: context.h(16),
-                        //   ),
-                        //   side: const BorderSide(
-                        //     color: CustomColors.purpleColor,
-                        //     width: 2,
-                        //   ),
-                        //   shape: RoundedRectangleBorder(
-                        //     borderRadius: BorderRadius.circular(context.r(12)),
-                        //   ),
-                        // ),
-                        text:
-                            // Text(
-                            "Recapture",
-                        // style: CustomFonts.black18w600.copyWith(
-                        //   color: CustomColors.purpleColor,
-                        // ),
-                        // ),
+                        text: "Recapture",
                       ),
                     ),
                     SizedBox(width: context.w(16)),

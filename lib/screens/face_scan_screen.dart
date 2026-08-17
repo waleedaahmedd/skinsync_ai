@@ -4,7 +4,6 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
-import '../widgets/custom_bordered_button.dart';
 import '../widgets/custom_button.dart';
 import 'bottom_nav_page.dart';
 import 'bottom_nav_screens/face_detection_screen.dart';
@@ -131,8 +130,9 @@ class FaceScanScreen extends StatelessWidget {
                     ),
                     SizedBox(height: context.h(20)),
                     if (isFront && pose == 'front')
-                      CustomBorderedButton(
+                      CustomButton(
                         text: " Explore Clinics",
+                        isBorder: true,
                         onPressed: () {
                           Navigator.pushNamedAndRemoveUntil(
                             context,

@@ -13,7 +13,6 @@ import '../widgets/custom_app_bar.dart';
 import '../widgets/dialogs/success_dialogs.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/custom_button.dart';
-import '../widgets/custom_bordered_button.dart';
 import '../widgets/simulation_card.dart';
 import 'face_pose_capture_screen.dart';
 import 'journey_clinics_screen.dart';
@@ -161,27 +160,19 @@ class _TreatmentJourneyDetailScreenState
 
   Widget _buildSubTabButton(String title) {
     final isSelected = _selectedSubTab == title;
-    final onPressed = () {
-      setState(() {
-        _selectedSubTab = title;
-      });
-    };
 
     return Expanded(
-      child: isSelected
-          ? CustomButton(
-              text: title,
-              onPressed: onPressed,
-              height: context.h(45),
-              borderRadius: context.r(100),
-            )
-          : CustomBorderedButton(
-              text: title,
-              onPressed: onPressed,
-              height: context.h(45),
-              borderRadius: context.r(100),
-              textColor: Colors.black,
-            ),
+      child: CustomButton(
+        text: title,
+        onPressed: () {
+          setState(() {
+            _selectedSubTab = title;
+          });
+        },
+        height: context.h(45),
+        borderRadius: context.r(100),
+        isBorder: !isSelected,
+      ),
     );
   }
 

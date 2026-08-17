@@ -4,7 +4,6 @@ import 'package:iconsax/iconsax.dart';
 
 import '../services/google_auth_service.dart';
 import '../utils/custom_fonts.dart';
-import 'custom_bordered_button.dart';
 import 'custom_button.dart';
 
 void showLogoutDialog({
@@ -79,33 +78,13 @@ void showLogoutDialog({
               // Cancel Button
               SizedBox(
                 width: double.infinity,
-                child:CustomBorderedButton(
+                child: CustomButton(
                   text: "Cancel",
+                  isBorder: true,
                   onPressed: () {
                     Navigator.pop(context);
                   },
                 ),
-                //  OutlinedButton(
-                //   onPressed: () {
-                //     Navigator.pop(context);
-                //   },
-                //   style: OutlinedButton.styleFrom(
-                //     padding: EdgeInsets
-                //         .zero, // Zero padding prevents vertical text clipping
-                //     side: BorderSide(color: Colors.grey.shade300),
-                //     shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(context.r(26)),
-                //     ),
-                //   ),
-                //   child: Text(
-                //     "Cancel",
-                //     style: CustomFonts.black14w600.copyWith(
-                //       color: Colors.black54,
-                //     ),
-                //     textAlign: TextAlign.center,
-                //   ),
-                // ),
-             
               ),
             ],
           ),
