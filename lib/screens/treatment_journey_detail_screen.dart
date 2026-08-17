@@ -10,6 +10,7 @@ import '../view_models/treatment_journey_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/dialogs/delete_confirmation_dialog.dart';
 import '../widgets/dialogs/success_dialogs.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/custom_button.dart';
@@ -117,7 +118,7 @@ class _TreatmentJourneyDetailScreenState
                 TabBar(
                   controller: _tabController,
                   isScrollable: state.options.length > 3,
-                  indicatorColor: CustomColors.darkPurple,
+                  indicatorColor: CustomColors.lightBlueColor,
                   indicatorSize: TabBarIndicatorSize.label,
                   labelColor: Colors.black,
                   unselectedLabelColor: Colors.grey.shade500,
@@ -205,6 +206,22 @@ class _TreatmentJourneyDetailScreenState
             showActionButton: true,
             showImages: _selectedSubTab == "Simulation",
             showTreatments: _selectedSubTab == "Treatments",
+            onDelete: () {
+              final currentOption = state.options[_tabController?.index ?? 0];
+              if (currentOption.id != null) {
+                showDeleteConfirmationDialog(
+                  context: context,
+                  title: "Delete Option?",
+                  description:
+                      "Are you sure you want to delete '${currentOption.name}'? This action cannot be undone.",
+                  onDelete: () {
+                    ref
+                        .read(treatmentJourneyProvider.notifier)
+                        .callDeleteOption(currentOption.id!);
+                  },
+                );
+              }
+            },
             actionButtonText: ref.watch(clinicProvider).clinicId != null
                 ? "Share this Option"
                 : "Select this Option",

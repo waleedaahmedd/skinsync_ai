@@ -23,6 +23,7 @@ class SimulationCard extends ConsumerStatefulWidget {
   final String? price;
   final bool showImages;
   final bool showTreatments;
+  final VoidCallback? onDelete;
 
   const SimulationCard({
     super.key,
@@ -33,6 +34,7 @@ class SimulationCard extends ConsumerStatefulWidget {
     this.price,
     this.showImages = true,
     this.showTreatments = true,
+    this.onDelete,
   });
 
   @override
@@ -64,24 +66,42 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (widget.sim.createdAt != null)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Created at:",
-                  style: CustomFonts.grey13w400,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (widget.sim.createdAt != null)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Created at:",
+                      style: CustomFonts.grey13w400,
+                    ),
+                    SizedBox(width: context.w(8)),
+                    Text(
+                      widget.sim.createdAt!.formattedDateTime,
+                      style: CustomFonts.grey13w400,
+                    ),
+                  ],
                 ),
-                Text(
-                  widget.sim.createdAt!.formattedDateTime,
-                  style: CustomFonts.grey13w400,
+              if (widget.onDelete != null)
+                IconButton(
+                  onPressed: widget.onDelete,
+                  icon: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: Colors.red,
+                    size: 22,
+                  ),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  visualDensity: VisualDensity.compact,
                 ),
-              ],
-            ),
+            ],
+          ),
           if (widget.showImages) ...[
             SizedBox(height: context.h(12)),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
                   padding: EdgeInsets.symmetric(
@@ -99,9 +119,7 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                         _isComparisonMode ? "Slider View" : "Side by Side",
                         style: CustomFonts.black14w600.copyWith(
                           fontSize: context.sp(12),
-                          color: _isComparisonMode
-                              ? CustomColors.darkPurple
-                              : CustomColors.textGreyColor,
+                          color: Colors.black,
                         ),
                       ),
                       SizedBox(width: context.w(4)),
@@ -109,7 +127,7 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                         scale: 0.7,
                         child: Switch.adaptive(
                           value: _isComparisonMode,
-                          activeTrackColor: CustomColors.purpleColor,
+                          activeTrackColor: CustomColors.lightBlueColor,
                           activeThumbColor: Colors.white,
                           inactiveTrackColor: Colors.grey.shade300,
                           onChanged: (val) {

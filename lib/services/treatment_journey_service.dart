@@ -167,8 +167,26 @@ class TreatmentJourneyService implements TreatmentJourneyRepository {
     } else {
       final parsed = json.decode(response.body);
       throw AppException(
-        AuthResponse.fromJson(parsed).message ??
-            "Failed to fetch clinic detail",
+        AuthResponse.fromJson(parsed).message ?? "Failed to delete group",
+      );
+    }
+  }
+
+  @override
+  Future<BaseResponseModel> deleteOption(int optionId) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.treatmentJourneyOptions,
+      requestType: RequestType.delete,
+      params: "/$optionId",
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      return BaseResponseModel.fromJson(parsed);
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(
+        AuthResponse.fromJson(parsed).message ?? "Failed to delete option",
       );
     }
   }

@@ -18,4 +18,5 @@ abstract class TreatmentJourneyRepository {
   });
   Future<ClinicDetailResponse> getClinicDetail(int clinicId);
   Future<BaseResponseModel> deleteGroup(int groupId);
+  Future<BaseResponseModel> deleteOption(int optionId);
 }
