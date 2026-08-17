@@ -593,35 +593,61 @@ class _ArFaceModelPreviewScreenState
       builder: (context, ref, _) {
         final state = ref.watch(treatmentViewModel);
 
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: context.w(20)),
-          child: Row(
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: context.w(15)),
+          padding: EdgeInsets.all(context.w(12)),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(context.r(24)),
+            border: Border.all(
+              color: CustomColors.lightBlueColor.withValues(alpha: 0.3),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.04),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: _poseChip(
-                  "Front View",
-                  'front',
-                  state.frontPoseImage != null,
-                  Icons.face_unlock_rounded,
+              Padding(
+                padding: EdgeInsets.only(
+                  left: context.w(4),
+                  bottom: context.h(12),
+                ),
+                child: Text(
+                  "Choose a face view below to compare your before and after results",
+                  style: CustomFonts.black14w600.copyWith(
+                    color: Colors.black,
+                    letterSpacing: 0.2,
+                    height: 1.2,
+                  ),
                 ),
               ),
-              SizedBox(width: context.w(10)),
-              Expanded(
-                child: _poseChip(
-                  "Left Profile",
-                  'left',
-                  state.leftPoseImage != null,
-                  Icons.person_pin_circle_outlined,
-                ),
-              ),
-              SizedBox(width: context.w(10)),
-              Expanded(
-                child: _poseChip(
-                  "Right Profile",
-                  'right',
-                  state.rightPoseImage != null,
-                  Icons.person_pin_circle_outlined,
-                ),
+              Row(
+                children: [
+                  _poseChip(
+                    "Front View",
+                    'front',
+                    state.frontPoseImage != null,
+                  ),
+                  SizedBox(width: context.w(10)),
+                  _poseChip(
+                    "Left View",
+                    'left',
+                    state.leftPoseImage != null,
+                  ),
+                  SizedBox(width: context.w(10)),
+                  _poseChip(
+                    "Right View",
+                    'right',
+                    state.rightPoseImage != null,
+                  ),
+                ],
               ),
             ],
           ),
@@ -630,59 +656,34 @@ class _ArFaceModelPreviewScreenState
     );
   }
 
-  Widget _poseChip(String label, String value, bool hasImage, IconData icon) {
+  Widget _poseChip(String label, String value, bool hasImage) {
     final isSelected = _selectedPose == value;
     final bool canTap = hasImage;
 
-    return GestureDetector(
-      onTap: canTap ? () => setState(() => _selectedPose = value) : null,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeInOut,
-        padding: EdgeInsets.symmetric(vertical: context.h(12)),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? CustomColors.purpleColor
-              : CustomColors.lightPurpleColor.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(context.r(16)),
-          border: Border.all(
-            color: isSelected ? CustomColors.purpleColor : Colors.transparent,
-            width: 1.5,
+    return Expanded(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CustomButton(
+            text: label,
+            onPressed:
+                canTap ? () => setState(() => _selectedPose = value) : null,
+            height: context.h(42),
+            borderRadius: context.r(100),
+            isBorder: !isSelected,
+            textColor: Colors.black,
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: CustomColors.purpleColor.withValues(alpha: 0.25),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : null,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: context.sp(20),
-              color: isSelected
-                  ? Colors.white
-                  : (canTap ? Colors.black54 : Colors.grey.shade300),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            margin: EdgeInsets.only(top: context.h(8)),
+            height: context.h(3),
+            width: isSelected ? context.w(30) : 0,
+            decoration: BoxDecoration(
+              color: CustomColors.lightBlueColor,
+              borderRadius: BorderRadius.circular(context.r(2)),
             ),
-            SizedBox(height: context.h(6)),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: CustomFonts.black12w600.copyWith(
-                fontSize: context.sp(10),
-                letterSpacing: 0.5,
-                color: isSelected
-                    ? Colors.white
-                    : (canTap ? Colors.black87 : Colors.grey.shade300),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -56,7 +56,7 @@ class RequestClinicTreatmentCard extends StatelessWidget {
                         errorIcon: Iconsax.user,
                       )
                     : Container(
-                        color: theme.primaryColor.withOpacity(0.08),
+                        color: theme.primaryColor.withValues(alpha: 0.08),
                         child: Icon(
                           Iconsax.user,
                           size: 25,

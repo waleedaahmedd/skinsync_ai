@@ -123,6 +123,21 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     });
   }
 
+  Future<bool?> callDeleteOption(int optionId) async {
+    return await runSafely(() async {
+      EasyLoading.show(status: 'Deleting Option...');
+      final response = await _repo.deleteOption(optionId);
+      if (!ref.mounted) return null;
+      if (response.isSuccess == true) {
+        if (state.selectedGroup?.id != null) {
+          await fetchOptions(state.selectedGroup!.id!);
+        }
+      }
+      EasyLoading.dismiss();
+      return true;
+    });
+  }
+
   void setGroup(TreatmentJourneyGroup group) {
     state = state.copyWith(selectedGroup: group);
   }

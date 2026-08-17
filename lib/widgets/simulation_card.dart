@@ -26,6 +26,7 @@ class SimulationCard extends ConsumerStatefulWidget {
   final String? price;
   final bool showImages;
   final bool showTreatments;
+  final VoidCallback? onDelete;
 
   const SimulationCard({
     super.key,
@@ -35,7 +36,7 @@ class SimulationCard extends ConsumerStatefulWidget {
     this.onActionButtonPressed,
     this.price,
     this.showImages = true,
-    this.showTreatments = true,
+    this.showTreatments = true, this.onDelete,
   });
 
   @override
@@ -67,21 +68,42 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (widget.sim.createdAt != null)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Created at:", style: CustomFonts.grey13w400),
-                Text(
-                  widget.sim.createdAt!.formattedDateTime,
-                  style: CustomFonts.grey13w400,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (widget.sim.createdAt != null)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Created at:",
+                      style: CustomFonts.grey13w400,
+                    ),
+                    SizedBox(width: context.w(8)),
+                    Text(
+                      widget.sim.createdAt!.formattedDateTime,
+                      style: CustomFonts.grey13w400,
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              if (widget.onDelete != null)
+                IconButton(
+                  onPressed: widget.onDelete,
+                  icon: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: Colors.red,
+                    size: 22,
+                  ),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  visualDensity: VisualDensity.compact,
+                ),
+            ],
+          ),
           if (widget.showImages) ...[
             SizedBox(height: context.h(12)),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
                   padding: EdgeInsets.symmetric(
@@ -99,9 +121,7 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                         _isComparisonMode ? "Slider View" : "Side by Side",
                         style: CustomFonts.black14w600.copyWith(
                           fontSize: context.sp(12),
-                          color: _isComparisonMode
-                              ? CustomColors.darkPurple
-                              : CustomColors.textGreyColor,
+                          color: Colors.black,
                         ),
                       ),
                       SizedBox(width: context.w(4)),
@@ -109,7 +129,7 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                         scale: 0.7,
                         child: Switch.adaptive(
                           value: _isComparisonMode,
-                          activeTrackColor: CustomColors.purpleColor,
+                          activeTrackColor: CustomColors.lightBlueColor,
                           activeThumbColor: Colors.white,
                           inactiveTrackColor: Colors.grey.shade300,
                           onChanged: (val) {
@@ -150,16 +170,25 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
             SizedBox(height: context.h(12)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: widget.sim.treatments!.map((treatment) {
+              children: List.generate(widget.sim.treatments!.length, (index) {
+                final treatment = widget.sim.treatments![index];
                 return Padding(
-                  padding: EdgeInsets.only(bottom: context.h(12)),
+                  padding: EdgeInsets.only(bottom: context.h(16)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: context.h(8)),
+                        child: Text(
+                          "Treatment - ${index + 1}",
+                          style: CustomFonts.black18w600.copyWith(
+                            fontSize: context.sp(16),
+                          ),
+                        ),
+                      ),
                       // Treatment chip - visibility icon, tap opens TreatmentDetailScreen
                       SimulationTreatmentAreaChip(
-                        icon: treatment
-                            .icon, // adjust field name if different on your model
+                        icon: treatment.icon,
                         label: treatment.name ?? "Unnamed Treatment",
                         isTreatment: true,
                         imageUrl: treatment.image,
@@ -180,8 +209,21 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                           );
                         },
                       ),
-                      SizedBox(height: context.h(6)),
-                      if (treatment.areas != null)
+                      if (treatment.areas != null &&
+                          treatment.areas!.isNotEmpty) ...[
+                        SizedBox(height: context.h(16)),
+                        Padding(
+                          padding: EdgeInsets.only(
+                            left: context.w(4),
+                            bottom: context.h(10),
+                          ),
+                          child: Text(
+                            "Selected Areas",
+                            style: CustomFonts.black14w600.copyWith(
+                              color: Colors.grey.shade700,
+                            ),
+                          ),
+                        ),
                         Wrap(
                           spacing: context.w(8),
                           runSpacing: context.h(5),
@@ -195,8 +237,7 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                                 0;
 
                             return SimulationTreatmentAreaChip(
-                              icon: area
-                                  .icon, // adjust field name if different on your model
+                              icon: area.icon,
                               label: area.name ?? "",
                               isTreatment: false,
                               materialCount: materialCount,
@@ -204,10 +245,11 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                             );
                           }).toList(),
                         ),
+                      ],
                     ],
                   ),
                 );
-              }).toList(),
+              }),
             ),
           ],
           if (widget.price != null) ...[
@@ -366,8 +408,9 @@ class _ComparisonViewState extends State<_ComparisonView> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.before == null || widget.after == null)
+    if (widget.before == null || widget.after == null) {
       return const SizedBox.shrink();
+    }
 
     return Container(
       decoration: BoxDecoration(

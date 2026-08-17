@@ -26,6 +26,7 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
 
   Widget _buildIcon(BuildContext context) {
     final size = context.w(32);
+    final size = context.w(32);
     final hasIcon = icon != null && icon!.isNotEmpty;
 
     if (!hasIcon) {
@@ -33,6 +34,7 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
         PngAssets.splashLogo,
         width: size,
         height: size,
+        fit: BoxFit.contain,
         fit: BoxFit.contain,
       );
     }
@@ -42,6 +44,7 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
 
     if (isNetwork) {
       return ClipRRect(
+        borderRadius: BorderRadius.circular(context.r(8)),
         borderRadius: BorderRadius.circular(context.r(8)),
         child: AppNetworkImage(
           imageUrl: icon!,
@@ -55,16 +58,17 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
       );
     }
 
-    // Local asset path - fall back to splashLogo if it fails/breaks.
     return Image.asset(
       icon!,
       width: size,
       height: size,
       fit: BoxFit.contain,
+      fit: BoxFit.contain,
       errorBuilder: (context, error, stackTrace) => Image.asset(
         PngAssets.splashLogo,
         width: size,
         height: size,
+        fit: BoxFit.contain,
         fit: BoxFit.contain,
       ),
     );
@@ -73,6 +77,8 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
   Widget? _buildTrailing(BuildContext context) {
     if (isTreatment) {
       return Icon(
+        Icons.info_outline_rounded,
+        size: context.sp(18),
         Icons.info_outline_rounded,
         size: context.sp(18),
         color: CustomColors.darkPurple,
