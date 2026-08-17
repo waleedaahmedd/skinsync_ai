@@ -305,6 +305,8 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
               SizedBox(height: context.h(28)),
+            
+             
               // Treatment Requests Section
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
@@ -318,33 +320,42 @@ class HomeScreen extends ConsumerWidget {
 
               SizedBox(height: context.h(16)),
 
-              SizedBox(
-                height: context.h(150),
-                child: ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-                  scrollDirection: Axis.horizontal,
-                  itemCount: dummyTreatmentRequests.length,
-                  itemBuilder: (context, index) {
-                    final request = dummyTreatmentRequests[index];
+              // Treatment Requests Empty State Check
+              (dashboard?.requestTreatmentClinic?.isEmpty ?? true)
+                  ? _buildHorizontalEmptyState(
+                      context: context,
+                      height: context.h(100),
+                      icon: Icons.request_page_outlined,
+                      title: "No Treatment Requests",
+                      subtitle:
+                          "Treatment requests will appear here.",
+                    )
+                  : SizedBox(
+                      height: context.h(150),
+                      child: ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                        scrollDirection: Axis.horizontal,
+                        itemCount: dashboard!.requestTreatmentClinic!.length,
+                        itemBuilder: (context, index) {
+                          final request = dashboard.requestTreatmentClinic![index];
 
-                    return Padding(
-                      padding: EdgeInsets.only(
-                        right: index == dummyTreatmentRequests.length - 1
-                            ? 0
-                            : context.w(12),
-                      ),
-                      child: RequestClinicTreatmentCard(
-                        data: request,
-                        onTap: () {
-                          // Handle treatment request tap
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              right: index == dashboard.requestTreatmentClinic!.length - 1
+                                  ? 0
+                                  : context.w(12),
+                            ),
+                            child: RequestClinicTreatmentCard(
+                              data: request,
+                              onTap: () {
+                                // Handle treatment request tap
+                              },
+                            ),
+                          );
                         },
                       ),
-                    );
-                  },
-                ),
-              ),
-
+                    ),
               SizedBox(height: context.h(28)),
               SizedBox(height: context.h(28)),
 
