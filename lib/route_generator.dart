@@ -34,6 +34,7 @@ import 'screens/login_screen.dart';
 import 'screens/notes_screen.dart';
 import 'screens/notification_screen.dart';
 import 'screens/otp_screen.dart';
+import 'screens/patient_treatment_requests_screen.dart';
 import 'screens/payment_screen.dart';
 import 'screens/personal_detail_screen.dart';
 import 'screens/progress_detail_screen.dart';
@@ -340,6 +341,15 @@ class RouteGenerator {
             name: TreatmentJourneyScreen.routeName,
           ),
           builder: (_) => TreatmentJourneyScreen(isTreatmentJourney: arg),
+        );
+      case PatientTreatmentRequestsScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(
+            name: PatientTreatmentRequestsScreen.routeName,
+          ),
+          builder: (_) => PatientTreatmentRequestsScreen(
+            clinicId: args as int,
+          ),
         );
       case TreatmentJourneyDetailScreen.routeName:
         final argsMap = args as Map<String, dynamic>;
