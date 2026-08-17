@@ -6,7 +6,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../models/responses/simulation_history_response.dart';
+import '../models/responses/treatment_list_response.dart';
 import '../screens/ar_face_model_preview_screen.dart';
+import '../screens/treatment_detail_screen.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
@@ -14,6 +16,7 @@ import '../utils/date_time_utils.dart';
 import '../view_models/treatment_view_model.dart';
 import 'custom_app_bar.dart';
 import 'custom_button.dart';
+import 'simulation_treatment_area_chip.widget.dart';
 
 class SimulationCard extends ConsumerStatefulWidget {
   final SimulationData sim;
@@ -68,10 +71,7 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "Created at:",
-                  style: CustomFonts.grey13w400,
-                ),
+                Text("Created at:", style: CustomFonts.grey13w400),
                 Text(
                   widget.sim.createdAt!.formattedDateTime,
                   style: CustomFonts.grey13w400,
@@ -156,9 +156,28 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        treatment.name ?? "Unnamed Treatment",
-                        style: CustomFonts.black14w600,
+                      // Treatment chip - visibility icon, tap opens TreatmentDetailScreen
+                      SimulationTreatmentAreaChip(
+                        icon: treatment
+                            .icon, // adjust field name if different on your model
+                        label: treatment.name ?? "Unnamed Treatment",
+                        isTreatment: true,
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            TreatmentDetailScreen.routeName,
+                            arguments: TreatmentData(
+                              id: treatment.id,
+                              name: treatment.name,
+                              icon: treatment.icon,
+                              description: treatment.description,
+                              shortDescription: treatment.description,
+                              image: treatment.image,
+                              imageUrl: treatment.image,
+                              isArea: true,
+                            ),
+                          );
+                        },
                       ),
                       SizedBox(height: context.h(6)),
                       if (treatment.areas != null)
@@ -166,35 +185,20 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                           spacing: context.w(8),
                           runSpacing: context.h(5),
                           children: treatment.areas!.map((area) {
-                            String materialInfo = "";
-                            if (area.materials != null &&
-                                area.materials!.isNotEmpty) {
-                              final filteredMaterials = area.materials!
-                                  .where((m) => (m.selectedQuantity ?? 0) > 0)
-                                  .toList();
-                              if (filteredMaterials.isNotEmpty) {
-                                materialInfo = filteredMaterials
-                                    .map((m) =>
-                                        "${m.name}: ${m.selectedQuantity}")
-                                    .join(", ");
-                                materialInfo = " ($materialInfo)";
-                              }
-                            }
-                            return Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: context.w(10),
-                                vertical: context.h(4),
-                              ),
-                              decoration: BoxDecoration(
-                                color: CustomColors.greyColor
-                                    .withValues(alpha: 0.3),
-                                borderRadius:
-                                    BorderRadius.circular(context.r(20)),
-                              ),
-                              child: Text(
-                                "${area.name}$materialInfo",
-                                style: CustomFonts.black12w500,
-                              ),
+                            final materialCount =
+                                area.materials
+                                    ?.where(
+                                      (m) => (m.selectedQuantity ?? 0) > 0,
+                                    )
+                                    .length ??
+                                0;
+
+                            return SimulationTreatmentAreaChip(
+                              icon: area
+                                  .icon, // adjust field name if different on your model
+                              label: area.name ?? "",
+                              isTreatment: false,
+                              materialCount: materialCount,
                             );
                           }).toList(),
                         ),
@@ -360,7 +364,8 @@ class _ComparisonViewState extends State<_ComparisonView> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.before == null || widget.after == null) return const SizedBox.shrink();
+    if (widget.before == null || widget.after == null)
+      return const SizedBox.shrink();
 
     return Container(
       decoration: BoxDecoration(
@@ -393,12 +398,20 @@ class _ComparisonViewState extends State<_ComparisonView> {
             Positioned(
               top: context.h(12),
               left: context.w(12),
-              child: _buildBadge(context, "BEFORE", Colors.black.withValues(alpha: 0.6)),
+              child: _buildBadge(
+                context,
+                "BEFORE",
+                Colors.black.withValues(alpha: 0.6),
+              ),
             ),
             Positioned(
               top: context.h(12),
               right: context.w(12),
-              child: _buildBadge(context, "AFTER", Colors.black.withValues(alpha: 0.6)),
+              child: _buildBadge(
+                context,
+                "AFTER",
+                Colors.black.withValues(alpha: 0.6),
+              ),
             ),
           ],
         ),
