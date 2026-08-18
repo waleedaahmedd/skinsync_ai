@@ -14,7 +14,7 @@ import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/simulation_card.dart';
 import 'face_pose_capture_screen.dart';
 
-class SimulationHistoryScreen extends ConsumerStatefulWidget {
+  class SimulationHistoryScreen extends ConsumerStatefulWidget {
   static const String routeName = "/simulation_history_screen";
   const SimulationHistoryScreen({super.key});
 

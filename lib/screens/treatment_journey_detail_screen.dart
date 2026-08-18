@@ -163,31 +163,6 @@ class _TreatmentJourneyDetailScreenState
         spacing: 10.w,
         children: [
           Expanded(
-            child: CustomButton(
-              text: "Share this Option",
-              onPressed: () async {
-                final currentOptionId =
-                    state.options[_tabController?.index ?? 0].id;
-                if (currentOptionId != null) {
-                  ref
-                      .read(treatmentJourneyProvider.notifier)
-                      .setOptionId(currentOptionId);
-                }
-                final clinicId = ref.read(clinicProvider).clinicId;
-                if (clinicId != null) {
-                  final result = await ref
-                      .read(treatmentJourneyProvider.notifier)
-                      .callShareTreatmentRequest();
-                  if (result == true) {
-                    showShareJourneySuccessDialog(context);
-                  }
-                } else {
-                  Navigator.pushNamed(context, JourneyClinicsScreen.routeName);
-                }
-              },
-            ),
-          ),
-          Expanded(
             child: Consumer(
               builder: (context, ref, _) {
                 final capturedImagesNull = ref.watch(
@@ -217,6 +192,32 @@ class _TreatmentJourneyDetailScreenState
               },
             ),
           ),
+          Expanded(
+            child: CustomButton(
+              text: "Share this Option",
+              onPressed: () async {
+                final currentOptionId =
+                    state.options[_tabController?.index ?? 0].id;
+                if (currentOptionId != null) {
+                  ref
+                      .read(treatmentJourneyProvider.notifier)
+                      .setOptionId(currentOptionId);
+                }
+                final clinicId = ref.read(clinicProvider).clinicId;
+                if (clinicId != null) {
+                  final result = await ref
+                      .read(treatmentJourneyProvider.notifier)
+                      .callShareTreatmentRequest();
+                  if (result == true) {
+                    showShareJourneySuccessDialog(context);
+                  }
+                } else {
+                  Navigator.pushNamed(context, JourneyClinicsScreen.routeName);
+                }
+              },
+            ),
+          ),
+
         ],
       ),
     );
