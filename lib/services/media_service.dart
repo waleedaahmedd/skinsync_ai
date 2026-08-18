@@ -13,7 +13,7 @@ import '../main.dart';
 
 class MediaService {
   final _storage = FirebaseStorage.instance;
-  static const int maxSizeBytes = 700 * 1024; // 700KB limit for faster uploads
+  static const int maxSizeBytes = 1024 * 1024; // 700KB limit for faster uploads
 
   static MediaService? _instance;
 
@@ -221,16 +221,19 @@ class MediaService {
   }
 
   Future<Uint8List> _compressImage(Uint8List data) async {
+    Uint8List result = data;
+    int quality = 90;
     log('ORIGINAL SIZE: ${data.length}');
-    if (data.length <= maxSizeBytes) return data;
 
-    // Single step compression for speed
-    final result = await FlutterImageCompress.compressWithList(
-      data,
-      format: CompressFormat.jpeg,
-      quality: 70,
-    );
-    log('COMPRESSED SIZE: ${result.length}');
+    while (result.length > maxSizeBytes && quality >= 10) {
+      result = await FlutterImageCompress.compressWithList(
+        data,
+        format: CompressFormat.jpeg,
+        quality: quality,
+      );
+      log('COMPRESSION ITERATION - QUALITY: $quality, SIZE: ${result.length}');
+      quality -= 10;
+    }
     return result;
   }
 }

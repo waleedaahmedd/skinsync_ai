@@ -323,7 +323,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   }
 
   Future<bool?> callGoogleSignInApi() async {
-    String type = Platform.isIOS ? 'apple' : 'android';
     return await runSafely<bool>(() async {
       state = state.copyWith(loading: true);
       final savedEmail = await SecureStorage().getUserEmail();
@@ -332,6 +331,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
       String? fcmToken = await _getFcmToken();
 
       log("google sign IDToken ${idToken.toString}");
+      String type = Platform.isIOS ? 'apple' : 'android';
       final AuthResponse response = await _authRepository.googleSignInApi(
         request: SocialLoginRequest(
           deviceType: type,
