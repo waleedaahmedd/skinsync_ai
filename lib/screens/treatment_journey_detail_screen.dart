@@ -89,7 +89,7 @@ class _TreatmentJourneyDetailScreenState
                   ref.read(checkoutViewModel.notifier).clearState();
                   ref
                       .read(treatmentViewModel.notifier)
-                      .clearAllSelectedTreatments();
+                      .clearAllSelectedTreatments(capturedImage: true);
                   ref.read(treatmentViewModel.notifier).clearAiImage();
                   Navigator.of(
                     context,
@@ -188,22 +188,32 @@ class _TreatmentJourneyDetailScreenState
             ),
           ),
           Expanded(
-            child: CustomButton(
-              isBorder: true,
-              text: 'Duplicate this Option',
-              onPressed: () async {
-                final sim = state.simulations;
-                if (sim != null) {
-                  await ref
-                      .read(treatmentViewModel.notifier)
-                      .initializeSimulation(sim);
-                  if (context.mounted) {
-                    Navigator.pushNamed(
-                      context,
-                      ArFaceModelPreviewScreen.routeName,
-                    );
-                  }
+            child: Consumer(
+              builder: (context, ref, _) {
+                final capturedImagesNull = ref.watch(
+                  treatmentViewModel.select((s) => s.capturedImagesNull),
+                );
+                if (!capturedImagesNull) {
+                  return const SizedBox.shrink();
                 }
+                return CustomButton(
+                  isBorder: true,
+                  text: 'Duplicate this Option',
+                  onPressed: () async {
+                    final sim = state.simulations;
+                    if (sim != null) {
+                      await ref
+                          .read(treatmentViewModel.notifier)
+                          .initializeSimulation(sim);
+                      if (context.mounted) {
+                        Navigator.pushNamed(
+                          context,
+                          ArFaceModelPreviewScreen.routeName,
+                        );
+                      }
+                    }
+                  },
+                );
               },
             ),
           ),

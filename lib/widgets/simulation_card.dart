@@ -93,10 +93,7 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        "Created at:",
-                        style: CustomFonts.grey13w400,
-                      ),
+                      Text("Created at:", style: CustomFonts.grey13w400),
                       SizedBox(width: context.w(8)),
                       Text(
                         widget.sim.createdAt!.formattedDateTime,

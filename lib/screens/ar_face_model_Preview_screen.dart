@@ -184,6 +184,10 @@ class _ArFaceModelPreviewScreenState
       onPopInvokedWithResult: (didPop, result) {
         if (!isLoading) {
           ref.read(checkoutViewModel.notifier).clearState();
+          ref
+              .read(treatmentViewModel.notifier)
+              .clearAllSelectedTreatments(capturedImage: true);
+          ref.read(treatmentViewModel.notifier).clearAiImage();
         }
       },
       child: AbsorbPointer(
@@ -272,7 +276,6 @@ class _ArFaceModelPreviewScreenState
   // ---------------------------------------------------------------------------
   // Widget Builders
   // ---------------------------------------------------------------------------
-
 
   Widget _buildTreatmentHeader() {
     return Row(
@@ -636,11 +639,7 @@ class _ArFaceModelPreviewScreenState
                     state.frontPoseImage != null,
                   ),
                   SizedBox(width: context.w(10)),
-                  _poseChip(
-                    "Left View",
-                    'left',
-                    state.leftPoseImage != null,
-                  ),
+                  _poseChip("Left View", 'left', state.leftPoseImage != null),
                   SizedBox(width: context.w(10)),
                   _poseChip(
                     "Right View",
@@ -666,8 +665,9 @@ class _ArFaceModelPreviewScreenState
         children: [
           CustomButton(
             text: label,
-            onPressed:
-                canTap ? () => setState(() => _selectedPose = value) : null,
+            onPressed: canTap
+                ? () => setState(() => _selectedPose = value)
+                : null,
             height: context.h(42),
             borderRadius: context.r(100),
             isBorder: !isSelected,
