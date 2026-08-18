@@ -10,19 +10,16 @@ class PhoneWidget extends StatefulWidget {
   final ValueSetter<String>? onChanged;
   final void Function(Country country)? onCountryChanged;
   final String? initialCountryCode;
-  final bool showLabel;
-  final bool filled;
-  final bool removeValidation;
-
+  final bool enableCountrySelection;
   const PhoneWidget({
     super.key,
     required this.controller,
     this.onChanged,
     this.onCountryChanged,
     this.initialCountryCode,
-    this.showLabel = true,
-    this.filled = false,
-    this.removeValidation = false,
+    this.enableCountrySelection = true,
+   
+
   });
 
   @override
@@ -99,9 +96,10 @@ class _PhoneWidgetState extends State<PhoneWidget> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+
           GestureDetector(
-            onTap: () {
-              // Open country picker dialog
+            onTap: widget.enableCountrySelection? () {
+            
               showCountryPicker(
                 // countryCodeWidth: context.w(45),
                 moveAlongWithKeyboard: true,
@@ -129,7 +127,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
                   }
                 },
               );
-            },
+            }: null,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [

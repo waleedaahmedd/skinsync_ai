@@ -140,9 +140,11 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
                           ref
                               .read(checkoutViewModel.notifier)
                               .setInviteClinic(true);
-                          ref
-                              .read(clinicProvider.notifier)
-                              .fetchClinicsFromMap();
+                          if (!isDeploymentMode) {
+                            ref
+                                .read(clinicProvider.notifier)
+                                .fetchClinicsFromMap();
+                          }
                         }
                       },
                       tabs: const [

@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../main.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
@@ -29,7 +29,6 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
   final TextEditingController _emailController = TextEditingController();
   // final TextEditingController _locationController = TextEditingController();
   // final TextEditingController _bioController = TextEditingController();
-  Country? _selectedCountry;
 
   @override
   void dispose() {
@@ -46,6 +45,12 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
     super.initState();
     final authState = ref.read(authViewModel);
     _emailController.text = authState.authData?.user?.primaryEmail ?? '';
+    final cc = authState.authData?.user?.cc;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref
+          .read(authViewModel.notifier)
+          .setCountryCode(Country.parse(cc ?? "US"));
+    });
 
     // Initialize country if user data exists
     // TODO: CC Not provided in AuthResponse, uncomment when response is
@@ -63,31 +68,53 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
   }
 
   void _showImageSourceDialog() {
-    showModalBottomSheet(
+     showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(context.r(24)),
+        ),
+      ),
       builder: (BuildContext context) {
         return SafeArea(
           child: Wrap(
             children: [
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Choose from Gallery'),
-                onTap: () {
-                  Navigator.pop(context);
-                  ref
-                      .read(authViewModel.notifier)
-                      .pickProfileImage(ImageSource.gallery);
-                },
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: context.h(8)),
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.photo_library_outlined,
+                    color: CustomColors.darkPurple,
+                  ),
+                  title: Text(
+                    'Choose from Gallery',
+                    style: CustomFonts.black14w600,
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    ref
+                        .read(authViewModel.notifier)
+                        .pickProfileImage(ImageSource.gallery);
+                  },
+                ),
               ),
-              ListTile(
-                leading: const Icon(Icons.photo_camera),
-                title: const Text('Take a Photo'),
-                onTap: () {
-                  Navigator.pop(context);
-                  ref
-                      .read(authViewModel.notifier)
-                      .pickProfileImage(ImageSource.camera);
-                },
+              Divider(color: Colors.grey.shade100, height: context.h(1)),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: context.h(8)),
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.photo_camera_outlined,
+                    color: CustomColors.darkPurple,
+                  ),
+                  title: Text('Take a Photo', style: CustomFonts.black14w600),
+                  onTap: () {
+                    Navigator.pop(context);
+                    ref
+                        .read(authViewModel.notifier)
+                        .pickProfileImage(ImageSource.camera);
+                  },
+                ),
               ),
             ],
           ),
@@ -121,8 +148,8 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                       ClipOval(
                         clipBehavior: Clip.antiAliasWithSaveLayer,
                         child: profileImage != null
-                            ? Image.file(
-                                File(profileImage.path),
+                            ? Image.network(
+                                profileImage,
                                 fit: BoxFit.cover,
                                 height: context.w(75),
                                 width: context.w(75),
@@ -183,12 +210,14 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   ),
                   SizedBox(height: context.h(20)),
                   PhoneWidget(
+                    enableCountrySelection: !isDeploymentMode,
                     controller: _phoneController,
-                    initialCountryCode: _selectedCountry?.countryCode,
+                    initialCountryCode: ref
+                        .read(authViewModel)
+                        .country
+                        .countryCode,
                     onCountryChanged: (country) {
-                      setState(() {
-                        _selectedCountry = country;
-                      });
+                      ref.read(authViewModel.notifier).setCountryCode(country);
                     },
                   ),
                   SizedBox(height: context.h(20)),
@@ -251,10 +280,6 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                                 name: _nameController.text,
                                 phoneNumber: _phoneController.text.trim(),
                                 emailAddress: _emailController.text.trim(),
-                                // location: _locationController.text.trim(),
-                                // bio: _bioController.text.trim(),
-                                cc: _selectedCountry?.countryCode,
-                                country: _selectedCountry?.name,
                               )
                               .then((value) {
                                 if (value == true) {

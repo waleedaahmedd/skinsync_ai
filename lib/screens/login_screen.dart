@@ -214,7 +214,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                       controller: ref
                           .read(authViewModel.notifier)
                           .phoneController,
-                      filled: true,
                     ),
             ],
           ),

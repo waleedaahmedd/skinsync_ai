@@ -64,7 +64,9 @@ class ApiBaseHelper {
             Uri.parse(url),
             headers: headers,
             body: requestBody != '' ? jsonEncode(requestBody) : null,
+
           );
+            log('RESPONSE: ${responseJson.body}');
           return responseJson;
         case .delete:
           final responseJson = await http.delete(

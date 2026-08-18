@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:country_picker/country_picker.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../exceptions/app_exception.dart';
+import '../main.dart';
 import '../models/base_state_model.dart';
 import '../models/requests/onboarding_profile_request.dart';
 import '../models/requests/otp_request.dart';
@@ -35,7 +37,7 @@ final authViewModel = NotifierProvider(() {
 
 class AuthViewModel extends BaseViewModel<AuthState> {
   AuthViewModel({required this._authRepository})
-    : super(initialState: const AuthState());
+    : super(initialState: AuthState(country: Country.parse('US')));
 
   final AuthRepository _authRepository;
   final ImagePicker _imagePicker = ImagePicker();
@@ -70,19 +72,28 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   }
 
   Future<void> pickProfileImage(ImageSource source) async {
-    try {
-      final XFile? image = await _imagePicker.pickImage(
-        source: source,
-        imageQuality: 85,
-        maxWidth: 512,
-        maxHeight: 512,
+  try {
+    final XFile? image = await _imagePicker.pickImage(source: source);
+    if (image == null) return;
+    await runSafely(() async {
+      await EasyLoading.show(status: 'Loading....');
+      final String? imageUrl = await MediaService().uploadImage(
+        acceptAnyFormat: true,
+        state.authData?.user?.primaryEmail ?? '',
+        image,
       );
-      if (image != null) {
-        state = state.copyWith(profileImage: image);
+      if (imageUrl != null && state.authData?.user != null) {
+        state = state.copyWith(profileImage: imageUrl);
+          await EasyLoading.dismiss();
       }
-    } catch (e) {
-      onError('Error picking image: $e');
-    }
+    });
+  } catch (e) {
+      await EasyLoading.dismiss();
+    onError('Error picking image: $e');
+  }
+}
+  void setCountryCode(Country country) {
+    state = state.copyWith(country: country);
   }
 
   void clearProfileImage() {
@@ -199,7 +210,10 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         if (isUpdateAvailable ?? false) {
           throw const UpdateAppException();
         }
-        //  _fetchLocationInBackground();
+        if (!isDeploymentMode) {
+          _fetchLocationInBackground();
+        }
+
         state = state.copyWith(loading: false);
         return true;
       }
@@ -246,20 +260,12 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     required String emailAddress,
     String? location,
     String? bio,
-    String? cc,
-    String? country,
   }) async {
     return await runSafely(() async {
       state = state.copyWith(loading: true);
 
-      String? imageUrl;
-      if (state.profileImage != null) {
-        imageUrl = await MediaService().uploadImage(
-          acceptAnyFormat: true,
-          state.authData?.user?.primaryEmail ?? '',
-          state.profileImage!,
-        );
-      }
+      
+    
 
       final request = OnBoardingProfileRequest(
         name: name,
@@ -267,9 +273,9 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         emailAddress: emailAddress,
         location: location,
         bio: bio,
-        cc: cc,
-        country: country,
-        profileImageUrl: imageUrl ?? state.authData?.user?.profileImageUrl,
+        cc: '+${state.country.phoneCode}',
+        country: state.country.name,
+        profileImageUrl: state.profileImage ?? state.authData?.user?.profileImageUrl,
       );
 
       final BaseResponseModel response = await _authRepository
@@ -291,7 +297,10 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         state = state.copyWith(authData: authData);
         log('get me call successful,');
         // Location is fetched in background to avoid blocking the UI thread during splash/init
-        _fetchLocationInBackground();
+        if (!isDeploymentMode) {
+          _fetchLocationInBackground();
+        }
+
         return authData;
       } on AppException catch (e) {
         if (e.message == 'No Internet Connection') {
@@ -409,9 +418,8 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   }
 
   @override
-  void onError(String message) {
+  Future<void> onError(String message) async {
     super.onError(message);
-
     state = state.copyWith(loading: false, errorMessage: message);
   }
 
@@ -429,11 +437,11 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 class AuthState extends BaseStateModel {
   final AuthData? authData;
   final String? otpError;
-  final XFile? profileImage;
+  final String? profileImage;
   final AddressData? addressData;
   final bool isBiometricAvailable;
   final IconData? biometricIcon;
-
+  final Country country;
   const AuthState({
     super.loading = false,
     super.errorMessage,
@@ -443,6 +451,7 @@ class AuthState extends BaseStateModel {
     this.addressData,
     this.isBiometricAvailable = false,
     this.biometricIcon,
+    required this.country,
   });
 
   @override
@@ -457,11 +466,12 @@ class AuthState extends BaseStateModel {
     AuthData? authData,
     String? otpError,
     bool clearOtpError = false,
-    XFile? profileImage,
+    String? profileImage,
     bool clearProfileImage = false,
     AddressData? addressData,
     bool? isBiometricAvailable,
     IconData? biometricIcon,
+    Country? country,
   }) {
     return AuthState(
       loading: loading ?? this.loading,
@@ -474,6 +484,7 @@ class AuthState extends BaseStateModel {
       addressData: addressData ?? this.addressData,
       isBiometricAvailable: isBiometricAvailable ?? this.isBiometricAvailable,
       biometricIcon: biometricIcon ?? this.biometricIcon,
+      country: country ?? this.country,
     );
   }
 }

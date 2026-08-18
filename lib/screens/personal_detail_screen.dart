@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -8,6 +6,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../main.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
@@ -30,22 +29,31 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  // final TextEditingController _locationController = TextEditingController();
-  // final TextEditingController _bioController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  Country? _selectedCountry;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final data = ref.read(authViewModel).authData;
+
       if (data != null) {
         _nameController.text = data.user?.name ?? "";
         _phoneController.text = data.user?.phoneNumber ?? "";
         _emailController.text = data.user?.primaryEmail ?? "";
-        // _locationController.text = data.user?.location ?? "";
-        // _bioController.text = data.user?.bio ?? "";
+        final countryName = data.user?.country;
+        Country? country;
+        try {
+          country = countryName != null
+              ? CountryService().findByName(countryName)
+              : Country.parse('US');
+        } catch (_) {
+          country = Country.parse('US');
+        }
+
+        ref
+            .read(authViewModel.notifier)
+            .setCountryCode(Country.parse(country?.countryCode ?? 'US'));
       }
     });
   }
@@ -230,11 +238,17 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                       Text("Phone Number", style: CustomFonts.grey700_11w700),
                       SizedBox(height: context.h(6)),
                       PhoneWidget(
+                        enableCountrySelection: !isDeploymentMode,
                         controller: _phoneController,
-                        initialCountryCode: _selectedCountry?.countryCode,
+                        initialCountryCode: ref
+                            .read(authViewModel)
+                            .country
+                            .countryCode,
                         onCountryChanged: (country) {
                           setState(() {
-                            _selectedCountry = country;
+                            ref
+                                .read(authViewModel.notifier)
+                                .setCountryCode(country);
                           });
                         },
                       ),
@@ -315,138 +329,138 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                       // SizedBox(height: context.h(16)),
 
                       // Skin Goals Row
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Skin Type",
-                                  style: CustomFonts.grey700_11w700,
-                                ),
-                                SizedBox(height: context.h(6)),
-                                TextField(
-                                  style: CustomFonts.black13w600,
-                                  decoration: InputDecoration(
-                                    hintText: "Skin Type +2",
-                                    contentPadding: EdgeInsets.symmetric(
-                                      horizontal: context.w(14),
-                                      vertical: context.h(12),
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        context.r(14),
-                                      ),
-                                      borderSide: const BorderSide(
-                                        color: CustomColors.greyColor,
-                                      ),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        context.r(14),
-                                      ),
-                                      borderSide: BorderSide(
-                                        color: Colors.grey.shade300,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        context.r(14),
-                                      ),
-                                      borderSide: const BorderSide(
-                                        color: CustomColors.purpleColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: context.w(12)),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Skin Goal",
-                                  style: CustomFonts.grey700_11w700,
-                                ),
-                                SizedBox(height: context.h(6)),
-                                TextField(
-                                  style: CustomFonts.black13w600,
-                                  decoration: InputDecoration(
-                                    hintText: "Skin Goal +4",
-                                    contentPadding: EdgeInsets.symmetric(
-                                      horizontal: context.w(14),
-                                      vertical: context.h(12),
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        context.r(14),
-                                      ),
-                                      borderSide: const BorderSide(
-                                        color: CustomColors.greyColor,
-                                      ),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        context.r(14),
-                                      ),
-                                      borderSide: BorderSide(
-                                        color: Colors.grey.shade300,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        context.r(14),
-                                      ),
-                                      borderSide: const BorderSide(
-                                        color: CustomColors.purpleColor,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: context.h(16)),
+                      // Row(
+                      //   children: [
+                      //     Expanded(
+                      //       child: Column(
+                      //         crossAxisAlignment: CrossAxisAlignment.start,
+                      //         children: [
+                      //           Text(
+                      //             "Skin Type",
+                      //             style: CustomFonts.grey700_11w700,
+                      //           ),
+                      //           SizedBox(height: context.h(6)),
+                      //           TextField(
+                      //             style: CustomFonts.black13w600,
+                      //             decoration: InputDecoration(
+                      //               hintText: "Skin Type +2",
+                      //               contentPadding: EdgeInsets.symmetric(
+                      //                 horizontal: context.w(14),
+                      //                 vertical: context.h(12),
+                      //               ),
+                      //               border: OutlineInputBorder(
+                      //                 borderRadius: BorderRadius.circular(
+                      //                   context.r(14),
+                      //                 ),
+                      //                 borderSide: const BorderSide(
+                      //                   color: CustomColors.greyColor,
+                      //                 ),
+                      //               ),
+                      //               enabledBorder: OutlineInputBorder(
+                      //                 borderRadius: BorderRadius.circular(
+                      //                   context.r(14),
+                      //                 ),
+                      //                 borderSide: BorderSide(
+                      //                   color: Colors.grey.shade300,
+                      //                 ),
+                      //               ),
+                      //               focusedBorder: OutlineInputBorder(
+                      //                 borderRadius: BorderRadius.circular(
+                      //                   context.r(14),
+                      //                 ),
+                      //                 borderSide: const BorderSide(
+                      //                   color: CustomColors.purpleColor,
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //     SizedBox(width: context.w(12)),
+                      //     Expanded(
+                      //       child: Column(
+                      //         crossAxisAlignment: CrossAxisAlignment.start,
+                      //         children: [
+                      //           Text(
+                      //             "Skin Goal",
+                      //             style: CustomFonts.grey700_11w700,
+                      //           ),
+                      //           SizedBox(height: context.h(6)),
+                      //           TextField(
+                      //             style: CustomFonts.black13w600,
+                      //             decoration: InputDecoration(
+                      //               hintText: "Skin Goal +4",
+                      //               contentPadding: EdgeInsets.symmetric(
+                      //                 horizontal: context.w(14),
+                      //                 vertical: context.h(12),
+                      //               ),
+                      //               border: OutlineInputBorder(
+                      //                 borderRadius: BorderRadius.circular(
+                      //                   context.r(14),
+                      //                 ),
+                      //                 borderSide: const BorderSide(
+                      //                   color: CustomColors.greyColor,
+                      //                 ),
+                      //               ),
+                      //               enabledBorder: OutlineInputBorder(
+                      //                 borderRadius: BorderRadius.circular(
+                      //                   context.r(14),
+                      //                 ),
+                      //                 borderSide: BorderSide(
+                      //                   color: Colors.grey.shade300,
+                      //                 ),
+                      //               ),
+                      //               focusedBorder: OutlineInputBorder(
+                      //                 borderRadius: BorderRadius.circular(
+                      //                   context.r(14),
+                      //                 ),
+                      //                 borderSide: const BorderSide(
+                      //                   color: CustomColors.purpleColor,
+                      //                 ),
+                      //               ),
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     ),
+                      //   ],
+                      // ),
+                      // SizedBox(height: context.h(16)),
 
-                      // Primary Concerns
-                      Text(
-                        "Primary Concerns",
-                        style: CustomFonts.grey700_11w700,
-                      ),
-                      SizedBox(height: context.h(6)),
-                      TextField(
-                        style: CustomFonts.black13w600,
-                        decoration: InputDecoration(
-                          hintText: "Primary Concerns +3",
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: context.w(14),
-                            vertical: context.h(12),
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(context.r(14)),
-                            borderSide: const BorderSide(
-                              color: CustomColors.greyColor,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(context.r(14)),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(context.r(14)),
-                            borderSide: const BorderSide(
-                              color: CustomColors.purpleColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: context.h(16)),
+                      // // Primary Concerns
+                      // Text(
+                      //   "Primary Concerns",
+                      //   style: CustomFonts.grey700_11w700,
+                      // ),
+                      // SizedBox(height: context.h(6)),
+                      // TextField(
+                      //   style: CustomFonts.black13w600,
+                      //   decoration: InputDecoration(
+                      //     hintText: "Primary Concerns +3",
+                      //     contentPadding: EdgeInsets.symmetric(
+                      //       horizontal: context.w(14),
+                      //       vertical: context.h(12),
+                      //     ),
+                      //     border: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(context.r(14)),
+                      //       borderSide: const BorderSide(
+                      //         color: CustomColors.greyColor,
+                      //       ),
+                      //     ),
+                      //     enabledBorder: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(context.r(14)),
+                      //       borderSide: BorderSide(color: Colors.grey.shade300),
+                      //     ),
+                      //     focusedBorder: OutlineInputBorder(
+                      //       borderRadius: BorderRadius.circular(context.r(14)),
+                      //       borderSide: const BorderSide(
+                      //         color: CustomColors.purpleColor,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      // SizedBox(height: context.h(16)),
 
                       // Bio
                       // Text(
@@ -485,27 +499,37 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: context.h(24)),
 
                 // Reusable Custom Button
-                Consumer(
-                  builder: (_, ref, _) {
-                    final loading = ref.watch(
-                      authViewModel.select((s) => s.loading),
-                    );
-                    if (loading) {
-                      return const AppLoader();
-                    }
-                    return CustomButton(
-                      text: "Save Changes",
-                      isLoading: loading,
-                      onPressed: _onSavePressed,
-                    );
-                  },
-                ),
-                SizedBox(height: context.h(40)),
               ],
             ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: context.w(24),
+            right: context.w(24),
+            top: context.h(12),
+            bottom: MediaQuery.paddingOf(context).bottom + context.h(30),
+          ),
+          child: Consumer(
+            builder: (_, ref, _) {
+              final loading = ref.watch(authViewModel.select((s) => s.loading));
+
+              return SizedBox(
+                height: context.h(52), // match CustomButton's height
+                width: double.infinity,
+                child: loading
+                    ? const AppLoader()
+                    : CustomButton(
+                        text: "Save Changes",
+                        isLoading: loading,
+                        onPressed: _onSavePressed,
+                      ),
+              );
+            },
           ),
         ),
       ),
@@ -533,8 +557,8 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                     authViewModel.select((s) => s.profileImage),
                   );
                   if (profileImage != null) {
-                    return Image.file(
-                      File(profileImage.path),
+                    return Image.network(
+                      profileImage,
                       fit: BoxFit.cover,
                       height: context.w(90),
                       width: context.w(90),

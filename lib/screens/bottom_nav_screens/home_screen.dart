@@ -82,12 +82,14 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBarWithActionIcon(
-        action: GreyContainer(
+        action:
+        !isDeploymentMode?
+         GreyContainer(
           icon: Icons.notifications_none_outlined,
           onTap: () {
             Navigator.of(context).pushNamed(NotificationScreen.routeName);
           },
-        ),
+        ):null,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
