@@ -19,6 +19,9 @@ class SimulationHistoryResponse extends BaseResponseModel {
 
 class SimulationData {
   final int? id;
+  final int? userId;
+  final int? groupId;
+  final String? name;
   final String? frontImageBefore;
   final String? frontImageAfter;
   final String? rightImageBefore;
@@ -27,9 +30,13 @@ class SimulationData {
   final String? leftImageAfter;
   final List<SimulationTreatment>? treatments;
   final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const SimulationData({
     this.id,
+    this.userId,
+    this.groupId,
+    this.name,
     this.frontImageBefore,
     this.frontImageAfter,
     this.rightImageBefore,
@@ -38,10 +45,14 @@ class SimulationData {
     this.leftImageAfter,
     this.treatments,
     this.createdAt,
+    this.updatedAt,
   });
 
   factory SimulationData.fromJson(Map<String, dynamic> json) => SimulationData(
     id: json["id"],
+    userId: json["user_id"],
+    groupId: json["group_id"],
+    name: json["name"],
     frontImageBefore: json["front_image_before"],
     frontImageAfter: json["front_image_after"],
     rightImageBefore: json["right_image_before"],
@@ -56,6 +67,9 @@ class SimulationData {
     createdAt: json["created_at"] == null
         ? null
         : DateTime.parse(json["created_at"]).toLocal(),
+    updatedAt: json["updated_at"] == null
+        ? null
+        : DateTime.parse(json["updated_at"]).toLocal(),
   );
 }
 

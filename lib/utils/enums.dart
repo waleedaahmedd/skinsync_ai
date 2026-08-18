@@ -63,7 +63,7 @@ enum EndPoints {
   shareTreatmentRequest('v1/share-treatment-request'),
   treatmentJourneyOptions('v1/treatment-journey-options'),
   deleteTreatmentJourneyOptions('v1/treatment-journey-option'),
-  patientTreatmentRequest('patient-treatment-request'),
+  patientTreatmentRequest('v1/patient-treatment-request'),
   clinic('v1/clinic');
 
   final String path;
