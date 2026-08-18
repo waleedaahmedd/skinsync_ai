@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
 import '../models/base_state_model.dart';
+import '../widgets/app_progress_indicator.dart';
 import '../models/requests/save_history_request.dart';
 import '../models/responses/materials_response.dart';
 import '../models/responses/simulation_history_response.dart';
@@ -42,6 +43,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
   Future<void> initializeSimulation(SimulationData? simulation) async {
     if (simulation == null) return;
+    EasyLoading.show(status: 'Fetching Data ...');
 
     state = state.copyWith(isAiImageGenerated: false);
     clearAiImage();
@@ -119,40 +121,73 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       }
     }
 
-    EasyLoading.show(status: 'Fetching AI Images...');
     log('INITIALIZING SIMULATION');
     try {
       final service = MediaService();
+      const int totalImages = 6;
+      int currentCount = 0;
+
+      void showProgress(String message) {
+        currentCount++;
+        EasyLoading.show(
+          indicator: AppProgressIndicator(
+            current: currentCount,
+            total: totalImages,
+            message: message,
+          ),
+        );
+      }
+
+      EasyLoading.show(
+        indicator: const AppProgressIndicator(
+          current: 0,
+          total: totalImages,
+          message: 'Fetching AI Images...',
+        ),
+      );
+
       final frontImageBefore = await service.downloadSimulationImage(
         imageUrl: simulation.frontImageBefore,
         pose: 'front-before',
         simId: simulation.id,
       );
+      showProgress('Fetching AI Images...');
+
       final frontImageAfter = await service.downloadSimulationImage(
         imageUrl: simulation.frontImageAfter,
         pose: 'front-after',
         simId: simulation.id,
       );
+      showProgress('Fetching AI Images...');
+
       final rightImageBefore = await service.downloadSimulationImage(
         imageUrl: simulation.rightImageBefore,
         pose: 'right-before',
         simId: simulation.id,
       );
+      showProgress('Fetching AI Images...');
+
       final rightImageAfter = await service.downloadSimulationImage(
         imageUrl: simulation.rightImageAfter,
         pose: 'right-after',
         simId: simulation.id,
       );
+      showProgress('Fetching AI Images...');
+
       final leftImageBefore = await service.downloadSimulationImage(
         imageUrl: simulation.leftImageBefore,
         pose: 'left-before',
         simId: simulation.id,
       );
+      showProgress('Fetching AI Images...');
+
       final leftImageAfter = await service.downloadSimulationImage(
         imageUrl: simulation.leftImageAfter,
         pose: 'left-after',
         simId: simulation.id,
       );
+      showProgress('Fetching AI Images...');
+
       if (!ref.mounted) return;
       state = state.copyWith(
         loading: false,
@@ -396,6 +431,20 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
 
       final timestamp = DateTime.now().millisecondsSinceEpoch;
 
+      const int totalOutput = 3;
+      int currentOutput = 0;
+
+      void showOutputProgress(String message) {
+        currentOutput++;
+        EasyLoading.show(
+          indicator: AppProgressIndicator(
+            current: currentOutput,
+            total: totalOutput,
+            message: message,
+          ),
+        );
+      }
+
       // 3. Process generated images from response
       if (output.containsKey('front_image') && output['front_image'] != null) {
         imageFront = await base64ToXFile(
@@ -403,19 +452,25 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
           fileName: 'ai_front_$timestamp.jpg',
         );
       }
+      showOutputProgress('Generating AI Images...');
       if (!ref.mounted) return;
+
       if (output.containsKey('right_image') && output['right_image'] != null) {
         imageRight = await base64ToXFile(
           output['right_image'],
           fileName: 'ai_right_$timestamp.jpg',
         );
       }
+      showOutputProgress('Generating AI Images...');
+      if (!ref.mounted) return;
+
       if (output.containsKey('left_image') && output['left_image'] != null) {
         imageLeft = await base64ToXFile(
           output['left_image'],
           fileName: 'ai_left_$timestamp.jpg',
         );
       }
+      showOutputProgress('Generating AI Images...');
       if (!ref.mounted) return;
 
       if (imageFront == null && imageRight == null && imageLeft == null) {

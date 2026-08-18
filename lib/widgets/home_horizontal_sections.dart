@@ -363,93 +363,136 @@ class DashboardClinicHomeCard extends StatelessWidget {
                 offset: const Offset(0, 4),
               ),
             ],
-            border: Border.all(
-              color: CustomColors.greyColor.withValues(alpha: 0.6),
-            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(context.r(16)),
-                ),
-                child: CachedNetworkImage(
-                  imageUrl: clinic.clinicImage ?? "",
-                  height: context.h(100),
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: Colors.grey.shade100,
-                    child: const Center(child: CupertinoActivityIndicator()),
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    color: Colors.grey.shade100,
-                    child: const Icon(
-                      Icons.storefront_rounded,
-                      size: 30,
-                      color: Colors.grey,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(context.r(16)),
                     ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: context.w(12),
-                  vertical: context.h(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            clinic.clinicName ?? "Unknown Clinic",
-                            style: CustomFonts.black14w600,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: context.w(8),
-                            vertical: context.h(4),
-                          ),
-                          decoration: BoxDecoration(
-                            color: CustomColors.purpleColor.withValues(
-                              alpha: 0.12,
-                            ),
-                            borderRadius: BorderRadius.circular(context.r(20)),
-                          ),
-                          child: Text(
-                            "${clinic.doctorCount ?? 0} Doctors",
-                            style: CustomFonts.darkPurple12w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: context.h(6)),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on_outlined,
-                          size: context.sp(12),
+                    child: CachedNetworkImage(
+                      imageUrl: clinic.bannerImage ?? "",
+                      height: context.h(100),
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: Colors.grey.shade100,
+                        child:
+                            const Center(child: CupertinoActivityIndicator()),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.grey.shade100,
+                        child: const Icon(
+                          Icons.storefront_rounded,
+                          size: 30,
                           color: Colors.grey,
                         ),
-                        SizedBox(width: context.w(4)),
-                        Expanded(
-                          child: Text(
-                            clinic.address ?? "No address provided",
-                            style: CustomFonts.grey700_10w400,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.w(12),
+                      vertical: context.h(8),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                clinic.clinicName ?? "Unknown Clinic",
+                                style: CustomFonts.black14w600,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: context.w(8),
+                                vertical: context.h(4),
+                              ),
+                              decoration: BoxDecoration(
+                                color: CustomColors.purpleColor.withValues(
+                                  alpha: 0.12,
+                                ),
+                                borderRadius:
+                                    BorderRadius.circular(context.r(20)),
+                              ),
+                              child: Text(
+                                "${clinic.doctorCount ?? 0} Doctors",
+                                style: CustomFonts.darkPurple12w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: context.h(6)),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.location_on_outlined,
+                              size: context.sp(12),
+                              color: Colors.grey,
+                            ),
+                            SizedBox(width: context.w(4)),
+                            Expanded(
+                              child: Text(
+                                clinic.address ?? "No address provided",
+                                style: CustomFonts.grey700_10w400,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
+                  ),
+                ],
+              ),
+              Positioned(
+                top: context.h(8),
+                left: context.w(8),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: clinic.clinicImage ?? "",
+                      height: context.w(40),
+                      width: context.w(40),
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        height: context.w(40),
+                        width: context.w(40),
+                        color: Colors.grey.shade100,
+                        child: const CupertinoActivityIndicator(radius: 8),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        height: context.w(40),
+                        width: context.w(40),
+                        color: Colors.grey.shade100,
+                        child: Icon(
+                          Icons.storefront_rounded,
+                          size: context.w(20),
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],

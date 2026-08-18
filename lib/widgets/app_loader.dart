@@ -6,7 +6,9 @@ import '../utils/color_constant.dart';
 
 class AppLoader extends StatelessWidget {
   final double? size;
-  const AppLoader({super.key, this.size});
+  final double? value;
+
+  const AppLoader({super.key, this.size, this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +28,9 @@ class AppLoader extends StatelessWidget {
             SizedBox(
               height: context.w(60),
               width: context.w(60),
-              child: const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(
+              child: CircularProgressIndicator(
+                value: value,
+                valueColor: const AlwaysStoppedAnimation(
                   CustomColors.lightPurpleColor,
                 ),
               ),

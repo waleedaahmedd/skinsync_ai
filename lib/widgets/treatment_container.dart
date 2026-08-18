@@ -47,7 +47,6 @@ class TreatmentContainer extends StatelessWidget {
       margin: EdgeInsets.only(bottom: context.h(4)),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(context.r(10)),
-        border: Border.all(color: Colors.white, width: 1.5),
         boxShadow: [
           BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4),
         ],
@@ -247,10 +246,6 @@ class TreatmentContainer extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: Colors.black.withValues(alpha: 0.05),
                               shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.black12,
-                                width: 1.5,
-                              ),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withValues(alpha: 0.02),
@@ -345,10 +340,6 @@ class TreatmentContainer extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Colors.black.withValues(alpha: 0.4),
                             shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.2),
-                              width: 1,
-                            ),
                           ),
                           child: Icon(
                             Icons.info_outline,
