@@ -7,8 +7,8 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http_parser/http_parser.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 import '../models/base_state_model.dart';
 import '../models/requests/save_history_request.dart';
@@ -322,7 +322,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
               "areas_sku": areaItem.target.globalSku ?? "",
               "material_quantity": areaItem.material?.selectedQuantity ?? 1,
             };
-          }).toList()
+          }).toList(),
         };
       }).toList();
 
@@ -360,21 +360,21 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       await addFile('right_image', state.rightPoseImage);
 
       log('SENDING AI REQUEST TO: $url');
-      
+
       // Increase timeout for AI processing (e.g., 2 minutes)
       final client = http.Client();
-      final streamedResponse = await client.send(request).timeout(
-        const Duration(minutes: 2),
-      );
-      
+      final streamedResponse = await client
+          .send(request)
+          .timeout(const Duration(minutes: 2));
+
       final response = await http.Response.fromStream(streamedResponse);
       if (!ref.mounted) return;
       log('AI RESPONSE STATUS: ${response.statusCode}');
       log('AI RESPONSE BODY: ${response.body}');
 
-      if (response.statusCode < 200 || response.statusCode >= 300) {
-        throw Exception('AI Prediction failed with status: ${response.statusCode}. Body: ${response.body}');
-      }
+      // if (response.statusCode < 200 || response.statusCode >= 300) {
+      //   throw Exception('AI Prediction failed with status: ${response.statusCode}. Body: ${response.body}');
+      // }
 
       final responseData = jsonDecode(response.body);
 
@@ -419,7 +419,9 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       if (!ref.mounted) return;
 
       if (imageFront == null && imageRight == null && imageLeft == null) {
-        throw Exception('AI failed to generate valid images. Please try again.');
+        throw Exception(
+          'AI failed to generate valid images. Please try again.',
+        );
       }
 
       if (wasBefore) toggleIsBefore();
