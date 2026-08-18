@@ -10,11 +10,12 @@ import '../view_models/treatment_journey_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_button.dart';
 import '../widgets/dialogs/delete_confirmation_dialog.dart';
 import '../widgets/dialogs/success_dialogs.dart';
 import '../widgets/medical_disclaimer_banner.dart';
-import '../widgets/custom_button.dart';
 import '../widgets/simulation_card.dart';
+import 'ar_face_model_Preview_screen.dart';
 import 'face_pose_capture_screen.dart';
 import 'journey_clinics_screen.dart';
 
@@ -158,27 +159,55 @@ class _TreatmentJourneyDetailScreenState
         left: context.w(24),
         right: context.w(24),
       ),
-      child: CustomButton(
-        text: "Share this Option",
-        onPressed: () async {
-          final currentOptionId = state.options[_tabController?.index ?? 0].id;
-          if (currentOptionId != null) {
-            ref
-                .read(treatmentJourneyProvider.notifier)
-                .setOptionId(currentOptionId);
-          }
-          final clinicId = ref.read(clinicProvider).clinicId;
-          if (clinicId != null) {
-            final result = await ref
-                .read(treatmentJourneyProvider.notifier)
-                .callShareTreatmentRequest();
-            if (result == true) {
-              showShareJourneySuccessDialog(context);
-            }
-          } else {
-            Navigator.pushNamed(context, JourneyClinicsScreen.routeName);
-          }
-        },
+      child: Row(
+        spacing: 10.w,
+        children: [
+          Expanded(
+            child: CustomButton(
+              text: "Share this Option",
+              onPressed: () async {
+                final currentOptionId =
+                    state.options[_tabController?.index ?? 0].id;
+                if (currentOptionId != null) {
+                  ref
+                      .read(treatmentJourneyProvider.notifier)
+                      .setOptionId(currentOptionId);
+                }
+                final clinicId = ref.read(clinicProvider).clinicId;
+                if (clinicId != null) {
+                  final result = await ref
+                      .read(treatmentJourneyProvider.notifier)
+                      .callShareTreatmentRequest();
+                  if (result == true) {
+                    showShareJourneySuccessDialog(context);
+                  }
+                } else {
+                  Navigator.pushNamed(context, JourneyClinicsScreen.routeName);
+                }
+              },
+            ),
+          ),
+          Expanded(
+            child: CustomButton(
+              isBorder: true,
+              text: 'Duplicate this Option',
+              onPressed: () async {
+                final sim = state.simulations;
+                if (sim != null) {
+                  await ref
+                      .read(treatmentViewModel.notifier)
+                      .initializeSimulation(sim);
+                  if (context.mounted) {
+                    Navigator.pushNamed(
+                      context,
+                      ArFaceModelPreviewScreen.routeName,
+                    );
+                  }
+                }
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -226,10 +255,7 @@ class _TreatmentJourneyDetailScreenState
         children: [
           const MedicalDisclaimerBanner(),
           Padding(
-            padding: EdgeInsets.only(
-              top: context.h(10),
-              bottom: context.h(20),
-            ),
+            padding: EdgeInsets.only(top: context.h(10), bottom: context.h(20)),
             child: Row(
               children: [
                 _buildSubTabButton("Simulation"),
