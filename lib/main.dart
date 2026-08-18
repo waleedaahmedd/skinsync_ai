@@ -1,4 +1,3 @@
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,24 +15,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  if (kDebugMode) {
-    // Replace this string with the permanent token you generated in Step 1
-
-    await FirebaseAppCheck.instance.activate(
-      providerAndroid: const AndroidDebugProvider(),
-      providerApple: const AppleDebugProvider(),
-    );
-
-    // For native platforms, ensure the token is fed directly into the native layer.
-    // If you are using environment variables via --dart-define-from-file:
-    // const token = String.fromEnvironment('APP_CHECK_DEBUG_TOKEN');
-  } else {
-    // Production attestation providers
-    await FirebaseAppCheck.instance.activate(
-      providerAndroid: const AndroidPlayIntegrityProvider(),
-      providerApple: const AppleAppAttestWithDeviceCheckFallbackProvider(),
-    );
-  }
   await ScreenUtilPlus.ensureScreenSize();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await SecureStorage().init();
