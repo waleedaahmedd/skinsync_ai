@@ -118,6 +118,8 @@ class User {
   final String? phoneNumber;
   final String? location;
   final String? bio;
+  final String? cc;
+  final String? country;
 
   User({
     this.id,
@@ -129,6 +131,8 @@ class User {
     this.phoneNumber,
     this.location,
     this.bio,
+    this.country,
+    this.cc
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -141,6 +145,8 @@ class User {
     phoneNumber: json["phone_number"],
     location: json["location"],
     bio: json["bio"],
+    country: json["country"],
+    cc: json["cc"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -153,6 +159,8 @@ class User {
     "phone_number": phoneNumber,
     "location": location,
     "bio": bio,
+    "country":country,
+    "cc": cc
   };
 }
 

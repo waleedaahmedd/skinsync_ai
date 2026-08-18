@@ -5,7 +5,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
-import 'face_scan_screen.dart';
+import 'bottom_nav_page.dart';
 import '../utils/assets.dart';
 import '../utils/biometric_helper.dart';
 import '../utils/custom_fonts.dart';
@@ -120,7 +120,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
                               if (mounted) {
                                 Navigator.pushNamedAndRemoveUntil(
                                   context,
-                                  FaceScanScreen.routeName,
+                                  BottomNavPage.routeName,
                                   (Route<dynamic> route) => false,
                                 );
                               }
@@ -148,7 +148,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
               onTap: () {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
-                  FaceScanScreen.routeName,
+                  BottomNavPage.routeName,
                   (Route<dynamic> route) => false,
                 );
               },

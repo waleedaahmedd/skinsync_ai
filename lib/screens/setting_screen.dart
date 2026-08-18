@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
+import '../main.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
@@ -117,6 +118,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
               child: Column(
                 children: [
                   // Push Notifications Setting Option
+                  if(!isDeploymentMode)
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(12)),
                     child: Row(
@@ -151,6 +153,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                       ],
                     ),
                   ),
+                  if(!isDeploymentMode)
                   Padding(
                     padding: EdgeInsets.only(left: context.w(54), right: context.w(16)),
                     child: Divider(

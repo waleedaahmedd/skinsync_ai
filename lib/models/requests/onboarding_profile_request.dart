@@ -1,4 +1,4 @@
-class OnBoardingProfileRequest {
+class OnBoardingProfileRequest  {
   final String name;
   final String phoneNumber;
   final String emailAddress;
