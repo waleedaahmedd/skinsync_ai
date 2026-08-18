@@ -279,90 +279,91 @@ class TreatmentContainer extends StatelessWidget {
                     Positioned(top: context.h(12), right: context.w(12), child: topRightWidget!),
 
                   // AI Compatible Badge
-                  if (useInAiSimulator)
+                 
                     Positioned(
                       top: context.h(12),
                       right: (treatments != null && !isDeploymentMode)
                           ? context.w(44)
                           : context.w(12),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: context.w(10),
-                          vertical: context.h(5),
-                        ),
-                        decoration: BoxDecoration(
-                          color: CustomColors.purpleColor.withValues(
-                            alpha: 0.9,
-                          ),
-                          borderRadius: BorderRadius.circular(context.r(12)),
-                          boxShadow: [
-                            BoxShadow(
+                      child: Row(
+                        children: [
+                           if (useInAiSimulator)
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: context.w(10),
+                              vertical: context.h(5),
+                            ),
+                            decoration: BoxDecoration(
                               color: CustomColors.purpleColor.withValues(
-                                alpha: 0.3,
+                                alpha: 0.9,
                               ),
-                              blurRadius: 6,
-                              offset: const Offset(0, 2),
+                              borderRadius: BorderRadius.circular(context.r(12)),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: CustomColors.purpleColor.withValues(
+                                    alpha: 0.3,
+                                  ),
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
-                          ],
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.auto_awesome,
+                                  color: Colors.white,
+                                  size: context.sp(10),
+                                ),
+                                SizedBox(width: context.w(4)),
+                                Text(
+                                  "AI Compatible",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: context.sp(9),
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Degular',
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(width:4.w),
+                          if (treatments != null)
+                          GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            TreatmentDetailScreen.routeName,
+                            arguments: treatments,
+                          );
+                        },
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          padding: EdgeInsets.all(context.w(6)),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.4),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              width: 1,
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.info_outline,
+                            color: Colors.white,
+                            size: context.sp(16),
+                          ),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.auto_awesome,
-                              color: Colors.white,
-                              size: context.sp(10),
-                            ),
-                            SizedBox(width: context.w(4)),
-                            Text(
-                              "AI Compatible",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: context.sp(9),
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Degular',
-                              ),
-                            ),
-                          ],
-                        ),
+                      ),
+                   
+                        ],
                       ),
                     ),
 
-                  // 6. Info Button on Top Right (if not in deployment mode and real treatment is present)
-                  if (treatments != null)
-                    Visibility(
-                      visible: !isDeploymentMode,
-                      child: Positioned(
-                        top: context.h(12),
-                        right: context.w(12),
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              TreatmentDetailScreen.routeName,
-                              arguments: treatments,
-                            );
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: Container(
-                            padding: EdgeInsets.all(context.w(6)),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.4),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                width: 1,
-                              ),
-                            ),
-                            child: Icon(
-                              Icons.info_outline,
-                              color: Colors.white,
-                              size: context.sp(16),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                  
+                  
                 ],
               ),
             ),
