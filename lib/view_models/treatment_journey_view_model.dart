@@ -74,6 +74,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       );
 
       await _repo.shareTreatmentRequest(request: request);
+      await ref.read(authViewModel.notifier).callGetMe();
       if (!ref.mounted) return null;
       EasyLoading.dismiss();
       return true;
@@ -110,14 +111,15 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       return true;
     });
   }
-   Future<bool?> callDeleteGroup(int groupId) async {
+
+  Future<bool?> callDeleteGroup(int groupId) async {
     return await runSafely(() async {
       EasyLoading.show(status: 'Deleting Group...');
       final response = await _repo.deleteGroup(groupId);
       if (!ref.mounted) return null;
-     if(response.isSuccess == true){
-      await fetchTreatmentJourneyGroups(false);  
-     }
+      if (response.isSuccess == true) {
+        await fetchTreatmentJourneyGroups(false);
+      }
       EasyLoading.dismiss();
       return true;
     });
