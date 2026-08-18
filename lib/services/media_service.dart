@@ -13,7 +13,7 @@ import '../main.dart';
 
 class MediaService {
   final _storage = FirebaseStorage.instance;
-  static const int maxSizeBytes = 2 * 1024 * 1024;
+  static const int maxSizeBytes = 700 * 1024; // 700KB limit for faster uploads
 
   static MediaService? _instance;
 
@@ -36,13 +36,34 @@ class MediaService {
     final metadata = SettableMetadata(
       contentType: _imageContentType(image.path, acceptAnyFormat),
     );
-    final bytes = await image.readAsBytes();
-    final compressedBytes = await _compressImage(bytes);
-    final task = ref.putData(compressedBytes, metadata);
-    await task.whenComplete(() {});
+
+    final File file = File(image.path);
+    final int originalSize = await file.length();
+
+    // If file is large, compress it before uploading
+    if (originalSize > maxSizeBytes) {
+      final tempDir = await getTemporaryDirectory();
+      final targetPath =
+          '${tempDir.path}/compressed_${DateTime.now().millisecondsSinceEpoch}_${image.name}';
+
+      final compressedXFile = await FlutterImageCompress.compressAndGetFile(
+        image.path,
+        targetPath,
+        quality: 70, // 70% quality is optimal for mobile
+        format: CompressFormat.jpeg,
+      );
+
+      if (compressedXFile != null) {
+        final task = ref.putFile(File(compressedXFile.path), metadata);
+        await task;
+        return await ref.getDownloadURL();
+      }
+    }
+
+    // Direct upload if already within limits
+    final task = ref.putFile(file, metadata);
+    await task;
     final url = await ref.getDownloadURL();
-    log('Uploaded image path: $storagePath');
-    log('Uploaded image URL: $url');
     return url;
   }
 
@@ -200,19 +221,16 @@ class MediaService {
   }
 
   Future<Uint8List> _compressImage(Uint8List data) async {
-    Uint8List result = data;
-    int quality = 90;
     log('ORIGINAL SIZE: ${data.length}');
+    if (data.length <= maxSizeBytes) return data;
 
-    while (result.length > maxSizeBytes && quality >= 10) {
-      result = await FlutterImageCompress.compressWithList(
-        data,
-        format: CompressFormat.jpeg,
-        quality: quality,
-      );
-      log('COMPRESSION ITERATION - QUALITY: $quality, SIZE: ${result.length}');
-      quality -= 10;
-    }
+    // Single step compression for speed
+    final result = await FlutterImageCompress.compressWithList(
+      data,
+      format: CompressFormat.jpeg,
+      quality: 70,
+    );
+    log('COMPRESSED SIZE: ${result.length}');
     return result;
   }
 }
