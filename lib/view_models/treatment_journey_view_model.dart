@@ -85,29 +85,42 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     state = state.copyWith(selectedOptionId: id);
   }
 
-  Future<bool?> fetchOptions(int groupId) async {
+  Future<bool?> fetchOptions(int groupId, {bool showloading = true}) async {
     return await runSafely(() async {
-      EasyLoading.show(status: 'Fetching Journey...');
+      if (showloading) {
+        EasyLoading.show(status: 'Fetching Journey...');
+      }
+
       final response = await _repo.getOptions(groupId);
 
       if (!ref.mounted) return null;
       state = state.copyWith(loading: false, options: response.data ?? []);
       if (state.options.isNotEmpty) {
         setOptionId(state.options.first.id!);
-        await fetchOptionsDetail(state.options.first.id!);
+        await fetchOptionsDetail(state.options.first.id!,showLoading: false);
       }
-      EasyLoading.dismiss();
+      if (showloading) {
+        EasyLoading.dismiss();
+      }
       return true;
     });
   }
 
-  Future<bool?> fetchOptionsDetail(int optionId) async {
+  Future<bool?> fetchOptionsDetail(
+    int optionId, {
+    bool showLoading = true,
+  }) async {
     return await runSafely(() async {
-      EasyLoading.show(status: 'Fetching Options...');
+      if (showLoading) {
+        EasyLoading.show(status: 'Fetching Options Detail...');
+      }
+
       final response = await _repo.getOptionsDetail(optionId);
       if (!ref.mounted) return null;
       state = state.copyWith(loading: false, simulations: response.data);
-      EasyLoading.dismiss();
+      if (showLoading) {
+        EasyLoading.dismiss();
+      }
       return true;
     });
   }
@@ -222,9 +235,8 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
         treatments: historyTreatments,
       );
       final response = await _repo.createTjOptions(request);
-      if (!ref.mounted) return null;
       if (response.isSuccess == true) {
-        EasyLoading.showSuccess('Option created successfully');
+        await EasyLoading.showSuccess('Option created successfully');
       }
       return true;
     });

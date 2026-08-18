@@ -138,7 +138,7 @@ class _ArFaceModelPreviewScreenState
             if (groupId != null) {
               await ref
                   .read(treatmentJourneyProvider.notifier)
-                  .fetchOptions(groupId);
+                  .fetchOptions(groupId,showloading: false);
             }
           }
         },
