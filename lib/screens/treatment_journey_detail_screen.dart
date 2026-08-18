@@ -173,7 +173,7 @@ class _TreatmentJourneyDetailScreenState
                 }
                 return CustomButton(
                   isBorder: true,
-                  text: 'Duplicate this Option',
+                  text: 'Modify',
                   onPressed: () async {
                     final sim = state.simulations;
                     if (sim != null) {
@@ -194,7 +194,7 @@ class _TreatmentJourneyDetailScreenState
           ),
           Expanded(
             child: CustomButton(
-              text: "Share this Option",
+              text: "Share",
               onPressed: () async {
                 final currentOptionId =
                     state.options[_tabController?.index ?? 0].id;
