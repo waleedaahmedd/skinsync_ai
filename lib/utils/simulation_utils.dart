@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../services/media_service.dart';
+import '../widgets/app_progress_indicator.dart';
 
 class SimulationImages {
   final XFile? frontBefore;
@@ -44,27 +45,68 @@ Future<SimulationUrls> uploadSimulationImages({
 }) async {
   final mediaService = MediaService();
 
+  final uploadTasks = [
+    {
+      'file': images.frontAfter != null ? images.frontBefore : null,
+      'path': '$userId/treatment_option/front/before/'
+    },
+    {
+      'file': images.frontAfter,
+      'path': '$userId/treatment_option/front/after/'
+    },
+    {
+      'file': images.rightAfter != null ? images.rightBefore : null,
+      'path': '$userId/treatment_option/before/right/'
+    },
+    {
+      'file': images.rightAfter,
+      'path': '$userId/treatment_option/after/right/'
+    },
+    {
+      'file': images.leftAfter != null ? images.leftBefore : null,
+      'path': '$userId/treatment_option/before/left/'
+    },
+    {'file': images.leftAfter, 'path': '$userId/treatment_option/after/left/'},
+  ];
+
+  final int totalToUpload = uploadTasks.where((e) => e['file'] != null).length;
+  int currentCount = 0;
+
+  void showProgress() {
+    currentCount++;
+    EasyLoading.show(
+      indicator: AppProgressIndicator(
+        current: currentCount,
+        total: totalToUpload,
+        message: 'Uploading Images...',
+      ),
+    );
+  }
+
+  if (totalToUpload > 0) {
+    EasyLoading.show(
+      indicator: AppProgressIndicator(
+        current: 0,
+        total: totalToUpload,
+        message: 'Uploading Images...',
+      ),
+    );
+  }
+
   Future<String?> upload(XFile? file, String path) async {
     if (file == null) return null;
     final url = await mediaService.uploadImage(path, file);
     if (url == null) {
       EasyLoading.showError('Failed to upload image');
     }
+    showProgress();
     return url;
   }
 
-  // Uploading all images
-  final results = await Future.wait([
-    upload(images.frontAfter != null ? images.frontBefore : null,
-        '$userId/treatment_option/front/before/'),
-    upload(images.frontAfter, '$userId/treatment_option/front/after/'),
-    upload(images.rightAfter != null ? images.rightBefore : null,
-        '$userId/treatment_option/before/right/'),
-    upload(images.rightAfter, '$userId/treatment_option/after/right/'),
-    upload(images.leftAfter != null ? images.leftBefore : null,
-        '$userId/treatment_option/before/left/'),
-    upload(images.leftAfter, '$userId/treatment_option/after/left/'),
-  ]);
+  // Uploading all images in parallel while tracking progress
+  final results = await Future.wait(
+    uploadTasks.map((task) => upload(task['file'] as XFile?, task['path'] as String)),
+  );
 
   return SimulationUrls(
     frontBefore: results[0],
