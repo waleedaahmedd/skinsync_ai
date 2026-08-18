@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'models/responses/appointments_list_response.dart';
 import 'models/responses/get_clinic_response.dart';
+import 'models/responses/patient_treatment_request_response.dart';
 import 'models/responses/treatment_area_list_response.dart';
 import 'models/responses/treatment_category_list_response.dart';
 import 'models/responses/treatment_list_response.dart';
@@ -34,6 +35,7 @@ import 'screens/login_screen.dart';
 import 'screens/notes_screen.dart';
 import 'screens/notification_screen.dart';
 import 'screens/otp_screen.dart';
+import 'screens/patient_treatment_request_detail_screen.dart';
 import 'screens/patient_treatment_requests_screen.dart';
 import 'screens/payment_screen.dart';
 import 'screens/personal_detail_screen.dart';
@@ -349,6 +351,15 @@ class RouteGenerator {
           ),
           builder: (_) => PatientTreatmentRequestsScreen(
             clinicId: args as int,
+          ),
+        );
+      case PatientTreatmentRequestDetailScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(
+            name: PatientTreatmentRequestDetailScreen.routeName,
+          ),
+          builder: (_) => PatientTreatmentRequestDetailScreen(
+            request: args as PatientTreatmentRequest,
           ),
         );
       case TreatmentJourneyDetailScreen.routeName:

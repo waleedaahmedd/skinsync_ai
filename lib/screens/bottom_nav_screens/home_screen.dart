@@ -308,11 +308,11 @@ class HomeScreen extends ConsumerWidget {
               SizedBox(height: context.h(28)),
             
              
-              // Treatment Requests Section
+              // Shared Treatment Requests Section
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                 child: HeadingWithRightArrow(
-                  title: "Treatment Requests",
+                  title: "Shared Treatment Requests",
                   onTap: () {
                     final clinicId = dashboard?.requestTreatmentClinic?.firstOrNull?.id;
                     if (clinicId != null) {
@@ -328,15 +328,15 @@ class HomeScreen extends ConsumerWidget {
 
               SizedBox(height: context.h(16)),
 
-              // Treatment Requests Empty State Check
+              // Shared Treatment Requests Empty State Check
               (dashboard?.requestTreatmentClinic?.isEmpty ?? true)
                   ? _buildHorizontalEmptyState(
                       context: context,
                       height: context.h(100),
                       icon: Icons.request_page_outlined,
-                      title: "No Treatment Requests",
+                      title: "No Shared Treatment Requests",
                       subtitle:
-                          "Treatment requests will appear here.",
+                          "Shared treatment requests will appear here.",
                     )
                   : SizedBox(
                       height: context.h(150),

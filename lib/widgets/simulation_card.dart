@@ -26,7 +26,9 @@ class SimulationCard extends ConsumerStatefulWidget {
   final String? price;
   final bool showImages;
   final bool showTreatments;
+  final bool showCreatedAt;
   final VoidCallback? onDelete;
+  final double? width;
 
   const SimulationCard({
     super.key,
@@ -36,7 +38,10 @@ class SimulationCard extends ConsumerStatefulWidget {
     this.onActionButtonPressed,
     this.price,
     this.showImages = true,
-    this.showTreatments = true, this.onDelete,
+    this.showTreatments = true,
+    this.showCreatedAt = true,
+    this.onDelete,
+    this.width,
   });
 
   @override
@@ -49,44 +54,75 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: widget.width ?? double.infinity,
       margin: EdgeInsets.only(bottom: context.h(20)),
       padding: EdgeInsets.all(context.w(15)),
       decoration: BoxDecoration(
         color: CustomColors.whiteColor,
-        borderRadius: BorderRadius.circular(context.r(20)),
+        borderRadius: BorderRadius.circular(context.r(24)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: CustomColors.lightBlueColor.withValues(alpha: 0.15),
+            blurRadius: 25,
+            offset: const Offset(-8, 10),
+          ),
+          BoxShadow(
+            color: CustomColors.darkPurple.withValues(alpha: 0.15),
+            blurRadius: 25,
+            offset: const Offset(8, 10),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
         border: Border.all(
-          color: CustomColors.greyColor.withValues(alpha: 0.5),
+          color: CustomColors.greyColor.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              if (widget.sim.createdAt != null)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      "Created at:",
-                      style: CustomFonts.grey13w400,
+          if (widget.showCreatedAt && widget.sim.createdAt != null)
+            Padding(
+              padding: EdgeInsets.only(bottom: context.h(8)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Created at:",
+                        style: CustomFonts.grey13w400,
+                      ),
+                      SizedBox(width: context.w(8)),
+                      Text(
+                        widget.sim.createdAt!.formattedDateTime,
+                        style: CustomFonts.grey13w400,
+                      ),
+                    ],
+                  ),
+                  if (widget.onDelete != null)
+                    IconButton(
+                      onPressed: widget.onDelete,
+                      icon: const Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.red,
+                        size: 22,
+                      ),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      visualDensity: VisualDensity.compact,
                     ),
-                    SizedBox(width: context.w(8)),
-                    Text(
-                      widget.sim.createdAt!.formattedDateTime,
-                      style: CustomFonts.grey13w400,
-                    ),
-                  ],
-                ),
-              if (widget.onDelete != null)
+                ],
+              ),
+            )
+          else if (widget.onDelete != null)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
                 IconButton(
                   onPressed: widget.onDelete,
                   icon: const Icon(
@@ -98,8 +134,8 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                   constraints: const BoxConstraints(),
                   visualDensity: VisualDensity.compact,
                 ),
-            ],
-          ),
+              ],
+            ),
           if (widget.showImages) ...[
             SizedBox(height: context.h(12)),
             Row(
@@ -181,9 +217,7 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                         padding: EdgeInsets.only(bottom: context.h(8)),
                         child: Text(
                           "Treatment - ${index + 1}",
-                          style: CustomFonts.black18w600.copyWith(
-                            fontSize: context.sp(16),
-                          ),
+                          style: CustomFonts.black16w600,
                         ),
                       ),
                       // Treatment chip - visibility icon, tap opens TreatmentDetailScreen
@@ -219,9 +253,7 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                           ),
                           child: Text(
                             "Selected Areas",
-                            style: CustomFonts.black14w600.copyWith(
-                              color: Colors.grey.shade700,
-                            ),
+                            style: CustomFonts.black16w600,
                           ),
                         ),
                         Wrap(

@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
+import '../models/responses/patient_treatment_request_response.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../utils/date_time_utils.dart';
 import '../view_models/patient_treatment_request_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/medical_disclaimer_banner.dart';
-import '../widgets/simulation_card.dart';
+import '../widgets/simulation_treatment_area_chip.widget.dart';
+import 'patient_treatment_request_detail_screen.dart';
 
 class PatientTreatmentRequestsScreen extends ConsumerStatefulWidget {
   final int clinicId;
@@ -24,8 +25,6 @@ class PatientTreatmentRequestsScreen extends ConsumerStatefulWidget {
 
 class _PatientTreatmentRequestsScreenState
     extends ConsumerState<PatientTreatmentRequestsScreen> {
-  String _selectedSubTab = "Simulation";
-
   @override
   void initState() {
     super.initState();
@@ -44,105 +43,43 @@ class _PatientTreatmentRequestsScreenState
       backgroundColor: Colors.white,
       appBar: const CustomAppBar(
         showTitle: true,
-        title: "Treatment Requests",
+        title: "Shared Treatment Requests",
       ),
       body: state.loading
           ? const Center(child: AppLoader())
           : state.requests.isEmpty
           ? Center(
               child: Text(
-                state.errorMessage ?? "No treatment requests found",
+                state.errorMessage ?? "No shared treatment requests found",
                 style: CustomFonts.grey16w400,
               ),
             )
           : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(
-                    top: context.h(10),
-                    bottom: context.h(20),
-                    left: context.w(24),
-                    right: context.w(24),
+                  padding: EdgeInsets.fromLTRB(
+                    context.w(24),
+                    context.h(20),
+                    context.w(24),
+                    context.h(10),
                   ),
-                  child: Row(
-                    children: [
-                      _buildSubTabButton("Simulation"),
-                      SizedBox(width: context.w(12)),
-                      _buildSubTabButton("Treatments"),
-                    ],
+                  child: Text(
+                    "Review shared simulation requests and their requested treatments.",
+                    style: CustomFonts.grey14w400.copyWith(height: 1.4),
                   ),
                 ),
                 Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.w(24),
+                      vertical: context.h(10),
+                    ),
                     physics: const BouncingScrollPhysics(),
                     itemCount: state.requests.length,
                     itemBuilder: (context, index) {
                       final request = state.requests[index];
-                      final sim = request.simulation;
-
-                      if (sim == null) return const SizedBox.shrink();
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (index == 0) const MedicalDisclaimerBanner(),
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: context.h(16),
-                              bottom: context.h(12),
-                              left: context.w(4),
-                            ),
-                            child: Row(
-                              children: [
-                                CircleAvatar(
-                                  radius: context.r(24),
-                                  backgroundColor: CustomColors.greyColor
-                                      .withValues(alpha: 0.2),
-                                  backgroundImage:
-                                      request.image != null &&
-                                              request.image!.isNotEmpty
-                                          ? NetworkImage(request.image!)
-                                          : null,
-                                  child: request.image == null ||
-                                          request.image!.isEmpty
-                                      ? const Icon(
-                                          Icons.person,
-                                          color: Colors.grey,
-                                          size: 28,
-                                        )
-                                      : null,
-                                ),
-                                SizedBox(width: context.w(12)),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        request.patientName ??
-                                            "Unnamed Patient",
-                                        style: CustomFonts.black18w600,
-                                      ),
-                                      Text(
-                                        request.patientEmail ?? "",
-                                        style: CustomFonts.grey14w400,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SimulationCard(
-                            sim: sim,
-                            showActionButton: false,
-                            showImages: _selectedSubTab == "Simulation",
-                            showTreatments: _selectedSubTab == "Treatments",
-                          ),
-                          SizedBox(height: context.h(20)),
-                        ],
-                      );
+                      return _buildRequestSummaryCard(context, request);
                     },
                   ),
                 ),
@@ -151,21 +88,124 @@ class _PatientTreatmentRequestsScreenState
     );
   }
 
-  Widget _buildSubTabButton(String title) {
-    final isSelected = _selectedSubTab == title;
+  Widget _buildRequestSummaryCard(
+    BuildContext context,
+    PatientTreatmentRequest request,
+  ) {
+    final treatments = request.treatments ?? [];
+    final title = request.name ?? "Shared Treatment Request";
+    final subtitle = request.createdAt != null
+        ? "Created at: ${request.createdAt!.formattedDateTime}"
+        : "";
 
-    return Expanded(
-      child: CustomButton(
-        text: title,
-        onPressed: () {
-          setState(() {
-            _selectedSubTab = title;
-          });
+    return Container(
+      margin: EdgeInsets.only(bottom: context.h(16)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(context.r(20)),
+        border: Border.all(
+          color: CustomColors.greyColor.withValues(alpha: 0.5),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: InkWell(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            PatientTreatmentRequestDetailScreen.routeName,
+            arguments: request,
+          );
         },
-        height: context.h(45),
-        borderRadius: context.r(100),
-        isBorder: !isSelected,
-        textColor: isSelected ? Colors.white : Colors.black,
+        borderRadius: BorderRadius.circular(context.r(20)),
+        child: Padding(
+          padding: EdgeInsets.all(context.w(16)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: CustomFonts.black18w600,
+                        ),
+                        if (subtitle.isNotEmpty)
+                          Text(
+                            subtitle,
+                            style: CustomFonts.grey14w400,
+                          ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: Colors.grey.shade400,
+                    size: context.sp(24),
+                  ),
+                ],
+              ),
+              if (treatments.isNotEmpty) ...[
+                SizedBox(height: context.h(16)),
+                const Divider(height: 1),
+                SizedBox(height: context.h(16)),
+                Text(
+                  "Requested Treatments",
+                  style: CustomFonts.black16w600,
+                ),
+                SizedBox(height: context.h(12)),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: treatments.map((t) {
+                    return Padding(
+                      padding: EdgeInsets.only(bottom: context.h(12)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SimulationTreatmentAreaChip(
+                            label: t.name ?? "",
+                            icon: t.icon,
+                            isTreatment: true,
+                            imageUrl: t.image,
+                          ),
+                          if (t.areas != null && t.areas!.isNotEmpty) ...[
+                            SizedBox(height: context.h(8)),
+                            Padding(
+                              padding: EdgeInsets.only(left: context.w(12)),
+                              child: Wrap(
+                                spacing: context.w(8),
+                                runSpacing: context.h(8),
+                                children: t.areas!.map((area) {
+                                  return SimulationTreatmentAreaChip(
+                                    label: area.name ?? "",
+                                    icon: area.icon,
+                                    isTreatment: false,
+                                    imageUrl: area.image,
+                                    materialCount: area.materials
+                                        ?.where((m) => (m.selectedQuantity ?? 0) > 0)
+                                        .length,
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }

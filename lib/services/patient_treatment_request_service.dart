@@ -28,7 +28,7 @@ class PatientTreatmentRequestService implements PatientTreatmentRequestRepositor
     } else {
       final parsed = json.decode(response.body);
       throw AppException(
-        AuthResponse.fromJson(parsed).message ?? "Failed to fetch treatment requests",
+        AuthResponse.fromJson(parsed).message ?? "Failed to fetch shared treatment requests",
       );
     }
   }

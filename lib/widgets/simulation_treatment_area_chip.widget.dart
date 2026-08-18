@@ -94,7 +94,7 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: CustomColors.purpleColor.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(context.r(20)),
+        borderRadius: BorderRadius.circular(context.r(12)),
       ),
       child: Text(
         "$materialCount",
@@ -122,7 +122,7 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
           borderRadius: BorderRadius.circular(context.r(24)),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(context.r(20)),
+          borderRadius: BorderRadius.circular(context.r(10)),
           child: Stack(
             children: [
               // Background image
