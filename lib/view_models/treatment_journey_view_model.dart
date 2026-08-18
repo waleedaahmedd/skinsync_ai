@@ -103,10 +103,15 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 
   Future<bool?> fetchOptionsDetail(int optionId) async {
     return await runSafely(() async {
-      EasyLoading.show(status: 'Fetching Options...');
+      // EasyLoading.show(status: 'Fetching Options...');
+      state = state.copyWith(isSimulationsLoading: true);
       final response = await _repo.getOptionsDetail(optionId);
       if (!ref.mounted) return null;
-      state = state.copyWith(loading: false, simulations: response.data);
+      state = state.copyWith(
+        loading: false,
+        simulations: response.data,
+        isSimulationsLoading: false,
+      );
       EasyLoading.dismiss();
       return true;
     });
