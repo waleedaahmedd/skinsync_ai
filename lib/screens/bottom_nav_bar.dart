@@ -16,7 +16,7 @@ class BottomNavBar extends StatelessWidget {
   static final List<BottomNavItem> _items = [
     const BottomNavItem(
       label: 'Home',
-      selectedIcon: FontAwesomeIcons.solidHouse,
+      selectedIcon: FontAwesomeIcons.house,
       unselectedIcon: FontAwesomeIcons.house,
     ),
     const BottomNavItem(
@@ -26,7 +26,7 @@ class BottomNavBar extends StatelessWidget {
     ),
     const BottomNavItem(
       label: 'Explore',
-      selectedIcon: FontAwesomeIcons.solidCompass,
+      selectedIcon: FontAwesomeIcons.compass,
       unselectedIcon: FontAwesomeIcons.compass,
     ),
     const BottomNavItem(
@@ -36,7 +36,7 @@ class BottomNavBar extends StatelessWidget {
     ),
     const BottomNavItem(
       label: 'Profile',
-      selectedIcon: FontAwesomeIcons.solidUser,
+      selectedIcon: FontAwesomeIcons.user,
       unselectedIcon: FontAwesomeIcons.user,
     ),
   ];
