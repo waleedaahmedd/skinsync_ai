@@ -102,17 +102,27 @@ class _PatientTreatmentRequestsScreenState
       margin: EdgeInsets.only(bottom: context.h(16)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(context.r(20)),
-        border: Border.all(
-          color: CustomColors.greyColor.withValues(alpha: 0.5),
-        ),
+        borderRadius: BorderRadius.circular(context.r(24)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
+            color: CustomColors.lightBlueColor.withValues(alpha: 0.15),
+            blurRadius: 25,
+            offset: const Offset(-8, 10),
+          ),
+          BoxShadow(
+            color: CustomColors.darkPurple.withValues(alpha: 0.15),
+            blurRadius: 25,
+            offset: const Offset(8, 10),
+          ),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
+        border: Border.all(
+          color: CustomColors.greyColor.withValues(alpha: 0.3),
+        ),
       ),
       child: InkWell(
         onTap: () {
@@ -122,9 +132,9 @@ class _PatientTreatmentRequestsScreenState
             arguments: request,
           );
         },
-        borderRadius: BorderRadius.circular(context.r(20)),
+        borderRadius: BorderRadius.circular(context.r(24)),
         child: Padding(
-          padding: EdgeInsets.all(context.w(16)),
+          padding: EdgeInsets.all(context.w(20)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -154,22 +164,26 @@ class _PatientTreatmentRequestsScreenState
                 ],
               ),
               if (treatments.isNotEmpty) ...[
-                SizedBox(height: context.h(16)),
+                SizedBox(height: context.h(12)),
                 const Divider(height: 1),
-                SizedBox(height: context.h(16)),
-                Text(
-                  "Requested Treatments",
-                  style: CustomFonts.black16w600,
-                ),
                 SizedBox(height: context.h(12)),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: treatments.map((t) {
+                  children: List.generate(treatments.length, (index) {
+                    final t = treatments[index];
+                    final isLast = index == treatments.length - 1;
                     return Padding(
-                      padding: EdgeInsets.only(bottom: context.h(12)),
+                      padding: EdgeInsets.only(bottom: isLast ? 0 : context.h(12)),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Padding(
+                            padding: EdgeInsets.only(bottom: context.h(6)),
+                            child: Text(
+                              "Treatment - ${index + 1}",
+                              style: CustomFonts.black16w600,
+                            ),
+                          ),
                           SimulationTreatmentAreaChip(
                             label: t.name ?? "",
                             icon: t.icon,
@@ -177,30 +191,36 @@ class _PatientTreatmentRequestsScreenState
                             imageUrl: t.image,
                           ),
                           if (t.areas != null && t.areas!.isNotEmpty) ...[
-                            SizedBox(height: context.h(8)),
+                            SizedBox(height: context.h(10)),
                             Padding(
-                              padding: EdgeInsets.only(left: context.w(12)),
-                              child: Wrap(
-                                spacing: context.w(8),
-                                runSpacing: context.h(8),
-                                children: t.areas!.map((area) {
-                                  return SimulationTreatmentAreaChip(
-                                    label: area.name ?? "",
-                                    icon: area.icon,
-                                    isTreatment: false,
-                                    imageUrl: area.image,
-                                    materialCount: area.materials
-                                        ?.where((m) => (m.selectedQuantity ?? 0) > 0)
-                                        .length,
-                                  );
-                                }).toList(),
+                              padding: EdgeInsets.only(
+                                left: context.w(4),
+                                bottom: context.h(8)),
+                              child: Text(
+                                "Selected Areas",
+                                style: CustomFonts.black16w600,
                               ),
+                            ),
+                            Wrap(
+                              spacing: context.w(8),
+                              runSpacing: context.h(8),
+                              children: t.areas!.map((area) {
+                                return SimulationTreatmentAreaChip(
+                                  label: area.name ?? "",
+                                  icon: area.icon,
+                                  isTreatment: false,
+                                  imageUrl: area.image,
+                                  materialCount: area.materials
+                                      ?.where((m) => (m.selectedQuantity ?? 0) > 0)
+                                      .length,
+                                );
+                              }).toList(),
                             ),
                           ],
                         ],
                       ),
                     );
-                  }).toList(),
+                  }),
                 ),
               ],
             ],

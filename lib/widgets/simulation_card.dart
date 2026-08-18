@@ -56,7 +56,7 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
     return Container(
       width: widget.width ?? double.infinity,
       margin: EdgeInsets.only(bottom: context.h(20)),
-      padding: EdgeInsets.all(context.w(15)),
+      padding: EdgeInsets.all(context.w(20)),
       decoration: BoxDecoration(
         color: CustomColors.whiteColor,
         borderRadius: BorderRadius.circular(context.r(24)),
@@ -203,18 +203,19 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
           if (widget.showTreatments &&
               widget.sim.treatments != null &&
               widget.sim.treatments!.isNotEmpty) ...[
-            SizedBox(height: context.h(12)),
+            SizedBox(height: context.h(8)),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: List.generate(widget.sim.treatments!.length, (index) {
                 final treatment = widget.sim.treatments![index];
+                final isLast = index == widget.sim.treatments!.length - 1;
                 return Padding(
-                  padding: EdgeInsets.only(bottom: context.h(16)),
+                  padding: EdgeInsets.only(bottom: isLast ? 0 : context.h(12)),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(bottom: context.h(8)),
+                        padding: EdgeInsets.only(bottom: context.h(6)),
                         child: Text(
                           "Treatment - ${index + 1}",
                           style: CustomFonts.black16w600,
@@ -245,11 +246,11 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                       ),
                       if (treatment.areas != null &&
                           treatment.areas!.isNotEmpty) ...[
-                        SizedBox(height: context.h(16)),
+                        SizedBox(height: context.h(10)),
                         Padding(
                           padding: EdgeInsets.only(
                             left: context.w(4),
-                            bottom: context.h(10),
+                            bottom: context.h(8),
                           ),
                           child: Text(
                             "Selected Areas",
@@ -285,7 +286,7 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
             ),
           ],
           if (widget.price != null) ...[
-            SizedBox(height: context.h(15)),
+            SizedBox(height: context.h(10)),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -300,7 +301,7 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
             ),
           ],
           if (widget.showActionButton) ...[
-            SizedBox(height: context.h(10)),
+            SizedBox(height: context.h(8)),
             CustomButton(
               onPressed:
                   widget.onActionButtonPressed ??

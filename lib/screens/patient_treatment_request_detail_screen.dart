@@ -38,73 +38,67 @@ class _PatientTreatmentRequestDetailScreenState
         showTitle: true,
         title: "Request Details",
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(
-              top: context.h(10),
-              bottom: context.h(20),
-              left: context.w(24),
-              right: context.w(24),
-            ),
-            child: Row(
-              children: [
-                _buildSubTabButton("Simulation"),
-                SizedBox(width: context.w(12)),
-                _buildSubTabButton("Treatments"),
-              ],
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(
+          horizontal: context.w(24),
+          vertical: context.h(20),
+        ),
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const MedicalDisclaimerBanner(),
+            Padding(
+              padding: EdgeInsets.only(
+                top: context.h(10),
+                bottom: context.h(20),
+              ),
+              child: Row(
                 children: [
-                  const MedicalDisclaimerBanner(),
-                  Padding(
-                    padding: EdgeInsets.only(
-                      top: context.h(16),
-                      bottom: context.h(20),
-                      left: context.w(4),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                title,
-                                style: CustomFonts.black20w600,
-                              ),
-                              if (subtitle.isNotEmpty) ...[
-                                SizedBox(height: context.h(4)),
-                                Text(
-                                  "Created at: $subtitle",
-                                  style: CustomFonts.grey14w400,
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SimulationCard(
-                    sim: sim,
-                    showActionButton: false,
-                    showImages: _selectedSubTab == "Simulation",
-                    showTreatments: _selectedSubTab == "Treatments",
-                    showCreatedAt: false,
-                  ),
-                  SizedBox(height: context.h(30)),
+                  _buildSubTabButton("Simulation"),
+                  SizedBox(width: context.w(12)),
+                  _buildSubTabButton("Treatments"),
                 ],
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: context.h(20),
+                left: context.w(4),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: CustomFonts.black20w600,
+                        ),
+                        if (subtitle.isNotEmpty) ...[
+                          SizedBox(height: context.h(4)),
+                          Text(
+                            "Created at: $subtitle",
+                            style: CustomFonts.grey14w400,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SimulationCard(
+              sim: sim,
+              showActionButton: false,
+              showImages: _selectedSubTab == "Simulation",
+              showTreatments: _selectedSubTab == "Treatments",
+              showCreatedAt: false,
+            ),
+            SizedBox(height: context.h(30)),
+          ],
+        ),
       ),
     );
   }
@@ -123,7 +117,6 @@ class _PatientTreatmentRequestDetailScreenState
         height: context.h(45),
         borderRadius: context.r(100),
         isBorder: !isSelected,
-        textColor: isSelected ? Colors.white : Colors.black,
       ),
     );
   }
