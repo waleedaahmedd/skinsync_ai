@@ -97,7 +97,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       state = state.copyWith(loading: false, options: response.data ?? []);
       if (state.options.isNotEmpty) {
         setOptionId(state.options.first.id!);
-        await fetchOptionsDetail(state.options.first.id!,showLoading: false);
+        await fetchOptionsDetail(state.options.first.id!);
       }
       if (showloading) {
         EasyLoading.dismiss();
@@ -107,9 +107,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
   }
 
   Future<bool?> fetchOptionsDetail(
-    int optionId, {
-    bool showLoading = true,
-  }) async {
+    int optionId) async {
     return await runSafely(() async {
       // EasyLoading.show(status: 'Fetching Options...');
       state = state.copyWith(isSimulationsLoading: true);
