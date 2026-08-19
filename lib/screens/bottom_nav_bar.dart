@@ -58,7 +58,7 @@ class BottomNavBar extends StatelessWidget {
                 (item) => TabItem(
                   icon: FaIcon(
                     item.unselectedIcon,
-                    size: context.h(18),
+                    size: context.h(20),
                     color: CustomColors.bottomNavText,
                   ),
                   activeIcon: Container(
@@ -69,7 +69,7 @@ class BottomNavBar extends StatelessWidget {
                     child: Center(
                       child: FaIcon(
                         item.selectedIcon,
-                        size: context.h(25),
+                        size: context.h(22),
                         color: CustomColors.blackColor,
                       ),
                     ),
