@@ -273,6 +273,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                     child: CustomButton(
                       isLoading: ref.watch(authViewModel).loading,
                       onPressed: () {
+                        FocusScope.of(context).unfocus();
                         if (_formKey.currentState?.validate() ?? false) {
                           ref
                               .read(authViewModel.notifier)
