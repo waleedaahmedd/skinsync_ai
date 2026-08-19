@@ -2,13 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import 'package:flutter_svg/svg.dart';
 
 import '../models/responses/get_clinic_response.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
-import 'frosted_container.dart';
 
 class CustomClinicGridViewTile extends StatelessWidget {
   final Clinic? clinicData;
@@ -44,17 +42,47 @@ class CustomClinicGridViewTile extends StatelessWidget {
           children: [
             // Top Image with Badges
             SizedBox(
-              height: context.h(150),
+              // height: context.h(150),
               width: double.infinity,
               child: Stack(
                 children: [
+                  // ClipRRect(
+                  //   borderRadius: BorderRadius.vertical(
+                  //     top: Radius.circular(context.r(16)),
+                  //   ),
+                  //   child: CachedNetworkImage(
+                  //     imageUrl: clinicData?.logo ?? "",
+                  //     height: context.h(150),
+                  //     width: double.infinity,
+                  //     fit: BoxFit.cover,
+                  //     placeholder: (context, url) => Container(
+                  //       color: Colors.grey.shade100,
+                  //       child: const Center(
+                  //         child: CupertinoActivityIndicator(),
+                  //       ),
+                  //     ),
+                  //     errorWidget: (context, url, error) {
+                  //       return Container(
+                  //         height: context.h(150),
+                  //         width: double.infinity,
+                  //         color: Colors.grey.shade100,
+                  //         child: Icon(
+                  //           Icons.storefront_rounded,
+                  //           size: context.sp(32),
+                  //           color: Colors.grey.shade400,
+                  //         ),
+                  //       );
+                  //     },
+                  //   ),
+                  // ),
                   ClipRRect(
                     borderRadius: BorderRadius.vertical(
                       top: Radius.circular(context.r(16)),
                     ),
                     child: CachedNetworkImage(
-                      imageUrl: clinicData?.logo ?? "",
-                      height: context.h(150),
+                      // Banner is not available here yet.
+                      imageUrl: "",
+                      height: context.h(100),
                       width: double.infinity,
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Container(
@@ -63,104 +91,149 @@ class CustomClinicGridViewTile extends StatelessWidget {
                           child: CupertinoActivityIndicator(),
                         ),
                       ),
-                      errorWidget: (context, url, error) {
-                        return Container(
-                          height: context.h(150),
-                          width: double.infinity,
-                          color: Colors.grey.shade100,
-                          child: Icon(
-                            Icons.storefront_rounded,
-                            size: context.sp(32),
-                            color: Colors.grey.shade400,
-                          ),
-                        );
-                      },
+                      errorWidget: (_, _, _) => DecoratedBox(
+                        decoration: const BoxDecoration(
+                          gradient: CustomColors.purpleBlueGradient,
+                        ),
+                        child: Image.asset(
+                          PngAssets.splashLogo,
+                          opacity: const AlwaysStoppedAnimation(0.4),
+                          fit: .cover,
+                        ),
+                      ),
+                      // errorWidget: (context, url, error) => Container(
+                      //   color: Colors.grey.shade100,
+                      //   child: const Icon(
+                      //     Icons.storefront_rounded,
+                      //     size: 30,
+                      //     color: Colors.grey,
+                      //   ),
+                      // ),
                     ),
                   ),
-                  // "Top Choice" Flame Badge
                   Positioned(
                     top: context.h(8),
                     left: context.w(8),
-                    child: FrostedContainer(
-                      borderRadius: context.r(8),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: context.w(8),
-                        vertical: context.h(4),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          SvgPicture.asset(
-                            SvgAssets.flame,
-                            height: context.h(11),
-                            width: context.w(9),
-                            colorFilter: const ColorFilter.mode(
-                              CustomColors.pinkColor,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                          SizedBox(width: context.w(4)),
-                          Text(
-                            "Top Choice",
-                            style: CustomFonts.black10w600.copyWith(
-                              color: CustomColors.pinkColor,
-                              fontSize: context.sp(10),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Rating Star Badge
-                  Positioned(
-                    bottom: context.h(8),
-                    right: context.w(8),
-                    child: FrostedContainer(
-                      borderRadius: context.r(8),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: context.w(8),
-                        vertical: context.h(4),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.star_rounded,
-                            color: Colors.amber,
-                            size: context.sp(14),
-                          ),
-                          SizedBox(width: context.w(3)),
-                          Text(
-                            '${clinicData?.place?.rating ?? 0.0}',
-                            style: CustomFonts.black10w600.copyWith(
-                              fontSize: context.sp(10),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Favorite Badge Icon
-                  Positioned(
-                    top: context.h(8),
-                    right: context.w(8),
                     child: Container(
-                      padding: EdgeInsets.all(context.w(5)),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.black.withValues(alpha: 0.25),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      child: Icon(
-                        Icons.favorite_border_rounded,
-                        color: Colors.white,
-                        size: context.sp(15),
+                      child: ClipOval(
+                        child: CachedNetworkImage(
+                          imageUrl: clinicData?.logo ?? '',
+                          height: context.w(40),
+                          width: context.w(40),
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            height: context.w(40),
+                            width: context.w(40),
+                            color: Colors.grey.shade100,
+                            child: const CupertinoActivityIndicator(radius: 8),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            height: context.w(40),
+                            width: context.w(40),
+                            color: Colors.grey.shade100,
+                            child: Icon(
+                              Icons.storefront_rounded,
+                              size: context.w(20),
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
+                  // "Top Choice" Flame Badge
+                  // Positioned(
+                  //   top: context.h(8),
+                  //   left: context.w(8),
+                  //   child: FrostedContainer(
+                  //     borderRadius: context.r(8),
+                  //     padding: EdgeInsets.symmetric(
+                  //       horizontal: context.w(8),
+                  //       vertical: context.h(4),
+                  //     ),
+                  //     child: Row(
+                  //       mainAxisSize: MainAxisSize.min,
+                  //       children: [
+                  //         SvgPicture.asset(
+                  //           SvgAssets.flame,
+                  //           height: context.h(11),
+                  //           width: context.w(9),
+                  //           colorFilter: const ColorFilter.mode(
+                  //             CustomColors.pinkColor,
+                  //             BlendMode.srcIn,
+                  //           ),
+                  //         ),
+                  //         SizedBox(width: context.w(4)),
+                  //         Text(
+                  //           "Top Choice",
+                  //           style: CustomFonts.black10w600.copyWith(
+                  //             color: CustomColors.pinkColor,
+                  //             fontSize: context.sp(10),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  // // Rating Star Badge
+                  // Positioned(
+                  //   bottom: context.h(8),
+                  //   right: context.w(8),
+                  //   child: FrostedContainer(
+                  //     borderRadius: context.r(8),
+                  //     padding: EdgeInsets.symmetric(
+                  //       horizontal: context.w(8),
+                  //       vertical: context.h(4),
+                  //     ),
+                  //     child: Row(
+                  //       mainAxisSize: MainAxisSize.min,
+                  //       children: [
+                  //         Icon(
+                  //           Icons.star_rounded,
+                  //           color: Colors.amber,
+                  //           size: context.sp(14),
+                  //         ),
+                  //         SizedBox(width: context.w(3)),
+                  //         Text(
+                  //           '${clinicData?.place?.rating ?? 0.0}',
+                  //           style: CustomFonts.black10w600.copyWith(
+                  //             fontSize: context.sp(10),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+                  // // Favorite Badge Icon
+                  // Positioned(
+                  //   top: context.h(8),
+                  //   right: context.w(8),
+                  //   child: Container(
+                  //     padding: EdgeInsets.all(context.w(5)),
+                  //     decoration: BoxDecoration(
+                  //       shape: BoxShape.circle,
+                  //       color: Colors.black.withValues(alpha: 0.25),
+                  //     ),
+                  //     child: Icon(
+                  //       Icons.favorite_border_rounded,
+                  //       color: Colors.white,
+                  //       size: context.sp(15),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),
-
             // Bottom Details Info
             Padding(
               padding: EdgeInsets.all(context.w(12)),
@@ -175,6 +248,22 @@ class CustomClinicGridViewTile extends StatelessWidget {
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: context.h(5)),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.w(8),
+                      vertical: context.h(4),
+                    ),
+                    decoration: BoxDecoration(
+                      color: CustomColors.purpleColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(context.r(20)),
+                    ),
+                    child: Text(
+                      // Doctor count is not available here yet.
+                      "0 Doctors",
+                      style: CustomFonts.darkPurple12w600,
+                    ),
                   ),
                   if (clinicData?.address != null) ...[
                     SizedBox(height: context.h(5)),

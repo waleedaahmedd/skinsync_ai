@@ -7,6 +7,7 @@ import '../models/responses/auth_response.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../models/responses/practitioner_list_response.dart';
 import '../screens/journey_clinic_detail_screen.dart';
+import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import 'doctor_card.dart';
@@ -380,17 +381,28 @@ class DashboardClinicHomeCard extends StatelessWidget {
                       fit: BoxFit.cover,
                       placeholder: (context, url) => Container(
                         color: Colors.grey.shade100,
-                        child:
-                            const Center(child: CupertinoActivityIndicator()),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        color: Colors.grey.shade100,
-                        child: const Icon(
-                          Icons.storefront_rounded,
-                          size: 30,
-                          color: Colors.grey,
+                        child: const Center(
+                          child: CupertinoActivityIndicator(),
                         ),
                       ),
+                      errorWidget: (_, _, _) => DecoratedBox(
+                        decoration: const BoxDecoration(
+                          gradient: CustomColors.purpleBlueGradient,
+                        ),
+                        child: Image.asset(
+                          PngAssets.splashLogo,
+                          opacity: const AlwaysStoppedAnimation(0.4),
+                          fit: .cover,
+                        ),
+                      ),
+                      // errorWidget: (context, url, error) => Container(
+                      //   color: Colors.grey.shade100,
+                      //   child: const Icon(
+                      //     Icons.storefront_rounded,
+                      //     size: 30,
+                      //     color: Colors.grey,
+                      //   ),
+                      // ),
                     ),
                   ),
                   Padding(
@@ -421,8 +433,9 @@ class DashboardClinicHomeCard extends StatelessWidget {
                                 color: CustomColors.purpleColor.withValues(
                                   alpha: 0.12,
                                 ),
-                                borderRadius:
-                                    BorderRadius.circular(context.r(20)),
+                                borderRadius: BorderRadius.circular(
+                                  context.r(20),
+                                ),
                               ),
                               child: Text(
                                 "${clinic.doctorCount ?? 0} Doctors",

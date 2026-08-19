@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,10 +43,12 @@ abstract class BaseViewModel<S> extends Notifier<S> {
     } on AppException catch (e, s) {
       log(e.message, stackTrace: s);
       onError(e.message);
+      FirebaseCrashlytics.instance.recordError(e, s);
       return null;
     } catch (e, s) {
       log(e.toString(), stackTrace: s);
       onError(e.toString().replaceAll('Exception:', ''));
+      FirebaseCrashlytics.instance.recordError(e, s);
       return null;
     }
   }

@@ -1,8 +1,10 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+
 import '../models/responses/get_clinic_response.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
@@ -84,19 +86,23 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
                     left: context.w(24),
                     right: context.w(24),
                     top: context.h(8),
-                    bottom: context.h(MediaQuery.paddingOf(context).bottom + 20),
+                    bottom: context.h(
+                      MediaQuery.paddingOf(context).bottom + 20,
+                    ),
                   ),
                   state: state,
                   fetchNextPage: fetchNextPage,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 0.86,
+                    childAspectRatio: 0.95,
                     crossAxisSpacing: context.w(14),
                     mainAxisSpacing: context.h(14),
                   ),
                   builderDelegate: PagedChildBuilderDelegate(
-                    noItemsFoundIndicatorBuilder: (_) => _buildEmptyClinicsView(),
-                    firstPageErrorIndicatorBuilder: (_) => _buildEmptyClinicsView(),
+                    noItemsFoundIndicatorBuilder: (_) =>
+                        _buildEmptyClinicsView(),
+                    firstPageErrorIndicatorBuilder: (_) =>
+                        _buildEmptyClinicsView(),
                     firstPageProgressIndicatorBuilder: (_) => const AppLoader(),
                     newPageProgressIndicatorBuilder: (_) => const AppLoader(),
                     itemBuilder: (_, clinic, _) {

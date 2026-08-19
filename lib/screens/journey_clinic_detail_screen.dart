@@ -5,8 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../models/responses/clinic_detail_response.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../utils/app_lunach_utils.dart';
+import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../view_models/clinic_view_model.dart';
@@ -72,27 +74,25 @@ class _JourneyClinicDetailScreenState
                             decoration: const BoxDecoration(
                               gradient: CustomColors.purpleBlueGradient,
                             ),
-                            child: clinicDetail.bannerImage != null
-                                ? CachedNetworkImage(
-                                    imageUrl: clinicDetail.bannerImage!,
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) => const Center(
-                                      child: CupertinoActivityIndicator(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(
-                                          Icons.broken_image_rounded,
-                                          color: Colors.white38,
-                                          size: 40,
-                                        ),
-                                  )
-                                : const Icon(
-                                    Icons.storefront_rounded,
-                                    size: 60,
-                                    color: Colors.white70,
-                                  ),
+                            child: CachedNetworkImage(
+                              imageUrl: clinicDetail.bannerImage ?? '',
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => const Center(
+                                child: CupertinoActivityIndicator(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              errorWidget: (_, _, _) => DecoratedBox(
+                                decoration: const BoxDecoration(
+                                  gradient: CustomColors.purpleBlueGradient,
+                                ),
+                                child: Image.asset(
+                                  PngAssets.splashLogo,
+                                  opacity: const AlwaysStoppedAnimation(0.4),
+                                  fit: .cover,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                         Positioned.fill(
@@ -189,26 +189,26 @@ class _JourneyClinicDetailScreenState
                             clinicDetail.name ?? 'N/A',
                             style: CustomFonts.black28w600,
                           ),
-                          SizedBox(height: context.h(10)),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.star_rounded,
-                                size: 20,
-                                color: Colors.amber,
-                              ),
-                              SizedBox(width: context.w(4)),
-                              Text(
-                                '${widget.clinic?.place?.rating ?? 0}',
-                                style: CustomFonts.black16w600,
-                              ),
-                              SizedBox(width: context.w(8)),
-                              Text(
-                                "(${widget.clinic?.place?.userRatingCount ?? 0} Reviews)",
-                                style: CustomFonts.textGrey14w400,
-                              ),
-                            ],
-                          ),
+                          // SizedBox(height: context.h(10)),
+                          // Row(
+                          //   children: [
+                          //     const Icon(
+                          //       Icons.star_rounded,
+                          //       size: 20,
+                          //       color: Colors.amber,
+                          //     ),
+                          //     SizedBox(width: context.w(4)),
+                          //     Text(
+                          //       '${widget.clinic?.place?.rating ?? 0}',
+                          //       style: CustomFonts.black16w600,
+                          //     ),
+                          //     SizedBox(width: context.w(8)),
+                          //     Text(
+                          //       "(${widget.clinic?.place?.userRatingCount ?? 0} Reviews)",
+                          //       style: CustomFonts.textGrey14w400,
+                          //     ),
+                          //   ],
+                          // ),
                           SizedBox(height: context.h(16)),
                           Text(
                             clinicDetail.description ??
@@ -274,8 +274,7 @@ class _JourneyClinicDetailScreenState
                           if (clinicDetail.website != null) ...[
                             SizedBox(height: context.h(8)),
                             InkWell(
-                              onTap: () =>
-                                  launchWebsite(clinicDetail.website!),
+                              onTap: () => launchWebsite(clinicDetail.website!),
                               child: Row(
                                 children: [
                                   const Icon(
@@ -318,49 +317,7 @@ class _JourneyClinicDetailScreenState
                     SizedBox(height: context.h(24)),
                     if (clinicDetail.latitude != null &&
                         clinicDetail.longitude != null)
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: context.w(24),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Location", style: CustomFonts.black18w600),
-                            SizedBox(height: context.h(12)),
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                context.r(16),
-                              ),
-                              child: SizedBox(
-                                height: context.h(200),
-                                width: double.infinity,
-                                child: GoogleMap(
-                                  initialCameraPosition: CameraPosition(
-                                    target: LatLng(
-                                      clinicDetail.latitude!,
-                                      clinicDetail.longitude!,
-                                    ),
-                                    zoom: 13,
-                                  ),
-                                  markers: {
-                                    Marker(
-                                      markerId: const MarkerId(
-                                        "clinic_location",
-                                      ),
-                                      position: LatLng(
-                                        clinicDetail.latitude!,
-                                        clinicDetail.longitude!,
-                                      ),
-                                    ),
-                                  },
-                                  zoomControlsEnabled: false,
-                                  zoomGesturesEnabled: false,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      _buildMap(context, clinicDetail),
                     SizedBox(height: context.h(120)),
                   ],
                 ),
@@ -417,6 +374,48 @@ class _JourneyClinicDetailScreenState
                       },
                     );
                   },
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Padding _buildMap(BuildContext context, ClinicDetailData clinicDetail) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Location", style: CustomFonts.black18w600),
+          SizedBox(height: context.h(12)),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(context.r(16)),
+            child: IgnorePointer(
+              child: SizedBox(
+                height: context.h(200),
+                width: double.infinity,
+                child: GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(
+                      clinicDetail.latitude!,
+                      clinicDetail.longitude!,
+                    ),
+                    zoom: 13,
+                  ),
+                  markers: {
+                    Marker(
+                      markerId: const MarkerId("clinic_location"),
+                      position: LatLng(
+                        clinicDetail.latitude!,
+                        clinicDetail.longitude!,
+                      ),
+                    ),
+                  },
+                  zoomControlsEnabled: false,
+                  zoomGesturesEnabled: false,
                 ),
               ),
             ),
