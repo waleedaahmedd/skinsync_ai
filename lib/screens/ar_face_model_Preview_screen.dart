@@ -10,6 +10,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
+import '../app_init.dart';
 import '../models/responses/materials_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
 import '../models/responses/treatment_list_response.dart';
@@ -127,10 +128,32 @@ class _ArFaceModelPreviewScreenState
         screenContext: context,
         groupName: selectedGroup.name ?? 'Unknown Group',
         onConfirm: () async {
+        
           final result = await ref
               .read(treatmentJourneyProvider.notifier)
               .createTjOptions();
           if (result == true) {
+            rootScaffoldMessengerKey.currentState?.showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                        'Your journey is ready! Tap the Journey button in the top-right corner to view it.',
+                      ),
+                      duration: const Duration(seconds: 3),
+                      behavior: SnackBarBehavior.floating,
+                      margin: EdgeInsets.only(
+                        left: 16.w,
+                        right: 16.w,
+                        bottom: 80.h,
+                      ),
+                      action: SnackBarAction(
+                        label: '✕',
+                        onPressed: () {
+                          rootScaffoldMessengerKey.currentState
+                              ?.hideCurrentSnackBar();
+                        },
+                      ),
+                    ),
+                  );
             final groupId = ref
                 .read(treatmentJourneyProvider)
                 .selectedGroup

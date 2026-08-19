@@ -14,7 +14,7 @@ import '../widgets/custom_button.dart';
 import 'bottom_nav_page.dart';
 import 'face_scan_screen.dart';
 import 'login_screen.dart';
-import 'signup_onboarding.dart';
+import 'your_profile_screen.dart';
 
 class OtpScreen extends StatelessWidget {
   const OtpScreen({super.key});
@@ -171,7 +171,7 @@ class OtpScreen extends StatelessWidget {
                                         isLoggedIn
                                             ? Navigator.pushNamedAndRemoveUntil(
                                                 context,
-                                                SignupOnboarding.routeName,
+                                                YourProfileScreen.routeName,
                                                 (Route<dynamic> route) =>
                                                     route.settings.name ==
                                                     LoginScreen.routeName,

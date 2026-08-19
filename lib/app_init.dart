@@ -11,7 +11,8 @@ import 'utils/screen_size.dart';
 import 'utils/theme.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
-
+final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 void configLoading(BuildContext context) {
   EasyLoading.instance
     ..displayDuration = const Duration(milliseconds: 2000)
@@ -62,6 +63,7 @@ class AppInit extends StatelessWidget {
           builder: (context, ref, child) {
             final ThemeMode themeMode = ref.watch(themeViewModel);
             return MaterialApp(
+              scaffoldMessengerKey: rootScaffoldMessengerKey,
               navigatorKey: navigatorKey,
               debugShowCheckedModeBanner: false,
               title: 'SkinSync AI',
