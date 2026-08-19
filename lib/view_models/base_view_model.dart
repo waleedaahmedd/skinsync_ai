@@ -43,19 +43,23 @@ abstract class BaseViewModel<S> extends Notifier<S> {
       );
       return null;
     } on SignInWithAppleException catch (e, s) {
+      if (e is SignInWithAppleAuthorizationException &&
+          e.code == AuthorizationErrorCode.canceled) {
+        onCancel();
+        return null;
+      }
       log(e.toString(), stackTrace: s);
       onError('Something went wrong. Please try again.');
       FirebaseCrashlytics.instance.recordError(e, s);
       return null;
-    }  
-    on GoogleSignInException catch (e, s) {
-      // if (e.code == .canceled) {
-        onError('Something went wrong. Please try again.');
-      // } else {
-        log(e.description ?? 'N/A', stackTrace: s);
-        // onError(e.description ?? 'Something went wrong. Please try again.');
-        FirebaseCrashlytics.instance.recordError(e, s);
-      // }
+    } on GoogleSignInException catch (e, s) {
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        onCancel();
+        return null;
+      }
+      log(e.description ?? 'N/A', stackTrace: s);
+      onError('Something went wrong. Please try again.');
+      FirebaseCrashlytics.instance.recordError(e, s);
       return null;
     } on AppException catch (e, s) {
       log(e.message, stackTrace: s);
@@ -74,4 +78,6 @@ abstract class BaseViewModel<S> extends Notifier<S> {
   void onError(String message) {
     EasyLoading.showError(message);
   }
+
+  void onCancel() {}
 }

@@ -424,6 +424,11 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   }
 
   @override
+  void onCancel() {
+    state = state.copyWith(loading: false);
+  }
+
+  @override
   void dispose() {
     emailController.dispose();
     otpController.dispose();
