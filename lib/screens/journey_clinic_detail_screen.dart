@@ -75,7 +75,7 @@ class _JourneyClinicDetailScreenState
                               gradient: CustomColors.purpleBlueGradient,
                             ),
                             child: CachedNetworkImage(
-                              imageUrl: clinicDetail.bannerImage ?? '',
+                              imageUrl: clinicDetail.banner ?? '',
                               fit: BoxFit.cover,
                               placeholder: (context, url) => const Center(
                                 child: CupertinoActivityIndicator(

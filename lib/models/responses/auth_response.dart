@@ -438,7 +438,7 @@ class TopClinic {
   final String? clinicName;
   final String? address;
   final int? doctorCount;
-  final String? bannerImage;
+  final String? banner;
 
   TopClinic({
     this.clinicId,
@@ -447,7 +447,7 @@ class TopClinic {
     this.clinicName,
     this.address,
     this.doctorCount,
-    this.bannerImage,
+    this.banner,
   });
 
   factory TopClinic.fromJson(Map<String, dynamic> json) => TopClinic(
@@ -457,7 +457,7 @@ class TopClinic {
     clinicName: json["clinic_name"],
     address: json["address"],
     doctorCount: json["doctor_count"],
-    bannerImage: json["banner_image"],
+    banner: json["banner"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -467,6 +467,6 @@ class TopClinic {
     "clinic_name": clinicName,
     "address": address,
     "doctor_count": doctorCount,
-    "banner_image": bannerImage,
+    "banner": banner,
   };
 }

@@ -33,7 +33,7 @@ class ClinicDetailData {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final String? logo; // Added based on journey_clinic_detail_screen.dart usage
-  final String? bannerImage;
+  final String? banner;
 
   ClinicDetailData({
     this.id,
@@ -53,7 +53,7 @@ class ClinicDetailData {
     this.createdAt,
     this.updatedAt,
     this.logo,
-    this.bannerImage,
+    this.banner,
   });
 
   factory ClinicDetailData.fromJson(Map<String, dynamic> json) =>
@@ -79,6 +79,6 @@ class ClinicDetailData {
             ? null
             : DateTime.parse(json["updated_at"]).toLocal(),
         logo: json["logo"],
-        bannerImage: json["banner_image"],
+        banner: json["banner"],
       );
 }
