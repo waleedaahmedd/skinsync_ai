@@ -315,6 +315,7 @@ class HomeScreen extends ConsumerWidget {
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                 child: HeadingWithRightArrow(
                   title: "Shared Treatment Requests",
+                  showRightArrow: false,
                   onTap: () {
                     final clinicId = dashboard?.requestTreatmentClinic?.firstOrNull?.id;
                     if (clinicId != null) {

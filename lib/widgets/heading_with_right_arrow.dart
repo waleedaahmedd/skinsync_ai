@@ -7,10 +7,12 @@ import '../utils/custom_fonts.dart';
 class HeadingWithRightArrow extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
+   final bool showRightArrow;
   const HeadingWithRightArrow({
     super.key,
     required this.title,
     required this.onTap,
+     this.showRightArrow = true,
   });
 
   @override
@@ -19,18 +21,21 @@ class HeadingWithRightArrow extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(title, style: CustomFonts.black22w600),
-        GestureDetector(
-          onTap: onTap,
-          child: Container(
-            padding: EdgeInsets.all(context.w(7)),
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: CustomColors.greyColor,
-            ),
-            child: Icon(
-              CupertinoIcons.arrow_right,
-              size: context.sp(16),
-              color: Colors.black,
+        Visibility(
+          visible: showRightArrow,
+          child: GestureDetector(
+            onTap: onTap,
+            child: Container(
+              padding: EdgeInsets.all(context.w(7)),
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: CustomColors.greyColor,
+              ),
+              child: Icon(
+                CupertinoIcons.arrow_right,
+                size: context.sp(16),
+                color: Colors.black,
+              ),
             ),
           ),
         ),
