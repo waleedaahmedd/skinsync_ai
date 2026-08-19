@@ -195,7 +195,7 @@ class _TreatmentJourneyDetailScreenState
             ),
           ),
           Expanded(
-            child: (state.options[_tabController?.index ?? 0].isShared == null)
+            child: (state.options[_tabController?.index ?? 0].isShared == true)
                 ? Container(
                     height: 52.h,
                     decoration: BoxDecoration(
