@@ -4,6 +4,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../app_init.dart';
 import '../exceptions/app_exception.dart';
@@ -39,6 +40,15 @@ abstract class BaseViewModel<S> extends Notifier<S> {
         UpdateVersionScreen.routeName,
         (route) => false,
       );
+      return null;
+    } on GoogleSignInException catch (e, s) {
+      if (e.code == .canceled) {
+        onError('Something went wrong. Please try again.');
+      } else {
+        log(e.description ?? 'N/A', stackTrace: s);
+        onError(e.description ?? 'Something went wrong. Please try again.');
+        FirebaseCrashlytics.instance.recordError(e, s);
+      }
       return null;
     } on AppException catch (e, s) {
       log(e.message, stackTrace: s);
