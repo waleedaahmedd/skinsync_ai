@@ -154,7 +154,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
 
       final controller = CameraController(
         target,
-        ResolutionPreset.max,
+        ResolutionPreset.veryHigh,
         enableAudio: false,
       );
 
