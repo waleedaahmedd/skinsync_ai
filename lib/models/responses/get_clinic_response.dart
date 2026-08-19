@@ -30,6 +30,7 @@ class Clinic {
   final String? description;
   final String? address;
   final String? logo;
+  final String? banner;
   final int? price;
   final int? syringeSize;
   final String? status;
@@ -44,6 +45,7 @@ class Clinic {
     this.description,
     this.address,
     this.logo,
+    this.banner,
     this.price,
     this.syringeSize,
     this.status,
@@ -60,6 +62,7 @@ class Clinic {
       description: json['description'],
       address: json['address'],
       logo: json['logo'] ?? json['image'],
+      banner: json['banner'],
       price: json['price'],
       syringeSize: json['syringe_size'],
       status: json['status'],
