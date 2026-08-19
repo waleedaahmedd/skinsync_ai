@@ -60,20 +60,21 @@ class _JourneyClinicDetailScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Stack(
+                      clipBehavior: Clip.none,
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.vertical(
                             bottom: Radius.circular(context.r(32)),
                           ),
                           child: Container(
-                            height: context.h(310),
+                            height: context.h(280),
                             width: double.infinity,
                             decoration: const BoxDecoration(
                               gradient: CustomColors.purpleBlueGradient,
                             ),
-                            child: clinicDetail.logo != null
+                            child: clinicDetail.bannerImage != null
                                 ? CachedNetworkImage(
-                                    imageUrl: clinicDetail.logo!,
+                                    imageUrl: clinicDetail.bannerImage!,
                                     fit: BoxFit.cover,
                                     placeholder: (context, url) => const Center(
                                       child: CupertinoActivityIndicator(
@@ -130,12 +131,6 @@ class _JourneyClinicDetailScreenState
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: Colors.black.withValues(alpha: 0.35),
-                                    border: Border.all(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.2,
-                                      ),
-                                      width: 1.5,
-                                    ),
                                   ),
                                   child: const Center(
                                     child: Icon(
@@ -149,9 +144,42 @@ class _JourneyClinicDetailScreenState
                             ],
                           ),
                         ),
+                        Positioned(
+                          bottom: -context.h(35),
+                          left: context.w(24),
+                          child: Container(
+                            height: context.h(85),
+                            width: context.h(85),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.1),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 5),
+                                ),
+                              ],
+                            ),
+                            padding: EdgeInsets.all(context.w(3)),
+                            child: ClipOval(
+                              child: CachedNetworkImage(
+                                imageUrl: clinicDetail.logo ?? "",
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) =>
+                                    const CupertinoActivityIndicator(),
+                                errorWidget: (context, url, error) => Icon(
+                                  Icons.storefront_rounded,
+                                  size: context.h(40),
+                                  color: Colors.grey.shade400,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
-                    SizedBox(height: context.h(24)),
+                    SizedBox(height: context.h(50)),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                       child: Column(
