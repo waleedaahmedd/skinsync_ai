@@ -29,6 +29,7 @@ class SimulationData {
   final String? leftImageBefore;
   final String? leftImageAfter;
   final List<SimulationTreatment>? treatments;
+  final bool? isShared;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -44,6 +45,7 @@ class SimulationData {
     this.leftImageBefore,
     this.leftImageAfter,
     this.treatments,
+    this.isShared,
     this.createdAt,
     this.updatedAt,
   });
@@ -64,6 +66,7 @@ class SimulationData {
         : List<SimulationTreatment>.from(
             json["treatments"]!.map((x) => SimulationTreatment.fromJson(x)),
           ),
+    isShared: json["is_shared"],
     createdAt: json["created_at"] == null
         ? null
         : DateTime.parse(json["created_at"]).toLocal(),

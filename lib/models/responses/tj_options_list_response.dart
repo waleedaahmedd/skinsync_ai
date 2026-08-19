@@ -21,12 +21,14 @@ class TJOption {
   final int? id;
   final String? name;
   final String? description;
+  final bool? isShared;
 
-  const TJOption({this.id, this.name, this.description});
+  const TJOption({this.id, this.name, this.description, this.isShared});
 
   factory TJOption.fromJson(Map<String, dynamic> json) => TJOption(
         id: json["id"],
         name: json["name"],
         description: json["description"],
+        isShared: json["is_shared"],
       );
 }

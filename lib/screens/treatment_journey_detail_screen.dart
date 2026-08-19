@@ -127,7 +127,9 @@ class _TreatmentJourneyDetailScreenState
                   unselectedLabelStyle: CustomFonts.grey16w500,
                   dividerColor: Colors.transparent,
                   tabs: state.options
-                      .map((opt) => Tab(text: opt.name))
+                      .map((opt) => Tab(
+                            text: "${opt.name}${opt.isShared == true ? '*' : ''}",
+                          ))
                       .toList(),
                 ),
                 Expanded(
@@ -193,29 +195,46 @@ class _TreatmentJourneyDetailScreenState
             ),
           ),
           Expanded(
-            child: CustomButton(
-              text: "Share",
-              onPressed: () async {
-                final currentOptionId =
-                    state.options[_tabController?.index ?? 0].id;
-                if (currentOptionId != null) {
-                  ref
-                      .read(treatmentJourneyProvider.notifier)
-                      .setOptionId(currentOptionId);
-                }
-                final clinicId = ref.read(clinicProvider).clinicId;
-                if (clinicId != null) {
-                  final result = await ref
-                      .read(treatmentJourneyProvider.notifier)
-                      .callShareTreatmentRequest();
-                  if (result == true) {
-                    showShareJourneySuccessDialog(context);
-                  }
-                } else {
-                  Navigator.pushNamed(context, JourneyClinicsScreen.routeName);
-                }
-              },
-            ),
+            child: (state.options[_tabController?.index ?? 0].isShared == null)
+                ? Container(
+                    height: 52.h,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(context.r(12)),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Already Shared",
+                        style: CustomFonts.black16w600.copyWith(
+                          color: Colors.grey.shade500,
+                        ),
+                      ),
+                    ),
+                  )
+                : CustomButton(
+                    text: "Share",
+                    onPressed: () async {
+                      final currentOptionId =
+                          state.options[_tabController?.index ?? 0].id;
+                      if (currentOptionId != null) {
+                        ref
+                            .read(treatmentJourneyProvider.notifier)
+                            .setOptionId(currentOptionId);
+                      }
+                      final clinicId = ref.read(clinicProvider).clinicId;
+                      if (clinicId != null) {
+                        final result = await ref
+                            .read(treatmentJourneyProvider.notifier)
+                            .callShareTreatmentRequest();
+                        if (result == true) {
+                          showShareJourneySuccessDialog(context);
+                        }
+                      } else {
+                        Navigator.pushNamed(
+                            context, JourneyClinicsScreen.routeName);
+                      }
+                    },
+                  ),
           ),
 
         ],
