@@ -4,6 +4,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:iconsax/iconsax.dart';
 
+import '../app_init.dart';
 import '../models/responses/groups_list_response.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
@@ -230,37 +231,48 @@ class _TreatmentJourneyScreenState
     );
   }
 
-  Widget _buildGroupCard(BuildContext context, TreatmentJourneyGroup group,int index) {
+  Widget _buildGroupCard(
+    BuildContext context,
+    TreatmentJourneyGroup group,
+    int index,
+  ) {
     return Slidable(
-    key: ValueKey(group.id ?? 'group_$index'),
-     groupTag: 'treatment_journey_groups',  
-    endActionPane: ActionPane(
-      motion: const DrawerMotion(),
-      extentRatio: 0.22,
-      children: [
-        CustomSlidableAction(
-         alignment: .center,
-          onPressed: (_) {
-            if (group.id != null) {
-              showDeleteConfirmationDialog(
-                context: context,
-                title: "Delete Group?",
-                description: "Are you sure you want to delete '${group.name}'? This action cannot be undone.",
-                onDelete: () {
-                  ref.read(treatmentJourneyProvider.notifier).callDeleteGroup(group.id!);
-                },
-              );
-            }
-          },
-          backgroundColor: Colors.transparent,
-          foregroundColor: Colors.white,
-         
-          padding: EdgeInsets.only(bottom: 10.h),
-          child:  Icon(Icons.delete_outline_rounded,color:Colors.red,size: 24.sp,),
-        ),
-      ],
-    ),
-    child:  Container(
+      key: ValueKey(group.id ?? 'group_$index'),
+      groupTag: 'treatment_journey_groups',
+      endActionPane: ActionPane(
+        motion: const DrawerMotion(),
+        extentRatio: 0.22,
+        children: [
+          CustomSlidableAction(
+            alignment: .center,
+            onPressed: (_) {
+              if (group.id != null) {
+                showDeleteConfirmationDialog(
+                  context: context,
+                  title: "Delete Group?",
+                  description:
+                      "Are you sure you want to delete '${group.name}'? This action cannot be undone.",
+                  onDelete: () {
+                    ref
+                        .read(treatmentJourneyProvider.notifier)
+                        .callDeleteGroup(group.id!);
+                  },
+                );
+              }
+            },
+            backgroundColor: Colors.transparent,
+            foregroundColor: Colors.white,
+
+            padding: EdgeInsets.only(bottom: 10.h),
+            child: Icon(
+              Icons.delete_outline_rounded,
+              color: Colors.red,
+              size: 24.sp,
+            ),
+          ),
+        ],
+      ),
+      child: Container(
         margin: EdgeInsets.only(bottom: context.h(16)),
         decoration: BoxDecoration(
           color: CustomColors.whiteColor,
@@ -279,7 +291,6 @@ class _TreatmentJourneyScreenState
         ),
         child: InkWell(
           onTap: () async {
-            final messenger = ScaffoldMessenger.of(context);
             if (group.id != null) {
               ref.read(treatmentJourneyProvider.notifier).setGroup(group);
             }
@@ -294,23 +305,30 @@ class _TreatmentJourneyScreenState
                     .createTjOptions();
                 if (!mounted) return;
                 if (result == true) {
-                  Navigator.pop(context);
-      
-                  messenger.showSnackBar(
+                  
+                  rootScaffoldMessengerKey.currentState?.showSnackBar(
                     SnackBar(
                       content: const Text(
                         'Your journey is ready! Tap the Journey button in the top-right corner to view it.',
                       ),
-                      duration: const Duration(seconds: 3),
+                    //  duration: const Duration(seconds: 3),
                       behavior: SnackBarBehavior.floating,
+                      margin: EdgeInsets.only(
+                        left: 16.w,
+                        right: 16.w,
+                        bottom: 80.h,
+                      ),
                       action: SnackBarAction(
                         label: '✕',
                         onPressed: () {
-                          messenger.hideCurrentSnackBar();
+                          rootScaffoldMessengerKey.currentState
+                              ?.hideCurrentSnackBar();
                         },
                       ),
                     ),
                   );
+                  Navigator.pop(context);
+
                 }
               }
             } else {
@@ -319,7 +337,7 @@ class _TreatmentJourneyScreenState
                   .fetchOptions(group.id!);
               if (!mounted) return;
               // EasyLoading.dismiss();
-      
+
               if (success ?? false) {
                 Navigator.pushNamed(
                   context,
@@ -351,7 +369,10 @@ class _TreatmentJourneyScreenState
                       color: CustomColors.whiteColor,
                       shape: BoxShape.circle,
                     ),
-                    child: Image.asset(PngAssets.splashLogo, fit: BoxFit.contain),
+                    child: Image.asset(
+                      PngAssets.splashLogo,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
                 SizedBox(width: context.w(16)),
