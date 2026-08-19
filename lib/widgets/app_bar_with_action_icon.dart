@@ -84,7 +84,7 @@ class AppBarWithActionIcon extends StatelessWidget
                                 ),
                                 SizedBox(height: context.h(2)),
                                 Text(
-                                  'Your skin health journey starts here.',
+                                  'Your aesthetic journey starts here.',
                                   style: CustomFonts.grey12w400,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,

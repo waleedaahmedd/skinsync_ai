@@ -33,7 +33,7 @@ class TreatmentExploreScreen extends ConsumerWidget {
                   ),
                   SizedBox(height: context.h(8)),
                   Text(
-                    "Select how you would like to browse our elite clinical skin and body therapies.",
+                    "Choose how you’d like to explore aesthetic treatments.",
                     style: CustomFonts.grey14w400.copyWith(height: 1.3),
                   ),
                 ],
