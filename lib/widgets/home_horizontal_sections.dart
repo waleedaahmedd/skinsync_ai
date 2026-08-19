@@ -375,7 +375,7 @@ class DashboardClinicHomeCard extends StatelessWidget {
                       top: Radius.circular(context.r(16)),
                     ),
                     child: CachedNetworkImage(
-                      imageUrl: clinic.bannerImage ?? "",
+                      imageUrl: clinic.banner ?? "",
                       height: context.h(100),
                       width: double.infinity,
                       fit: BoxFit.cover,

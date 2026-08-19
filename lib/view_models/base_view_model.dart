@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../app_init.dart';
 import '../exceptions/app_exception.dart';
@@ -41,14 +42,24 @@ abstract class BaseViewModel<S> extends Notifier<S> {
         (route) => false,
       );
       return null;
-    } on GoogleSignInException catch (e, s) {
-      if (e.code == .canceled) {
-        onError('Something went wrong. Please try again.');
-      } else {
-        log(e.description ?? 'N/A', stackTrace: s);
-        onError(e.description ?? 'Something went wrong. Please try again.');
-        FirebaseCrashlytics.instance.recordError(e, s);
+    } on SignInWithAppleException catch (e, s) {
+      if (e is SignInWithAppleAuthorizationException &&
+          e.code == AuthorizationErrorCode.canceled) {
+        onCancel();
+        return null;
       }
+      log(e.toString(), stackTrace: s);
+      onError('Something went wrong. Please try again.');
+      FirebaseCrashlytics.instance.recordError(e, s);
+      return null;
+    } on GoogleSignInException catch (e, s) {
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        onCancel();
+        return null;
+      }
+      log(e.description ?? 'N/A', stackTrace: s);
+      onError('Something went wrong. Please try again.');
+      FirebaseCrashlytics.instance.recordError(e, s);
       return null;
     } on AppException catch (e, s) {
       log(e.message, stackTrace: s);
@@ -67,4 +78,6 @@ abstract class BaseViewModel<S> extends Notifier<S> {
   void onError(String message) {
     EasyLoading.showError(message);
   }
+
+  void onCancel() {}
 }

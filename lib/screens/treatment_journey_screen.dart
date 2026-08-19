@@ -199,7 +199,7 @@ class _TreatmentJourneyScreenState
                       0,
                     ),
                     child: Text(
-                      "Create a new journey group or select an existing one to manage your simulations.",
+                      "Create a new journey group or select an existing one to manage your simulations and share them with clinics.",
                       style: CustomFonts.grey14w400.copyWith(height: 1.4),
                     ),
                   ),
