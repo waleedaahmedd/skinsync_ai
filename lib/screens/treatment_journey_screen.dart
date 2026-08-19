@@ -311,7 +311,8 @@ class _TreatmentJourneyScreenState
                       content: const Text(
                         'Your journey is ready! Tap the Journey button in the top-right corner to view it.',
                       ),
-                    //  duration: const Duration(seconds: 3),
+                      duration: const Duration(seconds: 3),
+                      persist: false,
                       behavior: SnackBarBehavior.floating,
                       margin: EdgeInsets.only(
                         left: 16.w,
