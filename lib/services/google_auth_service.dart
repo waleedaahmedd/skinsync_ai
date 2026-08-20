@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../exceptions/app_exception.dart';
+import '../firebase_options.dart';
 
 import 'base_auth_service.dart';
 
@@ -31,7 +32,9 @@ class GoogleAuthService extends BaseAuthService {
   @override
   Future<User> signIn() async {
     if (!_initialized) {
-      await GoogleSignIn.instance.initialize();
+      await GoogleSignIn.instance.initialize(
+        serverClientId: DefaultFirebaseOptions.currentPlatform.iosClientId,
+      );
       _initialized = true;
     }
     final user = await GoogleSignIn.instance.authenticate();
