@@ -117,7 +117,7 @@ class HomeScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-              if (!isDeploymentMode) SizedBox(height: context.h(16)),
+              if (!isDeploymentMode) SizedBox(height: context.h(10)),
               if (!isDeploymentMode)
                 appointments.isEmpty
                     ? _buildHorizontalEmptyState(
@@ -162,7 +162,7 @@ class HomeScreen extends ConsumerWidget {
                           },
                         ),
                       ),
-              if (!isDeploymentMode) SizedBox(height: context.h(28)),
+              if (!isDeploymentMode) SizedBox(height: context.h(12)),
               // Suggested Treatments Section
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
@@ -174,10 +174,10 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ),
 
-              SizedBox(height: context.h(16)),
+              SizedBox(height: context.h(10)),
 
               SizedBox(
-                height: context.h(200),
+                height: context.h(220),
                 child: Consumer(
                   builder: (context, ref, _) {
                     final suggestedTreatments =
@@ -199,6 +199,11 @@ class HomeScreen extends ConsumerWidget {
                       shrinkWrap: true,
                       itemCount: suggestedTreatments.length,
                       scrollDirection: Axis.horizontal,
+                      clipBehavior: Clip.none,
+                      padding: EdgeInsets.only(
+                        top: context.h(10),
+                        bottom: context.h(20),
+                      ),
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: EdgeInsets.only(
@@ -218,7 +223,7 @@ class HomeScreen extends ConsumerWidget {
                   },
                 ),
               ),
-              if (!isDeploymentMode) SizedBox(height: context.h(28)),
+              if (!isDeploymentMode) SizedBox(height: context.h(12)),
 
               // Top Doctors Section
               if (!isDeploymentMode)
@@ -235,7 +240,7 @@ class HomeScreen extends ConsumerWidget {
                     },
                   ),
                 ),
-              if (!isDeploymentMode) SizedBox(height: context.h(16)),
+              if (!isDeploymentMode) SizedBox(height: context.h(10)),
 
               // Top Doctors Empty State Check
               if (!isDeploymentMode)
@@ -249,13 +254,17 @@ class HomeScreen extends ConsumerWidget {
                             "Specialist dermatologists and clinical practitioners will be listed here soon.",
                       )
                     : SizedBox(
-                        height: context.h(220),
+                        height: context.h(210),
                         child: ListView.builder(
                           physics: const BouncingScrollPhysics(),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: context.w(24),
+                          padding: EdgeInsets.only(
+                            left: context.w(24),
+                            right: context.w(24),
+                            top: context.h(10),
+                            bottom: context.h(20),
                           ),
                           scrollDirection: Axis.horizontal,
+                          clipBehavior: Clip.none,
                           itemCount: dashboard!.topDoctors!.length,
                           itemBuilder: (context, index) =>
                               DashboardDoctorHomeCard(
@@ -263,7 +272,7 @@ class HomeScreen extends ConsumerWidget {
                               ),
                         ),
                       ),
-              SizedBox(height: context.h(28)),
+             // SizedBox(height: context.h(12)),
               // Top Clinics Section
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
@@ -278,7 +287,7 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ),
 
-              SizedBox(height: context.h(16)),
+              SizedBox(height: context.h(10)),
 
               // Top Clinics Empty State Check
               (dashboard?.topClinics?.isEmpty ?? true)
@@ -291,13 +300,17 @@ class HomeScreen extends ConsumerWidget {
                           "Top-rated aesthetic clinics and wellness spas will be listed here soon.",
                     )
                   : SizedBox(
-                      height: context.h(180),
+                      height: context.h(210),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: context.w(24),
+                        padding: EdgeInsets.only(
+                          left: context.w(24),
+                          right: context.w(24),
+                          top: context.h(10),
+                          bottom: context.h(20),
                         ),
                         scrollDirection: Axis.horizontal,
+                        clipBehavior: Clip.none,
                         itemCount: dashboard!.topClinics!.length,
                         itemBuilder: (context, index) =>
                             DashboardClinicHomeCard(
@@ -305,7 +318,7 @@ class HomeScreen extends ConsumerWidget {
                             ),
                       ),
                     ),
-              SizedBox(height: context.h(28)),
+            //  SizedBox(height: context.h(12)),
               if (dashboard?.recentSimulations?.isNotEmpty ?? false) ...{
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: context.w(24)),
@@ -316,20 +329,26 @@ class HomeScreen extends ConsumerWidget {
                     },
                   ),
                 ),
-                SizedBox(height: context.h(16)),
+                SizedBox(height: context.h(10)),
                 SizedBox(
-                  height: context.h(190),
+                  height: context.h(220),
                   child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
-                    padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                    padding: EdgeInsets.only(
+                      left: context.w(24),
+                      right: context.w(24),
+                      top: context.h(10),
+                      bottom: context.h(20),
+                    ),
                     scrollDirection: Axis.horizontal,
+                    clipBehavior: Clip.none,
                     itemCount: dashboard!.recentSimulations!.length,
                     itemBuilder: (context, index) => DashboardSimulationCard(
                       simulation: dashboard.recentSimulations![index],
                     ),
                   ),
                 ),
-                SizedBox(height: context.h(28)),
+              //  SizedBox(height: context.h(12)),
               },
               // Shared Treatment Requests Section
               Padding(
@@ -351,7 +370,7 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ),
 
-              SizedBox(height: context.h(16)),
+              SizedBox(height: context.h(10)),
 
               // Shared Treatment Requests Empty State Check
               (dashboard?.requestTreatmentClinic?.isEmpty ?? true)
@@ -363,13 +382,17 @@ class HomeScreen extends ConsumerWidget {
                       subtitle: "Shared treatment requests will appear here.",
                     )
                   : SizedBox(
-                      height: context.h(130),
+                      height: context.h(150),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: context.w(24),
+                        padding: EdgeInsets.only(
+                          left: context.w(24),
+                          right: context.w(24),
+                          top: context.h(10),
+                          bottom: context.h(20),
                         ),
                         scrollDirection: Axis.horizontal,
+                        clipBehavior: Clip.none,
                         itemCount: dashboard!.requestTreatmentClinic!.length,
                         itemBuilder: (context, index) {
                           final request =
@@ -400,8 +423,8 @@ class HomeScreen extends ConsumerWidget {
                         },
                       ),
                     ),
-              SizedBox(height: context.h(28)),
-              SizedBox(height: context.h(28)),
+              SizedBox(height: context.h(12)),
+            //  SizedBox(height: context.h(12)),
 
               // Promotions & Discounts Section
               if (!isDeploymentMode)
@@ -412,7 +435,7 @@ class HomeScreen extends ConsumerWidget {
                     style: CustomFonts.black22w600,
                   ),
                 ),
-              if (!isDeploymentMode) SizedBox(height: context.h(16)),
+              if (!isDeploymentMode) SizedBox(height: context.h(10)),
 
               // Promotions Empty State Check
               if (!isDeploymentMode)

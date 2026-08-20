@@ -42,7 +42,7 @@ class DoctorCard extends StatelessWidget {
               borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(16))),
               child: CachedNetworkImage(
                 imageUrl: doctor.doctorImage ?? '',
-                height: context.h(100),
+                height: context.h(80),
                 width: double.infinity,
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Container(
