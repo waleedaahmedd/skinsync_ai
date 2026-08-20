@@ -2,6 +2,7 @@ import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 
@@ -18,8 +19,6 @@ class PhoneWidget extends StatefulWidget {
     this.onCountryChanged,
     this.initialCountryCode,
     this.enableCountrySelection = true,
-   
-
   });
 
   @override
@@ -80,7 +79,7 @@ class _PhoneWidgetState extends State<PhoneWidget> {
           onTapOutside: (_) {
             _focusNode.unfocus();
           },
-          keyboardType: TextInputType.phone,
+          keyboardType: TextInputType.number,
           decoration: InputDecoration(
             hintText: '012 345 6798',
             hintStyle: CustomFonts.grey18w400,
@@ -96,43 +95,49 @@ class _PhoneWidgetState extends State<PhoneWidget> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-
           GestureDetector(
-            onTap: widget.enableCountrySelection? () {
-            
-              showCountryPicker(
-                // countryCodeWidth: context.w(45),
-                moveAlongWithKeyboard: true,
-                countryListTheme: CountryListThemeData(
-                  bottomSheetWidth: MediaQuery.sizeOf(context).width,
-                  bottomSheetHeight: context.h(560),
-                  textStyle: TextStyle(fontSize: context.sp(14), color: Colors.black),
-                  searchTextStyle: TextStyle(fontSize: context.sp(14)),
-                  margin: EdgeInsets.zero,
-                  padding: EdgeInsets.only(
-                    top: context.h(15),
-                    bottom: context.h(27),
-                    left: context.w(20),
-                    right: context.w(20),
-                  ),
-                ),
-                context: context,
-                showPhoneCode: true,
-                onSelect: (Country country) {
-                  setState(() {
-                    _selectedCountry = country;
-                  });
-                  if (widget.onCountryChanged != null) {
-                    widget.onCountryChanged!(country);
+            onTap: widget.enableCountrySelection
+                ? () {
+                    showCountryPicker(
+                      // countryCodeWidth: context.w(45),
+                      moveAlongWithKeyboard: true,
+                      countryListTheme: CountryListThemeData(
+                        bottomSheetWidth: MediaQuery.sizeOf(context).width,
+                        bottomSheetHeight: context.h(560),
+                        textStyle: TextStyle(
+                          fontSize: context.sp(14),
+                          color: Colors.black,
+                        ),
+                        searchTextStyle: TextStyle(fontSize: context.sp(14)),
+                        margin: EdgeInsets.zero,
+                        padding: EdgeInsets.only(
+                          top: context.h(15),
+                          bottom: context.h(27),
+                          left: context.w(20),
+                          right: context.w(20),
+                        ),
+                      ),
+                      context: context,
+                      showPhoneCode: true,
+                      onSelect: (Country country) {
+                        setState(() {
+                          _selectedCountry = country;
+                        });
+                        if (widget.onCountryChanged != null) {
+                          widget.onCountryChanged!(country);
+                        }
+                      },
+                    );
                   }
-                },
-              );
-            }: null,
+                : null,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: context.w(12), right: context.w(4)),
+                  padding: EdgeInsets.only(
+                    left: context.w(12),
+                    right: context.w(4),
+                  ),
                   child: Center(
                     child: Text(
                       _selectedCountry.flagEmoji,

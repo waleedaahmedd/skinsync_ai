@@ -1,14 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import 'utils/assets.dart';
-import 'view_models/theme_view_model.dart';
 
 import 'route_generator.dart';
+import 'utils/assets.dart';
 import 'utils/color_constant.dart';
 import 'utils/screen_size.dart';
 import 'utils/theme.dart';
+import 'view_models/theme_view_model.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
@@ -31,8 +33,11 @@ void configLoading(BuildContext context) {
       child: Stack(
         children: [
           Center(
-            child: Image.asset(PngAssets.splashLogo,
-                width: context.w(50), height: context.w(50)),
+            child: Image.asset(
+              PngAssets.splashLogo,
+              width: context.w(50),
+              height: context.w(50),
+            ),
           ),
           SizedBox(
             height: context.w(60),
@@ -59,22 +64,29 @@ class AppInit extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         configLoading(context);
-        return Consumer(
-          builder: (context, ref, child) {
-            final ThemeMode themeMode = ref.watch(themeViewModel);
-            return MaterialApp(
-              scaffoldMessengerKey: rootScaffoldMessengerKey,
-              navigatorKey: navigatorKey,
-              debugShowCheckedModeBanner: false,
-              title: 'SkinSync AI',
-              initialRoute: '/',
-              onGenerateRoute: RouteGenerator.generateRoute,
-              themeMode: themeMode,
-              theme: AppTheme.lightTheme(context),
-              darkTheme: AppTheme.darkTheme,
-              builder: EasyLoading.init(),
-            );
+        return GestureDetector(
+          behavior: .deferToChild,
+          onTap: () {
+            log('LOSING FOCUS');
+            FocusManager.instance.primaryFocus?.unfocus();
           },
+          child: Consumer(
+            builder: (context, ref, child) {
+              final ThemeMode themeMode = ref.watch(themeViewModel);
+              return MaterialApp(
+                scaffoldMessengerKey: rootScaffoldMessengerKey,
+                navigatorKey: navigatorKey,
+                debugShowCheckedModeBanner: false,
+                title: 'SkinSync AI',
+                initialRoute: '/',
+                onGenerateRoute: RouteGenerator.generateRoute,
+                themeMode: themeMode,
+                theme: AppTheme.lightTheme(context),
+                darkTheme: AppTheme.darkTheme,
+                builder: EasyLoading.init(),
+              );
+            },
+          ),
         );
       },
     );
