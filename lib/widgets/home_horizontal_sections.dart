@@ -1,16 +1,23 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../models/responses/auth_response.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../models/responses/practitioner_list_response.dart';
+import '../screens/ar_face_model_Preview_screen.dart';
 import '../screens/journey_clinic_detail_screen.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../view_models/treatment_journey_view_model.dart';
+import '../view_models/treatment_view_model.dart';
+import 'custom_button.dart';
 import 'doctor_card.dart';
+import 'simulation_card.dart';
 
 class DoctorHomeCard extends StatelessWidget {
   final PractitionerDoctor doctor;
@@ -510,6 +517,91 @@ class DashboardClinicHomeCard extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class DashboardSimulationCard extends ConsumerWidget {
+  final DashboardSimulation simulation;
+
+  const DashboardSimulationCard({super.key, required this.simulation});
+
+  Future<void> _onModifyTap(WidgetRef ref) async {
+    await ref
+        .read(treatmentJourneyProvider.notifier)
+        .fetchOptionsDetail(simulation.id);
+    final state = ref.read(treatmentJourneyProvider);
+    final sim = state.simulations;
+    if (sim != null) {
+      await ref.read(treatmentViewModel.notifier).initializeSimulation(sim);
+      if (ref.context.mounted) {
+        Navigator.pushNamed(ref.context, ArFaceModelPreviewScreen.routeName);
+      }
+    } else {
+      EasyLoading.show(status: 'Failed to load simulation. Please try again.');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final _ = ref.watch(treatmentJourneyProvider.select((s) => s.loading));
+    return Padding(
+      padding: EdgeInsets.only(
+        right: context.w(16),
+        bottom: context.h(8),
+        top: context.h(4),
+      ),
+      child: Container(
+        width: context.w(245),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(context.r(16)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.vertical(
+                top: Radius.circular(context.r(16)),
+              ),
+              child: ComparisonView(
+                before: simulation.frontImageBefore,
+                after: simulation.frontImageAfter,
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: context.w(12),
+                vertical: context.h(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    simulation.name ?? 'Unknown Simulation',
+                    style: CustomFonts.black14w600,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: context.h(6)),
+                  CustomButton(
+                    text: 'Modify',
+                    isBorder: true,
+                    onPressed: () => _onModifyTap(ref),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

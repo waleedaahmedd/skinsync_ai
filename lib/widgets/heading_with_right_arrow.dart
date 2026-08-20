@@ -8,6 +8,7 @@ class HeadingWithRightArrow extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
    final bool showRightArrow;
+
   const HeadingWithRightArrow({
     super.key,
     required this.title,

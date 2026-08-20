@@ -337,7 +337,7 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
           child: Text(label, style: CustomFonts.black14w600),
         ),
         if (_isComparisonMode)
-          _ComparisonView(before: before, after: after)
+          ComparisonView(before: before, after: after)
         else
           Row(
             children: [
@@ -423,17 +423,17 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
   }
 }
 
-class _ComparisonView extends StatefulWidget {
+class ComparisonView extends StatefulWidget {
   final String? before;
   final String? after;
 
-  const _ComparisonView({required this.before, required this.after});
+  const ComparisonView({required this.before, required this.after});
 
   @override
-  State<_ComparisonView> createState() => _ComparisonViewState();
+  State<ComparisonView> createState() => _ComparisonViewState();
 }
 
-class _ComparisonViewState extends State<_ComparisonView> {
+class _ComparisonViewState extends State<ComparisonView> {
   double _sliderValue = 0.5;
 
   @override

@@ -106,9 +106,9 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     });
   }
 
-  Future<bool?> fetchOptionsDetail(
-    int optionId) async {
+  Future<bool?> fetchOptionsDetail(int? optionId) async {
     return await runSafely(() async {
+      if (optionId == null) return false;
       // EasyLoading.show(status: 'Fetching Options...');
       state = state.copyWith(isSimulationsLoading: true);
       final response = await _repo.getOptionsDetail(optionId);

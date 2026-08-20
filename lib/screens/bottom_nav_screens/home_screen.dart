@@ -18,11 +18,11 @@ import '../../widgets/points_earn_card.dart';
 import '../../widgets/requested_clinic_treatment_widget.dart';
 import '../../widgets/treatment_container.dart';
 import '../appointment_detail_screen.dart';
+import '../doctors_screen.dart';
 import '../journey_clinics_screen.dart';
+import '../notification_screen.dart';
 import '../patient_treatment_requests_screen.dart';
 import 'appointments_screen.dart';
-import '../doctors_screen.dart';
-import '../notification_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -82,14 +82,14 @@ class HomeScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBarWithActionIcon(
-        action:
-        !isDeploymentMode?
-         GreyContainer(
-          icon: Icons.notifications_none_outlined,
-          onTap: () {
-            Navigator.of(context).pushNamed(NotificationScreen.routeName);
-          },
-        ):null,
+        action: !isDeploymentMode
+            ? GreyContainer(
+                icon: Icons.notifications_none_outlined,
+                onTap: () {
+                  Navigator.of(context).pushNamed(NotificationScreen.routeName);
+                },
+              )
+            : null,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -163,7 +163,6 @@ class HomeScreen extends ConsumerWidget {
                         ),
                       ),
               if (!isDeploymentMode) SizedBox(height: context.h(28)),
-
               // Suggested Treatments Section
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
@@ -265,7 +264,6 @@ class HomeScreen extends ConsumerWidget {
                         ),
                       ),
               SizedBox(height: context.h(28)),
-
               // Top Clinics Section
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
@@ -308,8 +306,31 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
               SizedBox(height: context.h(28)),
-            
-             
+              if (dashboard?.recentSimulations?.isNotEmpty ?? false) ...{
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                  child: HeadingWithRightArrow(
+                    title: "Recent Simulations",
+                    onTap: () {
+                      ref.read(bottomNavViewModel.notifier).changePage(3);
+                    },
+                  ),
+                ),
+                SizedBox(height: context.h(16)),
+                SizedBox(
+                  height: context.h(200),
+                  child: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
+                    padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: dashboard!.recentSimulations!.length,
+                    itemBuilder: (context, index) => DashboardSimulationCard(
+                      simulation: dashboard.recentSimulations![index],
+                    ),
+                  ),
+                ),
+                SizedBox(height: context.h(28)),
+              },
               // Shared Treatment Requests Section
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
@@ -317,7 +338,8 @@ class HomeScreen extends ConsumerWidget {
                   title: "Shared Treatment Requests",
                   showRightArrow: false,
                   onTap: () {
-                    final clinicId = dashboard?.requestTreatmentClinic?.firstOrNull?.id;
+                    final clinicId =
+                        dashboard?.requestTreatmentClinic?.firstOrNull?.id;
                     if (clinicId != null) {
                       Navigator.pushNamed(
                         context,
@@ -338,22 +360,27 @@ class HomeScreen extends ConsumerWidget {
                       height: context.h(100),
                       icon: Icons.request_page_outlined,
                       title: "No Shared Treatment Requests",
-                      subtitle:
-                          "Shared treatment requests will appear here.",
+                      subtitle: "Shared treatment requests will appear here.",
                     )
                   : SizedBox(
                       height: context.h(150),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.w(24),
+                        ),
                         scrollDirection: Axis.horizontal,
                         itemCount: dashboard!.requestTreatmentClinic!.length,
                         itemBuilder: (context, index) {
-                          final request = dashboard.requestTreatmentClinic![index];
+                          final request =
+                              dashboard.requestTreatmentClinic![index];
 
                           return Padding(
                             padding: EdgeInsets.only(
-                              right: index == dashboard.requestTreatmentClinic!.length - 1
+                              right:
+                                  index ==
+                                      dashboard.requestTreatmentClinic!.length -
+                                          1
                                   ? 0
                                   : context.w(12),
                             ),

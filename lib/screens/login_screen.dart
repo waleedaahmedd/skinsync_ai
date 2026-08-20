@@ -252,9 +252,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               .read(authViewModel.notifier)
                               .callSignInApi(req);
                           if (success == true) {
-                            Navigator.of(
-                              context,
-                            ).pushNamed(OtpScreen.routeName);
+                            if (mounted) {
+                              Navigator.of(
+                                context,
+                              ).pushNamed(OtpScreen.routeName);
+                            }
                           }
                         }
                       },

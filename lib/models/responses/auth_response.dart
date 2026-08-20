@@ -132,7 +132,7 @@ class User {
     this.location,
     this.bio,
     this.country,
-    this.cc
+    this.cc,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -159,8 +159,8 @@ class User {
     "phone_number": phoneNumber,
     "location": location,
     "bio": bio,
-    "country":country,
-    "cc": cc
+    "country": country,
+    "cc": cc,
   };
 }
 
@@ -170,6 +170,7 @@ class DashboardData {
   final List<TopDoctor>? topDoctors;
   final List<TopClinic>? topClinics;
   final List<RequestClinicTreatmentModel>? requestTreatmentClinic;
+  final List<DashboardSimulation>? recentSimulations;
 
   DashboardData({
     this.appointments,
@@ -177,6 +178,7 @@ class DashboardData {
     this.topDoctors,
     this.topClinics,
     this.requestTreatmentClinic,
+    this.recentSimulations,
   });
 
   factory DashboardData.fromJson(Map<String, dynamic> json) => DashboardData(
@@ -205,6 +207,13 @@ class DashboardData {
         : List<RequestClinicTreatmentModel>.from(
             json["request_clinic_treatments"].map(
               (x) => RequestClinicTreatmentModel.fromJson(x),
+            ),
+          ),
+    recentSimulations: json['recent_simulations'] == null
+        ? []
+        : List<DashboardSimulation>.from(
+            json['recent_simulations'].map(
+              (x) => DashboardSimulation.fromJson(x),
             ),
           ),
   );
@@ -260,80 +269,27 @@ class RequestClinicTreatmentModel {
   };
 }
 
-// class DashboardAppointment {
-//   final int? date;
-//   final String? appointmentType;
-//   final int? appointmentTypeId;
-//   final List<AppointmentTreatment>? treatments;
-//   final DashboardDoctor? doctor;
-//   final DashboardClinic? clinic;
-//   final AppointmentSlot? slot;
+class DashboardSimulation {
+  final int? id;
+  final String? name;
+  final String? frontImageBefore;
+  final String? frontImageAfter;
 
-//   DashboardAppointment({
-//     this.date,
-//     this.appointmentType,
-//     this.appointmentTypeId,
-//     this.treatments,
-//     this.doctor,
-//     this.clinic,
-//     this.slot,
-//   });
+  const DashboardSimulation({
+    this.id,
+    this.name,
+    this.frontImageBefore,
+    this.frontImageAfter,
+  });
 
-//   factory DashboardAppointment.fromJson(Map<String, dynamic> json) =>
-//       DashboardAppointment(
-//         date: json["date"],
-//         appointmentType: json["appointment_type"],
-//         appointmentTypeId: json["appointment_type_id"],
-//          slot : json['slot'] != null ? AppointmentSlot.fromJson(json['slot']) : null,
-//         treatments: json["treatments"] == null
-//             ? []
-//             : List<AppointmentTreatment>.from(
-//                 json["treatments"]!.map(
-//                   (x) => AppointmentTreatment.fromJson(x),
-//                 ),
-//               ),
-//         doctor: json["doctor"] == null
-//             ? null
-//             : DashboardDoctor.fromJson(json["doctor"]),
-//         clinic: json["clinic"] == null
-//             ? null
-//             : DashboardClinic.fromJson(json["clinic"]),
-//       );
-
-//   Map<String, dynamic> toJson() => {
-//     "date": date,
-//     "appointment_type": appointmentType,
-//     "appointment_type_id": appointmentTypeId,
-//     "treatments": treatments?.map((x) => x.toJson()).toList(),
-//     "doctor": doctor?.toJson(),
-//     "clinic": clinic?.toJson(),
-//   };
-
-//   AppointmentItem toAppointmentItem() {
-//     return AppointmentItem(
-//       date: date,
-//       appointmentType: appointmentType,
-//       appointmentTypeId: appointmentTypeId,
-//       treatments: treatments,
-//       doctor: doctor != null
-//           ? AppointmentDoctor(
-//             id: doctor!.doctorId,
-//             name: doctor!.doctorName,
-//             image: doctor!.doctorImage,
-//           )
-//           : null,
-//       clinic: clinic != null
-//           ? AppointmentClinic(
-//             id: clinic!.clinicId,
-//             name: clinic!.clinicName,
-//             logo: clinic!.clinicImage,
-//           )
-//           : null,
-//     );
-//   }
-// }
-
-// // Remove AppointmentTreatment and AppointmentMaterial here to use from get_appointment_response.dart
+  factory DashboardSimulation.fromJson(Map<String, dynamic> json) =>
+      DashboardSimulation(
+        id: json["id"],
+        name: json["name"],
+        frontImageBefore: json["front_image_before"],
+        frontImageAfter: json["front_image_after"],
+      );
+}
 
 class DashboardDoctor {
   final int? doctorId;
