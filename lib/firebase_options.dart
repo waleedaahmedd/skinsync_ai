@@ -55,6 +55,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '55541632083',
     projectId: 'skinsync-2aa8e',
     storageBucket: 'skinsync-2aa8e.firebasestorage.app',
+    // YE DO LINES AAPNE ADD KARNI HAIN
+    androidClientId: '55541632083-09c7mg023dhonqchhaj1tm08ot60d7uq.apps.googleusercontent.com',
+    iosClientId: '55541632083-rmv67................apps.googleusercontent.com', // <-- Yahan apni puri Web Client ID paste karein jo image mein sabse niche thi
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
