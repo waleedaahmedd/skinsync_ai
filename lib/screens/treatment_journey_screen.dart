@@ -304,7 +304,7 @@ class _TreatmentJourneyScreenState
                     .createTjOptions();
                 if (!mounted) return;
                 if (result == true) {
-                  
+                  isTreatmentJourney = true;
                   // rootScaffoldMessengerKey.currentState?.showSnackBar(
                   //   SnackBar(
                   //     content: const Text(
