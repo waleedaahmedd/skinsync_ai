@@ -318,7 +318,7 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 SizedBox(height: context.h(16)),
                 SizedBox(
-                  height: context.h(320),
+                  height: context.h(190),
                   child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
                     padding: EdgeInsets.symmetric(horizontal: context.w(24)),
