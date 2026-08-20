@@ -129,15 +129,9 @@ class TreatmentContainer extends StatelessWidget {
               borderRadius: BorderRadius.circular(context.r(20)),
               boxShadow: [
                 BoxShadow(
-                  color: CustomColors.purpleColor.withValues(alpha: 0.12),
-                  blurRadius: 15,
-                  offset: const Offset(0, 8),
-                  spreadRadius: 1,
-                ),
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
