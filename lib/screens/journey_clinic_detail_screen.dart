@@ -31,22 +31,44 @@ class JourneyClinicDetailScreen extends ConsumerStatefulWidget {
 
 class _JourneyClinicDetailScreenState
     extends ConsumerState<JourneyClinicDetailScreen> {
+  late final bool _isMapClinic = widget.clinic?.place != null;
+  ClinicDetailData? _localClinicDetail;
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => ref
-          .read(clinicProvider.notifier)
-          .fetchClinicDetail(widget.clinic?.id),
+    if (_isMapClinic) {
+      _localClinicDetail = _buildDetailFromMapClinic(widget.clinic!);
+    } else {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => ref
+            .read(clinicProvider.notifier)
+            .fetchClinicDetail(widget.clinic?.id),
+      );
+    }
+  }
+
+  ClinicDetailData _buildDetailFromMapClinic(Clinic clinic) {
+    return ClinicDetailData(
+      id: clinic.id,
+      name: clinic.name,
+      description: clinic.description,
+      address: clinic.address,
+      phone: clinic.phone,
+      latitude: clinic.location?.latitude,
+      longitude: clinic.location?.longitude,
+      logo: clinic.logo,
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final clinicDetail = ref.watch(
-      clinicProvider.select((s) => s.clinicDetail),
-    );
-    final isLoading = ref.watch(clinicProvider.select((s) => s.loading));
+    final clinicDetail = _isMapClinic
+        ? _localClinicDetail
+        : ref.watch(clinicProvider.select((s) => s.clinicDetail));
+    final isLoading = _isMapClinic
+        ? false
+        : ref.watch(clinicProvider.select((s) => s.loading));
 
     return Scaffold(
       backgroundColor: CustomColors.whiteColor,

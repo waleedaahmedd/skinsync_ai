@@ -28,21 +28,47 @@ class JourneyClinicsScreen extends ConsumerStatefulWidget {
 class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
   Timer? _timer;
   final _searchController = TextEditingController();
+  bool _switchedToMapSource = false; 
+  late final Future<void> _mapClinicsFuture; 
+
   late final _pagingController = PagingController<int, Clinic>(
     getNextPageKey: (state) {
       final lastPageLength = state.pages?.lastOrNull?.length;
       if (lastPageLength == null) {
         return 1;
       }
-      return lastPageLength < 10 ? null : state.nextIntPageKey;
+
+      if (_switchedToMapSource) {
+        return null;
+      }
+
+      if (lastPageLength < 10) {
+
+        _switchedToMapSource = true;
+      }
+      return state.nextIntPageKey;
     },
     fetchPage: (page) async {
-      final clinics = await ref
-          .read(clinicProvider.notifier)
-          .getClinic(page: page, search: _searchController.text.trim());
-      return clinics ?? [];
+      if (!_switchedToMapSource) {
+        final clinics = await ref
+            .read(clinicProvider.notifier)
+            .getClinic(page: page, search: _searchController.text.trim());
+        return clinics ?? [];
+      }
+      await _mapClinicsFuture;
+      return ref.read(clinicProvider).clinicsToInvite;
     },
   );
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+        _mapClinicsFuture =
+        ref.read(clinicProvider.notifier).fetchClinicsFromMap();
+    });
+  
+  }
 
   @override
   void dispose() {
@@ -54,7 +80,6 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Keep clinicProvider alive and reactive to state changes
     ref.watch(clinicProvider);
 
     return Scaffold(
@@ -71,6 +96,7 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
               onChanged: (query) {
                 _timer?.cancel();
                 _timer = Timer(const Duration(milliseconds: 500), () {
+                  _switchedToMapSource = false; // reset on new search
                   _pagingController.refresh();
                 });
               },
@@ -94,7 +120,7 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
                   fetchNextPage: fetchNextPage,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 0.95,
+                    childAspectRatio: 0.90,
                     crossAxisSpacing: context.w(14),
                     mainAxisSpacing: context.h(14),
                   ),
