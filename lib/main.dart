@@ -11,7 +11,7 @@ import 'firebase_options.dart';
 import 'services/storage_service.dart';
 import 'utils/secure_storage_service.dart';
 
-bool isDeploymentMode = true;
+bool isDeploymentMode = false;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

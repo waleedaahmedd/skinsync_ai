@@ -28,8 +28,8 @@ class JourneyClinicsScreen extends ConsumerStatefulWidget {
 class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
   Timer? _timer;
   final _searchController = TextEditingController();
-  bool _switchedToMapSource = false; 
-  late final Future<void> _mapClinicsFuture; 
+  bool _switchedToMapSource = false;
+  Future<void>? _mapClinicsFuture;
 
   late final _pagingController = PagingController<int, Clinic>(
     getNextPageKey: (state) {
@@ -37,37 +37,46 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
       if (lastPageLength == null) {
         return 1;
       }
-
+      // Once we've switched to (and appended) map results within a page,
+      // there's nothing more to fetch — map results aren't paginated.
       if (_switchedToMapSource) {
         return null;
-      }
-
-      if (lastPageLength < 10) {
-
-        _switchedToMapSource = true;
       }
       return state.nextIntPageKey;
     },
     fetchPage: (page) async {
-      if (!_switchedToMapSource) {
-        final clinics = await ref
+      final search = _searchController.text.trim();
+      final clinics =
+          await ref.read(clinicProvider.notifier).getClinic(
+                page: page,
+                search: search,
+              ) ??
+          [];
+
+      // getClinic API had fewer than a full page (or none) — append map
+      // results into THIS SAME page, instead of waiting for another
+      // fetchPage call that scroll might never trigger.
+      if (clinics.length < 10) {
+        _switchedToMapSource = true;
+        _mapClinicsFuture ??= ref
             .read(clinicProvider.notifier)
-            .getClinic(page: page, search: _searchController.text.trim());
-        return clinics ?? [];
+            .fetchClinicsFromMap(search: search);
+        await _mapClinicsFuture;
+        final mapClinics = ref.read(clinicProvider).clinicsToInvite;
+        return [...clinics, ...mapClinics];
       }
-      await _mapClinicsFuture;
-      return ref.read(clinicProvider).clinicsToInvite;
+
+      return clinics;
     },
   );
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_){
-        _mapClinicsFuture =
-        ref.read(clinicProvider.notifier).fetchClinicsFromMap();
+    Future.microtask(() {
+      _mapClinicsFuture =
+          ref.read(clinicProvider.notifier).fetchClinicsFromMap();
     });
-  
   }
 
   @override
@@ -96,7 +105,8 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
               onChanged: (query) {
                 _timer?.cancel();
                 _timer = Timer(const Duration(milliseconds: 500), () {
-                  _switchedToMapSource = false; // reset on new search
+                  _switchedToMapSource = false;
+                  _mapClinicsFuture = null; // fresh map fetch for new search
                   _pagingController.refresh();
                 });
               },
@@ -182,3 +192,4 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
     );
   }
 }
+
