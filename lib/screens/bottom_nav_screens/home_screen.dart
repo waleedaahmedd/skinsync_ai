@@ -177,7 +177,7 @@ class HomeScreen extends ConsumerWidget {
               SizedBox(height: context.h(16)),
 
               SizedBox(
-                height: context.h(180),
+                height: context.h(200),
                 child: Consumer(
                   builder: (context, ref, _) {
                     final suggestedTreatments =
@@ -208,8 +208,8 @@ class HomeScreen extends ConsumerWidget {
                                 : context.w(0),
                           ),
                           child: TreatmentContainer(
-                            imageHeight: context.h(145),
-                            width: context.w(310),
+                            //imageHeight: context.h(145),
+                            width: context.w(350),
                             treatments: suggestedTreatments[index],
                           ),
                         );
@@ -480,13 +480,7 @@ class HomeScreen extends ConsumerWidget {
             color: CustomColors.lightPurpleColor.withValues(alpha: 0.4),
             width: 1.5,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          boxShadow: CustomColors.cardShadow,
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(context.r(22)),

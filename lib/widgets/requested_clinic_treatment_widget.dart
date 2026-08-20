@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../models/responses/auth_response.dart';
+import '../utils/color_constant.dart';
 import 'app_network_image.dart';
 
 class RequestClinicTreatmentCard extends StatelessWidget {
@@ -37,13 +38,7 @@ class RequestClinicTreatmentCard extends StatelessWidget {
           border: Border.all(
             color: Colors.grey.shade200,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          boxShadow: CustomColors.cardShadow,
         ),
         child: Row(
           children: [

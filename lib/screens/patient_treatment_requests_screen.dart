@@ -103,23 +103,7 @@ class _PatientTreatmentRequestsScreenState
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(context.r(24)),
-        boxShadow: [
-          BoxShadow(
-            color: CustomColors.lightBlueColor.withValues(alpha: 0.15),
-            blurRadius: 25,
-            offset: const Offset(-8, 10),
-          ),
-          BoxShadow(
-            color: CustomColors.darkPurple.withValues(alpha: 0.15),
-            blurRadius: 25,
-            offset: const Offset(8, 10),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: CustomColors.cardShadow,
         border: Border.all(
           color: CustomColors.greyColor.withValues(alpha: 0.3),
         ),

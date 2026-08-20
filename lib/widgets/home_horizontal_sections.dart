@@ -362,13 +362,7 @@ class DashboardClinicHomeCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(context.r(16)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            boxShadow: CustomColors.cardShadow,
           ),
           child: Stack(
             children: [
@@ -602,15 +596,9 @@ class DashboardSimulationCard extends ConsumerWidget {
         child: Ink(
           width: context.w(380),
           decoration: BoxDecoration(
-            gradient: CustomColors.whitePurpleGradient,
+            color: CustomColors.whiteColor,
             borderRadius: BorderRadius.circular(context.r(16)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            boxShadow: CustomColors.cardShadow,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

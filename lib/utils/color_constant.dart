@@ -18,6 +18,24 @@ abstract final class CustomColors {
   static const Color darkPurple = Color(0xFF7D69EB);
   static const Color lightBlueBackground = Color(0xffDEF8FF);
 
+  static List<BoxShadow> get cardShadow => [
+        BoxShadow(
+          color: lightBlueColor.withValues(alpha: 0.15),
+          blurRadius: 25,
+          offset: const Offset(-8, 10),
+        ),
+        BoxShadow(
+          color: darkPurple.withValues(alpha: 0.15),
+          blurRadius: 25,
+          offset: const Offset(8, 10),
+        ),
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.03),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
+        ),
+      ];
+
   static const LinearGradient purpleBlueGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
