@@ -267,7 +267,7 @@ class _TreatmentJourneyScreenState
             child: Icon(
               Icons.delete_outline_rounded,
               color: Colors.red,
-              size: 24.sp,
+              size: context.sp(24),
             ),
           ),
         ],
@@ -315,9 +315,9 @@ class _TreatmentJourneyScreenState
                       persist: false,
                       behavior: SnackBarBehavior.floating,
                       margin: EdgeInsets.only(
-                        left: 16.w,
-                        right: 16.w,
-                        bottom: 80.h,
+                        left: context.w(16),
+                        right: context.w(16),
+                        bottom: context.h(80),
                       ),
                       action: SnackBarAction(
                         label: '✕',

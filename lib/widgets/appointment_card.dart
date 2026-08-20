@@ -83,7 +83,7 @@ class AppointmentCard extends StatelessWidget {
                               children: [
                                 Icon(
                                   Icons.calendar_today_rounded,
-                                  size: 16.sp,
+                                  size: context.sp(16),
                                   color: Colors.black,
                                 ),
                                 SizedBox(width: context.w(8)),
@@ -102,7 +102,7 @@ class AppointmentCard extends StatelessWidget {
                               children: [
                                 Icon(
                                   Icons.access_time_filled_rounded,
-                                  size: 14.sp,
+                                  size: context.sp(14),
                                   color: Colors.black,
                                 ),
                                 SizedBox(width: context.w(8)),
@@ -282,7 +282,7 @@ class AppointmentCard extends StatelessWidget {
                           //             i++
                           //           ) ...[
                           Row(
-                            spacing: 10.w,
+                            spacing: context.w(10),
                             children: [
                               Expanded(
                                 child: _buildTreatmentTile(

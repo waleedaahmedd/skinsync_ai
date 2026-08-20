@@ -21,8 +21,8 @@ class GreyContainer extends StatelessWidget {
           color: CustomColors.greyColor,
           borderRadius: shape != BoxShape.circle ? BorderRadius.circular(context.r(8)) : null,
         ),
-        height: height.h,
-        width: width.w,
+        height: context.h(height),
+        width:context.w(width),
       
         child: Icon(
          icon,

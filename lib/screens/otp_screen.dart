@@ -144,7 +144,7 @@ class OtpScreen extends StatelessWidget {
             ),
             const Spacer(),
             SizedBox(
-              height: 60.w,
+              height: context.w(60),
               child: Center(
                 child: Consumer(
                   builder: (context, ref, child) => SizedBox(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
@@ -25,6 +26,28 @@ class GetStartedScreen extends StatelessWidget {
           ),
           child: Stack(
             children: [
+              SafeArea(
+                child: FutureBuilder(
+                  future: PackageInfo.fromPlatform(),
+                  builder: (_, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return const SizedBox.shrink();
+                    } else {
+                      final data = snapshot.data;
+                      if (data == null) {
+                        return const SizedBox.shrink();
+                      }
+                      return Align(
+                        alignment: .topCenter,
+                        child: Text(
+                          '${data.version} (${data.buildNumber})',
+                          style: CustomFonts.grey12w400,
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ),
               Positioned(
                 top: context.h(70),
                 right: context.w(0),
