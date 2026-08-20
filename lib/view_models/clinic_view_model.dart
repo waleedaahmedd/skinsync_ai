@@ -97,6 +97,7 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
             address: place.shortFormattedAddress,
             name: place.displayName?.text,
             logo: place.photos?.firstOrNull?.name,
+            banner: place.photos?.firstOrNull?.name,
             location: place.location != null
                 ? LatLng(place.location!.latitude!, place.location!.longitude!)
                 : null,

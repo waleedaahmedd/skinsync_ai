@@ -291,7 +291,7 @@ class HomeScreen extends ConsumerWidget {
                           "Top-rated aesthetic clinics and wellness spas will be listed here soon.",
                     )
                   : SizedBox(
-                      height: context.h(200),
+                      height: context.h(180),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(
@@ -318,7 +318,7 @@ class HomeScreen extends ConsumerWidget {
                 ),
                 SizedBox(height: context.h(16)),
                 SizedBox(
-                  height: context.h(200),
+                  height: context.h(320),
                   child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
                     padding: EdgeInsets.symmetric(horizontal: context.w(24)),
@@ -363,7 +363,7 @@ class HomeScreen extends ConsumerWidget {
                       subtitle: "Shared treatment requests will appear here.",
                     )
                   : SizedBox(
-                      height: context.h(150),
+                      height: context.h(130),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         padding: EdgeInsets.symmetric(

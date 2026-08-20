@@ -58,6 +58,7 @@ class _JourneyClinicDetailScreenState
       latitude: clinic.location?.latitude,
       longitude: clinic.location?.longitude,
       logo: clinic.logo,
+      banner: clinic.banner,
     );
   }
 

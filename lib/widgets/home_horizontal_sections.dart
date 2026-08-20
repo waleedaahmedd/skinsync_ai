@@ -574,6 +574,7 @@ class DashboardSimulationCard extends ConsumerWidget {
                 top: Radius.circular(context.r(16)),
               ),
               child: ComparisonView(
+                height: context.h(200),
                 before: simulation.frontImageBefore,
                 after: simulation.frontImageAfter,
               ),

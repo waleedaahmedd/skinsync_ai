@@ -493,7 +493,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
           fetchNextPage: fetchNextPage,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 0.86,
+            childAspectRatio: 0.78,
             crossAxisSpacing: context.w(14),
             mainAxisSpacing: context.h(14),
           ),

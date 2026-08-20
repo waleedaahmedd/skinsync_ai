@@ -81,7 +81,7 @@ class CustomClinicGridViewTile extends StatelessWidget {
                     ),
                     child: CachedNetworkImage(
                       // Banner is not available here yet.
-                      imageUrl: "",
+                      imageUrl: clinicData?.banner ?? '',
                       height: context.h(100),
                       width: double.infinity,
                       fit: BoxFit.cover,
@@ -236,7 +236,12 @@ class CustomClinicGridViewTile extends StatelessWidget {
             ),
             // Bottom Details Info
             Padding(
-              padding: EdgeInsets.all(context.w(12)),
+              padding: EdgeInsets.fromLTRB(
+                context.w(12),
+                context.h(8),
+                context.w(12),
+                context.h(10),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -244,16 +249,16 @@ class CustomClinicGridViewTile extends StatelessWidget {
                     clinicData?.name ?? "Clinic Name",
                     style: CustomFonts.black16w600.copyWith(
                       fontSize: context.sp(14),
-                      height: 1.2,
+                      height: 1.1,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: context.h(5)),
+                  SizedBox(height: context.h(4)),
                   Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: context.w(8),
-                      vertical: context.h(4),
+                      vertical: context.h(3),
                     ),
                     decoration: BoxDecoration(
                       color: CustomColors.purpleColor.withValues(alpha: 0.12),
@@ -262,16 +267,18 @@ class CustomClinicGridViewTile extends StatelessWidget {
                     child: Text(
                       // Doctor count is not available here yet.
                       "0 Doctors",
-                      style: CustomFonts.darkPurple12w600,
+                      style: CustomFonts.darkPurple12w600.copyWith(
+                        fontSize: context.sp(10),
+                      ),
                     ),
                   ),
                   if (clinicData?.address != null) ...[
-                    SizedBox(height: context.h(5)),
+                    SizedBox(height: context.h(4)),
                     Row(
                       children: [
                         Icon(
                           Icons.location_on_outlined,
-                          size: context.sp(12),
+                          size: context.sp(11),
                           color: Colors.grey,
                         ),
                         SizedBox(width: context.w(4)),
@@ -279,7 +286,7 @@ class CustomClinicGridViewTile extends StatelessWidget {
                           child: Text(
                             clinicData!.address!,
                             style: CustomFonts.grey13w400.copyWith(
-                              fontSize: context.sp(11),
+                              fontSize: context.sp(10),
                               color: CustomColors.textGreyColor.withValues(
                                 alpha: 0.8,
                               ),
@@ -292,12 +299,12 @@ class CustomClinicGridViewTile extends StatelessWidget {
                     ),
                   ],
                   if (clinicData?.place?.currentOpeningHours != null) ...[
-                    SizedBox(height: context.h(4)),
+                    SizedBox(height: context.h(3)),
                     Row(
                       children: [
                         Icon(
                           Icons.access_time_rounded,
-                          size: context.sp(12),
+                          size: context.sp(11),
                           color: Colors.grey,
                         ),
                         SizedBox(width: context.w(4)),
@@ -308,7 +315,7 @@ class CustomClinicGridViewTile extends StatelessWidget {
                                 .currentOpeningHours!
                                 .todayOpeningHours,
                             style: CustomFonts.grey13w400.copyWith(
-                              fontSize: context.sp(11),
+                              fontSize: context.sp(10),
                               color: Colors.grey.shade600,
                             ),
                             maxLines: 1,

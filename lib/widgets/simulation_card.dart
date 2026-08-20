@@ -426,8 +426,9 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
 class ComparisonView extends StatefulWidget {
   final String? before;
   final String? after;
+  final double? height;
 
-  const ComparisonView({required this.before, required this.after});
+  const ComparisonView({required this.before, required this.after, this.height});
 
   @override
   State<ComparisonView> createState() => _ComparisonViewState();
@@ -449,7 +450,7 @@ class _ComparisonViewState extends State<ComparisonView> {
           color: CustomColors.greyColor.withValues(alpha: 0.3),
         ),
       ),
-      height: context.h(250),
+      height: widget.height ?? context.h(250),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(context.r(12)),
         child: Stack(
@@ -498,7 +499,7 @@ class _ComparisonViewState extends State<ComparisonView> {
     return CachedNetworkImage(
       imageUrl: imageUrl,
       width: double.infinity,
-      height: context.h(250),
+      height: widget.height ?? context.h(250),
       fit: BoxFit.cover,
       placeholder: (context, url) => Container(
         color: CustomColors.greyColor.withValues(alpha: 0.2),
