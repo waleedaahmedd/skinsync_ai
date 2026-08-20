@@ -51,7 +51,7 @@ class BottomNavBar extends StatelessWidget {
           backgroundColor: Colors.white,
           color: CustomColors.bottomNavText,
           activeColor: Colors.transparent,
-          height: kBottomNavigationBarHeight + 15.h,
+          height: kBottomNavigationBarHeight + context.w(15),
           elevation: 0.5,
           items: _items
               .map(

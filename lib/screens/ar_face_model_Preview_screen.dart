@@ -142,9 +142,9 @@ class _ArFaceModelPreviewScreenState
                       persist: false,
                       behavior: SnackBarBehavior.floating,
                       margin: EdgeInsets.only(
-                        left: 16.w,
-                        right: 16.w,
-                        bottom: 80.h,
+                        left: context.w(16),
+                        right: context.w(16),
+                        bottom: context.h(80),
                       ),
                       action: SnackBarAction(
                         label: '✕',
