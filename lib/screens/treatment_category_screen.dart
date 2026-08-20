@@ -60,6 +60,7 @@ class _TreatmentCategoryScreenState
           children: [
             // Professional MedSpa Header
             CustomAppBar(title: widget.title),
+            SizedBox(height: context.h(10)),
             // Premium Breadcrumb Selection Path Container
             Padding(
               padding: EdgeInsets.symmetric(horizontal: context.w(30)),
@@ -123,7 +124,11 @@ class _TreatmentCategoryScreenState
                       key: ValueKey('category_list_${widget.title}'),
                       child: ListView.builder(
                         scrollDirection: Axis.vertical,
-                        padding: EdgeInsets.symmetric(horizontal: context.w(30)),
+                        padding: EdgeInsets.only(
+                          left: context.w(30),
+                          right: context.w(30),
+                          top: context.h(20),
+                        ),
                         physics: const BouncingScrollPhysics(),
                         itemCount: displayedCategories.length + 1,
                         itemBuilder: (context, index) {
