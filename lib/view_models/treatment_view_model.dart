@@ -11,7 +11,6 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
 import '../models/base_state_model.dart';
-import '../widgets/app_progress_indicator.dart';
 import '../models/requests/save_history_request.dart';
 import '../models/responses/materials_response.dart';
 import '../models/responses/simulation_history_response.dart';
@@ -25,6 +24,7 @@ import '../services/treatment_services.dart';
 import '../utils/image_utills.dart';
 import '../utils/list_utils.dart';
 import '../utils/simulation_utils.dart';
+import '../widgets/app_progress_indicator.dart';
 import 'auth_view_model.dart';
 import 'base_view_model.dart';
 import 'checkout_view_model.dart';
@@ -285,6 +285,9 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       isAiImageGenerated: false,
       material: state.material,
       materialsLoading: state.materialsLoading,
+      frontPoseImage: capturedImage ? null : state.frontPoseImage,
+      leftPoseImage: capturedImage ? null : state.leftPoseImage,
+      rightPoseImage: capturedImage ? null : state.rightPoseImage,
     );
   }
 
