@@ -162,7 +162,7 @@ class _TreatmentJourneyDetailScreenState
         right: context.w(24),
       ),
       child: Row(
-        spacing: 10.w,
+        spacing: context.w(10),
         children: [
           Expanded(
             child: Consumer(
@@ -197,7 +197,7 @@ class _TreatmentJourneyDetailScreenState
           Expanded(
             child: (state.options[_tabController?.index ?? 0].isShared == true)
                 ? Container(
-                    height: 52.h,
+                    height: context.h(52),
                     decoration: BoxDecoration(
                       color: Colors.grey.shade100,
                       borderRadius: BorderRadius.circular(context.r(12)),

@@ -150,8 +150,8 @@ class TreatmentDetailScreen extends StatelessWidget {
                   Row(
                     children: [
                       CachedNetworkImage(
-                        height: 30.h,
-                        width: 30.w,
+                        height: context.h(30),
+                        width: context.w(30),
                         imageUrl: treatments.icon ?? '',
                         fit: BoxFit.cover,
                         placeholder: (context, url) => Container(
