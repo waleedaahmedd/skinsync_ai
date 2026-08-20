@@ -44,10 +44,10 @@ class LocationService {
   // }
 
   Future<AddressData?> fetchAddress() async {
-    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      throw const AppException('Location service denied!');
-    }
+    // final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    // if (!serviceEnabled) {
+    //   throw const AppException('Location service denied!');
+    // }
 
     // Check/request permission
     var permission = await Geolocator.checkPermission();
@@ -89,29 +89,39 @@ class LocationService {
     return data.results!.first.formattedAddress!;
   }
 
-  Future<List<Place>> fetchNearbyClinics({required LatLng location}) async {
-    final uri = Uri.parse('https://places.googleapis.com/v1/places:searchText');
-    final body = {
-      'textQuery': 'MedSpa Clinic',
-      'maxResultCount': 100,
-      'locationBias': {
-        'circle': {
-          'center': {
-            'latitude': location.latitude,
-            'longitude': location.longitude,
-          },
-          'radius': 1000,
+Future<List<Place>> fetchNearbyClinics({
+  required LatLng location,
+  String? search,
+}) async {
+  final uri = Uri.parse('https://places.googleapis.com/v1/places:searchText');
+  final trimmedSearch = search?.trim() ?? '';
+  final body = {
+    // Fold the user's search text into the query so results are
+    // relevant to what they typed, while still biasing to MedSpa/clinic
+    // results when the search is empty or unrelated.
+    'textQuery': trimmedSearch.isEmpty
+        ? 'MedSpa Clinic'
+        : '$trimmedSearch MedSpa Clinic',
+    'maxResultCount': 100,
+    'locationBias': {
+      'circle': {
+        'center': {
+          'latitude': location.latitude,
+          'longitude': location.longitude,
         },
+        'radius': 1000,
       },
-    };
-    final headers = {
-      'Content-Type': 'application/json',
-      'X-Goog-Api-Key': _apiKey,
-      'X-Goog-FieldMask': '*',
-    };
-    final response = await post(uri, body: jsonEncode(body), headers: headers);
-    final jsonString = response.body;
-    log('JSON: $jsonString');
-    return MapClinicsResponse.fromJson(jsonDecode(jsonString)).places ?? [];
-  }
+    },
+  };
+  final headers = {
+    'Content-Type': 'application/json',
+    'X-Goog-Api-Key': _apiKey,
+    'X-Goog-FieldMask': '*',
+  };
+  final response = await post(uri, body: jsonEncode(body), headers: headers);
+  final jsonString = response.body;
+  log('JSON: $jsonString');
+  return MapClinicsResponse.fromJson(jsonDecode(jsonString)).places ?? [];
+}
+
 }
