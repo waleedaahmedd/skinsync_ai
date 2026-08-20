@@ -4,7 +4,6 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:iconsax/iconsax.dart';
 
-import '../app_init.dart';
 import '../models/responses/groups_list_response.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
@@ -306,29 +305,34 @@ class _TreatmentJourneyScreenState
                 if (!mounted) return;
                 if (result == true) {
                   
-                  rootScaffoldMessengerKey.currentState?.showSnackBar(
-                    SnackBar(
-                      content: const Text(
-                        'Your journey is ready! Tap the Journey button in the top-right corner to view it.',
-                      ),
-                      duration: const Duration(seconds: 3),
-                      persist: false,
-                      behavior: SnackBarBehavior.floating,
-                      margin: EdgeInsets.only(
-                        left: context.w(16),
-                        right: context.w(16),
-                        bottom: context.h(80),
-                      ),
-                      action: SnackBarAction(
-                        label: '✕',
-                        onPressed: () {
-                          rootScaffoldMessengerKey.currentState
-                              ?.hideCurrentSnackBar();
-                        },
-                      ),
-                    ),
-                  );
-                  Navigator.pop(context);
+                  // rootScaffoldMessengerKey.currentState?.showSnackBar(
+                  //   SnackBar(
+                  //     content: const Text(
+                  //       'Your journey is ready! Tap the Journey button in the top-right corner to view it.',
+                  //     ),
+                  //     duration: const Duration(seconds: 3),
+                  //     persist: false,
+                  //     behavior: SnackBarBehavior.floating,
+                  //     margin: EdgeInsets.only(
+                  //       left: context.w(16),
+                  //       right: context.w(16),
+                  //       bottom: context.h(80),
+                  //     ),
+                  //     action: SnackBarAction(
+                  //       label: '✕',
+                  //       onPressed: () {
+                  //         rootScaffoldMessengerKey.currentState
+                  //             ?.hideCurrentSnackBar();
+                  //       },
+                  //     ),
+                  //   ),
+                  // );
+                  
+                  Navigator.pushNamed(
+                  context,
+                  TreatmentJourneyDetailScreen.routeName,
+                  arguments: {'groupId': group.id, 'groupName': group.name},
+                );
 
                 }
               }

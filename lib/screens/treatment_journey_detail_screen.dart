@@ -16,6 +16,7 @@ import '../widgets/dialogs/success_dialogs.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/simulation_card.dart';
 import 'ar_face_model_Preview_screen.dart';
+import 'bottom_nav_page.dart';
 import 'face_pose_capture_screen.dart';
 import 'journey_clinics_screen.dart';
 
@@ -127,9 +128,11 @@ class _TreatmentJourneyDetailScreenState
                   unselectedLabelStyle: CustomFonts.grey16w500,
                   dividerColor: Colors.transparent,
                   tabs: state.options
-                      .map((opt) => Tab(
-                            text: "${opt.name}${opt.isShared == true ? '*' : ''}",
-                          ))
+                      .map(
+                        (opt) => Tab(
+                          text: "${opt.name}${opt.isShared == true ? '*' : ''}",
+                        ),
+                      )
                       .toList(),
                 ),
                 Expanded(
@@ -170,15 +173,19 @@ class _TreatmentJourneyDetailScreenState
                 final capturedImagesNull = ref.watch(
                   treatmentViewModel.select((s) => s.capturedImagesNull),
                 );
-                if (!capturedImagesNull) {
-                  return const SizedBox.shrink();
-                }
+
                 return CustomButton(
                   isBorder: true,
-                  text: 'Modify',
+                  text: !capturedImagesNull ? 'Back To Home' : 'Modify',
                   onPressed: () async {
                     final sim = state.simulations;
-                    if (sim != null) {
+                    if (!capturedImagesNull) {
+                      Navigator.popUntil(
+                        context,
+                        (route) =>
+                            route.settings.name == BottomNavPage.routeName,
+                      );
+                    } else if (sim != null) {
                       await ref
                           .read(treatmentViewModel.notifier)
                           .initializeSimulation(sim);
@@ -231,12 +238,13 @@ class _TreatmentJourneyDetailScreenState
                         }
                       } else {
                         Navigator.pushNamed(
-                            context, JourneyClinicsScreen.routeName);
+                          context,
+                          JourneyClinicsScreen.routeName,
+                        );
                       }
                     },
                   ),
           ),
-
         ],
       ),
     );
