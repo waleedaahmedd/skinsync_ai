@@ -155,6 +155,13 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     state = state.copyWith(selectedGroup: group);
   }
 
+  void clearSelectedGroup() {
+  state = state.copyWith(
+    clearSelectedGroup: true,
+   
+  );
+}
+
   Future<bool?> createTjOptions() async {
     return await runSafely(() async {
       EasyLoading.show(status: 'Creating Option...');
@@ -235,6 +242,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       final response = await _repo.createTjOptions(request);
       if (response.isSuccess == true) {
         await EasyLoading.showSuccess('Option created successfully');
+        clearSelectedGroup();
       }
       return true;
     });
@@ -280,6 +288,7 @@ class TreatmentJourneyState extends BaseStateModel {
     bool? loading,
     String? errorMessage,
     TreatmentJourneyGroup? selectedGroup,
+  bool clearSelectedGroup = false,
     List<TreatmentJourneyGroup>? groups,
     List<TJOption>? options,
     SimulationData? simulations,
@@ -291,7 +300,9 @@ class TreatmentJourneyState extends BaseStateModel {
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
       groups: groups ?? this.groups,
-      selectedGroup: selectedGroup ?? this.selectedGroup,
+      selectedGroup: clearSelectedGroup
+        ? null
+        : (selectedGroup ?? this.selectedGroup),
       options: options ?? this.options,
       simulations: simulations ?? this.simulations,
       isSimulationsLoading: isSimulationsLoading ?? this.isSimulationsLoading,
