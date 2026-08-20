@@ -57,6 +57,9 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      onTapOutside: (_){
+         FocusScope.of(context).unfocus();
+      } ,
       controller: _controller,
       focusNode: widget.focusNode,
       onChanged: widget.onChanged,

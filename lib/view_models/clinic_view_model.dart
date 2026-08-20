@@ -74,42 +74,41 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
       return response.data ?? [];
     });
   }
-  
-  Future<void> fetchClinicsFromMap() async {
-    return await runSafely(() async {
-      state = state.copyWith(clinicLoading: true);
-      LatLng? location = ref.read(authViewModel).addressData?.latLng;
-      if (location == null) {
-        await ref.read(authViewModel.notifier).fetchLocation(true);
-      }
-      location = ref.read(authViewModel).addressData!.latLng;
-      final places = await LocationService().fetchNearbyClinics(
-        location: location,
+Future<void> fetchClinicsFromMap({String? search}) async {
+  return await runSafely(() async {
+    state = state.copyWith(clinicLoading: true);
+    LatLng? location = ref.read(authViewModel).addressData?.latLng;
+    if (location == null) {
+      await ref.read(authViewModel.notifier).fetchLocation(true);
+    }
+    location = ref.read(authViewModel).addressData!.latLng;
+    final places = await LocationService().fetchNearbyClinics(
+      location: location,
+      search: search,
+    );
+    if (!ref.mounted) return;
+    final List<Clinic> clinics = [];
+    for (final place in places) {
+      clinics.add(
+        Clinic(
+          id: 29,
+          phone: place.internationalPhoneNumber,
+          description: place.primaryTypeDisplayName?.text,
+          address: place.shortFormattedAddress,
+          name: place.displayName?.text,
+          logo: place.photos?.firstOrNull?.name,
+           banner: place.photos?.firstOrNull?.name,
+          location: place.location != null
+              ? LatLng(place.location!.latitude!, place.location!.longitude!)
+              : null,
+          place: place,
+        ),
       );
-      if (!ref.mounted) return;
-      final List<Clinic> clinics = [];
-      for (final place in places) {
-        clinics.add(
-          Clinic(
-            id: 29,
-            phone: place.internationalPhoneNumber,
-            description: place.primaryTypeDisplayName?.text,
-            address: place.shortFormattedAddress,
-            name: place.displayName?.text,
-            logo: place.photos?.firstOrNull?.name,
-            banner: place.photos?.firstOrNull?.name,
-            location: place.location != null
-                ? LatLng(place.location!.latitude!, place.location!.longitude!)
-                : null,
-            place: place,
-          ),
-        );
-      }
-      if (!ref.mounted) return;
-      state = state.copyWith(clinicLoading: false, clinicsToInvite: clinics);
-    });
-  }
-
+    }
+    if (!ref.mounted) return;
+    state = state.copyWith(clinicLoading: false, clinicsToInvite: clinics);
+  });
+}
   void toggleViewType() {
     state = state.copyWith(
       viewType: state.viewType == ViewType.grid ? ViewType.map : ViewType.grid,
