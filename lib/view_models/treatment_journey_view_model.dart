@@ -129,20 +129,21 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     });
   }
 
-  Future<bool?> fetchOptionsDetail(int? optionId) async {
+  Future<SimulationData?> fetchOptionsDetail(int? optionId) async {
     return await runSafely(() async {
-      if (optionId == null) return false;
+      if (optionId == null) return null;
       // EasyLoading.show(status: 'Fetching Options...');
       state = state.copyWith(isSimulationsLoading: true);
       final response = await _repo.getOptionsDetail(optionId);
-      if (!ref.mounted) return null;
-      state = state.copyWith(
-        loading: false,
-        simulations: response.data,
-        isSimulationsLoading: false,
-      );
+      if (ref.mounted) {
+        state = state.copyWith(
+          loading: false,
+          simulations: response.data,
+          isSimulationsLoading: false,
+        );
+      }
       EasyLoading.dismiss();
-      return true;
+      return response.data;
     });
   }
 
@@ -179,11 +180,8 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
   }
 
   void clearSelectedGroup() {
-  state = state.copyWith(
-    clearSelectedGroup: true,
-   
-  );
-}
+    state = state.copyWith(clearSelectedGroup: true);
+  }
 
   Future<bool?> createTjOptions() async {
     return await runSafely(() async {
@@ -311,7 +309,7 @@ class TreatmentJourneyState extends BaseStateModel {
     bool? loading,
     String? errorMessage,
     TreatmentJourneyGroup? selectedGroup,
-  bool clearSelectedGroup = false,
+    bool clearSelectedGroup = false,
     List<TreatmentJourneyGroup>? groups,
     List<TJOption>? options,
     SimulationData? simulations,
@@ -324,8 +322,8 @@ class TreatmentJourneyState extends BaseStateModel {
       errorMessage: errorMessage ?? this.errorMessage,
       groups: groups ?? this.groups,
       selectedGroup: clearSelectedGroup
-        ? null
-        : (selectedGroup ?? this.selectedGroup),
+          ? null
+          : (selectedGroup ?? this.selectedGroup),
       options: options ?? this.options,
       simulations: simulations ?? this.simulations,
       isSimulationsLoading: isSimulationsLoading ?? this.isSimulationsLoading,

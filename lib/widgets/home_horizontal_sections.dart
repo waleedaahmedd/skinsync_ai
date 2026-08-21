@@ -339,175 +339,178 @@ class DashboardClinicHomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.pushNamed(
-          context,
-          JourneyClinicDetailScreen.routeName,
-          arguments: Clinic(
-            id: clinic.clinicId,
-            name: clinic.clinicName,
-            address: clinic.address,
+    return Material(
+      type: .transparency,
+      child: InkWell(
+        onTap: () {
+          Navigator.pushNamed(
+            context,
+            JourneyClinicDetailScreen.routeName,
+            arguments: Clinic(
+              id: clinic.clinicId,
+              name: clinic.clinicName,
+              address: clinic.address,
+            ),
+          );
+        },
+        child: Padding(
+          padding: EdgeInsets.only(
+            right: context.w(16),
+            bottom: context.h(8),
+            top: context.h(4),
           ),
-        );
-      },
-      child: Padding(
-        padding: EdgeInsets.only(
-          right: context.w(16),
-          bottom: context.h(8),
-          top: context.h(4),
-        ),
-        child: Ink(
-          width: context.w(245),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(context.r(16)),
-            boxShadow: CustomColors.cardShadow,
-          ),
-          child: Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(context.r(16)),
-                    ),
-                    child: CachedNetworkImage(
-                      imageUrl: clinic.banner ?? "",
-                      height: context.h(100),
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: Colors.grey.shade100,
-                        child: const Center(
-                          child: CupertinoActivityIndicator(),
-                        ),
+          child: Ink(
+            width: context.w(245),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(context.r(16)),
+              boxShadow: CustomColors.cardShadow,
+            ),
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(context.r(16)),
                       ),
-                      errorWidget: (_, _, _) => DecoratedBox(
-                        decoration: const BoxDecoration(
-                          gradient: CustomColors.purpleBlueGradient,
+                      child: CachedNetworkImage(
+                        imageUrl: clinic.banner ?? "",
+                        height: context.h(100),
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          color: Colors.grey.shade100,
+                          child: const Center(
+                            child: CupertinoActivityIndicator(),
+                          ),
                         ),
-                        child: Image.asset(
-                          PngAssets.splashLogo,
-                          opacity: const AlwaysStoppedAnimation(0.4),
-                          fit: .cover,
+                        errorWidget: (_, _, _) => DecoratedBox(
+                          decoration: const BoxDecoration(
+                            gradient: CustomColors.purpleBlueGradient,
+                          ),
+                          child: Image.asset(
+                            PngAssets.splashLogo,
+                            opacity: const AlwaysStoppedAnimation(0.4),
+                            fit: .cover,
+                          ),
                         ),
+                        // errorWidget: (context, url, error) => Container(
+                        //   color: Colors.grey.shade100,
+                        //   child: const Icon(
+                        //     Icons.storefront_rounded,
+                        //     size: 30,
+                        //     color: Colors.grey,
+                        //   ),
+                        // ),
                       ),
-                      // errorWidget: (context, url, error) => Container(
-                      //   color: Colors.grey.shade100,
-                      //   child: const Icon(
-                      //     Icons.storefront_rounded,
-                      //     size: 30,
-                      //     color: Colors.grey,
-                      //   ),
-                      // ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.w(12),
-                      vertical: context.h(8),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                clinic.clinicName ?? "Unknown Clinic",
-                                style: CustomFonts.black14w600,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: context.w(8),
-                                vertical: context.h(4),
-                              ),
-                              decoration: BoxDecoration(
-                                color: CustomColors.purpleColor.withValues(
-                                  alpha: 0.12,
-                                ),
-                                borderRadius: BorderRadius.circular(
-                                  context.r(20),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.w(12),
+                        vertical: context.h(8),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  clinic.clinicName ?? "Unknown Clinic",
+                                  style: CustomFonts.black14w600,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              child: Text(
-                                "${clinic.doctorCount ?? 0} Doctors",
-                                style: CustomFonts.darkPurple12w600,
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: context.w(8),
+                                  vertical: context.h(4),
+                                ),
+                                decoration: BoxDecoration(
+                                  color: CustomColors.purpleColor.withValues(
+                                    alpha: 0.12,
+                                  ),
+                                  borderRadius: BorderRadius.circular(
+                                    context.r(20),
+                                  ),
+                                ),
+                                child: Text(
+                                  "${clinic.doctorCount ?? 0} Doctors",
+                                  style: CustomFonts.darkPurple12w600,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: context.h(6)),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.location_on_outlined,
-                              size: context.sp(12),
-                              color: Colors.grey,
-                            ),
-                            SizedBox(width: context.w(4)),
-                            Expanded(
-                              child: Text(
-                                clinic.address ?? "No address provided",
-                                style: CustomFonts.grey700_10w400,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                            ],
+                          ),
+                          SizedBox(height: context.h(6)),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.location_on_outlined,
+                                size: context.sp(12),
+                                color: Colors.grey,
                               ),
-                            ),
-                          ],
+                              SizedBox(width: context.w(4)),
+                              Expanded(
+                                child: Text(
+                                  clinic.address ?? "No address provided",
+                                  style: CustomFonts.grey700_10w400,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Positioned(
+                  top: context.h(8),
+                  left: context.w(8),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              Positioned(
-                top: context.h(8),
-                left: context.w(8),
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: ClipOval(
-                    child: CachedNetworkImage(
-                      imageUrl: clinic.clinicImage ?? "",
-                      height: context.w(40),
-                      width: context.w(40),
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
+                    child: ClipOval(
+                      child: CachedNetworkImage(
+                        imageUrl: clinic.clinicImage ?? "",
                         height: context.w(40),
                         width: context.w(40),
-                        color: Colors.grey.shade100,
-                        child: const CupertinoActivityIndicator(radius: 8),
-                      ),
-                      errorWidget: (context, url, error) => Container(
-                        height: context.w(40),
-                        width: context.w(40),
-                        color: Colors.grey.shade100,
-                        child: Icon(
-                          Icons.storefront_rounded,
-                          size: context.w(20),
-                          color: Colors.grey,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          height: context.w(40),
+                          width: context.w(40),
+                          color: Colors.grey.shade100,
+                          child: const CupertinoActivityIndicator(radius: 8),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          height: context.w(40),
+                          width: context.w(40),
+                          color: Colors.grey.shade100,
+                          child: Icon(
+                            Icons.storefront_rounded,
+                            size: context.w(20),
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -522,11 +525,9 @@ class DashboardSimulationCard extends ConsumerWidget {
 
   Future<void> _onModifyTap(WidgetRef ref) async {
     EasyLoading.show(status: 'Loading...');
-    await ref
+    final sim = await ref
         .read(treatmentJourneyProvider.notifier)
         .fetchOptionsDetail(simulation.id);
-    final state = ref.read(treatmentJourneyProvider);
-    final sim = state.simulations;
     if (sim != null) {
       await ref.read(treatmentViewModel.notifier).initializeSimulation(sim);
       if (ref.context.mounted) {
@@ -541,10 +542,7 @@ class DashboardSimulationCard extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: CustomFonts.black14w600,
-        ),
+        Text(label, style: CustomFonts.black14w600),
         SizedBox(height: context.h(4)),
         ClipRRect(
           borderRadius: BorderRadius.circular(context.r(12)),
@@ -583,7 +581,7 @@ class DashboardSimulationCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-     final _ = ref.watch(treatmentJourneyProvider.select((s) => s.loading));
+    // final _ = ref.watch(treatmentJourneyProvider.select((s) => s.loading));
     return Padding(
       padding: EdgeInsets.only(
         right: context.w(16),
