@@ -330,11 +330,19 @@ class _TreatmentJourneyScreenState
                   //   ),
                   // );
                   
-                  Navigator.pushNamed(
+                final success = await ref
+                  .read(treatmentJourneyProvider.notifier)
+                  .fetchOptions(group.id!);
+              if (!mounted) return;
+              // EasyLoading.dismiss();
+
+              if (success ?? false) {
+                Navigator.pushNamed(
                   context,
                   TreatmentJourneyDetailScreen.routeName,
                   arguments: {'groupId': group.id, 'groupName': group.name},
                 );
+              }
 
                 }
               }
