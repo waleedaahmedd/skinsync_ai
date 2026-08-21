@@ -184,49 +184,51 @@ class _TreatmentJourneyScreenState
           ),
         ],
       ),
-      body: state.loading
-          ? const Center(child: AppLoader())
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (state.groups.isNotEmpty)
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      context.w(24),
-                      context.h(20),
-                      context.w(24),
-                      0,
+      body: SafeArea(
+        child: state.loading
+            ? const Center(child: AppLoader())
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (state.groups.isNotEmpty)
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        context.w(24),
+                        context.h(20),
+                        context.w(24),
+                        0,
+                      ),
+                      child: Text(
+                        "Create a new journey group or select an existing one to manage your simulations and share them with clinics.",
+                        style: CustomFonts.grey14w400.copyWith(height: 1.4),
+                      ),
                     ),
-                    child: Text(
-                      "Create a new journey group or select an existing one to manage your simulations and share them with clinics.",
-                      style: CustomFonts.grey14w400.copyWith(height: 1.4),
-                    ),
-                  ),
-                Expanded(
-                  child: state.groups.isEmpty
-                      ? Center(
-                          child: Text(
-                            state.errorMessage ?? "No journeys found",
-                            style: CustomFonts.grey16w400,
-                          ),
-                        )
-                      : SlidableAutoCloseBehavior(
-                          child: ListView.builder(
-                            physics: const BouncingScrollPhysics(),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: context.w(24),
-                              vertical: context.h(20),
+                  Expanded(
+                    child: state.groups.isEmpty
+                        ? Center(
+                            child: Text(
+                              state.errorMessage ?? "No journeys found",
+                              style: CustomFonts.grey16w400,
                             ),
-                            itemCount: state.groups.length,
-                            itemBuilder: (context, index) {
-                              final group = state.groups[index];
-                              return _buildGroupCard(context, group, index);
-                            },
+                          )
+                        : SlidableAutoCloseBehavior(
+                            child: ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: context.w(24),
+                                vertical: context.h(20),
+                              ),
+                              itemCount: state.groups.length,
+                              itemBuilder: (context, index) {
+                                final group = state.groups[index];
+                                return _buildGroupCard(context, group, index);
+                              },
+                            ),
                           ),
-                        ),
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+      ),
     );
   }
 

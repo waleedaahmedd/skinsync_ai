@@ -50,16 +50,16 @@ android {
 
     buildTypes {
         release {
-            signingConfig   = signingConfigs.getByName("release")
-            isMinifyEnabled = false
-            isShrinkResources = false
+            isMinifyEnabled = true          // Optimizations ke liye true hona behtar hai
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
         debug {
-            signingConfig = signingConfigs.getByName("release")
+            // Debug ko defaults par chor dein taake debug certificates override na hon
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 }
@@ -72,4 +72,11 @@ kotlin {
 
 flutter {
     source = "../.."
+}
+
+configurations.configureEach {
+    resolutionStrategy {
+        force("androidx.credentials:credentials:1.3.0")
+        force("androidx.credentials:credentials-play-services-auth:1.3.0")
+    }
 }

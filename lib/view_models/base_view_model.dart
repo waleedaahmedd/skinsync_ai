@@ -47,18 +47,20 @@ abstract class BaseViewModel<S> extends Notifier<S> {
       if (e is SignInWithAppleAuthorizationException &&
           e.code == AuthorizationErrorCode.canceled) {
         onCancel();
+        onError('Apple Sign In Error (${e.code}): ${e.message}');
         return null;
       }
-      onError('Something went wrong. Please try again.');
+      onError(e.toString());
       FirebaseCrashlytics.instance.recordError(e, s);
       return null;
     } on GoogleSignInException catch (e, s) {
       log('GoogleSignInException: code=${e.code}, description=${e.description}', stackTrace: s, name: 'AUTH_ERROR');
       if (e.code == GoogleSignInExceptionCode.canceled) {
         onCancel();
+        onError('Google Sign In Error (${e.code}): ${e.description ?? "User cancelled"}');
         return null;
       }
-      onError('Something went wrong. Please try again.');
+      onError(e.description ?? 'Something went wrong. Please try again.');
       FirebaseCrashlytics.instance.recordError(e, s);
       return null;
     } on AppException catch (e, s) {

@@ -121,25 +121,13 @@ class TreatmentContainer extends StatelessWidget {
                 }
               },
           child: Container(
-            height: imageHeight ?? context.h(300),
+            height: imageHeight ?? context.h(250),
             width: width ?? MediaQuery.sizeOf(context).width,
             margin: EdgeInsets.only(bottom: context.h(16)),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(context.r(20)),
-              boxShadow: [
-                BoxShadow(
-                  color: CustomColors.purpleColor.withValues(alpha: 0.12),
-                  blurRadius: 15,
-                  offset: const Offset(0, 8),
-                  spreadRadius: 1,
-                ),
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+              boxShadow: CustomColors.cardShadow,
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(context.r(20)),

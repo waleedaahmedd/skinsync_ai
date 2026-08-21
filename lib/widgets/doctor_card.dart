@@ -30,13 +30,7 @@ class DoctorCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(context.r(16)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          boxShadow: CustomColors.cardShadow,
           border: Border.all(
             color: CustomColors.greyColor.withValues(alpha: 0.6),
           ),
@@ -48,7 +42,7 @@ class DoctorCard extends StatelessWidget {
               borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(16))),
               child: CachedNetworkImage(
                 imageUrl: doctor.doctorImage ?? '',
-                height: context.h(100),
+                height: context.h(80),
                 width: double.infinity,
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Container(

@@ -17,13 +17,7 @@ class DiscountCard extends StatelessWidget {
           color: Colors.black.withValues(alpha: 0.08),
           width: 1.5,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: CustomColors.cardShadow,
       ),
       height: context.h(144),
       width: context.w(360), // Slightly adjusted width for better fitting on smaller screen widths

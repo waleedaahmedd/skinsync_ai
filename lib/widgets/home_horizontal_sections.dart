@@ -15,9 +15,7 @@ import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../view_models/treatment_view_model.dart';
-import 'custom_button.dart';
 import 'doctor_card.dart';
-import 'simulation_card.dart';
 
 class DoctorHomeCard extends StatelessWidget {
   final PractitionerDoctor doctor;
@@ -364,13 +362,7 @@ class DashboardClinicHomeCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(context.r(16)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            boxShadow: CustomColors.cardShadow,
           ),
           child: Stack(
             children: [
@@ -529,6 +521,7 @@ class DashboardSimulationCard extends ConsumerWidget {
   const DashboardSimulationCard({super.key, required this.simulation});
 
   Future<void> _onModifyTap(WidgetRef ref) async {
+    EasyLoading.show(status: 'Loading...');
     await ref
         .read(treatmentJourneyProvider.notifier)
         .fetchOptionsDetail(simulation.id);
@@ -544,6 +537,50 @@ class DashboardSimulationCard extends ConsumerWidget {
     }
   }
 
+  Widget _buildImage(BuildContext context, String label, String? imageUrl) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: CustomFonts.black14w600,
+        ),
+        SizedBox(height: context.h(4)),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(context.r(12)),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.4),
+              borderRadius: BorderRadius.circular(context.r(12)),
+            ),
+            child: CachedNetworkImage(
+              imageUrl: imageUrl ?? '',
+              height: context.h(120),
+              width: double.infinity,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Container(
+                height: context.h(120),
+                color: Colors.white.withValues(alpha: 0.2),
+                child: const Center(
+                  child: CupertinoActivityIndicator(radius: 8),
+                ),
+              ),
+              errorWidget: (context, url, error) => Container(
+                height: context.h(150),
+                color: Colors.white.withValues(alpha: 0.2),
+                child: Icon(
+                  Icons.broken_image_rounded,
+                  size: context.w(20),
+                  color: Colors.black26,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final _ = ref.watch(treatmentJourneyProvider.select((s) => s.loading));
@@ -553,56 +590,48 @@ class DashboardSimulationCard extends ConsumerWidget {
         bottom: context.h(8),
         top: context.h(4),
       ),
-      child: Container(
-        width: context.w(245),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(context.r(16)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(context.r(16)),
+      child: InkWell(
+        onTap: () => _onModifyTap(ref),
+        borderRadius: BorderRadius.circular(context.r(16)),
+        child: Ink(
+          width: context.w(380),
+          decoration: BoxDecoration(
+            color: CustomColors.whiteColor,
+            borderRadius: BorderRadius.circular(context.r(16)),
+            boxShadow: CustomColors.cardShadow,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  context.w(12),
+                  context.h(12),
+                  context.w(12),
+                  context.h(12),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _buildImage(
+                        context,
+                        'Before',
+                        simulation.frontImageBefore,
+                      ),
+                    ),
+                    SizedBox(width: context.w(10)),
+                    Expanded(
+                      child: _buildImage(
+                        context,
+                        'After',
+                        simulation.frontImageAfter,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: ComparisonView(
-                height: context.h(200),
-                before: simulation.frontImageBefore,
-                after: simulation.frontImageAfter,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: context.w(12),
-                vertical: context.h(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    simulation.name ?? 'Unknown Simulation',
-                    style: CustomFonts.black14w600,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: context.h(6)),
-                  CustomButton(
-                    text: 'Modify',
-                    isBorder: true,
-                    onPressed: () => _onModifyTap(ref),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

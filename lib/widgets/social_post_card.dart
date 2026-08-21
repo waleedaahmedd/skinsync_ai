@@ -18,6 +18,8 @@ class SocialPostCard extends ConsumerStatefulWidget {
 }
 
 class _SocialPostCardState extends ConsumerState<SocialPostCard> {
+  bool _isExpanded = false;
+
   @override
   Widget build(BuildContext context) {
     final post = widget.post;
@@ -37,18 +39,7 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
           color: Colors.grey.withValues(alpha: 0.08),
           width: 1,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
+        boxShadow: CustomColors.cardShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -168,13 +159,49 @@ class _SocialPostCardState extends ConsumerState<SocialPostCard> {
                 context.w(16),
                 context.h(16),
               ),
-              child: Text(
-                post.contentText!,
-                style: CustomFonts.black14w400.copyWith(
-                  height: 1.6,
-                  color: Colors.black.withValues(alpha: 0.85),
-                  letterSpacing: 0.1,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    post.contentText!,
+                    maxLines: _isExpanded ? null : 2,
+                    overflow: _isExpanded
+                        ? TextOverflow.visible
+                        : TextOverflow.ellipsis,
+                    style: CustomFonts.black14w400.copyWith(
+                      height: 1.6,
+                      color: Colors.black.withValues(alpha: 0.85),
+                      letterSpacing: 0.1,
+                    ),
+                  ),
+                  if (post.contentText!.length > 60)
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _isExpanded = !_isExpanded;
+                        });
+                      },
+                      child: Padding(
+                        padding: EdgeInsets.only(top: context.h(4)),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              _isExpanded ? 'Hide' : 'Read More',
+                              style: CustomFonts.blue14w400Underline,
+                            ),
+                            Icon(
+                              _isExpanded
+                                  ? Icons.keyboard_arrow_up_rounded
+                                  : Icons.keyboard_arrow_down_rounded,
+                              color: CustomColors.blueColor,
+                              size: context.sp(18),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
 
