@@ -16,19 +16,20 @@ import 'auth_view_model.dart';
 import 'base_view_model.dart';
 import 'checkout_view_model.dart';
 
-final clinicProvider = NotifierProvider.autoDispose<ClinicViewModel, ClinicState>(() {
-  final apiBaseHelper = ApiBaseHelper();
-  final clinicService = ClinicService(apiClient: apiBaseHelper);
-  return ClinicViewModel(repository: clinicService);
-});
+final clinicProvider =
+    NotifierProvider.autoDispose<ClinicViewModel, ClinicState>(() {
+      final apiBaseHelper = ApiBaseHelper();
+      final clinicService = ClinicService(apiClient: apiBaseHelper);
+      return ClinicViewModel(repository: clinicService);
+    });
 
 class ClinicViewModel extends BaseViewModel<ClinicState> {
   final ClinicRepository _repository;
   ClinicViewModel({required this._repository})
     : super(initialState: const ClinicState());
 
-  void setClinicId(int? id) {
-    state = state.copyWith(clinicId: id);
+  void setClinic(Clinic? clinic) {
+    state = state.copyWith(clinic: clinic);
   }
 
   Future<void> fetchClinicDetail(int? clinicId) async {
@@ -39,11 +40,24 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
       state = state.copyWith(
         loading: true,
         errorMessage: null,
-        clinicId: clinicId,
       );
       final response = await _repository.getClinicDetail(clinicId);
       if (!ref.mounted) return;
-      state = state.copyWith(loading: false, clinicDetail: response.data);
+      state = state.copyWith(loading: false, clinicDetail: response.data,
+      clinic: Clinic(
+        id: response.data?.id,
+        name: response.data?.name,
+        email: response.data?.email,
+        phone: response.data?.phone,
+        description: response.data?.description,
+        address: response.data?.address,
+        logo: response.data?.logo,
+        banner: response.data?.banner,
+        status: response.data?.status,
+        location: response.data?.latitude != null && response.data?.longitude != null
+            ? LatLng(response.data!.latitude!, response.data!.longitude!)
+            : null,
+      ),);
     });
   }
 
@@ -132,7 +146,7 @@ class ClinicState extends BaseStateModel {
   final List<Clinic> clinicsToInvite;
   final List<Clinic> clinics;
   final bool clinicLoading;
-  final int? clinicId;
+  final Clinic? clinic;
   final ClinicDetailData? clinicDetail;
   final ViewType viewType;
 
@@ -142,7 +156,7 @@ class ClinicState extends BaseStateModel {
     this.clinicsToInvite = const [],
     this.clinics = const [],
     this.clinicLoading = false,
-    this.clinicId,
+    this.clinic,
     this.clinicDetail,
     this.viewType = ViewType.grid,
   });
@@ -154,7 +168,7 @@ class ClinicState extends BaseStateModel {
     List<Clinic>? clinicsToInvite,
     List<Clinic>? clinics,
     bool? clinicLoading,
-    int? clinicId,
+    Clinic? clinic,
     ClinicDetailData? clinicDetail,
     ViewType? viewType,
   }) {
@@ -164,7 +178,7 @@ class ClinicState extends BaseStateModel {
       clinicLoading: clinicLoading ?? this.clinicLoading,
       clinicsToInvite: clinicsToInvite ?? this.clinicsToInvite,
       clinics: clinics ?? this.clinics,
-      clinicId: clinicId ?? this.clinicId,
+      clinic: clinic ?? this.clinic,
       clinicDetail: clinicDetail ?? this.clinicDetail,
       viewType: viewType ?? this.viewType,
     );

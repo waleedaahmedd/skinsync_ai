@@ -381,7 +381,7 @@ class _JourneyClinicDetailScreenState
                         if (optionId == null) {
                           ref
                               .read(clinicProvider.notifier)
-                              .setClinicId(widget.clinic?.id);
+                              .setClinic(widget.clinic);
                           Navigator.pushNamed(
                             context,
                             TreatmentJourneyScreen.routeName,

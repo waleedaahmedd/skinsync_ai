@@ -1,4 +1,5 @@
 import '../models/requests/create_group_request.dart';
+import '../models/requests/share_map_treatment_request.dart';
 import '../models/requests/share_treatment_request.dart';
 import '../models/requests/tj_options_request.dart';
 import '../models/responses/base_response_model.dart';
@@ -15,6 +16,9 @@ abstract class TreatmentJourneyRepository {
   Future<BaseResponseModel> createTjOptions(TjOptionsRequest request);
   Future<BaseResponseModel> shareTreatmentRequest({
     required ShareTreatmentRequest request,
+  });
+  Future<BaseResponseModel> shareMapTreatmentRequest({
+    required ShareMapTreatmentRequest request,
   });
   Future<ClinicDetailResponse> getClinicDetail(int clinicId);
   Future<BaseResponseModel> deleteGroup(int groupId);
