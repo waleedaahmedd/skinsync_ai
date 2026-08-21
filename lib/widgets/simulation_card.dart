@@ -10,6 +10,7 @@ import '../models/responses/treatment_list_response.dart';
 import '../screens/ar_face_model_Preview_screen.dart';
 import '../screens/treatment_detail_screen.dart';
 import '../utils/assets.dart';
+import '../utils/calculate_treatment_price.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../utils/date_time_utils.dart';
@@ -51,6 +52,17 @@ class SimulationCard extends ConsumerStatefulWidget {
 class _SimulationCardState extends ConsumerState<SimulationCard> {
   bool _isComparisonMode = false;
 
+  num get _grandTotalPrice {
+    final treatmentPrices = PriceUtils.calculateTreatmentPrices(
+      widget.sim.treatments ?? [],
+    );
+
+    return treatmentPrices.fold<num>(
+      0,
+      (total, treatment) => total + treatment.totalPrice,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -87,32 +99,88 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
           if (widget.showCreatedAt && widget.sim.createdAt != null)
             Padding(
               padding: EdgeInsets.only(bottom: context.h(8)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Created At + Delete
                   Row(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Created at:", style: CustomFonts.grey13w400),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text("Created at:", style: CustomFonts.grey13w400),
+                          SizedBox(width: context.w(8)),
+                          Text(
+                            widget.sim.createdAt!.formattedDateTime,
+                            style: CustomFonts.grey13w400,
+                          ),
+                        ],
+                      ),
+                      if (widget.onDelete != null)
+                        IconButton(
+                          onPressed: widget.onDelete,
+                          icon: const Icon(
+                            Icons.delete_outline_rounded,
+                            color: Colors.red,
+                            size: 22,
+                          ),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          visualDensity: VisualDensity.compact,
+                        ),
+                    ],
+                  ),
+
+                  SizedBox(height: context.h(8)),
+
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Estimated Price:",
+                              style: CustomFonts.grey14w400,
+                            ),
+
+                            SizedBox(height: context.h(4)),
+
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  Icons.info_outline_rounded,
+                                  size: context.sp(16),
+                                  color: CustomColors.darkPurple,
+                                ),
+
+                                SizedBox(width: context.w(4)),
+
+                                Expanded(
+                                  child: Text(
+                                    "Prices may vary based on the final treatment plan and materials used.",
+                                    style: CustomFonts.grey13w400
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+
                       SizedBox(width: context.w(8)),
+
                       Text(
-                        widget.sim.createdAt!.formattedDateTime,
-                        style: CustomFonts.grey13w400,
+                        "\$${_grandTotalPrice.toStringAsFixed(0)}",
+                        style: CustomFonts.black18w600.copyWith(
+                          color: CustomColors.darkPurple,
+                        ),
                       ),
                     ],
                   ),
-                  if (widget.onDelete != null)
-                    IconButton(
-                      onPressed: widget.onDelete,
-                      icon: const Icon(
-                        Icons.delete_outline_rounded,
-                        color: Colors.red,
-                        size: 22,
-                      ),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                      visualDensity: VisualDensity.compact,
-                    ),
                 ],
               ),
             )
@@ -201,102 +269,157 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
               widget.sim.treatments != null &&
               widget.sim.treatments!.isNotEmpty) ...[
             SizedBox(height: context.h(8)),
+
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: List.generate(widget.sim.treatments!.length, (index) {
-                final treatment = widget.sim.treatments![index];
-                final isLast = index == widget.sim.treatments!.length - 1;
-                return Padding(
-                  padding: EdgeInsets.only(bottom: isLast ? 0 : context.h(12)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: context.h(6)),
-                        child: Text(
-                          "Treatment - ${index + 1}",
-                          style: CustomFonts.black16w600,
-                        ),
-                      ),
-                      // Treatment chip - visibility icon, tap opens TreatmentDetailScreen
-                      SimulationTreatmentAreaChip(
-                        icon: treatment.icon,
-                        label: treatment.name ?? "Unnamed Treatment",
-                        isTreatment: true,
-                        imageUrl: treatment.image,
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            TreatmentDetailScreen.routeName,
-                            arguments: TreatmentData(
-                              id: treatment.id,
-                              name: treatment.name,
-                              icon: treatment.icon,
-                              description: treatment.description,
-                              shortDescription: treatment.description,
-                              image: treatment.image,
-                              imageUrl: treatment.image,
-                              isArea: true,
-                            ),
-                          );
-                        },
-                      ),
-                      if (treatment.areas != null &&
-                          treatment.areas!.isNotEmpty) ...[
-                        SizedBox(height: context.h(10)),
+              children: [
+                ...List.generate(widget.sim.treatments!.length, (index) {
+                  final treatment = widget.sim.treatments![index];
+                  final isLast = index == widget.sim.treatments!.length - 1;
+
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      bottom: isLast ? 0 : context.h(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Padding(
-                          padding: EdgeInsets.only(
-                            left: context.w(4),
-                            bottom: context.h(8),
-                          ),
+                          padding: EdgeInsets.only(bottom: context.h(6)),
                           child: Text(
-                            "Selected Areas",
+                            "Treatment - ${index + 1}",
                             style: CustomFonts.black16w600,
                           ),
                         ),
-                        Wrap(
-                          spacing: context.w(8),
-                          runSpacing: context.h(5),
-                          children: treatment.areas!.map((area) {
-                            final materialCount =
-                                area.materials
-                                    ?.where(
-                                      (m) => (m.selectedQuantity ?? 0) > 0,
-                                    )
-                                    .length ??
-                                0;
 
-                            return SimulationTreatmentAreaChip(
-                              icon: area.icon,
-                              label: area.name ?? "",
-                              isTreatment: false,
-                              materialCount: materialCount,
-                              imageUrl: area.image,
+                        // Treatment chip
+                        SimulationTreatmentAreaChip(
+                          icon: treatment.icon,
+                          label: treatment.name ?? "Unnamed Treatment",
+                          isTreatment: true,
+                          imageUrl: treatment.image,
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              TreatmentDetailScreen.routeName,
+                              arguments: TreatmentData(
+                                id: treatment.id,
+                                name: treatment.name,
+                                icon: treatment.icon,
+                                description: treatment.description,
+                                shortDescription: treatment.description,
+                                image: treatment.image,
+                                imageUrl: treatment.image,
+                                isArea: true,
+                              ),
                             );
-                          }).toList(),
+                          },
+                        ),
+
+                        if (treatment.areas != null &&
+                            treatment.areas!.isNotEmpty) ...[
+                          SizedBox(height: context.h(10)),
+
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: context.w(4),
+                              bottom: context.h(8),
+                            ),
+                            child: Text(
+                              "Selected Areas",
+                              style: CustomFonts.black16w600,
+                            ),
+                          ),
+
+                          Wrap(
+                            spacing: context.w(8),
+                            runSpacing: context.h(5),
+                            children: treatment.areas!.map((area) {
+                              return SimulationTreatmentAreaChip(
+                                icon: area.icon,
+                                label: area.name ?? "",
+                                isTreatment: false,
+                                materials: area.materials,
+                                imageUrl: area.image,
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      ],
+                    ),
+                  );
+                }),
+
+                SizedBox(height: context.h(16)),
+
+                Text("Price Breakdown", style: CustomFonts.black16w600),
+
+                SizedBox(height: context.h(8)),
+
+                Builder(
+                  builder: (context) {
+                    final treatmentPrices = PriceUtils.calculateTreatmentPrices(
+                      widget.sim.treatments ?? [],
+                    );
+
+                    final grandTotal = treatmentPrices.fold<num>(
+                      0,
+                      (total, treatment) => total + treatment.totalPrice,
+                    );
+
+                    return Column(
+                      children: [
+                        // Treatment prices
+                        ...treatmentPrices.map((treatment) {
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: context.h(6)),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    treatment.name ?? "Unnamed Treatment",
+                                    style: CustomFonts.grey14w400,
+                                  ),
+                                ),
+                                Text(
+                                  "\$${treatment.totalPrice.toStringAsFixed(0)}",
+                                  style: CustomFonts.black14w600,
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+
+                        SizedBox(height: context.h(8)),
+
+                        Divider(height: 1, color: Colors.grey.shade300),
+
+                        SizedBox(height: context.h(8)),
+
+                        // Grand Total
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Total", style: CustomFonts.black16w600),
+                            Text(
+                              "\$${grandTotal.toStringAsFixed(0)}",
+                              style: CustomFonts.black18w600.copyWith(
+                                color: CustomColors.darkPurple,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
-                    ],
-                  ),
-                );
-              }),
-            ),
-          ],
-          if (widget.price != null) ...[
-            SizedBox(height: context.h(10)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Total Price:", style: CustomFonts.grey14w400),
-                Text(
-                  widget.price!,
-                  style: CustomFonts.black18w600.copyWith(
-                    color: CustomColors.darkPurple,
-                  ),
+                    );
+                  },
                 ),
               ],
             ),
           ],
+
+          SizedBox(height: context.h(10)),
+
           if (widget.showActionButton) ...[
             SizedBox(height: context.h(8)),
             CustomButton(
@@ -428,7 +551,11 @@ class ComparisonView extends StatefulWidget {
   final String? after;
   final double? height;
 
-  const ComparisonView({required this.before, required this.after, this.height});
+  const ComparisonView({
+    required this.before,
+    required this.after,
+    this.height,
+  });
 
   @override
   State<ComparisonView> createState() => _ComparisonViewState();

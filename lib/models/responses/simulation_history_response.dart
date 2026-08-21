@@ -115,6 +115,7 @@ class SimulationArea {
   final String? name;
   final String? image;
   final String? icon;
+  final num? price;
   final List<SimulationMaterial>? materials;
 
   const SimulationArea({
@@ -122,7 +123,9 @@ class SimulationArea {
     this.name,
     this.image,
     this.icon,
+    this.price,
     this.materials,
+    t
   });
 
   factory SimulationArea.fromJson(Map<String, dynamic> json) =>
@@ -131,6 +134,7 @@ class SimulationArea {
         name: json["area_name"],
         image: json["area_image"],
         icon: json["area_icon"],
+        price: json['price'],
         materials: json["materials"] == null
             ? []
             : List<SimulationMaterial>.from(

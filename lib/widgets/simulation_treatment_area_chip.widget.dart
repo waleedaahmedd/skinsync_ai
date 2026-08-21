@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
+import '../models/responses/simulation_history_response.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
@@ -11,22 +12,22 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
   final String label;
   final bool isTreatment;
   final String? imageUrl;
-  final int? materialCount;
+  final List<SimulationMaterial>? materials;
   final VoidCallback? onTap;
 
- const SimulationTreatmentAreaChip({
+  const SimulationTreatmentAreaChip({
     super.key,
     this.icon,
     required this.label,
     this.isTreatment = false,
-    this.materialCount,
     this.imageUrl,
+    this.materials,
     this.onTap,
   });
 
   Widget _buildIcon(BuildContext context) {
     final size = context.w(32);
-   
+
     final hasIcon = icon != null && icon!.isNotEmpty;
 
     if (!hasIcon) {
@@ -35,7 +36,6 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
         width: size,
         height: size,
         fit: BoxFit.contain,
-       
       );
     }
 
@@ -45,14 +45,12 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
     if (isNetwork) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(context.r(8)),
-       
         child: AppNetworkImage(
           imageUrl: icon!,
           width: size,
           height: size,
           fit: BoxFit.contain,
           borderRadius: BorderRadius.circular(context.r(8)),
-          // AppNetworkImage's own error state - falls back to splashLogo
           errorIcon: Icons.broken_image,
         ),
       );
@@ -63,13 +61,11 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
       width: size,
       height: size,
       fit: BoxFit.contain,
-     
       errorBuilder: (context, error, stackTrace) => Image.asset(
         PngAssets.splashLogo,
         width: size,
         height: size,
         fit: BoxFit.contain,
-      
       ),
     );
   }
@@ -79,29 +75,46 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
       return Icon(
         Icons.info_outline_rounded,
         size: context.sp(18),
-       
         color: CustomColors.darkPurple,
       );
     }
 
-    final hasMaterial = materialCount != null && materialCount! > 0;
-    if (!hasMaterial) return null;
+    return null;
+  }
 
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.w(6),
-        vertical: context.h(1),
-      ),
-      decoration: BoxDecoration(
-        color: CustomColors.purpleColor.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(context.r(12)),
-      ),
-      child: Text(
-        "$materialCount",
-        style: CustomFonts.black12w500.copyWith(
-          color: CustomColors.darkPurple,
-          fontSize: context.sp(11),
-        ),
+  Widget _buildMaterials(BuildContext context) {
+    final selectedMaterials = (materials ?? [])
+        .where((material) => (material.selectedQuantity ?? 0) > 0)
+        .toList();
+
+    if (selectedMaterials.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Padding(
+      padding: EdgeInsets.only(top: context.h(2)),
+      child: Wrap(
+        spacing: context.w(4),
+        runSpacing: context.h(3),
+        children: selectedMaterials.map((material) {
+          return Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: context.w(7),
+              vertical: context.h(3),
+            ),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.circular(context.r(6)),
+            ),
+            child: Text(
+              '${material.name ?? "Material"} × ${material.selectedQuantity ?? 0}',
+              style: CustomFonts.black12w500.copyWith(
+                color: Colors.white,
+                fontSize: context.sp(11),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -109,7 +122,14 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final trailing = _buildTrailing(context);
-    final bool hasImage = imageUrl != null && imageUrl!.isNotEmpty;
+    final hasImage = imageUrl != null && imageUrl!.isNotEmpty;
+
+    final selectedMaterials = (materials ?? [])
+        .where((material) => (material.selectedQuantity ?? 0) > 0)
+        .toList();
+
+    final hasMaterials = selectedMaterials.isNotEmpty;
+
     return InkWell(
       onTap: isTreatment ? onTap : null,
       borderRadius: BorderRadius.circular(context.r(20)),
@@ -129,7 +149,7 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
               if (hasImage)
                 Positioned.fill(
                   child: AppNetworkImage(
-                    imageUrl:imageUrl! ,
+                    imageUrl: imageUrl!,
                     fit: BoxFit.cover,
                     placeholderColor: Colors.transparent,
                   ),
@@ -144,7 +164,7 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
                 ),
               ),
 
-              // Chip content
+              // Content
               Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: context.w(12),
@@ -152,23 +172,36 @@ class SimulationTreatmentAreaChip extends StatelessWidget {
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     _buildIcon(context),
 
                     SizedBox(width: context.w(12)),
 
-                    Flexible(
-                      child: Text(
-                        label,
-                        style: CustomFonts.black16w500,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              label,
+                              style: CustomFonts.black16w500,
+                              overflow: TextOverflow.ellipsis,
+                            ),
 
-                    if (trailing != null) ...[
-                      SizedBox(width: context.w(6)),
-                      trailing,
-                    ],
+                            if (trailing != null) ...[
+                              SizedBox(width: context.w(6)),
+                              trailing,
+                            ],
+                          ],
+                        ),
+
+                        if (!isTreatment && hasMaterials)
+                          _buildMaterials(context),
+                      ],
+                    ),
                   ],
                 ),
               ),

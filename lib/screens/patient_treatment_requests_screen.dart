@@ -194,9 +194,8 @@ class _PatientTreatmentRequestsScreenState
                                   icon: area.icon,
                                   isTreatment: false,
                                   imageUrl: area.image,
-                                  materialCount: area.materials
-                                      ?.where((m) => (m.selectedQuantity ?? 0) > 0)
-                                      .length,
+                                  materials: area.materials
+                                     ,
                                 );
                               }).toList(),
                             ),
