@@ -55,7 +55,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '55541632083',
     projectId: 'skinsync-2aa8e',
     storageBucket: 'skinsync-2aa8e.firebasestorage.app',
-    androidClientId: '55541632083-09c7mg023dhonqchhaj1tm08ot60d7uq.apps.googleusercontent.com',
+    androidClientId: '55541632083-7c4gfhc6vmhoo67q87ej1oe0hjqfjpsv.apps.googleusercontent.com',
     iosClientId: '55541632083-rmv67oi9q88454a3v18sn1e9a3sfopgh.apps.googleusercontent.com',
   );
 

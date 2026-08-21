@@ -49,7 +49,7 @@ abstract class BaseViewModel<S> extends Notifier<S> {
         onCancel();
         return null;
       }
-      onError('Something went wrong. Please try again.');
+      onError(e.toString());
       FirebaseCrashlytics.instance.recordError(e, s);
       return null;
     } on GoogleSignInException catch (e, s) {
@@ -58,7 +58,7 @@ abstract class BaseViewModel<S> extends Notifier<S> {
         onCancel();
         return null;
       }
-      onError('Something went wrong. Please try again.');
+      onError(e.description ?? 'Something went wrong. Please try again.');
       FirebaseCrashlytics.instance.recordError(e, s);
       return null;
     } on AppException catch (e, s) {
