@@ -7,6 +7,7 @@ import '../models/requests/create_group_request.dart';
 import '../models/requests/save_history_request.dart';
 import '../models/requests/share_treatment_request.dart';
 import '../models/requests/tj_options_request.dart';
+import '../models/responses/get_clinic_response.dart';
 import '../models/responses/groups_list_response.dart';
 import '../models/responses/simulation_history_response.dart';
 import '../models/responses/tj_options_list_response.dart';
@@ -61,6 +62,27 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
   }
 
   Future<bool?> callShareTreatmentRequest() async {
+    return await runSafely(() async {
+      final clinicId = ref.read(clinicProvider).clinicId;
+      if (state.selectedOptionId == null || clinicId == null) {
+        EasyLoading.showError('Select a journey option to share!');
+        return false;
+      }
+      EasyLoading.show(status: 'Loading');
+      final request = ShareTreatmentRequest(
+        clinicId: clinicId,
+        optionId: state.selectedOptionId!,
+      );
+
+      await _repo.shareTreatmentRequest(request: request);
+      await ref.read(authViewModel.notifier).callGetMe();
+      if (!ref.mounted) return null;
+      EasyLoading.dismiss();
+      return true;
+    });
+  }
+
+  Future<bool?> callShareMapTreatmentRequest(Clinic clinic) async {
     return await runSafely(() async {
       final clinicId = ref.read(clinicProvider).clinicId;
       if (state.selectedOptionId == null || clinicId == null) {

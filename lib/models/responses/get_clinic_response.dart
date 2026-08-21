@@ -103,4 +103,21 @@ class Clinic {
       ownerEmail: email ?? '',
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'description': description,
+      'address': address,
+      'logo': logo,
+      'banner': banner,
+      'price': price,
+      'syringe_size': syringeSize,
+      'status': status,
+      'location': location?.toJson(),
+    };
+  }
 }

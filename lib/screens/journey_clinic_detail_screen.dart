@@ -388,6 +388,16 @@ class _JourneyClinicDetailScreenState
                           );
                           return;
                         }
+                        if (widget.clinic?.place != null) {
+                         final success = await ref
+                              .read(treatmentJourneyProvider.notifier)
+                              .callShareMapTreatmentRequest(widget.clinic!);
+
+                         if (success ?? false) {
+                           showShareJourneySuccessDialog(context);
+                         }
+                          return;
+                        }
                         final result = await ref
                             .read(treatmentJourneyProvider.notifier)
                             .callShareTreatmentRequest();
