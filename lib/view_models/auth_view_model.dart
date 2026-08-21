@@ -8,7 +8,6 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../app_init.dart';
 import '../exceptions/app_exception.dart';
 import '../main.dart';
 import '../models/base_state_model.dart';
@@ -420,21 +419,8 @@ class AuthViewModel extends BaseViewModel<AuthState> {
 
   @override
   Future<void> onError(String message) async {
+    super.onError(message);
     state = state.copyWith(loading: false, errorMessage: message);
-    rootScaffoldMessengerKey.currentState?.showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.redAccent,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(20),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-    );
   }
 
   @override
