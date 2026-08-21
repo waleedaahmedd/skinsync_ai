@@ -147,7 +147,7 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
                         onTap: () {
                           ref
                               .read(clinicProvider.notifier)
-                              .setClinicId(clinic.id!);
+                              .setClinic(clinic);
                           Navigator.pushNamed(
                             context,
                             JourneyClinicDetailScreen.routeName,

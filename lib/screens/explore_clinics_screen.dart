@@ -384,7 +384,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
               onTap: () {
                 ref
                     .read(clinicProvider.notifier)
-                    .setClinicId(clinics[index].id!);
+                    .setClinic(clinics[index]);
                 Navigator.pushNamed(
                   context,
                   ClinicsDetailScreen.routeName,
@@ -506,7 +506,7 @@ class _ExploreClinicsScreenState extends ConsumerState<ExploreClinicsScreen> {
               return CustomClinicGridViewTile(
                 clinicData: clinic,
                 onTap: () {
-                  ref.read(clinicProvider.notifier).setClinicId(clinic.id!);
+                  ref.read(clinicProvider.notifier).setClinic(clinic);
                   Navigator.pushNamed(
                     context,
                     ClinicsDetailScreen.routeName,

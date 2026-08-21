@@ -533,7 +533,7 @@ class DashboardSimulationCard extends ConsumerWidget {
         Navigator.pushNamed(ref.context, ArFaceModelPreviewScreen.routeName);
       }
     } else {
-      EasyLoading.show(status: 'Failed to load simulation. Please try again.');
+      EasyLoading.showError('Failed to load simulation. Please try again.');
     }
   }
 
@@ -583,7 +583,7 @@ class DashboardSimulationCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final _ = ref.watch(treatmentJourneyProvider.select((s) => s.loading));
+    // final _ = ref.watch(treatmentJourneyProvider.select((s) => s.loading));
     return Padding(
       padding: EdgeInsets.only(
         right: context.w(16),

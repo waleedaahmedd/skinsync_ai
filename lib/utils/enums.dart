@@ -61,6 +61,7 @@ enum EndPoints {
   treatmentJourneyGroups('v1/treatment-journey-groups'),
   updateTreatmentJourneyGroups('v1/treatment-journey-group'),
   shareTreatmentRequest('v1/share-treatment-request'),
+  shareMapTreatmentRequest('v1/share-map-treatment-request'),
   treatmentJourneyOptions('v1/treatment-journey-options'),
   deleteTreatmentJourneyOptions('v1/treatment-journey-option'),
   patientTreatmentRequest('v1/patient-treatment-request'),

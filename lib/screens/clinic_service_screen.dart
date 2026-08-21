@@ -53,7 +53,7 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
 
       final selectedClinic = ref.read(checkoutViewModel).selectedClinic;
       if (selectedClinic?.id != null) {
-        ref.read(clinicProvider.notifier).setClinicId(selectedClinic!.id!);
+        ref.read(clinicProvider.notifier).setClinic(selectedClinic!);
       }
 
       await ref

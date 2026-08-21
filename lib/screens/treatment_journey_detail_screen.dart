@@ -228,8 +228,16 @@ class _TreatmentJourneyDetailScreenState
                             .read(treatmentJourneyProvider.notifier)
                             .setOptionId(currentOptionId);
                       }
-                      final clinicId = ref.read(clinicProvider).clinicId;
-                      if (clinicId != null) {
+                      final clinic = ref.read(clinicProvider).clinic;
+                      if (clinic?.place != null) {
+                        final result = await ref
+                            .read(treatmentJourneyProvider.notifier)
+                            .callShareMapTreatmentRequest(clinic!);
+                        if (result == true) {
+                          showShareJourneySuccessDialog(context);
+                        }
+                      }
+                      else if (clinic != null) {
                         final result = await ref
                             .read(treatmentJourneyProvider.notifier)
                             .callShareTreatmentRequest();

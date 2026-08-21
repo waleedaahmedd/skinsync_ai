@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/base_state_model.dart';
 import '../models/requests/create_group_request.dart';
 import '../models/requests/save_history_request.dart';
+import '../models/requests/share_map_treatment_request.dart';
 import '../models/requests/share_treatment_request.dart';
 import '../models/requests/tj_options_request.dart';
 import '../models/responses/get_clinic_response.dart';
@@ -63,7 +64,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 
   Future<bool?> callShareTreatmentRequest() async {
     return await runSafely(() async {
-      final clinicId = ref.read(clinicProvider).clinicId;
+      final clinicId = ref.read(clinicProvider).clinic?.id;
       if (state.selectedOptionId == null || clinicId == null) {
         EasyLoading.showError('Select a journey option to share!');
         return false;
@@ -84,18 +85,18 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 
   Future<bool?> callShareMapTreatmentRequest(Clinic clinic) async {
     return await runSafely(() async {
-      final clinicId = ref.read(clinicProvider).clinicId;
-      if (state.selectedOptionId == null || clinicId == null) {
+      final clinic = ref.read(clinicProvider).clinic;
+      if (state.selectedOptionId == null || clinic == null) {
         EasyLoading.showError('Select a journey option to share!');
         return false;
       }
       EasyLoading.show(status: 'Loading');
-      final request = ShareTreatmentRequest(
-        clinicId: clinicId,
+      final request = ShareMapTreatmentRequest(
+        clinic: clinic,
         optionId: state.selectedOptionId!,
       );
 
-      await _repo.shareTreatmentRequest(request: request);
+      await _repo.shareMapTreatmentRequest(request: request);
       await ref.read(authViewModel.notifier).callGetMe();
       if (!ref.mounted) return null;
       EasyLoading.dismiss();
@@ -285,7 +286,6 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 @immutable
 class TreatmentJourneyState extends BaseStateModel {
   final List<TreatmentJourneyGroup> groups;
-
   final List<TJOption> options;
   final SimulationData? simulations;
   final bool isSimulationsLoading;
