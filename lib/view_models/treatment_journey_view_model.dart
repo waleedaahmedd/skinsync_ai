@@ -264,6 +264,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       );
       final response = await _repo.createTjOptions(request);
       if (response.isSuccess == true) {
+        await ref.read(authViewModel.notifier).callGetMe();
         await EasyLoading.showSuccess('Option created successfully');
         clearSelectedGroup();
       }
