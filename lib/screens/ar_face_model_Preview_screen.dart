@@ -10,7 +10,6 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-import '../app_init.dart';
 import '../models/responses/materials_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
 import '../models/responses/treatment_list_response.dart';
@@ -30,6 +29,7 @@ import '../widgets/dialogs/save_option_confirmation_dialog.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/selected_treatments_summary_card.dart';
 import '../widgets/service_type_button.dart';
+import 'treatment_journey_detail_screen.dart';
 import 'treatment_journey_screen.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
@@ -133,28 +133,37 @@ class _ArFaceModelPreviewScreenState
               .read(treatmentJourneyProvider.notifier)
               .createTjOptions();
           if (result == true) {
-            rootScaffoldMessengerKey.currentState?.showSnackBar(
-                    SnackBar(
-                      content: const Text(
-                        'Your journey is ready! Tap the Journey button in the top-right corner to view it.',
-                      ),
-                      duration: const Duration(seconds: 3),
-                      persist: false,
-                      behavior: SnackBarBehavior.floating,
-                      margin: EdgeInsets.only(
-                        left: context.w(16),
-                        right: context.w(16),
-                        bottom: context.h(80),
-                      ),
-                      action: SnackBarAction(
-                        label: '✕',
-                        onPressed: () {
-                          rootScaffoldMessengerKey.currentState
-                              ?.hideCurrentSnackBar();
-                        },
-                      ),
-                    ),
-                  );
+            final result2 = await ref
+                .read(treatmentJourneyProvider.notifier)
+                .fetchOptions(selectedGroup.id ?? 0);
+            if (result2 == true) {
+              Navigator.popUntil(
+                context,
+                ModalRoute.withName(TreatmentJourneyDetailScreen.routeName),
+              );
+            }
+            // rootScaffoldMessengerKey.currentState?.showSnackBar(
+            //         SnackBar(
+            //           content: const Text(
+            //             'Your journey is ready! Tap the Journey button in the top-right corner to view it.',
+            //           ),
+            //           duration: const Duration(seconds: 3),
+            //           persist: false,
+            //           behavior: SnackBarBehavior.floating,
+            //           margin: EdgeInsets.only(
+            //             left: context.w(16),
+            //             right: context.w(16),
+            //             bottom: context.h(80),
+            //           ),
+            //           action: SnackBarAction(
+            //             label: '✕',
+            //             onPressed: () {
+            //               rootScaffoldMessengerKey.currentState
+            //                   ?.hideCurrentSnackBar();
+            //             },
+            //           ),
+            //         ),
+            //       );
             final groupId = ref
                 .read(treatmentJourneyProvider)
                 .selectedGroup
