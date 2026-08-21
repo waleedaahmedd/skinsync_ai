@@ -371,45 +371,51 @@ class MyProfileScreen extends StatelessWidget {
                     ],
 
                   // CARD 3: Account Security Section
-                  buildOptionCard([
-                    buildCardOption(
-                      callBack: () {
-                        showDeleteAccountDialog(
-                          screenContext: context,
-                          onSuccess: () async {
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              GetStartedScreen.routeName,
-                                  (route) => false,
+                  Consumer(
+                    builder: (_, ref, _) {
+                      return buildOptionCard([
+                        buildCardOption(
+                          callBack: () {
+                            ref.read(authViewModel.notifier);
+                            showDeleteAccountDialog(
+                              screenContext: context,
+                              onSuccess: () async {
+                                await SecureStorage().clearAllSecureStrings();
+                                Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  GetStartedScreen.routeName,
+                                      (route) => false,
+                                );
+                              },
                             );
                           },
-                        );
-                      },
-                      icon: Iconsax.user_remove,
-                      title: "Delete Account",
-                    ),
-                    buildCardOption(
-                      callBack: () {
-                        showLogoutDialog(
-                          screenContext: context,
-                          desc: "Logout successful",
-                          onSuccess: () async {
-                            final navigator = Navigator.of(context);
-                            SecureStorage secureStorage = SecureStorage();
-                            await secureStorage.clearAllSecureStrings();
+                          icon: Iconsax.user_remove,
+                          title: "Delete Account",
+                        ),
+                        buildCardOption(
+                          callBack: () {
+                            showLogoutDialog(
+                              screenContext: context,
+                              desc: "Logout successful",
+                              onSuccess: () async {
+                                final navigator = Navigator.of(context);
+                                SecureStorage secureStorage = SecureStorage();
+                                await secureStorage.clearAllSecureStrings();
 
-                            navigator.pushNamedAndRemoveUntil(
-                              GetStartedScreen.routeName,
-                                  (route) => false,
+                                navigator.pushNamedAndRemoveUntil(
+                                  GetStartedScreen.routeName,
+                                      (route) => false,
+                                );
+                              },
                             );
                           },
-                        );
-                      },
-                      icon: SvgAssets.logOut,
-                      title: "Log Out",
-                      isLast: true,
-                    ),
-                  ]),
+                          icon: SvgAssets.logOut,
+                          title: "Log Out",
+                          isLast: true,
+                        ),
+                      ]);
+                    }
+                  ),
                 ],
               ),
             ),
