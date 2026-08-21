@@ -117,7 +117,10 @@ class Clinic {
       'price': price,
       'syringe_size': syringeSize,
       'status': status,
-      'location': location?.toJson(),
+      'location': {
+        'lat': location?.latitude,
+        'lng': location?.longitude,
+      },
     };
   }
 }
