@@ -9,7 +9,22 @@ class ShareMapTreatmentRequest {
   Map<String, dynamic> toJson() {
     return {
       'option_id': optionId,
-      'clinic': clinic.toJson(),
+      'clinic': {
+        'name': clinic.name ?? clinic.place?.displayName?.text ?? '',
+        'email': clinic.email ?? '',
+        'phone': clinic.phone ??
+            clinic.place?.internationalPhoneNumber ??
+            clinic.place?.nationalPhoneNumber ??
+            '',
+        'description': clinic.description ?? clinic.place?.formattedAddress ?? '',
+        'address': clinic.address ?? clinic.place?.formattedAddress ?? '',
+        'owner_name': clinic.ownerName ?? clinic.name ?? clinic.place?.displayName?.text ?? '',
+        'owner_email': clinic.ownerEmail ?? clinic.email ?? '',
+        'location': {
+          'lat': clinic.location?.latitude ?? clinic.place?.location?.latitude,
+          'lng': clinic.location?.longitude ?? clinic.place?.location?.longitude,
+        },
+      },
     };
   }
 }

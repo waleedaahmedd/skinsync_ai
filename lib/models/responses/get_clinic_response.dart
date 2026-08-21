@@ -36,6 +36,8 @@ class Clinic {
   final String? status;
   final LatLng? location;
   final Place? place;
+  final String? ownerName;
+  final String? ownerEmail;
 
   Clinic({
     this.id,
@@ -51,6 +53,8 @@ class Clinic {
     this.status,
     this.location,
     this.place,
+    this.ownerName,
+    this.ownerEmail,
   });
 
   factory Clinic.fromJson(Map<String, dynamic> json) {
@@ -70,6 +74,8 @@ class Clinic {
           ? LatLng(json['location']['lat'], json['location']['lng'])
           : null,
       place: json['place'] != null ? Place.fromJson(json['place']) : null,
+      ownerName: json['owner_name'],
+      ownerEmail: json['owner_email'],
     );
   }
 
@@ -121,6 +127,8 @@ class Clinic {
         'lat': location?.latitude,
         'lng': location?.longitude,
       },
+      'owner_name': ownerName,
+      'owner_email': ownerEmail,
     };
   }
 }

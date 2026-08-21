@@ -85,8 +85,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 
   Future<bool?> callShareMapTreatmentRequest(Clinic clinic) async {
     return await runSafely(() async {
-      final clinic = ref.read(clinicProvider).clinic;
-      if (state.selectedOptionId == null || clinic == null) {
+      if (state.selectedOptionId == null) {
         EasyLoading.showError('Select a journey option to share!');
         return false;
       }
