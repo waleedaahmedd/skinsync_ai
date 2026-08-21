@@ -82,6 +82,14 @@
           }
         },
         {
+          "client_id": "55541632083-qvpl1guf5tus79v1bpfseo02mcsgvkgo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skinsyncaiinc.skinsyncai",
+            "certificate_hash": "348c1b217f2d2de8b8407688364beebe11f3d227"
+          }
+        },
+        {
           "client_id": "55541632083-rmv67oi9q88454a3v18sn1e9a3sfopgh.apps.googleusercontent.com",
           "client_type": 3
         }

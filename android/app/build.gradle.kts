@@ -50,6 +50,7 @@ android {
 
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true          // Optimizations ke liye true hona behtar hai
             isShrinkResources = true
             proguardFiles(
