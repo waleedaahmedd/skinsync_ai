@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'app_init.dart';
 import 'firebase_options.dart';
+import 'services/notification_service.dart';
 import 'services/storage_service.dart';
 import 'utils/secure_storage_service.dart';
 
@@ -24,5 +25,6 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await SecureStorage().init();
   await StorageService.instance.init();
+  await NotificationService.instance.initialize();
   runApp(const ProviderScope(child: AppInit()));
 }

@@ -2,6 +2,8 @@ import Flutter
 import UIKit
 import GoogleMaps
 import Firebase
+import FirebaseMessaging
+import UserNotifications
 import AVFoundation
 import MediaPlayer
 
@@ -16,6 +18,11 @@ import MediaPlayer
   ) -> Bool {
     GMSServices.provideAPIKey("AIzaSyA0X5qoEmjUDlEQzbW0yZLGWAAfbos8GIE")
     GeneratedPluginRegistrant.register(with: self)
+
+    UNUserNotificationCenter.current().delegate = self
+    Messaging.messaging().delegate = self
+    UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { _, _ in }
+    application.registerForRemoteNotifications()
 
     if let controller = window?.rootViewController as? FlutterViewController {
         let volumeEventChannel = FlutterEventChannel(name: "com.skinsyncai/volume_buttons", binaryMessenger: controller.binaryMessenger)
@@ -51,6 +58,9 @@ import MediaPlayer
         volumeView?.isHidden = true
     }
   }
+}
+
+extension AppDelegate: UNUserNotificationCenterDelegate, MessagingDelegate {
 }
 
 extension AppDelegate: FlutterStreamHandler {

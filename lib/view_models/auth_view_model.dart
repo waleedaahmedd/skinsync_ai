@@ -72,26 +72,27 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   }
 
   Future<void> pickProfileImage(ImageSource source) async {
-  try {
-    final XFile? image = await _imagePicker.pickImage(source: source);
-    if (image == null) return;
-    await runSafely(() async {
-      await EasyLoading.show(status: 'Loading....');
-      final String? imageUrl = await MediaService().uploadImage(
-        acceptAnyFormat: true,
-        state.authData?.user?.primaryEmail ?? '',
-        image,
-      );
-      if (imageUrl != null && state.authData?.user != null) {
-        state = state.copyWith(profileImage: imageUrl);
+    try {
+      final XFile? image = await _imagePicker.pickImage(source: source);
+      if (image == null) return;
+      await runSafely(() async {
+        await EasyLoading.show(status: 'Loading....');
+        final String? imageUrl = await MediaService().uploadImage(
+          acceptAnyFormat: true,
+          state.authData?.user?.primaryEmail ?? '',
+          image,
+        );
+        if (imageUrl != null && state.authData?.user != null) {
+          state = state.copyWith(profileImage: imageUrl);
           await EasyLoading.dismiss();
-      }
-    });
-  } catch (e) {
+        }
+      });
+    } catch (e) {
       await EasyLoading.dismiss();
-    onError('Error picking image: $e');
+      onError('Error picking image: $e');
+    }
   }
-}
+
   void setCountryCode(Country country) {
     state = state.copyWith(country: country);
   }
@@ -264,9 +265,6 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     return await runSafely(() async {
       state = state.copyWith(loading: true);
 
-      
-    
-
       final request = OnBoardingProfileRequest(
         name: name,
         phoneNumber: phoneNumber,
@@ -275,7 +273,8 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         bio: bio,
         cc: '+${state.country.phoneCode}',
         country: state.country.name,
-        profileImageUrl: state.profileImage ?? state.authData?.user?.profileImageUrl,
+        profileImageUrl:
+            state.profileImage ?? state.authData?.user?.profileImageUrl,
       );
 
       final BaseResponseModel response = await _authRepository
@@ -410,7 +409,9 @@ class AuthViewModel extends BaseViewModel<AuthState> {
           return null;
         }
       }
-      return await FirebaseMessaging.instance.getToken();
+      final token = await FirebaseMessaging.instance.getToken();
+      log('FCM TOKEN: $token');
+      return token;
     } catch (e) {
       log("Error getting FCM token: $e");
       return null;
