@@ -6,14 +6,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+
 import '../main.dart';
 import '../utils/assets.dart';
+import '../utils/biometric_helper.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
-import '../utils/secure_storage_service.dart';
-
-import '../utils/biometric_helper.dart';
 import '../utils/enums.dart';
+import '../utils/secure_storage_service.dart';
 import '../view_models/auth_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 
@@ -95,7 +96,10 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
       appBar: const CustomAppBar(showTitle: true, title: "Settings"),
       body: Column(
         children: [
-          Divider(color: CustomColors.greyColor.withValues(alpha: 0.6), height: context.h(1)),
+          Divider(
+            color: CustomColors.greyColor.withValues(alpha: 0.6),
+            height: context.h(1),
+          ),
           SizedBox(height: context.h(24)),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: context.w(24)),
@@ -118,53 +122,62 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
               child: Column(
                 children: [
                   // Push Notifications Setting Option
-                  if(!isDeploymentMode)
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(12)),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(context.w(8)),
-                          decoration: BoxDecoration(
-                            color: unifiedColor.withValues(alpha: 0.08),
-                            shape: BoxShape.circle,
+                  if (!isDeploymentMode)
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.w(16),
+                        vertical: context.h(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(context.w(8)),
+                            decoration: BoxDecoration(
+                              color: unifiedColor.withValues(alpha: 0.08),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Iconsax.notification,
+                              size: context.sp(18),
+                              color: unifiedColor,
+                            ),
                           ),
-                          child: Icon(
-                            Iconsax.notification,
-                            size: context.sp(18),
-                            color: unifiedColor,
+                          SizedBox(width: context.w(14)),
+                          Expanded(
+                            child: Text(
+                              "Push Notifications",
+                              style: CustomFonts.black16w500,
+                            ),
                           ),
-                        ),
-                        SizedBox(width: context.w(14)),
-                        Expanded(
-                          child: Text(
-                            "Push Notifications",
-                            style: CustomFonts.black16w500,
+                          CustomSizedSwitch(
+                            isOn: isNotificationEnabled,
+                            onChanged: (val) {
+                              setState(() {
+                                isNotificationEnabled = val;
+                              });
+                            },
                           ),
-                        ),
-                        CustomSizedSwitch(
-                          isOn: isNotificationEnabled,
-                          onChanged: (val) {
-                            setState(() {
-                              isNotificationEnabled = val;
-                            });
-                          },
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  if(!isDeploymentMode)
-                  Padding(
-                    padding: EdgeInsets.only(left: context.w(54), right: context.w(16)),
-                    child: Divider(
-                      color: Colors.grey.shade100,
-                      height: context.h(1),
+                  if (!isDeploymentMode)
+                    Padding(
+                      padding: EdgeInsets.only(
+                        left: context.w(54),
+                        right: context.w(16),
+                      ),
+                      child: Divider(
+                        color: Colors.grey.shade100,
+                        height: context.h(1),
+                      ),
                     ),
-                  ),
 
                   // Biometric Authentication Setting Option
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(12)),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.w(16),
+                      vertical: context.h(12),
+                    ),
                     child: Row(
                       children: [
                         Container(
@@ -177,7 +190,10 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                             SvgAssets.biometric,
                             height: context.w(18),
                             width: context.w(18),
-                            colorFilter: const ColorFilter.mode(unifiedColor, BlendMode.srcIn),
+                            colorFilter: const ColorFilter.mode(
+                              unifiedColor,
+                              BlendMode.srcIn,
+                            ),
                           ),
                         ),
                         SizedBox(width: context.w(14)),
@@ -191,9 +207,11 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                           key: UniqueKey(),
                           future: BiometricHelper().isBiometricAvailable(),
                           builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return const SizedBox();
-                            } else if (snapshot.hasData && snapshot.data == true) {
+                            } else if (snapshot.hasData &&
+                                snapshot.data == true) {
                               return CustomSizedSwitch(
                                 isOn: isBiometricEnabled,
                                 onChanged: _onBiometricChanged,
@@ -208,6 +226,29 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                   ),
                 ],
               ),
+            ),
+          ),
+          const Spacer(),
+          SafeArea(
+            child: FutureBuilder(
+              future: PackageInfo.fromPlatform(),
+              builder: (_, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const SizedBox.shrink();
+                } else {
+                  final data = snapshot.data;
+                  if (data == null) {
+                    return const SizedBox.shrink();
+                  }
+                  return Align(
+                    alignment: .topCenter,
+                    child: Text(
+                      'Skinsync Ai ${DateTime.now().year} v${data.version} (${data.buildNumber})',
+                      style: CustomFonts.grey16w400,
+                    ),
+                  );
+                }
+              },
             ),
           ),
         ],

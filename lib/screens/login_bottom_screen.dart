@@ -25,29 +25,32 @@ class LoginBottomScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final loading = ref.watch(authViewModel.select((s) => s.loading));
     final bottom = MediaQuery.viewInsetsOf(context).bottom;
-    return SafeArea(
-      child: GestureDetector(
-        behavior: .translucent,
-        onTap: () {
-          if (!loading) {
-            Navigator.pop(context);
-          }
-        },
-        child: Align(
-          alignment: .bottomCenter,
-          child: BackdropFilter(
-            filter: .blur(sigmaX: 2, sigmaY: 2),
-            child: Material(
-              type: .transparency,
-              child: Container(
-                color: Colors.transparent,
-                padding: EdgeInsets.only(
-                  top: context.h(10),
-                  left: context.w(10),
-                  right: context.w(10),
-                  bottom: context.h(10) + bottom,
+    return PopScope(
+      canPop: !loading,
+      child: SafeArea(
+        child: GestureDetector(
+          behavior: .translucent,
+          onTap: () {
+            if (!loading) {
+              Navigator.pop(context);
+            }
+          },
+          child: Align(
+            alignment: .bottomCenter,
+            child: BackdropFilter(
+              filter: .blur(sigmaX: 2, sigmaY: 2),
+              child: Material(
+                type: .transparency,
+                child: Container(
+                  color: Colors.transparent,
+                  padding: EdgeInsets.only(
+                    top: context.h(10),
+                    left: context.w(10),
+                    right: context.w(10),
+                    bottom: context.h(10) + bottom,
+                  ),
+                  child: _buildBody(ref, loading),
                 ),
-                child: _buildBody(ref, loading),
               ),
             ),
           ),
