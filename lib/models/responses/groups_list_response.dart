@@ -2,19 +2,35 @@ import 'base_response_model.dart';
 
 class GroupsListResponse extends BaseResponseModel {
   final List<TreatmentJourneyGroup>? data;
+  final int? page;
+  final int? total;
+  final int? totalPages;
 
-  GroupsListResponse({super.isSuccess, super.message, this.data});
+  GroupsListResponse({
+    super.isSuccess,
+    super.message,
+    this.data,
+    this.page,
+    this.total,
+    this.totalPages,
+  });
 
-  factory GroupsListResponse.fromJson(Map<String, dynamic> json) =>
-      GroupsListResponse(
-        isSuccess: json["is_success"],
-        message: json["message"],
-        data: json["data"] == null
-            ? []
-            : List<TreatmentJourneyGroup>.from(
-                json["data"]!.map((x) => TreatmentJourneyGroup.fromJson(x)),
+  factory GroupsListResponse.fromJson(Map<String, dynamic> json) {
+    return GroupsListResponse(
+      isSuccess: json["is_success"],
+      message: json["message"],
+      data: json["data"] == null
+          ? []
+          : List<TreatmentJourneyGroup>.from(
+              json["data"].map(
+                (x) => TreatmentJourneyGroup.fromJson(x),
               ),
-      );
+            ),
+      page: json["page"],
+      total: json["total"],
+      totalPages: json["total_pages"],
+    );
+  }
 }
 
 class TreatmentJourneyGroup {
@@ -30,13 +46,14 @@ class TreatmentJourneyGroup {
     this.totalOptions,
   });
 
-  factory TreatmentJourneyGroup.fromJson(Map<String, dynamic> json) =>
-      TreatmentJourneyGroup(
-        id: json["id"],
-        name: json["name"],
-        createdAt: json["created_at"] == null
-            ? null
-            : DateTime.parse(json["created_at"]).toLocal(),
-        totalOptions: json["total_options"],
-      );
+  factory TreatmentJourneyGroup.fromJson(Map<String, dynamic> json) {
+    return TreatmentJourneyGroup(
+      id: json["id"],
+      name: json["name"],
+      createdAt: json["created_at"] == null
+          ? null
+          : DateTime.parse(json["created_at"]).toLocal(),
+      totalOptions: json["total_options"],
+    );
+  }
 }

@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../models/base_state_model.dart';
 import '../models/requests/create_group_request.dart';
@@ -35,20 +39,67 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     : _repo = repo ?? TreatmentJourneyService(apiClient: ApiBaseHelper()),
       super(initialState: const TreatmentJourneyState());
 
-  Future<String?> fetchTreatmentJourneyGroups([bool loading = true]) async {
-    return await runSafely(() async {
-      if (loading) {
-        state = state.copyWith(loading: true, errorMessage: null);
-      }
-      final response = await _repo.getGroups();
-      if (!ref.mounted) return null;
-      state = state.copyWith(loading: false, groups: response.data ?? []);
-      if (state.groups.isEmpty) {
-        return 'show';
-      }
-      return null;
-    });
-  }
+  final TextEditingController searchController = TextEditingController();
+
+  Timer? _searchTimer;
+
+
+late final PagingController<int, TreatmentJourneyGroup> pagingController =
+    PagingController<int, TreatmentJourneyGroup>(
+      getNextPageKey: (pagingState) {
+        final lastPageKey = pagingState.keys?.last ?? 0;
+        final totalPages = state.totalPages ?? 1;
+
+        final effectiveTotalPages = totalPages == 0 ? 1 : totalPages;
+
+        return lastPageKey < effectiveTotalPages
+            ? lastPageKey + 1
+            : null;
+      },
+      fetchPage: (pageKey) async {
+        return await fetchGroupsPage(pageKey) ?? [];
+      },
+    );
+Future<List<TreatmentJourneyGroup>?> fetchGroupsPage(int pageKey) async {
+  return runSafely(() async {
+    debugPrint(
+      'Fetching groups => page: $pageKey, search: ${searchController.text}',
+    );
+
+    final response = await _repo.getGroups(
+      page: pageKey,
+      search: searchController.text.trim(),
+    );
+
+    if (!ref.mounted) return null;
+
+    state = state.copyWith(
+      totalPages: response.totalPages ?? 1,
+      groups: response.data ?? [],
+    );
+
+    return response.data ?? [];
+  });
+}
+
+void searchGroups(String value) {
+  _searchTimer?.cancel();
+
+  _searchTimer = Timer(
+    const Duration(milliseconds: 500),
+    () {
+      if (!ref.mounted) return;
+
+      state = state.copyWith(
+        totalPages: null,
+        groups: [],
+      );
+
+      pagingController.refresh();
+    },
+  );
+}
+
 
   Future<bool?> createGroup(String name) async {
     return await runSafely(() async {
@@ -56,7 +107,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       final request = CreateGroupRequest(name: name);
       await _repo.createGroup(request);
       if (!ref.mounted) return null;
-      await fetchTreatmentJourneyGroups(false);
+      pagingController.refresh();
       EasyLoading.dismiss();
       return true;
     });
@@ -152,7 +203,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       final response = await _repo.deleteGroup(groupId);
       if (!ref.mounted) return null;
       if (response.isSuccess == true) {
-        await fetchTreatmentJourneyGroups(false);
+        pagingController.refresh();
       }
       EasyLoading.dismiss();
       return true;
@@ -279,6 +330,14 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     );
     super.onError(message);
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _searchTimer?.cancel();
+    searchController.dispose();
+    pagingController.dispose();
+  }
 }
 
 @immutable
@@ -290,7 +349,7 @@ class TreatmentJourneyState extends BaseStateModel {
   final int? selectedOptionId;
   final TreatmentJourneyGroup? selectedGroup;
   final String? price;
-
+  final int? totalPages;
   const TreatmentJourneyState({
     super.loading = false,
     super.errorMessage,
@@ -301,6 +360,7 @@ class TreatmentJourneyState extends BaseStateModel {
     this.isSimulationsLoading = false,
     this.selectedOptionId,
     this.price,
+    this.totalPages,
   });
 
   @override
@@ -315,6 +375,7 @@ class TreatmentJourneyState extends BaseStateModel {
     bool? isSimulationsLoading,
     int? selectedOptionId,
     String? price,
+    int? totalPages,
   }) {
     return TreatmentJourneyState(
       loading: loading ?? this.loading,
@@ -328,6 +389,7 @@ class TreatmentJourneyState extends BaseStateModel {
       isSimulationsLoading: isSimulationsLoading ?? this.isSimulationsLoading,
       selectedOptionId: selectedOptionId ?? this.selectedOptionId,
       price: price ?? this.price,
+      totalPages: totalPages ?? this.totalPages,
     );
   }
 }

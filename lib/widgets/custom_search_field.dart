@@ -71,6 +71,7 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
                 icon: const Icon(Icons.clear, color: Colors.grey),
                 onPressed: () {
                   _controller.clear();
+                   FocusScope.of(context).unfocus();
                   if (widget.onChanged != null) {
                     widget.onChanged!("");
                   }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../models/responses/groups_list_response.dart';
 import '../utils/assets.dart';
@@ -13,6 +14,7 @@ import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/custom_search_field.dart';
 import '../widgets/dialogs/delete_confirmation_dialog.dart';
 import 'treatment_journey_detail_screen.dart';
 
@@ -35,24 +37,43 @@ class _TreatmentJourneyScreenState
     extends ConsumerState<TreatmentJourneyScreen> {
   final TextEditingController _groupNameController = TextEditingController();
   late bool isTreatmentJourney;
+  late final PagingController<int, TreatmentJourneyGroup> _pagingController;
+  bool _hasCheckedEmptyState = false;
+
   @override
   void initState() {
     super.initState();
     isTreatmentJourney = widget.isTreatmentJourney;
+    _pagingController = ref
+        .read(treatmentJourneyProvider.notifier)
+        .pagingController;
+    _pagingController.addListener(_maybeShowCreateDialogOnEmpty);
+  }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final result = await ref
-          .read(treatmentJourneyProvider.notifier)
-          .fetchTreatmentJourneyGroups();
-      if (!mounted) return;
-      if (result == 'show') {
+  void _maybeShowCreateDialogOnEmpty() {
+    if (_hasCheckedEmptyState) return;
+
+    final state = _pagingController.value;
+    // Wait until the first page has actually finished loading (not still
+    // fetching, no error) before deciding it's empty.
+    final firstPageLoaded =
+        (state.pages?.isNotEmpty ?? false) &&
+        !state.isLoading &&
+        state.error == null;
+    if (!firstPageLoaded) return;
+
+    _hasCheckedEmptyState = true;
+    if ((state.items?.isEmpty ?? true)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
         _showCreateGroupDialog();
-      }
-    });
+      });
+    }
   }
 
   @override
   void dispose() {
+    _pagingController.removeListener(_maybeShowCreateDialogOnEmpty);
     _groupNameController.dispose();
     super.dispose();
   }
@@ -165,7 +186,8 @@ class _TreatmentJourneyScreenState
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(treatmentJourneyProvider);
+    
+    ref.watch(treatmentJourneyProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -185,49 +207,85 @@ class _TreatmentJourneyScreenState
         ],
       ),
       body: SafeArea(
-        child: state.loading
-            ? const Center(child: AppLoader())
-            : Column(
+        child: PagingListener<int, TreatmentJourneyGroup>(
+          controller: _pagingController,
+          builder: (context, state, fetchNextPage) {
+            final items = state.items ?? const [];
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (state.groups.isNotEmpty)
+                  if (items.isNotEmpty)
                     Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        context.w(24),
-                        context.h(20),
-                        context.w(24),
-                        0,
+                      padding: EdgeInsets.only(
+                        top: context.h(10),
+                        bottom: context.w(24),
                       ),
                       child: Text(
                         "Create a new journey group or select an existing one to manage your simulations and share them with clinics.",
                         style: CustomFonts.grey14w400.copyWith(height: 1.4),
                       ),
                     ),
+                 
+                  CustomSearchField(
+                    
+                    controller: ref
+                        .read(treatmentJourneyProvider.notifier)
+                        .searchController,
+                    hintText: "Search Groups...",
+                    onChanged: (query) {
+                      ref
+                          .read(treatmentJourneyProvider.notifier)
+                          .searchGroups(query);
+                    },
+                  ),
+                  SizedBox(height: context.h(20)),
                   Expanded(
-                    child: state.groups.isEmpty
-                        ? Center(
-                            child: Text(
-                              state.errorMessage ?? "No journeys found",
-                              style: CustomFonts.grey16w400,
+                    child: SlidableAutoCloseBehavior(
+                      child: PagedListView<int, TreatmentJourneyGroup>(
+                        state: state,
+                        fetchNextPage: fetchNextPage,
+                        physics: const BouncingScrollPhysics(),
+                        padding: EdgeInsets.only(
+                        
+                          bottom: context.h(20),
+                        ),
+                        builderDelegate:
+                            PagedChildBuilderDelegate<TreatmentJourneyGroup>(
+                              itemBuilder: (context, group, index) =>
+                                  _buildGroupCard(context, group, index),
+                              firstPageProgressIndicatorBuilder: (context) =>
+                                  const Center(child: AppLoader()),
+                              newPageProgressIndicatorBuilder: (context) =>
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: context.h(16),
+                                    ),
+                                    child: const Center(child: AppLoader()),
+                                  ),
+                              noItemsFoundIndicatorBuilder: (context) =>
+                                  _buildEmptyGroupsView(),
+                              firstPageErrorIndicatorBuilder: (context) =>
+                                  _buildEmptyGroupsView(),
                             ),
-                          )
-                        : SlidableAutoCloseBehavior(
-                            child: ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: context.w(24),
-                                vertical: context.h(20),
-                              ),
-                              itemCount: state.groups.length,
-                              itemBuilder: (context, index) {
-                                final group = state.groups[index];
-                                return _buildGroupCard(context, group, index);
-                              },
-                            ),
-                          ),
+                      ),
+                    ),
                   ),
                 ],
               ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Center _buildEmptyGroupsView() {
+    return Center(
+      child: Text(
+        ref.read(treatmentJourneyProvider).errorMessage ?? "No journeys found",
+        style: CustomFonts.grey16w400,
       ),
     );
   }
@@ -307,43 +365,17 @@ class _TreatmentJourneyScreenState
                 if (!mounted) return;
                 if (result == true) {
                   isTreatmentJourney = true;
-                  // rootScaffoldMessengerKey.currentState?.showSnackBar(
-                  //   SnackBar(
-                  //     content: const Text(
-                  //       'Your journey is ready! Tap the Journey button in the top-right corner to view it.',
-                  //     ),
-                  //     duration: const Duration(seconds: 3),
-                  //     persist: false,
-                  //     behavior: SnackBarBehavior.floating,
-                  //     margin: EdgeInsets.only(
-                  //       left: context.w(16),
-                  //       right: context.w(16),
-                  //       bottom: context.h(80),
-                  //     ),
-                  //     action: SnackBarAction(
-                  //       label: '✕',
-                  //       onPressed: () {
-                  //         rootScaffoldMessengerKey.currentState
-                  //             ?.hideCurrentSnackBar();
-                  //       },
-                  //     ),
-                  //   ),
-                  // );
-                  
-                final success = await ref
-                  .read(treatmentJourneyProvider.notifier)
-                  .fetchOptions(group.id!);
-              if (!mounted) return;
-              // EasyLoading.dismiss();
-
-              if (success ?? false) {
-                Navigator.pushNamed(
-                  context,
-                  TreatmentJourneyDetailScreen.routeName,
-                  arguments: {'groupId': group.id, 'groupName': group.name},
-                );
-              }
-
+                  final refetchSuccess = await ref
+                      .read(treatmentJourneyProvider.notifier)
+                      .fetchOptions(group.id!);
+                  if (!mounted) return;
+                  if (refetchSuccess ?? false) {
+                    Navigator.pushNamed(
+                      context,
+                      TreatmentJourneyDetailScreen.routeName,
+                      arguments: {'groupId': group.id, 'groupName': group.name},
+                    );
+                  }
                 }
               }
             } else {
@@ -351,8 +383,6 @@ class _TreatmentJourneyScreenState
                   .read(treatmentJourneyProvider.notifier)
                   .fetchOptions(group.id!);
               if (!mounted) return;
-              // EasyLoading.dismiss();
-
               if (success ?? false) {
                 Navigator.pushNamed(
                   context,
@@ -361,7 +391,6 @@ class _TreatmentJourneyScreenState
                 );
               }
             }
-            // EasyLoading.show(status: 'Loading options...');
           },
           borderRadius: BorderRadius.circular(context.r(16)),
           child: Padding(

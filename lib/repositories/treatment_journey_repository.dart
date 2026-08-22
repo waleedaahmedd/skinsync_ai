@@ -9,7 +9,7 @@ import '../models/responses/tj_option_simulations_response.dart';
 import '../models/responses/tj_options_list_response.dart';
 
 abstract class TreatmentJourneyRepository {
-  Future<GroupsListResponse> getGroups();
+  Future<GroupsListResponse> getGroups({required int page,required String search});
   Future<BaseResponseModel> createGroup(CreateGroupRequest request);
   Future<TJOptionsListResponse> getOptions(int groupId);
   Future<TJOptionSimulationsResponse> getOptionsDetail(int optionId);

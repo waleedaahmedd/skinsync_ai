@@ -20,10 +20,11 @@ class TreatmentJourneyService implements TreatmentJourneyRepository {
   TreatmentJourneyService({required this._apiClient});
 
   @override
-  Future<GroupsListResponse> getGroups() async {
+  Future<GroupsListResponse> getGroups({required int page,required String search}) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.treatmentJourneyGroups,
       requestType: RequestType.get,
+      params: '?page=$page&limit=10&search=$search'
     );
 
     if (response.statusCode >= 200 && response.statusCode < 300) {

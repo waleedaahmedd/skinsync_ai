@@ -88,6 +88,7 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
       return response.data ?? [];
     });
   }
+
 Future<void> fetchClinicsFromMap({String? search}) async {
   return await runSafely(() async {
     state = state.copyWith(clinicLoading: true);
