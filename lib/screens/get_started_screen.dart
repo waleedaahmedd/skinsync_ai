@@ -77,7 +77,6 @@ class GetStartedScreen extends StatelessWidget {
 
                 child: Image.asset(
                   PngAssets.face,
-                  // height: context.w(200),
                   fit: BoxFit.fitWidth,
                   alignment: Alignment.topCenter,
                 ),
@@ -118,8 +117,8 @@ class GetStartedScreen extends StatelessWidget {
                         ShaderMask(
                           shaderCallback: (bounds) => const LinearGradient(
                             colors: [
-                              CustomColors.lightBlueColor, // Light blue
-                              CustomColors.lightPurpleColor, // Light pink
+                              CustomColors.lightBlueColor,
+                              CustomColors.lightPurpleColor,
                             ],
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,

@@ -29,6 +29,7 @@ import 'screens/face_pose_capture_screen.dart';
 import 'screens/face_scan_screen.dart';
 import 'screens/get_notified_screen.dart';
 import 'screens/get_started_screen.dart';
+import 'screens/intro_screen.dart';
 import 'screens/journey_clinic_detail_screen.dart';
 import 'screens/journey_clinics_screen.dart';
 import 'screens/login_screen.dart';
@@ -81,6 +82,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: const RouteSettings(name: GetStartedScreen.routeName),
           builder: (_) => const GetStartedScreen(),
+        );
+      case IntroScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: IntroScreen.routeName),
+          builder: (_) => const IntroScreen(),
         );
       case LoginScreen.routeName:
         return MaterialPageRoute(

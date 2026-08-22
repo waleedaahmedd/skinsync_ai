@@ -8,6 +8,7 @@ import '../utils/secure_storage_service.dart';
 import '../view_models/auth_view_model.dart';
 import 'bottom_nav_page.dart';
 import 'get_started_screen.dart';
+import 'intro_screen.dart';
 import 'update_version_screen.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -94,10 +95,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               Navigator.of(context).pushReplacement(
                 PageRouteBuilder(
                   pageBuilder: (context, animation, secondaryAnimation) =>
-                      const GetStartedScreen(),
+                      const IntroScreen(),
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
-                        // Use ease-in curve
                         var curve = Curves.easeIn;
                         var curvedAnimation = CurvedAnimation(
                           parent: animation,
@@ -114,18 +114,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             }
           });
         } else {
-          // Navigator.pushNamedAndRemoveUntil(
-          //   context,
-          //   BottomNavPage.routeName,
-          //   (Route<dynamic> route) => false,
-          // );
           Navigator.of(context).pushReplacement(
             PageRouteBuilder(
               pageBuilder: (context, animation, secondaryAnimation) =>
-                  const GetStartedScreen(),
+                  const IntroScreen(),
               transitionsBuilder:
                   (context, animation, secondaryAnimation, child) {
-                    // Use ease-in curve
                     var curve = Curves.easeIn;
                     var curvedAnimation = CurvedAnimation(
                       parent: animation,
