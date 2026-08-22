@@ -8,7 +8,7 @@ import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
 import '../widgets/custom_button.dart';
-import '../widgets/login_bottom_sheet.dart';
+import 'login_bottom_screen.dart';
 
 class GetStartedScreen extends StatelessWidget {
   const GetStartedScreen({super.key});
@@ -26,28 +26,6 @@ class GetStartedScreen extends StatelessWidget {
           ),
           child: Stack(
             children: [
-              SafeArea(
-                child: FutureBuilder(
-                  future: PackageInfo.fromPlatform(),
-                  builder: (_, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return const SizedBox.shrink();
-                    } else {
-                      final data = snapshot.data;
-                      if (data == null) {
-                        return const SizedBox.shrink();
-                      }
-                      return Align(
-                        alignment: .topCenter,
-                        child: Text(
-                          '${data.version} (${data.buildNumber})',
-                          style: CustomFonts.grey12w400,
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ),
               Positioned(
                 top: context.h(70),
                 right: context.w(0),
@@ -69,7 +47,6 @@ class GetStartedScreen extends StatelessWidget {
                   color: const Color(0xff88E3FB).withValues(alpha: 0.7),
                 ),
               ),
-
               Positioned(
                 top: context.h(92),
                 right: 0,
@@ -81,7 +58,6 @@ class GetStartedScreen extends StatelessWidget {
                   alignment: Alignment.topCenter,
                 ),
               ),
-
               Positioned(
                 top: context.h(215),
                 left: context.w(0),
@@ -140,13 +116,38 @@ class GetStartedScreen extends StatelessWidget {
                             ref
                                 .read(authViewModel.notifier)
                                 .checkBiometricAvailability();
-                            loginBottomSheet(context);
+                            Navigator.pushNamed(
+                              context,
+                              LoginBottomScreen.routeName,
+                            );
                           },
                           text: "Get Started",
                         ),
                       ),
                     ),
                   ],
+                ),
+              ),
+              SafeArea(
+                child: FutureBuilder(
+                  future: PackageInfo.fromPlatform(),
+                  builder: (_, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox.shrink();
+                    } else {
+                      final data = snapshot.data;
+                      if (data == null) {
+                        return const SizedBox.shrink();
+                      }
+                      return Align(
+                        alignment: .topCenter,
+                        child: Text(
+                          '${data.version} (${data.buildNumber})',
+                          style: CustomFonts.grey12w400,
+                        ),
+                      );
+                    }
+                  },
                 ),
               ),
             ],

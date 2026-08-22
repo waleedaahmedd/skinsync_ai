@@ -32,6 +32,7 @@ import 'screens/get_started_screen.dart';
 import 'screens/intro_screen.dart';
 import 'screens/journey_clinic_detail_screen.dart';
 import 'screens/journey_clinics_screen.dart';
+import 'screens/login_bottom_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/notes_screen.dart';
 import 'screens/notification_screen.dart';
@@ -60,7 +61,6 @@ import 'screens/treatments_screen.dart';
 import 'screens/update_version_screen.dart';
 import 'screens/your_profile_screen.dart';
 import 'utils/enums.dart';
-
 import 'widgets/custom_app_bar.dart';
 
 class RouteGenerator {
@@ -120,7 +120,9 @@ class RouteGenerator {
         );
       case JourneyClinicDetailScreen.routeName:
         return MaterialPageRoute(
-          settings: const RouteSettings(name: JourneyClinicDetailScreen.routeName),
+          settings: const RouteSettings(
+            name: JourneyClinicDetailScreen.routeName,
+          ),
           builder: (_) => JourneyClinicDetailScreen(clinic: args as Clinic?),
         );
       case BottomNavPage.routeName:
@@ -166,8 +168,11 @@ class RouteGenerator {
         );
       case AppointmentDetailScreen.routeName:
         return MaterialPageRoute(
-          settings: const RouteSettings(name: AppointmentDetailScreen.routeName),
-          builder: (_) => AppointmentDetailScreen(appointment: args as AppointmentItem),
+          settings: const RouteSettings(
+            name: AppointmentDetailScreen.routeName,
+          ),
+          builder: (_) =>
+              AppointmentDetailScreen(appointment: args as AppointmentItem),
         );
       case ExploreClinicsScreen.routeName:
         return MaterialPageRoute(
@@ -345,9 +350,7 @@ class RouteGenerator {
       case TreatmentJourneyScreen.routeName:
         final arg = args as bool? ?? true;
         return MaterialPageRoute(
-          settings: const RouteSettings(
-            name: TreatmentJourneyScreen.routeName,
-          ),
+          settings: const RouteSettings(name: TreatmentJourneyScreen.routeName),
           builder: (_) => TreatmentJourneyScreen(isTreatmentJourney: arg),
         );
       case PatientTreatmentRequestsScreen.routeName:
@@ -355,9 +358,7 @@ class RouteGenerator {
           settings: const RouteSettings(
             name: PatientTreatmentRequestsScreen.routeName,
           ),
-          builder: (_) => PatientTreatmentRequestsScreen(
-            clinicId: args as int,
-          ),
+          builder: (_) => PatientTreatmentRequestsScreen(clinicId: args as int),
         );
       case PatientTreatmentRequestDetailScreen.routeName:
         return MaterialPageRoute(
@@ -381,10 +382,29 @@ class RouteGenerator {
         );
       case UpdateVersionScreen.routeName:
         return MaterialPageRoute(
-          settings: const RouteSettings(
-            name: UpdateVersionScreen.routeName,
-          ),
+          settings: const RouteSettings(name: UpdateVersionScreen.routeName),
           builder: (_) => const UpdateVersionScreen(),
+        );
+      case LoginBottomScreen.routeName:
+        return PageRouteBuilder(
+          settings: const RouteSettings(name: LoginBottomScreen.routeName),
+          opaque: false,
+          barrierDismissible: false,
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const LoginBottomScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(0.0, 1.0);
+            const end = Offset.zero;
+            const curve = Curves.easeOut;
+            var tween = Tween(
+              begin: begin,
+              end: end,
+            ).chain(CurveTween(curve: curve));
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
         );
       default:
         return _errorRoute();

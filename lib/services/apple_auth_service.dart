@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 import 'dart:math' hide log;
 
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
-import '../exceptions/app_exception.dart';
 
+import '../exceptions/app_exception.dart';
 import 'base_auth_service.dart';
 
 class AppleAuthService extends BaseAuthService {
@@ -32,9 +31,9 @@ class AppleAuthService extends BaseAuthService {
 
   @override
   Future<User> signIn() async {
-    if (!Platform.isIOS) {
-      throw const AppException('Apple Sign In is only supported on iOS');
-    }
+    // if (!Platform.isIOS) {
+    //   throw const AppException('Apple Sign In is only supported on iOS');
+    // }
 
     final rawNonce = generateNonce(); // ✅ now truly random
     final nonce = sha256.convert(utf8.encode(rawNonce)).toString();
@@ -56,7 +55,6 @@ class AppleAuthService extends BaseAuthService {
       idToken: appleCredential.identityToken,
       rawNonce: rawNonce,
       accessToken: appleCredential.authorizationCode,
-
     );
 
     final userCredential = await _auth.signInWithCredential(credential);
@@ -76,7 +74,7 @@ class AppleAuthService extends BaseAuthService {
     final random = Random.secure();
     return List.generate(
       length,
-          (_) => charset[random.nextInt(charset.length)],
+      (_) => charset[random.nextInt(charset.length)],
     ).join();
   }
 }
