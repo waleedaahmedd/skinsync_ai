@@ -73,82 +73,88 @@ class _TreatmentJourneyDetailScreenState
       _setupTabController(state.options.length);
     }
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        showTitle: true,
-        title: widget.groupName,
-        actions: [
-          Consumer(
-            builder: (_, ref, _) {
-              final state = ref.watch(treatmentViewModel);
-              if (!state.capturedImagesNull) {
-                return const SizedBox.shrink();
-              }
-              return IconButton(
-                onPressed: () {
-                  ref.read(checkoutViewModel.notifier).clearState();
-                  ref
-                      .read(treatmentViewModel.notifier)
-                      .clearAllSelectedTreatments(capturedImage: true);
-                  ref.read(treatmentViewModel.notifier).clearAiImage();
-                  Navigator.of(
-                    context,
-                  ).pushNamed(FacePoseCaptureScreen.routeName);
-                },
-                icon: const Icon(
-                  Icons.add_circle_outline_rounded,
-                  color: Colors.black,
-                ),
-                tooltip: "Add More Options",
-              );
-            },
-          ),
-        ],
-      ),
-      body: state.loading
-          ? const Center(child: AppLoader())
-          : state.options.isEmpty
-          ? Center(
-              child: Text(
-                state.errorMessage ?? "No options available",
-                style: CustomFonts.grey16w400,
-              ),
-            )
-          : Column(
-              children: [
-                TabBar(
-                  controller: _tabController,
-                  isScrollable: state.options.length > 3,
-                  indicatorColor: CustomColors.lightBlueColor,
-                  indicatorSize: TabBarIndicatorSize.label,
-                  labelColor: Colors.black,
-                  unselectedLabelColor: Colors.grey.shade500,
-                  labelStyle: CustomFonts.black16w600,
-                  unselectedLabelStyle: CustomFonts.grey16w500,
-                  dividerColor: Colors.transparent,
-                  tabs: state.options
-                      .map(
-                        (opt) => Tab(
-                          text: "${opt.name}${opt.isShared == true ? '*' : ''}",
-                        ),
-                      )
-                      .toList(),
-                ),
-                Expanded(
-                  child: state.isSimulationsLoading
-                      ? const Center(child: AppLoader())
-                      : TabBarView(
-                          controller: _tabController,
-                          physics: const NeverScrollableScrollPhysics(),
-                          children: state.options.map((opt) {
-                            return _buildSimulationsList(context, state);
-                          }).toList(),
-                        ),
-                ),
-              ],
+    return PopScope(
+      onPopInvokedWithResult: (_, _) {
+        ref.read(treatmentJourneyProvider.notifier).clearSelectedGroup();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: CustomAppBar(
+          showTitle: true,
+          title: widget.groupName,
+          actions: [
+            Consumer(
+              builder: (_, ref, _) {
+                final state = ref.watch(treatmentViewModel);
+                if (!state.capturedImagesNull) {
+                  return const SizedBox.shrink();
+                }
+                return IconButton(
+                  onPressed: () {
+                    ref.read(checkoutViewModel.notifier).clearState();
+                    ref
+                        .read(treatmentViewModel.notifier)
+                        .clearAllSelectedTreatments(capturedImage: true);
+                    ref.read(treatmentViewModel.notifier).clearAiImage();
+                    Navigator.of(
+                      context,
+                    ).pushNamed(FacePoseCaptureScreen.routeName);
+                  },
+                  icon: const Icon(
+                    Icons.add_circle_outline_rounded,
+                    color: Colors.black,
+                  ),
+                  tooltip: "Add More Options",
+                );
+              },
             ),
-      bottomNavigationBar: _buildBottomBar(context, state),
+          ],
+        ),
+        body: state.loading
+            ? const Center(child: AppLoader())
+            : state.options.isEmpty
+            ? Center(
+                child: Text(
+                  state.errorMessage ?? "No options available",
+                  style: CustomFonts.grey16w400,
+                ),
+              )
+            : Column(
+                children: [
+                  TabBar(
+                    controller: _tabController,
+                    isScrollable: state.options.length > 3,
+                    indicatorColor: CustomColors.lightBlueColor,
+                    indicatorSize: TabBarIndicatorSize.label,
+                    labelColor: Colors.black,
+                    unselectedLabelColor: Colors.grey.shade500,
+                    labelStyle: CustomFonts.black16w600,
+                    unselectedLabelStyle: CustomFonts.grey16w500,
+                    dividerColor: Colors.transparent,
+                    tabs: state.options
+                        .map(
+                          (opt) => Tab(
+                            text:
+                                "${opt.name}${opt.isShared == true ? '*' : ''}",
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  Expanded(
+                    child: state.isSimulationsLoading
+                        ? const Center(child: AppLoader())
+                        : TabBarView(
+                            controller: _tabController,
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: state.options.map((opt) {
+                              return _buildSimulationsList(context, state);
+                            }).toList(),
+                          ),
+                  ),
+                ],
+              ),
+        bottomNavigationBar: _buildBottomBar(context, state),
+      ),
     );
   }
 
@@ -236,8 +242,7 @@ class _TreatmentJourneyDetailScreenState
                         if (result == true) {
                           showShareJourneySuccessDialog(context);
                         }
-                      }
-                      else if (clinic != null) {
+                      } else if (clinic != null) {
                         final result = await ref
                             .read(treatmentJourneyProvider.notifier)
                             .callShareTreatmentRequest();

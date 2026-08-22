@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,63 +42,53 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 
   Timer? _searchTimer;
 
+  late final PagingController<int, TreatmentJourneyGroup> pagingController =
+      PagingController<int, TreatmentJourneyGroup>(
+        getNextPageKey: (pagingState) {
+          final lastPageKey = pagingState.keys?.last ?? 0;
+          final totalPages = state.totalPages ?? 1;
 
-late final PagingController<int, TreatmentJourneyGroup> pagingController =
-    PagingController<int, TreatmentJourneyGroup>(
-      getNextPageKey: (pagingState) {
-        final lastPageKey = pagingState.keys?.last ?? 0;
-        final totalPages = state.totalPages ?? 1;
+          final effectiveTotalPages = totalPages == 0 ? 1 : totalPages;
 
-        final effectiveTotalPages = totalPages == 0 ? 1 : totalPages;
-
-        return lastPageKey < effectiveTotalPages
-            ? lastPageKey + 1
-            : null;
-      },
-      fetchPage: (pageKey) async {
-        return await fetchGroupsPage(pageKey) ?? [];
-      },
-    );
-Future<List<TreatmentJourneyGroup>?> fetchGroupsPage(int pageKey) async {
-  return runSafely(() async {
-    debugPrint(
-      'Fetching groups => page: $pageKey, search: ${searchController.text}',
-    );
-
-    final response = await _repo.getGroups(
-      page: pageKey,
-      search: searchController.text.trim(),
-    );
-
-    if (!ref.mounted) return null;
-
-    state = state.copyWith(
-      totalPages: response.totalPages ?? 1,
-      groups: response.data ?? [],
-    );
-
-    return response.data ?? [];
-  });
-}
-
-void searchGroups(String value) {
-  _searchTimer?.cancel();
-
-  _searchTimer = Timer(
-    const Duration(milliseconds: 500),
-    () {
-      if (!ref.mounted) return;
-
-      state = state.copyWith(
-        totalPages: null,
-        groups: [],
+          return lastPageKey < effectiveTotalPages ? lastPageKey + 1 : null;
+        },
+        fetchPage: (pageKey) async {
+          return await fetchGroupsPage(pageKey) ?? [];
+        },
+      );
+  Future<List<TreatmentJourneyGroup>?> fetchGroupsPage(int pageKey) async {
+    return runSafely(() async {
+      debugPrint(
+        'Fetching groups => page: $pageKey, search: ${searchController.text}',
       );
 
-      pagingController.refresh();
-    },
-  );
-}
+      final response = await _repo.getGroups(
+        page: pageKey,
+        search: searchController.text.trim(),
+      );
 
+      if (!ref.mounted) return null;
+
+      state = state.copyWith(
+        totalPages: response.totalPages ?? 1,
+        groups: response.data ?? [],
+      );
+
+      return response.data ?? [];
+    });
+  }
+
+  void searchGroups(String value) {
+    _searchTimer?.cancel();
+
+    _searchTimer = Timer(const Duration(milliseconds: 500), () {
+      if (!ref.mounted) return;
+
+      state = state.copyWith(totalPages: null, groups: []);
+
+      pagingController.refresh();
+    });
+  }
 
   Future<bool?> createGroup(String name) async {
     return await runSafely(() async {
@@ -229,8 +218,8 @@ void searchGroups(String value) {
     state = state.copyWith(selectedGroup: group);
   }
 
-  void clearSelectedGroup() {
-    state = state.copyWith(clearSelectedGroup: true);
+  void clearSelectedGroup({bool clearOptions = false}) {
+    state = state.copyWith(clearSelectedGroup: true, clearSelectedOption: true);
   }
 
   Future<bool?> createTjOptions() async {
@@ -369,6 +358,7 @@ class TreatmentJourneyState extends BaseStateModel {
     String? errorMessage,
     TreatmentJourneyGroup? selectedGroup,
     bool clearSelectedGroup = false,
+    bool clearSelectedOption = false,
     List<TreatmentJourneyGroup>? groups,
     List<TJOption>? options,
     SimulationData? simulations,
@@ -387,7 +377,9 @@ class TreatmentJourneyState extends BaseStateModel {
       options: options ?? this.options,
       simulations: simulations ?? this.simulations,
       isSimulationsLoading: isSimulationsLoading ?? this.isSimulationsLoading,
-      selectedOptionId: selectedOptionId ?? this.selectedOptionId,
+      selectedOptionId: clearSelectedOption
+          ? null
+          : (selectedOptionId ?? this.selectedOptionId),
       price: price ?? this.price,
       totalPages: totalPages ?? this.totalPages,
     );
