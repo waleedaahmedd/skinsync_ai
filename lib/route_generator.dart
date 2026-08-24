@@ -47,6 +47,7 @@ import 'screens/saved_treatment_screen.dart';
 import 'screens/select_appointment_type_screen.dart';
 import 'screens/select_date_time_screen.dart';
 import 'screens/select_product_screen.dart';
+import 'screens/subscription_plans_screen.dart';
 import 'screens/setting_screen.dart';
 import 'screens/signup_onboarding.dart';
 import 'screens/simulation_history_screen.dart';
@@ -240,6 +241,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: const RouteSettings(name: SettingScreen.routeName),
           builder: (_) => const SettingScreen(),
+        );
+      case SubscriptionPlansScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: SubscriptionPlansScreen.routeName),
+          builder: (_) => const SubscriptionPlansScreen(),
         );
       case PersonalDetailScreen.routeName:
         return MaterialPageRoute(

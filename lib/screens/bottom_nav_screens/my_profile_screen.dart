@@ -20,6 +20,7 @@ import '../../widgets/logout_dialog_box.dart';
 import '../../main.dart';
 import '../../widgets/dialogs/delete_account_dialog.dart';
 import '../simulation_history_screen.dart';
+import '../subscription_plans_screen.dart';
 import '../treatment_journey_screen.dart';
 import 'appointments_screen.dart';
 
@@ -310,6 +311,17 @@ class MyProfileScreen extends StatelessWidget {
                         },
                         icon: SvgAssets.appointments,
                         title: "Simulation History",
+                      ),
+                      buildCardOption(
+                        callBack: () {
+                          Navigator.pushNamed(
+                            context,
+                            SubscriptionPlansScreen.routeName,
+                          );
+                        },
+                        icon: Iconsax.card,
+                        title: "Subscription Plans",
+                        isLast: true,
                       ),
                     ],
                   ]),
