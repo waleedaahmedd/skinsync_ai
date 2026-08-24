@@ -114,6 +114,85 @@ class MyProfileScreen extends StatelessWidget {
       );
     }
 
+    Widget buildUpgradeBanner() {
+      return Container(
+        padding: EdgeInsets.all(context.w(16)),
+        decoration: BoxDecoration(
+          gradient: CustomColors.purpleBlueGradient,
+          borderRadius: BorderRadius.circular(context.r(24)),
+          boxShadow: [
+            BoxShadow(
+              color: CustomColors.purpleColor.withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(context.w(10)),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Iconsax.crown,
+                color: Colors.white,
+                size: context.w(24),
+              ),
+            ),
+            SizedBox(width: context.w(16)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Upgrade to Premium",
+                    style: CustomFonts.white16w600.copyWith(
+                      color: Colors.black87,
+                      fontSize: context.sp(15),
+                    ),
+                  ),
+                  SizedBox(height: context.h(2)),
+                  Text(
+                    "Unlock unlimited AI simulations and premium support.",
+                    style: CustomFonts.white12w600.copyWith(
+                      color: Colors.black54,
+                      fontSize: context.sp(11),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: context.w(12)),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, SubscriptionPlansScreen.routeName);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(
+                  horizontal: context.w(14),
+                  vertical: context.h(8),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(context.r(12)),
+                ),
+                elevation: 0,
+              ),
+              child: Text(
+                "Upgrade",
+                style: CustomFonts.white14w600.copyWith(fontSize: context.sp(12)),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -256,6 +335,8 @@ class MyProfileScreen extends StatelessWidget {
                     context.w(24), context.h(20), context.w(24),
                     context.h(100)),
                 children: [
+                  buildUpgradeBanner(),
+                  SizedBox(height: context.h(20)),
                   // CARD 1: Clinical Portal Section
                   buildOptionCard([
                     buildCardOption(
