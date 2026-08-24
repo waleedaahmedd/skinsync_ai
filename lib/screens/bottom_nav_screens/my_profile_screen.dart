@@ -228,8 +228,8 @@ class MyProfileScreen extends StatelessWidget {
                             ),
                             SizedBox(height: context.h(2)),
                             Text(
-                              "Platinum Glow Member",
-                              style: CustomFonts.pink10w700,
+                              "Free Plan",
+                              style: CustomFonts.darkPurple12w600,
                             ),
                           ],
                         );

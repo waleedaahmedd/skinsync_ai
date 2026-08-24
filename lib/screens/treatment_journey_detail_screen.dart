@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:iconsax/iconsax.dart';
 
+import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
@@ -37,10 +39,13 @@ class TreatmentJourneyDetailScreen extends ConsumerStatefulWidget {
       _TreatmentJourneyDetailScreenState();
 }
 
+enum _JourneyFilter { all, shared, unshared }
+
 class _TreatmentJourneyDetailScreenState
     extends ConsumerState<TreatmentJourneyDetailScreen>
     with TickerProviderStateMixin {
   TabController? _tabController;
+  _JourneyFilter _currentFilter = _JourneyFilter.all;
 
   @override
   void dispose() {
@@ -48,20 +53,29 @@ class _TreatmentJourneyDetailScreenState
     super.dispose();
   }
 
-  void _setupTabController(int length) {
+  void _setupTabController(List<dynamic> filteredOptions) {
+    final length = filteredOptions.length;
     if (_tabController == null || _tabController!.length != length) {
       _tabController?.dispose();
       _tabController = TabController(length: length, vsync: this);
       _tabController!.addListener(() {
-        if (!_tabController!.indexIsChanging) {
-          final options = ref.read(treatmentJourneyProvider).options;
-          if (options.isNotEmpty) {
-            ref
-                .read(treatmentJourneyProvider.notifier)
-                .fetchOptionsDetail(options[_tabController!.index].id!);
-          }
+        if (!_tabController!.indexIsChanging &&
+            _tabController!.index < filteredOptions.length) {
+          ref
+              .read(treatmentJourneyProvider.notifier)
+              .fetchOptionsDetail(filteredOptions[_tabController!.index].id!);
         }
       });
+
+      if (length > 0) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && _tabController!.index < filteredOptions.length) {
+            ref
+                .read(treatmentJourneyProvider.notifier)
+                .fetchOptionsDetail(filteredOptions[_tabController!.index].id!);
+          }
+        });
+      }
     }
   }
 
@@ -69,8 +83,20 @@ class _TreatmentJourneyDetailScreenState
   Widget build(BuildContext context) {
     final state = ref.watch(treatmentJourneyProvider);
 
-    if (state.options.isNotEmpty) {
-      _setupTabController(state.options.length);
+    final filteredOptions = state.options.where((opt) {
+      switch (_currentFilter) {
+        case _JourneyFilter.shared:
+          return opt.isShared == true;
+        case _JourneyFilter.unshared:
+          return opt.isShared != true;
+        case _JourneyFilter.all:
+        default:
+          return true;
+      }
+    }).toList();
+
+    if (filteredOptions.isNotEmpty) {
+      _setupTabController(filteredOptions);
     }
 
     return PopScope(
@@ -83,6 +109,43 @@ class _TreatmentJourneyDetailScreenState
           showTitle: true,
           title: widget.groupName,
           actions: [
+            PopupMenuButton<_JourneyFilter>(
+              padding: EdgeInsets.zero,
+              onSelected: (filter) {
+                setState(() {
+                  _currentFilter = filter;
+                  _tabController = null; // Reset controller to re-init
+                });
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(context.r(16)),
+              ),
+              color: Colors.white,
+              elevation: 3,
+              itemBuilder: (context) => [
+                _buildFilterItem(_JourneyFilter.all, "All"),
+                _buildFilterItem(_JourneyFilter.shared, "Shared"),
+                _buildFilterItem(_JourneyFilter.unshared, "Unshared"),
+              ],
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: context.w(12)),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Iconsax.filter, color: Colors.black, size: 18),
+                    SizedBox(width: context.w(6)),
+                    Text(
+                      _currentFilter == _JourneyFilter.all
+                          ? "All"
+                          : (_currentFilter == _JourneyFilter.shared
+                              ? "Shared"
+                              : "Unshared"),
+                      style: CustomFonts.black14w600,
+                    ),
+                  ],
+                ),
+              ),
+            ),
             Consumer(
               builder: (_, ref, _) {
                 final state = ref.watch(treatmentViewModel);
@@ -112,18 +175,31 @@ class _TreatmentJourneyDetailScreenState
         ),
         body: state.loading
             ? const Center(child: AppLoader())
-            : state.options.isEmpty
+            : filteredOptions.isEmpty
             ? Center(
-                child: Text(
-                  state.errorMessage ?? "No options available",
-                  style: CustomFonts.grey16w400,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Iconsax.document_filter,
+                      size: context.w(48),
+                      color: Colors.grey,
+                    ),
+                    SizedBox(height: context.h(16)),
+                    Text(
+                      _currentFilter == _JourneyFilter.all
+                          ? (state.errorMessage ?? "No options available")
+                          : "No ${_currentFilter.name} options found",
+                      style: CustomFonts.grey16w400,
+                    ),
+                  ],
                 ),
               )
             : Column(
                 children: [
                   TabBar(
                     controller: _tabController,
-                    isScrollable: state.options.length > 3,
+                    isScrollable: filteredOptions.length > 3,
                     indicatorColor: CustomColors.lightBlueColor,
                     indicatorSize: TabBarIndicatorSize.label,
                     labelColor: Colors.black,
@@ -131,14 +207,26 @@ class _TreatmentJourneyDetailScreenState
                     labelStyle: CustomFonts.black16w600,
                     unselectedLabelStyle: CustomFonts.grey16w500,
                     dividerColor: Colors.transparent,
-                    tabs: state.options
-                        .map(
-                          (opt) => Tab(
-                            text:
-                                "${opt.name}${opt.isShared == true ? '*' : ''}",
-                          ),
-                        )
-                        .toList(),
+                    tabs: filteredOptions.map((opt) {
+                      final bool isShared = opt.isShared == true;
+                      return Tab(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(opt.name ?? ''),
+                            if (isShared) ...[
+                              SizedBox(width: context.w(6)),
+                              Image.asset(
+                                PngAssets.splashLogo,
+                                height: context.h(16),
+                                width: context.w(16),
+                                fit: BoxFit.contain,
+                              ),
+                            ],
+                          ],
+                        ),
+                      );
+                    }).toList(),
                   ),
                   Expanded(
                     child: state.isSimulationsLoading
@@ -146,20 +234,52 @@ class _TreatmentJourneyDetailScreenState
                         : TabBarView(
                             controller: _tabController,
                             physics: const NeverScrollableScrollPhysics(),
-                            children: state.options.map((opt) {
+                            children: filteredOptions.map((opt) {
                               return _buildSimulationsList(context, state);
                             }).toList(),
                           ),
                   ),
                 ],
               ),
-        bottomNavigationBar: _buildBottomBar(context, state),
+        bottomNavigationBar: _buildBottomBar(context, state, filteredOptions),
       ),
     );
   }
 
-  Widget? _buildBottomBar(BuildContext context, TreatmentJourneyState state) {
-    if (state.loading || state.options.isEmpty || state.simulations == null) {
+  PopupMenuItem<_JourneyFilter> _buildFilterItem(
+    _JourneyFilter value,
+    String label,
+  ) {
+    final isSelected = _currentFilter == value;
+    return PopupMenuItem(
+      value: value,
+      child: Row(
+        children: [
+          Text(
+            label,
+            style: CustomFonts.black14w500.copyWith(
+              color: isSelected ? CustomColors.purpleColor : Colors.black,
+            ),
+          ),
+          if (isSelected) ...[
+            const Spacer(),
+            const Icon(
+              Icons.check,
+              color: CustomColors.purpleColor,
+              size: 18,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget? _buildBottomBar(
+    BuildContext context,
+    TreatmentJourneyState state,
+    List<dynamic> filteredOptions,
+  ) {
+    if (state.loading || filteredOptions.isEmpty || state.simulations == null) {
       return null;
     }
 
@@ -208,7 +328,8 @@ class _TreatmentJourneyDetailScreenState
             ),
           ),
           Expanded(
-            child: (state.options[_tabController?.index ?? 0].isShared == true)
+            child: (filteredOptions[_tabController?.index ?? 0].isShared ==
+                    true)
                 ? Container(
                     height: context.h(52),
                     decoration: BoxDecoration(
@@ -228,7 +349,7 @@ class _TreatmentJourneyDetailScreenState
                     text: "Share",
                     onPressed: () async {
                       final currentOptionId =
-                          state.options[_tabController?.index ?? 0].id;
+                          filteredOptions[_tabController?.index ?? 0].id;
                       if (currentOptionId != null) {
                         ref
                             .read(treatmentJourneyProvider.notifier)
@@ -297,6 +418,18 @@ class _TreatmentJourneyDetailScreenState
       );
     }
 
+    final filteredOptions = state.options.where((opt) {
+      switch (_currentFilter) {
+        case _JourneyFilter.shared:
+          return opt.isShared == true;
+        case _JourneyFilter.unshared:
+          return opt.isShared != true;
+        case _JourneyFilter.all:
+        default:
+          return true;
+      }
+    }).toList();
+
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(
         horizontal: context.w(24),
@@ -322,7 +455,8 @@ class _TreatmentJourneyDetailScreenState
             showImages: _selectedSubTab == "Simulation",
             showTreatments: _selectedSubTab == "Treatments",
             onDelete: () {
-              final currentOption = state.options[_tabController?.index ?? 0];
+              final currentOption =
+                  filteredOptions[_tabController?.index ?? 0];
               if (currentOption.id != null) {
                 showDeleteConfirmationDialog(
                   context: context,

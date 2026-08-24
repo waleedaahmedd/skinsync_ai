@@ -360,8 +360,7 @@ class _ArFaceModelPreviewScreenState
                   return AnimationConfiguration.staggeredList(
                     position: index,
                     duration: const Duration(milliseconds: 600),
-                    child: SlideAnimation(
-                      horizontalOffset: 50.0,
+                    child: FlipAnimation(
                       child: FadeInAnimation(
                         child: Padding(
                           padding: EdgeInsets.only(right: context.w(12)),
@@ -947,21 +946,29 @@ class _ArFaceModelPreviewScreenState
                 ),
               ),
               SizedBox(height: context.h(12)),
-              Wrap(
-                direction: Axis.horizontal,
-                spacing: context.w(12),
-                runSpacing: context.h(12),
-                children: entry.value.map((area) {
-                  final isSelected = selectedAreaIds.contains(area.id);
-                  return ServiceTypeButton(
-                    imageUrl: area.image,
-                    icon: area.icon,
-                    text: area.name ?? '-',
-                    selected: isSelected,
-                    onPressed: () =>
-                        _onAreaPressed(area, isSelected, treatment),
-                  );
-                }).toList(),
+              AnimationLimiter(
+                child: Wrap(
+                  direction: Axis.horizontal,
+                  spacing: context.w(12),
+                  runSpacing: context.h(12),
+                  children: AnimationConfiguration.toStaggeredList(
+                    duration: const Duration(milliseconds: 600),
+                    childAnimationBuilder: (widget) => FlipAnimation(
+                      child: FadeInAnimation(child: widget),
+                    ),
+                    children: entry.value.map((area) {
+                      final isSelected = selectedAreaIds.contains(area.id);
+                      return ServiceTypeButton(
+                        imageUrl: area.image,
+                        icon: area.icon,
+                        text: area.name ?? '-',
+                        selected: isSelected,
+                        onPressed: () =>
+                            _onAreaPressed(area, isSelected, treatment),
+                      );
+                    }).toList(),
+                  ),
+                ),
               ),
             ],
           );

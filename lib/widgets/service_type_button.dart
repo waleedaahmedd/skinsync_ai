@@ -22,25 +22,19 @@ class ServiceTypeButton extends StatelessWidget {
 
   Widget _buildLeftIcon(BuildContext context, String iconPath, bool selected) {
     if (iconPath.startsWith('http://') || iconPath.startsWith('https://')) {
-      return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(context.r(6)),
-          border: Border.all(color: Colors.white, width: 1),
-        ),
-        child: AppNetworkImage(
-          imageUrl: iconPath,
-          width: context.w(20),
-          height: context.w(20),
-          fit: BoxFit.cover,
-          borderRadius: BorderRadius.circular(context.r(6)),
-          errorIcon: Icons.broken_image,
-        ),
+      return AppNetworkImage(
+        imageUrl: iconPath,
+        width: context.w(26),
+        height: context.w(26),
+        fit: BoxFit.cover,
+        borderRadius: BorderRadius.circular(context.r(6)),
+        errorIcon: Icons.broken_image,
       );
     } else {
       return Image.asset(
         iconPath,
-        width: context.w(16),
-        height: context.w(16),
+        width: context.w(22),
+        height: context.w(22),
         color: selected ? Colors.white : Colors.black,
       );
     }
@@ -58,7 +52,7 @@ class ServiceTypeButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(context.r(16)),
           border: Border.all(
             color: selected ? CustomColors.purpleColor : Colors.black,
-            width: selected ? 2.0 : 1.5,
+            width: 2.0,
           ),
           boxShadow: [
             BoxShadow(
@@ -107,7 +101,9 @@ class ServiceTypeButton extends StatelessWidget {
                     ],
                     Text(
                       text,
-                      style: selected ? CustomFonts.white12w600 : CustomFonts.black13w600,
+                      style: CustomFonts.black13w600.copyWith(
+                        color: selected ? Colors.white : Colors.black,
+                      ),
                     ),
                   ],
                 ),
