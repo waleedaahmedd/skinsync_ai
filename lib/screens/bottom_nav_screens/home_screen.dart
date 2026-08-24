@@ -116,7 +116,7 @@ class HomeScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-              SizedBox(height: context.h(10)),
+              SizedBox(height: context.h(12)),
                 appointments.isEmpty
                     ? _buildHorizontalEmptyState(
                         context: context,
@@ -127,40 +127,45 @@ class HomeScreen extends ConsumerWidget {
                             "Your scheduled clinical treatments and session details will appear here.",
                       )
                     : SizedBox(
-                        height: context.h(300),
+                        height: context.h(305),
                         child: ListView.builder(
                           physics: const BouncingScrollPhysics(),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: context.w(24),
-                          ),
                           scrollDirection: Axis.horizontal,
+                          clipBehavior: Clip.none,
+                          // padding: EdgeInsets.only(
+                          //   top: context.h(10),
+                          //   bottom: context.h(40),
+                          // ),
                           itemCount: appointments.length,
                           itemBuilder: (context, index) {
                             final appointment = appointments[index];
 
-                            return Container(
-                              width: 0.8.sw,
+                            return Padding(
                               padding: EdgeInsets.only(
+                                left: index == 0 ? context.w(24) : context.w(16),
                                 right: index == appointments.length - 1
-                                    ? 0
-                                    : context.w(12),
+                                    ? context.w(24)
+                                    : context.w(0),
                               ),
-                              child: AppointmentCard(
-                                isTreatmentListHorizontal: true,
-                                appointment: appointment,
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    AppointmentDetailScreen.routeName,
-                                    arguments: appointment,
-                                  );
-                                },
+                              child: SizedBox(
+                                width: 0.8.sw,
+                                child: AppointmentCard(
+                                  isTreatmentListHorizontal: true,
+                                  appointment: appointment,
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      AppointmentDetailScreen.routeName,
+                                      arguments: appointment,
+                                    );
+                                  },
+                                ),
                               ),
                             );
                           },
                         ),
                       ),
-         SizedBox(height: context.h(12)),
+          SizedBox(height: context.h(12)),
               // Suggested Treatments Section
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
@@ -172,10 +177,10 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ),
 
-              SizedBox(height: context.h(10)),
+              SizedBox(height: context.h(12)),
 
               SizedBox(
-                height: context.h(220),
+                height: context.h(180),
                 child: Consumer(
                   builder: (context, ref, _) {
                     final suggestedTreatments =
@@ -198,10 +203,10 @@ class HomeScreen extends ConsumerWidget {
                       itemCount: suggestedTreatments.length,
                       scrollDirection: Axis.horizontal,
                       clipBehavior: Clip.none,
-                      padding: EdgeInsets.only(
-                        top: context.h(10),
-                        bottom: context.h(20),
-                      ),
+                      // padding: EdgeInsets.only(
+                      //   top: context.h(2),
+                      //   bottom: context.h(20),
+                      // ),
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: EdgeInsets.only(
@@ -252,25 +257,30 @@ class HomeScreen extends ConsumerWidget {
                             "Specialist dermatologists and clinical practitioners will be listed here soon.",
                       )
                     : SizedBox(
-                        height: context.h(210),
+                        height: context.h(250),
                         child: ListView.builder(
                           physics: const BouncingScrollPhysics(),
-                          padding: EdgeInsets.only(
-                            left: context.w(24),
-                            right: context.w(24),
-                            top: context.h(10),
-                            bottom: context.h(20),
-                          ),
                           scrollDirection: Axis.horizontal,
                           clipBehavior: Clip.none,
+                          // padding: EdgeInsets.only(
+                          //   top: context.h(10),
+                          //   bottom: context.h(40),
+                          // ),
                           itemCount: dashboard!.topDoctors!.length,
-                          itemBuilder: (context, index) =>
-                              DashboardDoctorHomeCard(
-                                doctor: dashboard.topDoctors![index],
-                              ),
+                          itemBuilder: (context, index) => Padding(
+                            padding: EdgeInsets.only(
+                              left: index == 0 ? context.w(24) : context.w(16),
+                              right: index == dashboard.topDoctors!.length - 1
+                                  ? context.w(24)
+                                  : context.w(0),
+                            ),
+                            child: DashboardDoctorHomeCard(
+                              doctor: dashboard.topDoctors![index],
+                            ),
+                          ),
                         ),
                       ),
-             // SizedBox(height: context.h(12)),
+              SizedBox(height: context.h(12)),
               // Top Clinics Section
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
@@ -285,7 +295,7 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ),
 
-              SizedBox(height: context.h(10)),
+              SizedBox(height: context.h(12)),
 
               // Top Clinics Empty State Check
               (dashboard?.topClinics?.isEmpty ?? true)
@@ -298,25 +308,30 @@ class HomeScreen extends ConsumerWidget {
                           "Top-rated aesthetic clinics and wellness spas will be listed here soon.",
                     )
                   : SizedBox(
-                      height: context.h(210),
+                      height: context.h(200),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.only(
-                          left: context.w(24),
-                          right: context.w(24),
-                          top: context.h(10),
-                          bottom: context.h(20),
-                        ),
                         scrollDirection: Axis.horizontal,
                         clipBehavior: Clip.none,
+                        // padding: EdgeInsets.only(
+                        //   top: context.h(10),
+                        //   bottom: context.h(40),
+                        // ),
                         itemCount: dashboard!.topClinics!.length,
-                        itemBuilder: (context, index) =>
-                            DashboardClinicHomeCard(
-                              clinic: dashboard.topClinics![index],
-                            ),
+                        itemBuilder: (context, index) => Padding(
+                          padding: EdgeInsets.only(
+                            left: index == 0 ? context.w(24) : context.w(16),
+                            right: index == dashboard.topClinics!.length - 1
+                                ? context.w(24)
+                                : context.w(0),
+                          ),
+                          child: DashboardClinicHomeCard(
+                            clinic: dashboard.topClinics![index],
+                          ),
+                        ),
                       ),
                     ),
-            //  SizedBox(height: context.h(12)),
+              SizedBox(height: context.h(12)),
               if (dashboard?.recentSimulations?.isNotEmpty ?? false) ...{
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: context.w(24)),
@@ -327,26 +342,32 @@ class HomeScreen extends ConsumerWidget {
                     },
                   ),
                 ),
-                SizedBox(height: context.h(10)),
+                SizedBox(height: context.h(12)),
                 SizedBox(
-                  height: context.h(220),
+                  height: context.h(200),
                   child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
-                    padding: EdgeInsets.only(
-                      left: context.w(24),
-                      right: context.w(24),
-                      top: context.h(10),
-                      bottom: context.h(20),
-                    ),
                     scrollDirection: Axis.horizontal,
                     clipBehavior: Clip.none,
+                    // padding: EdgeInsets.only(
+                    //   top: context.h(10),
+                    //   bottom: context.h(40),
+                    // ),
                     itemCount: dashboard!.recentSimulations!.length,
-                    itemBuilder: (context, index) => DashboardSimulationCard(
-                      simulation: dashboard.recentSimulations![index],
+                    itemBuilder: (context, index) => Padding(
+                      padding: EdgeInsets.only(
+                        left: index == 0 ? context.w(24) : context.w(16),
+                        right: index == dashboard.recentSimulations!.length - 1
+                            ? context.w(24)
+                            : context.w(0),
+                      ),
+                      child: DashboardSimulationCard(
+                        simulation: dashboard.recentSimulations![index],
+                      ),
                     ),
                   ),
                 ),
-              //  SizedBox(height: context.h(12)),
+                SizedBox(height: context.h(12)),
               },
               // Shared Treatment Requests Section
               Padding(
@@ -368,7 +389,7 @@ class HomeScreen extends ConsumerWidget {
                 ),
               ),
 
-              SizedBox(height: context.h(10)),
+              SizedBox(height: context.h(12)),
 
               // Shared Treatment Requests Empty State Check
               (dashboard?.requestTreatmentClinic?.isEmpty ?? true)
@@ -383,14 +404,12 @@ class HomeScreen extends ConsumerWidget {
                       height: context.h(150),
                       child: ListView.builder(
                         physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.only(
-                          left: context.w(24),
-                          right: context.w(24),
-                          top: context.h(10),
-                          bottom: context.h(20),
-                        ),
                         scrollDirection: Axis.horizontal,
                         clipBehavior: Clip.none,
+                        // padding: EdgeInsets.only(
+                        //   top: context.h(10),
+                        //   bottom: context.h(40),
+                        // ),
                         itemCount: dashboard!.requestTreatmentClinic!.length,
                         itemBuilder: (context, index) {
                           final request =
@@ -398,12 +417,14 @@ class HomeScreen extends ConsumerWidget {
 
                           return Padding(
                             padding: EdgeInsets.only(
+                              left: index == 0 ? context.w(24) : context.w(16),
                               right:
                                   index ==
-                                      dashboard.requestTreatmentClinic!.length -
-                                          1
-                                  ? 0
-                                  : context.w(12),
+                                          dashboard.requestTreatmentClinic!
+                                                  .length -
+                                              1
+                                      ? context.w(24)
+                                      : context.w(0),
                             ),
                             child: RequestClinicTreatmentCard(
                               data: request,
@@ -447,12 +468,17 @@ class HomeScreen extends ConsumerWidget {
                             "Exclusive clinical deals, seasonal discounts, and special offers are on their way.",
                       )
                     : SizedBox(
-                        height: context.h(144),
+                        height: context.h(200),
                         child: ListView.builder(
                           physics: const BouncingScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: promotionsCount,
                           scrollDirection: Axis.horizontal,
+                          clipBehavior: Clip.none,
+                          padding: EdgeInsets.only(
+                            top: context.h(10),
+                            bottom: context.h(40),
+                          ),
                           itemBuilder: (context, index) {
                             return Padding(
                               padding: EdgeInsets.only(

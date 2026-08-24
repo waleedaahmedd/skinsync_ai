@@ -41,7 +41,7 @@ class AppointmentCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: EdgeInsets.only(
-          bottom: isTreatmentListHorizontal ? context.h(12) : context.h(22),
+          bottom: isTreatmentListHorizontal ? context.h(20) : context.h(22),
         ),
         decoration: BoxDecoration(
           color: Colors.white,

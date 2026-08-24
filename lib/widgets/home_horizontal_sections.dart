@@ -329,6 +329,10 @@ class DashboardDoctorHomeCard extends StatelessWidget {
     return DoctorCard(
       doctor: doctor.toPractitionerDoctor(),
       width: context.w(160),
+      margin: EdgeInsets.only(
+        bottom: context.h(8),
+        top: context.h(4),
+      ),
     );
   }
 }
@@ -339,33 +343,33 @@ class DashboardClinicHomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      type: .transparency,
-      child: InkWell(
-        onTap: () {
-          Navigator.pushNamed(
-            context,
-            JourneyClinicDetailScreen.routeName,
-            arguments: Clinic(
-              id: clinic.clinicId,
-              name: clinic.clinicName,
-              address: clinic.address,
-            ),
-          );
-        },
-        child: Padding(
-          padding: EdgeInsets.only(
-            right: context.w(16),
-            bottom: context.h(8),
-            top: context.h(4),
-          ),
-          child: Ink(
-            width: context.w(245),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(context.r(16)),
-              boxShadow: CustomColors.cardShadow,
-            ),
+    return Container(
+      width: context.w(245),
+      margin: EdgeInsets.only(
+        bottom: context.h(20),
+        top: context.h(4),
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(context.r(16)),
+        boxShadow: CustomColors.cardShadow,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(context.r(16)),
+        child: Material(
+          color: Colors.white,
+          child: InkWell(
+            onTap: () {
+              Navigator.pushNamed(
+                context,
+                JourneyClinicDetailScreen.routeName,
+                arguments: Clinic(
+                  id: clinic.clinicId,
+                  name: clinic.clinicName,
+                  address: clinic.address,
+                ),
+              );
+            },
             child: Stack(
               children: [
                 Column(
@@ -396,14 +400,6 @@ class DashboardClinicHomeCard extends StatelessWidget {
                             fit: .cover,
                           ),
                         ),
-                        // errorWidget: (context, url, error) => Container(
-                        //   color: Colors.grey.shade100,
-                        //   child: const Icon(
-                        //     Icons.storefront_rounded,
-                        //     size: 30,
-                        //     color: Colors.grey,
-                        //   ),
-                        // ),
                       ),
                     ),
                     Padding(
@@ -582,53 +578,55 @@ class DashboardSimulationCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final _ = ref.watch(treatmentJourneyProvider.select((s) => s.loading));
-    return Padding(
-      padding: EdgeInsets.only(
-        right: context.w(16),
-        bottom: context.h(8),
+    return Container(
+      width: context.w(380),
+      margin: EdgeInsets.only(
+        bottom: context.h(20),
         top: context.h(4),
       ),
-      child: InkWell(
-        onTap: () => _onModifyTap(ref),
+      decoration: BoxDecoration(
+        color: CustomColors.whiteColor,
         borderRadius: BorderRadius.circular(context.r(16)),
-        child: Ink(
-          width: context.w(380),
-          decoration: BoxDecoration(
-            color: CustomColors.whiteColor,
-            borderRadius: BorderRadius.circular(context.r(16)),
-            boxShadow: CustomColors.cardShadow,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  context.w(12),
-                  context.h(12),
-                  context.w(12),
-                  context.h(12),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _buildImage(
-                        context,
-                        'Before',
-                        simulation.frontImageBefore,
+        boxShadow: CustomColors.cardShadow,
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(context.r(16)),
+        child: Material(
+          color: Colors.white,
+          child: InkWell(
+            onTap: () => _onModifyTap(ref),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    context.w(12),
+                    context.h(12),
+                    context.w(12),
+                    context.h(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _buildImage(
+                          context,
+                          'Before',
+                          simulation.frontImageBefore,
+                        ),
                       ),
-                    ),
-                    SizedBox(width: context.w(10)),
-                    Expanded(
-                      child: _buildImage(
-                        context,
-                        'After',
-                        simulation.frontImageAfter,
+                      SizedBox(width: context.w(10)),
+                      Expanded(
+                        child: _buildImage(
+                          context,
+                          'After',
+                          simulation.frontImageAfter,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
