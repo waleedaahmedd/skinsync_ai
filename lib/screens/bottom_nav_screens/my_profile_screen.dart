@@ -279,17 +279,29 @@ class MyProfileScreen extends StatelessWidget {
                       icon: SvgAssets.progress,
                       title: "Treatment Journey",
                     ),
+                    buildCardOption(
+                      callBack: () {
+                        Navigator.pushNamed(
+                          context,
+                          AppointmentsScreen.routeName,
+                        );
+                      },
+                      icon: SvgAssets.appointment,
+                      title: "Appointments",
+                    ),
+                    buildCardOption(
+                      callBack: () {
+                        Navigator.pushNamed(
+                          context,
+                          SubscriptionPlansScreen.routeName,
+                        );
+                      },
+                      icon: Iconsax.card,
+                      title: "Subscription Plans",
+                      isLast: true,
+                    ),
                     if (!isDeploymentMode) ...[
-                      buildCardOption(
-                        callBack: () {
-                          Navigator.pushNamed(
-                            context,
-                            AppointmentsScreen.routeName,
-                          );
-                        },
-                        icon: SvgAssets.appointment,
-                        title: "Appointments",
-                      ),
+
                       buildCardOption(
                         callBack: () {
                           Navigator.pushNamed(
@@ -312,17 +324,7 @@ class MyProfileScreen extends StatelessWidget {
                         icon: SvgAssets.appointments,
                         title: "Simulation History",
                       ),
-                      buildCardOption(
-                        callBack: () {
-                          Navigator.pushNamed(
-                            context,
-                            SubscriptionPlansScreen.routeName,
-                          );
-                        },
-                        icon: Iconsax.card,
-                        title: "Subscription Plans",
-                        isLast: true,
-                      ),
+
                     ],
                   ]),
                   SizedBox(height: context.h(16)),

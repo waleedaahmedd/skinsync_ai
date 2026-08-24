@@ -98,13 +98,12 @@ class HomeScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: context.h(22)),
-              if (!isDeploymentMode)
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                   child: Column(
                     children: [
-                      const PointsEarnCard(),
-                      SizedBox(height: context.h(28)),
+                      if (!isDeploymentMode)  const PointsEarnCard(),
+                      if (!isDeploymentMode)  SizedBox(height: context.h(28)),
                       HeadingWithRightArrow(
                         title: "Upcoming Appointments",
                         onTap: () {
@@ -117,8 +116,7 @@ class HomeScreen extends ConsumerWidget {
                     ],
                   ),
                 ),
-              if (!isDeploymentMode) SizedBox(height: context.h(10)),
-              if (!isDeploymentMode)
+              SizedBox(height: context.h(10)),
                 appointments.isEmpty
                     ? _buildHorizontalEmptyState(
                         context: context,
@@ -162,7 +160,7 @@ class HomeScreen extends ConsumerWidget {
                           },
                         ),
                       ),
-              if (!isDeploymentMode) SizedBox(height: context.h(12)),
+         SizedBox(height: context.h(12)),
               // Suggested Treatments Section
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
