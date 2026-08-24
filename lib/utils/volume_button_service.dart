@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 enum VolumeButtonEvent { up, down }
@@ -18,7 +19,7 @@ class VolumeButtonService {
     try {
       await _methodChannel.invokeMethod('enableInterception');
     } catch (e) {
-      print("Error enabling volume interception: $e");
+      debugPrint("Error enabling volume interception: $e");
     }
   }
 
@@ -26,7 +27,7 @@ class VolumeButtonService {
     try {
       await _methodChannel.invokeMethod('disableInterception');
     } catch (e) {
-      print("Error disabling volume interception: $e");
+      debugPrint("Error disabling volume interception: $e");
     }
   }
 

@@ -8,7 +8,7 @@ import 'api_base_helper.dart';
 
 class PatientTreatmentRequestService implements PatientTreatmentRequestRepository {
   final ApiBaseHelper _apiClient;
-  PatientTreatmentRequestService({required ApiBaseHelper apiClient}) : _apiClient = apiClient;
+  PatientTreatmentRequestService({required this._apiClient});
 
   @override
   Future<PatientTreatmentRequestResponse> getPatientTreatmentRequests({

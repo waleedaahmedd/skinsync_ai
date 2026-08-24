@@ -16,9 +16,8 @@ final patientTreatmentRequestProvider =
 
 class PatientTreatmentRequestViewModel extends BaseViewModel<PatientTreatmentRequestState> {
   final PatientTreatmentRequestRepository _repository;
-  PatientTreatmentRequestViewModel({required PatientTreatmentRequestRepository repository})
-      : _repository = repository,
-        super(initialState: const PatientTreatmentRequestState());
+  PatientTreatmentRequestViewModel({required this._repository})
+      : super(initialState: const PatientTreatmentRequestState());
 
   Future<void> fetchRequests({required int clinicId, int page = 1}) async {
     return await runSafely(() async {

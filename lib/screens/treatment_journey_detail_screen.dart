@@ -15,7 +15,7 @@ import '../widgets/dialogs/delete_confirmation_dialog.dart';
 import '../widgets/dialogs/success_dialogs.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/simulation_card.dart';
-import 'ar_face_model_Preview_screen.dart';
+import 'ar_face_model_preview_screen.dart';
 import 'bottom_nav_page.dart';
 import 'face_pose_capture_screen.dart';
 import 'journey_clinics_screen.dart';
