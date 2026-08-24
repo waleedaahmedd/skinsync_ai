@@ -35,6 +35,7 @@ class _SubscriptionPlansScreenState
       id: 1,
       name: 'Basic Care',
       basePrice: 19.99,
+      interval: 'week',
       simulationCount: 5,
       postsViewCount: 20,
       isActive: true,

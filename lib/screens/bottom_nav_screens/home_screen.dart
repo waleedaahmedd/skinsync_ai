@@ -98,24 +98,138 @@ class HomeScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: context.h(22)),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-                  child: Column(
-                    children: [
-                      if (!isDeploymentMode)  const PointsEarnCard(),
-                      if (!isDeploymentMode)  SizedBox(height: context.h(28)),
-                      HeadingWithRightArrow(
-                        title: "Upcoming Appointments",
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            AppointmentsScreen.routeName,
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                child: Column(
+                  children: [
+                    if (!isDeploymentMode) const PointsEarnCard(),
+                    if (!isDeploymentMode) SizedBox(height: context.h(28)),
+                  ],
+                ),
+              ),
+
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                child: HeadingWithRightArrow(
+                  title: "Recent Simulations",
+                  onTap: () {
+                    ref.read(bottomNavViewModel.notifier).changePage(3);
+                  },
+                ),
+              ),
+              SizedBox(height: context.h(12)),
+              (dashboard?.recentSimulations?.isEmpty ?? true)
+                  ? _buildHorizontalEmptyState(
+                      context: context,
+                      height: context.h(100),
+                      icon: Icons.auto_awesome_rounded,
+                      title: "No Recent Simulations",
+                      subtitle:
+                          "Your facial AI scans and treatment simulations will appear here.",
+                    )
+                  : SizedBox(
+                      height: context.h(200),
+                      child: ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        clipBehavior: Clip.none,
+                        itemCount: dashboard!.recentSimulations!.length,
+                        itemBuilder: (context, index) => Padding(
+                          padding: EdgeInsets.only(
+                            left: index == 0 ? context.w(24) : context.w(16),
+                            right: index == dashboard.recentSimulations!.length - 1
+                                ? context.w(24)
+                                : context.w(0),
+                          ),
+                          child: DashboardSimulationCard(
+                            simulation: dashboard.recentSimulations![index],
+                          ),
+                        ),
+                      ),
+                    ),
+              SizedBox(height: context.h(12)),
+
+              // Shared Treatment Requests Section
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                child: HeadingWithRightArrow(
+                  title: "Shared Treatment Requests",
+                  showRightArrow: false,
+                  onTap: () {
+                    final clinicId =
+                        dashboard?.requestTreatmentClinic?.firstOrNull?.id;
+                    if (clinicId != null) {
+                      Navigator.pushNamed(
+                        context,
+                        PatientTreatmentRequestsScreen.routeName,
+                        arguments: clinicId,
+                      );
+                    }
+                  },
+                ),
+              ),
+
+              SizedBox(height: context.h(12)),
+
+              // Shared Treatment Requests Empty State Check
+              (dashboard?.requestTreatmentClinic?.isEmpty ?? true)
+                  ? _buildHorizontalEmptyState(
+                      context: context,
+                      height: context.h(100),
+                      icon: Icons.request_page_outlined,
+                      title: "No Shared Treatment Requests",
+                      subtitle: "Shared treatment requests will appear here.",
+                    )
+                  : SizedBox(
+                      height: context.h(150),
+                      child: ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        clipBehavior: Clip.none,
+                        itemCount: dashboard!.requestTreatmentClinic!.length,
+                        itemBuilder: (context, index) {
+                          final request =
+                              dashboard.requestTreatmentClinic![index];
+
+                          return Padding(
+                            padding: EdgeInsets.only(
+                              left: index == 0 ? context.w(24) : context.w(16),
+                              right: index ==
+                                      dashboard.requestTreatmentClinic!.length -
+                                          1
+                                  ? context.w(24)
+                                  : context.w(0),
+                            ),
+                            child: RequestClinicTreatmentCard(
+                              data: request,
+                              onTap: () {
+                                if (request.id != null) {
+                                  Navigator.pushNamed(
+                                    context,
+                                    PatientTreatmentRequestsScreen.routeName,
+                                    arguments: request.id,
+                                  );
+                                }
+                              },
+                            ),
                           );
                         },
                       ),
-                    ],
-                  ),
+                    ),
+              SizedBox(height: context.h(12)),
+
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                child: HeadingWithRightArrow(
+                  title: "Upcoming Appointments",
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      AppointmentsScreen.routeName,
+                    );
+                  },
                 ),
+              ),
               SizedBox(height: context.h(12)),
                 appointments.isEmpty
                     ? _buildHorizontalEmptyState(
@@ -165,7 +279,7 @@ class HomeScreen extends ConsumerWidget {
                           },
                         ),
                       ),
-          SizedBox(height: context.h(12)),
+              SizedBox(height: context.h(12)),
               // Suggested Treatments Section
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: context.w(24)),
@@ -332,119 +446,6 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
               SizedBox(height: context.h(12)),
-              if (dashboard?.recentSimulations?.isNotEmpty ?? false) ...{
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-                  child: HeadingWithRightArrow(
-                    title: "Recent Simulations",
-                    onTap: () {
-                      ref.read(bottomNavViewModel.notifier).changePage(3);
-                    },
-                  ),
-                ),
-                SizedBox(height: context.h(12)),
-                SizedBox(
-                  height: context.h(200),
-                  child: ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    clipBehavior: Clip.none,
-                    // padding: EdgeInsets.only(
-                    //   top: context.h(10),
-                    //   bottom: context.h(40),
-                    // ),
-                    itemCount: dashboard!.recentSimulations!.length,
-                    itemBuilder: (context, index) => Padding(
-                      padding: EdgeInsets.only(
-                        left: index == 0 ? context.w(24) : context.w(16),
-                        right: index == dashboard.recentSimulations!.length - 1
-                            ? context.w(24)
-                            : context.w(0),
-                      ),
-                      child: DashboardSimulationCard(
-                        simulation: dashboard.recentSimulations![index],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: context.h(12)),
-              },
-              // Shared Treatment Requests Section
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-                child: HeadingWithRightArrow(
-                  title: "Shared Treatment Requests",
-                  showRightArrow: false,
-                  onTap: () {
-                    final clinicId =
-                        dashboard?.requestTreatmentClinic?.firstOrNull?.id;
-                    if (clinicId != null) {
-                      Navigator.pushNamed(
-                        context,
-                        PatientTreatmentRequestsScreen.routeName,
-                        arguments: clinicId,
-                      );
-                    }
-                  },
-                ),
-              ),
-
-              SizedBox(height: context.h(12)),
-
-              // Shared Treatment Requests Empty State Check
-              (dashboard?.requestTreatmentClinic?.isEmpty ?? true)
-                  ? _buildHorizontalEmptyState(
-                      context: context,
-                      height: context.h(100),
-                      icon: Icons.request_page_outlined,
-                      title: "No Shared Treatment Requests",
-                      subtitle: "Shared treatment requests will appear here.",
-                    )
-                  : SizedBox(
-                      height: context.h(150),
-                      child: ListView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        clipBehavior: Clip.none,
-                        // padding: EdgeInsets.only(
-                        //   top: context.h(10),
-                        //   bottom: context.h(40),
-                        // ),
-                        itemCount: dashboard!.requestTreatmentClinic!.length,
-                        itemBuilder: (context, index) {
-                          final request =
-                              dashboard.requestTreatmentClinic![index];
-
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              left: index == 0 ? context.w(24) : context.w(16),
-                              right:
-                                  index ==
-                                          dashboard.requestTreatmentClinic!
-                                                  .length -
-                                              1
-                                      ? context.w(24)
-                                      : context.w(0),
-                            ),
-                            child: RequestClinicTreatmentCard(
-                              data: request,
-                              onTap: () {
-                                if (request.id != null) {
-                                  Navigator.pushNamed(
-                                    context,
-                                    PatientTreatmentRequestsScreen.routeName,
-                                    arguments: request.id,
-                                  );
-                                }
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-              SizedBox(height: context.h(12)),
-            //  SizedBox(height: context.h(12)),
-
               // Promotions & Discounts Section
               if (!isDeploymentMode)
                 Padding(

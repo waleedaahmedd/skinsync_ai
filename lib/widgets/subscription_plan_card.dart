@@ -99,7 +99,7 @@ class SubscriptionPlanCard extends StatelessWidget {
               ),
               SizedBox(height: context.h(8)),
               Text(
-                plan.basePrice == 0 ? "Free" : "\$${plan.basePrice}/month",
+                plan.basePrice == 0 ? "Free" : "\$${plan.basePrice}/${plan.interval}",
                 style: CustomFonts.black18w400.copyWith(
                   fontWeight: FontWeight.bold,
                   color: isSelected

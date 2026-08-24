@@ -2,6 +2,7 @@ class PatientSubscriptionPlanModel {
   final int? id;
   final String? name;
   final double? basePrice;
+  final String interval;
   final int simulationCount;
   final bool unlimitedSimulations;
   final int postsViewCount;
@@ -13,6 +14,7 @@ class PatientSubscriptionPlanModel {
     this.id,
     this.name,
     this.basePrice,
+    this.interval = 'month',
     this.simulationCount = 0,
     this.unlimitedSimulations = false,
     this.postsViewCount = 0,
@@ -26,6 +28,7 @@ class PatientSubscriptionPlanModel {
       id: json['id'] as int?,
       name: json['name'] as String?,
       basePrice: (json['base_price'] as num?)?.toDouble(),
+      interval: json['interval'] as String? ?? 'month',
       simulationCount: json['simulation_count'] as int? ?? 0,
       unlimitedSimulations: json['unlimited_simulations'] as bool? ?? false,
       postsViewCount: json['posts_view_count'] as int? ?? 0,
@@ -42,6 +45,7 @@ class PatientSubscriptionPlanModel {
       'id': id,
       'name': name,
       'base_price': basePrice,
+      'interval': interval,
       'simulation_count': simulationCount,
       'unlimited_simulations': unlimitedSimulations,
       'posts_view_count': postsViewCount,
