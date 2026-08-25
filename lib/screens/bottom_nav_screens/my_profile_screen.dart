@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
+import '../consent_forms_screen.dart';
 import '../get_started_screen.dart';
 import '../personal_detail_screen.dart';
 import '../saved_treatment_screen.dart';
@@ -447,6 +448,16 @@ class MyProfileScreen extends StatelessWidget {
                       buildOptionCard([
                         buildCardOption(
                           callBack: () {
+                            Navigator.pushNamed(
+                              context,
+                              ConsentFormsScreen.routeName,
+                            );
+                          },
+                          icon: Iconsax.document_text,
+                          title: "Consent Forms",
+                        ),
+                        buildCardOption(
+                          callBack: () {
                             WebviewPage.open(
                               context: context,
                               url: 'https://skinsyncai.com/terms-of-service/',
@@ -466,6 +477,7 @@ class MyProfileScreen extends StatelessWidget {
                           },
                           icon: Iconsax.security,
                           title: "Privacy Policy",
+                          isLast: true,
                         ),
                       ]),
                       SizedBox(height: context.h(16)),
