@@ -15,6 +15,7 @@ import '../models/requests/save_history_request.dart';
 import '../models/responses/materials_response.dart';
 import '../models/responses/simulation_history_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
+import '../models/responses/treatment_detail_response.dart';
 import '../models/responses/treatment_list_response.dart';
 import '../models/selected_treatment_and_areas_model.dart';
 import '../repositories/treatment_repository.dart';
@@ -334,6 +335,20 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     return response;
   }
 
+Future<TreatmentDetailModel?> calltreatmentDetail({required int id}) async {
+  final response = await runSafely(() async {
+    state = state.copyWith(loading: true, treatmentDetail: null);
+    final res = await _repo.getTreatmentDetail(treatmentId: id);
+    if (!ref.mounted) return null;
+    state = state.copyWith(loading: false, treatmentDetail: res.data);
+    return res;
+  });
+  if (response == null) {
+    state = state.copyWith(loading: false);
+  }
+  return response?.data;
+}
+
   Future<void> callPredictAPI() async {
     if (state.capturedImagesNull) {
       const msg =
@@ -602,7 +617,7 @@ class TreatmentsState extends BaseStateModel {
   final XFile? frontPoseImage;
   final XFile? leftPoseImage;
   final XFile? rightPoseImage;
-
+  final TreatmentDetailModel? treatmentDetail;
   final XFile? frontAiImage;
   final XFile? leftAiImage;
   final XFile? rightAiImage;
@@ -626,6 +641,7 @@ class TreatmentsState extends BaseStateModel {
     this.leftAiImage,
     this.rightAiImage,
     this.isAiImageGenerated = false,
+    this.treatmentDetail,
   });
 
   @override
@@ -634,6 +650,8 @@ class TreatmentsState extends BaseStateModel {
     String? errorMessage,
     List<TreatmentData>? treatments,
     List<TreatmentAreaModel>? areaNavigationStack,
+    TreatmentDetailModel? treatmentDetail,
+
     bool? isBefore,
     XFile? capturedImage,
     XFile? aiImage,
@@ -663,6 +681,7 @@ class TreatmentsState extends BaseStateModel {
       isAiImageGenerated: isAiImageGenerated ?? this.isAiImageGenerated,
       material: material ?? this.material,
       materialsLoading: materialsLoading ?? this.materialsLoading,
+      treatmentDetail: treatmentDetail ?? this.treatmentDetail,
     );
   }
 

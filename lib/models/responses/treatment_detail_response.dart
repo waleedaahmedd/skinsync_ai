@@ -27,6 +27,7 @@ class TreatmentDetailModel {
   int? id;
   int? currentStep;
   String? status;
+  String? name;
   List<int>? selectedCategoryIds;
   List<TreatmentCategoryModel>? selectedCategories;
   String? globalSku;
@@ -74,6 +75,7 @@ class TreatmentDetailModel {
     this.id,
     this.currentStep,
     this.status,
+    this.name,
     this.selectedCategoryIds,
     this.selectedCategories,
     this.globalSku,
@@ -120,6 +122,7 @@ class TreatmentDetailModel {
 
   TreatmentDetailModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    name = json['name'];
     currentStep = json['current_step'];
     status = json['status'];
     selectedCategoryIds = json['selected_category_ids'] != null

@@ -224,9 +224,11 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   }
 
   Future<bool?> callVerifyOtpApi() async {
+    String? fcmToken = await _getFcmToken();
     final request = OtpRequest(
       email: emailController.text,
       otp: otpController.text,
+      fcmToken: fcmToken ?? '',
     );
     return await runSafely(() async {
       final savedEmail = await SecureStorage().getUserEmail();
