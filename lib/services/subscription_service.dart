@@ -23,7 +23,7 @@ class SubscriptionService implements SubscriptionRepository {
   Future<BaseResponseModel> upgradePlan(int planId) async {
     final response = await apiClient.httpRequest(
       endPoint: EndPoints.subscribe,
-      requestType: RequestType.post,
+      requestType: RequestType.get,
       params: '$planId',
     );
     return BaseResponseModel.fromJson(jsonDecode(response.body));

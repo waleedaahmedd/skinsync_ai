@@ -169,14 +169,6 @@ class SubscriptionPlanCard extends StatelessWidget {
                           ? CustomColors.blackColor
                           : CustomColors.silverColor,
                     ),
-                    if (plan.id == 2 || plan.id == 3)
-                      _buildBenefitItem(
-                        context,
-                        "Priority Support",
-                        color: isSelected
-                            ? CustomColors.blackColor
-                            : CustomColors.silverColor,
-                      ),
                   ],
                 ),
               ),

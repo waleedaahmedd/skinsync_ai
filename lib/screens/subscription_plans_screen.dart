@@ -88,8 +88,8 @@ class _SubscriptionPlansScreenState
           if (currentPlan != null && selectedPlanId != currentPlan.id) ...[
             CustomButton(
               isBorder: true,
-              backgroundColor: Colors.white,
-              textColor: CustomColors.purpleColor,
+              borderRadius: context.r(30),
+              textColor: CustomColors.blackColor,
               onPressed: () => _showComparisonSheet(context, currentPlan, selectedPlan),
               text: "Compare with Current Plan",
             ),
@@ -206,10 +206,6 @@ class _SubscriptionPlansScreenState
         _comparisonItem(
           "Post Views",
           plan.unlimitedPostsView ? "Unlimited" : "${plan.postsViewCount}",
-        ),
-        _comparisonItem(
-          "Support",
-          (plan.id ?? 0) >= 2 ? "Priority" : "Standard",
         ),
       ],
     );
