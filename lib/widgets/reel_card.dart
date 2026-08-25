@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:cached_video_player_plus/cached_video_player_plus.dart';
 import 'package:video_player/video_player.dart';
 
 import '../models/explore_models.dart';
@@ -18,7 +19,7 @@ class ReelCard extends ConsumerStatefulWidget {
 }
 
 class _ReelCardState extends ConsumerState<ReelCard> {
-  late VideoPlayerController _controller;
+  late CachedVideoPlayerPlus _controller;
   bool _initialized = false;
   bool _isExpanded = false;
 
@@ -30,15 +31,15 @@ class _ReelCardState extends ConsumerState<ReelCard> {
 
   void _initializeVideo() {
     _controller =
-        VideoPlayerController.networkUrl(Uri.parse(widget.reel.videoUrl))
+        CachedVideoPlayerPlus.networkUrl(Uri.parse(widget.reel.videoUrl))
           ..initialize().then((_) {
             if (mounted) {
               setState(() {
                 _initialized = true;
               });
               if (widget.isActive) {
-                _controller.play();
-                _controller.setLooping(true);
+                _controller.controller.play();
+                _controller.controller.setLooping(true);
               }
             }
           });
@@ -49,9 +50,9 @@ class _ReelCardState extends ConsumerState<ReelCard> {
     super.didUpdateWidget(oldWidget);
     if (_initialized) {
       if (widget.isActive && !oldWidget.isActive) {
-        _controller.play();
+        _controller.controller.play();
       } else if (!widget.isActive && oldWidget.isActive) {
-        _controller.pause();
+        _controller.controller.pause();
       }
     }
   }
@@ -74,8 +75,8 @@ class _ReelCardState extends ConsumerState<ReelCard> {
           Center(
             child: _initialized
                 ? AspectRatio(
-                    aspectRatio: _controller.value.aspectRatio,
-                    child: VideoPlayer(_controller),
+                    aspectRatio: _controller.controller.value.aspectRatio,
+                    child: VideoPlayer(_controller.controller),
                   )
                 : const CircularProgressIndicator(color: Colors.white),
           ),
@@ -83,10 +84,11 @@ class _ReelCardState extends ConsumerState<ReelCard> {
           // Overlay for interactions
           GestureDetector(
             onTap: () {
-              if (_controller.value.isPlaying) {
-                _controller.pause();
+              if (!_initialized) return;
+              if (_controller.controller.value.isPlaying) {
+                _controller.controller.pause();
               } else {
-                _controller.play();
+                _controller.controller.play();
               }
               setState(() {});
             },
@@ -98,7 +100,7 @@ class _ReelCardState extends ConsumerState<ReelCard> {
           ),
 
           // Play/Pause icon overlay on tap
-          if (!_controller.value.isPlaying && _initialized)
+          if (_initialized && !_controller.controller.value.isPlaying)
             Center(
               child: Icon(
                 Icons.play_arrow_rounded,
