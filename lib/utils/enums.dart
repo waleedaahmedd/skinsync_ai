@@ -65,6 +65,8 @@ enum EndPoints {
   treatmentJourneyOptions('v1/treatment-journey-options'),
   deleteTreatmentJourneyOptions('v1/treatment-journey-option'),
   patientTreatmentRequest('v1/patient-treatment-request'),
+  patientCurrentPlan('v1/patient-current-plan'),
+  subscribe('v1/subscribe/'),
   clinic('v1/clinic');
 
   final String path;
@@ -74,7 +76,7 @@ enum EndPoints {
 
 enum BaseUrls {
   api('https://api.skinsyncai.com/api/'),
-  apiQa('https://api-dev.skinsyncai.com/api/');
+  apiQa('https://gecko-pure-gator.ngrok-free.app/api/');
 
   final String url;
   const BaseUrls(this.url);

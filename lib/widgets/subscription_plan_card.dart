@@ -11,6 +11,7 @@ class SubscriptionPlanCard extends StatelessWidget {
   final bool isActive;
   final VoidCallback onTap;
   final double? width;
+  final double? height;
   final EdgeInsetsGeometry? margin;
 
   const SubscriptionPlanCard({
@@ -20,6 +21,7 @@ class SubscriptionPlanCard extends StatelessWidget {
     this.isActive = false,
     required this.onTap,
     this.width,
+    this.height,
     this.margin,
   });
 
@@ -29,6 +31,7 @@ class SubscriptionPlanCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         width: width,
+        height: height,
         margin: margin ?? EdgeInsets.only(bottom: context.h(16)),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(context.r(24)),
