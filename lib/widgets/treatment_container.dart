@@ -75,7 +75,6 @@ class TreatmentContainer extends StatelessWidget {
         final subtitleText =
             customSubtitle ??
             treatmentData?.shortDescription ??
-            treatments?.description ??
             "";
         final bgImage =
             customImageUrl ??

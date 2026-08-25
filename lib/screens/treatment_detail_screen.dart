@@ -196,7 +196,7 @@ class TreatmentDetailScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    treatments.description ?? '',
+                    treatments.shortDescription ?? '',
                     style: CustomFonts.textGrey16w400,
                   ),
                 ],

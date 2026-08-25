@@ -306,7 +306,6 @@ class _SimulationCardState extends ConsumerState<SimulationCard> {
                                 id: treatment.id,
                                 name: treatment.name,
                                 icon: treatment.icon,
-                                description: treatment.description,
                                 shortDescription: treatment.description,
                                 image: treatment.image,
                                 imageUrl: treatment.image,

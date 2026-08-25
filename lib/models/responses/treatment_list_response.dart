@@ -47,7 +47,6 @@ class TreatmentData {
   int? id;
   String? name;
   String? icon;
-  String? description;
   bool? isArea;
   String? imageUrl;
   String? shortDescription;
@@ -59,7 +58,6 @@ class TreatmentData {
     this.id,
     this.name,
     this.icon,
-    this.description,
     this.isArea = true,
     this.imageUrl,
     this.shortDescription,
@@ -73,10 +71,8 @@ class TreatmentData {
     name = json['name'];
     icon = json['icon'];
     shortDescription = json['short_description'];
-    description = shortDescription;
     globalSku = json['global_sku'];
     image = json['image'];
-    imageUrl = image;
     useInAiSimulator = json['use_in_ai_simulator'];
     isArea = true; // Maintain compatibility with isArea logic
   }

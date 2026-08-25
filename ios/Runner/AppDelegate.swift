@@ -60,7 +60,7 @@ import MediaPlayer
   }
 }
 
-extension AppDelegate: UNUserNotificationCenterDelegate, MessagingDelegate {
+extension AppDelegate: MessagingDelegate {
 }
 
 extension AppDelegate: FlutterStreamHandler {
