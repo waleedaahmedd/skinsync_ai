@@ -30,7 +30,7 @@ enum AppointmentType {
 
 enum EndPoints {
   treatmentList('treatments/list'),
-  treatments("treatments"),
+  treatments("treatment"),
   signIn('login'),
   socialLogin("social-login"),
   biometricRegister('v1/biometric/register'),

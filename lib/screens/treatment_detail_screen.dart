@@ -210,7 +210,7 @@ class _TreatmentDetailScreenState extends ConsumerState<TreatmentDetailScreen> {
                           ),
                           SizedBox(width: 6.w),
                           Text(
-                            detail.patientDisplayName ?? "",
+                            detail.name ?? "",
                             style: CustomFonts.black28w600,
                           ),
                         ],
