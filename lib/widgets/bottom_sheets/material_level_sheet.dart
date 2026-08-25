@@ -187,7 +187,6 @@ class _MaterialLevelSheetState extends ConsumerState<MaterialLevelSheet> {
             CustomButton(
               text: "Apply Selection",
               borderRadius: context.r(26),
-              textColor: Colors.white,
               onPressed: () {
                 final selectedMaterial = SelectedMaterialModel(
                   id: material.id ?? 0,

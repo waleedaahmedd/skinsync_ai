@@ -7,7 +7,7 @@ class PatientSubscriptionPlanModel {
   final bool unlimitedSimulations;
   final int postsViewCount;
   final bool unlimitedPostsView;
-  final List<String>? assignedPatients;
+  final List<dynamic>? assignedPatients;
   final bool isActive;
 
   PatientSubscriptionPlanModel({
@@ -30,12 +30,12 @@ class PatientSubscriptionPlanModel {
       basePrice: (json['base_price'] as num?)?.toDouble(),
       interval: json['interval'] as String? ?? 'month',
       simulationCount: json['simulation_count'] as int? ?? 0,
-      unlimitedSimulations: json['unlimited_simulations'] as bool? ?? false,
+      unlimitedSimulations: (json['unlimited_simulations'] ?? json['unlimited_simulation']) as bool? ?? false,
       postsViewCount: json['posts_view_count'] as int? ?? 0,
       unlimitedPostsView: json['unlimited_posts_view'] as bool? ?? false,
       isActive: (json['is_active'] as bool?) ?? true,
       assignedPatients: json['assigned_patients'] != null
-          ? List<String>.from(json['assigned_patients'] as Iterable)
+          ? List<dynamic>.from(json['assigned_patients'] as Iterable)
           : null,
     );
   }

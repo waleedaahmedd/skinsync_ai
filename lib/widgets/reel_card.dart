@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:cached_video_player_plus/cached_video_player_plus.dart';
 import 'package:video_player/video_player.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../models/explore_models.dart';
 import '../utils/custom_fonts.dart';
@@ -40,6 +41,7 @@ class _ReelCardState extends ConsumerState<ReelCard> {
               if (widget.isActive) {
                 _controller.controller.play();
                 _controller.controller.setLooping(true);
+                WakelockPlus.enable();
               }
             }
           });
@@ -51,6 +53,7 @@ class _ReelCardState extends ConsumerState<ReelCard> {
     if (_initialized) {
       if (widget.isActive && !oldWidget.isActive) {
         _controller.controller.play();
+        WakelockPlus.enable();
       } else if (!widget.isActive && oldWidget.isActive) {
         _controller.controller.pause();
       }
@@ -59,6 +62,9 @@ class _ReelCardState extends ConsumerState<ReelCard> {
 
   @override
   void dispose() {
+    if (widget.isActive) {
+      WakelockPlus.disable();
+    }
     _controller.dispose();
     super.dispose();
   }
@@ -87,8 +93,10 @@ class _ReelCardState extends ConsumerState<ReelCard> {
               if (!_initialized) return;
               if (_controller.controller.value.isPlaying) {
                 _controller.controller.pause();
+                WakelockPlus.disable();
               } else {
                 _controller.controller.play();
+                WakelockPlus.enable();
               }
               setState(() {});
             },

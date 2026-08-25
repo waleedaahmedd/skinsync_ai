@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
+import '../consent_forms_screen.dart';
 import '../get_started_screen.dart';
 import '../personal_detail_screen.dart';
 import '../saved_treatment_screen.dart';
@@ -115,80 +116,86 @@ class MyProfileScreen extends StatelessWidget {
     }
 
     Widget buildUpgradeBanner() {
-      return Container(
-        padding: EdgeInsets.all(context.w(16)),
-        decoration: BoxDecoration(
-          gradient: CustomColors.purpleBlueGradient,
-          borderRadius: BorderRadius.circular(context.r(24)),
-          boxShadow: [
-            BoxShadow(
-              color: CustomColors.purpleColor.withValues(alpha: 0.3),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: EdgeInsets.all(context.w(10)),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                shape: BoxShape.circle,
+      return InkWell(
+        onTap: () {
+          Navigator.pushNamed(context, SubscriptionPlansScreen.routeName);
+        },
+        borderRadius: BorderRadius.circular(context.r(24)),
+        child: Container(
+          padding: EdgeInsets.all(context.w(16)),
+          decoration: BoxDecoration(
+            gradient: CustomColors.purpleBlueGradient,
+            borderRadius: BorderRadius.circular(context.r(24)),
+            boxShadow: [
+              BoxShadow(
+                color: CustomColors.purpleColor.withValues(alpha: 0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
               ),
-              child: Icon(
-                Iconsax.crown,
-                color: Colors.white,
-                size: context.w(24),
-              ),
-            ),
-            SizedBox(width: context.w(16)),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Upgrade to Premium",
-                    style: CustomFonts.white16w600.copyWith(
-                      color: Colors.black87,
-                      fontSize: context.sp(15),
-                    ),
-                  ),
-                  SizedBox(height: context.h(2)),
-                  Text(
-                    "Unlock unlimited AI simulations and premium support.",
-                    style: CustomFonts.white12w600.copyWith(
-                      color: Colors.black54,
-                      fontSize: context.sp(11),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: context.w(12)),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, SubscriptionPlansScreen.routeName);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(
-                  horizontal: context.w(14),
-                  vertical: context.h(8),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(context.w(10)),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  shape: BoxShape.circle,
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(context.r(12)),
+                child: Icon(
+                  Iconsax.crown,
+                  color: CustomColors.blackColor,
+                  size: context.w(24),
                 ),
-                elevation: 0,
               ),
-              child: Text(
-                "Upgrade",
-                style: CustomFonts.white14w600.copyWith(fontSize: context.sp(12)),
+              SizedBox(width: context.w(16)),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Upgrade to Premium",
+                      style: CustomFonts.white16w600.copyWith(
+                        color: Colors.black87,
+                        fontSize: context.sp(15),
+                      ),
+                    ),
+                    SizedBox(height: context.h(2)),
+                    Text(
+                      "Unlock unlimited AI simulations and premium support.",
+                      style: CustomFonts.white12w600.copyWith(
+                        color: Colors.black54,
+                        fontSize: context.sp(11),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+              SizedBox(width: context.w(12)),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, SubscriptionPlansScreen.routeName);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.w(14),
+                    vertical: context.h(8),
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(context.r(12)),
+                  ),
+                  elevation: 0,
+                ),
+                child: Text(
+                  "Upgrade",
+                  style: CustomFonts.white14w600.copyWith(fontSize: context.sp(12)),
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -441,6 +448,16 @@ class MyProfileScreen extends StatelessWidget {
                       buildOptionCard([
                         buildCardOption(
                           callBack: () {
+                            Navigator.pushNamed(
+                              context,
+                              ConsentFormsScreen.routeName,
+                            );
+                          },
+                          icon: Iconsax.document_text,
+                          title: "Consent Forms",
+                        ),
+                        buildCardOption(
+                          callBack: () {
                             WebviewPage.open(
                               context: context,
                               url: 'https://skinsyncai.com/terms-of-service/',
@@ -460,6 +477,7 @@ class MyProfileScreen extends StatelessWidget {
                           },
                           icon: Iconsax.security,
                           title: "Privacy Policy",
+                          isLast: true,
                         ),
                       ]),
                       SizedBox(height: context.h(16)),
