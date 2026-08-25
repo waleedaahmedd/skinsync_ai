@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
+import '../models/subscription_plan_model.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../view_models/subscription_view_model.dart';
@@ -58,8 +59,11 @@ class _SubscriptionPlansScreenState
     final allPlans = state.plans;
 
     if (selectedPlanId == null && allPlans.isNotEmpty) {
-      selectedPlanId = currentPlan?.id ?? allPlans.first.id;
+      selectedPlanId = state.currentPlan?.id ?? allPlans.first.id;
     }
+
+    final selectedPlan =
+        allPlans.firstWhere((p) => p.id == selectedPlanId, orElse: () => allPlans.first);
 
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -78,24 +82,148 @@ class _SubscriptionPlansScreenState
           ),
         ],
       ),
-      child: CustomButton(
-        onPressed:
-            selectedPlanId == currentPlan?.id
-                ? null
-                : () async {
-                    if (selectedPlanId != null) {
-                      final success = await ref
-                          .read(subscriptionProvider.notifier)
-                          .upgradePlan(selectedPlanId!);
-                      if (success && mounted) {
-                        // Plan refreshed inside upgradePlan
-                      }
-                    }
-                  },
-        text:
-            selectedPlanId == currentPlan?.id
-                ? "Currently Active"
-                : "Upgrade to ${allPlans.firstWhere((p) => p.id == selectedPlanId, orElse: () => allPlans.first).name}",
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (currentPlan != null && selectedPlanId != currentPlan.id) ...[
+            CustomButton(
+              isBorder: true,
+              backgroundColor: Colors.white,
+              textColor: CustomColors.purpleColor,
+              onPressed: () => _showComparisonSheet(context, currentPlan, selectedPlan),
+              text: "Compare with Current Plan",
+            ),
+            SizedBox(height: context.h(12)),
+          ],
+          CustomButton(
+            onPressed:
+                selectedPlanId == currentPlan?.id
+                    ? null
+                    : () async {
+                        if (selectedPlanId != null) {
+                          final success = await ref
+                              .read(subscriptionProvider.notifier)
+                              .upgradePlan(selectedPlanId!);
+                          if (success && mounted) {
+                            // Plan refreshed inside upgradePlan
+                          }
+                        }
+                      },
+            text:
+                selectedPlanId == currentPlan?.id
+                    ? "Currently Active"
+                    : "Upgrade to ${selectedPlan.name}",
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showComparisonSheet(
+    BuildContext context,
+    PatientSubscriptionPlanModel current,
+    PatientSubscriptionPlanModel selected,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        height: 0.6.sh,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(32))),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(20)),
+        child: Column(
+          children: [
+            Container(
+              width: context.w(40),
+              height: context.h(4),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            SizedBox(height: context.h(24)),
+            Text("Plan Comparison", style: CustomFonts.black22w600),
+            SizedBox(height: context.h(32)),
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(child: _buildComparisonColumn("Current", current)),
+                  Container(
+                    width: 1,
+                    height: double.infinity,
+                    color: Colors.grey.shade200,
+                    margin: EdgeInsets.symmetric(horizontal: context.w(12)),
+                  ),
+                  Expanded(child: _buildComparisonColumn("Selected", selected, isHighlighted: true)),
+                ],
+              ),
+            ),
+            SizedBox(height: context.h(20)),
+            CustomButton(
+              onPressed: () => Navigator.pop(context),
+              text: "Close",
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildComparisonColumn(
+    String label,
+    PatientSubscriptionPlanModel plan, {
+    bool isHighlighted = false,
+  }) {
+    return Column(
+      children: [
+        Text(
+          label,
+          style: CustomFonts.grey14w400.copyWith(
+            color: isHighlighted ? CustomColors.purpleColor : Colors.grey,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: context.h(8)),
+        Text(
+          plan.name ?? '',
+          style: CustomFonts.black18w600,
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: context.h(4)),
+        Text(
+          plan.basePrice == 0 ? "Free" : "\$${plan.basePrice}/${plan.interval}",
+          style: CustomFonts.black14w600.copyWith(color: CustomColors.purpleColor),
+        ),
+        SizedBox(height: context.h(24)),
+        _comparisonItem(
+          "Simulations",
+          plan.unlimitedSimulations ? "Unlimited" : "${plan.simulationCount}",
+        ),
+        _comparisonItem(
+          "Post Views",
+          plan.unlimitedPostsView ? "Unlimited" : "${plan.postsViewCount}",
+        ),
+        _comparisonItem(
+          "Support",
+          (plan.id ?? 0) >= 2 ? "Priority" : "Standard",
+        ),
+      ],
+    );
+  }
+
+  Widget _comparisonItem(String title, String value) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: context.h(16)),
+      child: Column(
+        children: [
+          Text(title, style: CustomFonts.grey12w400),
+          SizedBox(height: context.h(2)),
+          Text(value, style: CustomFonts.black14w600),
+        ],
       ),
     );
   }
