@@ -23,6 +23,9 @@ import '../journey_clinics_screen.dart';
 import '../notification_screen.dart';
 import '../patient_treatment_requests_screen.dart';
 import 'appointments_screen.dart';
+import '../../utils/enums.dart';
+import '../../view_models/home_view_model.dart';
+import '../../widgets/reorder_home_sections_sheet.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -78,426 +81,538 @@ class HomeScreen extends ConsumerWidget {
     final authData = ref.watch(authViewModel).authData;
     final dashboard = authData?.dashboard;
     final appointments = dashboard?.appointments ?? [];
+    final homeState = ref.watch(homeViewModelProvider);
+    final sections = homeState.sections;
+    final isReorderMode = homeState.isReorderMode;
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBarWithActionIcon(
-        action: !isDeploymentMode
-            ? GreyContainer(
+        action: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (isReorderMode)
+              TextButton(
+                onPressed: () =>
+                    ref.read(homeViewModelProvider.notifier).toggleReorderMode(),
+                child: Text("Done", style: CustomFonts.darkPurple12w600.copyWith(fontSize: context.sp(14))),
+              )
+            else
+              GreyContainer(
+                icon: Icons.sort_rounded,
+                onTap: () =>
+                    ref.read(homeViewModelProvider.notifier).toggleReorderMode(),
+              ),
+            if (!isDeploymentMode) ...[
+              SizedBox(width: context.w(12)),
+              GreyContainer(
                 icon: Icons.notifications_none_outlined,
                 onTap: () {
-                  Navigator.of(context).pushNamed(NotificationScreen.routeName);
+                  Navigator.of(context)
+                      .pushNamed(NotificationScreen.routeName);
                 },
-              )
-            : null,
+              ),
+            ],
+          ],
+        ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: ReorderableListView(
+          proxyDecorator: (child, index, animation) => Material(
+            color: Colors.transparent,
+            child: child,
+          ),
           physics: const BouncingScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: context.h(22)),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-                child: Column(
-                  children: [
-                    if (!isDeploymentMode) const PointsEarnCard(),
-                    if (!isDeploymentMode) SizedBox(height: context.h(28)),
-                  ],
-                ),
-              ),
-
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-                child: HeadingWithRightArrow(
-                  title: "Recent Simulations",
-                  onTap: () {
-                    ref.read(bottomNavViewModel.notifier).changePage(3);
-                  },
-                ),
-              ),
-              SizedBox(height: context.h(12)),
-              (dashboard?.recentSimulations?.isEmpty ?? true)
-                  ? _buildHorizontalEmptyState(
-                      context: context,
-                      height: context.h(100),
-                      icon: Icons.auto_awesome_rounded,
-                      title: "No Recent Simulations",
-                      subtitle:
-                          "Your facial AI scans and treatment simulations will appear here.",
-                    )
-                  : SizedBox(
-                      height: context.h(200),
-                      child: ListView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        clipBehavior: Clip.none,
-                        itemCount: dashboard!.recentSimulations!.length,
-                        itemBuilder: (context, index) => Padding(
-                          padding: EdgeInsets.only(
-                            left: index == 0 ? context.w(24) : context.w(16),
-                            right: index == dashboard.recentSimulations!.length - 1
-                                ? context.w(24)
-                                : context.w(0),
-                          ),
-                          child: DashboardSimulationCard(
-                            simulation: dashboard.recentSimulations![index],
-                          ),
+          padding: EdgeInsets.only(top: context.h(22), bottom: context.h(100)),
+          onReorder: (oldIndex, newIndex) {
+            ref
+                .read(homeViewModelProvider.notifier)
+                .reorderSections(oldIndex, newIndex);
+          },
+          buildDefaultDragHandles: false, // We'll show handles only in edit mode
+          children: sections.map((section) {
+            final Widget sectionWidget;
+            switch (section) {
+              case HomeSection.points:
+                sectionWidget = isDeploymentMode
+                    ? const SizedBox.shrink()
+                    : Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: context.w(24)),
+                        child: Column(
+                          children: [
+                            const PointsEarnCard(),
+                            SizedBox(height: context.h(28)),
+                          ],
                         ),
+                      );
+                break;
+
+              case HomeSection.recentSimulations:
+                sectionWidget = Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                      child: HeadingWithRightArrow(
+                        title: "Recent Simulations",
+                        onTap: () {
+                          ref.read(bottomNavViewModel.notifier).changePage(3);
+                        },
                       ),
                     ),
-              SizedBox(height: context.h(12)),
-
-              // Shared Treatment Requests Section
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-                child: HeadingWithRightArrow(
-                  title: "Shared Treatment Requests",
-                  showRightArrow: false,
-                  onTap: () {
-                    final clinicId =
-                        dashboard?.requestTreatmentClinic?.firstOrNull?.id;
-                    if (clinicId != null) {
-                      Navigator.pushNamed(
-                        context,
-                        PatientTreatmentRequestsScreen.routeName,
-                        arguments: clinicId,
-                      );
-                    }
-                  },
-                ),
-              ),
-
-              SizedBox(height: context.h(12)),
-
-              // Shared Treatment Requests Empty State Check
-              (dashboard?.requestTreatmentClinic?.isEmpty ?? true)
-                  ? _buildHorizontalEmptyState(
-                      context: context,
-                      height: context.h(100),
-                      icon: Icons.request_page_outlined,
-                      title: "No Shared Treatment Requests",
-                      subtitle: "Shared treatment requests will appear here.",
-                    )
-                  : SizedBox(
-                      height: context.h(150),
-                      child: ListView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        clipBehavior: Clip.none,
-                        itemCount: dashboard!.requestTreatmentClinic!.length,
-                        itemBuilder: (context, index) {
-                          final request =
-                              dashboard.requestTreatmentClinic![index];
-
-                          return Padding(
-                            padding: EdgeInsets.only(
-                              left: index == 0 ? context.w(24) : context.w(16),
-                              right: index ==
-                                      dashboard.requestTreatmentClinic!.length -
-                                          1
-                                  ? context.w(24)
-                                  : context.w(0),
+                    SizedBox(height: context.h(12)),
+                    (dashboard?.recentSimulations?.isEmpty ?? true)
+                        ? _buildHorizontalEmptyState(
+                            context: context,
+                            height: context.h(100),
+                            icon: Icons.auto_awesome_rounded,
+                            title: "No Recent Simulations",
+                            subtitle:
+                                "Your facial AI scans and treatment simulations will appear here.",
+                          )
+                        : SizedBox(
+                            height: context.h(200),
+                            child: ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              clipBehavior: Clip.none,
+                              itemCount: dashboard!.recentSimulations!.length,
+                              itemBuilder: (context, index) => Padding(
+                                padding: EdgeInsets.only(
+                                  left:
+                                      index == 0 ? context.w(24) : context.w(16),
+                                  right: index ==
+                                          dashboard.recentSimulations!.length - 1
+                                      ? context.w(24)
+                                      : context.w(0),
+                                ),
+                                child: DashboardSimulationCard(
+                                  simulation: dashboard.recentSimulations![index],
+                                ),
+                              ),
                             ),
-                            child: RequestClinicTreatmentCard(
-                              data: request,
-                              onTap: () {
-                                if (request.id != null) {
-                                  Navigator.pushNamed(
-                                    context,
-                                    PatientTreatmentRequestsScreen.routeName,
-                                    arguments: request.id,
-                                  );
-                                }
+                          ),
+                    SizedBox(height: context.h(12)),
+                  ],
+                );
+                break;
+
+              case HomeSection.sharedTreatmentRequests:
+                sectionWidget = Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                      child: HeadingWithRightArrow(
+                        title: "Shared Treatment Requests",
+                        showRightArrow: false,
+                        onTap: () {
+                          final clinicId = dashboard
+                              ?.requestTreatmentClinic?.firstOrNull?.id;
+                          if (clinicId != null) {
+                            Navigator.pushNamed(
+                              context,
+                              PatientTreatmentRequestsScreen.routeName,
+                              arguments: clinicId,
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                    SizedBox(height: context.h(12)),
+                    (dashboard?.requestTreatmentClinic?.isEmpty ?? true)
+                        ? _buildHorizontalEmptyState(
+                            context: context,
+                            height: context.h(100),
+                            icon: Icons.request_page_outlined,
+                            title: "No Shared Treatment Requests",
+                            subtitle:
+                                "Shared treatment requests will appear here.",
+                          )
+                        : SizedBox(
+                            height: context.h(150),
+                            child: ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              clipBehavior: Clip.none,
+                              itemCount:
+                                  dashboard!.requestTreatmentClinic!.length,
+                              itemBuilder: (context, index) {
+                                final request =
+                                    dashboard.requestTreatmentClinic![index];
+
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                    left:
+                                        index == 0 ? context.w(24) : context.w(16),
+                                    right: index ==
+                                            dashboard.requestTreatmentClinic!
+                                                    .length -
+                                                1
+                                        ? context.w(24)
+                                        : context.w(0),
+                                  ),
+                                  child: RequestClinicTreatmentCard(
+                                    data: request,
+                                    onTap: () {
+                                      if (request.id != null) {
+                                        Navigator.pushNamed(
+                                          context,
+                                          PatientTreatmentRequestsScreen
+                                              .routeName,
+                                          arguments: request.id,
+                                        );
+                                      }
+                                    },
+                                  ),
+                                );
                               },
                             ),
+                          ),
+                    SizedBox(height: context.h(12)),
+                  ],
+                );
+                break;
+
+              case HomeSection.upcomingAppointments:
+                sectionWidget = Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                      child: HeadingWithRightArrow(
+                        title: "Upcoming Appointments",
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppointmentsScreen.routeName,
                           );
                         },
                       ),
                     ),
-              SizedBox(height: context.h(12)),
+                    SizedBox(height: context.h(12)),
+                    appointments.isEmpty
+                        ? _buildHorizontalEmptyState(
+                            context: context,
+                            height: context.h(100),
+                            icon: Icons.calendar_today_rounded,
+                            title: "No Upcoming Appointments",
+                            subtitle:
+                                "Your scheduled clinical treatments and session details will appear here.",
+                          )
+                        : SizedBox(
+                            height: context.h(305),
+                            child: ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              clipBehavior: Clip.none,
+                              itemCount: appointments.length,
+                              itemBuilder: (context, index) {
+                                final appointment = appointments[index];
 
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-                child: HeadingWithRightArrow(
-                  title: "Upcoming Appointments",
-                  onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      AppointmentsScreen.routeName,
-                    );
-                  },
-                ),
-              ),
-              SizedBox(height: context.h(12)),
-                appointments.isEmpty
-                    ? _buildHorizontalEmptyState(
-                        context: context,
-                        height: context.h(100),
-                        icon: Icons.calendar_today_rounded,
-                        title: "No Upcoming Appointments",
-                        subtitle:
-                            "Your scheduled clinical treatments and session details will appear here.",
-                      )
-                    : SizedBox(
-                        height: context.h(305),
-                        child: ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          clipBehavior: Clip.none,
-                          // padding: EdgeInsets.only(
-                          //   top: context.h(10),
-                          //   bottom: context.h(40),
-                          // ),
-                          itemCount: appointments.length,
-                          itemBuilder: (context, index) {
-                            final appointment = appointments[index];
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                    left:
+                                        index == 0 ? context.w(24) : context.w(16),
+                                    right: index == appointments.length - 1
+                                        ? context.w(24)
+                                        : context.w(0),
+                                  ),
+                                  child: SizedBox(
+                                    width: 0.8.sw,
+                                    child: AppointmentCard(
+                                      isTreatmentListHorizontal: true,
+                                      appointment: appointment,
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          AppointmentDetailScreen.routeName,
+                                          arguments: appointment,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                    SizedBox(height: context.h(12)),
+                  ],
+                );
+                break;
 
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                left: index == 0 ? context.w(24) : context.w(16),
-                                right: index == appointments.length - 1
-                                    ? context.w(24)
-                                    : context.w(0),
-                              ),
-                              child: SizedBox(
-                                width: 0.8.sw,
-                                child: AppointmentCard(
-                                  isTreatmentListHorizontal: true,
-                                  appointment: appointment,
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      AppointmentDetailScreen.routeName,
-                                      arguments: appointment,
-                                    );
-                                  },
+              case HomeSection.suggestedTreatments:
+                sectionWidget = Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                      child: HeadingWithRightArrow(
+                        title: "Suggested Treatments",
+                        onTap: () {
+                          ref.read(bottomNavViewModel.notifier).changePage(1);
+                        },
+                      ),
+                    ),
+                    SizedBox(height: context.h(12)),
+                    SizedBox(
+                      height: context.h(180),
+                      child: Consumer(
+                        builder: (context, ref, _) {
+                          final suggestedTreatments =
+                              dashboard?.suggestedTreatments ?? [];
+
+                          if (suggestedTreatments.isEmpty) {
+                            return _buildHorizontalEmptyState(
+                              context: context,
+                              height: context.h(100),
+                              icon: Icons.auto_awesome_rounded,
+                              title: "No Suggested Treatments",
+                              subtitle:
+                                  "Complete your facial AI scan to receive personalized clinical suggestions.",
+                            );
+                          }
+
+                          return ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: suggestedTreatments.length,
+                            scrollDirection: Axis.horizontal,
+                            clipBehavior: Clip.none,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                  left:
+                                      index == 0 ? context.w(24) : context.w(16),
+                                  right: index == suggestedTreatments.length - 1
+                                      ? context.w(24)
+                                      : context.w(0),
+                                ),
+                                child: TreatmentContainer(
+                                  width: context.w(350),
+                                  treatments: suggestedTreatments[index],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(height: context.h(12)),
+                  ],
+                );
+                break;
+
+              case HomeSection.topDoctors:
+                sectionWidget = isDeploymentMode
+                    ? const SizedBox.shrink()
+                    : Column(
+                        children: [
+                          Padding(
+                            padding:
+                                EdgeInsets.symmetric(horizontal: context.w(24)),
+                            child: HeadingWithRightArrow(
+                              title: "Top Doctors",
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  DoctorsScreen.routeName,
+                                  arguments: {'isFromHome': true},
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(height: context.h(10)),
+                          (dashboard?.topDoctors?.isEmpty ?? true)
+                              ? _buildHorizontalEmptyState(
+                                  context: context,
+                                  height: context.h(100),
+                                  icon: Icons.badge_outlined,
+                                  title: "No Specialists Available",
+                                  subtitle:
+                                      "Specialist dermatologists and clinical practitioners will be listed here soon.",
+                                )
+                              : SizedBox(
+                                  height: context.h(250),
+                                  child: ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    scrollDirection: Axis.horizontal,
+                                    clipBehavior: Clip.none,
+                                    itemCount: dashboard!.topDoctors!.length,
+                                    itemBuilder: (context, index) => Padding(
+                                      padding: EdgeInsets.only(
+                                        left: index == 0
+                                            ? context.w(24)
+                                            : context.w(16),
+                                        right: index ==
+                                                dashboard.topDoctors!.length - 1
+                                            ? context.w(24)
+                                            : context.w(0),
+                                      ),
+                                      child: DashboardDoctorHomeCard(
+                                        doctor: dashboard.topDoctors![index],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                          SizedBox(height: context.h(12)),
+                        ],
+                      );
+                break;
+
+              case HomeSection.topClinics:
+                sectionWidget = Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                      child: HeadingWithRightArrow(
+                        title: "Top Clinics",
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            JourneyClinicsScreen.routeName,
+                          );
+                        },
+                      ),
+                    ),
+                    SizedBox(height: context.h(12)),
+                    (dashboard?.topClinics?.isEmpty ?? true)
+                        ? _buildHorizontalEmptyState(
+                            context: context,
+                            height: context.h(100),
+                            icon: Icons.storefront_rounded,
+                            title: "No Clinics Available",
+                            subtitle:
+                                "Top-rated aesthetic clinics and wellness spas will be listed here soon.",
+                          )
+                        : SizedBox(
+                            height: context.h(200),
+                            child: ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              clipBehavior: Clip.none,
+                              itemCount: dashboard!.topClinics!.length,
+                              itemBuilder: (context, index) => Padding(
+                                padding: EdgeInsets.only(
+                                  left:
+                                      index == 0 ? context.w(24) : context.w(16),
+                                  right: index ==
+                                          dashboard.topClinics!.length - 1
+                                      ? context.w(24)
+                                      : context.w(0),
+                                ),
+                                child: DashboardClinicHomeCard(
+                                  clinic: dashboard.topClinics![index],
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                      ),
-              SizedBox(height: context.h(12)),
-              // Suggested Treatments Section
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-                child: HeadingWithRightArrow(
-                  title: "Suggested Treatments",
-                  onTap: () {
-                    ref.read(bottomNavViewModel.notifier).changePage(1);
-                  },
-                ),
-              ),
-
-              SizedBox(height: context.h(12)),
-
-              SizedBox(
-                height: context.h(180),
-                child: Consumer(
-                  builder: (context, ref, _) {
-                    final suggestedTreatments =
-                        dashboard?.suggestedTreatments ?? [];
-
-                    if (suggestedTreatments.isEmpty) {
-                      return _buildHorizontalEmptyState(
-                        context: context,
-                        height: context.h(100),
-                        icon: Icons.auto_awesome_rounded,
-                        title: "No Suggested Treatments",
-                        subtitle:
-                            "Complete your facial AI scan to receive personalized clinical suggestions.",
-                      );
-                    }
-
-                    return ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: suggestedTreatments.length,
-                      scrollDirection: Axis.horizontal,
-                      clipBehavior: Clip.none,
-                      // padding: EdgeInsets.only(
-                      //   top: context.h(2),
-                      //   bottom: context.h(20),
-                      // ),
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.only(
-                            left: index == 0 ? context.w(24) : context.w(16),
-                            right: index == suggestedTreatments.length - 1
-                                ? context.w(24)
-                                : context.w(0),
+                            ),
                           ),
-                          child: TreatmentContainer(
-                            //imageHeight: context.h(145),
-                            width: context.w(350),
-                            treatments: suggestedTreatments[index],
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
-              if (!isDeploymentMode) SizedBox(height: context.h(12)),
+                    SizedBox(height: context.h(12)),
+                  ],
+                );
+                break;
 
-              // Top Doctors Section
-              if (!isDeploymentMode)
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-                  child: HeadingWithRightArrow(
-                    title: "Top Doctors",
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        DoctorsScreen.routeName,
-                        arguments: {'isFromHome': true},
+              case HomeSection.promotions:
+                sectionWidget = isDeploymentMode
+                    ? const SizedBox.shrink()
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding:
+                                EdgeInsets.symmetric(horizontal: context.w(24)),
+                            child: Text(
+                              "Promotions & Discounts",
+                              style: CustomFonts.black22w600,
+                            ),
+                          ),
+                          SizedBox(height: context.h(10)),
+                          promotionsCount == 0
+                              ? _buildHorizontalEmptyState(
+                                  context: context,
+                                  height: context.h(100),
+                                  icon: Icons.local_offer_outlined,
+                                  title: "No Promotions Available",
+                                  subtitle:
+                                      "Exclusive clinical deals, seasonal discounts, and special offers are on their way.",
+                                )
+                              : SizedBox(
+                                  height: context.h(200),
+                                  child: ListView.builder(
+                                    physics: const BouncingScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: promotionsCount,
+                                    scrollDirection: Axis.horizontal,
+                                    clipBehavior: Clip.none,
+                                    padding: EdgeInsets.only(
+                                      top: context.h(10),
+                                      bottom: context.h(40),
+                                    ),
+                                    itemBuilder: (context, index) {
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                          left: index == 0
+                                              ? context.w(24)
+                                              : context.w(16),
+                                          right: index == promotionsCount - 1
+                                              ? context.w(24)
+                                              : context.w(0),
+                                        ),
+                                        child: const DiscountCard(),
+                                      );
+                                    },
+                                  ),
+                                ),
+                          SizedBox(height: context.h(10)),
+                        ],
                       );
-                    },
+                break;
+            }
+
+            final item = Container(
+              key: ValueKey(section),
+              margin: EdgeInsets.only(left: isReorderMode ? context.w(48) : 0),
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  AbsorbPointer(
+                    absorbing: isReorderMode,
+                    child: Opacity(
+                      opacity: isReorderMode ? 0.6 : 1.0,
+                      child: sectionWidget,
+                    ),
                   ),
-                ),
-              if (!isDeploymentMode) SizedBox(height: context.h(10)),
-
-              // Top Doctors Empty State Check
-              if (!isDeploymentMode)
-                (dashboard?.topDoctors?.isEmpty ?? true)
-                    ? _buildHorizontalEmptyState(
-                        context: context,
-                        height: context.h(100),
-                        icon: Icons.badge_outlined,
-                        title: "No Specialists Available",
-                        subtitle:
-                            "Specialist dermatologists and clinical practitioners will be listed here soon.",
-                      )
-                    : SizedBox(
-                        height: context.h(250),
-                        child: ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          clipBehavior: Clip.none,
-                          // padding: EdgeInsets.only(
-                          //   top: context.h(10),
-                          //   bottom: context.h(40),
-                          // ),
-                          itemCount: dashboard!.topDoctors!.length,
-                          itemBuilder: (context, index) => Padding(
-                            padding: EdgeInsets.only(
-                              left: index == 0 ? context.w(24) : context.w(16),
-                              right: index == dashboard.topDoctors!.length - 1
-                                  ? context.w(24)
-                                  : context.w(0),
-                            ),
-                            child: DashboardDoctorHomeCard(
-                              doctor: dashboard.topDoctors![index],
-                            ),
+                  if (isReorderMode)
+                    Positioned(
+                      left: -context.w(42),
+                      top: context.h(0),
+                      child: Container(
+                        padding: EdgeInsets.all(context.w(6)),
+                        decoration: BoxDecoration(
+                          color: CustomColors.purpleColor.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(context.r(10)),
+                          border: Border.all(
+                            color: CustomColors.purpleColor.withValues(alpha: 0.2),
+                            width: 1,
                           ),
                         ),
-                      ),
-              SizedBox(height: context.h(12)),
-              // Top Clinics Section
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-                child: HeadingWithRightArrow(
-                  title: "Top Clinics",
-                  onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      JourneyClinicsScreen.routeName,
-                    );
-                  },
-                ),
-              ),
-
-              SizedBox(height: context.h(12)),
-
-              // Top Clinics Empty State Check
-              (dashboard?.topClinics?.isEmpty ?? true)
-                  ? _buildHorizontalEmptyState(
-                      context: context,
-                      height: context.h(100),
-                      icon: Icons.storefront_rounded,
-                      title: "No Clinics Available",
-                      subtitle:
-                          "Top-rated aesthetic clinics and wellness spas will be listed here soon.",
-                    )
-                  : SizedBox(
-                      height: context.h(200),
-                      child: ListView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        clipBehavior: Clip.none,
-                        // padding: EdgeInsets.only(
-                        //   top: context.h(10),
-                        //   bottom: context.h(40),
-                        // ),
-                        itemCount: dashboard!.topClinics!.length,
-                        itemBuilder: (context, index) => Padding(
-                          padding: EdgeInsets.only(
-                            left: index == 0 ? context.w(24) : context.w(16),
-                            right: index == dashboard.topClinics!.length - 1
-                                ? context.w(24)
-                                : context.w(0),
-                          ),
-                          child: DashboardClinicHomeCard(
-                            clinic: dashboard.topClinics![index],
-                          ),
+                        child: Icon(
+                          Icons.drag_handle_rounded,
+                          color: CustomColors.purpleColor,
+                          size: context.sp(24),
                         ),
                       ),
                     ),
-              SizedBox(height: context.h(12)),
-              // Promotions & Discounts Section
-              if (!isDeploymentMode)
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-                  child: Text(
-                    "Promotions & Discounts",
-                    style: CustomFonts.black22w600,
-                  ),
-                ),
-              if (!isDeploymentMode) SizedBox(height: context.h(10)),
+                ],
+              ),
+            );
 
-              // Promotions Empty State Check
-              if (!isDeploymentMode)
-                promotionsCount == 0
-                    ? _buildHorizontalEmptyState(
-                        context: context,
-                        height: context.h(100),
-                        icon: Icons.local_offer_outlined,
-                        title: "No Promotions Available",
-                        subtitle:
-                            "Exclusive clinical deals, seasonal discounts, and special offers are on their way.",
-                      )
-                    : SizedBox(
-                        height: context.h(200),
-                        child: ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: promotionsCount,
-                          scrollDirection: Axis.horizontal,
-                          clipBehavior: Clip.none,
-                          padding: EdgeInsets.only(
-                            top: context.h(10),
-                            bottom: context.h(40),
-                          ),
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: EdgeInsets.only(
-                                left: index == 0
-                                    ? context.w(24)
-                                    : context.w(16),
-                                right: index == promotionsCount - 1
-                                    ? context.w(24)
-                                    : context.w(0),
-                              ),
-                              child: const DiscountCard(),
-                            );
-                          },
-                        ),
-                      ),
-              SizedBox(height: context.h(100)),
-            ],
-          ),
+            if (isReorderMode) {
+              return ReorderableDragStartListener(
+                key: ValueKey(section),
+                index: sections.indexOf(section),
+                child: item,
+              );
+            }
+            return item;
+          }).toList(),
         ),
       ),
     );

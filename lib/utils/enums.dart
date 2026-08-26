@@ -1,7 +1,8 @@
 enum SharedPreferencesKeys {
   themeModeKey("theme-mode"),
   biometricAuthKey("biometric-auth"),
-  accessTokenKey("access-token");
+  accessTokenKey("access-token"),
+  homeSectionsOrder("home-sections-order");
 
   const SharedPreferencesKeys(this.keyText);
 
@@ -112,4 +113,36 @@ enum Store {
   final String link;
 
   const Store(this.link);
+}
+
+enum HomeSection {
+  points,
+  recentSimulations,
+  sharedTreatmentRequests,
+  upcomingAppointments,
+  suggestedTreatments,
+  topDoctors,
+  topClinics,
+  promotions;
+
+  String get displayName {
+    switch (this) {
+      case HomeSection.points:
+        return "Points & Rewards";
+      case HomeSection.recentSimulations:
+        return "Recent Simulations";
+      case HomeSection.sharedTreatmentRequests:
+        return "Shared Treatment Requests";
+      case HomeSection.upcomingAppointments:
+        return "Upcoming Appointments";
+      case HomeSection.suggestedTreatments:
+        return "Suggested Treatments";
+      case HomeSection.topDoctors:
+        return "Top Doctors";
+      case HomeSection.topClinics:
+        return "Top Clinics";
+      case HomeSection.promotions:
+        return "Promotions & Discounts";
+    }
+  }
 }
