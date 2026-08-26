@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../../main.dart';
-import '../../models/responses/auth_response.dart';
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
 import '../../view_models/auth_view_model.dart';
@@ -29,48 +28,7 @@ import '../../view_models/home_view_model.dart';
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
   static const String routeName = "HomeScreen";
-  static final List<RequestClinicTreatmentModel> dummyTreatmentRequests = [
-    RequestClinicTreatmentModel(
-      id: 1,
-      clinicName: 'Skin Care Clinic',
-      clinicEmail: 'skincare@gmail.com',
-      address: 'Beverly Hills, California',
-      image: 'https://i.pravatar.cc/150?img=32',
-      totalTreatmentCount: 5,
-    ),
-    RequestClinicTreatmentModel(
-      id: 2,
-      clinicName: 'Glow Aesthetic Center',
-      clinicEmail: 'glowaesthetic@gmail.com',
-      address: 'Beverly Hills, California',
-      image: 'https://i.pravatar.cc/150?img=44',
-      totalTreatmentCount: 3,
-    ),
-    RequestClinicTreatmentModel(
-      id: 3,
-      clinicName: 'Derma Wellness Clinic',
-      clinicEmail: 'dermawellness@gmail.com',
-      image: 'https://i.pravatar.cc/150?img=47',
-      totalTreatmentCount: 8,
-    ),
-    RequestClinicTreatmentModel(
-      id: 4,
-      clinicName: 'Elite Skin & Laser',
-      clinicEmail: 'eliteskin@gmail.com',
-      address: '123 Wilshire Blvd, Beverly Hills, CA 90210',
-      image: 'https://i.pravatar.cc/150?img=49',
-      totalTreatmentCount: 2,
-    ),
-    RequestClinicTreatmentModel(
-      id: 5,
-      clinicName: 'Perfect Skin Clinic',
-      clinicEmail: 'perfectskin@gmail.com',
-      address: '123 Wilshire Blvd, Beverly Hills, CA 90210',
-      image: 'https://i.pravatar.cc/150?img=12',
-      totalTreatmentCount: 6,
-    ),
-  ];
-
+  
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Promotions are still static as no API endpoint provides them yet
@@ -462,7 +420,7 @@ class HomeScreen extends ConsumerWidget {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                       child: HeadingWithRightArrow(
-                        title: "Top Clinics",
+                        title: "Discover Clinics",
                         onTap: () {
                           Navigator.pushNamed(
                             context,
