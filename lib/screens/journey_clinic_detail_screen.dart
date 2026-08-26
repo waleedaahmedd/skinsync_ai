@@ -15,6 +15,7 @@ import '../view_models/clinic_view_model.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/dialogs/facial_scan_consent_dialog.dart';
 import '../widgets/dialogs/success_dialogs.dart';
 import 'treatment_journey_screen.dart';
 
@@ -389,21 +390,35 @@ class _JourneyClinicDetailScreenState
                           return;
                         }
                         if (widget.clinic?.place != null) {
-                         final success = await ref
-                              .read(treatmentJourneyProvider.notifier)
-                              .callShareMapTreatmentRequest(widget.clinic!);
+                          showFacialScanConsentDialog(
+                            context: context,
+                            onConfirm: () async {
+                              final success = await ref
+                                  .read(treatmentJourneyProvider.notifier)
+                                  .callShareMapTreatmentRequest(widget.clinic!);
 
-                         if (success ?? false) {
-                           showShareJourneySuccessDialog(context);
-                         }
+                              if (success ?? false) {
+                                if (context.mounted) {
+                                  showShareJourneySuccessDialog(context);
+                                }
+                              }
+                            },
+                          );
                           return;
                         }
-                        final result = await ref
-                            .read(treatmentJourneyProvider.notifier)
-                            .callShareTreatmentRequest();
-                        if (result == true) {
-                          showShareJourneySuccessDialog(context);
-                        }
+                        showFacialScanConsentDialog(
+                          context: context,
+                          onConfirm: () async {
+                            final result = await ref
+                                .read(treatmentJourneyProvider.notifier)
+                                .callShareTreatmentRequest();
+                            if (result == true) {
+                              if (context.mounted) {
+                                showShareJourneySuccessDialog(context);
+                              }
+                            }
+                          },
+                        );
                       },
                     );
                   },
