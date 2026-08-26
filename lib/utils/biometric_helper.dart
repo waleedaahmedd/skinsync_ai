@@ -119,4 +119,28 @@ class BiometricHelper {
       return false;
     }
   }
+
+  /// Authenticate user with fallback to device credentials (PIN/Pattern/Password)
+  Future<bool> authenticateWithFallback({
+    String reason = 'Please authenticate to proceed',
+  }) async {
+    try {
+      final bool canAuthenticateWithBiometrics = await _auth.canCheckBiometrics;
+      final bool canAuthenticate =
+          canAuthenticateWithBiometrics || await _auth.isDeviceSupported();
+
+      if (!canAuthenticate) {
+        log('Authentication not supported on this device');
+        return false;
+      }
+
+      return await _auth.authenticate(
+        localizedReason: reason,
+        biometricOnly: false, // Allows fallback to PIN/Pattern/Password
+      );
+    } catch (e) {
+      log('Authentication error: $e');
+      return false;
+    }
+  }
 }

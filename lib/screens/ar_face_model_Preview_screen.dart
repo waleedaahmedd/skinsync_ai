@@ -29,6 +29,7 @@ import '../widgets/dialogs/save_option_confirmation_dialog.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/selected_treatments_summary_card.dart';
 import '../widgets/service_type_button.dart';
+import '../widgets/dialogs/bipa_consent_dialog.dart';
 import 'treatment_journey_detail_screen.dart';
 import 'treatment_journey_screen.dart';
 
@@ -501,7 +502,12 @@ class _ArFaceModelPreviewScreenState
                     textColor: CustomColors.blackColor,
                     height: context.h(58),
                     onPressed: () {
-                      ref.read(treatmentViewModel.notifier).callPredictAPI();
+                      showBipaConsentDialog(
+                        context: context,
+                        onAccepted: () {
+                          ref.read(treatmentViewModel.notifier).callPredictAPI();
+                        },
+                      );
                     },
                   ),
                 ),
