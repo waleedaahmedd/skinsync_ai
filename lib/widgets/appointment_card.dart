@@ -56,7 +56,7 @@ class AppointmentCard extends StatelessWidget {
             Container(
               padding: EdgeInsets.symmetric(
                 horizontal: context.w(18),
-                vertical: context.h(16),
+                vertical: context.h(27),
               ),
               decoration: BoxDecoration(
                 gradient: CustomColors.purpleBlueGradient,
@@ -154,7 +154,10 @@ class AppointmentCard extends StatelessWidget {
 
             // 2. Middle Section: Clinic & Doctor
             Padding(
-              padding: EdgeInsets.all(context.w(18)),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.w(18),
+                vertical: context.h(14),
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -246,9 +249,9 @@ class AppointmentCard extends StatelessWidget {
 
                   if (appointment.treatments != null &&
                       appointment.treatments!.isNotEmpty) ...[
-                    SizedBox(height: context.h(18)),
+                    SizedBox(height: context.h(12)),
                     const Divider(height: 1, color: Colors.black12),
-                    SizedBox(height: context.h(18)),
+                    SizedBox(height: context.h(12)),
 
                     // Condition passed in via isTreatmentListHorizontal param.
                     // - Vertical, or only 1 treatment: expand full width.
@@ -322,7 +325,10 @@ class AppointmentCard extends StatelessWidget {
       margin: isHorizontal
           ? EdgeInsets.zero
           : EdgeInsets.only(bottom: context.h(12)),
-      padding: EdgeInsets.all(context.w(12)),
+      padding: EdgeInsets.symmetric(
+        horizontal: context.w(12),
+        vertical: context.h(10),
+      ),
       decoration: BoxDecoration(
         image: DecorationImage(
           colorFilter: ColorFilter.mode(

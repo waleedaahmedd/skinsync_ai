@@ -25,7 +25,6 @@ import '../patient_treatment_requests_screen.dart';
 import 'appointments_screen.dart';
 import '../../utils/enums.dart';
 import '../../view_models/home_view_model.dart';
-import '../../widgets/reorder_home_sections_sheet.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -229,8 +228,8 @@ class HomeScreen extends ConsumerWidget {
                                 "Shared treatment requests will appear here.",
                           )
                         : SizedBox(
-                            height: context.h(150),
-                            child: ListView.builder(
+                      height: context.h(160),
+                      child: ListView.builder(
                               physics: const BouncingScrollPhysics(),
                               scrollDirection: Axis.horizontal,
                               clipBehavior: Clip.none,
@@ -299,8 +298,8 @@ class HomeScreen extends ConsumerWidget {
                                 "Your scheduled clinical treatments and session details will appear here.",
                           )
                         : SizedBox(
-                            height: context.h(305),
-                            child: ListView.builder(
+                        height: context.h(315),
+                        child: ListView.builder(
                               physics: const BouncingScrollPhysics(),
                               scrollDirection: Axis.horizontal,
                               clipBehavior: Clip.none,

@@ -38,7 +38,7 @@ class RequestClinicTreatmentCard extends StatelessWidget {
           child: InkWell(
             onTap: onTap,
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: Row(
                 children: [
                   // Patient Image
@@ -92,7 +92,7 @@ class RequestClinicTreatmentCard extends StatelessWidget {
 
                         // Email
                         if (patientEmail.isNotEmpty) ...[
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 2),
                           Row(
                             children: [
                               Icon(
@@ -116,7 +116,7 @@ class RequestClinicTreatmentCard extends StatelessWidget {
                           ),
                         ],
                         if (address.isNotEmpty) ...[
-                          const SizedBox(height: 5),
+                          const SizedBox(height: 2),
                           Row(
                             children: [
                               Icon(
@@ -140,7 +140,7 @@ class RequestClinicTreatmentCard extends StatelessWidget {
                           ),
                         ],
                         // Treatment Count
-                        const SizedBox(height: 5),
+                        const SizedBox(height: 2),
                         Row(
                           children: [
                             Icon(
