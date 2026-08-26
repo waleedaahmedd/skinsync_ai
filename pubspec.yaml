@@ -53,7 +53,7 @@ dependencies:
   flutter_staggered_animations: ^1.1.1
   image_picker: ^1.2.3
   percent_indicator: ^4.2.5
-  path_provider: any
+  path_provider: ^2.1.6
   cross_file: any
   intl: ^0.20.3
   mime: ^2.0.0
@@ -97,6 +97,10 @@ dependencies:
   convex_bottom_bar: ^3.2.0
   flutter_slidable: ^4.0.3
   flutter_local_notifications: ^22.3.0
+  syncfusion_flutter_signaturepad: ^34.2.5
+  pdf: ^3.13.0
+  syncfusion_flutter_pdf: ^34.2.5
+  syncfusion_flutter_pdfviewer: ^34.2.5
 
 dev_dependencies:
   flutter_test:
