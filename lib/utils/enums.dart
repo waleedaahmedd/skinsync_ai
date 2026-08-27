@@ -67,6 +67,7 @@ enum EndPoints {
   deleteTreatmentJourneyOptions('v1/treatment-journey-option'),
   patientTreatmentRequest('v1/patient-treatment-request'),
   patientCurrentPlan('v1/patient-current-plan'),
+  notification('v1/notifications'),
   subscribe('v1/subscribe/'),
   clinic('v1/clinic');
 

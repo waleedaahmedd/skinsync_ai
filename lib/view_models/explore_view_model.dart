@@ -53,11 +53,11 @@ class ExploreState extends BaseStateModel {
   ExploreState copyWith({
     bool? loading,
     String? errorMessage,
-    List<ReelModel>? reels,
+    List<ReelModel>? notification,
     List<CommunityPostModel>? posts,
-    int? reelsTotalPages,
+    int? totalPages,
     int? postsTotalPages,
-    int? reelsCurrentPage,
+    int? currentPage,
     int? postsCurrentPage,
     int? pageSize,
     ExploreViewType? viewType,
@@ -67,11 +67,11 @@ class ExploreState extends BaseStateModel {
     return ExploreState(
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
-      reels: reels ?? this.reels,
+      reels: notification ?? this.reels,
       posts: posts ?? this.posts,
-      reelsTotalPages: reelsTotalPages ?? this.reelsTotalPages,
+      reelsTotalPages: totalPages ?? this.reelsTotalPages,
       postsTotalPages: postsTotalPages ?? this.postsTotalPages,
-      reelsCurrentPage: reelsCurrentPage ?? this.reelsCurrentPage,
+      reelsCurrentPage: currentPage ?? this.reelsCurrentPage,
       postsCurrentPage: postsCurrentPage ?? this.postsCurrentPage,
       pageSize: pageSize ?? this.pageSize,
       viewType: viewType ?? this.viewType,
@@ -117,9 +117,9 @@ class ExploreViewModel extends BaseViewModel<ExploreState> {
         : <ReelModel>[...state.reels, ...(response.data ?? <ReelModel>[])];
 
     state = state.copyWith(
-      reels: newReels,
-      reelsTotalPages: response.totalPages,
-      reelsCurrentPage: response.page,
+      notification: newReels,
+      totalPages: response.totalPages,
+      currentPage: response.page,
       reelsLoading: false,
     );
   });

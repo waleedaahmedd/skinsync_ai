@@ -54,7 +54,7 @@ class ReelsViewModel extends Notifier<ReelsState> {
 
   void toggleLike(String reelId) {
     state = state.copyWith(
-      reels: state.reels.map((reel) {
+      notification: state.reels.map((reel) {
         if (reel.id == reelId) {
           return reel.copyWith(
             isLiked: !reel.isLiked,
@@ -68,7 +68,7 @@ class ReelsViewModel extends Notifier<ReelsState> {
 
   void toggleSave(String reelId) {
     state = state.copyWith(
-      reels: state.reels.map((reel) {
+      notification: state.reels.map((reel) {
         if (reel.id == reelId) {
           return reel.copyWith(isSaved: !reel.isSaved);
         }
@@ -91,12 +91,12 @@ class ReelsState extends BaseStateModel {
   ReelsState copyWith({
     bool? loading,
     String? errorMessage,
-    List<Reel>? reels,
+    List<Reel>? notification,
   }) {
     return ReelsState(
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
-      reels: reels ?? this.reels,
+      reels: notification ?? this.reels,
     );
   }
 }
