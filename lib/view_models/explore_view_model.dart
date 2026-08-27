@@ -53,7 +53,7 @@ class ExploreState extends BaseStateModel {
   ExploreState copyWith({
     bool? loading,
     String? errorMessage,
-    List<ReelModel>? notification,
+    List<ReelModel>? signDocument,
     List<CommunityPostModel>? posts,
     int? totalPages,
     int? postsTotalPages,
@@ -67,7 +67,7 @@ class ExploreState extends BaseStateModel {
     return ExploreState(
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
-      reels: notification ?? this.reels,
+      reels: signDocument ?? this.reels,
       posts: posts ?? this.posts,
       reelsTotalPages: totalPages ?? this.reelsTotalPages,
       postsTotalPages: postsTotalPages ?? this.postsTotalPages,
@@ -117,7 +117,7 @@ class ExploreViewModel extends BaseViewModel<ExploreState> {
         : <ReelModel>[...state.reels, ...(response.data ?? <ReelModel>[])];
 
     state = state.copyWith(
-      notification: newReels,
+      signDocument: newReels,
       totalPages: response.totalPages,
       currentPage: response.page,
       reelsLoading: false,

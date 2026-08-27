@@ -7,6 +7,7 @@ import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
 import '../../view_models/auth_view_model.dart';
 import '../../view_models/bottom_nav_view_model.dart';
+import '../../view_models/forms_view_model.dart';
 import '../../widgets/app_bar_with_action_icon.dart';
 import '../../widgets/appointment_card.dart';
 import '../../widgets/discount_card.dart';
@@ -25,12 +26,25 @@ import 'appointments_screen.dart';
 import '../../utils/enums.dart';
 import '../../view_models/home_view_model.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
   static const String routeName = "HomeScreen";
-  
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+
+@override
+  void initState() {
+   ref.read(formsViewModel.notifier).fetchForms();
+    super.initState();
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
     // Promotions are still static as no API endpoint provides them yet
     const int promotionsCount =
         0; // Set to 0 to show empty state if not available
