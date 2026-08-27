@@ -7,7 +7,6 @@ import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
 import '../../view_models/auth_view_model.dart';
 import '../../view_models/bottom_nav_view_model.dart';
-import '../../view_models/forms_view_model.dart';
 import '../../widgets/app_bar_with_action_icon.dart';
 import '../../widgets/appointment_card.dart';
 import '../../widgets/discount_card.dart';
@@ -26,28 +25,12 @@ import 'appointments_screen.dart';
 import '../../utils/enums.dart';
 import '../../view_models/home_view_model.dart';
 
-class HomeScreen extends ConsumerStatefulWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
   static const String routeName = "HomeScreen";
-
-  @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends ConsumerState<HomeScreen> {
-
-@override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_){
- ref.read(formsViewModel.notifier).fetchForms();
-    });
   
-    super.initState();
-  }
-
-
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // Promotions are still static as no API endpoint provides them yet
     const int promotionsCount =
         0; // Set to 0 to show empty state if not available
@@ -77,7 +60,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onTap: () =>
                     ref.read(homeViewModelProvider.notifier).toggleReorderMode(),
               ),
-           
+            if (!isDeploymentMode) ...[
               SizedBox(width: context.w(12)),
               GreyContainer(
                 icon: Icons.notifications_none_outlined,
@@ -86,7 +69,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       .pushNamed(NotificationScreen.routeName);
                 },
               ),
-            
+            ],
           ],
         ),
       ),
