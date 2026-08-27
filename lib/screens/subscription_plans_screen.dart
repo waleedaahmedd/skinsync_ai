@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
-import '../models/subscription_plan_model.dart';
+import '../models/responses/patient_plans_response.dart' hide Duration;
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../utils/list_utils.dart';
 import '../view_models/subscription_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
@@ -28,14 +29,6 @@ class _SubscriptionPlansScreenState
   int? selectedPlanId;
 
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(subscriptionProvider.notifier).fetchSubscriptionPlans();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final subscriptionState = ref.watch(subscriptionProvider);
 
@@ -45,10 +38,10 @@ class _SubscriptionPlansScreenState
       body: subscriptionState.loading
           ? const Center(child: AppLoader())
           : subscriptionState.errorMessage != null
-              ? Center(child: Text(subscriptionState.errorMessage!))
-              : _buildBody(subscriptionState),
-      bottomNavigationBar: subscriptionState.loading ||
-              subscriptionState.errorMessage != null
+          ? Center(child: Text(subscriptionState.errorMessage!))
+          : _buildBody(subscriptionState),
+      bottomNavigationBar:
+          subscriptionState.loading || subscriptionState.errorMessage != null
           ? null
           : _buildBottomButton(subscriptionState),
     );
@@ -62,8 +55,9 @@ class _SubscriptionPlansScreenState
       selectedPlanId = state.currentPlan?.id ?? allPlans.first.id;
     }
 
-    final selectedPlan =
-        allPlans.firstWhere((p) => p.id == selectedPlanId, orElse: () => allPlans.first);
+    final selectedPlan = allPlans.firstWhereOrNull(
+      (p) => p.id == selectedPlanId,
+    );
 
     return Container(
       padding: EdgeInsets.fromLTRB(
@@ -90,40 +84,39 @@ class _SubscriptionPlansScreenState
               isBorder: true,
               borderRadius: context.r(30),
               textColor: CustomColors.blackColor,
-              onPressed: () => _showComparisonSheet(context, currentPlan, selectedPlan),
+              onPressed: () {
+                if (selectedPlan == null) {
+                  return;
+                }
+                _showComparisonSheet(context, currentPlan, selectedPlan);
+              },
               text: "Compare with Current Plan",
             ),
             SizedBox(height: context.h(12)),
           ],
           CustomButton(
-            onPressed:
-                selectedPlanId == currentPlan?.id
-                    ? null
-                    : () async {
-                        if (selectedPlanId != null) {
-                          final success = await ref
-                              .read(subscriptionProvider.notifier)
-                              .upgradePlan(selectedPlanId!);
-                          if (success && mounted) {
-                            // Plan refreshed inside upgradePlan
-                          }
-                        }
-                      },
-            text:
-                selectedPlanId == currentPlan?.id
-                    ? "Currently Active"
-                    : "Upgrade to ${selectedPlan.name}",
+            onPressed: selectedPlanId == currentPlan?.id
+                ? null
+                : () async {
+                    if (selectedPlanId != null) {
+                      final success = await ref
+                          .read(subscriptionProvider.notifier)
+                          .upgradePlan(selectedPlanId!);
+                      if (success && mounted) {
+                        // Plan refreshed inside upgradePlan
+                      }
+                    }
+                  },
+            text: selectedPlanId == currentPlan?.id
+                ? "Currently Active"
+                : "Upgrade to ${selectedPlan?.name ?? 'N/A'}",
           ),
         ],
       ),
     );
   }
 
-  void _showComparisonSheet(
-    BuildContext context,
-    PatientSubscriptionPlanModel current,
-    PatientSubscriptionPlanModel selected,
-  ) {
+  void _showComparisonSheet(BuildContext context, Plan current, Plan selected) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -132,9 +125,14 @@ class _SubscriptionPlansScreenState
         height: 0.6.sh,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(32))),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(context.r(32)),
+          ),
         ),
-        padding: EdgeInsets.symmetric(horizontal: context.w(24), vertical: context.h(20)),
+        padding: EdgeInsets.symmetric(
+          horizontal: context.w(24),
+          vertical: context.h(20),
+        ),
         child: Column(
           children: [
             Container(
@@ -158,7 +156,13 @@ class _SubscriptionPlansScreenState
                     color: Colors.grey.shade200,
                     margin: EdgeInsets.symmetric(horizontal: context.w(12)),
                   ),
-                  Expanded(child: _buildComparisonColumn("Selected", selected, isHighlighted: true)),
+                  Expanded(
+                    child: _buildComparisonColumn(
+                      "Selected",
+                      selected,
+                      isHighlighted: true,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -175,7 +179,7 @@ class _SubscriptionPlansScreenState
 
   Widget _buildComparisonColumn(
     String label,
-    PatientSubscriptionPlanModel plan, {
+    Plan plan, {
     bool isHighlighted = false,
   }) {
     return Column(
@@ -195,17 +199,25 @@ class _SubscriptionPlansScreenState
         ),
         SizedBox(height: context.h(4)),
         Text(
-          plan.basePrice == 0 ? "Free" : "\$${plan.basePrice}/${plan.interval}",
-          style: CustomFonts.black14w600.copyWith(color: CustomColors.purpleColor),
+          plan.basePrice == 0
+              ? "Free"
+              : "\$${plan.basePrice}/${plan.durationOptions?.firstOrNull?.name}",
+          style: CustomFonts.black14w600.copyWith(
+            color: CustomColors.purpleColor,
+          ),
         ),
         SizedBox(height: context.h(24)),
         _comparisonItem(
           "Simulations",
-          plan.unlimitedSimulations ? "Unlimited" : "${plan.simulationCount}",
+          (plan.unlimitedSimulation ?? false)
+              ? "Unlimited"
+              : "${plan.simulationCount}",
         ),
         _comparisonItem(
           "Post Views",
-          plan.unlimitedPostsView ? "Unlimited" : "${plan.postsViewCount}",
+          (plan.unlimitedPostsView ?? false)
+              ? "Unlimited"
+              : "${plan.postsViewCount}",
         ),
       ],
     );
@@ -239,11 +251,10 @@ class _SubscriptionPlansScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: AnimationConfiguration.toStaggeredList(
             duration: const Duration(milliseconds: 600),
-            childAnimationBuilder:
-                (widget) => SlideAnimation(
-                  verticalOffset: 50.0,
-                  child: FadeInAnimation(child: widget),
-                ),
+            childAnimationBuilder: (widget) => SlideAnimation(
+              verticalOffset: 50.0,
+              child: FadeInAnimation(child: widget),
+            ),
             children: [
               Divider(
                 color: CustomColors.greyColor.withValues(alpha: 0.6),
@@ -270,8 +281,8 @@ class _SubscriptionPlansScreenState
                     plan: currentPlan,
                     isSelected: selectedPlanId == currentPlan.id,
                     isActive: true,
-                    onTap:
-                        () => setState(() => selectedPlanId = currentPlan.id),
+                    onTap: () =>
+                        setState(() => selectedPlanId = currentPlan.id),
                   ),
                 )
               else
@@ -314,7 +325,8 @@ class _SubscriptionPlansScreenState
                   itemBuilder: (context, index) {
                     final plan = allPlans[index];
                     // Hide from "Other" if it's the current plan
-                    if (plan.id == currentPlan?.id) return const SizedBox.shrink();
+                    if (plan.id == currentPlan?.id)
+                      return const SizedBox.shrink();
 
                     final isSelected = plan.id == selectedPlanId;
 
@@ -331,8 +343,8 @@ class _SubscriptionPlansScreenState
                             plan: plan,
                             isSelected: isSelected,
                             isActive: plan.id == currentPlan?.id,
-                            onTap:
-                                () => setState(() => selectedPlanId = plan.id),
+                            onTap: () =>
+                                setState(() => selectedPlanId = plan.id),
                           ),
                         ),
                       ),

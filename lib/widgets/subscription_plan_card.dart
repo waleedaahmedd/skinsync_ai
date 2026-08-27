@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
-import '../models/subscription_plan_model.dart';
+import '../models/responses/patient_plans_response.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 
 class SubscriptionPlanCard extends StatelessWidget {
-  final PatientSubscriptionPlanModel plan;
+  final Plan plan;
   final bool isSelected;
   final bool isActive;
   final VoidCallback onTap;
@@ -115,9 +115,15 @@ class SubscriptionPlanCard extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? CustomColors.blackColor.withValues(alpha: 0.1)
-                                  : CustomColors.silverColor.withValues(alpha: 0.05),
-                              borderRadius: BorderRadius.circular(context.r(20)),
+                                  ? CustomColors.blackColor.withValues(
+                                      alpha: 0.1,
+                                    )
+                                  : CustomColors.silverColor.withValues(
+                                      alpha: 0.05,
+                                    ),
+                              borderRadius: BorderRadius.circular(
+                                context.r(20),
+                              ),
                               border: Border.all(
                                 color: isSelected
                                     ? CustomColors.blackColor
@@ -142,7 +148,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                     Text(
                       plan.basePrice == 0
                           ? "Free"
-                          : "\$${plan.basePrice}/${plan.interval}",
+                          : "\$${plan.basePrice}/${plan.durationOptions?.firstOrNull?.name}",
                       style: CustomFonts.black18w400.copyWith(
                         fontWeight: FontWeight.bold,
                         color: isSelected
@@ -153,7 +159,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                     SizedBox(height: context.h(16)),
                     _buildBenefitItem(
                       context,
-                      plan.unlimitedSimulations
+                      (plan.unlimitedSimulation ?? false)
                           ? "Unlimited AI Simulations"
                           : "${plan.simulationCount} AI Simulations",
                       color: isSelected
@@ -162,7 +168,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                     ),
                     _buildBenefitItem(
                       context,
-                      plan.unlimitedPostsView
+                      (plan.unlimitedPostsView ?? false)
                           ? "Unlimited Posts View"
                           : "${plan.postsViewCount} Posts View",
                       color: isSelected
@@ -190,12 +196,7 @@ class SubscriptionPlanCard extends StatelessWidget {
             color: color ?? CustomColors.darkPurple,
           ),
           SizedBox(width: context.w(10)),
-          Text(
-            title,
-            style: CustomFonts.black14w400.copyWith(
-              color: color,
-            ),
-          ),
+          Text(title, style: CustomFonts.black14w400.copyWith(color: color)),
         ],
       ),
     );
