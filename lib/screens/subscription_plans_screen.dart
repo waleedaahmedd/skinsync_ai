@@ -40,10 +40,11 @@ class _SubscriptionPlansScreenState
           : subscriptionState.errorMessage != null
           ? Center(child: Text(subscriptionState.errorMessage!))
           : _buildBody(subscriptionState),
-      bottomNavigationBar:
-          subscriptionState.loading || subscriptionState.errorMessage != null
-          ? null
-          : _buildBottomButton(subscriptionState),
+      bottomNavigationBar: subscriptionState.loading ||
+                  subscriptionState.errorMessage != null ||
+                  subscriptionState.plans.isEmpty
+              ? null
+              : _buildBottomButton(subscriptionState),
     );
   }
 
@@ -79,15 +80,15 @@ class _SubscriptionPlansScreenState
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (currentPlan != null && selectedPlanId != currentPlan.id) ...[
+          if (currentPlan != null &&
+              selectedPlanId != currentPlan.id &&
+              allPlans.isNotEmpty &&
+              selectedPlan != null) ...[
             CustomButton(
               isBorder: true,
               borderRadius: context.r(30),
               textColor: CustomColors.blackColor,
               onPressed: () {
-                if (selectedPlan == null) {
-                  return;
-                }
                 _showComparisonSheet(context, currentPlan, selectedPlan);
               },
               text: "Compare with Current Plan",
@@ -98,13 +99,32 @@ class _SubscriptionPlansScreenState
             onPressed: selectedPlanId == currentPlan?.id
                 ? null
                 : () async {
-                    if (selectedPlanId != null) {
-                      final success = await ref
+                    if (selectedPlan == null) return;
+
+                    if (selectedPlan.isLifetime == true) {
+                      // Direct API call for lifetime plan
+                      await ref
                           .read(subscriptionProvider.notifier)
-                          .upgradePlan(selectedPlanId!);
-                      if (success && mounted) {
-                        // Plan refreshed inside upgradePlan
-                      }
+                          .upgradePlan(selectedPlan.id!);
+                      return;
+                    }
+
+                    final options = selectedPlan.durationOptions ?? [];
+
+                    if (options.isEmpty) {
+                      // Fallback if no options (though shouldn't happen based on requirement)
+                      await ref
+                          .read(subscriptionProvider.notifier)
+                          .upgradePlan(selectedPlan.id!);
+                    } else if (options.length == 1) {
+                      // Direct API call for single duration
+                      await ref
+                          .read(subscriptionProvider.notifier)
+                          .upgradePlan(selectedPlan.id!,
+                              durationId: options.first.id);
+                    } else {
+                      // Show bottom sheet for multiple durations
+                      _showDurationSelectionSheet(context, selectedPlan);
                     }
                   },
             text: selectedPlanId == currentPlan?.id
@@ -112,6 +132,91 @@ class _SubscriptionPlansScreenState
                 : "Upgrade to ${selectedPlan?.name ?? 'N/A'}",
           ),
         ],
+      ),
+    );
+  }
+
+  void _showDurationSelectionSheet(BuildContext context, Plan selectedPlan) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        padding: EdgeInsets.fromLTRB(
+          context.w(24),
+          context.h(20),
+          context.w(24),
+          context.h(32) + MediaQuery.paddingOf(context).bottom,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(32))),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: context.w(40),
+              height: context.h(4),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            SizedBox(height: context.h(24)),
+            Text("Select Duration", style: CustomFonts.black22w600),
+            SizedBox(height: context.h(8)),
+            Text(
+              "Choose how often you'd like to be billed for ${selectedPlan.name}",
+              style: CustomFonts.grey14w400,
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: context.h(24)),
+            ...?selectedPlan.durationOptions?.map((option) => Padding(
+                  padding: EdgeInsets.only(bottom: context.h(12)),
+                  child: InkWell(
+                    onTap: () async {
+                      Navigator.pop(context);
+                      await ref
+                          .read(subscriptionProvider.notifier)
+                          .upgradePlan(selectedPlan.id!, durationId: option.id);
+                    },
+                    borderRadius: BorderRadius.circular(context.r(16)),
+                    child: Container(
+                      padding: EdgeInsets.all(context.w(16)),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade200),
+                        borderRadius: BorderRadius.circular(context.r(16)),
+                        color: Colors.grey.shade50,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            option.name ?? 'N/A',
+                            style: CustomFonts.black16w600,
+                          ),
+                          Text(
+                            "\$${option.price}",
+                            style: CustomFonts.black16w600.copyWith(
+                              color: CustomColors.purpleColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                )),
+            SizedBox(height: context.h(12)),
+            CustomButton(
+              isBorder: true,
+              borderRadius: context.r(30),
+              textColor: CustomColors.blackColor,
+              onPressed: () => Navigator.pop(context),
+              text: "Cancel",
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -147,23 +252,27 @@ class _SubscriptionPlansScreenState
             Text("Plan Comparison", style: CustomFonts.black22w600),
             SizedBox(height: context.h(32)),
             Expanded(
-              child: Row(
-                children: [
-                  Expanded(child: _buildComparisonColumn("Current", current)),
-                  Container(
-                    width: 1,
-                    height: double.infinity,
-                    color: Colors.grey.shade200,
-                    margin: EdgeInsets.symmetric(horizontal: context.w(12)),
-                  ),
-                  Expanded(
-                    child: _buildComparisonColumn(
-                      "Selected",
-                      selected,
-                      isHighlighted: true,
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: _buildComparisonColumn("Current", current)),
+                    Container(
+                      width: 1,
+                      height: 400.h, // Fixed height for vertical divider
+                      color: Colors.grey.shade200,
+                      margin: EdgeInsets.symmetric(horizontal: context.w(12)),
                     ),
-                  ),
-                ],
+                    Expanded(
+                      child: _buildComparisonColumn(
+                        "Selected",
+                        selected,
+                        isHighlighted: true,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             SizedBox(height: context.h(20)),
@@ -182,12 +291,14 @@ class _SubscriptionPlansScreenState
     Plan plan, {
     bool isHighlighted = false,
   }) {
+    final textColor = isHighlighted ? CustomColors.purpleColor : Colors.grey;
+
     return Column(
       children: [
         Text(
           label,
           style: CustomFonts.grey14w400.copyWith(
-            color: isHighlighted ? CustomColors.purpleColor : Colors.grey,
+            color: textColor,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -199,38 +310,68 @@ class _SubscriptionPlansScreenState
         ),
         SizedBox(height: context.h(4)),
         Text(
-          plan.basePrice == 0
-              ? "Free"
-              : "\$${plan.basePrice}/${plan.durationOptions?.firstOrNull?.name}",
+          _getPriceText(plan),
           style: CustomFonts.black14w600.copyWith(
             color: CustomColors.purpleColor,
+            fontSize: context.sp(11),
           ),
+          textAlign: TextAlign.center,
         ),
         SizedBox(height: context.h(24)),
         _comparisonItem(
-          "Simulations",
           (plan.unlimitedSimulation ?? false)
-              ? "Unlimited"
-              : "${plan.simulationCount}",
+              ? "Unlimited AI Simulations"
+              : "${plan.simulationCount} AI Simulations",
         ),
         _comparisonItem(
-          "Post Views",
           (plan.unlimitedPostsView ?? false)
-              ? "Unlimited"
-              : "${plan.postsViewCount}",
+              ? "Unlimited Posts View"
+              : "${plan.postsViewCount} Posts View",
         ),
+        if (plan.benefits != null)
+          ...plan.benefits!.map(
+            (benefit) => _comparisonItem(benefit.title ?? ''),
+          ),
       ],
     );
   }
 
-  Widget _comparisonItem(String title, String value) {
+  String _getPriceText(Plan plan) {
+    if (plan.isLifetime == true) {
+      return "\$${plan.basePrice} (Lifetime)";
+    }
+    if (plan.durationOptions == null || plan.durationOptions!.isEmpty) {
+      return plan.basePrice == 0 || plan.basePrice == null
+          ? "Free"
+          : "\$${plan.basePrice}";
+    }
+    return plan.durationOptions!
+        .map((opt) => "\$${opt.price}/${opt.name}")
+        .join("\n"); // Using newline for better fit in comparison column
+  }
+
+  Widget _comparisonItem(String title) {
+    if (title.isEmpty) return const SizedBox.shrink();
     return Padding(
-      padding: EdgeInsets.only(bottom: context.h(16)),
-      child: Column(
+      padding: EdgeInsets.only(bottom: context.h(12)),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: CustomFonts.grey12w400),
-          SizedBox(height: context.h(2)),
-          Text(value, style: CustomFonts.black14w600),
+          Icon(
+            Icons.check_circle_outline_rounded,
+            size: context.sp(14),
+            color: CustomColors.darkPurple,
+          ),
+          SizedBox(width: context.w(8)),
+          Expanded(
+            child: Text(
+              title,
+              style: CustomFonts.black14w400.copyWith(
+                fontSize: context.sp(12),
+                height: 1.2,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -325,8 +466,9 @@ class _SubscriptionPlansScreenState
                   itemBuilder: (context, index) {
                     final plan = allPlans[index];
                     // Hide from "Other" if it's the current plan
-                    if (plan.id == currentPlan?.id)
+                    if (plan.id == currentPlan?.id) {
                       return const SizedBox.shrink();
+                    }
 
                     final isSelected = plan.id == selectedPlanId;
 

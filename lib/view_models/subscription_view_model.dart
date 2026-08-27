@@ -45,10 +45,13 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
     });
   }
 
-  Future<bool> upgradePlan(int planId) async {
+  Future<bool> upgradePlan(int planId, {int? durationId}) async {
     EasyLoading.show(status: 'Upgrading...');
     try {
-      final response = await _repository.upgradePlan(planId);
+      final response = await _repository.upgradePlan(
+        planId: planId,
+        durationId: durationId,
+      );
       if (response.isSuccess ?? false) {
         EasyLoading.showSuccess(
           response.message ?? 'Plan upgraded successfully!',

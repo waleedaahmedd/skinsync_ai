@@ -3,5 +3,5 @@ import '../models/responses/patient_plans_response.dart';
 
 abstract class SubscriptionRepository {
   Future<PatientPlansResponse> getPatientCurrentPlan();
-  Future<BaseResponseModel> upgradePlan(int planId);
+  Future<BaseResponseModel> upgradePlan({required int planId, int? durationId});
 }

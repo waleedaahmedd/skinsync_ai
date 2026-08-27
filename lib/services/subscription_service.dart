@@ -20,11 +20,18 @@ class SubscriptionService implements SubscriptionRepository {
   }
 
   @override
-  Future<BaseResponseModel> upgradePlan(int planId) async {
+  Future<BaseResponseModel> upgradePlan({required int planId, int? durationId}) async {
+    final Map<String, dynamic> body = {
+      "plan_id": planId,
+    };
+    if (durationId != null) {
+      body["duration_id"] = durationId;
+    }
+
     final response = await apiClient.httpRequest(
       endPoint: EndPoints.subscribe,
-      requestType: RequestType.get,
-      params: '$planId',
+      requestType: RequestType.post,
+      requestBody: body,
     );
     return BaseResponseModel.fromJson(jsonDecode(response.body));
   }
