@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../view_models/bottom_nav_view_model.dart';
+import '../view_models/subscription_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 import '../widgets/scan_face_button.dart';
 import 'bottom_nav_bar.dart';
@@ -31,6 +32,7 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(bottomNavViewModel.notifier).changePage(0);
       ref.read(treatmentViewModel.notifier).init();
+      ref.read(subscriptionProvider.notifier).fetchSubscriptionPlans();
     });
   }
 

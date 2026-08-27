@@ -1,38 +1,39 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../models/base_state_model.dart';
-import '../models/subscription_plan_model.dart';
+import '../models/responses/patient_plans_response.dart';
 import '../repositories/subscription_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/subscription_service.dart';
 import 'base_view_model.dart';
 
 final subscriptionProvider =
-    NotifierProvider.autoDispose<SubscriptionViewModel, SubscriptionState>(() {
-  final apiBaseHelper = ApiBaseHelper();
-  final service = SubscriptionService(apiClient: apiBaseHelper);
-  return SubscriptionViewModel(repository: service);
-});
+    NotifierProvider<SubscriptionViewModel, SubscriptionState>(() {
+      final apiBaseHelper = ApiBaseHelper();
+      final service = SubscriptionService(apiClient: apiBaseHelper);
+      return SubscriptionViewModel(repository: service);
+    });
 
 class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
   final SubscriptionRepository _repository;
 
   SubscriptionViewModel({required SubscriptionRepository repository})
-      : _repository = repository,
-        super(initialState: const SubscriptionState());
+    : _repository = repository,
+      super(initialState: const SubscriptionState());
 
   Future<void> fetchSubscriptionPlans() async {
     return await runSafely(() async {
       state = state.copyWith(loading: true, errorMessage: null);
       final response = await _repository.getPatientCurrentPlan();
-      
+
       if (!ref.mounted) return;
 
       if (response.isSuccess ?? false) {
         state = state.copyWith(
           loading: false,
-          currentPlan: response.data?.currentPlan,
+          currentPlan: response.data?.currentPlan?.plan,
           plans: response.data?.plans ?? [],
         );
       } else {
@@ -49,7 +50,9 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
     try {
       final response = await _repository.upgradePlan(planId);
       if (response.isSuccess ?? false) {
-        EasyLoading.showSuccess(response.message ?? 'Plan upgraded successfully!');
+        EasyLoading.showSuccess(
+          response.message ?? 'Plan upgraded successfully!',
+        );
         await fetchSubscriptionPlans();
         return true;
       } else {
@@ -67,8 +70,8 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
 
 @immutable
 class SubscriptionState extends BaseStateModel {
-  final PatientSubscriptionPlanModel? currentPlan;
-  final List<PatientSubscriptionPlanModel> plans;
+  final Plan? currentPlan;
+  final List<Plan> plans;
 
   const SubscriptionState({
     super.loading = false,
@@ -81,8 +84,8 @@ class SubscriptionState extends BaseStateModel {
   SubscriptionState copyWith({
     bool? loading,
     String? errorMessage,
-    PatientSubscriptionPlanModel? currentPlan,
-    List<PatientSubscriptionPlanModel>? plans,
+    Plan? currentPlan,
+    List<Plan>? plans,
   }) {
     return SubscriptionState(
       loading: loading ?? this.loading,

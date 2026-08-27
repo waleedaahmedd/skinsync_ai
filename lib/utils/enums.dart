@@ -77,14 +77,13 @@ enum EndPoints {
   const EndPoints(this.path);
 }
 
-enum Status{
-   active,
-  inactive,
-}
+enum Status { active, inactive }
 
 enum BaseUrls {
   api('https://api.skinsyncai.com/api/'),
-  apiQa('https://api-dev.skinsyncai.com/api/');
+  // apiQa('https://api-dev.skinsyncai.com/api/');
+  apiQa('https://bgzh46mj-8084.inc1.devtunnels.ms/api/');
+
   //apiQa('https://gecko-pure-gator.ngrok-free.app/api/');
 
   final String url;
