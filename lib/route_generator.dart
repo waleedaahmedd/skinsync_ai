@@ -22,6 +22,7 @@ import 'screens/bottom_nav_screens/reels_screen.dart';
 import 'screens/bottom_nav_screens/treatment_explore_screen.dart';
 import 'screens/clinic_service_screen.dart';
 import 'screens/clinics_detail_screen.dart';
+import 'screens/compliance_form_screen.dart';
 import 'screens/consent_detail_screen.dart';
 import 'screens/consent_forms_screen.dart';
 import 'screens/doctor_detail_screen.dart';
@@ -101,6 +102,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: const RouteSettings(name: ConsentFormsScreen.routeName),
           builder: (_) => const ConsentFormsScreen(),
+        );
+         case ComplianceFormsScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: ComplianceFormsScreen.routeName),
+          builder: (_) => const ComplianceFormsScreen(),
         );
       case ConsentDetailScreen.routeName:
         return MaterialPageRoute(

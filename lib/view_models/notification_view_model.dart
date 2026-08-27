@@ -41,7 +41,7 @@ class NotificationState extends BaseStateModel {
   NotificationState copyWith({
     bool? loading,
     String? errorMessage,
-    List<NotificationData>? notification,
+    List<NotificationData>? signDocument,
     int? totalPages,
     int? currentPage,
     int? pageSize,
@@ -49,7 +49,7 @@ class NotificationState extends BaseStateModel {
     return NotificationState(
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
-      notification: notification ?? this.notification,
+      notification: signDocument ?? this.notification,
       totalPages: totalPages ?? this.totalPages,
       currentPage: currentPage ?? this.currentPage,
       pageSize: pageSize ?? this.pageSize,
@@ -94,7 +94,7 @@ class NotificationViewModel extends BaseViewModel<NotificationState> {
           ];
 
     state = state.copyWith(
-      notification: newNotification,
+      signDocument: newNotification,
       totalPages: response.totalPages,
       currentPage: response.page,
       loading: false,
