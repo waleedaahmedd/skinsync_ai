@@ -169,7 +169,7 @@ class OtpScreen extends StatelessWidget {
                                         isLoggedIn
                                             ? Navigator.pushNamedAndRemoveUntil(
                                                 context,
-                                                SignupOnboarding.routeName,
+                                                YourProfileScreen.routeName,
                                                 (Route<dynamic> route) =>
                                                     route.settings.name ==
                                                     LoginScreen.routeName,
