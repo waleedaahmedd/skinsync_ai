@@ -35,15 +35,15 @@ class SubscriptionPlanCard extends StatelessWidget {
         margin: margin ?? EdgeInsets.only(bottom: context.h(16)),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(context.r(24)),
-          color: isSelected ? null : Colors.white,
-          gradient: isSelected ? CustomColors.purpleBlueGradient : null,
+          color: (isSelected || isActive) ? null : Colors.white,
+          gradient: (isSelected || isActive) ? CustomColors.purpleBlueGradient : null,
           border: Border.all(
-            color: isSelected
+            color: (isSelected || isActive)
                 ? Colors.transparent
                 : CustomColors.greyColor.withValues(alpha: 0.3),
-            width: isSelected ? 2 : 1,
+            width: (isSelected || isActive) ? 2 : 1,
           ),
-          boxShadow: isSelected
+          boxShadow: (isSelected || isActive)
               ? [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.2),
@@ -70,7 +70,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                   width: context.h(160),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isSelected
+                    color: (isSelected || isActive)
                         ? Colors.white.withValues(alpha: 0.18)
                         : CustomColors.purpleColor.withValues(alpha: 0.08),
                   ),
@@ -84,7 +84,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                   width: context.h(100),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: isSelected
+                    color: (isSelected || isActive)
                         ? Colors.white.withValues(alpha: 0.12)
                         : CustomColors.lightPurpleColor.withValues(alpha: 0.06),
                   ),
@@ -102,7 +102,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                         Text(
                           plan.name ?? '',
                           style: CustomFonts.black20w600.copyWith(
-                            color: isSelected
+                            color: (isSelected || isActive)
                                 ? CustomColors.blackColor
                                 : CustomColors.silverColor,
                           ),
@@ -114,7 +114,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                               vertical: context.h(4),
                             ),
                             decoration: BoxDecoration(
-                              color: isSelected
+                              color: (isSelected || isActive)
                                   ? CustomColors.blackColor.withValues(
                                       alpha: 0.1,
                                     )
@@ -125,7 +125,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                                 context.r(20),
                               ),
                               border: Border.all(
-                                color: isSelected
+                                color: (isSelected || isActive)
                                     ? CustomColors.blackColor
                                     : CustomColors.silverColor,
                                 width: 1,
@@ -134,7 +134,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                             child: Text(
                               "Active",
                               style: CustomFonts.white12w600.copyWith(
-                                color: isSelected
+                                color: (isSelected || isActive)
                                     ? CustomColors.blackColor
                                     : CustomColors.silverColor,
                                 fontSize: context.sp(10),
@@ -146,12 +146,11 @@ class SubscriptionPlanCard extends StatelessWidget {
                     ),
                     SizedBox(height: context.h(8)),
                     Text(
-                      plan.basePrice == 0
-                          ? "Free"
-                          : "\$${plan.basePrice}/${plan.durationOptions?.firstOrNull?.name}",
+                      _getPriceText(plan),
                       style: CustomFonts.black18w400.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: isSelected
+                        fontSize: context.sp(14),
+                        color: (isSelected || isActive)
                             ? CustomColors.blackColor
                             : CustomColors.silverColor,
                       ),
@@ -162,7 +161,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                       (plan.unlimitedSimulation ?? false)
                           ? "Unlimited AI Simulations"
                           : "${plan.simulationCount} AI Simulations",
-                      color: isSelected
+                      color: (isSelected || isActive)
                           ? CustomColors.blackColor
                           : CustomColors.silverColor,
                     ),
@@ -171,10 +170,20 @@ class SubscriptionPlanCard extends StatelessWidget {
                       (plan.unlimitedPostsView ?? false)
                           ? "Unlimited Posts View"
                           : "${plan.postsViewCount} Posts View",
-                      color: isSelected
+                      color: (isSelected || isActive)
                           ? CustomColors.blackColor
                           : CustomColors.silverColor,
                     ),
+                    if (plan.benefits != null)
+                      ...plan.benefits!.map(
+                        (benefit) => _buildBenefitItem(
+                          context,
+                          benefit.title ?? '',
+                          color: (isSelected || isActive)
+                              ? CustomColors.blackColor
+                              : CustomColors.silverColor,
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -185,18 +194,45 @@ class SubscriptionPlanCard extends StatelessWidget {
     );
   }
 
+  String _getPriceText(Plan plan) {
+    if (plan.isLifetime == true) {
+      return "\$${plan.basePrice} (Lifetime)";
+    }
+    if (plan.durationOptions == null || plan.durationOptions!.isEmpty) {
+      return plan.basePrice == 0 || plan.basePrice == null
+          ? "Free"
+          : "\$${plan.basePrice}";
+    }
+    return plan.durationOptions!
+        .map((opt) => "\$${opt.price}/${opt.name}")
+        .join(" | ");
+  }
+
   Widget _buildBenefitItem(BuildContext context, String title, {Color? color}) {
+    if (title.isEmpty) return const SizedBox.shrink();
     return Padding(
       padding: EdgeInsets.only(bottom: context.h(8)),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.check_circle_outline_rounded,
-            size: context.sp(18),
-            color: color ?? CustomColors.darkPurple,
+          Padding(
+            padding: EdgeInsets.only(top: context.h(2)),
+            child: Icon(
+              Icons.check_circle_outline_rounded,
+              size: context.sp(16),
+              color: color ?? CustomColors.darkPurple,
+            ),
           ),
           SizedBox(width: context.w(10)),
-          Text(title, style: CustomFonts.black14w400.copyWith(color: color)),
+          Expanded(
+            child: Text(
+              title,
+              style: CustomFonts.black14w400.copyWith(
+                color: color,
+                fontSize: context.sp(13),
+              ),
+            ),
+          ),
         ],
       ),
     );
