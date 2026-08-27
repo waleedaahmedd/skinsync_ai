@@ -7,11 +7,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import '../consent_forms_screen.dart';
 import '../get_started_screen.dart';
+import '../legal_document_screen.dart';
 import '../personal_detail_screen.dart';
-import '../privacy_policy_screen.dart';
 import '../saved_treatment_screen.dart';
 import '../setting_screen.dart';
-import '../terms_of_service_screen.dart';
 import '../../utils/assets.dart';
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
@@ -459,17 +458,183 @@ class MyProfileScreen extends StatelessWidget {
                         ),
                         buildCardOption(
                           callBack: () {
-                            Navigator.pushNamed(context, TermsOfServiceScreen.routeName);
+                            Navigator.pushNamed(
+                              context,
+                              LegalDocumentScreen.routeName,
+                              arguments: LegalDocumentArgs(
+                                title: "Terms Of Service",
+                                assetPath: 'assets/dummyassets/A_Terms_of_Service.pdf',
+                                storageFileName: 'signed_terms_of_service.pdf',
+                              ),
+                            );
                           },
                           icon: Iconsax.document,
                           title: "Terms Of Service",
                         ),
                         buildCardOption(
                           callBack: () {
-                            Navigator.pushNamed(context, PrivacyPolicyScreen.routeName);
+                            Navigator.pushNamed(
+                              context,
+                              LegalDocumentScreen.routeName,
+                              arguments: LegalDocumentArgs(
+                                title: "Privacy Policy",
+                                assetPath: 'assets/dummyassets/B_Privacy_Policy.pdf',
+                                storageFileName: 'signed_privacy_policy.pdf',
+                              ),
+                            );
                           },
                           icon: Iconsax.security,
                           title: "Privacy Policy",
+                        ),
+                        buildCardOption(
+                          callBack: () {
+                            Navigator.pushNamed(
+                              context,
+                              LegalDocumentScreen.routeName,
+                              arguments: LegalDocumentArgs(
+                                title: "Consumer Health Data Consent",
+                                assetPath: 'assets/dummyassets/A_Terms_of_Service.pdf',
+                                storageFileName: 'signed_consumer_health_data_consent.pdf',
+                              ),
+                            );
+                          },
+                          icon: Iconsax.document_text,
+                          title: "Consumer Health Data Consent",
+                        ),
+                        buildCardOption(
+                          callBack: () {
+                            Navigator.pushNamed(
+                              context,
+                              LegalDocumentScreen.routeName,
+                              arguments: LegalDocumentArgs(
+                                title: "Facial Scan & Biometric Release",
+                                assetPath: 'assets/dummyassets/A_Terms_of_Service.pdf',
+                                storageFileName: 'signed_facial_scan_biometric_release.pdf',
+                              ),
+                            );
+                          },
+                          icon: Iconsax.document_text,
+                          title: "Facial Scan & Biometric Release",
+                        ),
+                        buildCardOption(
+                          callBack: () {
+                            Navigator.pushNamed(
+                              context,
+                              LegalDocumentScreen.routeName,
+                              arguments: LegalDocumentArgs(
+                                title: "Medical Disclaimer",
+                                assetPath: 'assets/dummyassets/A_Terms_of_Service.pdf',
+                                storageFileName: 'signed_medical_disclaimer.pdf',
+                              ),
+                            );
+                          },
+                          icon: Iconsax.document_text,
+                          title: "Medical Disclaimer",
+                        ),
+                        buildCardOption(
+                          callBack: () {
+                            Navigator.pushNamed(
+                              context,
+                              LegalDocumentScreen.routeName,
+                              arguments: LegalDocumentArgs(
+                                title: "AI Transparency & Responsible Use Policy",
+                                assetPath: 'assets/dummyassets/A_Terms_of_Service.pdf',
+                                storageFileName: 'signed_ai_transparency_policy.pdf',
+                              ),
+                            );
+                          },
+                          icon: Iconsax.document_text,
+                          title: "AI Transparency & Responsible Use Policy",
+                        ),
+                        buildCardOption(
+                          callBack: () {
+                            Navigator.pushNamed(
+                              context,
+                              LegalDocumentScreen.routeName,
+                              arguments: LegalDocumentArgs(
+                                title: "Accessibility Statement",
+                                assetPath: 'assets/dummyassets/A_Terms_of_Service.pdf',
+                                storageFileName: 'signed_accessibility_statement.pdf',
+                              ),
+                            );
+                          },
+                          icon: Iconsax.document_text,
+                          title: "Accessibility Statement",
+                        ),
+                        buildCardOption(
+                          callBack: () {
+                            Navigator.pushNamed(
+                              context,
+                              LegalDocumentScreen.routeName,
+                              arguments: LegalDocumentArgs(
+                                title: "U.S. Consumer Health Data Privacy Supplement",
+                                assetPath: 'assets/dummyassets/A_Terms_of_Service.pdf',
+                                storageFileName: 'signed_us_health_privacy_supplement.pdf',
+                              ),
+                            );
+                          },
+                          icon: Iconsax.document_text,
+                          title: "U.S. Consumer Health Data Privacy Supplement",
+                        ),
+                        buildCardOption(
+                          callBack: () {
+                            Navigator.pushNamed(
+                              context,
+                              LegalDocumentScreen.routeName,
+                              arguments: LegalDocumentArgs(
+                                title: "Clinic Share Authorization",
+                                assetPath: 'assets/dummyassets/A_Terms_of_Service.pdf',
+                                storageFileName: 'signed_clinic_share_authorization.pdf',
+                              ),
+                            );
+                          },
+                          icon: Iconsax.document_text,
+                          title: "Clinic Share Authorization",
+                        ),
+                        buildCardOption(
+                          callBack: () {
+                            Navigator.pushNamed(
+                              context,
+                              LegalDocumentScreen.routeName,
+                              arguments: LegalDocumentArgs(
+                                title: "Post-Treatment Notice & Consent",
+                                assetPath: 'assets/dummyassets/A_Terms_of_Service.pdf',
+                                storageFileName: 'signed_post_treatment_notice_consent.pdf',
+                              ),
+                            );
+                          },
+                          icon: Iconsax.document_text,
+                          title: "Post-Treatment Notice & Consent",
+                        ),
+                        buildCardOption(
+                          callBack: () {
+                            Navigator.pushNamed(
+                              context,
+                              LegalDocumentScreen.routeName,
+                              arguments: LegalDocumentArgs(
+                                title: "Electronic Records & Communications Consent",
+                                assetPath: 'assets/dummyassets/A_Terms_of_Service.pdf',
+                                storageFileName: 'signed_electronic_records_consent.pdf',
+                              ),
+                            );
+                          },
+                          icon: Iconsax.document_text,
+                          title: "Electronic Records & Communications Consent",
+                        ),
+                        buildCardOption(
+                          callBack: () {
+                            Navigator.pushNamed(
+                              context,
+                              LegalDocumentScreen.routeName,
+                              arguments: LegalDocumentArgs(
+                                title: "Reciprocal Clinic Data Use Addendum",
+                                assetPath: 'assets/dummyassets/A_Terms_of_Service.pdf',
+                                storageFileName: 'signed_reciprocal_clinic_data_addendum.pdf',
+                              ),
+                            );
+                          },
+                          icon: Iconsax.document_text,
+                          title: "Reciprocal Clinic Data Use Addendum",
                           isLast: true,
                         ),
                       ]),

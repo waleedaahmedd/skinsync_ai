@@ -12,16 +12,30 @@ import '../utils/custom_fonts.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 
-class TermsOfServiceScreen extends StatefulWidget {
-  const TermsOfServiceScreen({super.key});
+class LegalDocumentArgs {
+  final String title;
+  final String assetPath;
+  final String storageFileName;
 
-  static const String routeName = '/TermsOfServiceScreen';
-
-  @override
-  State<TermsOfServiceScreen> createState() => _TermsOfServiceScreenState();
+  LegalDocumentArgs({
+    required this.title,
+    required this.assetPath,
+    required this.storageFileName,
+  });
 }
 
-class _TermsOfServiceScreenState extends State<TermsOfServiceScreen> {
+class LegalDocumentScreen extends StatefulWidget {
+  final LegalDocumentArgs args;
+
+  const LegalDocumentScreen({super.key, required this.args});
+
+  static const String routeName = '/LegalDocumentScreen';
+
+  @override
+  State<LegalDocumentScreen> createState() => _LegalDocumentScreenState();
+}
+
+class _LegalDocumentScreenState extends State<LegalDocumentScreen> {
   final GlobalKey<SfSignaturePadState> _signaturePadKey = GlobalKey();
   String? _pdfPath;
   bool _isLoading = true;
@@ -35,7 +49,7 @@ class _TermsOfServiceScreenState extends State<TermsOfServiceScreen> {
 
   Future<void> _checkExistingPdf() async {
     final directory = await getApplicationDocumentsDirectory();
-    final path = '${directory.path}/signed_terms_of_service.pdf';
+    final path = '${directory.path}/${widget.args.storageFileName}';
     final file = File(path);
     if (await file.exists()) {
       setState(() {
@@ -55,23 +69,26 @@ class _TermsOfServiceScreenState extends State<TermsOfServiceScreen> {
       setState(() => _isLoading = true);
 
       // 1. Get signature image
-      final ui.Image signatureImage = await _signaturePadKey.currentState!.toImage(pixelRatio: 3.0);
-      final byteData = await signatureImage.toByteData(format: ui.ImageByteFormat.png);
+      final ui.Image signatureImage =
+          await _signaturePadKey.currentState!.toImage(pixelRatio: 3.0);
+      final byteData =
+          await signatureImage.toByteData(format: ui.ImageByteFormat.png);
       final Uint8List signatureBytes = byteData!.buffer.asUint8List();
 
       // 2. Load original PDF from assets
-      // IMPORTANT: Make sure you have placed the PDF in assets/dummyassets/A_Terms_of_Service.pdf
-      final ByteData assetData = await rootBundle.load('assets/dummyassets/A_Terms_of_Service.pdf');
+      final ByteData assetData = await rootBundle.load(widget.args.assetPath);
       final Uint8List originalBytes = assetData.buffer.asUint8List();
 
       // 3. Create PDF document and add signature
       final PdfDocument document = PdfDocument(inputBytes: originalBytes);
-      final PdfPage lastPage = document.pages.add(); // Adding a new page for signature
-      
-      final PdfFont boldFont = PdfStandardFont(PdfFontFamily.helvetica, 14, style: PdfFontStyle.bold);
-      
+      final PdfPage lastPage =
+          document.pages.add(); // Adding a new page for signature
+
+      final PdfFont boldFont = PdfStandardFont(PdfFontFamily.helvetica, 14,
+          style: PdfFontStyle.bold);
+
       lastPage.graphics.drawString(
-        "Signature Confirmation",
+        "Signature Confirmation (${widget.args.title})",
         boldFont,
         bounds: const Rect.fromLTWH(0, 20, 0, 0),
       );
@@ -92,7 +109,7 @@ class _TermsOfServiceScreenState extends State<TermsOfServiceScreen> {
       document.dispose();
 
       final directory = await getApplicationDocumentsDirectory();
-      final path = '${directory.path}/signed_terms_of_service.pdf';
+      final path = '${directory.path}/${widget.args.storageFileName}';
       final file = File(path);
       await file.writeAsBytes(bytes, flush: true);
 
@@ -101,10 +118,12 @@ class _TermsOfServiceScreenState extends State<TermsOfServiceScreen> {
         _isSigned = true;
         _isLoading = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Terms of Service signed and saved successfully!")),
+          SnackBar(
+              content:
+                  Text("${widget.args.title} signed and saved successfully!")),
         );
       }
     } catch (e) {
@@ -112,7 +131,9 @@ class _TermsOfServiceScreenState extends State<TermsOfServiceScreen> {
       debugPrint("Error saving PDF: $e");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error: $e. Make sure assets/dummyassets/A_Terms_of_Service.pdf exists.")),
+          SnackBar(
+              content: Text(
+                  "Error: $e. Make sure ${widget.args.assetPath} exists.")),
         );
       }
     }
@@ -122,10 +143,10 @@ class _TermsOfServiceScreenState extends State<TermsOfServiceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const CustomAppBar(title: "Terms of Service"),
-      body: _isLoading 
+      appBar: CustomAppBar(title: widget.args.title),
+      body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _isSigned 
+          : _isSigned
               ? SfPdfViewer.file(File(_pdfPath!))
               : _buildTermsWithSignature(),
     );
@@ -136,7 +157,7 @@ class _TermsOfServiceScreenState extends State<TermsOfServiceScreen> {
       children: [
         Expanded(
           flex: 2,
-          child: SfPdfViewer.asset('assets/dummyassets/A_Terms_of_Service.pdf'),
+          child: SfPdfViewer.asset(widget.args.assetPath),
         ),
         Container(
           height: 220.h,

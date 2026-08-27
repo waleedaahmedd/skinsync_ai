@@ -25,6 +25,7 @@ import 'screens/clinics_detail_screen.dart';
 import 'screens/consent_detail_screen.dart';
 import 'screens/consent_forms_screen.dart';
 import 'screens/doctor_detail_screen.dart';
+import 'screens/legal_document_screen.dart';
 import 'screens/doctors_screen.dart';
 import 'screens/explore_clinics_screen.dart';
 import 'screens/face_pose_capture_screen.dart';
@@ -43,7 +44,6 @@ import 'screens/patient_treatment_request_detail_screen.dart';
 import 'screens/patient_treatment_requests_screen.dart';
 import 'screens/payment_screen.dart';
 import 'screens/personal_detail_screen.dart';
-import 'screens/privacy_policy_screen.dart';
 import 'screens/progress_detail_screen.dart';
 import 'screens/review_screen.dart';
 import 'screens/saved_treatment_screen.dart';
@@ -55,7 +55,6 @@ import 'screens/setting_screen.dart';
 import 'screens/signup_onboarding.dart';
 import 'screens/simulation_history_screen.dart';
 import 'screens/splash_screen.dart';
-import 'screens/terms_of_service_screen.dart';
 import 'screens/treatment_area_screen.dart';
 import 'screens/treatment_category_screen.dart';
 import 'screens/treatment_detail_screen.dart';
@@ -88,15 +87,10 @@ class RouteGenerator {
           settings: const RouteSettings(name: GetStartedScreen.routeName),
           builder: (_) => const GetStartedScreen(),
         );
-      case PrivacyPolicyScreen.routeName:
+      case LegalDocumentScreen.routeName:
         return MaterialPageRoute(
-          settings: const RouteSettings(name: PrivacyPolicyScreen.routeName),
-          builder: (_) => const PrivacyPolicyScreen(),
-        );
-      case TermsOfServiceScreen.routeName:
-        return MaterialPageRoute(
-          settings: const RouteSettings(name: TermsOfServiceScreen.routeName),
-          builder: (_) => const TermsOfServiceScreen(),
+          settings: const RouteSettings(name: LegalDocumentScreen.routeName),
+          builder: (_) => LegalDocumentScreen(args: args as LegalDocumentArgs),
         );
       case IntroScreen.routeName:
         return MaterialPageRoute(
