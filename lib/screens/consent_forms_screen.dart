@@ -1,43 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
+import '../models/responses/consent_form_response.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../view_models/forms_view_model.dart';
 import '../widgets/custom_app_bar.dart';
-import 'consent_detail_screen.dart';
+import 'legal_document_screen.dart';
 
-class ConsentFormsScreen extends StatelessWidget {
+class ConsentFormsScreen extends ConsumerStatefulWidget {
   const ConsentFormsScreen({super.key});
 
   static const String routeName = "/ConsentFormsScreen";
 
   @override
-  Widget build(BuildContext context) {
-    // Dummy data for signed agreements
-    final List<Map<String, String>> signedAgreements = [
-      {
-        "title": "Nationwide Launch Agreements + Consent Package",
-        "subtitle": "Agreement A: Terms of Service",
-        "date": "Signed date: August 23, 2026",
-        "id": "1",
-      },
-      {
-        "title": "Privacy Practices Agreement",
-        "subtitle": "Agreement B: Data Privacy",
-        "date": "Signed date: August 25, 2026",
-        "id": "2",
-      },
-    ];
+  ConsumerState<ConsentFormsScreen> createState() =>
+      _ConsentFormsScreenState();
+}
 
-    // Dummy data for unsigned agreements
-    final List<Map<String, String>> unsignedAgreements = [
-      {
-        "title": "Telehealth Consent Form",
-        "subtitle": "Agreement C: Remote Consultation",
-        "date": "Effective date: September 01, 2026",
-        "id": "3",
-      },
-    ];
+class _ConsentFormsScreenState extends ConsumerState<ConsentFormsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref.read(formsViewModel.notifier).fetchForms();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = ref.watch(formsViewModel);
 
     return DefaultTabController(
       length: 2,
@@ -60,12 +53,14 @@ class ConsentFormsScreen extends StatelessWidget {
               ],
             ),
             Expanded(
-              child: TabBarView(
-                children: [
-                  _ConsentListView(agreements: signedAgreements),
-                  _ConsentListView(agreements: unsignedAgreements),
-                ],
-              ),
+              child: state.loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : TabBarView(
+                      children: [
+                        _ConsentListView(documents: state.signDocument),
+                        _ConsentListView(documents: state.unSignDocument),
+                      ],
+                    ),
             ),
           ],
         ),
@@ -75,13 +70,13 @@ class ConsentFormsScreen extends StatelessWidget {
 }
 
 class _ConsentListView extends StatelessWidget {
-  final List<Map<String, String>> agreements;
+  final List<Document> documents;
 
-  const _ConsentListView({required this.agreements});
+  const _ConsentListView({required this.documents});
 
   @override
   Widget build(BuildContext context) {
-    if (agreements.isEmpty) {
+    if (documents.isEmpty) {
       return Center(
         child: Text(
           "No forms found",
@@ -92,17 +87,21 @@ class _ConsentListView extends StatelessWidget {
 
     return ListView.separated(
       padding: EdgeInsets.all(context.w(20)),
-      itemCount: agreements.length,
+      itemCount: documents.length,
       separatorBuilder: (context, index) => SizedBox(height: context.h(16)),
       itemBuilder: (context, index) {
-        final agreement = agreements[index];
+        final document = documents[index];
         return InkWell(
           onTap: () {
-            Navigator.pushNamed(
-              context,
-              ConsentDetailScreen.routeName,
-              arguments: agreement,
-            );
+           Navigator.pushNamed(
+                              context,
+                              LegalDocumentScreen.routeName,
+                              arguments: LegalDocumentArgs(
+                                title: document.title ?? '',
+                                assetPath: document.url ?? '' ,
+                                storageFileName: document.title ?? '',
+                              ),
+                            );
           },
           borderRadius: BorderRadius.circular(context.r(16)),
           child: Container(
@@ -142,21 +141,16 @@ class _ConsentListView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        agreement["title"]!,
+                        document.title ?? 'Untitled Document',
                         style: CustomFonts.black16w600,
                       ),
-                      SizedBox(height: context.h(4)),
-                      Text(
-                        agreement["subtitle"]!,
-                        style: CustomFonts.grey14w400,
-                      ),
-                      SizedBox(height: context.h(8)),
-                      Text(
-                        agreement["date"]!,
-                        style: CustomFonts.grey12w400.copyWith(
-                          fontStyle: FontStyle.italic,
+                      if (document.type != null) ...[
+                        SizedBox(height: context.h(4)),
+                        Text(
+                          document.type!,
+                          style: CustomFonts.grey14w400,
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),

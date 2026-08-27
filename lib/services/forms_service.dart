@@ -13,8 +13,9 @@ class FormsService implements FormsRepository {
   @override
   Future<ConsentFormResponse> fetchConsentForm() async {
     final response = await _apiClient.httpRequest(
-      endPoint: EndPoints.notification,
+      endPoint: EndPoints.forms,
       requestType: .get,
+      params:"?type=consent"
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);

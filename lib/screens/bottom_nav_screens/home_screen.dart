@@ -38,7 +38,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
 @override
   void initState() {
-   ref.read(formsViewModel.notifier).fetchForms();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+ ref.read(formsViewModel.notifier).fetchForms();
+    });
+  
     super.initState();
   }
 
