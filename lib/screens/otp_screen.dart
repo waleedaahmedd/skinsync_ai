@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:pinput/pinput.dart';
-
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
@@ -12,7 +11,7 @@ import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 import 'bottom_nav_page.dart';
 import 'login_screen.dart';
-import 'signup_onboarding.dart';
+import 'your_profile_screen.dart';
 
 class OtpScreen extends StatelessWidget {
   const OtpScreen({super.key});
