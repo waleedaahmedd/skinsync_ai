@@ -8,7 +8,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-import '../main.dart';
 import '../utils/assets.dart';
 import '../utils/biometric_helper.dart';
 import '../utils/color_constant.dart';
@@ -16,6 +15,7 @@ import '../utils/custom_fonts.dart';
 import '../utils/enums.dart';
 import '../utils/secure_storage_service.dart';
 import '../view_models/auth_view_model.dart';
+import '../view_models/notification_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 
 class SettingScreen extends ConsumerStatefulWidget {
@@ -121,56 +121,64 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
               ),
               child: Column(
                 children: [
-                  // Push Notifications Setting Option
-                  if (!isDeploymentMode)
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: context.w(16),
-                        vertical: context.h(12),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(context.w(8)),
-                            decoration: BoxDecoration(
-                              color: unifiedColor.withValues(alpha: 0.08),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Iconsax.notification,
-                              size: context.sp(18),
-                              color: unifiedColor,
-                            ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.w(16),
+                      vertical: context.h(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(context.w(8)),
+                          decoration: BoxDecoration(
+                            color: unifiedColor.withValues(alpha: 0.08),
+                            shape: BoxShape.circle,
                           ),
-                          SizedBox(width: context.w(14)),
-                          Expanded(
-                            child: Text(
-                              "Push Notifications",
-                              style: CustomFonts.black16w500,
-                            ),
+                          child: Icon(
+                            Iconsax.notification,
+                            size: context.sp(18),
+                            color: unifiedColor,
                           ),
-                          CustomSizedSwitch(
-                            isOn: isNotificationEnabled,
-                            onChanged: (val) {
+                        ),
+                        SizedBox(width: context.w(14)),
+                        Expanded(
+                          child: Text(
+                            "Push Notifications",
+                            style: CustomFonts.black16w500,
+                          ),
+                        ),
+                        CustomSizedSwitch(
+                          isOn: isNotificationEnabled,
+                          onChanged: (val) async {
+                            final status = val
+                                ? Status.active
+                                : Status.inactive;
+
+                            final success = await ref
+                                .read(notificationViewModel.notifier)
+                                .callNotificationStatus(status: status);
+
+                            if (success) {
                               setState(() {
                                 isNotificationEnabled = val;
                               });
-                            },
-                          ),
-                        ],
-                      ),
+                            }
+                          },
+                        ),
+                      ],
                     ),
-                  if (!isDeploymentMode)
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: context.w(54),
-                        right: context.w(16),
-                      ),
-                      child: Divider(
-                        color: Colors.grey.shade100,
-                        height: context.h(1),
-                      ),
+                  ),
+
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: context.w(54),
+                      right: context.w(16),
                     ),
+                    child: Divider(
+                      color: Colors.grey.shade100,
+                      height: context.h(1),
+                    ),
+                  ),
 
                   // Biometric Authentication Setting Option
                   Padding(

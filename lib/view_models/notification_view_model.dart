@@ -1,3 +1,4 @@
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/base_state_model.dart';
@@ -5,6 +6,7 @@ import '../models/responses/notification_response.dart';
 import '../repositories/notification_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/notification_service.dart';
+import '../utils/enums.dart';
 import 'base_view_model.dart';
 
 final notificationViewModel =
@@ -105,9 +107,25 @@ class NotificationViewModel extends BaseViewModel<NotificationState> {
 
   return fetchedPage;
 }
+ 
+ 
+Future<bool> callNotificationStatus({required Status status}) async {
+  EasyLoading.show(status: 'Loading....');
+
+  final result = await runSafely(() async {
+    await _repository.callNotificationStatus(status: status);
+    return true;
+  });
+
+  EasyLoading.dismiss();
+
+  return result ?? false;
+}
+ 
   @override
   void onError(String message) {
     state = state.copyWith(loading: false);
+    EasyLoading.dismiss();
     super.onError(message);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
@@ -6,6 +7,7 @@ import '../models/requests/save_answer_request.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../view_models/sign_up_onboarding_view_model.dart';
+import '../widgets/app_loader.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/question_title.dart';
 
@@ -71,10 +73,13 @@ class SkinType extends StatelessWidget {
                 width: double.infinity,
                 child: Consumer(
                   builder: (_, ref, _) {
+                    final loading = ref
+                        .watch(onBoardingViewModel)
+                        .isSaveAnswerLoding;
+                    if (loading) {
+                      return const AppLoader();
+                    }
                     return CustomButton(
-                      isLoading: ref
-                          .watch(onBoardingViewModel)
-                          .isSaveAnswerLoding,
                       onPressed: () {
                         final onBoardingVM = ref.read(
                           onBoardingViewModel.notifier,
@@ -89,7 +94,10 @@ class SkinType extends StatelessWidget {
                             ),
                           ],
                         );
-
+                        if (questionID == null || optionID == null) {
+                          EasyLoading.showError('Please select an option');
+                          return;
+                        }
                         if (questionID != null && optionID != null) {
                           onBoardingVM
                               .callSaveAnswerApi(saveAnswer: saveAnswer)

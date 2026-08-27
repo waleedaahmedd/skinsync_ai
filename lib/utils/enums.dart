@@ -68,12 +68,18 @@ enum EndPoints {
   patientTreatmentRequest('v1/patient-treatment-request'),
   patientCurrentPlan('v1/patient-current-plan'),
   notification('v1/notifications'),
+  notificationstatus('v1/pushnotification-status'),
   subscribe('v1/subscribe/'),
   clinic('v1/clinic');
 
   final String path;
 
   const EndPoints(this.path);
+}
+
+enum Status{
+   active,
+  inactive,
 }
 
 enum BaseUrls {

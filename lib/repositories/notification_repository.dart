@@ -1,4 +1,6 @@
+import '../models/responses/base_response_model.dart';
 import '../models/responses/notification_response.dart';
+import '../utils/enums.dart';
 
 abstract class NotificationRepository {
 
@@ -7,4 +9,9 @@ abstract class NotificationRepository {
     int limit = 20,
   });
  
+ Future<BaseResponseModel> callNotificationStatus({
+   required Status status
+  });
+
+
 }

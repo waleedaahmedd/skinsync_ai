@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../utils/enums.dart';
+import '../view_models/notification_view_model.dart';
 import '../widgets/custom_button.dart';
 import 'biometric_screen.dart';
 
@@ -46,18 +49,25 @@ class GetNotifiedScreen extends StatelessWidget {
             SizedBox(height: context.h(64)),
             Image.asset(PngAssets.getNotified, height: context.h(320)),
             SizedBox(height: context.h(79)),
-            SizedBox(
-              width: double.infinity,
-              child: CustomButton(
-                onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    BiometricScreen.routeName,
-                    (Route<dynamic> route) => false,
-                  );
-                },
-                text: "Turn On Notifications",
-              ),
+            Consumer(
+              builder: (contex,ref,_) {
+                return SizedBox(
+                  width: double.infinity,
+                  child: CustomButton(
+                    onPressed: () async {
+                      final result = await   ref.read(notificationViewModel.notifier).callNotificationStatus(status: Status.active);
+                     if(result){
+                       Navigator.pushNamedAndRemoveUntil(
+                          context,
+                          BiometricScreen.routeName,
+                          (Route<dynamic> route) => false,
+                        );
+                     }
+                    },
+                    text: "Turn On Notifications",
+                  ),
+                );
+              }
             ),
             SizedBox(height: context.h(19)),
             GestureDetector(

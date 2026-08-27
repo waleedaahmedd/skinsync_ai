@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:pinput/pinput.dart';
 
-import '../main.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
@@ -12,9 +11,8 @@ import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 import 'bottom_nav_page.dart';
-import 'face_scan_screen.dart';
 import 'login_screen.dart';
-import 'your_profile_screen.dart';
+import 'signup_onboarding.dart';
 
 class OtpScreen extends StatelessWidget {
   const OtpScreen({super.key});
@@ -171,18 +169,14 @@ class OtpScreen extends StatelessWidget {
                                         isLoggedIn
                                             ? Navigator.pushNamedAndRemoveUntil(
                                                 context,
-                                                YourProfileScreen.routeName,
+                                                SignupOnboarding.routeName,
                                                 (Route<dynamic> route) =>
                                                     route.settings.name ==
                                                     LoginScreen.routeName,
                                               )
-                                            : !isDeploymentMode
-                                            ? Navigator.pushNamedAndRemoveUntil(
-                                                context,
-                                                FaceScanScreen.routeName,
-                                                (Route<dynamic> route) => false,
-                                              )
-                                            : Navigator.pushNamedAndRemoveUntil(
+                                            : 
+                                            
+                                           Navigator.pushNamedAndRemoveUntil(
                                                 context,
                                                 BottomNavPage.routeName,
                                                 (Route<dynamic> route) => false,

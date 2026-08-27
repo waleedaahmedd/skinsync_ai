@@ -146,7 +146,7 @@ class _SignupOnboardingState extends ConsumerState<SignupOnboarding> {
                             child: Row(
                               children: [
                                 Text(
-                                  'Skip This',
+                                  'Skip',
                                   style: CustomFonts.black16w400,
                                 ),
                                 SizedBox(width: context.w(8)),

@@ -12,7 +12,7 @@ import '../utils/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/phone_widget.dart';
-import 'biometric_screen.dart';
+import 'get_notified_screen.dart';
 class YourProfileScreen extends ConsumerStatefulWidget {
   const YourProfileScreen({super.key});
   static const String routeName = '/YourProfileScreen';
@@ -285,7 +285,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                                 if (value == true) {
                                   Navigator.pushNamedAndRemoveUntil(
                                     context,
-                                    BiometricScreen.routeName,
+                                    GetNotifiedScreen.routeName,
                                     (Route<dynamic> route) => false,
                                   );
                                 }
