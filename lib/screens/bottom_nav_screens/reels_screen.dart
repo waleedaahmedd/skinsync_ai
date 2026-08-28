@@ -6,6 +6,7 @@ import '../../view_models/explore_view_model.dart';
 import '../../widgets/app_loader.dart';
 import '../../widgets/reel_card.dart';
 import '../../widgets/social_toggle_button.dart';
+import '../../widgets/post_usage_container.dart';
 
 class ReelsScreen extends ConsumerStatefulWidget {
   const ReelsScreen({super.key});
@@ -132,6 +133,14 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
                   ],
                 ),
               ),
+            ),
+
+            // Usage tracking container at the bottom
+            Positioned(
+              bottom: 85.h,
+              left: 0,
+              right: 0,
+              child: const PostUsageContainer(isDark: true),
             ),
           ],
         ),
