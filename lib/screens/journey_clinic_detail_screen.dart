@@ -16,7 +16,7 @@ import '../view_models/clinic_view_model.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_button.dart';
-import '../widgets/dialogs/preferred_slots_dialog.dart';
+import '../widgets/bottom_sheets/preferred_slots_bottom_sheet.dart';
 import '../widgets/dialogs/facial_scan_consent_dialog.dart';
 import '../widgets/dialogs/success_dialogs.dart';
 import 'treatment_journey_screen.dart';
@@ -394,6 +394,7 @@ class _JourneyClinicDetailScreenState
                             showFacialScanConsentDialog(
                               context: context,
                               simulationData: tjState.simulations,
+                              preferredSlots: slots,
                               onConfirm: () async {
                                 final success = await ref
                                     .read(treatmentJourneyProvider.notifier)
@@ -414,6 +415,7 @@ class _JourneyClinicDetailScreenState
                           showFacialScanConsentDialog(
                             context: context,
                             simulationData: tjState.simulations,
+                            preferredSlots: slots,
                             onConfirm: () async {
                               final result = await ref
                                   .read(treatmentJourneyProvider.notifier)
@@ -427,7 +429,7 @@ class _JourneyClinicDetailScreenState
                           );
                         }
 
-                        showPreferredSlotsDialog(
+                        PreferredSlotsBottomSheet.show(
                           context: context,
                           onConfirm: (slots) => processShare(slots),
                         );

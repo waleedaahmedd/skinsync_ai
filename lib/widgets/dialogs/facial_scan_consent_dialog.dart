@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
+import '../../models/requests/preferred_slot.dart';
 import '../../models/responses/simulation_history_response.dart';
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
@@ -9,6 +10,7 @@ import '../custom_button.dart';
 void showFacialScanConsentDialog({
   required BuildContext context,
   SimulationData? simulationData,
+  List<PreferredSlot>? preferredSlots,
   required VoidCallback onConfirm,
 }) {
   showDialog(
@@ -57,6 +59,11 @@ void showFacialScanConsentDialog({
                       children: [
                         if (simulationData != null) ...[
                           _buildReceipt(context, simulationData),
+                          SizedBox(height: context.h(16)),
+                        ],
+                        if (preferredSlots != null &&
+                            preferredSlots.isNotEmpty) ...[
+                          _buildSlotsSummary(context, preferredSlots),
                           SizedBox(height: context.h(20)),
                         ],
                         Text(
@@ -180,6 +187,63 @@ Widget _buildReceipt(BuildContext context, SimulationData simulationData) {
               ),
             );
           }),
+      ],
+    ),
+  );
+}
+
+Widget _buildSlotsSummary(
+  BuildContext context,
+  List<PreferredSlot> preferredSlots,
+) {
+  return Container(
+    width: double.infinity,
+    padding: EdgeInsets.all(context.w(16)),
+    decoration: BoxDecoration(
+      color: CustomColors.purpleColor.withValues(alpha: 0.04),
+      borderRadius: BorderRadius.circular(context.r(16)),
+      border: Border.all(color: CustomColors.purpleColor.withValues(alpha: 0.1)),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(
+              Iconsax.calendar_tick,
+              size: 20,
+              color: CustomColors.purpleColor,
+            ),
+            SizedBox(width: context.w(8)),
+            Text("Preferred Slots", style: CustomFonts.black16w600),
+          ],
+        ),
+        const Divider(height: 24),
+        ...preferredSlots.asMap().entries.map((entry) {
+          final index = entry.key;
+          final slot = entry.value;
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: index != preferredSlots.length - 1 ? context.h(10) : 0,
+            ),
+            child: Row(
+              children: [
+                Text(
+                  "${index + 1}. ",
+                  style: CustomFonts.darkPurple12w600.copyWith(
+                    fontSize: context.sp(14),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    "${slot.date} at ${slot.time}",
+                    style: CustomFonts.black13w500,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
       ],
     ),
   );
