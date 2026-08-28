@@ -36,7 +36,9 @@ class SubscriptionPlanCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(context.r(24)),
           color: (isSelected || isActive) ? null : Colors.white,
-          gradient: (isSelected || isActive) ? CustomColors.purpleBlueGradient : null,
+          gradient: (isSelected || isActive)
+              ? CustomColors.purpleBlueGradient
+              : null,
           border: Border.all(
             color: (isSelected || isActive)
                 ? Colors.transparent
@@ -206,6 +208,239 @@ class SubscriptionPlanCard extends StatelessWidget {
     return plan.durationOptions!
         .map((opt) => "\$${opt.price}/${opt.name}")
         .join(" | ");
+  }
+
+  Widget _buildBenefitItem(BuildContext context, String title, {Color? color}) {
+    if (title.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: EdgeInsets.only(bottom: context.h(8)),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: context.h(2)),
+            child: Icon(
+              Icons.check_circle_outline_rounded,
+              size: context.sp(16),
+              color: color ?? CustomColors.darkPurple,
+            ),
+          ),
+          SizedBox(width: context.w(10)),
+          Expanded(
+            child: Text(
+              title,
+              style: CustomFonts.black14w400.copyWith(
+                color: color,
+                fontSize: context.sp(13),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SubscriptionCard extends StatelessWidget {
+  final CurrentPlan plan;
+  final bool isSelected;
+  final bool isActive;
+  final VoidCallback onTap;
+  final double? width;
+  final double? height;
+  final EdgeInsetsGeometry? margin;
+
+  const SubscriptionCard({
+    super.key,
+    required this.plan,
+    required this.isSelected,
+    this.isActive = false,
+    required this.onTap,
+    this.width,
+    this.height,
+    this.margin,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: width,
+        height: height,
+        margin: margin ?? EdgeInsets.only(bottom: context.h(16)),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(context.r(24)),
+          color: (isSelected || isActive) ? null : Colors.white,
+          gradient: (isSelected || isActive)
+              ? CustomColors.purpleBlueGradient
+              : null,
+          border: Border.all(
+            color: (isSelected || isActive)
+                ? Colors.transparent
+                : CustomColors.greyColor.withValues(alpha: 0.3),
+            width: (isSelected || isActive) ? 2 : 1,
+          ),
+          boxShadow: (isSelected || isActive)
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                  BoxShadow(
+                    color: Colors.white.withValues(alpha: 0.1),
+                    blurRadius: 10,
+                  ),
+                ]
+              : CustomColors.cardShadow,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(context.r(24)),
+          child: Stack(
+            children: [
+              // Decorative Circles (Larger and more prominent)
+              Positioned(
+                bottom: -context.h(50),
+                right: -context.w(40),
+                child: Container(
+                  height: context.h(160),
+                  width: context.h(160),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: (isSelected || isActive)
+                        ? Colors.white.withValues(alpha: 0.18)
+                        : CustomColors.purpleColor.withValues(alpha: 0.08),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: -context.h(20),
+                left: -context.w(30),
+                child: Container(
+                  height: context.h(100),
+                  width: context.h(100),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: (isSelected || isActive)
+                        ? Colors.white.withValues(alpha: 0.12)
+                        : CustomColors.lightPurpleColor.withValues(alpha: 0.06),
+                  ),
+                ),
+              ),
+
+              Padding(
+                padding: EdgeInsets.all(context.w(20)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          plan.name ?? '',
+                          style: CustomFonts.black20w600.copyWith(
+                            color: (isSelected || isActive)
+                                ? CustomColors.blackColor
+                                : CustomColors.silverColor,
+                          ),
+                        ),
+                        if (isActive)
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: context.w(12),
+                              vertical: context.h(4),
+                            ),
+                            decoration: BoxDecoration(
+                              color: (isSelected || isActive)
+                                  ? CustomColors.blackColor.withValues(
+                                      alpha: 0.1,
+                                    )
+                                  : CustomColors.silverColor.withValues(
+                                      alpha: 0.05,
+                                    ),
+                              borderRadius: BorderRadius.circular(
+                                context.r(20),
+                              ),
+                              border: Border.all(
+                                color: (isSelected || isActive)
+                                    ? CustomColors.blackColor
+                                    : CustomColors.silverColor,
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              "Active",
+                              style: CustomFonts.white12w600.copyWith(
+                                color: (isSelected || isActive)
+                                    ? CustomColors.blackColor
+                                    : CustomColors.silverColor,
+                                fontSize: context.sp(10),
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    SizedBox(height: context.h(8)),
+                    Text(
+                      _getPriceSubText(plan),
+                      style: CustomFonts.black18w400.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: context.sp(14),
+                        color: (isSelected || isActive)
+                            ? CustomColors.blackColor
+                            : CustomColors.silverColor,
+                      ),
+                    ),
+                    SizedBox(height: context.h(16)),
+                    _buildBenefitItem(
+                      context,
+                      (plan.unlimitedSimulation ?? false)
+                          ? "Unlimited AI Simulations"
+                          : "${plan.simulationCount} AI Simulations",
+                      color: (isSelected || isActive)
+                          ? CustomColors.blackColor
+                          : CustomColors.silverColor,
+                    ),
+                    _buildBenefitItem(
+                      context,
+                      (plan.unlimitedPostsView ?? false)
+                          ? "Unlimited Posts View"
+                          : "${plan.postsViewCount} Posts View",
+                      color: (isSelected || isActive)
+                          ? CustomColors.blackColor
+                          : CustomColors.silverColor,
+                    ),
+                    if (plan.benefits != null)
+                      ...plan.benefits!.map(
+                        (benefit) => _buildBenefitItem(
+                          context,
+                          benefit.title ?? '',
+                          color: (isSelected || isActive)
+                              ? CustomColors.blackColor
+                              : CustomColors.silverColor,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _getPriceSubText(CurrentPlan plan) {
+    if (plan.isLifetime == true) {
+      return "\$${plan.price} (Lifetime)";
+    }
+    if (plan.durationName == null) {
+      return plan.price == 0 || plan.price == null ? "Free" : "\$${plan.price}";
+    }
+    return plan.durationName ??
+        'N/A'; // Using newline for better fit in comparison column
   }
 
   Widget _buildBenefitItem(BuildContext context, String title, {Color? color}) {

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
-import '../models/responses/patient_plans_response.dart' hide Duration;
+import '../models/responses/patient_plans_response.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../utils/list_utils.dart';
@@ -40,11 +40,12 @@ class _SubscriptionPlansScreenState
           : subscriptionState.errorMessage != null
           ? Center(child: Text(subscriptionState.errorMessage!))
           : _buildBody(subscriptionState),
-      bottomNavigationBar: subscriptionState.loading ||
-                  subscriptionState.errorMessage != null ||
-                  subscriptionState.plans.isEmpty
-              ? null
-              : _buildBottomButton(subscriptionState),
+      bottomNavigationBar:
+          subscriptionState.loading ||
+              subscriptionState.errorMessage != null ||
+              subscriptionState.plans.isEmpty
+          ? null
+          : _buildBottomButton(subscriptionState),
     );
   }
 
@@ -120,8 +121,10 @@ class _SubscriptionPlansScreenState
                       // Direct API call for single duration
                       await ref
                           .read(subscriptionProvider.notifier)
-                          .upgradePlan(selectedPlan.id!,
-                              durationId: options.first.id);
+                          .upgradePlan(
+                            selectedPlan.id!,
+                            durationId: options.first.id,
+                          );
                     } else {
                       // Show bottom sheet for multiple durations
                       _showDurationSelectionSheet(context, selectedPlan);
@@ -150,7 +153,9 @@ class _SubscriptionPlansScreenState
         ),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(32))),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(context.r(32)),
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -172,41 +177,43 @@ class _SubscriptionPlansScreenState
               textAlign: TextAlign.center,
             ),
             SizedBox(height: context.h(24)),
-            ...?selectedPlan.durationOptions?.map((option) => Padding(
-                  padding: EdgeInsets.only(bottom: context.h(12)),
-                  child: InkWell(
-                    onTap: () async {
-                      Navigator.pop(context);
-                      await ref
-                          .read(subscriptionProvider.notifier)
-                          .upgradePlan(selectedPlan.id!, durationId: option.id);
-                    },
-                    borderRadius: BorderRadius.circular(context.r(16)),
-                    child: Container(
-                      padding: EdgeInsets.all(context.w(16)),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade200),
-                        borderRadius: BorderRadius.circular(context.r(16)),
-                        color: Colors.grey.shade50,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            option.name ?? 'N/A',
-                            style: CustomFonts.black16w600,
+            ...?selectedPlan.durationOptions?.map(
+              (option) => Padding(
+                padding: EdgeInsets.only(bottom: context.h(12)),
+                child: InkWell(
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await ref
+                        .read(subscriptionProvider.notifier)
+                        .upgradePlan(selectedPlan.id!, durationId: option.id);
+                  },
+                  borderRadius: BorderRadius.circular(context.r(16)),
+                  child: Container(
+                    padding: EdgeInsets.all(context.w(16)),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade200),
+                      borderRadius: BorderRadius.circular(context.r(16)),
+                      color: Colors.grey.shade50,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          option.name ?? 'N/A',
+                          style: CustomFonts.black16w600,
+                        ),
+                        Text(
+                          "\$${option.price}",
+                          style: CustomFonts.black16w600.copyWith(
+                            color: CustomColors.purpleColor,
                           ),
-                          Text(
-                            "\$${option.price}",
-                            style: CustomFonts.black16w600.copyWith(
-                              color: CustomColors.purpleColor,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                )),
+                ),
+              ),
+            ),
             SizedBox(height: context.h(12)),
             CustomButton(
               isBorder: true,
@@ -221,7 +228,11 @@ class _SubscriptionPlansScreenState
     );
   }
 
-  void _showComparisonSheet(BuildContext context, Plan current, Plan selected) {
+  void _showComparisonSheet(
+    BuildContext context,
+    CurrentPlan current,
+    Plan selected,
+  ) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -257,7 +268,12 @@ class _SubscriptionPlansScreenState
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(child: _buildComparisonColumn("Current", current)),
+                    Expanded(
+                      child: _buildComparisonForSubscription(
+                        "Current",
+                        current,
+                      ),
+                    ),
                     Container(
                       width: 1,
                       height: 400.h, // Fixed height for vertical divider
@@ -334,6 +350,67 @@ class _SubscriptionPlansScreenState
           ),
       ],
     );
+  }
+
+  Widget _buildComparisonForSubscription(
+    String label,
+    CurrentPlan plan, {
+    bool isHighlighted = false,
+  }) {
+    final textColor = isHighlighted ? CustomColors.purpleColor : Colors.grey;
+
+    return Column(
+      children: [
+        Text(
+          label,
+          style: CustomFonts.grey14w400.copyWith(
+            color: textColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: context.h(8)),
+        Text(
+          plan.name ?? '',
+          style: CustomFonts.black18w600,
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: context.h(4)),
+        Text(
+          _getPriceSubText(plan),
+          style: CustomFonts.black14w600.copyWith(
+            color: CustomColors.purpleColor,
+            fontSize: context.sp(11),
+          ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: context.h(24)),
+        _comparisonItem(
+          (plan.unlimitedSimulation ?? false)
+              ? "Unlimited AI Simulations"
+              : "${plan.simulationCount} AI Simulations",
+        ),
+        _comparisonItem(
+          (plan.unlimitedPostsView ?? false)
+              ? "Unlimited Posts View"
+              : "${plan.postsViewCount} Posts View",
+        ),
+        if (plan.benefits != null)
+          ...plan.benefits!.map(
+            (benefit) => _comparisonItem(benefit.title ?? ''),
+          ),
+      ],
+    );
+  }
+
+  String _getPriceSubText(CurrentPlan plan) {
+    if (plan.isLifetime == true) {
+      return "\$${plan.price} (Lifetime)";
+    }
+    if (plan.durationName == null) {
+      return plan.price == 0 || plan.price == null ? "Free" : "\$${plan.price}";
+    }
+    return plan.durationName ??
+        'N/A'; // Using newline for better fit in comparison column
   }
 
   String _getPriceText(Plan plan) {
@@ -418,7 +495,7 @@ class _SubscriptionPlansScreenState
               if (currentPlan != null)
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-                  child: SubscriptionPlanCard(
+                  child: SubscriptionCard(
                     plan: currentPlan,
                     isSelected: selectedPlanId == currentPlan.id,
                     isActive: true,

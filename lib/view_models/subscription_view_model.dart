@@ -20,7 +20,7 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
   final SubscriptionRepository _repository;
 
   SubscriptionViewModel({required this._repository})
-      : super(initialState: const SubscriptionState());
+    : super(initialState: const SubscriptionState());
 
   Future<void> fetchSubscriptionPlans() async {
     return await runSafely(() async {
@@ -32,7 +32,7 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
       if (response.isSuccess ?? false) {
         state = state.copyWith(
           loading: false,
-          currentPlan: response.data?.currentPlan?.plan,
+          currentPlan: response.data?.currentPlan,
           plans: response.data?.plans ?? [],
         );
       } else {
@@ -72,7 +72,7 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
 
 @immutable
 class SubscriptionState extends BaseStateModel {
-  final Plan? currentPlan;
+  final CurrentPlan? currentPlan;
   final List<Plan> plans;
 
   const SubscriptionState({
@@ -86,7 +86,7 @@ class SubscriptionState extends BaseStateModel {
   SubscriptionState copyWith({
     bool? loading,
     String? errorMessage,
-    Plan? currentPlan,
+    CurrentPlan? currentPlan,
     List<Plan>? plans,
   }) {
     return SubscriptionState(

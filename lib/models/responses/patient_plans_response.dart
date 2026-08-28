@@ -46,93 +46,9 @@ class PatientPlansData {
 }
 
 class CurrentPlan {
-  final Subscription? subscription;
-  final Plan? plan;
-  final Duration? duration;
-  final List<CurrentPlanBenefit>? benefits;
-
-  CurrentPlan({this.subscription, this.plan, this.duration, this.benefits});
-
-  factory CurrentPlan.fromJson(Map<String, dynamic> json) => CurrentPlan(
-    subscription: json["subscription"] == null
-        ? null
-        : Subscription.fromJson(json["subscription"]),
-    plan: json["plan"] == null ? null : Plan.fromJson(json["plan"]),
-    duration: json["duration"] == null
-        ? null
-        : Duration.fromJson(json["duration"]),
-    benefits: json["benefits"] == null
-        ? []
-        : List<CurrentPlanBenefit>.from(
-            json["benefits"]!.map((x) => CurrentPlanBenefit.fromJson(x)),
-          ),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "subscription": subscription?.toJson(),
-    "plan": plan?.toJson(),
-    "duration": duration?.toJson(),
-    "benefits": benefits == null
-        ? []
-        : List<dynamic>.from(benefits!.map((x) => x.toJson())),
-  };
-}
-
-class CurrentPlanBenefit {
   final int? id;
-  final String? sku;
-  final String? title;
-  final String? description;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-
-  CurrentPlanBenefit({
-    this.id,
-    this.sku,
-    this.title,
-    this.description,
-    this.createdAt,
-    this.updatedAt,
-  });
-
-  factory CurrentPlanBenefit.fromJson(Map<String, dynamic> json) =>
-      CurrentPlanBenefit(
-        id: json["id"],
-        sku: json["sku"],
-        title: json["title"],
-        description: json["description"],
-        createdAt: json["created_at"] == null
-            ? null
-            : DateTime.parse(json["created_at"]),
-        updatedAt: json["updated_at"] == null
-            ? null
-            : DateTime.parse(json["updated_at"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "sku": sku,
-    "title": title,
-    "description": description,
-    "created_at": createdAt?.toIso8601String(),
-    "updated_at": updatedAt?.toIso8601String(),
-  };
-}
-
-class Duration {
-  final int? id;
-  final String? name;
-
-  Duration({this.id, this.name});
-
-  factory Duration.fromJson(Map<String, dynamic> json) =>
-      Duration(id: json["id"], name: json["name"]);
-
-  Map<String, dynamic> toJson() => {"id": id, "name": name};
-}
-
-class Plan {
-  final int? id;
+  final int? userId;
+  final int? planId;
   final String? name;
   final int? simulationCount;
   final bool? unlimitedSimulation;
@@ -141,13 +57,17 @@ class Plan {
   final bool? isActive;
   final bool? isDefault;
   final bool? isLifetime;
-  final dynamic basePrice;
-  final dynamic assignedPatients;
-  final List<DurationOption>? durationOptions;
-  final List<PlanBenefit>? benefits;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final int? durationId;
+  final String? durationName;
+  final double? price;
+  final List<Benefit>? benefits;
 
-  Plan({
+  CurrentPlan({
     this.id,
+    this.userId,
+    this.planId,
     this.name,
     this.simulationCount,
     this.unlimitedSimulation,
@@ -156,14 +76,18 @@ class Plan {
     this.isActive,
     this.isDefault,
     this.isLifetime,
-    this.basePrice,
-    this.assignedPatients,
-    this.durationOptions,
+    this.startDate,
+    this.endDate,
+    this.durationId,
+    this.durationName,
+    this.price,
     this.benefits,
   });
 
-  factory Plan.fromJson(Map<String, dynamic> json) => Plan(
+  factory CurrentPlan.fromJson(Map<String, dynamic> json) => CurrentPlan(
     id: json["id"],
+    userId: json["user_id"],
+    planId: json["plan_id"],
     name: json["name"],
     simulationCount: json["simulation_count"],
     unlimitedSimulation: json["unlimited_simulation"],
@@ -172,22 +96,22 @@ class Plan {
     isActive: json["is_active"],
     isDefault: json["is_default"],
     isLifetime: json["is_lifetime"],
-    basePrice: json["base_price"],
-    assignedPatients: json["assigned_patients"],
-    durationOptions: json["duration_options"] == null
-        ? []
-        : List<DurationOption>.from(
-            json["duration_options"]!.map((x) => DurationOption.fromJson(x)),
-          ),
+    startDate: json["start_date"] == null
+        ? null
+        : DateTime.parse(json["start_date"]),
+    endDate: json["end_date"] == null ? null : DateTime.parse(json["end_date"]),
+    durationId: json["duration_id"],
+    durationName: json["duration_name"],
+    price: json["price"]?.toDouble(),
     benefits: json["benefits"] == null
         ? []
-        : List<PlanBenefit>.from(
-            json["benefits"]!.map((x) => PlanBenefit.fromJson(x)),
-          ),
+        : List<Benefit>.from(json["benefits"]!.map((x) => Benefit.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
+    "user_id": userId,
+    "plan_id": planId,
     "name": name,
     "simulation_count": simulationCount,
     "unlimited_simulation": unlimitedSimulation,
@@ -196,26 +120,26 @@ class Plan {
     "is_active": isActive,
     "is_default": isDefault,
     "is_lifetime": isLifetime,
-    "base_price": basePrice,
-    "assigned_patients": assignedPatients,
-    "duration_options": durationOptions == null
-        ? []
-        : List<dynamic>.from(durationOptions!.map((x) => x.toJson())),
+    "start_date": startDate?.toIso8601String(),
+    "end_date": endDate?.toIso8601String(),
+    "duration_id": durationId,
+    "duration_name": durationName,
+    "price": price,
     "benefits": benefits == null
         ? []
         : List<dynamic>.from(benefits!.map((x) => x.toJson())),
   };
 }
 
-class PlanBenefit {
+class Benefit {
   final int? id;
   final String? sku;
   final String? title;
   final String? description;
 
-  PlanBenefit({this.id, this.sku, this.title, this.description});
+  Benefit({this.id, this.sku, this.title, this.description});
 
-  factory PlanBenefit.fromJson(Map<String, dynamic> json) => PlanBenefit(
+  factory Benefit.fromJson(Map<String, dynamic> json) => Benefit(
     id: json["id"],
     sku: json["sku"],
     title: json["title"],
@@ -227,6 +151,80 @@ class PlanBenefit {
     "sku": sku,
     "title": title,
     "description": description,
+  };
+}
+
+class Plan {
+  final int? id;
+  final String? name;
+  final int? simulationCount;
+  final bool? unlimitedSimulation;
+  final int? postsViewCount;
+  final bool? unlimitedPostsView;
+  final dynamic assignedPatients;
+  final List<DurationOption>? durationOptions;
+  final List<Benefit>? benefits;
+  final bool? isActive;
+  final bool? isDefault;
+  final bool? isLifetime;
+  final int? basePrice;
+
+  Plan({
+    this.id,
+    this.name,
+    this.simulationCount,
+    this.unlimitedSimulation,
+    this.postsViewCount,
+    this.unlimitedPostsView,
+    this.assignedPatients,
+    this.durationOptions,
+    this.benefits,
+    this.isActive,
+    this.isDefault,
+    this.isLifetime,
+    this.basePrice,
+  });
+
+  factory Plan.fromJson(Map<String, dynamic> json) => Plan(
+    id: json["id"],
+    name: json["name"],
+    simulationCount: json["simulation_count"],
+    unlimitedSimulation: json["unlimited_simulation"],
+    postsViewCount: json["posts_view_count"],
+    unlimitedPostsView: json["unlimited_posts_view"],
+    assignedPatients: json["assigned_patients"],
+    durationOptions: json["duration_options"] == null
+        ? []
+        : List<DurationOption>.from(
+            json["duration_options"]!.map((x) => DurationOption.fromJson(x)),
+          ),
+    benefits: json["benefits"] == null
+        ? []
+        : List<Benefit>.from(json["benefits"]!.map((x) => Benefit.fromJson(x))),
+    isActive: json["is_active"],
+    isDefault: json["is_default"],
+    isLifetime: json["is_lifetime"],
+    basePrice: json["base_price"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+    "simulation_count": simulationCount,
+    "unlimited_simulation": unlimitedSimulation,
+    "posts_view_count": postsViewCount,
+    "unlimited_posts_view": unlimitedPostsView,
+    "assigned_patients": assignedPatients,
+    "duration_options": durationOptions == null
+        ? []
+        : List<dynamic>.from(durationOptions!.map((x) => x.toJson())),
+    "benefits": benefits == null
+        ? []
+        : List<dynamic>.from(benefits!.map((x) => x.toJson())),
+    "is_active": isActive,
+    "is_default": isDefault,
+    "is_lifetime": isLifetime,
+    "base_price": basePrice,
   };
 }
 
@@ -244,90 +242,4 @@ class DurationOption {
   );
 
   Map<String, dynamic> toJson() => {"id": id, "name": name, "price": price};
-}
-
-class Subscription {
-  final int? id;
-  final int? userId;
-  final int? planId;
-  final String? name;
-  final int? simulationCount;
-  final bool? unlimitedSimulation;
-  final int? postsViewCount;
-  final bool? unlimitedPostsView;
-  final bool? isActive;
-  final bool? isDefault;
-  final DateTime? startDate;
-  final DateTime? endDate;
-  final int? durationId;
-  final String? durationName;
-  final double? price;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-
-  Subscription({
-    this.id,
-    this.userId,
-    this.planId,
-    this.name,
-    this.simulationCount,
-    this.unlimitedSimulation,
-    this.postsViewCount,
-    this.unlimitedPostsView,
-    this.isActive,
-    this.isDefault,
-    this.startDate,
-    this.endDate,
-    this.durationId,
-    this.durationName,
-    this.price,
-    this.createdAt,
-    this.updatedAt,
-  });
-
-  factory Subscription.fromJson(Map<String, dynamic> json) => Subscription(
-    id: json["id"],
-    userId: json["user_id"],
-    planId: json["plan_id"],
-    name: json["name"],
-    simulationCount: json["simulation_count"],
-    unlimitedSimulation: json["unlimited_simulation"],
-    postsViewCount: json["posts_view_count"],
-    unlimitedPostsView: json["unlimited_posts_view"],
-    isActive: json["is_active"],
-    isDefault: json["is_default"],
-    startDate: json["start_date"] == null
-        ? null
-        : DateTime.parse(json["start_date"]),
-    endDate: json["end_date"] == null ? null : DateTime.parse(json["end_date"]),
-    durationId: json["duration_id"],
-    durationName: json["duration_name"],
-    price: json["price"]?.toDouble(),
-    createdAt: json["created_at"] == null
-        ? null
-        : DateTime.parse(json["created_at"]),
-    updatedAt: json["updated_at"] == null
-        ? null
-        : DateTime.parse(json["updated_at"]),
-  );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "user_id": userId,
-    "plan_id": planId,
-    "name": name,
-    "simulation_count": simulationCount,
-    "unlimited_simulation": unlimitedSimulation,
-    "posts_view_count": postsViewCount,
-    "unlimited_posts_view": unlimitedPostsView,
-    "is_active": isActive,
-    "is_default": isDefault,
-    "start_date": startDate?.toIso8601String(),
-    "end_date": endDate?.toIso8601String(),
-    "duration_id": durationId,
-    "duration_name": durationName,
-    "price": price,
-    "created_at": createdAt?.toIso8601String(),
-    "updated_at": updatedAt?.toIso8601String(),
-  };
 }
