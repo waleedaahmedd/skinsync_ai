@@ -14,6 +14,7 @@ class LegalDocumentArgs {
   final String? url;
   final String storageFileName;
   final int? formId;
+  final bool isAlreadySigned;
 
   LegalDocumentArgs({
     required this.title,
@@ -21,6 +22,7 @@ class LegalDocumentArgs {
     this.url,
     required this.storageFileName,
     this.formId,
+    this.isAlreadySigned = false,
   });
 }
 
@@ -48,6 +50,13 @@ class _LegalDocumentScreenState extends ConsumerState<LegalDocumentScreen> {
   }
 
   Future<void> _checkExistingPdf() async {
+    if (widget.args.isAlreadySigned) {
+      setState(() {
+        _isLoading = false;
+        _isSigned = false; // Force network view for already signed backend docs
+      });
+      return;
+    }
     final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/${widget.args.storageFileName}';
     final file = File(path);
@@ -88,31 +97,43 @@ class _LegalDocumentScreenState extends ConsumerState<LegalDocumentScreen> {
       appBar: CustomAppBar(title: widget.args.title),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _isSigned
-              ? SfPdfViewer.file(File(_pdfPath!))
-              : _buildDocumentPreview(),
-      bottomNavigationBar: (!_isLoading && !_isSigned)
-          ? Padding(
-              padding: EdgeInsets.fromLTRB(
-                20.w,
-                10.h,
-                20.w,
-                20.h + MediaQuery.paddingOf(context).bottom,
-              ),
-              child: CustomButton(
-                onPressed: _showSignatureBottomSheet,
-                text: "Sign and Save",
-              ),
-            )
-          : null,
+          : SizedBox.expand(
+              child: _isSigned && _pdfPath != null
+                  ? SfPdfViewer.file(
+                      File(_pdfPath!),
+                      key: ValueKey(_pdfPath),
+                    )
+                  : _buildDocumentPreview(),
+            ),
+      bottomNavigationBar:
+          (!_isLoading && !_isSigned && !widget.args.isAlreadySigned)
+              ? Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    20.w,
+                    10.h,
+                    20.w,
+                    20.h + MediaQuery.paddingOf(context).bottom,
+                  ),
+                  child: CustomButton(
+                    onPressed: _showSignatureBottomSheet,
+                    text: "Sign and Save",
+                  ),
+                )
+              : null,
     );
   }
 
   Widget _buildDocumentPreview() {
-    if (widget.args.assetPath != null) {
-      return SfPdfViewer.asset(widget.args.assetPath!);
-    } else if (widget.args.url != null) {
-      return SfPdfViewer.network(widget.args.url!);
+    if (widget.args.assetPath != null && widget.args.assetPath!.isNotEmpty) {
+      return SfPdfViewer.asset(
+        widget.args.assetPath!,
+        key: ValueKey(widget.args.assetPath),
+      );
+    } else if (widget.args.url != null && widget.args.url!.isNotEmpty) {
+      return SfPdfViewer.network(
+        widget.args.url!,
+        key: ValueKey(widget.args.url),
+      );
     } else {
       return const Center(child: Text("Document not found"));
     }

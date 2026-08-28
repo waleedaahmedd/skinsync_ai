@@ -59,7 +59,10 @@ class _ConsentFormsScreenState extends ConsumerState<ConsentFormsScreen> {
                   : TabBarView(
                       children: [
                         _ConsentListView(documents: state.unSignDocument),
-                        _ConsentListView(documents: state.signDocument),
+                        _ConsentListView(
+                          documents: state.signDocument,
+                          isAlreadySigned: true,
+                        ),
                       ],
                     ),
             ),
@@ -72,8 +75,9 @@ class _ConsentFormsScreenState extends ConsumerState<ConsentFormsScreen> {
 
 class _ConsentListView extends StatelessWidget {
   final List<Document> documents;
+  final bool isAlreadySigned;
 
-  const _ConsentListView({required this.documents});
+  const _ConsentListView({required this.documents, this.isAlreadySigned = false});
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +106,7 @@ class _ConsentListView extends StatelessWidget {
                 url: document.url,
                 storageFileName: 'signed_form_${document.id}.pdf',
                 formId: document.id,
+                isAlreadySigned: isAlreadySigned,
               ),
             );
           },

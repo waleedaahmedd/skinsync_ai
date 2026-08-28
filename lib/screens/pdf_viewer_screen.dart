@@ -15,7 +15,14 @@ class PdfViewerScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: CustomAppBar(title: title),
-      body: SfPdfViewer.network(url),
+      body: url.isNotEmpty
+          ? SizedBox.expand(
+              child: SfPdfViewer.network(
+                url,
+                key: ValueKey(url),
+              ),
+            )
+          : const Center(child: Text("Invalid document URL")),
     );
   }
 }
