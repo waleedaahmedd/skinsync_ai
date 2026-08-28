@@ -96,7 +96,7 @@ void showFacialScanConsentDialog({
                     SizedBox(width: context.w(12)),
                     Expanded(
                       child: CustomButton(
-                        text: "Yes",
+                        text: "Continue",
                         height: context.h(52),
                         onPressed: () {
                           Navigator.pop(context);

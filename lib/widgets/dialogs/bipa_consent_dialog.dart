@@ -74,14 +74,9 @@ void showBipaConsentDialog({
               SizedBox(height: context.h(24)),
               CustomButton(
                 text: "Continue",
-                onPressed: () async {
-                  final success = await BiometricHelper().authenticateWithFallback(
-                    reason: "Please authenticate to sign the BIPA release and proceed.",
-                  );
-                  if (success) {
-                    onAccepted();
-                    Navigator.pop(context);
-                  }
+                onPressed: () {
+                  onAccepted();
+                  Navigator.pop(context);
                 },
               ),
             ],

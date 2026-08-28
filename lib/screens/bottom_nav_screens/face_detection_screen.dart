@@ -18,6 +18,7 @@ import '../../view_models/treatment_view_model.dart';
 import '../../widgets/app_loader.dart';
 import '../../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
 import '../../widgets/custom_button.dart';
+import '../../widgets/dialogs/bipa_consent_dialog.dart';
 
 class FaceDetectionScreen extends ConsumerStatefulWidget {
   final String pose;
@@ -61,7 +62,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     _volumeButtonService.startListening((event) {
       if (!mounted) return;
       if (!_isCapturing && _capturedImage == null) {
-        _captureAndNavigate(_storedRef!);
+        showBipaConsentDialog(
+          context: context,
+          onAccepted: () => _captureAndNavigate(_storedRef!),
+        );
       }
     });
 
@@ -358,73 +362,83 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     const circleRadiusPercent = 0.42;
     const circleCenterYPercent = 0.42;
 
-    return SizedBox.expand(
-      child: Stack(
-        children: [
-          Align(
-            alignment: Alignment.topCenter,
-            child: AspectRatio(
-              aspectRatio: aspectRatio,
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final canvasWidth = constraints.maxWidth;
-                  final canvasHeight = constraints.maxHeight;
-                  final circleRadius = canvasWidth * circleRadiusPercent;
-                  final circleCenterY = canvasHeight * circleCenterYPercent;
-                  return Stack(
-                    children: [
-                      CameraPreview(_cameraController!),
-                      AnimatedBuilder(
-                        animation: _pulseController,
-                        builder: (context, child) {
-                          return CustomPaint(
-                            painter: TintOverlayPainter(
-                              centerRadius: circleRadius,
-                              centerY: circleCenterY,
-                              isPoseCorrect: _isPoseCorrect,
-                              pulseValue: _pulseController.value,
-                            ),
-                            child: const SizedBox.expand(),
-                          );
-                        },
-                      ),
-                    ],
-                  );
-                },
+    return GestureDetector(
+      onTap: () {
+        if (!_isCapturing && _capturedImage == null) {
+          showBipaConsentDialog(
+            context: context,
+            onAccepted: () => _captureAndNavigate(_storedRef!),
+          );
+        }
+      },
+      child: SizedBox.expand(
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.topCenter,
+              child: AspectRatio(
+                aspectRatio: aspectRatio,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final canvasWidth = constraints.maxWidth;
+                    final canvasHeight = constraints.maxHeight;
+                    final circleRadius = canvasWidth * circleRadiusPercent;
+                    final circleCenterY = canvasHeight * circleCenterYPercent;
+                    return Stack(
+                      children: [
+                        CameraPreview(_cameraController!),
+                        AnimatedBuilder(
+                          animation: _pulseController,
+                          builder: (context, child) {
+                            return CustomPaint(
+                              painter: TintOverlayPainter(
+                                centerRadius: circleRadius,
+                                centerY: circleCenterY,
+                                isPoseCorrect: _isPoseCorrect,
+                                pulseValue: _pulseController.value,
+                              ),
+                              child: const SizedBox.expand(),
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
             ),
-          ),
-          Positioned(
-            top: MediaQuery.paddingOf(context).top + context.h(10),
-            left: 0,
-            right: 0,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.w(20)),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _buildHeaderButton(
-                        icon: Icons.arrow_back_ios_new_rounded,
-                        onTap: () => Navigator.pop(context),
-                      ),
-                      _buildPoseIndicator(),
-                      _buildHeaderButton(
-                        icon: Icons.flip_camera_ios_outlined,
-                        onTap: _toggleCamera,
-                      ),
-                    ],
-                  ),
-                ],
+            Positioned(
+              top: MediaQuery.paddingOf(context).top + context.h(10),
+              left: 0,
+              right: 0,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: context.w(20)),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildHeaderButton(
+                          icon: Icons.arrow_back_ios_new_rounded,
+                          onTap: () => Navigator.pop(context),
+                        ),
+                        _buildPoseIndicator(),
+                        _buildHeaderButton(
+                          icon: Icons.flip_camera_ios_outlined,
+                          onTap: _toggleCamera,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: _buildInstructionOverlay(),
-          ),
-        ],
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: _buildInstructionOverlay(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -535,7 +549,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
             Padding(
               padding: EdgeInsets.only(top: context.h(8)),
               child: Text(
-                "Tip: You can also press the Volume button to capture",
+                "Tip: You can also tap anywhere or press the Volume button to capture",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: CustomColors.purpleColor,
@@ -553,7 +567,12 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
               Padding(
                 padding: EdgeInsets.only(bottom: context.h(20)),
                 child: CustomButton(
-                  onPressed: () => _captureAndNavigate(_storedRef!),
+                  onPressed: () {
+                    showBipaConsentDialog(
+                      context: context,
+                      onAccepted: () => _captureAndNavigate(_storedRef!),
+                    );
+                  },
                   text: "Capture Image",
                 ),
               ),

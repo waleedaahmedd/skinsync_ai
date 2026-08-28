@@ -71,7 +71,7 @@ enum EndPoints {
   forms('v1/forms'),
   signForm('v1/forms/sign'),
   notificationstatus('v1/pushnotification-status'),
-  subscribe('v1/subscribe/'),
+  subscribe('v1/subscribe'),
   clinic('v1/clinic');
 
   final String path;
@@ -83,8 +83,8 @@ enum Status { active, inactive }
 
 enum BaseUrls {
   api('https://api.skinsyncai.com/api/'),
-  // apiQa('https://api-dev.skinsyncai.com/api/');
-  apiQa('https://bgzh46mj-8084.inc1.devtunnels.ms/api/');
+  apiQa('https://api-dev.skinsyncai.com/api/');
+ // apiQa('https://bgzh46mj-8084.inc1.devtunnels.ms/api/');
 
   final String url;
   const BaseUrls(this.url);

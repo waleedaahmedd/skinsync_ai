@@ -33,7 +33,9 @@ class FacePoseCaptureScreen extends ConsumerWidget {
     return PopScope(
       onPopInvokedWithResult: (_, _) {
         ref.read(checkoutViewModel.notifier).clearState();
-        ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+        ref
+            .read(treatmentViewModel.notifier)
+            .clearAllSelectedTreatments(capturedImage: true);
         ref.read(treatmentViewModel.notifier).clearAiImage();
       },
       child: Scaffold(

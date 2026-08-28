@@ -502,12 +502,7 @@ class _ArFaceModelPreviewScreenState
                     textColor: CustomColors.blackColor,
                     height: context.h(58),
                     onPressed: () {
-                      showBipaConsentDialog(
-                        context: context,
-                        onAccepted: () {
-                          ref.read(treatmentViewModel.notifier).callPredictAPI();
-                        },
-                      );
+                      ref.read(treatmentViewModel.notifier).callPredictAPI();
                     },
                   ),
                 ),
