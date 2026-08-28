@@ -18,7 +18,6 @@ import '../../view_models/treatment_view_model.dart';
 import '../../widgets/app_loader.dart';
 import '../../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
 import '../../widgets/custom_button.dart';
-import '../../widgets/dialogs/bipa_consent_dialog.dart';
 
 class FaceDetectionScreen extends ConsumerStatefulWidget {
   final String pose;
@@ -37,7 +36,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
   XFile? _capturedImage;
 
   bool _isCapturing = false;
-  bool _isConsentAccepted = false;
   final bool _isPoseCorrect = false;
 
   final VolumeButtonService _volumeButtonService = VolumeButtonService();
@@ -63,18 +61,11 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     _volumeButtonService.startListening((event) {
       if (!mounted) return;
       if (!_isCapturing && _capturedImage == null) {
-        _handleCaptureTrigger();
+        _captureAndNavigate(_storedRef!);
       }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      showBipaConsentDialog(
-        context: context,
-        onAccepted: () {
-          _isConsentAccepted = true;
-        },
-      );
-
       final show = await SecureStorage().getMedicalDisclaimer();
       if (show) {
         MedicalDisclaimerBottomSheet.show(context);
@@ -370,7 +361,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     return GestureDetector(
       onTap: () {
         if (!_isCapturing && _capturedImage == null) {
-          _handleCaptureTrigger();
+          _captureAndNavigate(_storedRef!);
         }
       },
       child: SizedBox.expand(
@@ -569,7 +560,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
               Padding(
                 padding: EdgeInsets.only(bottom: context.h(20)),
                 child: CustomButton(
-                  onPressed: _handleCaptureTrigger,
+                  onPressed: () => _captureAndNavigate(_storedRef!),
                   text: "Capture Image",
                 ),
               ),
@@ -577,20 +568,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
         ),
       ),
     );
-  }
-
-  void _handleCaptureTrigger() {
-    if (_isConsentAccepted) {
-      _captureAndNavigate(_storedRef!);
-    } else {
-      showBipaConsentDialog(
-        context: context,
-        onAccepted: () {
-          _isConsentAccepted = true;
-          _captureAndNavigate(_storedRef!);
-        },
-      );
-    }
   }
 
   Widget _buildProfessionalTips() {

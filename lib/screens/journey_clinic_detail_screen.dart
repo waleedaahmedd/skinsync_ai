@@ -13,6 +13,7 @@ import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../view_models/clinic_view_model.dart';
+import '../view_models/forms_view_model.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_button.dart';
@@ -429,10 +430,18 @@ class _JourneyClinicDetailScreenState
                           );
                         }
 
-                        PreferredSlotsBottomSheet.show(
-                          context: context,
-                          onConfirm: (slots) => processShare(slots),
-                        );
+                        final bool? docResult = await ref
+                            .read(formsViewModel.notifier)
+                            .checkAndOpenDocumentBySku("SHRE-TRET-CONS");
+
+                        if (docResult == null || docResult == true) {
+                          if (context.mounted) {
+                            PreferredSlotsBottomSheet.show(
+                              context: context,
+                              onConfirm: (slots) => processShare(slots),
+                            );
+                          }
+                        }
                       },
                     );
                   },
