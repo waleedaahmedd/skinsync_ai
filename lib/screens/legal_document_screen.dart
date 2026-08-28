@@ -115,7 +115,7 @@ class _LegalDocumentScreenState extends ConsumerState<LegalDocumentScreen> {
               ),
               child: (widget.args.isAlreadySigned || _isSigned)
                   ? CustomButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => Navigator.pop(context, true),
                       text: "Continue",
                     )
                   : CustomButton(

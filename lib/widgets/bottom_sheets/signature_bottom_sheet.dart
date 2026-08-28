@@ -103,7 +103,7 @@ class _SignatureBottomSheetState extends ConsumerState<SignatureBottomSheet> {
         if (success) {
           if (mounted) {
             Navigator.pop(context); // Close bottom sheet
-            Navigator.pop(context); // Go back from LegalDocumentScreen
+            Navigator.pop(context, true); // Go back from LegalDocumentScreen
           }
           return;
         } else {

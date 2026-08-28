@@ -9,6 +9,7 @@ import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
+import '../view_models/forms_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
@@ -16,13 +17,23 @@ import '../widgets/treatment_container.dart';
 import 'ar_face_model_preview_screen.dart';
 import 'bottom_nav_screens/face_detection_screen.dart';
 
-class FacePoseCaptureScreen extends ConsumerWidget {
+class FacePoseCaptureScreen extends ConsumerStatefulWidget {
   static const String routeName = '/FacePoseCaptureScreen';
 
   const FacePoseCaptureScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<FacePoseCaptureScreen> createState() => _FacePoseCaptureScreenState();
+}
+
+class _FacePoseCaptureScreenState extends ConsumerState<FacePoseCaptureScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(treatmentViewModel);
 
     final bool allCaptured =
@@ -95,21 +106,21 @@ class FacePoseCaptureScreen extends ConsumerWidget {
                       title: "Front Profile",
                       subtitle: "Look straight into the camera",
                       image: state.frontPoseImage,
-                      onTap: () => _capturePose(context, 'front'),
+                      onTap: () => _handlePoseTap(context, 'front'),
                     ),
                     _buildPoseContainer(
                       context: context,
                       title: "Left Profile",
                       subtitle: "Turn your face to the left",
                       image: state.leftPoseImage,
-                      onTap: () => _capturePose(context, 'left'),
+                      onTap: () => _handlePoseTap(context, 'left'),
                     ),
                     _buildPoseContainer(
                       context: context,
                       title: "Right Profile",
                       subtitle: "Turn your face to the right",
                       image: state.rightPoseImage,
-                      onTap: () => _capturePose(context, 'right'),
+                      onTap: () => _handlePoseTap(context, 'right'),
                     ),
                     SizedBox(height: context.h(40)),
                   ],
@@ -152,6 +163,15 @@ class FacePoseCaptureScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  void _handlePoseTap(BuildContext context, String pose) async {
+    final bool? result = await ref
+        .read(formsViewModel.notifier)
+        .checkAndOpenDocumentBySku("FACE-SCAN-CONS");
+    if (result == null || result == true) {
+      _capturePose(context, pose);
+    }
   }
 
   void _capturePose(BuildContext context, String pose) {
