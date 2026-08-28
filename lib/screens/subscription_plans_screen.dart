@@ -337,12 +337,12 @@ class _SubscriptionPlansScreenState
         _comparisonItem(
           (plan.unlimitedSimulation ?? false)
               ? "Unlimited AI Simulations"
-              : "${plan.simulationCount} AI Simulations",
+              : "${plan.simulationCount ?? 0} AI Simulations",
         ),
         _comparisonItem(
           (plan.unlimitedPostsView ?? false)
               ? "Unlimited Posts View"
-              : "${plan.postsViewCount} Posts View",
+              : "${plan.postsViewCount ?? 0} Posts View",
         ),
         if (plan.benefits != null)
           ...plan.benefits!.map(
@@ -387,12 +387,12 @@ class _SubscriptionPlansScreenState
         _comparisonItem(
           (plan.unlimitedSimulation ?? false)
               ? "Unlimited AI Simulations"
-              : "${plan.simulationCount} AI Simulations",
+              : "AI Simulations: ${plan.usedSimulationCount ?? 0} Used / ${plan.simulationCount ?? 0} Total",
         ),
         _comparisonItem(
           (plan.unlimitedPostsView ?? false)
               ? "Unlimited Posts View"
-              : "${plan.postsViewCount} Posts View",
+              : "Posts View: ${plan.usedPostCount ?? 0} Used / ${plan.postsViewCount ?? 0} Total",
         ),
         if (plan.benefits != null)
           ...plan.benefits!.map(

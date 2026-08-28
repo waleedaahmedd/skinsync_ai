@@ -73,7 +73,9 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
               .read(treatmentAreaProvider.notifier)
               .fetchAreasByTreatment(treatment.id!);
 
-          if (!ref.mounted) return;
+          if (!ref.mounted) {
+            return;
+          }
           final treatmentAreas = ref.read(treatmentAreaProvider).areas;
 
           if (simTreatment.areas != null) {
@@ -189,7 +191,9 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
       );
       showProgress('Fetching AI Images...');
 
-      if (!ref.mounted) return;
+      if (!ref.mounted) {
+        return;
+      }
       state = state.copyWith(
         loading: false,
         isAiImageGenerated: true,
@@ -349,13 +353,13 @@ Future<TreatmentDetailModel?> calltreatmentDetail({required int id}) async {
   return response?.data;
 }
 
-  Future<void> callPredictAPI() async {
+  Future<bool> callPredictAPI() async {
     if (state.capturedImagesNull) {
       const msg =
           'No captured image available. Please capture your face first.';
       state = state.copyWith(loading: false, errorMessage: msg);
       EasyLoading.showError(msg);
-      return;
+      return false;
     }
 
     final wasBefore = state.isBefore;
@@ -421,13 +425,9 @@ Future<TreatmentDetailModel?> calltreatmentDetail({required int id}) async {
           .timeout(const Duration(minutes: 2));
 
       final response = await http.Response.fromStream(streamedResponse);
-      if (!ref.mounted) return;
+      if (!ref.mounted) return false;
       log('AI RESPONSE STATUS: ${response.statusCode}');
       log('AI RESPONSE BODY: ${response.body}');
-
-      // if (response.statusCode < 200 || response.statusCode >= 300) {
-      //   throw Exception('AI Prediction failed with status: ${response.statusCode}. Body: ${response.body}');
-      // }
 
       final responseData = jsonDecode(response.body);
 
@@ -471,7 +471,7 @@ Future<TreatmentDetailModel?> calltreatmentDetail({required int id}) async {
         );
       }
       showOutputProgress('Generating AI Images...');
-      if (!ref.mounted) return;
+      if (!ref.mounted) return false;
 
       if (output.containsKey('right_image') && output['right_image'] != null) {
         imageRight = await base64ToXFile(
@@ -480,7 +480,7 @@ Future<TreatmentDetailModel?> calltreatmentDetail({required int id}) async {
         );
       }
       showOutputProgress('Generating AI Images...');
-      if (!ref.mounted) return;
+      if (!ref.mounted) return false;
 
       if (output.containsKey('left_image') && output['left_image'] != null) {
         imageLeft = await base64ToXFile(
@@ -489,7 +489,7 @@ Future<TreatmentDetailModel?> calltreatmentDetail({required int id}) async {
         );
       }
       showOutputProgress('Generating AI Images...');
-      if (!ref.mounted) return;
+      if (!ref.mounted) return false;
 
       if (imageFront == null && imageRight == null && imageLeft == null) {
         throw Exception(
@@ -509,12 +509,14 @@ Future<TreatmentDetailModel?> calltreatmentDetail({required int id}) async {
       );
       EasyLoading.dismiss();
       EasyLoading.showSuccess('Simulations generated successfully!');
+      return true;
     } catch (e, s) {
       final errorMsg = e.toString().replaceFirst('Exception: ', '');
       log('SIMULATION ERROR: $errorMsg', stackTrace: s);
       state = state.copyWith(loading: false, errorMessage: errorMsg);
       EasyLoading.dismiss();
       EasyLoading.showError(errorMsg);
+      return false;
     }
   }
 
@@ -559,7 +561,9 @@ Future<TreatmentDetailModel?> calltreatmentDetail({required int id}) async {
         ),
       );
 
-      if (!ref.mounted) return;
+      if (!ref.mounted) {
+        return;
+      }
 
       final historyTreatments = selectedTreatmentsAndAreas.map((item) {
         return HistoryTreatmentRequest(
@@ -596,7 +600,9 @@ Future<TreatmentDetailModel?> calltreatmentDetail({required int id}) async {
         treatments: historyTreatments,
       );
       await _repo.saveAiHistory(request);
-      if (!ref.mounted) return;
+      if (!ref.mounted) {
+        return;
+      }
       EasyLoading.showSuccess('Image saved!');
     });
   }

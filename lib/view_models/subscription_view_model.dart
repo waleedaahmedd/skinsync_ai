@@ -7,6 +7,7 @@ import '../models/responses/patient_plans_response.dart';
 import '../repositories/subscription_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/subscription_service.dart';
+import '../utils/enums.dart';
 import 'base_view_model.dart';
 
 final subscriptionProvider =
@@ -67,6 +68,26 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
     } finally {
       EasyLoading.dismiss();
     }
+  }
+
+  Future<bool> recordUsage({
+    required UsageType usageType,
+    required int subscriptionId,
+  }) async {
+    EasyLoading.show(status: 'Updating usage...');
+    final result = await runSafely(() async {
+      final response = await _repository.recordUsage(
+        usageType: usageType,
+        subscriptionId: subscriptionId,
+      );
+      if (response.isSuccess ?? false) {
+        await fetchSubscriptionPlans();
+        return true;
+      }
+      return false;
+    });
+    EasyLoading.dismiss();
+    return result ?? false;
   }
 }
 

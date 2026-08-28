@@ -17,7 +17,9 @@ import '../models/selected_treatment_and_areas_model.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../utils/enums.dart';
 import '../view_models/checkout_view_model.dart';
+import '../view_models/subscription_view_model.dart';
 import '../view_models/treatment_area_view_model.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../view_models/treatment_view_model.dart';
@@ -29,9 +31,9 @@ import '../widgets/dialogs/save_option_confirmation_dialog.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/selected_treatments_summary_card.dart';
 import '../widgets/service_type_button.dart';
-import '../widgets/dialogs/bipa_consent_dialog.dart';
 import 'treatment_journey_detail_screen.dart';
 import 'treatment_journey_screen.dart';
+import 'subscription_plans_screen.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
   const ArFaceModelPreviewScreen({super.key});
@@ -464,14 +466,27 @@ class _ArFaceModelPreviewScreenState
   Widget _buildBottomActions() {
     return Consumer(
       builder: (context, ref, _) {
-        final selectedTreatmentsAndAreas = ref
-            .watch(checkoutViewModel)
-            .selectedTreatmentsAndAreas;
+        final selectedTreatmentsAndAreas =
+            ref.watch(checkoutViewModel).selectedTreatmentsAndAreas;
         final hasAnySelectedArea = selectedTreatmentsAndAreas.any(
           (item) => item.selectedAreas.isNotEmpty,
         );
 
         if (!hasAnySelectedArea) return const SizedBox.shrink();
+
+        final subscriptionState = ref.watch(subscriptionProvider);
+        final currentPlan = subscriptionState.currentPlan;
+
+        bool isLimitReached = false;
+        if (currentPlan != null) {
+          final isUnlimited = currentPlan.unlimitedSimulation ?? false;
+          final simCount = currentPlan.simulationCount ?? 0;
+          final usedCount = currentPlan.usedSimulationCount ?? 0;
+
+          if (!isUnlimited && simCount != 0 && usedCount >= simCount) {
+            isLimitReached = true;
+          }
+        }
 
         return Container(
           padding: EdgeInsets.fromLTRB(
@@ -495,16 +510,41 @@ class _ArFaceModelPreviewScreenState
               Expanded(
                 child: ScaleTransition(
                   scale: _pulseAnimation,
-                  child: CustomButton(
-                    text: "Generate Ai Image",
-                    isBorder: true,
-                    borderRadius: context.r(30),
-                    textColor: CustomColors.blackColor,
-                    height: context.h(58),
-                    onPressed: () {
-                      ref.read(treatmentViewModel.notifier).callPredictAPI();
-                    },
-                  ),
+                  child: isLimitReached
+                      ? CustomButton(
+                          text: "Upgrade Plan",
+                          isBorder: true,
+                          borderRadius: context.r(30),
+                          textColor: CustomColors.blackColor,
+                          height: context.h(58),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              SubscriptionPlansScreen.routeName,
+                            );
+                          },
+                        )
+                      : CustomButton(
+                          text: "Generate Ai Image",
+                          isBorder: true,
+                          borderRadius: context.r(30),
+                          textColor: CustomColors.blackColor,
+                          height: context.h(58),
+                          onPressed: () async {
+                            final success = await ref
+                                .read(treatmentViewModel.notifier)
+                                .callPredictAPI();
+
+                            if (success && currentPlan?.id != null) {
+                              await ref
+                                  .read(subscriptionProvider.notifier)
+                                  .recordUsage(
+                                    usageType: UsageType.simulation,
+                                    subscriptionId: currentPlan!.id!,
+                                  );
+                            }
+                          },
+                        ),
                 ),
               ),
               context.horizontalSpace(10),

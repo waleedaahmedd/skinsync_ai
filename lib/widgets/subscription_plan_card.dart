@@ -162,7 +162,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                       context,
                       (plan.unlimitedSimulation ?? false)
                           ? "Unlimited AI Simulations"
-                          : "${plan.simulationCount} AI Simulations",
+                          : "${plan.simulationCount ?? 0} AI Simulations",
                       color: (isSelected || isActive)
                           ? CustomColors.blackColor
                           : CustomColors.silverColor,
@@ -171,7 +171,7 @@ class SubscriptionPlanCard extends StatelessWidget {
                       context,
                       (plan.unlimitedPostsView ?? false)
                           ? "Unlimited Posts View"
-                          : "${plan.postsViewCount} Posts View",
+                          : "${plan.postsViewCount ?? 0} Posts View",
                       color: (isSelected || isActive)
                           ? CustomColors.blackColor
                           : CustomColors.silverColor,
@@ -398,7 +398,7 @@ class SubscriptionCard extends StatelessWidget {
                       context,
                       (plan.unlimitedSimulation ?? false)
                           ? "Unlimited AI Simulations"
-                          : "${plan.simulationCount} AI Simulations",
+                          : "AI Simulations: ${plan.usedSimulationCount ?? 0} Used / ${plan.simulationCount ?? 0} Total",
                       color: (isSelected || isActive)
                           ? CustomColors.blackColor
                           : CustomColors.silverColor,
@@ -407,7 +407,7 @@ class SubscriptionCard extends StatelessWidget {
                       context,
                       (plan.unlimitedPostsView ?? false)
                           ? "Unlimited Posts View"
-                          : "${plan.postsViewCount} Posts View",
+                          : "Posts View: ${plan.usedPostCount ?? 0} Used / ${plan.postsViewCount ?? 0} Total",
                       color: (isSelected || isActive)
                           ? CustomColors.blackColor
                           : CustomColors.silverColor,

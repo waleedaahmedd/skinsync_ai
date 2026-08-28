@@ -72,6 +72,7 @@ enum EndPoints {
   signForm('v1/forms/sign'),
   notificationstatus('v1/pushnotification-status'),
   subscribe('v1/subscribe'),
+  patientUsages('v1/patient-usages'),
   clinic('v1/clinic');
 
   final String path;
@@ -91,6 +92,14 @@ enum BaseUrls {
 }
 
 enum ViewType { grid, map }
+
+enum UsageType {
+  simulation('simulation'),
+  post('post');
+
+  final String value;
+  const UsageType(this.value);
+}
 
 enum ApplicationType { clinic, patient }
 

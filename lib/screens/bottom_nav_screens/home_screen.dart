@@ -81,7 +81,7 @@ class HomeScreen extends ConsumerWidget {
           ),
           physics: const BouncingScrollPhysics(),
           padding: EdgeInsets.only(top: context.h(22), bottom: context.h(100)),
-          onReorder: (oldIndex, newIndex) {
+          onReorderItem: (oldIndex, newIndex) {
             ref
                 .read(homeViewModelProvider.notifier)
                 .reorderSections(oldIndex, newIndex);

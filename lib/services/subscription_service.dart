@@ -35,4 +35,22 @@ class SubscriptionService implements SubscriptionRepository {
     );
     return BaseResponseModel.fromJson(jsonDecode(response.body));
   }
+
+  @override
+  Future<BaseResponseModel> recordUsage({
+    required UsageType usageType,
+    required int subscriptionId,
+  }) async {
+    final Map<String, dynamic> body = {
+      "usage_type": usageType.value,
+      "subscription_id": subscriptionId,
+    };
+
+    final response = await apiClient.httpRequest(
+      endPoint: EndPoints.patientUsages,
+      requestType: RequestType.post,
+      requestBody: body,
+    );
+    return BaseResponseModel.fromJson(jsonDecode(response.body));
+  }
 }

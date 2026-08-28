@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../utils/custom_fonts.dart';
-import '../../utils/biometric_helper.dart';
 import '../custom_button.dart';
 
 void showBipaConsentDialog({
