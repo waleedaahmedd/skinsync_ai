@@ -54,6 +54,8 @@ class CurrentPlan {
   final bool? unlimitedSimulation;
   final int? postsViewCount;
   final bool? unlimitedPostsView;
+  final int? usedSimulationCount;
+  final int? usedPostCount;
   final bool? isActive;
   final bool? isDefault;
   final bool? isLifetime;
@@ -73,6 +75,8 @@ class CurrentPlan {
     this.unlimitedSimulation,
     this.postsViewCount,
     this.unlimitedPostsView,
+    this.usedSimulationCount,
+    this.usedPostCount,
     this.isActive,
     this.isDefault,
     this.isLifetime,
@@ -93,6 +97,8 @@ class CurrentPlan {
     unlimitedSimulation: json["unlimited_simulation"],
     postsViewCount: json["posts_view_count"],
     unlimitedPostsView: json["unlimited_posts_view"],
+    usedSimulationCount: json["used_simulation_count"],
+    usedPostCount: json["used_post_count"],
     isActive: json["is_active"],
     isDefault: json["is_default"],
     isLifetime: json["is_lifetime"],
@@ -117,6 +123,8 @@ class CurrentPlan {
     "unlimited_simulation": unlimitedSimulation,
     "posts_view_count": postsViewCount,
     "unlimited_posts_view": unlimitedPostsView,
+    "used_simulation_count": usedSimulationCount,
+    "used_post_count": usedPostCount,
     "is_active": isActive,
     "is_default": isDefault,
     "is_lifetime": isLifetime,
@@ -167,7 +175,7 @@ class Plan {
   final bool? isActive;
   final bool? isDefault;
   final bool? isLifetime;
-  final int? basePrice;
+  final num? basePrice;
 
   Plan({
     this.id,
