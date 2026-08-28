@@ -27,6 +27,7 @@ import '../widgets/app_loader.dart';
 import '../widgets/bottom_sheets/material_level_sheet.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/dialogs/medical_disclaimer_dialog.dart';
 import '../widgets/dialogs/save_option_confirmation_dialog.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/selected_treatments_summary_card.dart';
@@ -95,6 +96,7 @@ class _ArFaceModelPreviewScreenState
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      showMedicalDisclaimerDialog(context: context);
       final selectedTreatment = ref.read(checkoutViewModel).selectedTreatments;
       final treatmentState = ref.read(treatmentViewModel);
 
