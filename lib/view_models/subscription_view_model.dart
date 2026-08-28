@@ -19,9 +19,8 @@ final subscriptionProvider =
 class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
   final SubscriptionRepository _repository;
 
-  SubscriptionViewModel({required SubscriptionRepository repository})
-    : _repository = repository,
-      super(initialState: const SubscriptionState());
+  SubscriptionViewModel({required this._repository})
+      : super(initialState: const SubscriptionState());
 
   Future<void> fetchSubscriptionPlans() async {
     return await runSafely(() async {

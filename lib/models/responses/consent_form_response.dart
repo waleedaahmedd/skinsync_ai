@@ -43,12 +43,12 @@ class ConstentForm {
     String toRawJson() => json.encode(toJson());
 
     factory ConstentForm.fromJson(Map<String, dynamic> json) => ConstentForm(
-        signedDocuments: json["signed_documents"] == null ? [] : List<Document>.from(json["signed_documents"]!.map((x) => x)),
+        signedDocuments: json["signed_documents"] == null ? [] : List<Document>.from(json["signed_documents"]!.map((x) => Document.fromJson(x))),
         unSignedDocuments: json["un_signed_documents"] == null ? [] : List<Document>.from(json["un_signed_documents"]!.map((x) => Document.fromJson(x))),
     );
 
     Map<String, dynamic> toJson() => {
-        "signed_documents": signedDocuments == null ? [] : List<dynamic>.from(signedDocuments!.map((x) => x)),
+        "signed_documents": signedDocuments == null ? [] : List<dynamic>.from(signedDocuments!.map((x) => x.toJson())),
         "un_signed_documents": unSignedDocuments == null ? [] : List<dynamic>.from(unSignedDocuments!.map((x) => x.toJson())),
     };
 }

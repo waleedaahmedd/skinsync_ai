@@ -69,6 +69,7 @@ enum EndPoints {
   patientCurrentPlan('v1/patient-current-plan'),
   notification('v1/notifications'),
   forms('v1/forms'),
+  signForm('v1/forms/sign'),
   notificationstatus('v1/pushnotification-status'),
   subscribe('v1/subscribe/'),
   clinic('v1/clinic');

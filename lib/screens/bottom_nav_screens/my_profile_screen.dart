@@ -9,7 +9,6 @@ import '../allergy_and_medical_history.dart';
 import '../compliance_form_screen.dart';
 import '../consent_forms_screen.dart';
 import '../get_started_screen.dart';
-import '../legal_document_screen.dart';
 import '../personal_detail_screen.dart';
 import '../saved_treatment_screen.dart';
 import '../setting_screen.dart';
@@ -452,7 +451,7 @@ class MyProfileScreen extends StatelessWidget {
                               ConsentFormsScreen.routeName,
                             );
                           },
-                          icon: Iconsax.document_text,
+                          icon: Iconsax.security,
                           title: "Consent Forms",
                         ),
                         buildCardOption(
@@ -464,37 +463,38 @@ class MyProfileScreen extends StatelessWidget {
                           },
                           icon: Iconsax.document_text,
                           title: "Compliance Forms",
+                          isLast: true,
                         ),
-                        buildCardOption(
-                          callBack: () {
-                            Navigator.pushNamed(
-                              context,
-                              LegalDocumentScreen.routeName,
-                              arguments: LegalDocumentArgs(
-                                title: "Terms Of Service",
-                                assetPath: 'assets/dummyassets/A_Terms_of_Service.pdf',
-                                storageFileName: 'signed_terms_of_service.pdf',
-                              ),
-                            );
-                          },
-                          icon: Iconsax.document,
-                          title: "Terms Of Service",
-                        ),
-                        buildCardOption(
-                          callBack: () {
-                            Navigator.pushNamed(
-                              context,
-                              LegalDocumentScreen.routeName,
-                              arguments: LegalDocumentArgs(
-                                title: "Privacy Policy",
-                                assetPath: 'assets/dummyassets/B_Privacy_Policy.pdf',
-                                storageFileName: 'signed_privacy_policy.pdf',
-                              ),
-                            );
-                          },
-                          icon: Iconsax.security,
-                          title: "Privacy Policy",
-                        ),
+                        // buildCardOption(
+                        //   callBack: () {
+                        //     Navigator.pushNamed(
+                        //       context,
+                        //       LegalDocumentScreen.routeName,
+                        //       arguments: LegalDocumentArgs(
+                        //         title: "Terms Of Service",
+                        //         assetPath: 'assets/dummyassets/A_Terms_of_Service.pdf',
+                        //         storageFileName: 'signed_terms_of_service.pdf',
+                        //       ),
+                        //     );
+                        //   },
+                        //   icon: Iconsax.document,
+                        //   title: "Terms Of Service",
+                        // ),
+                        // buildCardOption(
+                        //   callBack: () {
+                        //     Navigator.pushNamed(
+                        //       context,
+                        //       LegalDocumentScreen.routeName,
+                        //       arguments: LegalDocumentArgs(
+                        //         title: "Privacy Policy",
+                        //         assetPath: 'assets/dummyassets/B_Privacy_Policy.pdf',
+                        //         storageFileName: 'signed_privacy_policy.pdf',
+                        //       ),
+                        //     );
+                        //   },
+                        //   icon: Iconsax.security,
+                        //   title: "Privacy Policy",
+                        // ),
                       ]),
                       SizedBox(height: context.h(16)),
                     

@@ -44,6 +44,7 @@ import 'screens/otp_screen.dart';
 import 'screens/patient_treatment_request_detail_screen.dart';
 import 'screens/patient_treatment_requests_screen.dart';
 import 'screens/payment_screen.dart';
+import 'screens/pdf_viewer_screen.dart';
 import 'screens/personal_detail_screen.dart';
 import 'screens/progress_detail_screen.dart';
 import 'screens/review_screen.dart';
@@ -414,6 +415,15 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: const RouteSettings(name: UpdateVersionScreen.routeName),
           builder: (_) => const UpdateVersionScreen(),
+        );
+      case PdfViewerScreen.routeName:
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: PdfViewerScreen.routeName),
+          builder: (_) => PdfViewerScreen(
+            title: args['title'] ?? 'PDF Viewer',
+            url: args['url'] ?? '',
+          ),
         );
       case LoginBottomScreen.routeName:
         return PageRouteBuilder(

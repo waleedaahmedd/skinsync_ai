@@ -96,7 +96,7 @@ class ReelsState extends BaseStateModel {
     return ReelsState(
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
-      reels: signDocument ?? this.reels,
+      reels: signDocument ?? reels,
     );
   }
 }

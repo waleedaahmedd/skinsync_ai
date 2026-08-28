@@ -91,7 +91,6 @@ class _TreatmentJourneyDetailScreenState
         case _JourneyFilter.unshared:
           return opt.isShared != true;
         case _JourneyFilter.all:
-        default:
           return true;
       }
     }).toList();
@@ -440,7 +439,6 @@ class _TreatmentJourneyDetailScreenState
         case _JourneyFilter.unshared:
           return opt.isShared != true;
         case _JourneyFilter.all:
-        default:
           return true;
       }
     }).toList();

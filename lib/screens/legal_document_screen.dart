@@ -1,30 +1,30 @@
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
-import '../utils/custom_fonts.dart';
+import '../widgets/bottom_sheets/signature_bottom_sheet.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 
 class LegalDocumentArgs {
   final String title;
-  final String assetPath;
+  final String? assetPath;
+  final String? url;
   final String storageFileName;
+  final int? formId;
 
   LegalDocumentArgs({
     required this.title,
-    required this.assetPath,
+    this.assetPath,
+    this.url,
     required this.storageFileName,
+    this.formId,
   });
 }
 
-class LegalDocumentScreen extends StatefulWidget {
+class LegalDocumentScreen extends ConsumerStatefulWidget {
   final LegalDocumentArgs args;
 
   const LegalDocumentScreen({super.key, required this.args});
@@ -32,11 +32,11 @@ class LegalDocumentScreen extends StatefulWidget {
   static const String routeName = '/LegalDocumentScreen';
 
   @override
-  State<LegalDocumentScreen> createState() => _LegalDocumentScreenState();
+  ConsumerState<LegalDocumentScreen> createState() =>
+      _LegalDocumentScreenState();
 }
 
-class _LegalDocumentScreenState extends State<LegalDocumentScreen> {
-  final GlobalKey<SfSignaturePadState> _signaturePadKey = GlobalKey();
+class _LegalDocumentScreenState extends ConsumerState<LegalDocumentScreen> {
   String? _pdfPath;
   bool _isLoading = true;
   bool _isSigned = false;
@@ -64,79 +64,21 @@ class _LegalDocumentScreenState extends State<LegalDocumentScreen> {
     }
   }
 
-  Future<void> _handleSave() async {
-    try {
-      setState(() => _isLoading = true);
-
-      // 1. Get signature image
-      final ui.Image signatureImage =
-          await _signaturePadKey.currentState!.toImage(pixelRatio: 3.0);
-      final byteData =
-          await signatureImage.toByteData(format: ui.ImageByteFormat.png);
-      final Uint8List signatureBytes = byteData!.buffer.asUint8List();
-
-      // 2. Load original PDF from assets
-      final ByteData assetData = await rootBundle.load(widget.args.assetPath);
-      final Uint8List originalBytes = assetData.buffer.asUint8List();
-
-      // 3. Create PDF document and add signature
-      final PdfDocument document = PdfDocument(inputBytes: originalBytes);
-      final PdfPage lastPage =
-          document.pages.add(); // Adding a new page for signature
-
-      final PdfFont boldFont = PdfStandardFont(PdfFontFamily.helvetica, 14,
-          style: PdfFontStyle.bold);
-
-      lastPage.graphics.drawString(
-        "Signature Confirmation (${widget.args.title})",
-        boldFont,
-        bounds: const Rect.fromLTWH(0, 20, 0, 0),
-      );
-
-      lastPage.graphics.drawString(
-        "Signed on: ${DateTime.now().toString().split('.').first}",
-        PdfStandardFont(PdfFontFamily.helvetica, 12),
-        bounds: const Rect.fromLTWH(0, 50, 0, 0),
-      );
-
-      lastPage.graphics.drawImage(
-        PdfBitmap(signatureBytes),
-        const Rect.fromLTWH(0, 80, 300, 120),
-      );
-
-      // 4. Save the signed PDF
-      final List<int> bytes = await document.save();
-      document.dispose();
-
-      final directory = await getApplicationDocumentsDirectory();
-      final path = '${directory.path}/${widget.args.storageFileName}';
-      final file = File(path);
-      await file.writeAsBytes(bytes, flush: true);
-
-      setState(() {
-        _pdfPath = path;
-        _isSigned = true;
-        _isLoading = false;
-      });
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content:
-                  Text("${widget.args.title} signed and saved successfully!")),
-        );
-      }
-    } catch (e) {
-      setState(() => _isLoading = false);
-      debugPrint("Error saving PDF: $e");
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(
-                  "Error: $e. Make sure ${widget.args.assetPath} exists.")),
-        );
-      }
-    }
+  void _showSignatureBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => SignatureBottomSheet(
+        args: widget.args,
+        onSigned: (signedPath) {
+          setState(() {
+            _pdfPath = signedPath;
+            _isSigned = true;
+          });
+        },
+      ),
+    );
   }
 
   @override
@@ -148,65 +90,31 @@ class _LegalDocumentScreenState extends State<LegalDocumentScreen> {
           ? const Center(child: CircularProgressIndicator())
           : _isSigned
               ? SfPdfViewer.file(File(_pdfPath!))
-              : _buildTermsWithSignature(),
+              : _buildDocumentPreview(),
+      bottomNavigationBar: (!_isLoading && !_isSigned)
+          ? Padding(
+              padding: EdgeInsets.fromLTRB(
+                20.w,
+                10.h,
+                20.w,
+                20.h + MediaQuery.paddingOf(context).bottom,
+              ),
+              child: CustomButton(
+                onPressed: _showSignatureBottomSheet,
+                text: "Sign and Save",
+              ),
+            )
+          : null,
     );
   }
 
-  Widget _buildTermsWithSignature() {
-    return Column(
-      children: [
-        Expanded(
-          flex: 2,
-          child: SfPdfViewer.asset(widget.args.assetPath),
-        ),
-        Container(
-          height: 220.h,
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -4),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("Please Sign Below", style: CustomFonts.black16w600),
-                  TextButton(
-                    onPressed: () => _signaturePadKey.currentState!.clear(),
-                    child: const Text("Clear"),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300),
-                    borderRadius: BorderRadius.circular(12.r),
-                    color: Colors.grey.shade50,
-                  ),
-                  child: SfSignaturePad(
-                    key: _signaturePadKey,
-                    backgroundColor: Colors.transparent,
-                  ),
-                ),
-              ),
-              SizedBox(height: 12.h),
-              CustomButton(
-                onPressed: _handleSave,
-                text: "Sign and Save",
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+  Widget _buildDocumentPreview() {
+    if (widget.args.assetPath != null) {
+      return SfPdfViewer.asset(widget.args.assetPath!);
+    } else if (widget.args.url != null) {
+      return SfPdfViewer.network(widget.args.url!);
+    } else {
+      return const Center(child: Text("Document not found"));
+    }
   }
 }

@@ -49,7 +49,7 @@ class NotificationState extends BaseStateModel {
     return NotificationState(
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
-      notification: signDocument ?? this.notification,
+      notification: signDocument ?? notification,
       totalPages: totalPages ?? this.totalPages,
       currentPage: currentPage ?? this.currentPage,
       pageSize: pageSize ?? this.pageSize,

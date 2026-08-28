@@ -1,7 +1,8 @@
 import 'dart:convert';
 
 import '../exceptions/app_exception.dart';
-
+import '../models/responses/base_response_model.dart';
+import '../models/requests/sign_form_request.dart';
 import '../models/responses/consent_form_response.dart';
 import '../repositories/forms_repository.dart';
 import '../utils/enums.dart';
@@ -15,12 +16,11 @@ class FormsService implements FormsRepository {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.forms,
       requestType: .get,
-      params:"?type=consent"
+      //params:"?type="
     );
     if (response.statusCode >= 200 && response.statusCode < 300) {
       final parsed = json.decode(response.body);
-      ConsentFormResponse formResponse =
-          ConsentFormResponse.fromJson(parsed);
+      ConsentFormResponse formResponse = ConsentFormResponse.fromJson(parsed);
       return formResponse;
     } else {
       final parsed = json.decode(response.body);
@@ -29,6 +29,21 @@ class FormsService implements FormsRepository {
       );
     }
   }
-  
 
+  @override
+  Future<BaseResponseModel> signForm(SignFormRequest request) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.signForm,
+      requestType: .post,
+      requestBody: request.toJson(),
+    );
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return BaseResponseModel.fromJson(json.decode(response.body));
+    } else {
+      throw AppException(
+        BaseResponseModel.fromJson(json.decode(response.body)).message
+            as String,
+      );
+    }
+  }
 }

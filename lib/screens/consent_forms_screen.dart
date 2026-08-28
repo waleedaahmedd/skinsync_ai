@@ -41,15 +41,16 @@ class _ConsentFormsScreenState extends ConsumerState<ConsentFormsScreen> {
           children: [
             SizedBox(height: context.h(8)),
             TabBar(
-              labelColor: CustomColors.purpleColor,
-              unselectedLabelColor: Colors.grey.shade600,
-              indicatorColor: CustomColors.purpleColor,
-              indicatorWeight: 3,
+              labelColor: Colors.black,
+              unselectedLabelColor: Colors.grey.shade500,
+              indicatorColor: CustomColors.lightBlueColor,
+              indicatorSize: TabBarIndicatorSize.label,
               labelStyle: CustomFonts.black16w600,
-              unselectedLabelStyle: CustomFonts.grey16w400,
+              unselectedLabelStyle: CustomFonts.grey16w500,
+              dividerColor: Colors.transparent,
               tabs: const [
-                Tab(text: "Signed Forms"),
                 Tab(text: "Unsigned Forms"),
+                Tab(text: "Signed Forms"),
               ],
             ),
             Expanded(
@@ -57,8 +58,8 @@ class _ConsentFormsScreenState extends ConsumerState<ConsentFormsScreen> {
                   ? const Center(child: CircularProgressIndicator())
                   : TabBarView(
                       children: [
-                        _ConsentListView(documents: state.signDocument),
                         _ConsentListView(documents: state.unSignDocument),
+                        _ConsentListView(documents: state.signDocument),
                       ],
                     ),
             ),
@@ -93,15 +94,16 @@ class _ConsentListView extends StatelessWidget {
         final document = documents[index];
         return InkWell(
           onTap: () {
-           Navigator.pushNamed(
-                              context,
-                              LegalDocumentScreen.routeName,
-                              arguments: LegalDocumentArgs(
-                                title: document.title ?? '',
-                                assetPath: document.url ?? '' ,
-                                storageFileName: document.title ?? '',
-                              ),
-                            );
+            Navigator.pushNamed(
+              context,
+              LegalDocumentScreen.routeName,
+              arguments: LegalDocumentArgs(
+                title: document.title ?? '',
+                url: document.url,
+                storageFileName: 'signed_form_${document.id}.pdf',
+                formId: document.id,
+              ),
+            );
           },
           borderRadius: BorderRadius.circular(context.r(16)),
           child: Container(
