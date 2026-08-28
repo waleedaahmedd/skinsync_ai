@@ -46,6 +46,7 @@ import 'screens/patient_treatment_requests_screen.dart';
 import 'screens/payment_screen.dart';
 import 'screens/pdf_viewer_screen.dart';
 import 'screens/personal_detail_screen.dart';
+import 'screens/personal_document_screen.dart';
 import 'screens/progress_detail_screen.dart';
 import 'screens/review_screen.dart';
 import 'screens/saved_treatment_screen.dart';
@@ -104,7 +105,7 @@ class RouteGenerator {
           settings: const RouteSettings(name: ConsentFormsScreen.routeName),
           builder: (_) => const ConsentFormsScreen(),
         );
-         case ComplianceFormsScreen.routeName:
+      case ComplianceFormsScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: ComplianceFormsScreen.routeName),
           builder: (_) => const ComplianceFormsScreen(),
@@ -269,13 +270,20 @@ class RouteGenerator {
         );
       case SubscriptionPlansScreen.routeName:
         return MaterialPageRoute(
-          settings: const RouteSettings(name: SubscriptionPlansScreen.routeName),
+          settings: const RouteSettings(
+            name: SubscriptionPlansScreen.routeName,
+          ),
           builder: (_) => const SubscriptionPlansScreen(),
         );
       case PersonalDetailScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: PersonalDetailScreen.routeName),
           builder: (_) => const PersonalDetailScreen(),
+        );
+      case PersonalDocumentScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: PersonalDocumentScreen.routeName),
+          builder: (_) => const PersonalDocumentScreen(),
         );
       case SavedTreatmentScreen.routeName:
         return MaterialPageRoute(

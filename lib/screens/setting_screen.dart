@@ -29,7 +29,6 @@ class SettingScreen extends ConsumerStatefulWidget {
 class _SettingScreenState extends ConsumerState<SettingScreen> {
   bool isBiometricEnabled = false;
   bool isLoading = false;
-  bool isNotificationEnabled = false;
 
   @override
   void initState() {
@@ -38,6 +37,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
       final authKey = await SecureStorage().getSecureString(
         key: SharedPreferencesKeys.biometricAuthKey.keyText,
       );
+
       isBiometricEnabled = authKey != null;
       log('IS ENABLED: $isBiometricEnabled');
       setState(() {});
@@ -147,22 +147,26 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                             style: CustomFonts.black16w500,
                           ),
                         ),
-                        CustomSizedSwitch(
-                          isOn: isNotificationEnabled,
-                          onChanged: (val) async {
-                            final status = val
-                                ? Status.active
-                                : Status.inactive;
+                        Consumer(
+                          builder: (context, ref, _) {
+                            final isNotification =
+                                ref
+                                    .watch(authViewModel)
+                                    .authData
+                                    ?.pushNotification ??
+                                false;
+                            return CustomSizedSwitch(
+                              isOn: isNotification,
+                              onChanged: (val) async {
+                                final status = val
+                                    ? Status.active
+                                    : Status.inactive;
 
-                            final success = await ref
-                                .read(notificationViewModel.notifier)
-                                .callNotificationStatus(status: status);
-
-                            if (success) {
-                              setState(() {
-                                isNotificationEnabled = val;
-                              });
-                            }
+                                ref
+                                    .read(notificationViewModel.notifier)
+                                    .callNotificationStatus(status: status);
+                              },
+                            );
                           },
                         ),
                       ],

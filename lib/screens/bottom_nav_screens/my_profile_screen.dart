@@ -10,6 +10,7 @@ import '../compliance_form_screen.dart';
 import '../consent_forms_screen.dart';
 import '../get_started_screen.dart';
 import '../personal_detail_screen.dart';
+import '../personal_document_screen.dart';
 import '../saved_treatment_screen.dart';
 import '../setting_screen.dart';
 import '../../utils/assets.dart';
@@ -355,6 +356,18 @@ class MyProfileScreen extends StatelessWidget {
                       icon: SvgAssets.profileIcon,
                       title: "Personal Details",
                     ),
+
+                    buildCardOption(
+                        callBack: () {
+                          Navigator.pushNamed(
+                            context,
+                            PersonalDocumentScreen.routeName,
+                            arguments: true
+                          );
+                        },
+                        icon:SvgAssets.receipts,
+                        title: "Personal Documents",
+                      ),
 
                     buildCardOption(
                       callBack: () {
