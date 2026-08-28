@@ -7,6 +7,7 @@ import '../repositories/notification_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/notification_service.dart';
 import '../utils/enums.dart';
+import 'auth_view_model.dart';
 import 'base_view_model.dart';
 
 final notificationViewModel =
@@ -113,7 +114,10 @@ Future<bool> callNotificationStatus({required Status status}) async {
   EasyLoading.show(status: 'Loading....');
 
   final result = await runSafely(() async {
-    await _repository.callNotificationStatus(status: status);
+ final response=   await _repository.callNotificationStatus(status: status);
+if(response.isSuccess == true){
+  await ref.read(authViewModel.notifier).callGetMe();
+}
     return true;
   });
 

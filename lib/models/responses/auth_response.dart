@@ -22,6 +22,7 @@ class AuthResponse extends BaseResponseModel {
 
 class AuthData {
   final bool? isFirstLogin;
+  final bool? pushNotification;
   final bool? isActive;
   final String? accessToken;
   final String? refreshToken;
@@ -36,6 +37,7 @@ class AuthData {
   AuthData({
     this.isFirstLogin,
     this.isActive,
+    this.pushNotification,
     this.accessToken,
     this.refreshToken,
     this.isActiveExpiry,
@@ -50,6 +52,7 @@ class AuthData {
   factory AuthData.fromJson(Map<String, dynamic> json) => AuthData(
     isFirstLogin: json["is_first_login"],
     isActive: json["is_active"],
+    pushNotification : json['push_notification'],
     accessToken: json["access_token"],
     refreshToken: json["refresh_token"],
     isActiveExpiry: json["is_active_expiry"],

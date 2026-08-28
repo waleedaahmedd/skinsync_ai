@@ -93,6 +93,52 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     }
   }
 
+Future<String?> uploadDocument({
+  required ImageSource source,
+  required String documentType, // e.g., 'driving_license' or 'passport'
+}) async {
+  try {
+    final XFile? image = await _imagePicker.pickImage(
+      source: source,
+      imageQuality: 85, // Retains high detail for readability
+    );
+
+    if (image == null) return null;
+
+    String? uploadedUrl;
+
+    await runSafely(() async {
+      await EasyLoading.show(status: 'Uploading document...');
+
+      final String userEmail = state.authData?.user?.primaryEmail ?? '';
+
+      // Upload via MediaService
+      uploadedUrl = await MediaService().uploadImage(
+        acceptAnyFormat: true,
+        '$userEmail/$documentType', // optional path subfolder organization
+        image,
+      );
+
+      if (uploadedUrl != null) {
+
+
+        await EasyLoading.dismiss();
+        EasyLoading.showSuccess('Document uploaded successfully!');
+      } else {
+        await EasyLoading.dismiss();
+        EasyLoading.showError('Failed to upload document');
+      }
+    });
+
+    return uploadedUrl;
+  } catch (e) {
+    await EasyLoading.dismiss();
+    onError('Error picking document: $e');
+    return null;
+  }
+}
+
+
   void setCountryCode(Country country) {
     state = state.copyWith(country: country);
   }
