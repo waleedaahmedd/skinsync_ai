@@ -166,10 +166,10 @@ class _FacePoseCaptureScreenState extends ConsumerState<FacePoseCaptureScreen> {
   }
 
   void _handlePoseTap(BuildContext context, String pose) async {
-    final bool? result = await ref
+    final bool result = await ref
         .read(formsViewModel.notifier)
         .checkAndOpenDocumentBySku("FACE-SCAN-CONS");
-    if (result == null || result == true) {
+    if (result) {
       _capturePose(context, pose);
     }
   }

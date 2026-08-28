@@ -405,11 +405,11 @@ class _TreatmentJourneyDetailScreenState
                       }
 
                       if (clinic != null) {
-                        final bool? docResult = await ref
+                        final bool docResult = await ref
                             .read(formsViewModel.notifier)
                             .checkAndOpenDocumentBySku("SHRE-TRET-CONS");
 
-                        if (docResult == null || docResult == true) {
+                        if (docResult) {
                           if (context.mounted) {
                             PreferredSlotsBottomSheet.show(
                               context: context,

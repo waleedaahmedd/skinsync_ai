@@ -143,13 +143,13 @@ class FormsViewModel extends BaseViewModel<FormsState> {
     false;
   }
 
-  Future<bool?> checkAndOpenDocumentBySku(String sku) async {
+  Future<bool> checkAndOpenDocumentBySku(String sku) async {
     // 1. Check in signed documents
     final signedDoc = state.signDocument.firstWhereOrNull(
       (doc) => doc.globalSku == sku,
     );
     if (signedDoc != null) {
-      return await navigatorKey.currentState?.pushNamed(
+      final res = await navigatorKey.currentState?.pushNamed(
         LegalDocumentScreen.routeName,
         arguments: LegalDocumentArgs(
           title: signedDoc.title ?? '',
@@ -159,6 +159,7 @@ class FormsViewModel extends BaseViewModel<FormsState> {
           isAlreadySigned: true,
         ),
       ) as bool?;
+      return res ?? false;
     }
 
     // 2. Check in unsigned documents
@@ -166,7 +167,7 @@ class FormsViewModel extends BaseViewModel<FormsState> {
       (doc) => doc.globalSku == sku,
     );
     if (unSignedDoc != null) {
-      return await navigatorKey.currentState?.pushNamed(
+      final res = await navigatorKey.currentState?.pushNamed(
         LegalDocumentScreen.routeName,
         arguments: LegalDocumentArgs(
           title: unSignedDoc.title ?? '',
@@ -176,8 +177,9 @@ class FormsViewModel extends BaseViewModel<FormsState> {
           isAlreadySigned: false,
         ),
       ) as bool?;
+      return res ?? false;
     }
-    return null; // No document to open
+    return true; // No document to open, safe to proceed
   }
 
   @override
