@@ -105,21 +105,25 @@ class _LegalDocumentScreenState extends ConsumerState<LegalDocumentScreen> {
                     )
                   : _buildDocumentPreview(),
             ),
-      bottomNavigationBar:
-          (!_isLoading && !_isSigned && !widget.args.isAlreadySigned)
-              ? Padding(
-                  padding: EdgeInsets.fromLTRB(
-                    20.w,
-                    10.h,
-                    20.w,
-                    20.h + MediaQuery.paddingOf(context).bottom,
-                  ),
-                  child: CustomButton(
-                    onPressed: _showSignatureBottomSheet,
-                    text: "Sign and Save",
-                  ),
-                )
-              : null,
+      bottomNavigationBar: (!_isLoading)
+          ? Padding(
+              padding: EdgeInsets.fromLTRB(
+                20.w,
+                10.h,
+                20.w,
+                20.h + MediaQuery.paddingOf(context).bottom,
+              ),
+              child: (widget.args.isAlreadySigned || _isSigned)
+                  ? CustomButton(
+                      onPressed: () => Navigator.pop(context),
+                      text: "Continue",
+                    )
+                  : CustomButton(
+                      onPressed: _showSignatureBottomSheet,
+                      text: "Sign and Save",
+                    ),
+            )
+          : null,
     );
   }
 

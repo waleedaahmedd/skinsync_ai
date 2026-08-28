@@ -4,13 +4,16 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../app_init.dart';
 import '../models/base_state_model.dart';
 import '../models/requests/sign_form_request.dart';
 import '../models/responses/consent_form_response.dart';
 import '../repositories/forms_repository.dart';
+import '../screens/legal_document_screen.dart';
 import '../services/api_base_helper.dart';
 import '../services/forms_service.dart';
 import '../services/media_service.dart';
+import '../utils/list_utils.dart';
 import 'base_view_model.dart';
 
 final formsViewModel = NotifierProvider<FormsViewModel, FormsState>(() {
@@ -138,6 +141,44 @@ class FormsViewModel extends BaseViewModel<FormsState> {
       return false;
     }) ??
     false;
+  }
+
+  void checkAndOpenDocumentBySku(String sku) {
+    // 1. Check in signed documents
+    final signedDoc = state.signDocument.firstWhereOrNull(
+      (doc) => doc.globalSku == sku,
+    );
+    if (signedDoc != null) {
+      navigatorKey.currentState?.pushNamed(
+        LegalDocumentScreen.routeName,
+        arguments: LegalDocumentArgs(
+          title: signedDoc.title ?? '',
+          url: signedDoc.url,
+          storageFileName: 'signed_form_${signedDoc.id}.pdf',
+          formId: signedDoc.id,
+          isAlreadySigned: true,
+        ),
+      );
+      return;
+    }
+
+    // 2. Check in unsigned documents
+    final unSignedDoc = state.unSignDocument.firstWhereOrNull(
+      (doc) => doc.globalSku == sku,
+    );
+    if (unSignedDoc != null) {
+      navigatorKey.currentState?.pushNamed(
+        LegalDocumentScreen.routeName,
+        arguments: LegalDocumentArgs(
+          title: unSignedDoc.title ?? '',
+          url: unSignedDoc.url,
+          storageFileName: 'signed_form_${unSignedDoc.id}.pdf',
+          formId: unSignedDoc.id,
+          isAlreadySigned: false,
+        ),
+      );
+      return;
+    }
   }
 
   @override
