@@ -68,21 +68,30 @@ class FormsViewModel extends BaseViewModel<FormsState> {
     : super(initialState: const FormsState());
 
   Future<void> fetchForms({int page = 1}) async {
-    state = state.copyWith(loading: true);
+    // Explicitly reset all lists to empty before fetching new data
+    state = state.copyWith(
+      loading: true,
+      signDocument: [],
+      unSignDocument: [],
+      complianceDocuments: [],
+    );
 
     await runSafely(() async {
       final response = await _repository.fetchConsentForm();
       if (response.isSuccess == true) {
-        final List<Document> unSigned = response.data?.unSignedDocuments ?? [];
+        final List<Document> allSigned = response.data?.signedDocuments ?? [];
+        final List<Document> allUnSigned = response.data?.unSignedDocuments ?? [];
+        
         final List<Document> compliance =
-            unSigned.where((doc) => doc.type == 'compliance').toList();
+            allUnSigned.where((doc) => doc.type == 'compliance').toList();
         final List<Document> otherUnSigned =
-            unSigned.where((doc) => doc.type != 'compliance').toList();
+            allUnSigned.where((doc) => doc.type != 'compliance').toList();
 
         state = state.copyWith(
-          signDocument: response.data?.signedDocuments,
+          signDocument: allSigned,
           unSignDocument: otherUnSigned,
           complianceDocuments: compliance,
+          loading: false,
         );
       }
     });
