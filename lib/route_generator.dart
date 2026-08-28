@@ -291,11 +291,13 @@ class RouteGenerator {
           builder: (_) => const SavedTreatmentScreen(),
         );
       case AllergyAndMedicalHistory.routeName:
+        final showBackButton = settings.arguments as bool? ?? false;
         return MaterialPageRoute(
           settings: const RouteSettings(
             name: AllergyAndMedicalHistory.routeName,
           ),
-          builder: (_) => const AllergyAndMedicalHistory(),
+          builder: (_) =>
+              AllergyAndMedicalHistory(showBackButton: showBackButton),
         );
       case AdditionalInfoScreen.routeName:
         return MaterialPageRoute(

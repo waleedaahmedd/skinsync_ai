@@ -72,7 +72,9 @@ class MyProfileScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(context.r(24)),
             child: Padding(
               padding: EdgeInsets.symmetric(
-                  horizontal: context.w(16), vertical: context.h(14)),
+                horizontal: context.w(16),
+                vertical: context.h(14),
+              ),
               child: Row(
                 children: [
                   // Unified soft background tint & icon color
@@ -84,16 +86,19 @@ class MyProfileScreen extends StatelessWidget {
                     ),
                     child: icon is String
                         ? SvgPicture.asset(
-                      icon,
-                      height: context.w(18),
-                      width: context.w(18),
-                      colorFilter: const ColorFilter.mode(
-                        unifiedColor,
-                        BlendMode.srcIn,
-                      ),
-                    )
-                        : Icon(icon as IconData, size: context.w(18),
-                        color: unifiedColor),
+                            icon,
+                            height: context.w(18),
+                            width: context.w(18),
+                            colorFilter: const ColorFilter.mode(
+                              unifiedColor,
+                              BlendMode.srcIn,
+                            ),
+                          )
+                        : Icon(
+                            icon as IconData,
+                            size: context.w(18),
+                            color: unifiedColor,
+                          ),
                   ),
                   SizedBox(width: context.w(14)),
                   Expanded(child: Text(title, style: CustomFonts.black16w500)),
@@ -109,7 +114,9 @@ class MyProfileScreen extends StatelessWidget {
           if (!isLast)
             Padding(
               padding: EdgeInsets.only(
-                  left: context.w(54), right: context.w(16)),
+                left: context.w(54),
+                right: context.w(16),
+              ),
               child: Divider(color: Colors.grey.shade100, height: context.h(1)),
             ),
         ],
@@ -176,7 +183,10 @@ class MyProfileScreen extends StatelessWidget {
               SizedBox(width: context.w(12)),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, SubscriptionPlansScreen.routeName);
+                  Navigator.pushNamed(
+                    context,
+                    SubscriptionPlansScreen.routeName,
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
@@ -192,7 +202,9 @@ class MyProfileScreen extends StatelessWidget {
                 ),
                 child: Text(
                   "Upgrade",
-                  style: CustomFonts.white14w600.copyWith(fontSize: context.sp(12)),
+                  style: CustomFonts.white14w600.copyWith(
+                    fontSize: context.sp(12),
+                  ),
                 ),
               ),
             ],
@@ -252,8 +264,7 @@ class MyProfileScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: CustomColors.purpleColor.withValues(
-                            alpha: 0.4),
+                        color: CustomColors.purpleColor.withValues(alpha: 0.4),
                         width: context.w(4),
                       ),
                     ),
@@ -270,26 +281,24 @@ class MyProfileScreen extends StatelessWidget {
                             fit: BoxFit.cover,
                             height: context.w(80),
                             width: context.w(80),
-                            placeholder: (context, url) =>
-                                Container(
-                                  height: context.w(80),
-                                  width: context.w(80),
-                                  color: Colors.grey.shade100,
-                                  child: const Center(
-                                    child: CupertinoActivityIndicator(),
-                                  ),
-                                ),
-                            errorWidget: (context, url, error) =>
-                                Container(
-                                  height: context.w(80),
-                                  width: context.w(80),
-                                  color: Colors.grey.shade100,
-                                  child: Icon(
-                                    Icons.person_outline_rounded,
-                                    size: context.sp(36),
-                                    color: Colors.grey.shade400,
-                                  ),
-                                ),
+                            placeholder: (context, url) => Container(
+                              height: context.w(80),
+                              width: context.w(80),
+                              color: Colors.grey.shade100,
+                              child: const Center(
+                                child: CupertinoActivityIndicator(),
+                              ),
+                            ),
+                            errorWidget: (context, url, error) => Container(
+                              height: context.w(80),
+                              width: context.w(80),
+                              color: Colors.grey.shade100,
+                              child: Icon(
+                                Icons.person_outline_rounded,
+                                size: context.sp(36),
+                                color: Colors.grey.shade400,
+                              ),
+                            ),
                           ),
                         );
                       },
@@ -339,8 +348,11 @@ class MyProfileScreen extends StatelessWidget {
               child: ListView(
                 physics: const BouncingScrollPhysics(),
                 padding: EdgeInsets.fromLTRB(
-                    context.w(24), context.h(20), context.w(24),
-                    context.h(100)),
+                  context.w(24),
+                  context.h(20),
+                  context.w(24),
+                  context.h(100),
+                ),
                 children: [
                   buildUpgradeBanner(),
                   SizedBox(height: context.h(20)),
@@ -358,16 +370,16 @@ class MyProfileScreen extends StatelessWidget {
                     ),
 
                     buildCardOption(
-                        callBack: () {
-                          Navigator.pushNamed(
-                            context,
-                            PersonalDocumentScreen.routeName,
-                            arguments: true
-                          );
-                        },
-                        icon:SvgAssets.receipts,
-                        title: "Personal Documents",
-                      ),
+                      callBack: () {
+                        Navigator.pushNamed(
+                          context,
+                          PersonalDocumentScreen.routeName,
+                          arguments: true,
+                        );
+                      },
+                      icon: SvgAssets.receipts,
+                      title: "Personal Documents",
+                    ),
 
                     buildCardOption(
                       callBack: () {
@@ -400,31 +412,29 @@ class MyProfileScreen extends StatelessWidget {
                       title: "Subscription Plans",
                       isLast: true,
                     ),
-                 
 
-                      buildCardOption(
-                        callBack: () {
-                          Navigator.pushNamed(
-                            context,
-                            AllergyAndMedicalHistory.routeName,
-                            arguments: true
-                          );
-                        },
-                        icon: SvgAssets.medical,
-                        title: "Medical History",
-                      ),
+                    buildCardOption(
+                      callBack: () {
+                        Navigator.pushNamed(
+                          context,
+                          AllergyAndMedicalHistory.routeName,
+                          arguments: true,
+                        );
+                      },
+                      icon: SvgAssets.medical,
+                      title: "Medical History",
+                    ),
 
-                      // buildCardOption(
-                      //   callBack: () {
-                      //     Navigator.pushNamed(
-                      //       context,
-                      //       SimulationHistoryScreen.routeName,
-                      //     );
-                      //   },
-                      //   icon: SvgAssets.appointments,
-                      //   title: "Simulation History",
-                      // ),
-
+                    // buildCardOption(
+                    //   callBack: () {
+                    //     Navigator.pushNamed(
+                    //       context,
+                    //       SimulationHistoryScreen.routeName,
+                    //     );
+                    //   },
+                    //   icon: SvgAssets.appointments,
+                    //   title: "Simulation History",
+                    // ),
                   ]),
                   SizedBox(height: context.h(16)),
 
@@ -454,63 +464,62 @@ class MyProfileScreen extends StatelessWidget {
                     ]),
                     SizedBox(height: context.h(16)),
                   ],
-                    
-                      // Legal and Policy Section
-                      buildOptionCard([
-                        buildCardOption(
-                          callBack: () {
-                            Navigator.pushNamed(
-                              context,
-                              ConsentFormsScreen.routeName,
-                            );
-                          },
-                          icon: Iconsax.security,
-                          title: "Consent Forms",
-                        ),
-                        buildCardOption(
-                          callBack: () {
-                            Navigator.pushNamed(
-                              context,
-                              ComplianceFormsScreen.routeName,
-                            );
-                          },
-                          icon: Iconsax.document_text,
-                          title: "Compliance Forms",
-                          isLast: true,
-                        ),
-                        // buildCardOption(
-                        //   callBack: () {
-                        //     Navigator.pushNamed(
-                        //       context,
-                        //       LegalDocumentScreen.routeName,
-                        //       arguments: LegalDocumentArgs(
-                        //         title: "Terms Of Service",
-                        //         assetPath: 'assets/dummyassets/A_Terms_of_Service.pdf',
-                        //         storageFileName: 'signed_terms_of_service.pdf',
-                        //       ),
-                        //     );
-                        //   },
-                        //   icon: Iconsax.document,
-                        //   title: "Terms Of Service",
-                        // ),
-                        // buildCardOption(
-                        //   callBack: () {
-                        //     Navigator.pushNamed(
-                        //       context,
-                        //       LegalDocumentScreen.routeName,
-                        //       arguments: LegalDocumentArgs(
-                        //         title: "Privacy Policy",
-                        //         assetPath: 'assets/dummyassets/B_Privacy_Policy.pdf',
-                        //         storageFileName: 'signed_privacy_policy.pdf',
-                        //       ),
-                        //     );
-                        //   },
-                        //   icon: Iconsax.security,
-                        //   title: "Privacy Policy",
-                        // ),
-                      ]),
-                      SizedBox(height: context.h(16)),
-                    
+
+                  // Legal and Policy Section
+                  buildOptionCard([
+                    buildCardOption(
+                      callBack: () {
+                        Navigator.pushNamed(
+                          context,
+                          ConsentFormsScreen.routeName,
+                        );
+                      },
+                      icon: Iconsax.security,
+                      title: "Consent Forms",
+                    ),
+                    buildCardOption(
+                      callBack: () {
+                        Navigator.pushNamed(
+                          context,
+                          ComplianceFormsScreen.routeName,
+                        );
+                      },
+                      icon: Iconsax.document_text,
+                      title: "Compliance Forms",
+                      isLast: true,
+                    ),
+                    // buildCardOption(
+                    //   callBack: () {
+                    //     Navigator.pushNamed(
+                    //       context,
+                    //       LegalDocumentScreen.routeName,
+                    //       arguments: LegalDocumentArgs(
+                    //         title: "Terms Of Service",
+                    //         assetPath: 'assets/dummyassets/A_Terms_of_Service.pdf',
+                    //         storageFileName: 'signed_terms_of_service.pdf',
+                    //       ),
+                    //     );
+                    //   },
+                    //   icon: Iconsax.document,
+                    //   title: "Terms Of Service",
+                    // ),
+                    // buildCardOption(
+                    //   callBack: () {
+                    //     Navigator.pushNamed(
+                    //       context,
+                    //       LegalDocumentScreen.routeName,
+                    //       arguments: LegalDocumentArgs(
+                    //         title: "Privacy Policy",
+                    //         assetPath: 'assets/dummyassets/B_Privacy_Policy.pdf',
+                    //         storageFileName: 'signed_privacy_policy.pdf',
+                    //       ),
+                    //     );
+                    //   },
+                    //   icon: Iconsax.security,
+                    //   title: "Privacy Policy",
+                    // ),
+                  ]),
+                  SizedBox(height: context.h(16)),
 
                   // CARD 3: Account Security Section
                   Consumer(
@@ -526,7 +535,7 @@ class MyProfileScreen extends StatelessWidget {
                                 Navigator.pushNamedAndRemoveUntil(
                                   context,
                                   GetStartedScreen.routeName,
-                                      (route) => false,
+                                  (route) => false,
                                 );
                               },
                             );
@@ -546,7 +555,7 @@ class MyProfileScreen extends StatelessWidget {
 
                                 navigator.pushNamedAndRemoveUntil(
                                   GetStartedScreen.routeName,
-                                      (route) => false,
+                                  (route) => false,
                                 );
                               },
                             );
@@ -556,7 +565,7 @@ class MyProfileScreen extends StatelessWidget {
                           isLast: true,
                         ),
                       ]);
-                    }
+                    },
                   ),
                 ],
               ),
