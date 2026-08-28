@@ -371,11 +371,8 @@ class _JourneyClinicDetailScreenState
                 ),
                 child: Consumer(
                   builder: (_, ref, _) {
-                    final optionId = ref.watch(
-                      treatmentJourneyProvider.select(
-                        (s) => s.selectedOptionId,
-                      ),
-                    );
+                    final tjState = ref.watch(treatmentJourneyProvider);
+                    final optionId = tjState.selectedOptionId;
                     return CustomButton(
                       text: optionId == null ? 'Select Option' : 'Share Now',
                       onPressed: () async {
@@ -392,6 +389,7 @@ class _JourneyClinicDetailScreenState
                         if (widget.clinic?.place != null) {
                           showFacialScanConsentDialog(
                             context: context,
+                            simulationData: tjState.simulations,
                             onConfirm: () async {
                               final success = await ref
                                   .read(treatmentJourneyProvider.notifier)
@@ -408,6 +406,7 @@ class _JourneyClinicDetailScreenState
                         }
                         showFacialScanConsentDialog(
                           context: context,
+                          simulationData: tjState.simulations,
                           onConfirm: () async {
                             final result = await ref
                                 .read(treatmentJourneyProvider.notifier)

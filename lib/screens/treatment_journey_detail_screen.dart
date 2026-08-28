@@ -359,6 +359,7 @@ class _TreatmentJourneyDetailScreenState
                       if (clinic?.place != null) {
                         showFacialScanConsentDialog(
                           context: context,
+                          simulationData: state.simulations,
                           onConfirm: () async {
                             final result = await ref
                                 .read(treatmentJourneyProvider.notifier)
@@ -373,6 +374,7 @@ class _TreatmentJourneyDetailScreenState
                       } else if (clinic != null) {
                         showFacialScanConsentDialog(
                           context: context,
+                          simulationData: state.simulations,
                           onConfirm: () async {
                             final result = await ref
                                 .read(treatmentJourneyProvider.notifier)
