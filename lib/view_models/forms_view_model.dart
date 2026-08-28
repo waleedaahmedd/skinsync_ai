@@ -1,10 +1,8 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../models/base_state_model.dart';
 import '../models/requests/sign_form_request.dart';
@@ -109,23 +107,24 @@ class FormsViewModel extends BaseViewModel<FormsState> {
     return await runSafely(() async {
       EasyLoading.show(status: 'Uploading signed document...');
 
-      // 1. Save locally first to get a path (MediaService.uploadMedia handles Uint8List for XFile/PlatformFile)
-      // Actually MediaService.uploadMedia can take XFile which we can create from bytes if we save it.
-      final directory = await getTemporaryDirectory();
-      final file = File('${directory.path}/$fileName');
-      await file.writeAsBytes(pdfBytes);
+      // 1. Generate a unique filename using timestamp to avoid caching and ensure fresh URL
+      final uniqueFileName = '${DateTime.now().millisecondsSinceEpoch}_$fileName';
 
-      // 2. Upload to Firebase
+      // 2. Upload to Firebase directly from bytes
       final String? firebaseUrl = await MediaService().uploadMedia(
         path: 'signed_forms',
-        file: XFile(file.path),
+        file: XFile.fromData(
+          Uint8List.fromList(pdfBytes), // Ensure fresh data copy
+          name: uniqueFileName,
+          mimeType: 'application/pdf',
+        ),
       );
 
       if (firebaseUrl == null) {
         throw Exception('Failed to upload signed document to storage');
       }
 
-      // 3. Call Sign Form API
+      // 2. Call Sign Form API
       final request = SignFormRequest(formId: formId, url: firebaseUrl);
       final response = await _repository.signForm(request);
 

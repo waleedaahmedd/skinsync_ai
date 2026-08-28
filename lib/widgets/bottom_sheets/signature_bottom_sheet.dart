@@ -31,6 +31,7 @@ class SignatureBottomSheet extends ConsumerStatefulWidget {
 
 class _SignatureBottomSheetState extends ConsumerState<SignatureBottomSheet> {
   final GlobalKey<SfSignaturePadState> _signaturePadKey = GlobalKey();
+  bool _isSigned = false;
 
   Future<void> _handleSubmit() async {
     try {
@@ -59,8 +60,10 @@ class _SignatureBottomSheetState extends ConsumerState<SignatureBottomSheet> {
         throw Exception('No source PDF provided');
       }
 
-      // 3. Create PDF document and add signature
+      // 3. Load existing PDF document and add signature
       final PdfDocument document = PdfDocument(inputBytes: originalBytes);
+      
+      // Add a dedicated signature page at the end
       final PdfPage lastPage = document.pages.add();
 
       final PdfFont boldFont =
@@ -78,25 +81,26 @@ class _SignatureBottomSheetState extends ConsumerState<SignatureBottomSheet> {
         bounds: const Rect.fromLTWH(0, 50, 0, 0),
       );
 
+      // Draw the signature image
       lastPage.graphics.drawImage(
         PdfBitmap(signatureBytes),
         const Rect.fromLTWH(0, 80, 300, 120),
       );
 
-      final List<int> pdfBytes = await document.save();
-      document.dispose();
+      // 4. Save the merged document
+      final List<int> pdfBytesList = await document.save();
+      final Uint8List pdfBytes = Uint8List.fromList(pdfBytesList);
+      document.dispose(); // Back to dispose() as PdfDocument doesn't have close() in this version
 
-      // 4. If formId exists, upload to Firebase and call API
+      // 5. If formId exists, upload to Firebase and call API
       if (widget.args.formId != null) {
         final success = await ref.read(formsViewModel.notifier).signForm(
               formId: widget.args.formId!,
-              pdfBytes: Uint8List.fromList(pdfBytes),
+              pdfBytes: pdfBytes,
               fileName: widget.args.storageFileName,
             );
         
         if (success) {
-          // Success case: API was called and data was refreshed in ViewModel
-          // Navigate back to listing (ConsentFormsScreen)
           if (mounted) {
             Navigator.pop(context); // Close bottom sheet
             Navigator.pop(context); // Go back from LegalDocumentScreen
@@ -108,7 +112,7 @@ class _SignatureBottomSheetState extends ConsumerState<SignatureBottomSheet> {
         }
       }
 
-      // 5. Save locally for persistence (for Profile hardcoded docs like Terms/Privacy if ever used)
+      // 6. Save locally for persistence (fallback)
       final directory = await getApplicationDocumentsDirectory();
       final path = '${directory.path}/${widget.args.storageFileName}';
       final file = File(path);
@@ -167,22 +171,47 @@ class _SignatureBottomSheetState extends ConsumerState<SignatureBottomSheet> {
             child: SfSignaturePad(
               key: _signaturePadKey,
               backgroundColor: Colors.transparent,
+              onDrawStart: () {
+                if (!_isSigned) {
+                  setState(() => _isSigned = true);
+                }
+                return false; // Return false to continue drawing
+              },
             ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton(
-                onPressed: () => _signaturePadKey.currentState!.clear(),
+                onPressed: () {
+                  _signaturePadKey.currentState!.clear();
+                  setState(() => _isSigned = false);
+                },
                 child: const Text("Clear Signature"),
               ),
             ],
           ),
           SizedBox(height: 20.h),
-          CustomButton(
-            onPressed: _handleSubmit,
-            text: "Submit",
-          ),
+          if (_isSigned)
+            CustomButton(
+              onPressed: _handleSubmit,
+              text: "Submit",
+            )
+          else
+            Container(
+              width: double.infinity,
+              height: 52.h,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(30.r),
+              ),
+              child: Center(
+                child: Text(
+                  "Sign to Submit",
+                  style: CustomFonts.black14w600.copyWith(color: Colors.grey),
+                ),
+              ),
+            ),
           SizedBox(height: 10.h),
         ],
       ),
