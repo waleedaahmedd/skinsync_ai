@@ -7,6 +7,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import '../models/base_state_model.dart';
 import '../models/requests/create_group_request.dart';
+import '../models/requests/preferred_slot.dart';
 import '../models/requests/save_history_request.dart';
 import '../models/requests/share_map_treatment_request.dart';
 import '../models/requests/share_treatment_request.dart';
@@ -102,7 +103,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     });
   }
 
-  Future<bool?> callShareTreatmentRequest() async {
+  Future<bool?> callShareTreatmentRequest(List<PreferredSlot> slots) async {
     return await runSafely(() async {
       final clinicId = ref.read(clinicProvider).clinic?.id;
       if (state.selectedOptionId == null || clinicId == null) {
@@ -113,6 +114,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       final request = ShareTreatmentRequest(
         clinicId: clinicId,
         optionId: state.selectedOptionId!,
+        preferredSlots: slots,
       );
 
       await _repo.shareTreatmentRequest(request: request);
@@ -123,7 +125,10 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     });
   }
 
-  Future<bool?> callShareMapTreatmentRequest(Clinic clinic) async {
+  Future<bool?> callShareMapTreatmentRequest(
+    Clinic clinic,
+    List<PreferredSlot> slots,
+  ) async {
     return await runSafely(() async {
       if (state.selectedOptionId == null) {
         EasyLoading.showError('Select a journey option to share!');
@@ -133,6 +138,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       final request = ShareMapTreatmentRequest(
         clinic: clinic,
         optionId: state.selectedOptionId!,
+        preferredSlots: slots,
       );
 
       await _repo.shareMapTreatmentRequest(request: request);

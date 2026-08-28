@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../models/requests/preferred_slot.dart';
 import '../models/responses/clinic_detail_response.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../utils/app_lunach_utils.dart';
@@ -15,6 +16,7 @@ import '../view_models/clinic_view_model.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/dialogs/preferred_slots_dialog.dart';
 import '../widgets/dialogs/facial_scan_consent_dialog.dart';
 import '../widgets/dialogs/success_dialogs.dart';
 import 'treatment_journey_screen.dart';
@@ -386,37 +388,48 @@ class _JourneyClinicDetailScreenState
                           );
                           return;
                         }
-                        if (widget.clinic?.place != null) {
+
+                        void processShare(List<PreferredSlot> slots) {
+                          if (widget.clinic?.place != null) {
+                            showFacialScanConsentDialog(
+                              context: context,
+                              simulationData: tjState.simulations,
+                              onConfirm: () async {
+                                final success = await ref
+                                    .read(treatmentJourneyProvider.notifier)
+                                    .callShareMapTreatmentRequest(
+                                      widget.clinic!,
+                                      slots,
+                                    );
+
+                                if (success ?? false) {
+                                  if (context.mounted) {
+                                    showShareJourneySuccessDialog(context);
+                                  }
+                                }
+                              },
+                            );
+                            return;
+                          }
                           showFacialScanConsentDialog(
                             context: context,
                             simulationData: tjState.simulations,
                             onConfirm: () async {
-                              final success = await ref
+                              final result = await ref
                                   .read(treatmentJourneyProvider.notifier)
-                                  .callShareMapTreatmentRequest(widget.clinic!);
-
-                              if (success ?? false) {
+                                  .callShareTreatmentRequest(slots);
+                              if (result == true) {
                                 if (context.mounted) {
                                   showShareJourneySuccessDialog(context);
                                 }
                               }
                             },
                           );
-                          return;
                         }
-                        showFacialScanConsentDialog(
+
+                        showPreferredSlotsDialog(
                           context: context,
-                          simulationData: tjState.simulations,
-                          onConfirm: () async {
-                            final result = await ref
-                                .read(treatmentJourneyProvider.notifier)
-                                .callShareTreatmentRequest();
-                            if (result == true) {
-                              if (context.mounted) {
-                                showShareJourneySuccessDialog(context);
-                              }
-                            }
-                          },
+                          onConfirm: (slots) => processShare(slots),
                         );
                       },
                     );

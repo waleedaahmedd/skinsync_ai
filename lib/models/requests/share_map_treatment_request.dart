@@ -1,14 +1,21 @@
 import '../responses/get_clinic_response.dart';
+import 'preferred_slot.dart';
 
 class ShareMapTreatmentRequest {
   final int optionId;
   final Clinic clinic;
+  final List<PreferredSlot> preferredSlots;
 
-  ShareMapTreatmentRequest({required this.optionId, required this.clinic});
+  ShareMapTreatmentRequest({
+    required this.optionId,
+    required this.clinic,
+    required this.preferredSlots,
+  });
 
   Map<String, dynamic> toJson() {
     return {
       'option_id': optionId,
+      'preferred_slots': preferredSlots.map((e) => e.toJson()).toList(),
       'clinic': {
         'name': clinic.name ?? clinic.place?.displayName?.text ?? '',
         'email': clinic.email ?? '',
