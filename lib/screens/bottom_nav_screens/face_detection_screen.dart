@@ -398,7 +398,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
           }
           
           await Future.delayed(const Duration(milliseconds: 1000));
-          if (mounted && _isPoseCorrect) {
+          if (mounted && _isPoseCorrect && _isAutomaticMode) {
             _startCountdown();
           }
         } else if (!isPoseCorrect) {
