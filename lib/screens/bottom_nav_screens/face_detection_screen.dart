@@ -3,17 +3,19 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:face_detection_tflite/face_detection_tflite.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:vibration/vibration.dart';
 
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
-import '../../utils/volume_button_service.dart';
 import '../../utils/image_utills.dart';
 import '../../utils/secure_storage_service.dart';
 import '../../utils/tts_utils.dart';
+import '../../utils/volume_button_service.dart';
 import '../../view_models/treatment_view_model.dart';
 import '../../widgets/app_loader.dart';
 import '../../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
@@ -38,7 +40,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
 
   bool _isCapturing = false;
   bool _isConsentAccepted = false;
-  final bool _isPoseCorrect = false;
+  bool _isPoseCorrect = false;
+  bool _isProcessing = false;
+
+  FaceDetector? _detector;
 
   final VolumeButtonService _volumeButtonService = VolumeButtonService();
 
@@ -51,6 +56,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
   void initState() {
     super.initState();
     _storedRef = ref;
+    _initDetector();
     _initCamera(ref);
     _initTts();
 
@@ -178,11 +184,86 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
         _cameraController = controller;
       });
 
+      // Start image stream for face detection
+      await controller.startImageStream((image) {
+        _processCameraImage(image);
+      });
+
       _speakInstruction();
     } catch (e) {
       if (mounted) {
         _showError('Failed to initialize camera: $e');
       }
+    }
+  }
+
+  Future<void> _initDetector() async {
+    try {
+      _detector = await FaceDetector.create(
+        model: FaceDetectionModel.frontCamera,
+        minScore: 0.4,
+      );
+    } catch (e) {
+      log("Error initializing face detector: $e");
+    }
+  }
+
+  Future<void> _processCameraImage(CameraImage image) async {
+    if (_detector == null ||
+        _isProcessing ||
+        _isCapturing ||
+        _capturedImage != null) {
+      return;
+    }
+
+    _isProcessing = true;
+
+    try {
+      final faces = await _detector!.detectFacesFromCameraImage(
+        image,
+        mode: FaceDetectionMode.standard,
+      );
+
+      if (!mounted) return;
+
+      if (faces.isEmpty) {
+        if (_isPoseCorrect) {
+          setState(() => _isPoseCorrect = false);
+        }
+        return;
+      }
+
+      final face = faces.first;
+      final yaw = face.headEulerAngleY ?? 0;
+      final pitch = face.headEulerAngleX ?? 0;
+
+      bool isCorrect = false;
+
+      // Basic orientation checks
+      if (pitch.abs() < 20) {
+        if (widget.pose == 'front') {
+          isCorrect = yaw.abs() < 12;
+        } else if (widget.pose == 'left') {
+          // Adjust based on typical front camera mirroring
+          // headEulerAngleY: positive turns face toward right side of image.
+          // In front camera (mirrored), turning head left (user's POV) makes face look toward right of image?
+          // Let's stick with the previously logic and adjust if needed.
+          isCorrect = yaw > 18;
+        } else if (widget.pose == 'right') {
+          isCorrect = yaw < -18;
+        }
+      }
+
+      if (_isPoseCorrect != isCorrect) {
+        setState(() => _isPoseCorrect = isCorrect);
+        if (isCorrect) {
+          Vibration.vibrate(duration: 100);
+        }
+      }
+    } catch (e) {
+      log("Face detection error: $e");
+    } finally {
+      _isProcessing = false;
     }
   }
 
@@ -218,7 +299,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
         centerYPercent: 0.42,
         radiusPercent: 0.5,
         flipHorizontally:
-            _cameraController!.description.lensDirection == CameraLensDirection.front,
+            _cameraController!.description.lensDirection ==
+            CameraLensDirection.front,
       );
 
       if (!mounted) return;
@@ -333,6 +415,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
 
   @override
   void dispose() {
+    _detector?.dispose();
     _volumeButtonService.dispose();
     _cameraController?.dispose();
     _pulseController.dispose();
@@ -569,8 +652,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
               Padding(
                 padding: EdgeInsets.only(bottom: context.h(20)),
                 child: CustomButton(
-                  onPressed: _handleCaptureTrigger,
-                  text: "Capture Image",
+                  onPressed: _isPoseCorrect ? _handleCaptureTrigger : null,
+                  text: _isPoseCorrect
+                      ? "Capture Image"
+                      : "Align Face to Capture",
                 ),
               ),
           ],
