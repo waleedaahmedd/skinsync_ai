@@ -82,8 +82,25 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     _initVolumeButtonService();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (mounted) {
-        _showModeSelectionDialog();
+      if (widget.pose != 'front') {
+        // Strictly Auto for Left/Right profiles
+        setState(() {
+          _isAutomaticMode = true;
+          _isStarted = true;
+        });
+        _speakInstruction();
+      } else {
+        // Front pose: show dialog or use saved preference
+        final savedMode = await SecureStorage().getCaptureMode();
+        if (savedMode != null) {
+          setState(() {
+            _isAutomaticMode = savedMode;
+            _isStarted = true;
+          });
+          _speakInstruction();
+        } else if (mounted) {
+          _showModeSelectionDialog();
+        }
       }
 
       final show = await SecureStorage().getMedicalDisclaimer();
@@ -230,12 +247,13 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                 icon: Iconsax.magicpen,
                 title: "Automatic Capture",
                 subtitle: "Captures automatically when aligned",
-                isSelected: _isAutomaticMode,
+                isSelected: false,
                 onTap: () {
                   setState(() {
                     _isAutomaticMode = true;
                     _isStarted = true;
                   });
+                  SecureStorage().saveCaptureMode(true);
                   _speakInstruction();
                   Navigator.pop(context);
                 },
@@ -245,12 +263,13 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                 icon: Iconsax.camera,
                 title: "Manual Capture",
                 subtitle: "You control the capture button",
-                isSelected: !_isAutomaticMode,
+                isSelected: false,
                 onTap: () {
                   setState(() {
                     _isAutomaticMode = false;
                     _isStarted = true;
                   });
+                  SecureStorage().saveCaptureMode(false);
                   _speakInstruction();
                   Navigator.pop(context);
                 },
@@ -954,7 +973,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: context.w(24),
-          vertical: context.h(24),
+          vertical: context.h(12),
         ),
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -1004,12 +1023,12 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                 ),
               ),
             ),
-            SizedBox(height: context.h(16)),
+            SizedBox(height: context.h(12)),
             Text(
               _getInstructionText(),
               style: CustomFonts.white22w600.copyWith(fontSize: context.sp(26)),
             ),
-            SizedBox(height: context.h(8)),
+            SizedBox(height: context.h(4)),
             Text(
               _isAutomaticMode
                   ? "Keep your face within the frame for auto-capture"
@@ -1030,48 +1049,51 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                   ),
                 ),
               ),
-            SizedBox(height: context.h(28)),
+            SizedBox(height: context.h(16)),
             _buildProfessionalTips(),
-            SizedBox(height: context.h(24)),
+            SizedBox(height: context.h(16)),
             if (_isCapturing)
               const AppLoader()
             else
               Padding(
-                padding: EdgeInsets.only(bottom: context.h(20)),
+                padding: EdgeInsets.only(bottom: context.h(8)),
                 child: Column(
                   children: [
-                    if (!_isAutomaticMode)
+                    if (widget.pose == 'front' && !_isAutomaticMode)
                       CustomButton(
                         onPressed: () => _handleCaptureTrigger(),
                         text: "Capture Image",
                       ),
-                    SizedBox(height: context.h(16)),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _isAutomaticMode = !_isAutomaticMode;
-                          if (!_isAutomaticMode) {
-                            _stopCountdown();
-                          }
-                        });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "Switched to ${_isAutomaticMode ? "Automatic" : "Manual"} Mode",
+                    if (widget.pose == 'front') ...[
+                      SizedBox(height: context.h(8)),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _isAutomaticMode = !_isAutomaticMode;
+                            SecureStorage().saveCaptureMode(_isAutomaticMode);
+                            if (!_isAutomaticMode) {
+                              _stopCountdown();
+                            }
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "Switched to ${_isAutomaticMode ? "Automatic" : "Manual"} Mode",
+                              ),
+                              duration: const Duration(seconds: 1),
                             ),
-                            duration: const Duration(seconds: 1),
+                          );
+                        },
+                        child: Text(
+                          "Switch to ${_isAutomaticMode ? "Manual" : "Automatic"} Mode",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: context.sp(14),
+                            decoration: TextDecoration.underline,
                           ),
-                        );
-                      },
-                      child: Text(
-                        "Switch to ${_isAutomaticMode ? "Manual" : "Automatic"} Mode",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: context.sp(14),
-                          decoration: TextDecoration.underline,
                         ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ),
@@ -1091,7 +1113,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
             Expanded(child: _buildSmallTip(Iconsax.flash, "Bright light")),
           ],
         ),
-        SizedBox(height: context.h(12)),
+        SizedBox(height: context.h(8)),
         Row(
           children: [
             Expanded(child: _buildSmallTip(Iconsax.frame_1, "Steady hand")),
@@ -1107,7 +1129,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: context.w(12),
-        vertical: context.h(10),
+        vertical: context.h(6),
       ),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.05),

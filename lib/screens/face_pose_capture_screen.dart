@@ -8,6 +8,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../utils/secure_storage_service.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/forms_view_model.dart';
 import '../view_models/treatment_view_model.dart';
@@ -30,6 +31,7 @@ class _FacePoseCaptureScreenState extends ConsumerState<FacePoseCaptureScreen> {
   @override
   void initState() {
     super.initState();
+    SecureStorage().clearCaptureMode();
   }
 
   @override
