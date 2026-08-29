@@ -20,7 +20,7 @@ import '../../view_models/treatment_view_model.dart';
 import '../../widgets/app_loader.dart';
 import '../../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
 import '../../widgets/custom_button.dart';
-import '../../widgets/dialogs/bipa_consent_dialog.dart';
+// import '../../widgets/dialogs/bipa_consent_dialog.dart';
 
 class FaceDetectionScreen extends ConsumerStatefulWidget {
   final String pose;
@@ -39,7 +39,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
   XFile? _capturedImage;
 
   bool _isCapturing = false;
-  bool _isConsentAccepted = false;
+  // bool _isConsentAccepted = false;
   bool _isPoseCorrect = false;
   bool _isProcessing = false;
 
@@ -74,12 +74,12 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      showBipaConsentDialog(
-        context: context,
-        onAccepted: () {
-          _isConsentAccepted = true;
-        },
-      );
+      // showBipaConsentDialog(
+      //   context: context,
+      //   onAccepted: () {
+      //     _isConsentAccepted = true;
+      //   },
+      // );
 
       final show = await SecureStorage().getMedicalDisclaimer();
       if (show) {
@@ -665,17 +665,17 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
   }
 
   void _handleCaptureTrigger() {
-    if (_isConsentAccepted) {
+    // if (_isConsentAccepted) {
       _captureAndNavigate(_storedRef!);
-    } else {
-      showBipaConsentDialog(
-        context: context,
-        onAccepted: () {
-          _isConsentAccepted = true;
-          _captureAndNavigate(_storedRef!);
-        },
-      );
-    }
+    // } else {
+    //   showBipaConsentDialog(
+    //     context: context,
+    //     onAccepted: () {
+    //       _isConsentAccepted = true;
+    //       _captureAndNavigate(_storedRef!);
+    //     },
+    //   );
+    // }
   }
 
   Widget _buildProfessionalTips() {
