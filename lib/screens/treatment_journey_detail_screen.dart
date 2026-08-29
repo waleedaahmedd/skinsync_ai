@@ -22,6 +22,7 @@ import '../widgets/dialogs/facial_scan_consent_dialog.dart';
 import '../widgets/dialogs/success_dialogs.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/simulation_card.dart';
+import 'biometric_consent_screen.dart';
 import 'ar_face_model_preview_screen.dart';
 import 'bottom_nav_page.dart';
 import 'face_pose_capture_screen.dart';
@@ -158,14 +159,19 @@ class _TreatmentJourneyDetailScreenState
                 }
                 return IconButton(
                   onPressed: () {
-                    ref.read(checkoutViewModel.notifier).clearState();
-                    ref
-                        .read(treatmentViewModel.notifier)
-                        .clearAllSelectedTreatments(capturedImage: true);
-                    ref.read(treatmentViewModel.notifier).clearAiImage();
-                    Navigator.of(
-                      context,
-                    ).pushNamed(FacePoseCaptureScreen.routeName);
+                    BiometricConsentScreen.checkAndProceed(
+                      context: context,
+                      onProceed: () {
+                        ref.read(checkoutViewModel.notifier).clearState();
+                        ref
+                            .read(treatmentViewModel.notifier)
+                            .clearAllSelectedTreatments(capturedImage: true);
+                        ref.read(treatmentViewModel.notifier).clearAiImage();
+                        Navigator.of(
+                          context,
+                        ).pushNamed(FacePoseCaptureScreen.routeName);
+                      },
+                    );
                   },
                   icon: const Icon(
                     Icons.add_circle_outline_rounded,

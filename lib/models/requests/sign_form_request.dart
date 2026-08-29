@@ -1,14 +1,20 @@
 class SignFormRequest {
-  final int formId;
+  final String title;
   final String url;
+  final String type;
+  final String globalSku;
 
   SignFormRequest({
-    required this.formId,
+    required this.title,
     required this.url,
+    required this.type,
+    required this.globalSku,
   });
 
   Map<String, dynamic> toJson() => {
-        "form_id": formId,
+        "title": title,
         "url": url,
+        "type": type,
+        "global_sku": globalSku,
       };
 }

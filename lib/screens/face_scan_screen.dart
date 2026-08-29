@@ -5,6 +5,7 @@ import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../widgets/custom_button.dart';
+import 'biometric_consent_screen.dart';
 import 'bottom_nav_page.dart';
 import 'bottom_nav_screens/face_detection_screen.dart';
 import 'face_pose_capture_screen.dart';
@@ -115,16 +116,21 @@ class FaceScanScreen extends StatelessWidget {
                       width: double.infinity,
                       child: CustomButton(
                         onPressed: () {
-                          if (isFront && pose == 'front') {
-                            Navigator.of(
-                              context,
-                            ).pushNamed(FacePoseCaptureScreen.routeName);
-                          } else {
-                            Navigator.of(context).pushNamed(
-                              FaceDetectionScreen.routeName,
-                              arguments: pose,
-                            );
-                          }
+                          BiometricConsentScreen.checkAndProceed(
+                            context: context,
+                            onProceed: () {
+                              if (isFront && pose == 'front') {
+                                Navigator.of(
+                                  context,
+                                ).pushNamed(FacePoseCaptureScreen.routeName);
+                              } else {
+                                Navigator.of(context).pushNamed(
+                                  FaceDetectionScreen.routeName,
+                                  arguments: pose,
+                                );
+                              }
+                            },
+                          );
                         },
                         text: isFront && pose == 'front'
                             ? "Scan Your Face"

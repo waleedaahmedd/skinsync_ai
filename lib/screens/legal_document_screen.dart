@@ -15,6 +15,8 @@ class LegalDocumentArgs {
   final String storageFileName;
   final int? formId;
   final bool isAlreadySigned;
+  final String? type;
+  final String? globalSku;
 
   LegalDocumentArgs({
     required this.title,
@@ -23,6 +25,8 @@ class LegalDocumentArgs {
     required this.storageFileName,
     this.formId,
     this.isAlreadySigned = false,
+    this.type,
+    this.globalSku,
   });
 }
 

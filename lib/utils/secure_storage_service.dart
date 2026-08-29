@@ -14,6 +14,7 @@ class SecureStorage {
   static const String _medicalDisclaimerKey = 'medical-disclaimer';
   static const String _userEmailKey = 'user-data';
   static const String _captureModeKey = 'capture-mode';
+  static const String _biometricConsentKey = 'biometric-consent';
 
   SecureStorage._();
 
@@ -138,5 +139,14 @@ class SecureStorage {
 
   Future<void> clearCaptureMode() async {
     await _storage?.delete(key: _captureModeKey);
+  }
+
+  Future<void> saveBiometricConsent() async {
+    await _storage?.write(key: _biometricConsentKey, value: 'true');
+  }
+
+  Future<bool> getBiometricConsent() async {
+    final consent = await _storage?.read(key: _biometricConsentKey);
+    return consent == 'true';
   }
 }

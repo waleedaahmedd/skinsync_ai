@@ -95,7 +95,9 @@ class _SignatureBottomSheetState extends ConsumerState<SignatureBottomSheet> {
       // 5. If formId exists, upload to Firebase and call API
       if (widget.args.formId != null) {
         final success = await ref.read(formsViewModel.notifier).signForm(
-              formId: widget.args.formId!,
+              title: widget.args.title,
+              type: widget.args.type ?? '',
+              globalSku: widget.args.globalSku ?? '',
               pdfBytes: pdfBytes,
               fileName: widget.args.storageFileName,
             );

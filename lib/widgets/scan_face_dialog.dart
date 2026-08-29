@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../screens/face_pose_capture_screen.dart';
+import '../screens/biometric_consent_screen.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import 'custom_button.dart';
@@ -60,9 +61,14 @@ void showMScanFaceDialog(BuildContext context) {
                 textColor: Colors.white,
                 onPressed: () {
                   Navigator.pop(dialogContext); // close dialog
-                  Navigator.of(
-                    context,
-                  ).pushNamed(FacePoseCaptureScreen.routeName);
+                  BiometricConsentScreen.checkAndProceed(
+                    context: context,
+                    onProceed: () {
+                      Navigator.of(
+                        context,
+                      ).pushNamed(FacePoseCaptureScreen.routeName);
+                    },
+                  );
                 },
               ),
              // SizedBox(height: context.h(12)),

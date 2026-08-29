@@ -6,6 +6,7 @@ import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
 
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../utils/secure_storage_service.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 
@@ -15,6 +16,28 @@ class BiometricConsentScreen extends StatefulWidget {
   const BiometricConsentScreen({super.key, this.onConsentCompleted});
 
   static const String routeName = "/BiometricConsentScreen";
+
+  /// Helper to check consent and proceed with the action
+  static Future<void> checkAndProceed({
+    required BuildContext context,
+    required VoidCallback onProceed,
+  }) async {
+    final bool hasConsented = await SecureStorage().getBiometricConsent();
+    if (hasConsented) {
+      onProceed();
+    } else {
+      if (context.mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BiometricConsentScreen(
+              onConsentCompleted: onProceed,
+            ),
+          ),
+        );
+      }
+    }
+  }
 
   @override
   State<BiometricConsentScreen> createState() => _BiometricConsentScreenState();
@@ -63,6 +86,8 @@ class _BiometricConsentScreenState extends State<BiometricConsentScreen> {
       );
       return;
     }
+
+    await SecureStorage().saveBiometricConsent();
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(

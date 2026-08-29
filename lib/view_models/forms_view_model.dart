@@ -103,7 +103,9 @@ class FormsViewModel extends BaseViewModel<FormsState> {
   }
 
   Future<bool> signForm({
-    required int formId,
+    required String title,
+    required String type,
+    required String globalSku,
     required Uint8List pdfBytes,
     required String fileName,
   }) async {
@@ -128,7 +130,12 @@ class FormsViewModel extends BaseViewModel<FormsState> {
       }
 
       // 2. Call Sign Form API
-      final request = SignFormRequest(formId: formId, url: firebaseUrl);
+      final request = SignFormRequest(
+        title: title,
+        url: firebaseUrl,
+        type: type,
+        globalSku: globalSku,
+      );
       final response = await _repository.signForm(request);
 
       if (response.isSuccess == true) {
@@ -157,6 +164,8 @@ class FormsViewModel extends BaseViewModel<FormsState> {
           storageFileName: 'signed_form_${signedDoc.id}.pdf',
           formId: signedDoc.id,
           isAlreadySigned: true,
+          type: signedDoc.type,
+          globalSku: signedDoc.globalSku,
         ),
       ) as bool?;
       return res ?? false;
@@ -175,6 +184,8 @@ class FormsViewModel extends BaseViewModel<FormsState> {
           storageFileName: 'signed_form_${unSignedDoc.id}.pdf',
           formId: unSignedDoc.id,
           isAlreadySigned: false,
+          type: unSignedDoc.type,
+          globalSku: unSignedDoc.globalSku,
         ),
       ) as bool?;
       return res ?? false;
