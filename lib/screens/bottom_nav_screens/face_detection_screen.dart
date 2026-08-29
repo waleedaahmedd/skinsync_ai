@@ -734,11 +734,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
 
   void _listenToVolumeButtons() {
     VolumeController.instance.addListener((volume) {
-      if (mounted && _isStarted && !_isCapturing && _capturedImage == null) {
-        // Only trigger if not already auto-counting down or user is in manual mode
-        if (!_isAutomaticMode || (_isAutomaticMode && _showManualCaptureUI)) {
-           _handleCaptureTrigger();
-        }
+      if (mounted && _isStarted && !_isCapturing && _capturedImage == null && !_isAutomaticMode) {
+        // Physical shutter active only in manual mode
+        _handleCaptureTrigger();
       }
     });
   }
@@ -790,8 +788,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
 
     return GestureDetector(
       onTap: () {
-        if (_isStarted && !_isCapturing && _capturedImage == null) {
-          // Allow manual tap capture regardless of mode, but mostly for manual mode
+        if (_isStarted && !_isCapturing && _capturedImage == null && !_isAutomaticMode) {
+          // Strictly only allow manual tap capture in Manual mode
           _handleCaptureTrigger();
         }
       },
@@ -1049,7 +1047,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen> with 
                 padding: EdgeInsets.only(bottom: context.h(20)),
                 child: Column(
                   children: [
-                    if (!_isAutomaticMode || _showManualCaptureUI || _isFaceDetectorError)
+                    if (!_isAutomaticMode)
                       CustomButton(
                         onPressed: () => _handleCaptureTrigger(),
                         text: "Capture Image",
