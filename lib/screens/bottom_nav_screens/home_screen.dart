@@ -21,6 +21,7 @@ import '../doctors_screen.dart';
 import '../journey_clinics_screen.dart';
 import '../notification_screen.dart';
 import '../patient_treatment_requests_screen.dart';
+import '../biometric_consent_screen.dart';
 import 'appointments_screen.dart';
 import '../../utils/enums.dart';
 import '../../view_models/home_view_model.dart';
@@ -521,6 +522,51 @@ class HomeScreen extends ConsumerWidget {
                         ],
                       );
                 break;
+
+              case HomeSection.consentForms:
+                sectionWidget = Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                      child: HeadingWithRightArrow(
+                        title: "Clinical Consent Forms",
+                        showRightArrow: false,
+                        onTap: () {},
+                      ),
+                    ),
+                    SizedBox(height: context.h(12)),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: context.w(16), vertical: context.h(4)),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(context.r(16)),
+                          boxShadow: CustomColors.cardShadow,
+                        ),
+                        child: Column(
+                          children: [
+                            _buildConsentFormItem(
+                              context,
+                              title: "Biometric Scan Consent",
+                              subtitle: "Required for facial AI analysis",
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const BiometricConsentScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: context.h(12)),
+                  ],
+                );
+                break;
             }
 
             final item = Container(
@@ -570,6 +616,51 @@ class HomeScreen extends ConsumerWidget {
             }
             return item;
           }).toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildConsentFormItem(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: context.h(12)),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(context.w(10)),
+              decoration: BoxDecoration(
+                color: CustomColors.purpleColor.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.assignment_outlined,
+                color: CustomColors.purpleColor,
+                size: context.sp(20),
+              ),
+            ),
+            SizedBox(width: context.w(16)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: CustomFonts.black14w600),
+                  Text(subtitle, style: CustomFonts.textGrey12w400),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: context.sp(14),
+              color: Colors.grey.shade400,
+            ),
+          ],
         ),
       ),
     );
