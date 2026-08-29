@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../models/responses/treatment_list_response.dart';
 import '../models/responses/treatment_area_list_response.dart';
+import '../utils/string_utils.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 
@@ -45,7 +46,9 @@ class TreatmentPriceContainer extends StatelessWidget {
                   height: context.h(48),
                   width: context.w(48),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(context.r(10))),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(context.r(10)),
+                    ),
                     image: DecorationImage(
                       image: AssetImage(image),
                       fit: BoxFit.fitHeight,
@@ -61,7 +64,7 @@ class TreatmentPriceContainer extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            selectedTreatment?.name ?? "N/A",
+                            selectedTreatment?.name?.capitalize ?? "N/A",
                             style: CustomFonts.black14w700,
                           ),
                           Text("\$ 550", style: CustomFonts.red13w500),
@@ -92,7 +95,10 @@ class TreatmentPriceContainer extends StatelessWidget {
               children: selectedSubAreasList.map((e) {
                 final name = e.name ?? '-';
                 return Container(
-                  padding: EdgeInsets.symmetric(horizontal: context.w(8), vertical: context.h(4)),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.w(8),
+                    vertical: context.h(4),
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(context.r(999)),
@@ -100,7 +106,7 @@ class TreatmentPriceContainer extends StatelessWidget {
                       color: Colors.black.withValues(alpha: 0.08),
                     ),
                   ),
-                  child: Text(name, style: CustomFonts.black14w500),
+                  child: Text(name.capitalize, style: CustomFonts.black14w500),
                 );
               }).toList(),
             ),

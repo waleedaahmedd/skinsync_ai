@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-
+import '../../utils/string_utils.dart';
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
 import '../custom_button.dart';
@@ -77,7 +77,7 @@ class _BeforeYouBookBottomSheetState extends State<BeforeYouBookBottomSheet> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(width: context.w(28)),
-                Text(widget.title, style: CustomFonts.black20w600),
+                Text(widget.title.capitalize, style: CustomFonts.black20w600),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
                   child: Container(

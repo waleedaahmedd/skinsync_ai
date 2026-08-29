@@ -4,11 +4,13 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../models/requests/preferred_slot.dart';
+import '../utils/string_utils.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/clinic_view_model.dart';
+import '../view_models/forms_view_model.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 import '../widgets/app_loader.dart';
@@ -140,8 +142,8 @@ class _TreatmentJourneyDetailScreenState
                       _currentFilter == _JourneyFilter.all
                           ? "All"
                           : (_currentFilter == _JourneyFilter.shared
-                              ? "Shared"
-                              : "Unshared"),
+                                ? "Shared"
+                                : "Unshared"),
                       style: CustomFonts.black14w600,
                     ),
                   ],
@@ -215,7 +217,7 @@ class _TreatmentJourneyDetailScreenState
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(opt.name ?? ''),
+                            Text(opt.name?.capitalize ?? ''),
                             if (isShared) ...[
                               SizedBox(width: context.w(6)),
                               Image.asset(
@@ -265,11 +267,7 @@ class _TreatmentJourneyDetailScreenState
           ),
           if (isSelected) ...[
             const Spacer(),
-            const Icon(
-              Icons.check,
-              color: CustomColors.purpleColor,
-              size: 18,
-            ),
+            const Icon(Icons.check, color: CustomColors.purpleColor, size: 18),
           ],
         ],
       ),
@@ -330,8 +328,8 @@ class _TreatmentJourneyDetailScreenState
             ),
           ),
           Expanded(
-            child: (filteredOptions[_tabController?.index ?? 0].isShared ==
-                    true)
+            child:
+                (filteredOptions[_tabController?.index ?? 0].isShared == true)
                 ? Container(
                     height: context.h(52),
                     decoration: BoxDecoration(
@@ -368,10 +366,7 @@ class _TreatmentJourneyDetailScreenState
                             onConfirm: () async {
                               final result = await ref
                                   .read(treatmentJourneyProvider.notifier)
-                                  .callShareMapTreatmentRequest(
-                                    clinic!,
-                                    slots,
-                                  );
+                                  .callShareMapTreatmentRequest(clinic!, slots);
                               if (result == true) {
                                 if (context.mounted) {
                                   showShareJourneySuccessDialog(context);
@@ -404,10 +399,18 @@ class _TreatmentJourneyDetailScreenState
                       }
 
                       if (clinic != null) {
-                        PreferredSlotsBottomSheet.show(
-                          context: context,
-                          onConfirm: (slots) => processShare(slots),
-                        );
+                        final bool docResult = await ref
+                            .read(formsViewModel.notifier)
+                            .checkAndOpenDocumentBySku("SHRE-TRET-CONS");
+
+                        if (docResult) {
+                          if (context.mounted) {
+                            PreferredSlotsBottomSheet.show(
+                              context: context,
+                              onConfirm: (slots) => processShare(slots),
+                            );
+                          }
+                        }
                       } else {
                         Navigator.pushNamed(
                           context,
@@ -492,14 +495,13 @@ class _TreatmentJourneyDetailScreenState
             showImages: _selectedSubTab == "Simulation",
             showTreatments: _selectedSubTab == "Treatments",
             onDelete: () {
-              final currentOption =
-                  filteredOptions[_tabController?.index ?? 0];
+              final currentOption = filteredOptions[_tabController?.index ?? 0];
               if (currentOption.id != null) {
                 showDeleteConfirmationDialog(
                   context: context,
                   title: "Delete Option?",
                   description:
-                      "Are you sure you want to delete '${currentOption.name}'? This action cannot be undone.",
+                      "Are you sure you want to delete '${currentOption.name?.capitalize}'? This action cannot be undone.",
                   onDelete: () {
                     ref
                         .read(treatmentJourneyProvider.notifier)

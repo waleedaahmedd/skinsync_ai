@@ -3,22 +3,27 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:face_detection_tflite/face_detection_tflite.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_litert/flutter_litert.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:vibration/vibration.dart';
 
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
-import '../../utils/volume_button_service.dart';
+import '../../utils/face_detection_utils.dart';
 import '../../utils/image_utills.dart';
 import '../../utils/secure_storage_service.dart';
 import '../../utils/tts_utils.dart';
+import '../../utils/volume_button_service.dart';
 import '../../view_models/treatment_view_model.dart';
 import '../../widgets/app_loader.dart';
 import '../../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
 import '../../widgets/custom_button.dart';
-import '../../widgets/dialogs/bipa_consent_dialog.dart';
 
 class FaceDetectionScreen extends ConsumerStatefulWidget {
   final String pose;
@@ -37,13 +42,26 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
   XFile? _capturedImage;
 
   bool _isCapturing = false;
-  bool _isConsentAccepted = false;
-  final bool _isPoseCorrect = false;
+  bool _isPoseCorrect = false;
+  bool _isSoundOn = true;
+  bool _isAutomaticMode = false;
+  bool _isStarted = false;
+
+  int _countdown = 3;
+  Timer? _timer;
+  bool _isCountingDown = false;
+
+  Timer? _manualCaptureTimer;
+  bool _showManualCaptureUI = false;
 
   final VolumeButtonService _volumeButtonService = VolumeButtonService();
 
   // Store ref for use in callbacks
   WidgetRef? _storedRef;
+
+  FaceDetector? _faceDetector;
+  bool _isFaceDetectorError = false;
+  bool _isProcessingFrame = false;
 
   late AnimationController _pulseController;
 
@@ -51,6 +69,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
   void initState() {
     super.initState();
     _storedRef = ref;
+    _initFaceDetector();
     _initCamera(ref);
     _initTts();
 
@@ -59,25 +78,46 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
       duration: const Duration(seconds: 1),
     )..repeat();
 
-    _volumeButtonService.enableInterception();
-    _volumeButtonService.startListening((event) {
-      if (!mounted) return;
-      if (!_isCapturing && _capturedImage == null) {
-        _handleCaptureTrigger();
-      }
-    });
+    _startManualCaptureTimer();
+    _initVolumeButtonService();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      showBipaConsentDialog(
-        context: context,
-        onAccepted: () {
-          _isConsentAccepted = true;
-        },
-      );
+      if (widget.pose != 'front') {
+        // Strictly Auto for Left/Right profiles
+        setState(() {
+          _isAutomaticMode = true;
+          _isStarted = true;
+        });
+        _speakInstruction();
+      } else {
+        // Front pose: show dialog or use saved preference
+        final savedMode = await SecureStorage().getCaptureMode();
+        if (savedMode != null) {
+          setState(() {
+            _isAutomaticMode = savedMode;
+            _isStarted = true;
+          });
+          _speakInstruction();
+        } else if (mounted) {
+          _showModeSelectionDialog();
+        }
+      }
 
       final show = await SecureStorage().getMedicalDisclaimer();
       if (show) {
         MedicalDisclaimerBottomSheet.show(context);
+      }
+    });
+  }
+
+  void _initVolumeButtonService() {
+    _volumeButtonService.enableInterception();
+    _volumeButtonService.startListening((event) {
+      if (!mounted || !_isStarted) return;
+      if (!_isAutomaticMode || _showManualCaptureUI) {
+        if (!_isCapturing && _capturedImage == null) {
+          _handleCaptureTrigger();
+        }
       }
     });
   }
@@ -87,6 +127,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
   }
 
   void _speakInstruction() {
+    if (!_isSoundOn) return;
     final isFrontCamera =
         _cameraController?.description.lensDirection ==
         CameraLensDirection.front;
@@ -112,6 +153,334 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     TtsUtils.speak(ttsText);
   }
 
+  Future<void> _initFaceDetector() async {
+    setState(() {
+      _isFaceDetectorError = false;
+    });
+
+    try {
+      bool shouldPreferCpu = false;
+
+      if (Platform.isIOS) {
+        final deviceInfo = DeviceInfoPlugin();
+        final iosInfo = await deviceInfo.iosInfo;
+        final model = iosInfo.utsname.machine;
+        if (model.contains('iPhone8,') || model.contains('iPhone9,')) {
+          shouldPreferCpu = true;
+        }
+      } else if (Platform.isAndroid) {
+        shouldPreferCpu = true;
+      }
+
+      if (shouldPreferCpu) {
+        _faceDetector = await FaceDetector.create(
+          minScore: 0.35,
+          minFaceSize: 0.05,
+          performanceConfig: const PerformanceConfig.xnnpack(),
+        );
+      } else {
+        _faceDetector = await FaceDetector.create(
+          minScore: 0.35,
+          minFaceSize: 0.05,
+          performanceConfig: const PerformanceConfig.gpu(),
+        );
+      }
+
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
+      log('Face detector init failed: $e');
+      try {
+        _faceDetector = await FaceDetector.create(
+          minScore: 0.35,
+          minFaceSize: 0.05,
+          performanceConfig: const PerformanceConfig.xnnpack(),
+        );
+        if (mounted) setState(() {});
+      } catch (e2) {
+        if (mounted) {
+          setState(() {
+            _isFaceDetectorError = true;
+          });
+        }
+      }
+    }
+
+    Future.delayed(const Duration(seconds: 10), () {
+      if (mounted && _faceDetector == null) {
+        setState(() {
+          _isFaceDetectorError = true;
+        });
+      }
+    });
+  }
+
+  void _showModeSelectionDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.all(context.w(20)),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(context.r(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Choose Capture Mode",
+                style: CustomFonts.black22w600,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: context.h(10)),
+              Text(
+                "Select how you want to capture your photos",
+                style: TextStyle(color: Colors.grey, fontSize: context.sp(14)),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: context.h(24)),
+              _buildModeOption(
+                icon: Iconsax.magicpen,
+                title: "Automatic Capture",
+                subtitle: "Captures automatically when aligned",
+                isSelected: false,
+                onTap: () {
+                  setState(() {
+                    _isAutomaticMode = true;
+                    _isStarted = true;
+                  });
+                  SecureStorage().saveCaptureMode(true);
+                  _speakInstruction();
+                  Navigator.pop(context);
+                },
+              ),
+              SizedBox(height: context.h(12)),
+              _buildModeOption(
+                icon: Iconsax.camera,
+                title: "Manual Capture",
+                subtitle: "You control the capture button",
+                isSelected: false,
+                onTap: () {
+                  setState(() {
+                    _isAutomaticMode = false;
+                    _isStarted = true;
+                  });
+                  SecureStorage().saveCaptureMode(false);
+                  _speakInstruction();
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModeOption({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(context.w(16)),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? CustomColors.purpleColor.withValues(alpha: 0.1)
+              : Colors.grey.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(context.r(16)),
+          border: Border.all(
+            color: isSelected ? CustomColors.purpleColor : Colors.transparent,
+            width: 2,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? CustomColors.purpleColor : Colors.grey,
+            ),
+            SizedBox(width: context.w(16)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: CustomFonts.black16w600.copyWith(
+                      color: isSelected
+                          ? CustomColors.purpleColor
+                          : Colors.black,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: context.sp(12),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              const Icon(Icons.check_circle, color: CustomColors.purpleColor),
+          ],
+        ),
+      ),
+    );
+  }
+
+  CameraFrameRotation? _getRotation(int sensorOrientation) {
+    switch (sensorOrientation) {
+      case 90:
+        return CameraFrameRotation.cw90;
+      case 180:
+        return CameraFrameRotation.cw180;
+      case 270:
+        return CameraFrameRotation.cw270;
+      default:
+        return null;
+    }
+  }
+
+  void _onFrameAvailable(CameraImage image) async {
+    if (!_isStarted ||
+        _faceDetector == null ||
+        _isProcessingFrame ||
+        _isCapturing ||
+        _capturedImage != null) {
+      return;
+    }
+
+    _isProcessingFrame = true;
+
+    try {
+      final rotation = _getRotation(
+        _cameraController!.description.sensorOrientation,
+      );
+
+      final faces = await _faceDetector!.detectFacesFromCameraImage(
+        image,
+        rotation: rotation,
+      );
+
+      bool isPoseCorrect = false;
+      if (faces.isNotEmpty) {
+        final face = faces.first;
+        isPoseCorrect = face.isCorrectPose(
+          widget.pose,
+          isFrontCamera:
+              _cameraController?.description.lensDirection ==
+              CameraLensDirection.front,
+        );
+
+        if (isPoseCorrect && _showManualCaptureUI) {
+          setState(() {
+            _showManualCaptureUI = false;
+          });
+          _startManualCaptureTimer();
+        }
+      }
+
+      if (_isPoseCorrect != isPoseCorrect) {
+        setState(() {
+          _isPoseCorrect = isPoseCorrect;
+        });
+
+        if (_isPoseCorrect && _isAutomaticMode) {
+          if (Platform.isAndroid) {
+            try {
+              Vibration.vibrate(duration: 200);
+            } catch (e) {
+              log("Android vibration error: $e");
+            }
+          } else {
+            try {
+              HapticFeedback.vibrate();
+              HapticFeedback.mediumImpact();
+            } catch (e) {
+              log("iOS haptic feedback error: $e");
+            }
+          }
+
+          if (_isSoundOn) {
+            TtsUtils.speak("Hold still");
+          }
+          
+          await Future.delayed(const Duration(milliseconds: 1000));
+          if (mounted && _isPoseCorrect && _isAutomaticMode) {
+            _startCountdown();
+          }
+        } else if (!isPoseCorrect) {
+          _stopCountdown();
+        }
+      }
+    } catch (e) {
+      log('Face detection error: $e');
+    } finally {
+      _isProcessingFrame = false;
+    }
+  }
+
+  void _startCountdown() {
+    if (_isCountingDown || _isCapturing || _capturedImage != null) return;
+
+    setState(() {
+      _isCountingDown = true;
+      _countdown = 3;
+    });
+
+    if (_isSoundOn) {
+      TtsUtils.speak("$_countdown");
+    }
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+
+      if (_countdown > 1) {
+        setState(() {
+          _countdown--;
+        });
+        if (_isSoundOn) {
+          TtsUtils.speak("$_countdown");
+        }
+      } else {
+        if (_isPoseCorrect && _storedRef != null) {
+          if (_isSoundOn) {
+            TtsUtils.speak("Perfect");
+          }
+          _captureAndNavigate(_storedRef!);
+        } else {
+          _stopCountdown();
+        }
+      }
+    });
+  }
+
+  void _stopCountdown() {
+    _timer?.cancel();
+    _timer = null;
+    if (mounted) {
+      setState(() {
+        _isCountingDown = false;
+        _countdown = 3;
+      });
+      _startManualCaptureTimer();
+    }
+  }
+
   Future<void> _toggleCamera() async {
     if (_cameraController == null || _isCapturing || _capturedImage != null) {
       return;
@@ -129,16 +498,19 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     final oldController = _cameraController;
     setState(() {
       _cameraController = null;
+      _isPoseCorrect = false;
     });
 
     if (oldController != null) {
+      if (oldController.value.isStreamingImages) {
+        await oldController.stopImageStream();
+      }
       await oldController.dispose();
     }
 
     if (!mounted) return;
 
     _initCamera(_storedRef!, description: newDescription);
-    _speakInstruction();
   }
 
   Future<void> _initCamera(
@@ -163,8 +535,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
 
       final controller = CameraController(
         target,
-        ResolutionPreset.veryHigh,
+        ResolutionPreset.high,
         enableAudio: false,
+        imageFormatGroup: ImageFormatGroup.yuv420,
       );
 
       await controller.initialize();
@@ -174,11 +547,15 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
         return;
       }
 
+      controller.startImageStream(_onFrameAvailable);
+
       setState(() {
         _cameraController = controller;
       });
 
-      _speakInstruction();
+      if (_isStarted) {
+        _speakInstruction();
+      }
     } catch (e) {
       if (mounted) {
         _showError('Failed to initialize camera: $e');
@@ -201,11 +578,22 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
   Future<void> _captureAndNavigate(WidgetRef ref) async {
     if (_cameraController == null || _isCapturing) return;
 
-    TtsUtils.speak("Perfect");
+    _stopCountdown();
 
     setState(() {
       _isCapturing = true;
+      _isPoseCorrect = false;
     });
+
+    try {
+      if (_cameraController != null &&
+          _cameraController!.value.isStreamingImages) {
+        await _cameraController!.stopImageStream();
+        await Future.delayed(const Duration(milliseconds: 200));
+      }
+    } catch (e) {
+      log("Error stopping image stream: $e");
+    }
 
     if (!mounted || _cameraController == null) return;
 
@@ -218,7 +606,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
         centerYPercent: 0.42,
         radiusPercent: 0.5,
         flipHorizontally:
-            _cameraController!.description.lensDirection == CameraLensDirection.front,
+            _cameraController!.description.lensDirection ==
+            CameraLensDirection.front,
       );
 
       if (!mounted) return;
@@ -236,6 +625,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
       setState(() {
         _isCapturing = false;
       });
+      if (_cameraController != null &&
+          !_cameraController!.value.isStreamingImages) {
+        _cameraController!.startImageStream(_onFrameAvailable);
+      }
     }
   }
 
@@ -298,6 +691,12 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                             _capturedImage = null;
                             _isCapturing = false;
                           });
+                          if (_cameraController != null &&
+                              !_cameraController!.value.isStreamingImages) {
+                            _cameraController!.startImageStream(
+                              _onFrameAvailable,
+                            );
+                          }
                         },
                         text: "Recapture",
                       ),
@@ -331,10 +730,33 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     );
   }
 
+  void _startManualCaptureTimer() {
+    _manualCaptureTimer?.cancel();
+    if (_showManualCaptureUI) return;
+
+    _manualCaptureTimer = Timer(const Duration(seconds: 5), () {
+      if (mounted &&
+          !_isCountingDown &&
+          !_isCapturing &&
+          _capturedImage == null) {
+        setState(() {
+          _showManualCaptureUI = true;
+        });
+      }
+    });
+  }
+
+  void _handleCaptureTrigger() {
+    _captureAndNavigate(_storedRef!);
+  }
+
   @override
   void dispose() {
+    _timer?.cancel();
+    _manualCaptureTimer?.cancel();
     _volumeButtonService.dispose();
     _cameraController?.dispose();
+    _faceDetector?.dispose();
     _pulseController.dispose();
     TtsUtils.stop();
     super.dispose();
@@ -369,7 +791,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
 
     return GestureDetector(
       onTap: () {
-        if (!_isCapturing && _capturedImage == null) {
+        if (_isStarted && !_isCapturing && _capturedImage == null && !_isAutomaticMode) {
           _handleCaptureTrigger();
         }
       },
@@ -403,6 +825,35 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                             );
                           },
                         ),
+                        if (_isCountingDown)
+                          Center(
+                            child: AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              transitionBuilder:
+                                  (Widget child, Animation<double> animation) {
+                                return ScaleTransition(
+                                  scale: animation,
+                                  child: child,
+                                );
+                              },
+                              child: Text(
+                                '$_countdown',
+                                key: ValueKey<int>(_countdown),
+                                style: TextStyle(
+                                  fontSize: context.sp(120),
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  shadows: const [
+                                    Shadow(
+                                      blurRadius: 10,
+                                      color: Colors.black54,
+                                      offset: Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                       ],
                     );
                   },
@@ -424,11 +875,32 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                           icon: Icons.arrow_back_ios_new_rounded,
                           onTap: () => Navigator.pop(context),
                         ),
-                        _buildPoseIndicator(),
-                        _buildHeaderButton(
-                          icon: Icons.flip_camera_ios_outlined,
-                          onTap: _toggleCamera,
-                        ),
+                        if (_isStarted) _buildPoseIndicator(),
+                        if (_isStarted) 
+                          Row(
+                            children: [
+                              _buildHeaderButton(
+                                icon: _isSoundOn
+                                    ? Iconsax.volume_high
+                                    : Iconsax.volume_cross,
+                                onTap: () {
+                                  setState(() {
+                                    _isSoundOn = !_isSoundOn;
+                                  });
+                                  if (!_isSoundOn) {
+                                    TtsUtils.stop();
+                                  } else {
+                                    _speakInstruction();
+                                  }
+                                },
+                              ),
+                              SizedBox(width: context.w(10)),
+                              _buildHeaderButton(
+                                icon: Icons.flip_camera_ios_outlined,
+                                onTap: _toggleCamera,
+                              ),
+                            ],
+                          ),
                       ],
                     ),
                   ],
@@ -496,11 +968,12 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
   }
 
   Widget _buildInstructionOverlay() {
+    if (!_isStarted) return const SizedBox();
     return SafeArea(
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: context.w(24),
-          vertical: context.h(24),
+          vertical: context.h(12),
         ),
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -523,74 +996,111 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                 vertical: context.h(6),
               ),
               decoration: BoxDecoration(
-                color: Colors.white10,
+                color: _isPoseCorrect
+                    ? CustomColors.purpleColor.withValues(alpha: 0.2)
+                    : Colors.white10,
                 borderRadius: BorderRadius.circular(context.r(12)),
-                border: Border.all(color: Colors.white24),
+                border: Border.all(
+                  color: _isPoseCorrect
+                      ? CustomColors.purpleColor
+                      : Colors.white24,
+                ),
               ),
               child: Text(
-                "MANUAL CAPTURE MODE",
+                _isFaceDetectorError || _showManualCaptureUI
+                    ? "MANUAL CAPTURE MODE"
+                    : (_isAutomaticMode ? "AUTOMATIC CAPTURE MODE" : "MANUAL CAPTURE MODE"),
                 style: TextStyle(
-                  color: CustomColors.purpleColor,
+                  color:
+                      _isPoseCorrect ||
+                          _isFaceDetectorError ||
+                          _showManualCaptureUI
+                      ? CustomColors.purpleColor
+                      : Colors.white70,
                   fontSize: context.sp(12),
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
                 ),
               ),
             ),
-            SizedBox(height: context.h(16)),
+            SizedBox(height: context.h(12)),
             Text(
               _getInstructionText(),
               style: CustomFonts.white22w600.copyWith(fontSize: context.sp(26)),
             ),
-            SizedBox(height: context.h(8)),
+            SizedBox(height: context.h(4)),
             Text(
-              "Position your face and capture",
+              _isAutomaticMode
+                  ? "Keep your face within the frame for auto-capture"
+                  : "Position your face and capture",
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white70, fontSize: context.sp(14)),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: context.h(8)),
-              child: Text(
-                "Tip: You can also tap anywhere or press the Volume button to capture",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: CustomColors.purpleColor,
-                  fontSize: context.sp(12),
-                  fontWeight: FontWeight.w500,
+            if (!_isAutomaticMode || _showManualCaptureUI)
+              Padding(
+                padding: EdgeInsets.only(top: context.h(8)),
+                child: Text(
+                  "Tip: You can also tap anywhere or press the Volume button to capture",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: CustomColors.purpleColor,
+                    fontSize: context.sp(12),
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: context.h(28)),
+            SizedBox(height: context.h(16)),
             _buildProfessionalTips(),
-            SizedBox(height: context.h(24)),
+            SizedBox(height: context.h(16)),
             if (_isCapturing)
               const AppLoader()
             else
               Padding(
-                padding: EdgeInsets.only(bottom: context.h(20)),
-                child: CustomButton(
-                  onPressed: _handleCaptureTrigger,
-                  text: "Capture Image",
+                padding: EdgeInsets.only(bottom: context.h(8)),
+                child: Column(
+                  children: [
+                    if (widget.pose == 'front' && !_isAutomaticMode)
+                      CustomButton(
+                        onPressed: () => _handleCaptureTrigger(),
+                        text: "Capture Image",
+                      ),
+                    if (widget.pose == 'front') ...[
+                      SizedBox(height: context.h(8)),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _isAutomaticMode = !_isAutomaticMode;
+                            SecureStorage().saveCaptureMode(_isAutomaticMode);
+                            if (!_isAutomaticMode) {
+                              _stopCountdown();
+                            }
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                "Switched to ${_isAutomaticMode ? "Automatic" : "Manual"} Mode",
+                              ),
+                              duration: const Duration(seconds: 1),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          "Switch to ${_isAutomaticMode ? "Manual" : "Automatic"} Mode",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: context.sp(14),
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
           ],
         ),
       ),
     );
-  }
-
-  void _handleCaptureTrigger() {
-    if (_isConsentAccepted) {
-      _captureAndNavigate(_storedRef!);
-    } else {
-      showBipaConsentDialog(
-        context: context,
-        onAccepted: () {
-          _isConsentAccepted = true;
-          _captureAndNavigate(_storedRef!);
-        },
-      );
-    }
   }
 
   Widget _buildProfessionalTips() {
@@ -603,7 +1113,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
             Expanded(child: _buildSmallTip(Iconsax.flash, "Bright light")),
           ],
         ),
-        SizedBox(height: context.h(12)),
+        SizedBox(height: context.h(8)),
         Row(
           children: [
             Expanded(child: _buildSmallTip(Iconsax.frame_1, "Steady hand")),
@@ -619,7 +1129,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: context.w(12),
-        vertical: context.h(10),
+        vertical: context.h(6),
       ),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.05),

@@ -9,6 +9,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 
 import '../models/responses/appointment_detail_response.dart';
 import '../models/responses/appointments_list_response.dart';
+import '../utils/string_utils.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../utils/date_time_utils.dart';
@@ -292,7 +293,10 @@ class _AppointmentDetailScreenState
             if (clinic.logo != null && clinic.logo!.isNotEmpty)
               SizedBox(width: context.w(12)),
             Expanded(
-              child: Text(clinic.name ?? "N/A", style: CustomFonts.black16w700),
+              child: Text(
+                clinic.name?.capitalize ?? "N/A",
+                style: CustomFonts.black16w700,
+              ),
             ),
           ],
         ),
@@ -350,7 +354,8 @@ class _AppointmentDetailScreenState
               SizedBox(width: context.w(12)),
             Expanded(
               child: Text(
-                "${doctor.title ?? ''} ${doctor.name ?? 'N/A'}".trim(),
+                "${doctor.title?.capitalize ?? ''} ${doctor.name?.capitalize ?? 'N/A'}"
+                    .trim(),
                 style: CustomFonts.black16w700,
               ),
             ),
@@ -469,7 +474,7 @@ class _AppointmentDetailScreenState
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              t.treatmentName ?? "N/A",
+                              t.treatmentName?.capitalize ?? "N/A",
                               style: CustomFonts.black16w700.copyWith(
                                 fontSize: context.sp(16),
                               ),
@@ -537,7 +542,7 @@ class _AppointmentDetailScreenState
                               borderRadius: BorderRadius.circular(context.r(8)),
                             ),
                             child: Text(
-                              "${t.material!.selectedQuantity} ${t.material!.name ?? 'Syringes'}",
+                              "${t.material!.selectedQuantity} ${t.material!.name?.capitalize ?? 'Syringes'}",
                               textAlign: TextAlign.end,
                               style: CustomFonts.darkPurple10w700.copyWith(
                                 fontSize: context.sp(11),
@@ -686,7 +691,7 @@ class _AppointmentDetailScreenState
               Icon(icon, size: context.sp(18), color: CustomColors.darkPurple),
               SizedBox(width: context.w(10)),
               Text(
-                title.toUpperCase(),
+                title.capitalize.toUpperCase(),
                 style: CustomFonts.darkPurple12w600.copyWith(
                   letterSpacing: 1.1,
                 ),
@@ -760,7 +765,7 @@ class _AppointmentDetailScreenState
             SizedBox(width: context.w(10)),
           ],
           Text(
-            "$label:",
+            "${label.capitalize}:",
             style: CustomFonts.grey700_10w400.copyWith(
               fontSize: context.sp(12),
             ),

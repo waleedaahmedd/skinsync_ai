@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import '../utils/string_utils.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../widgets/custom_app_bar.dart';
@@ -314,7 +315,7 @@ class _AllergyAndMedicalHistoryState extends State<AllergyAndMedicalHistory> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(title, style: CustomFonts.black18w600),
+                      Text(title.capitalize, style: CustomFonts.black18w600),
                       IconButton(
                         icon: const Icon(Icons.close),
                         onPressed: () => Navigator.pop(context),
