@@ -1,9 +1,11 @@
 
+
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 import '../main.dart';
 import '../utils/assets.dart';
@@ -12,7 +14,8 @@ import '../utils/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/phone_widget.dart';
-import 'allergy_and_medical_history.dart';
+import 'terms_of_service_screen.dart';
+
 class YourProfileScreen extends ConsumerStatefulWidget {
   const YourProfileScreen({super.key});
   static const String routeName = '/YourProfileScreen';
@@ -26,16 +29,16 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  // final TextEditingController _locationController = TextEditingController();
-  // final TextEditingController _bioController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
+  
+  DateTime? _selectedDob;
 
   @override
   void dispose() {
     _nameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
-    // _locationController.dispose();
-    // _bioController.dispose();
+    _dobController.dispose();
     super.dispose();
   }
 
@@ -50,24 +53,89 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
           .read(authViewModel.notifier)
           .setCountryCode(Country.parse(cc ?? "US"));
     });
+  }
 
-    // Initialize country if user data exists
-    // TODO: CC Not provided in AuthResponse, uncomment when response is
-    // TODO: fixed
-    // final user = authState.authResponse?.data?.userDetails;
-    // if (user?.cc != null) {
-    //   try {
-    //     _selectedCountry = Country.parse(user!.cc!);
-    //   } catch (e) {
-    //     _selectedCountry = Country.parse('US');
-    //   }
-    // } else {
-    //   _selectedCountry = Country.parse('US');
-    // }
+  int _calculateAge(DateTime birthDate) {
+    final today = DateTime.now();
+    int age = today.year - birthDate.year;
+    if (today.month < birthDate.month ||
+        (today.month == birthDate.month && today.day < birthDate.day)) {
+      age--;
+    }
+    return age;
+  }
+
+  Future<void> _selectDateOfBirth(BuildContext context) async {
+    final DateTime initialDate = _selectedDob ?? DateTime.now();
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: CustomColors.darkPurple,
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      final age = _calculateAge(picked);
+      if (age < 18) {
+        if (!mounted) return;
+        _showUnderageDialog();
+      } else {
+        setState(() {
+          _selectedDob = picked;
+          _dobController.text = DateFormat('yyyy-MM-dd').format(picked);
+        });
+      }
+    }
+  }
+
+  void _showUnderageDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(context.r(16)),
+          ),
+          title: Text(
+            'Age Restriction',
+            style: CustomFonts.black20w600,
+          ),
+          content: Text(
+            'You are not authorized to use this app because you must be at least 18 years old.',
+            style: CustomFonts.black16w400,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _dobController.clear();
+                Navigator.pop(context);
+              },
+              child: Text(
+                'OK',
+                style: CustomFonts.black14w500.copyWith(color: CustomColors.purpleColor),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showImageSourceDialog() {
-     showModalBottomSheet(
+    showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
@@ -161,7 +229,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                               ),
                       ),
                       Positioned(
-                        bottom: -6, // or 0
+                        bottom: -6,
                         right: -6,
                         child: Container(
                           height: context.w(35),
@@ -241,31 +309,28 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                       return null;
                     },
                   ),
-                  // SizedBox(height: context.h(20)),
-                  // TextFormField(
-                  //   controller: _locationController,
-                  //   style: CustomFonts.black18w400,
-                  //   decoration: const InputDecoration(hintText: "Location"),
-                  //   validator: (value) {
-                  //     if (value == null || value.trim().isEmpty) {
-                  //       return 'Please enter your location';
-                  //     }
-                  //     return null;
-                  //   },
-                  // ),
-                  // SizedBox(height: context.h(20)),
-                  // TextFormField(
-                  //   controller: _bioController,
-                  //   style: CustomFonts.black18w400,
-                  //   maxLines: 4,
-                  //   decoration: const InputDecoration(hintText: "Bio"),
-                  //   validator: (value) {
-                  //     if (value == null || value.trim().isEmpty) {
-                  //       return 'Please enter your Bio';
-                  //     }
-                  //     return null;
-                  //   },
-                  // ),
+                  SizedBox(height: context.h(20)),
+                  // Date of Birth Field
+                  TextFormField(
+                    controller: _dobController,
+                    readOnly: true,
+                    onTap: () => _selectDateOfBirth(context),
+                    style: CustomFonts.black18w400,
+                    decoration: InputDecoration(
+                      hintText: "Date of Birth (YYYY-MM-DD)",
+                      suffixIcon: Icon(
+                        Icons.calendar_today_outlined,
+                        color: CustomColors.darkPurple,
+                        size: context.w(20),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please select your date of birth';
+                      }
+                      return null;
+                    },
+                  ),
                   SizedBox(height: context.h(35)),
                   SizedBox(
                     width: double.infinity,
@@ -274,28 +339,34 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                       onPressed: () {
                         FocusScope.of(context).unfocus();
                         if (_formKey.currentState?.validate() ?? false) {
+                          if (_selectedDob != null &&
+                              _calculateAge(_selectedDob!) < 18) {
+                            _showUnderageDialog();
+                            return;
+                          }
                           ref
                               .read(authViewModel.notifier)
                               .callOnboardingProfileApi(
                                 name: _nameController.text,
                                 phoneNumber: _phoneController.text.trim(),
-                                emailAddress: _emailController.text.trim(),
+                               emailAddress: _emailController.text.trim(),
+                                // dob: _dobController.text, // Pass dob here if supported by your ViewModel
                               )
                               .then((value) {
-                                if (value == true) {
-                                  Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    AllergyAndMedicalHistory.routeName,
-                                    arguments: false,
-                                    (Route<dynamic> route) => false,
-                                  );
-                                }
-                              });
+                            if (value == true) {
+                              Navigator.pushNamedAndRemoveUntil(
+                                context,
+                                TermsOfServiceScreen.routeName,
+                                (Route<dynamic> route) => false,
+                              );
+                            }
+                          });
                         }
                       },
                       text: "Next",
                     ),
                   ),
+                  SizedBox(height: context.h(30)),
                 ],
               ),
             ),

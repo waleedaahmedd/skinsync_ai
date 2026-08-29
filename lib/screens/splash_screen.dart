@@ -109,7 +109,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               Navigator.of(context).pushReplacement(
                 PageRouteBuilder(
                   pageBuilder: (context, animation, secondaryAnimation) =>
-                      const GetStartedScreen(), // Changed from IntroScreen
+                      const GetStartedScreen(), 
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
                         var curve = Curves.easeIn;

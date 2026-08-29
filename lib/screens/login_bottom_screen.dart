@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
-import '../main.dart';
 import '../utils/assets.dart';
 import '../utils/biometric_helper.dart';
 import '../utils/color_constant.dart';
@@ -14,8 +13,8 @@ import '../utils/enums.dart';
 import '../view_models/auth_view_model.dart';
 import '../widgets/app_loader.dart';
 import 'bottom_nav_page.dart';
-import 'face_scan_screen.dart';
 import 'login_screen.dart';
+import 'your_profile_screen.dart';
 
 class LoginBottomScreen extends ConsumerWidget {
   static const String routeName = '/login_bottom_screen';
@@ -166,19 +165,22 @@ class LoginBottomScreen extends ConsumerWidget {
                   .read(authViewModel.notifier)
                   .callGoogleSignInApi();
               if (success ?? false) {
-                if (isDeploymentMode) {
-                  Navigator.pushNamedAndRemoveUntil(
+               final isLogin = ref.read(authViewModel).authData?.isFirstLogin;
+                  if(isLogin ?? false){
+                     Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    YourProfileScreen.routeName,
+                    (Route<dynamic> route) =>
+                        route.settings.name == LoginScreen.routeName,
+                  );
+                  }else{
+                    Navigator.pushNamedAndRemoveUntil(
                     context,
                     BottomNavPage.routeName,
-                    (Route<dynamic> route) => false,
+                    (Route<dynamic> route) =>
+                        route.settings.name == LoginScreen.routeName,
                   );
-                } else {
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    FaceScanScreen.routeName,
-                    (Route<dynamic> route) => false,
-                  );
-                }
+                  }
               }
             },
             child: Container(
@@ -216,19 +218,23 @@ class LoginBottomScreen extends ConsumerWidget {
                     .read(authViewModel.notifier)
                     .callAppleSignInApi();
                 if (success ?? false) {
-                  if (isDeploymentMode) {
+                  final isLogin = ref.read(authViewModel).authData?.isFirstLogin;
+                  if(isLogin ?? false){
+                     Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    YourProfileScreen.routeName,
+                    (Route<dynamic> route) =>
+                        route.settings.name == LoginScreen.routeName,
+                  );
+                  }else{
                     Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      BottomNavPage.routeName,
-                      (Route<dynamic> route) => false,
-                    );
-                  } else {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      FaceScanScreen.routeName,
-                      (Route<dynamic> route) => false,
-                    );
+                    context,
+                    BottomNavPage.routeName,
+                    (Route<dynamic> route) =>
+                        route.settings.name == LoginScreen.routeName,
+                  );
                   }
+                  
                 }
               },
               child: Container(
