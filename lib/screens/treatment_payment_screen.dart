@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../models/responses/payment_options_response.dart';
+import '../utils/string_utils.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
@@ -174,7 +175,7 @@ class _TreatmentPaymentScreenState
                   context,
                   price: paymentOption.amount ?? 0,
                   paymentOption: paymentOption,
-                  title: paymentOption.title ?? 'N/A',
+                  title: paymentOption.title?.capitalize ?? 'N/A',
                   description: paymentOption.description ?? 'N/A',
                 ),
               SizedBox(height: context.h(22)),

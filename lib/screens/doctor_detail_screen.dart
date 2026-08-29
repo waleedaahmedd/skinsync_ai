@@ -6,6 +6,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../models/responses/get_clinic_response.dart';
 import '../models/responses/practitioner_list_response.dart';
+import '../utils/string_utils.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
@@ -96,7 +97,7 @@ class DoctorDetailScreen extends ConsumerWidget {
                             child: Column(
                               children: [
                                 Text(
-                                  doctor.doctorName ?? '',
+                                  doctor.doctorName?.capitalize ?? '',
                                   style: CustomFonts.black22w600,
                                 ),
                                 SizedBox(height: context.h(6)),
@@ -232,7 +233,7 @@ class DoctorDetailScreen extends ConsumerWidget {
                       );
                     }
                   },
-                 
+
                   borderRadius: context.r(26),
                 ),
               ),
@@ -275,7 +276,7 @@ class DoctorDetailScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: CustomFonts.black13w600),
+                Text(title.capitalize, style: CustomFonts.black13w600),
                 SizedBox(height: context.h(2)),
                 Text(subtitle, style: CustomFonts.grey12w400),
               ],

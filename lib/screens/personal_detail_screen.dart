@@ -10,6 +10,7 @@ import '../main.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../view_models/auth_view_model.dart';
+import '../utils/string_utils.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/app_network_image.dart';
 import '../widgets/custom_app_bar.dart';
@@ -38,7 +39,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
       final data = ref.read(authViewModel).authData;
 
       if (data != null) {
-        _nameController.text = data.user?.name ?? "";
+        _nameController.text = data.user?.name?.capitalize ?? "";
         _phoneController.text = data.user?.phoneNumber ?? "";
         _emailController.text = data.user?.primaryEmail ?? "";
         final countryName = data.user?.country;

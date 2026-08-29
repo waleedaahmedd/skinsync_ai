@@ -8,6 +8,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../models/responses/practitioner_list_response.dart';
+import '../utils/string_utils.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
@@ -511,7 +512,10 @@ class _ClinicServiceScreenState extends ConsumerState<ClinicServiceScreen> {
                 ),
               ),
               SizedBox(height: context.h(6.23)),
-              Text(doctor.doctorName ?? "", style: CustomFonts.black18w600),
+              Text(
+                doctor.doctorName?.capitalize ?? "",
+                style: CustomFonts.black18w600,
+              ),
               SizedBox(height: context.h(3.32)),
               Text(doctor.specialization ?? "", style: CustomFonts.black14w400),
             ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import '../utils/string_utils.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 
@@ -107,7 +108,7 @@ class TreatmentCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: context.h(14)),
-                  Text(step.title, style: CustomFonts.black18w600),
+                  Text(step.title.capitalize, style: CustomFonts.black18w600),
                   SizedBox(height: context.h(11)),
                   Text(step.description, style: CustomFonts.black16w400),
                   SizedBox(height: context.h(34)),

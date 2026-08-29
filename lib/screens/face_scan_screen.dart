@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-
+import '../utils/string_utils.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
@@ -104,9 +104,12 @@ class FaceScanScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     SizedBox(height: context.h(60)),
-                    Text(titleText, style: CustomFonts.black30w600),
+                    Text(titleText.capitalize, style: CustomFonts.black30w600),
                     SizedBox(height: context.h(2)),
-                    Text(subTitleText, style: CustomFonts.grey16w400),
+                    Text(
+                      subTitleText.capitalize,
+                      style: CustomFonts.grey16w400,
+                    ),
                     SizedBox(height: context.h(37.5)),
                     SizedBox(
                       width: double.infinity,

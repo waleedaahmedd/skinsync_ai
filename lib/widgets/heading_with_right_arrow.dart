@@ -1,19 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import '../utils/string_utils.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 
 class HeadingWithRightArrow extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
-   final bool showRightArrow;
+  final bool showRightArrow;
 
   const HeadingWithRightArrow({
     super.key,
     required this.title,
     required this.onTap,
-     this.showRightArrow = true,
+    this.showRightArrow = true,
   });
 
   @override
@@ -21,7 +22,7 @@ class HeadingWithRightArrow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: CustomFonts.black22w600),
+        Text(title.capitalize, style: CustomFonts.black22w600),
         Visibility(
           visible: showRightArrow,
           child: GestureDetector(

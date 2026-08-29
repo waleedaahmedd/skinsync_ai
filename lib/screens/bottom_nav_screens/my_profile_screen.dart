@@ -15,6 +15,7 @@ import '../saved_treatment_screen.dart';
 import '../setting_screen.dart';
 import '../../utils/assets.dart';
 import '../../utils/color_constant.dart';
+import '../../utils/string_utils.dart';
 import '../../utils/custom_fonts.dart';
 import '../../utils/secure_storage_service.dart';
 import '../../view_models/auth_view_model.dart';
@@ -101,7 +102,12 @@ class MyProfileScreen extends StatelessWidget {
                           ),
                   ),
                   SizedBox(width: context.w(14)),
-                  Expanded(child: Text(title, style: CustomFonts.black16w500)),
+                  Expanded(
+                    child: Text(
+                      title.capitalize,
+                      style: CustomFonts.black16w500,
+                    ),
+                  ),
                   Icon(
                     Icons.chevron_right_rounded,
                     color: Colors.grey.shade400,
@@ -317,7 +323,7 @@ class MyProfileScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              name ?? 'Guest User',
+                              name?.capitalize ?? 'Guest User',
                               style: CustomFonts.black22w600,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,

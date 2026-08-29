@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import '../../utils/string_utils.dart';
 import '../../utils/custom_fonts.dart';
 
 import '../../utils/color_constant.dart';
@@ -50,7 +51,7 @@ class MedicalDisclaimerBottomSheet extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(width: context.w(28)),
-                Text(title, style: CustomFonts.black20w600),
+                Text(title.capitalize, style: CustomFonts.black20w600),
                 GestureDetector(
                   onTap: () {
                     SecureStorage().saveMedicalDisclaimer();
