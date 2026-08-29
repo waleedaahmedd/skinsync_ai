@@ -42,6 +42,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
   bool _isConsentAccepted = false;
   bool _isPoseCorrect = false;
   bool _isProcessing = false;
+  bool _isSoundOn = true;
+  bool _isAutomaticMode = false;
 
   FaceDetector? _detector;
 
@@ -67,7 +69,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
 
     _volumeButtonService.enableInterception();
     _volumeButtonService.startListening((event) {
-      if (!mounted) return;
+      if (!mounted || _isAutomaticMode) return;
       if (!_isCapturing && _capturedImage == null) {
         _handleCaptureTrigger();
       }
@@ -81,6 +83,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
         },
       );
 
+      if (mounted) {
+        _showModeSelectionDialog();
+      }
+
       final show = await SecureStorage().getMedicalDisclaimer();
       if (show) {
         MedicalDisclaimerBottomSheet.show(context);
@@ -93,6 +99,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
   }
 
   void _speakInstruction() {
+    if (!_isSoundOn) return;
     final isFrontCamera =
         _cameraController?.description.lensDirection ==
         CameraLensDirection.front;
@@ -208,6 +215,119 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     }
   }
 
+  void _showModeSelectionDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: EdgeInsets.all(context.w(20)),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(context.r(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Choose Capture Mode",
+                style: CustomFonts.black22w600,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: context.h(10)),
+              Text(
+                "Select how you want to capture your photos",
+                style: TextStyle(color: Colors.grey, fontSize: context.sp(14)),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: context.h(24)),
+              _buildModeOption(
+                icon: Iconsax.magicpen,
+                title: "Automatic Capture",
+                subtitle: "Captures automatically when aligned",
+                isSelected: _isAutomaticMode,
+                onTap: () {
+                  setState(() => _isAutomaticMode = true);
+                  Navigator.pop(context);
+                },
+              ),
+              SizedBox(height: context.h(12)),
+              _buildModeOption(
+                icon: Iconsax.camera,
+                title: "Manual Capture",
+                subtitle: "You control the capture button",
+                isSelected: !_isAutomaticMode,
+                onTap: () {
+                  setState(() => _isAutomaticMode = false);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModeOption({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(context.w(16)),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? CustomColors.purpleColor.withValues(alpha: 0.1)
+              : Colors.grey.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(context.r(16)),
+          border: Border.all(
+            color: isSelected ? CustomColors.purpleColor : Colors.transparent,
+            width: 2,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? CustomColors.purpleColor : Colors.grey,
+            ),
+            SizedBox(width: context.w(16)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: CustomFonts.black16w600.copyWith(
+                      color: isSelected
+                          ? CustomColors.purpleColor
+                          : Colors.black,
+                    ),
+                  ),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: context.sp(12),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              const Icon(Icons.check_circle, color: CustomColors.purpleColor),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _processCameraImage(CameraImage image) async {
     if (_detector == null ||
         _isProcessing ||
@@ -258,6 +378,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
         setState(() => _isPoseCorrect = isCorrect);
         if (isCorrect) {
           Vibration.vibrate(duration: 100);
+          if (_isAutomaticMode && !_isCapturing && _capturedImage == null) {
+            _handleCaptureTrigger();
+          }
         }
       }
     } catch (e) {
@@ -282,7 +405,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
   Future<void> _captureAndNavigate(WidgetRef ref) async {
     if (_cameraController == null || _isCapturing) return;
 
-    TtsUtils.speak("Perfect");
+    if (_isSoundOn) {
+      TtsUtils.speak("Perfect");
+    }
 
     setState(() {
       _isCapturing = true;
@@ -508,9 +633,27 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                           onTap: () => Navigator.pop(context),
                         ),
                         _buildPoseIndicator(),
-                        _buildHeaderButton(
-                          icon: Icons.flip_camera_ios_outlined,
-                          onTap: _toggleCamera,
+                        Row(
+                          children: [
+                            _buildHeaderButton(
+                              icon: _isSoundOn
+                                  ? Iconsax.volume_high
+                                  : Iconsax.volume_cross,
+                              onTap: () {
+                                setState(() => _isSoundOn = !_isSoundOn);
+                                if (!_isSoundOn) {
+                                  TtsUtils.stop();
+                                } else {
+                                  _speakInstruction();
+                                }
+                              },
+                            ),
+                            SizedBox(width: context.w(10)),
+                            _buildHeaderButton(
+                              icon: Icons.flip_camera_ios_outlined,
+                              onTap: _toggleCamera,
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -611,7 +754,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                 border: Border.all(color: Colors.white24),
               ),
               child: Text(
-                "MANUAL CAPTURE MODE",
+                "${_isAutomaticMode ? "AUTOMATIC" : "MANUAL"} CAPTURE MODE",
                 style: TextStyle(
                   color: CustomColors.purpleColor,
                   fontSize: context.sp(12),
@@ -627,14 +770,18 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
             ),
             SizedBox(height: context.h(8)),
             Text(
-              "Position your face and capture",
+              _isAutomaticMode
+                  ? "Hold steady when aligned to capture"
+                  : "Position your face and capture",
               textAlign: TextAlign.center,
               style: TextStyle(color: Colors.white70, fontSize: context.sp(14)),
             ),
             Padding(
               padding: EdgeInsets.only(top: context.h(8)),
               child: Text(
-                "Tip: You can also tap anywhere or press the Volume button to capture",
+                _isAutomaticMode
+                    ? "Tip: Keep still for a second once the guide turns purple"
+                    : "Tip: You can also tap anywhere or press the Volume button to capture",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: CustomColors.purpleColor,
@@ -651,11 +798,43 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
             else
               Padding(
                 padding: EdgeInsets.only(bottom: context.h(20)),
-                child: CustomButton(
-                  onPressed: _isPoseCorrect ? _handleCaptureTrigger : null,
-                  text: _isPoseCorrect
-                      ? "Capture Image"
-                      : "Align Face to Capture",
+                child: Column(
+                  children: [
+                    if (!_isAutomaticMode) ...[
+                      CustomButton(
+                        onPressed: _isPoseCorrect
+                            ? _handleCaptureTrigger
+                            : null,
+                        text: _isPoseCorrect
+                            ? "Capture Image"
+                            : "Align Face to Capture",
+                      ),
+                      SizedBox(height: context.h(16)),
+                    ],
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _isAutomaticMode = !_isAutomaticMode;
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "Switched to ${_isAutomaticMode ? "Automatic" : "Manual"} Mode",
+                            ),
+                            duration: const Duration(seconds: 1),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        "Switch to ${_isAutomaticMode ? "Manual" : "Automatic"} Mode",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: context.sp(14),
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
           ],
