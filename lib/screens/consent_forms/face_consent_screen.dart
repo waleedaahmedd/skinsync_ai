@@ -13,7 +13,6 @@ import '../../utils/consent_utils.dart';
 import '../../utils/custom_fonts.dart';
 import '../../view_models/auth_view_model.dart';
 import '../../view_models/forms_view_model.dart';
-import '../face_pose_capture_screen.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_button.dart';
 
@@ -39,13 +38,10 @@ class FaceConsentScreen extends ConsumerStatefulWidget {
       onProceed: onProceed,
       onNotSigned: () async {
         if (context.mounted) {
-          Navigator.pushReplacement(
+          Navigator.pushNamed(
             context,
-            MaterialPageRoute(
-              builder: (context) => FaceConsentScreen(
-                onConsentCompleted: onProceed,
-              ),
-            ),
+            FaceConsentScreen.routeName,
+            arguments: onProceed,
           );
         }
       },
@@ -102,6 +98,10 @@ class _FaceConsentScreenState extends ConsumerState<FaceConsentScreen> {
   Future<void> _submitConsent() async {
     if (_isSubmitting) return;
 
+    final formsNotifier = ref.read(formsViewModel.notifier);
+    final navigator = Navigator.of(context);
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     setState(() {
       _isSubmitting = true;
     });
@@ -111,9 +111,9 @@ class _FaceConsentScreenState extends ConsumerState<FaceConsentScreen> {
       await Future.delayed(const Duration(milliseconds: 100));
 
       // 1. Capture the screen (RepaintBoundary) as an image
-      final RenderRepaintBoundary? boundary = 
+      final RenderRepaintBoundary? boundary =
           _repaintKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
-      
+
       if (boundary == null) throw Exception("Boundary not found");
 
       // Check if the boundary is ready to be painted
@@ -130,11 +130,11 @@ class _FaceConsentScreenState extends ConsumerState<FaceConsentScreen> {
 
       // 2. Create PDF and draw the screen image
       final PdfDocument document = PdfDocument();
-      
+
       // Calculate dimensions to fit the image on the page
       final double imageWidth = screenImage.width.toDouble();
       final double imageHeight = screenImage.height.toDouble();
-      
+
       // Use a standard PDF width (595 points for A4) but dynamic height
       const double pageWidth = 595;
       final double renderHeight = (imageHeight * pageWidth) / imageWidth;
@@ -144,7 +144,7 @@ class _FaceConsentScreenState extends ConsumerState<FaceConsentScreen> {
       document.pageSettings.margins.all = 0;
 
       final PdfPage page = document.pages.add();
-      
+
       page.graphics.drawImage(
         PdfBitmap(screenBytes),
         Rect.fromLTWH(0, 0, pageWidth, renderHeight),
@@ -155,7 +155,7 @@ class _FaceConsentScreenState extends ConsumerState<FaceConsentScreen> {
       document.dispose();
 
       // 3. Call signForm API
-      final bool success = await ref.read(formsViewModel.notifier).signForm(
+      final bool success = await formsNotifier.signForm(
         title: "Biometric Consent - ${_nameController.text}",
         type: "consent",
         globalSku: "FACE-SCAN-CONS",
@@ -168,17 +168,16 @@ class _FaceConsentScreenState extends ConsumerState<FaceConsentScreen> {
 
       if (success) {
         if (mounted) {
+          // Close FaceConsentScreen first to clean up stack
+          navigator.pop();
+          // Execute the original proceed action
           widget.onConsentCompleted?.call();
-          Navigator.pushReplacementNamed(
-            context,
-            FacePoseCaptureScreen.routeName,
-          );
         }
       }
     } catch (e) {
       if (mounted) {
         log("Error: $e");
-        ScaffoldMessenger.of(context).showSnackBar(
+        scaffoldMessenger.showSnackBar(
           SnackBar(content: Text("Error: $e")),
         );
       }
