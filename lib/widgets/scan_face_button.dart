@@ -4,6 +4,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../screens/face_pose_capture_screen.dart';
+import '../screens/consent_forms/biometric_consent_screen.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
@@ -22,11 +23,16 @@ class ScanFaceButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () {
-        ref.read(checkoutViewModel.notifier).clearState();
-        ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
-        ref.read(treatmentViewModel.notifier).clearAiImage();
-        ref.read(treatmentJourneyProvider.notifier).clearSelectedGroup();
-        Navigator.of(context).pushNamed(FacePoseCaptureScreen.routeName);
+        BiometricConsentScreen.checkAndProceed(
+          context: context,
+          onProceed: () {
+            ref.read(checkoutViewModel.notifier).clearState();
+            ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+            ref.read(treatmentViewModel.notifier).clearAiImage();
+            ref.read(treatmentJourneyProvider.notifier).clearSelectedGroup();
+            Navigator.of(context).pushNamed(FacePoseCaptureScreen.routeName);
+          },
+        );
       },
       child: Container(
         padding: EdgeInsets.symmetric(

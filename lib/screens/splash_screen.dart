@@ -78,10 +78,25 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               }
               final isLogin = authData.isFirstLogin;
               if (isLogin ?? false) {
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  GetStartedScreen.routeName,
-                  (_) => false,
+                await SecureStorage().clearAllSecureStrings();
+                Navigator.of(context).pushReplacement(
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) =>
+                        const GetStartedScreen(), // Changed from IntroScreen
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
+                          var curve = Curves.easeIn;
+                          var curvedAnimation = CurvedAnimation(
+                            parent: animation,
+                            curve: curve,
+                          );
+                          return FadeTransition(
+                            opacity: curvedAnimation,
+                            child: child,
+                          );
+                        },
+                    transitionDuration: const Duration(milliseconds: 900),
+                  ),
                 );
               } else {
                 Navigator.pushNamedAndRemoveUntil(
@@ -94,7 +109,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               Navigator.of(context).pushReplacement(
                 PageRouteBuilder(
                   pageBuilder: (context, animation, secondaryAnimation) =>
-                      const GetStartedScreen(), // Changed from IntroScreen
+                      const GetStartedScreen(), 
                   transitionsBuilder:
                       (context, animation, secondaryAnimation, child) {
                         var curve = Curves.easeIn;

@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../screens/face_pose_capture_screen.dart';
+import '../screens/consent_forms/biometric_consent_screen.dart';
 import '../screens/treatment_detail_screen.dart';
 import '../screens/treatment_area_screen.dart';
 import '../utils/color_constant.dart';
@@ -105,9 +106,14 @@ class TreatmentContainer extends StatelessWidget {
                 }
                 if (useInAiSimulator) {
                   // showMScanFaceDialog(context);
-                   Navigator.of(
-                    context,
-                  ).pushNamed(FacePoseCaptureScreen.routeName);
+                  BiometricConsentScreen.checkAndProceed(
+                    context: context,
+                    onProceed: () {
+                      Navigator.of(
+                        context,
+                      ).pushNamed(FacePoseCaptureScreen.routeName);
+                    },
+                  );
                 } else {
                   Navigator.pushNamed(
                     context,

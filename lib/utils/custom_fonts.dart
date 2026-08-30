@@ -659,4 +659,18 @@ abstract final class CustomFonts {
         color: CustomColors.pinkColor,
         fontFamily: 'Degular',
       );
+
+  static TextStyle get textGrey12w400 => TextStyle(
+        fontSize: _sp(12),
+        fontWeight: FontWeight.w400,
+        color: CustomColors.textGreyColor,
+        fontFamily: 'Degular',
+      );
+
+  static TextStyle get purple14w600 => TextStyle(
+        fontSize: _sp(14),
+        fontWeight: FontWeight.w600,
+        color: CustomColors.purpleColor,
+        fontFamily: 'Degular',
+      );
 }

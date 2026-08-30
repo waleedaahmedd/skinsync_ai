@@ -13,6 +13,7 @@ import '../widgets/custom_button.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/simulation_card.dart';
 import 'face_pose_capture_screen.dart';
+import 'consent_forms/biometric_consent_screen.dart';
 
   class SimulationHistoryScreen extends ConsumerStatefulWidget {
   static const String routeName = "/simulation_history_screen";
@@ -98,10 +99,17 @@ class _SimulationHistoryScreenState
         padding: .all(context.w(20)),
         child: CustomButton(
           text: 'Try another pose',
-          onPressed: () => Navigator.pushReplacementNamed(
-            context,
-            FacePoseCaptureScreen.routeName,
-          ),
+          onPressed: () {
+            BiometricConsentScreen.checkAndProceed(
+              context: context,
+              onProceed: () {
+                Navigator.pushReplacementNamed(
+                  context,
+                  FacePoseCaptureScreen.routeName,
+                );
+              },
+            );
+          },
         ),
       ),
     );
