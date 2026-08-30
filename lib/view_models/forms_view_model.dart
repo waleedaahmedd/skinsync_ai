@@ -108,12 +108,15 @@ class FormsViewModel extends BaseViewModel<FormsState> {
     required String globalSku,
     required Uint8List pdfBytes,
     required String fileName,
+    String? loadingStatus,
+    String? successStatus,
   }) async {
     return await runSafely(() async {
-      EasyLoading.show(status: 'Uploading signed document...');
+      EasyLoading.show(status: loadingStatus ?? 'Uploading signed document...');
 
       // 1. Generate a unique filename using timestamp to avoid caching and ensure fresh URL
-      final uniqueFileName = '${DateTime.now().millisecondsSinceEpoch}_$fileName';
+      final uniqueFileName =
+          '${DateTime.now().millisecondsSinceEpoch}_$fileName';
 
       // 2. Upload to Firebase directly from bytes
       final String? firebaseUrl = await MediaService().uploadMedia(
@@ -140,7 +143,7 @@ class FormsViewModel extends BaseViewModel<FormsState> {
 
       if (response.isSuccess == true) {
         EasyLoading.showSuccess(
-          response.message ?? 'Document signed successfully',
+          successStatus ?? response.message ?? 'Document signed successfully',
         );
         await fetchForms(); // Refresh lists
         return true;

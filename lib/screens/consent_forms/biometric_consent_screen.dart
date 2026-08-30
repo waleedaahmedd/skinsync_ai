@@ -10,9 +10,9 @@ import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
 import '../../utils/color_constant.dart';
 import '../../utils/consent_utils.dart';
 import '../../utils/custom_fonts.dart';
-import '../../utils/secure_storage_service.dart';
 import '../../view_models/auth_view_model.dart';
 import '../../view_models/forms_view_model.dart';
+import '../face_pose_capture_screen.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_button.dart';
 
@@ -33,24 +33,19 @@ class BiometricConsentScreen extends ConsumerStatefulWidget {
       context: context,
       ref: ref,
       sku: "FACE-SCAN-CONS",
-      dialogTitle: "Consent Already Provided",
-      dialogMessage: "You have already signed the biometric consent form. Thank you for your trust.",
+      dialogTitle: "Facial Scan Consent Already Provided",
+      dialogMessage: "We have already received your facial scan consent , Tap continue button to proceed with scan",
       onProceed: onProceed,
       onNotSigned: () async {
-        final bool hasConsented = await SecureStorage().getBiometricConsent();
-        if (hasConsented) {
-          onProceed();
-        } else {
-          if (context.mounted) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => BiometricConsentScreen(
-                  onConsentCompleted: onProceed,
-                ),
+        if (context.mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => BiometricConsentScreen(
+                onConsentCompleted: onProceed,
               ),
-            );
-          }
+            ),
+          );
         }
       },
     );
@@ -164,21 +159,19 @@ class _BiometricConsentScreenState extends ConsumerState<BiometricConsentScreen>
         type: "consent",
         globalSku: "FACE-SCAN-CONS",
         pdfBytes: pdfBytes,
-        fileName: "biometric_consent_${DateTime.now().millisecondsSinceEpoch}.pdf",
+        fileName:
+            "biometric_consent_${DateTime.now().millisecondsSinceEpoch}.pdf",
+        loadingStatus: "Processing ....",
+        successStatus: "Facial scan consent received successfully",
       );
 
       if (success) {
-        await SecureStorage().saveBiometricConsent();
-
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Biometric release consent recorded successfully."),
-              backgroundColor: CustomColors.purpleColor,
-            ),
-          );
           widget.onConsentCompleted?.call();
-          Navigator.pop(context);
+          Navigator.pushReplacementNamed(
+            context,
+            FacePoseCaptureScreen.routeName,
+          );
         }
       }
     } catch (e) {
@@ -201,7 +194,7 @@ class _BiometricConsentScreenState extends ConsumerState<BiometricConsentScreen>
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: CustomAppBar(
-        title: "Biometric Consent",
+        title: "Facial Scan Consent",
         onBackTap: () => Navigator.pop(context),
       ),
       body: SafeArea(
@@ -442,7 +435,7 @@ class _BiometricConsentScreenState extends ConsumerState<BiometricConsentScreen>
                     CustomButton(
                       onPressed: _isFormValid ? _submitConsent : null,
                       isLoading: _isSubmitting,
-                      text: "Consent & Proceed to Scan",
+                      text: "Proceed to Scan",
                     ),
                     SizedBox(height: context.h(40)),
                   ],
