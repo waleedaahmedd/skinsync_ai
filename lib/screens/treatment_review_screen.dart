@@ -10,7 +10,6 @@ import '../models/responses/get_clinic_response.dart';
 import '../models/responses/simulation_history_response.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
-import '../view_models/clinic_view_model.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
@@ -46,11 +45,11 @@ class TreatmentReviewScreen extends ConsumerWidget {
             _buildClinicInfo(context),
             SizedBox(height: context.h(24)),
             if (simulationData != null) ...[
+              _buildTreatmentDetails(context),
+              SizedBox(height: context.h(24)),
               Text("Simulation Images", style: CustomFonts.black18w600),
               SizedBox(height: context.h(12)),
               _buildSimulationImages(context),
-              SizedBox(height: context.h(24)),
-              _buildTreatmentDetails(context),
               SizedBox(height: context.h(24)),
             ],
             if (preferredSlots.isNotEmpty) ...[
@@ -81,50 +80,92 @@ class TreatmentReviewScreen extends ConsumerWidget {
         borderRadius: BorderRadius.circular(context.r(16)),
         border: Border.all(color: Colors.grey.shade200),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Container(
-            height: context.h(60),
-            width: context.h(60),
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-            ),
-            child: ClipOval(
-              child: CachedNetworkImage(
-                imageUrl: clinic.logo ?? "",
-                fit: BoxFit.cover,
-                placeholder: (context, url) =>
-                    const CupertinoActivityIndicator(),
-                errorWidget: (context, url, error) => Icon(
-                  Icons.storefront_rounded,
-                  size: context.h(30),
-                  color: Colors.grey.shade400,
+          Row(
+            children: [
+              Container(
+                height: context.h(60),
+                width: context.h(60),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
                 ),
-              ),
-            ),
-          ),
-          SizedBox(width: context.w(16)),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(clinic.name ?? "Clinic Name", style: CustomFonts.black18w600),
-                if (clinic.address != null)
-                  Padding(
-                    padding: EdgeInsets.only(top: context.h(4)),
-                    child: Text(
-                      clinic.address!,
-                      style: CustomFonts.grey14w400,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                child: ClipOval(
+                  child: CachedNetworkImage(
+                    imageUrl: clinic.logo ?? "",
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) =>
+                        const CupertinoActivityIndicator(),
+                    errorWidget: (context, url, error) => Icon(
+                      Icons.storefront_rounded,
+                      size: context.h(30),
+                      color: Colors.grey.shade400,
                     ),
                   ),
-              ],
-            ),
+                ),
+              ),
+              SizedBox(width: context.w(16)),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      clinic.name ?? "Clinic Name",
+                      style: CustomFonts.black18w600,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
+          SizedBox(height: context.h(16)),
+          const Divider(height: 1),
+          SizedBox(height: context.h(16)),
+          if (clinic.address != null)
+            _buildClinicDetailRow(
+              context,
+              Icons.location_on_outlined,
+              clinic.address!,
+            ),
+          if (clinic.phone != null) ...[
+            SizedBox(height: context.h(8)),
+            _buildClinicDetailRow(
+              context,
+              Icons.phone_outlined,
+              clinic.phone!,
+            ),
+          ],
+          if (clinic.email != null) ...[
+            SizedBox(height: context.h(8)),
+            _buildClinicDetailRow(
+              context,
+              Icons.email_outlined,
+              clinic.email!,
+            ),
+          ],
         ],
       ),
+    );
+  }
+
+  Widget _buildClinicDetailRow(BuildContext context, IconData icon, String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          icon,
+          size: 18,
+          color: CustomColors.purpleColor,
+        ),
+        SizedBox(width: context.w(12)),
+        Expanded(
+          child: Text(
+            text,
+            style: CustomFonts.grey14w400,
+          ),
+        ),
+      ],
     );
   }
 

@@ -136,12 +136,12 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
             ),
 
             // Usage tracking container at the bottom
-            Positioned(
-              bottom: 85.h,
-              left: 0,
-              right: 0,
-              child: const PostUsageContainer(isDark: true),
-            ),
+            // Positioned(
+            //   bottom: 85.h,
+            //   left: 0,
+            //   right: 0,
+            //   child: const PostUsageContainer(isDark: true),
+            // ),
           ],
         ),
       ),

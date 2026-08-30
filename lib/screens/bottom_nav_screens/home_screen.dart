@@ -60,7 +60,7 @@ class HomeScreen extends ConsumerWidget {
                 onTap: () =>
                     ref.read(homeViewModelProvider.notifier).toggleReorderMode(),
               ),
-            if (!isDeploymentMode) ...[
+
               SizedBox(width: context.w(12)),
               GreyContainer(
                 icon: Icons.notifications_none_outlined,
@@ -69,7 +69,7 @@ class HomeScreen extends ConsumerWidget {
                       .pushNamed(NotificationScreen.routeName);
                 },
               ),
-            ],
+
           ],
         ),
       ),

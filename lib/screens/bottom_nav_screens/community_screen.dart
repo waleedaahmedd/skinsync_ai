@@ -7,7 +7,6 @@ import '../../view_models/explore_view_model.dart';
 import '../../widgets/app_loader.dart';
 import '../../widgets/social_post_card.dart';
 import '../../widgets/social_toggle_button.dart';
-import '../../widgets/post_usage_container.dart';
 
 class CommunityScreen extends ConsumerStatefulWidget {
   const CommunityScreen({super.key});
@@ -55,7 +54,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const PostUsageContainer(),
+          // const PostUsageContainer(),
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: context.w(20),
