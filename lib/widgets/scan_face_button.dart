@@ -25,6 +25,7 @@ class ScanFaceButton extends ConsumerWidget {
       onTap: () {
         BiometricConsentScreen.checkAndProceed(
           context: context,
+          ref: ref,
           onProceed: () {
             ref.read(checkoutViewModel.notifier).clearState();
             ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();

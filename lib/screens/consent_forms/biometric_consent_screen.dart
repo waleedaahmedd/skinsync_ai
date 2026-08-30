@@ -8,6 +8,7 @@ import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:syncfusion_flutter_signaturepad/signaturepad.dart';
 
 import '../../utils/color_constant.dart';
+import '../../utils/consent_utils.dart';
 import '../../utils/custom_fonts.dart';
 import '../../utils/secure_storage_service.dart';
 import '../../view_models/auth_view_model.dart';
@@ -25,23 +26,34 @@ class BiometricConsentScreen extends ConsumerStatefulWidget {
   /// Helper to check consent and proceed with the action
   static Future<void> checkAndProceed({
     required BuildContext context,
+    required WidgetRef ref,
     required VoidCallback onProceed,
   }) async {
-    final bool hasConsented = await SecureStorage().getBiometricConsent();
-    if (hasConsented) {
-      onProceed();
-    } else {
-      if (context.mounted) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => BiometricConsentScreen(
-              onConsentCompleted: onProceed,
-            ),
-          ),
-        );
-      }
-    }
+    await ConsentUtils.checkAndProceed(
+      context: context,
+      ref: ref,
+      sku: "FACE-SCAN-CONS",
+      dialogTitle: "Consent Already Provided",
+      dialogMessage: "You have already signed the biometric consent form. Thank you for your trust.",
+      onProceed: onProceed,
+      onNotSigned: () async {
+        final bool hasConsented = await SecureStorage().getBiometricConsent();
+        if (hasConsented) {
+          onProceed();
+        } else {
+          if (context.mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => BiometricConsentScreen(
+                  onConsentCompleted: onProceed,
+                ),
+              ),
+            );
+          }
+        }
+      },
+    );
   }
 
   @override

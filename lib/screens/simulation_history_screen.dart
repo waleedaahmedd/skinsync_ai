@@ -102,6 +102,7 @@ class _SimulationHistoryScreenState
           onPressed: () {
             BiometricConsentScreen.checkAndProceed(
               context: context,
+              ref: ref,
               onProceed: () {
                 Navigator.pushReplacementNamed(
                   context,

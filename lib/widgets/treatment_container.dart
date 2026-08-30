@@ -108,6 +108,7 @@ class TreatmentContainer extends StatelessWidget {
                   // showMScanFaceDialog(context);
                   BiometricConsentScreen.checkAndProceed(
                     context: context,
+                    ref: ref,
                     onProceed: () {
                       Navigator.of(
                         context,

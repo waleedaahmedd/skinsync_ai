@@ -551,11 +551,10 @@ class HomeScreen extends ConsumerWidget {
                               title: "Biometric Scan Consent",
                               subtitle: "Required for facial AI analysis",
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const BiometricConsentScreen(),
-                                  ),
+                                BiometricConsentScreen.checkAndProceed(
+                                  context: context,
+                                  ref: ref,
+                                  onProceed: () {},
                                 );
                               },
                             ),

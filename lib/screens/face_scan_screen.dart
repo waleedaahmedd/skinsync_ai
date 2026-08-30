@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utils/string_utils.dart';
 import '../utils/assets.dart';
@@ -10,13 +11,13 @@ import 'bottom_nav_page.dart';
 import 'bottom_nav_screens/face_detection_screen.dart';
 import 'face_pose_capture_screen.dart';
 
-class FaceScanScreen extends StatelessWidget {
+class FaceScanScreen extends ConsumerWidget {
   final String pose;
   const FaceScanScreen({super.key, this.pose = 'front'});
   static const String routeName = '/FaceScanScreen';
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final bool isFront = pose == 'front';
     final bool isLeft = pose == 'left';
 
@@ -118,6 +119,7 @@ class FaceScanScreen extends StatelessWidget {
                         onPressed: () {
                           BiometricConsentScreen.checkAndProceed(
                             context: context,
+                            ref: ref,
                             onProceed: () {
                               if (isFront && pose == 'front') {
                                 Navigator.of(

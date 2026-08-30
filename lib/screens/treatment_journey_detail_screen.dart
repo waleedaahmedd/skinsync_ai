@@ -7,6 +7,7 @@ import '../models/requests/preferred_slot.dart';
 import '../utils/string_utils.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
+import '../utils/consent_utils.dart';
 import '../utils/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/clinic_view_model.dart';
@@ -161,6 +162,7 @@ class _TreatmentJourneyDetailScreenState
                   onPressed: () {
                     BiometricConsentScreen.checkAndProceed(
                       context: context,
+                      ref: ref,
                       onProceed: () {
                         ref.read(checkoutViewModel.notifier).clearState();
                         ref
@@ -405,18 +407,35 @@ class _TreatmentJourneyDetailScreenState
                       }
 
                       if (clinic != null) {
-                        final bool docResult = await ref
-                            .read(formsViewModel.notifier)
-                            .checkAndOpenDocumentBySku("SHRE-TRET-CONS");
+                        await ConsentUtils.checkAndProceed(
+                          context: context,
+                          ref: ref,
+                          sku: "SHRE-TRET-CONS",
+                          dialogTitle: "Consent Already Provided",
+                          dialogMessage: "You have already signed the treatment sharing consent form. Thank you.",
+                          onProceed: () {
+                            if (context.mounted) {
+                              PreferredSlotsBottomSheet.show(
+                                context: context,
+                                onConfirm: (slots) => processShare(slots),
+                              );
+                            }
+                          },
+                          onNotSigned: () async {
+                            final bool docResult = await ref
+                                .read(formsViewModel.notifier)
+                                .checkAndOpenDocumentBySku("SHRE-TRET-CONS");
 
-                        if (docResult) {
-                          if (context.mounted) {
-                            PreferredSlotsBottomSheet.show(
-                              context: context,
-                              onConfirm: (slots) => processShare(slots),
-                            );
-                          }
-                        }
+                            if (docResult) {
+                              if (context.mounted) {
+                                PreferredSlotsBottomSheet.show(
+                                  context: context,
+                                  onConfirm: (slots) => processShare(slots),
+                                );
+                              }
+                            }
+                          },
+                        );
                       } else {
                         Navigator.pushNamed(
                           context,
