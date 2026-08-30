@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 abstract final class CustomColors {
   static const Color lightBlueColor = Color(0xff88E3FB);

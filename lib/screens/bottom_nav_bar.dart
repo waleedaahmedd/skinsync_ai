@@ -1,5 +1,6 @@
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart' as m;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -10,7 +11,7 @@ import '../view_models/bottom_nav_view_model.dart';
 import '../view_models/checkout_view_model.dart';
 
 class BottomNavBar extends StatelessWidget {
-  final TabController? controller;
+  final m.TabController? controller;
   const BottomNavBar({super.key, this.controller});
 
   static final List<BottomNavItem> _items = [
