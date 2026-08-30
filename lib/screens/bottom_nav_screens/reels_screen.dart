@@ -6,7 +6,6 @@ import '../../view_models/explore_view_model.dart';
 import '../../widgets/app_loader.dart';
 import '../../widgets/reel_card.dart';
 import '../../widgets/social_toggle_button.dart';
-import '../../widgets/post_usage_container.dart';
 
 class ReelsScreen extends ConsumerStatefulWidget {
   const ReelsScreen({super.key});

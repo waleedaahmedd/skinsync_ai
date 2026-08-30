@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
@@ -165,7 +166,7 @@ class _FaceConsentScreenState extends ConsumerState<FaceConsentScreen> {
         successStatus: "Facial scan consent received successfully",
       );
 
-      if (!success) {
+      if (success) {
         if (mounted) {
           widget.onConsentCompleted?.call();
           Navigator.pushReplacementNamed(
@@ -176,6 +177,7 @@ class _FaceConsentScreenState extends ConsumerState<FaceConsentScreen> {
       }
     } catch (e) {
       if (mounted) {
+        log("Error: $e");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Error: $e")),
         );
