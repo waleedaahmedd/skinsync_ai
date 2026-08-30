@@ -52,7 +52,7 @@ class AuthData {
   factory AuthData.fromJson(Map<String, dynamic> json) => AuthData(
     isFirstLogin: json["is_first_login"],
     isActive: json["is_active"],
-    pushNotification : json['push_notification'],
+    pushNotification: json['push_notification'],
     accessToken: json["access_token"],
     refreshToken: json["refresh_token"],
     isActiveExpiry: json["is_active_expiry"],
@@ -121,6 +121,7 @@ class User {
   final String? phoneNumber;
   final String? location;
   final String? bio;
+  final String? dob;
   final String? cc;
   final String? country;
 
@@ -131,6 +132,7 @@ class User {
     this.role,
     this.profileImageUrl,
     this.primaryEmail,
+    this.dob,
     this.phoneNumber,
     this.location,
     this.bio,
@@ -148,6 +150,7 @@ class User {
     phoneNumber: json["phone_number"],
     location: json["location"],
     bio: json["bio"],
+    dob: json['dob'],
     country: json["country"],
     cc: json["cc"],
   );
@@ -164,6 +167,7 @@ class User {
     "bio": bio,
     "country": country,
     "cc": cc,
+    "dob": dob,
   };
 }
 

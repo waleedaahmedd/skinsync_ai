@@ -1,5 +1,6 @@
 
 
+
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,19 +27,12 @@ class YourProfileScreen extends ConsumerStatefulWidget {
 
 class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _dobController = TextEditingController();
   
   DateTime? _selectedDob;
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _phoneController.dispose();
-    _emailController.dispose();
-    _dobController.dispose();
+  
     super.dispose();
   }
 
@@ -46,9 +40,12 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
   void initState() {
     super.initState();
     final authState = ref.read(authViewModel);
-    _emailController.text = authState.authData?.user?.primaryEmail ?? '';
-    final cc = authState.authData?.user?.cc;
+    final authVM = ref.read(authViewModel.notifier);
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      authVM.emailController.text = authState.authData?.user?.primaryEmail ?? '';
+    authVM.nameController.text = authState.authData?.user?.name ?? '';
+    final cc = authState.authData?.user?.cc;
       ref
           .read(authViewModel.notifier)
           .setCountryCode(Country.parse(cc ?? "US"));
@@ -66,7 +63,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
   }
 
   Future<void> _selectDateOfBirth(BuildContext context) async {
-    final DateTime initialDate = _selectedDob ?? DateTime.now();
+    final DateTime initialDate = _selectedDob ?? DateTime.now().subtract(const Duration(days: 18 * 365));
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
@@ -88,13 +85,14 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
 
     if (picked != null) {
       final age = _calculateAge(picked);
-      if (age < 18) {
+      if (age < 18) { 
         if (!mounted) return;
         _showUnderageDialog();
       } else {
         setState(() {
+        final authVM = ref.read(authViewModel.notifier);
           _selectedDob = picked;
-          _dobController.text = DateFormat('yyyy-MM-dd').format(picked);
+          authVM.dobController.text = DateFormat('yyyy-MM-dd').format(picked);
         });
       }
     }
@@ -120,7 +118,8 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                _dobController.clear();
+                 final authVM = ref.read(authViewModel.notifier);
+                authVM.dobController.clear();
                 Navigator.pop(context);
               },
               child: Text(
@@ -262,7 +261,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   ),
                   SizedBox(height: context.h(22)),
                   TextFormField(
-                    controller: _nameController,
+                    controller:ref.read(authViewModel.notifier).nameController,
                     style: CustomFonts.black18w400,
                     decoration: const InputDecoration(hintText: "Your Name"),
                     validator: (value) {
@@ -278,7 +277,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   SizedBox(height: context.h(20)),
                   PhoneWidget(
                     enableCountrySelection: !isDeploymentMode,
-                    controller: _phoneController,
+                    controller:ref.read(authViewModel.notifier).phoneController,
                     initialCountryCode: ref
                         .read(authViewModel)
                         .country
@@ -290,7 +289,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   SizedBox(height: context.h(20)),
                   TextFormField(
                     readOnly: true,
-                    controller: _emailController,
+                    controller:ref.read(authViewModel.notifier).emailController,
                     style: CustomFonts.black18w400,
                     decoration: const InputDecoration(
                       hintText: "Email Address",
@@ -312,7 +311,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   SizedBox(height: context.h(20)),
                   // Date of Birth Field
                   TextFormField(
-                    controller: _dobController,
+                    controller:ref.read(authViewModel.notifier).dobController,
                     readOnly: true,
                     onTap: () => _selectDateOfBirth(context),
                     style: CustomFonts.black18w400,
@@ -344,23 +343,28 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                             _showUnderageDialog();
                             return;
                           }
-                          ref
-                              .read(authViewModel.notifier)
-                              .callOnboardingProfileApi(
-                                name: _nameController.text,
-                                phoneNumber: _phoneController.text.trim(),
-                               emailAddress: _emailController.text.trim(),
-                                // dob: _dobController.text, // Pass dob here if supported by your ViewModel
-                              )
-                              .then((value) {
-                            if (value == true) {
-                              Navigator.pushNamedAndRemoveUntil(
+                           Navigator.pushNamedAndRemoveUntil(
                                 context,
                                 TermsOfServiceScreen.routeName,
                                 (Route<dynamic> route) => false,
                               );
-                            }
-                          });
+                          // ref
+                          //     .read(authViewModel.notifier)
+                          //     .callOnboardingProfileApi(
+                          //       name: _nameController.text,
+                          //       phoneNumber: _phoneController.text.trim(),
+                          //      emailAddress: _emailController.text.trim(),
+                          //       // dob: _dobController.text, // Pass dob here if supported by your ViewModel
+                          //     )
+                          //     .then((value) {
+                          //   if (value == true) {
+                          //     Navigator.pushNamedAndRemoveUntil(
+                          //       context,
+                          //       TermsOfServiceScreen.routeName,
+                          //       (Route<dynamic> route) => false,
+                          //     );
+                          //   }
+                          // });
                         }
                       },
                       text: "Next",

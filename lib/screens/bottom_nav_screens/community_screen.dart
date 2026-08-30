@@ -75,7 +75,7 @@ class _CommunityScreenState extends ConsumerState<CommunityScreen> {
                       ),
                       SizedBox(height: context.h(4)),
                       Text(
-                        'Discover Educational content from registered providers',
+                        'Discover educational content from registered providers',
                         style: CustomFonts.grey14w400.copyWith(height: 1.3),
                       ),
                     ],

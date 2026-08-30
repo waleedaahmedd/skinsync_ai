@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../view_models/auth_view_model.dart';
+import '../widgets/app_loader.dart';
 import '../widgets/custom_button.dart';
 import 'get_notified_screen.dart';
 
@@ -140,21 +143,47 @@ class _MedicalDisclaimerScreenState extends State<MedicalDisclaimerScreen> {
                   ),
                 ),
                 SizedBox(height: context.h(20)),
-                SizedBox(
-                  width: double.infinity,
-                  child: CustomButton(
-                    text: "Next",
-                    onPressed: _isAccepted
-                        ? () {
-                            Navigator.pushNamedAndRemoveUntil(
-                                context,
-                                GetNotifiedScreen.routeName,
-                                arguments: false,
-                                (Route<dynamic> route) => false,
-                              );
-                          }
-                        : null,
-                  ),
+                Consumer(
+                  builder: (context,ref,_) {
+                    final loading = ref.watch(authViewModel).loading;
+                    if (loading) {
+                      return const Center(child: AppLoader());
+                    }
+                    return SizedBox(
+                      width: double.infinity,
+                      child: CustomButton(
+                        text: "Next",
+                        onPressed: _isAccepted
+                            ? () {
+                                  ref
+                                  .read(authViewModel.notifier)
+                                  .callOnboardingProfileApi()
+                                  //   name: _nameController.text,
+                                  //   phoneNumber: _phoneController.text.trim(),
+                                  //  emailAddress: _emailController.text.trim(),
+                                  //   // dob: _dobController.text, // Pass dob here if supported by your ViewModel
+                                  // )
+                                  .then((value) {
+                                if (value == true) {
+                                  Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                  GetNotifiedScreen.routeName,
+                                   arguments: false,
+                                    (Route<dynamic> route) => false,
+                                  );
+                                }
+                              });
+                                // Navigator.pushNamedAndRemoveUntil(
+                                //     context,
+                                //     GetNotifiedScreen.routeName,
+                                //     arguments: false,
+                                //     (Route<dynamic> route) => false,
+                                //   );
+                              }
+                            : null,
+                      ),
+                    );
+                  }
                 ),
                 SizedBox(height: context.h(30)),
               ],
