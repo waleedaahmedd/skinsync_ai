@@ -1,9 +1,9 @@
 import 'dart:developer';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'route_generator.dart';
 import 'utils/assets.dart';
@@ -83,7 +83,11 @@ class AppInit extends StatelessWidget {
                 themeMode: themeMode,
                 theme: AppTheme.lightTheme(context),
                 darkTheme: AppTheme.darkTheme,
-                builder: EasyLoading.init(),
+                builder: (BuildContext context, Widget? child) {
+                  return MaterialUiCompatibilityBridge(
+                    child: FlutterEasyLoading(child: child!),
+                  );
+                },
               );
             },
           ),
