@@ -2,9 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 
+import 'models/requests/preferred_slot.dart';
 import 'models/responses/appointments_list_response.dart';
 import 'models/responses/get_clinic_response.dart';
 import 'models/responses/patient_treatment_request_response.dart';
+import 'models/responses/simulation_history_response.dart';
 import 'models/responses/treatment_area_list_response.dart';
 import 'models/responses/treatment_category_list_response.dart';
 import 'models/responses/treatment_list_response.dart';
@@ -67,6 +69,7 @@ import 'screens/treatment_detail_screen.dart';
 import 'screens/treatment_journey_detail_screen.dart';
 import 'screens/treatment_journey_screen.dart';
 import 'screens/treatment_payment_screen.dart';
+import 'screens/treatment_review_screen.dart';
 import 'screens/treatments_screen.dart';
 import 'screens/update_version_screen.dart';
 import 'screens/your_profile_screen.dart';
@@ -437,6 +440,16 @@ class RouteGenerator {
           builder: (_) => TreatmentJourneyDetailScreen(
             groupId: argsMap['groupId'] as int,
             groupName: argsMap['groupName'] as String,
+          ),
+        );
+      case TreatmentReviewScreen.routeName:
+        final argsMap = args as Map<String, dynamic>;
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: TreatmentReviewScreen.routeName),
+          builder: (_) => TreatmentReviewScreen(
+            simulationData: argsMap['simulationData'] as SimulationData?,
+            preferredSlots: argsMap['preferredSlots'] as List<PreferredSlot>,
+            clinic: argsMap['clinic'] as Clinic,
           ),
         );
       case UpdateVersionScreen.routeName:

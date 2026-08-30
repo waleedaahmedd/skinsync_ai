@@ -13,13 +13,11 @@ import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../view_models/clinic_view_model.dart';
-import '../view_models/forms_view_model.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/bottom_sheets/preferred_slots_bottom_sheet.dart';
-import '../widgets/dialogs/facial_scan_consent_dialog.dart';
-import '../widgets/dialogs/success_dialogs.dart';
+import 'treatment_review_screen.dart';
 import 'treatment_journey_screen.dart';
 
 class JourneyClinicDetailScreen extends ConsumerStatefulWidget {
@@ -391,56 +389,30 @@ class _JourneyClinicDetailScreenState
                         }
 
                         void processShare(List<PreferredSlot> slots) {
-                          if (widget.clinic?.place != null) {
-                            showFacialScanConsentDialog(
-                              context: context,
-                              simulationData: tjState.simulations,
-                              preferredSlots: slots,
-                              onConfirm: () async {
-                                final success = await ref
-                                    .read(treatmentJourneyProvider.notifier)
-                                    .callShareMapTreatmentRequest(
-                                      widget.clinic!,
-                                      slots,
-                                    );
-
-                                if (success ?? false) {
-                                  if (context.mounted) {
-                                    showShareJourneySuccessDialog(context);
-                                  }
-                                }
+                          if (widget.clinic != null) {
+                            Navigator.pushNamed(
+                              context,
+                              TreatmentReviewScreen.routeName,
+                              arguments: {
+                                'simulationData': tjState.simulations,
+                                'preferredSlots': slots,
+                                'clinic': widget.clinic!,
                               },
                             );
-                            return;
                           }
-                          showFacialScanConsentDialog(
-                            context: context,
-                            simulationData: tjState.simulations,
-                            preferredSlots: slots,
-                            onConfirm: () async {
-                              final result = await ref
-                                  .read(treatmentJourneyProvider.notifier)
-                                  .callShareTreatmentRequest(slots);
-                              if (result == true) {
-                                if (context.mounted) {
-                                  showShareJourneySuccessDialog(context);
-                                }
-                              }
-                            },
-                          );
                         }
 
-                        final bool docResult = await ref
-                            .read(formsViewModel.notifier)
-                            .checkAndOpenDocumentBySku("SHRE-TRET-CONS");
-
-                        if (docResult) {
+                        // final bool docResult = await ref
+                        //     .read(formsViewModel.notifier)
+                        //     .checkAndOpenDocumentBySku("SHRE-TRET-CONS");
+                        //
+                        // if (docResult) {
                           if (context.mounted) {
                             PreferredSlotsBottomSheet.show(
                               context: context,
                               onConfirm: (slots) => processShare(slots),
                             );
-                          }
+                          // }
                         }
                       },
                     );

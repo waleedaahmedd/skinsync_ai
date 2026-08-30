@@ -7,11 +7,9 @@ import '../models/requests/preferred_slot.dart';
 import '../utils/string_utils.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
-import '../utils/consent_utils.dart';
 import '../utils/custom_fonts.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/clinic_view_model.dart';
-import '../view_models/forms_view_model.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 import '../widgets/app_loader.dart';
@@ -19,8 +17,6 @@ import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/dialogs/delete_confirmation_dialog.dart';
 import '../widgets/bottom_sheets/preferred_slots_bottom_sheet.dart';
-import '../widgets/dialogs/facial_scan_consent_dialog.dart';
-import '../widgets/dialogs/success_dialogs.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/simulation_card.dart';
 import 'consent_forms/biometric_consent_screen.dart';
@@ -28,6 +24,7 @@ import 'ar_face_model_preview_screen.dart';
 import 'bottom_nav_page.dart';
 import 'face_pose_capture_screen.dart';
 import 'journey_clinics_screen.dart';
+import 'treatment_review_screen.dart';
 
 class TreatmentJourneyDetailScreen extends ConsumerStatefulWidget {
   final int groupId;
@@ -366,36 +363,14 @@ class _TreatmentJourneyDetailScreenState
                       final clinic = ref.read(clinicProvider).clinic;
 
                       void processShare(List<PreferredSlot> slots) {
-                        if (clinic?.place != null) {
-                          showFacialScanConsentDialog(
-                            context: context,
-                            simulationData: state.simulations,
-                            preferredSlots: slots,
-                            onConfirm: () async {
-                              final result = await ref
-                                  .read(treatmentJourneyProvider.notifier)
-                                  .callShareMapTreatmentRequest(clinic!, slots);
-                              if (result == true) {
-                                if (context.mounted) {
-                                  showShareJourneySuccessDialog(context);
-                                }
-                              }
-                            },
-                          );
-                        } else if (clinic != null) {
-                          showFacialScanConsentDialog(
-                            context: context,
-                            simulationData: state.simulations,
-                            preferredSlots: slots,
-                            onConfirm: () async {
-                              final result = await ref
-                                  .read(treatmentJourneyProvider.notifier)
-                                  .callShareTreatmentRequest(slots);
-                              if (result == true) {
-                                if (context.mounted) {
-                                  showShareJourneySuccessDialog(context);
-                                }
-                              }
+                        if (clinic != null) {
+                          Navigator.pushNamed(
+                            context,
+                            TreatmentReviewScreen.routeName,
+                            arguments: {
+                              'simulationData': state.simulations,
+                              'preferredSlots': slots,
+                              'clinic': clinic,
                             },
                           );
                         } else {
@@ -407,34 +382,9 @@ class _TreatmentJourneyDetailScreenState
                       }
 
                       if (clinic != null) {
-                        await ConsentUtils.checkAndProceed(
+                        PreferredSlotsBottomSheet.show(
                           context: context,
-                          ref: ref,
-                          sku: "SHRE-TRET-CONS",
-                          dialogTitle: "Consent Already Provided",
-                          dialogMessage: "You have already signed the treatment sharing consent form. Thank you.",
-                          onProceed: () {
-                            if (context.mounted) {
-                              PreferredSlotsBottomSheet.show(
-                                context: context,
-                                onConfirm: (slots) => processShare(slots),
-                              );
-                            }
-                          },
-                          onNotSigned: () async {
-                            final bool docResult = await ref
-                                .read(formsViewModel.notifier)
-                                .checkAndOpenDocumentBySku("SHRE-TRET-CONS");
-
-                            if (docResult) {
-                              if (context.mounted) {
-                                PreferredSlotsBottomSheet.show(
-                                  context: context,
-                                  onConfirm: (slots) => processShare(slots),
-                                );
-                              }
-                            }
-                          },
+                          onConfirm: (slots) => processShare(slots),
                         );
                       } else {
                         Navigator.pushNamed(
