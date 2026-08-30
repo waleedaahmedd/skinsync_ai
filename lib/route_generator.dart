@@ -38,6 +38,7 @@ import 'screens/journey_clinic_detail_screen.dart';
 import 'screens/journey_clinics_screen.dart';
 import 'screens/login_bottom_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/medical_disclaimer_screen.dart';
 import 'screens/notes_screen.dart';
 import 'screens/notification_screen.dart';
 import 'screens/otp_screen.dart';
@@ -47,6 +48,7 @@ import 'screens/payment_screen.dart';
 import 'screens/pdf_viewer_screen.dart';
 import 'screens/personal_detail_screen.dart';
 import 'screens/personal_document_screen.dart';
+import 'screens/privacy_policy_screen.dart';
 import 'screens/progress_detail_screen.dart';
 import 'screens/review_screen.dart';
 import 'screens/saved_treatment_screen.dart';
@@ -58,6 +60,7 @@ import 'screens/setting_screen.dart';
 import 'screens/signup_onboarding.dart';
 import 'screens/simulation_history_screen.dart';
 import 'screens/splash_screen.dart';
+import 'screens/terms_of_service_screen.dart';
 import 'screens/treatment_area_screen.dart';
 import 'screens/treatment_category_screen.dart';
 import 'screens/treatment_detail_screen.dart';
@@ -303,6 +306,21 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: const RouteSettings(name: AdditionalInfoScreen.routeName),
           builder: (_) => const AdditionalInfoScreen(),
+        );
+         case MedicalDisclaimerScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: MedicalDisclaimerScreen.routeName),
+          builder: (_) => const MedicalDisclaimerScreen(),
+        );
+        case PrivacyPolicyScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: PrivacyPolicyScreen.routeName),
+          builder: (_) => const PrivacyPolicyScreen(),
+        );
+         case TermsOfServiceScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: TermsOfServiceScreen.routeName),
+          builder: (_) => const TermsOfServiceScreen(),
         );
       case TreatmentsScreen.routeName:
         return MaterialPageRoute(
