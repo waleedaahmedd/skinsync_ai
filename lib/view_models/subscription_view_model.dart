@@ -1,10 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../app_init.dart';
 import '../models/base_state_model.dart';
 import '../models/responses/patient_plans_response.dart';
 import '../repositories/subscription_repository.dart';
+import '../screens/webview_page.dart';
 import '../services/api_base_helper.dart';
 import '../services/subscription_service.dart';
 import '../utils/enums.dart';
@@ -53,10 +57,24 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
         durationId: durationId,
       );
       if (response.isSuccess ?? false) {
-        EasyLoading.showSuccess(
-          response.message ?? 'Plan upgraded successfully!',
+        EasyLoading.dismiss();
+        final params = await WebviewPage.open(
+          context: navigatorKey.currentContext!,
+          url: response.data!.stripeUrl!,
+          successUrl: response.data!.successUrl!,
+          cancelUrl: response.data!.cancelUrl!,
+          title: 'Subscribe',
         );
-        await fetchSubscriptionPlans();
+        log('PARAMS: $params');
+        if (params != null) {
+          await Future.delayed(const Duration(seconds: 3));
+          await fetchSubscriptionPlans();
+          EasyLoading.showSuccess(
+            response.message ?? 'Plan upgraded successfully!',
+          );
+        } else {
+          EasyLoading.showError('Something went wrong!');
+        }
         return true;
       } else {
         EasyLoading.showError(response.message ?? 'Failed to upgrade plan');
@@ -88,6 +106,12 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
     });
     EasyLoading.dismiss();
     return result ?? false;
+  }
+
+  @override
+  void onError(String message) {
+    state = state.copyWith(loading: false);
+    super.onError(message);
   }
 }
 

@@ -1,6 +1,8 @@
 import 'dart:convert';
+
 import '../models/responses/base_response_model.dart';
 import '../models/responses/patient_plans_response.dart';
+import '../models/responses/subscription_response.dart';
 import '../repositories/subscription_repository.dart';
 import '../utils/enums.dart';
 import 'api_base_helper.dart';
@@ -20,10 +22,11 @@ class SubscriptionService implements SubscriptionRepository {
   }
 
   @override
-  Future<BaseResponseModel> upgradePlan({required int planId, int? durationId}) async {
-    final Map<String, dynamic> body = {
-      "plan_id": planId,
-    };
+  Future<SubscriptionResponse> upgradePlan({
+    required int planId,
+    int? durationId,
+  }) async {
+    final Map<String, dynamic> body = {"plan_id": planId};
     if (durationId != null) {
       body["duration_id"] = durationId;
     }
@@ -33,7 +36,7 @@ class SubscriptionService implements SubscriptionRepository {
       requestType: RequestType.post,
       requestBody: body,
     );
-    return BaseResponseModel.fromJson(jsonDecode(response.body));
+    return SubscriptionResponse.fromJson(jsonDecode(response.body));
   }
 
   @override

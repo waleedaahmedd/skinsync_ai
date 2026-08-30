@@ -10,7 +10,6 @@ import '../models/responses/get_clinic_response.dart';
 import '../models/responses/simulation_history_response.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
-import '../view_models/clinic_view_model.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
