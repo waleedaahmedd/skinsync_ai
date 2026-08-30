@@ -21,7 +21,7 @@ import '../doctors_screen.dart';
 import '../journey_clinics_screen.dart';
 import '../notification_screen.dart';
 import '../patient_treatment_requests_screen.dart';
-import '../biometric_consent_screen.dart';
+import '../consent_forms/biometric_consent_screen.dart';
 import 'appointments_screen.dart';
 import '../../utils/enums.dart';
 import '../../view_models/home_view_model.dart';

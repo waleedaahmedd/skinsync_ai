@@ -16,7 +16,6 @@ import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/treatment_container.dart';
 import 'ar_face_model_preview_screen.dart';
-import 'biometric_consent_screen.dart';
 import 'bottom_nav_screens/face_detection_screen.dart';
 
 class FacePoseCaptureScreen extends ConsumerStatefulWidget {

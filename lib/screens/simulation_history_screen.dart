@@ -13,7 +13,7 @@ import '../widgets/custom_button.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/simulation_card.dart';
 import 'face_pose_capture_screen.dart';
-import 'biometric_consent_screen.dart';
+import 'consent_forms/biometric_consent_screen.dart';
 
   class SimulationHistoryScreen extends ConsumerStatefulWidget {
   static const String routeName = "/simulation_history_screen";

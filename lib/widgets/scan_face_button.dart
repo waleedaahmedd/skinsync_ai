@@ -4,7 +4,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../screens/face_pose_capture_screen.dart';
-import '../screens/biometric_consent_screen.dart';
+import '../screens/consent_forms/biometric_consent_screen.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';

@@ -24,7 +24,6 @@ import '../../view_models/treatment_view_model.dart';
 import '../../widgets/app_loader.dart';
 import '../../widgets/bottom_sheets/medical_disclaimer_bottomsheet.dart';
 import '../../widgets/custom_button.dart';
-import '../biometric_consent_screen.dart';
 
 class FaceDetectionScreen extends ConsumerStatefulWidget {
   final String pose;

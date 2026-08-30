@@ -22,7 +22,7 @@ import '../widgets/dialogs/facial_scan_consent_dialog.dart';
 import '../widgets/dialogs/success_dialogs.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/simulation_card.dart';
-import 'biometric_consent_screen.dart';
+import 'consent_forms/biometric_consent_screen.dart';
 import 'ar_face_model_preview_screen.dart';
 import 'bottom_nav_page.dart';
 import 'face_pose_capture_screen.dart';

@@ -5,7 +5,7 @@ import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../widgets/custom_button.dart';
-import 'biometric_consent_screen.dart';
+import 'consent_forms/biometric_consent_screen.dart';
 import 'bottom_nav_page.dart';
 import 'bottom_nav_screens/face_detection_screen.dart';
 import 'face_pose_capture_screen.dart';
