@@ -16,12 +16,12 @@ import '../face_pose_capture_screen.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_button.dart';
 
-class BiometricConsentScreen extends ConsumerStatefulWidget {
+class FaceConsentScreen extends ConsumerStatefulWidget {
   final VoidCallback? onConsentCompleted;
 
-  const BiometricConsentScreen({super.key, this.onConsentCompleted});
+  const FaceConsentScreen({super.key, this.onConsentCompleted});
 
-  static const String routeName = "/BiometricConsentScreen";
+  static const String routeName = "/FaceConsentScreen";
 
   /// Helper to check consent and proceed with the action
   static Future<void> checkAndProceed({
@@ -38,10 +38,10 @@ class BiometricConsentScreen extends ConsumerStatefulWidget {
       onProceed: onProceed,
       onNotSigned: () async {
         if (context.mounted) {
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => BiometricConsentScreen(
+              builder: (context) => FaceConsentScreen(
                 onConsentCompleted: onProceed,
               ),
             ),
@@ -52,10 +52,10 @@ class BiometricConsentScreen extends ConsumerStatefulWidget {
   }
 
   @override
-  ConsumerState<BiometricConsentScreen> createState() => _BiometricConsentScreenState();
+  ConsumerState<FaceConsentScreen> createState() => _FaceConsentScreenState();
 }
 
-class _BiometricConsentScreenState extends ConsumerState<BiometricConsentScreen> {
+class _FaceConsentScreenState extends ConsumerState<FaceConsentScreen> {
   // Section 5 Checkboxes State
   bool _checkReceivedAndReviewed = false;
   bool _checkAuthorizeCollectionAndStorage = false;
@@ -165,7 +165,7 @@ class _BiometricConsentScreenState extends ConsumerState<BiometricConsentScreen>
         successStatus: "Facial scan consent received successfully",
       );
 
-      if (success) {
+      if (!success) {
         if (mounted) {
           widget.onConsentCompleted?.call();
           Navigator.pushReplacementNamed(

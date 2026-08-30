@@ -6,7 +6,7 @@ import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../widgets/custom_button.dart';
-import 'consent_forms/biometric_consent_screen.dart';
+import 'consent_forms/face_consent_screen.dart';
 import 'bottom_nav_page.dart';
 import 'bottom_nav_screens/face_detection_screen.dart';
 import 'face_pose_capture_screen.dart';
@@ -117,7 +117,7 @@ class FaceScanScreen extends ConsumerWidget {
                       width: double.infinity,
                       child: CustomButton(
                         onPressed: () {
-                          BiometricConsentScreen.checkAndProceed(
+                          FaceConsentScreen.checkAndProceed(
                             context: context,
                             ref: ref,
                             onProceed: () {

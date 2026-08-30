@@ -59,6 +59,7 @@ class Document {
     final String? url;
     final String? type;
     final String? globalSku;
+    final String? description;
 
     Document({
         this.id,
@@ -66,6 +67,7 @@ class Document {
         this.url,
         this.type,
         this.globalSku,
+        this.description,
     });
 
     factory Document.fromRawJson(String str) => Document.fromJson(json.decode(str));
@@ -78,6 +80,7 @@ class Document {
         url: json["url"],
         type: json["type"],
         globalSku: json["global_sku"],
+        description: json["description"],
     );
 
     Map<String, dynamic> toJson() => {
@@ -86,5 +89,6 @@ class Document {
         "url": url,
         "type": type,
         "global_sku": globalSku,
+        "description": description,
     };
 }

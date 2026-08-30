@@ -19,7 +19,7 @@ import '../widgets/dialogs/delete_confirmation_dialog.dart';
 import '../widgets/bottom_sheets/preferred_slots_bottom_sheet.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/simulation_card.dart';
-import 'consent_forms/biometric_consent_screen.dart';
+import 'consent_forms/face_consent_screen.dart';
 import 'ar_face_model_preview_screen.dart';
 import 'bottom_nav_page.dart';
 import 'face_pose_capture_screen.dart';
@@ -157,7 +157,7 @@ class _TreatmentJourneyDetailScreenState
                 }
                 return IconButton(
                   onPressed: () {
-                    BiometricConsentScreen.checkAndProceed(
+                    FaceConsentScreen.checkAndProceed(
                       context: context,
                       ref: ref,
                       onProceed: () {
