@@ -27,6 +27,7 @@ import 'screens/clinics_detail_screen.dart';
 import 'screens/compliance_form_screen.dart';
 import 'screens/consent_detail_screen.dart';
 import 'screens/consent_forms_screen.dart';
+import 'screens/consent_forms/ai_transparency_policy_screen.dart';
 import 'screens/consent_forms/face_consent_screen.dart';
 import 'screens/doctor_detail_screen.dart';
 import 'screens/legal_document_screen.dart';
@@ -101,6 +102,14 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: const RouteSettings(name: LegalDocumentScreen.routeName),
           builder: (_) => LegalDocumentScreen(args: args as LegalDocumentArgs),
+        );
+      case AiTransparencyPolicyScreen.routeName:
+        return MaterialPageRoute(
+          settings:
+              const RouteSettings(name: AiTransparencyPolicyScreen.routeName),
+          builder: (_) => AiTransparencyPolicyScreen(
+            onPolicyAccepted: args as VoidCallback?,
+          ),
         );
       case FaceConsentScreen.routeName:
         return MaterialPageRoute(

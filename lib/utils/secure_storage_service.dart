@@ -15,6 +15,7 @@ class SecureStorage {
   static const String _userEmailKey = 'user-data';
   static const String _captureModeKey = 'capture-mode';
   static const String _biometricConsentKey = 'biometric-consent';
+  static const String _aiPolicyAcceptedKey = 'ai-policy-accepted';
 
   SecureStorage._();
 
@@ -148,5 +149,14 @@ class SecureStorage {
   Future<bool> getBiometricConsent() async {
     final consent = await _storage?.read(key: _biometricConsentKey);
     return consent == 'true';
+  }
+
+  Future<void> saveAiPolicyAccepted() async {
+    await _storage?.write(key: _aiPolicyAcceptedKey, value: 'true');
+  }
+
+  Future<bool> getAiPolicyAccepted() async {
+    final accepted = await _storage?.read(key: _aiPolicyAcceptedKey);
+    return accepted == 'true';
   }
 }

@@ -18,6 +18,7 @@ import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../utils/enums.dart';
+import '../utils/secure_storage_service.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/subscription_view_model.dart';
 import '../view_models/treatment_area_view_model.dart';
@@ -27,7 +28,6 @@ import '../widgets/app_loader.dart';
 import '../widgets/bottom_sheets/material_level_sheet.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
-import '../widgets/dialogs/medical_disclaimer_dialog.dart';
 import '../widgets/dialogs/save_option_confirmation_dialog.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/selected_treatments_summary_card.dart';
@@ -35,6 +35,7 @@ import '../widgets/service_type_button.dart';
 import 'treatment_journey_detail_screen.dart';
 import 'treatment_journey_screen.dart';
 import 'subscription_plans_screen.dart';
+import 'consent_forms/ai_transparency_policy_screen.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
   const ArFaceModelPreviewScreen({super.key});
@@ -96,7 +97,7 @@ class _ArFaceModelPreviewScreenState
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      showMedicalDisclaimerDialog(context: context);
+      // showMedicalDisclaimerDialog(context: context);
       final selectedTreatment = ref.read(checkoutViewModel).selectedTreatments;
       final treatmentState = ref.read(treatmentViewModel);
 
@@ -533,6 +534,18 @@ class _ArFaceModelPreviewScreenState
                           textColor: CustomColors.blackColor,
                           height: context.h(58),
                           onPressed: () async {
+                            final bool hasAccepted = await SecureStorage()
+                                .getAiPolicyAccepted();
+
+                            if (!hasAccepted) {
+                              if (!context.mounted) return;
+                              final result = await Navigator.pushNamed(
+                                context,
+                                AiTransparencyPolicyScreen.routeName,
+                              );
+                              if (result != true) return;
+                            }
+
                             final success = await ref
                                 .read(treatmentViewModel.notifier)
                                 .callPredictAPI();
