@@ -105,9 +105,7 @@ class RouteGenerator {
       case FaceConsentScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: FaceConsentScreen.routeName),
-          builder: (_) => FaceConsentScreen(
-            onConsentCompleted: args as VoidCallback?,
-          ),
+          builder: (_) => const FaceConsentScreen(),
         );
       case IntroScreen.routeName:
         return MaterialPageRoute(

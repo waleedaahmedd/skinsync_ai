@@ -82,25 +82,16 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     _initVolumeButtonService();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (widget.pose != 'front') {
-        // Strictly Auto for Left/Right profiles
+      // Use saved preference or show dialog for all poses
+      final savedMode = await SecureStorage().getCaptureMode();
+      if (savedMode != null) {
         setState(() {
-          _isAutomaticMode = true;
+          _isAutomaticMode = savedMode;
           _isStarted = true;
         });
         _speakInstruction();
-      } else {
-        // Front pose: show dialog or use saved preference
-        final savedMode = await SecureStorage().getCaptureMode();
-        if (savedMode != null) {
-          setState(() {
-            _isAutomaticMode = savedMode;
-            _isStarted = true;
-          });
-          _speakInstruction();
-        } else if (mounted) {
-          _showModeSelectionDialog();
-        }
+      } else if (mounted) {
+        _showModeSelectionDialog();
       }
 
       final show = await SecureStorage().getMedicalDisclaimer();
@@ -1059,41 +1050,39 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                 padding: EdgeInsets.only(bottom: context.h(8)),
                 child: Column(
                   children: [
-                    if (widget.pose == 'front' && !_isAutomaticMode)
+                    if (!_isAutomaticMode)
                       CustomButton(
                         onPressed: () => _handleCaptureTrigger(),
                         text: "Capture Image",
                       ),
-                    if (widget.pose == 'front') ...[
-                      SizedBox(height: context.h(8)),
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _isAutomaticMode = !_isAutomaticMode;
-                            SecureStorage().saveCaptureMode(_isAutomaticMode);
-                            if (!_isAutomaticMode) {
-                              _stopCountdown();
-                            }
-                          });
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                "Switched to ${_isAutomaticMode ? "Automatic" : "Manual"} Mode",
-                              ),
-                              duration: const Duration(seconds: 1),
+                    SizedBox(height: context.h(8)),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _isAutomaticMode = !_isAutomaticMode;
+                          SecureStorage().saveCaptureMode(_isAutomaticMode);
+                          if (!_isAutomaticMode) {
+                            _stopCountdown();
+                          }
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              "Switched to ${_isAutomaticMode ? "Automatic" : "Manual"} Mode",
                             ),
-                          );
-                        },
-                        child: Text(
-                          "Switch to ${_isAutomaticMode ? "Manual" : "Automatic"} Mode",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: context.sp(14),
-                            decoration: TextDecoration.underline,
+                            duration: const Duration(seconds: 1),
                           ),
+                        );
+                      },
+                      child: Text(
+                        "Switch to ${_isAutomaticMode ? "Manual" : "Automatic"} Mode",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: context.sp(14),
+                          decoration: TextDecoration.underline,
                         ),
                       ),
-                    ],
+                    ),
                   ],
                 ),
               ),

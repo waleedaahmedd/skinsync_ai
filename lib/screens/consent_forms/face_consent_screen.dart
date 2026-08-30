@@ -34,15 +34,18 @@ class FaceConsentScreen extends ConsumerStatefulWidget {
       ref: ref,
       sku: "FACE-SCAN-CONS",
       dialogTitle: "Facial Scan Consent Already Provided",
-      dialogMessage: "We have already received your facial scan consent , Tap continue button to proceed with scan",
+      dialogMessage:
+          "We have already received your facial scan consent , Tap continue button to proceed with scan",
       onProceed: onProceed,
       onNotSigned: () async {
         if (context.mounted) {
-          Navigator.pushNamed(
+          final result = await Navigator.pushNamed(
             context,
             FaceConsentScreen.routeName,
-            arguments: onProceed,
           );
+          if (result == true) {
+            onProceed();
+          }
         }
       },
     );
@@ -168,10 +171,8 @@ class _FaceConsentScreenState extends ConsumerState<FaceConsentScreen> {
 
       if (success) {
         if (mounted) {
-          // Close FaceConsentScreen first to clean up stack
-          navigator.pop();
-          // Execute the original proceed action
-          widget.onConsentCompleted?.call();
+          // Return true to indicate consent was successfully given
+          navigator.pop(true);
         }
       }
     } catch (e) {
