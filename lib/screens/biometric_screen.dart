@@ -54,7 +54,7 @@ class _BiometricScreenState extends State<BiometricScreen> {
             SizedBox(height: context.h(2)),
             Center(
               child: Text(
-                "We’ll scan your face and create a cool model just for you to enhance your experience!",
+                "Secure your account and personalize your experience. Biometric data allows for safe access to your private skin analysis, treatment simulations, and progress tracking.",
                 style: CustomFonts.black16w500,
                 textAlign: TextAlign.center,
               ),
