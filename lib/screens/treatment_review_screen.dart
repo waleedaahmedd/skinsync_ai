@@ -53,8 +53,10 @@ class TreatmentReviewScreen extends ConsumerWidget {
               _buildTreatmentDetails(context),
               SizedBox(height: context.h(24)),
             ],
-            _buildSlotsSummary(context),
-            SizedBox(height: context.h(24)),
+            if (preferredSlots.isNotEmpty) ...[
+              _buildSlotsSummary(context),
+              SizedBox(height: context.h(24)),
+            ],
             Text(
               "By continuing, you confirm that you are voluntarily submitting new facial images for SkinSync’s facial-analysis, simulation, treatment-planning, and progress-tracking features under your existing Facial Scan and Biometric Consent. Do not continue if you have withdrawn that consent.",
               style: CustomFonts.black14w400.copyWith(

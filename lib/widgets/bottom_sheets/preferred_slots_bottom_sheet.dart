@@ -82,9 +82,15 @@ class _PreferredSlotsBottomSheetState extends State<PreferredSlotsBottomSheet> {
     }
   }
 
-  bool get _canConfirm =>
-      _selectedDates.every((d) => d != null) &&
-      _selectedTimes.every((t) => t != null);
+  bool get _canConfirm {
+    for (int i = 0; i < 3; i++) {
+      if ((_selectedDates[i] != null && _selectedTimes[i] == null) ||
+          (_selectedDates[i] == null && _selectedTimes[i] != null)) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +132,7 @@ class _PreferredSlotsBottomSheetState extends State<PreferredSlotsBottomSheet> {
           ),
           SizedBox(height: context.h(12)),
           Text(
-            "Please select 3 preferred dates and times for your appointment.",
+            "You can select up to 3 preferred dates and times for your appointment (Optional).",
             style: CustomFonts.grey14w400,
           ),
           SizedBox(height: context.h(24)),
@@ -201,14 +207,18 @@ class _PreferredSlotsBottomSheetState extends State<PreferredSlotsBottomSheet> {
             text: "Continue",
             onPressed: _canConfirm
                 ? () {
-                    final slots = List.generate(3, (index) {
-                      final date = _selectedDates[index]!;
-                      final time = _selectedTimes[index]!;
-                      return PreferredSlot(
-                        date: date.formattedDate,
-                        time: time.format(context),
-                      );
-                    });
+                    final List<PreferredSlot> slots = [];
+                    for (int i = 0; i < 3; i++) {
+                      if (_selectedDates[i] != null &&
+                          _selectedTimes[i] != null) {
+                        slots.add(
+                          PreferredSlot(
+                            date: _selectedDates[i]!.formattedDate,
+                            time: _selectedTimes[i]!.format(context),
+                          ),
+                        );
+                      }
+                    }
                     Navigator.pop(context);
                     widget.onConfirm(slots);
                   }

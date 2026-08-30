@@ -138,8 +138,7 @@ enum HomeSection {
   suggestedTreatments,
   topDoctors,
   topClinics,
-  promotions,
-  consentForms;
+  promotions;
 
   String get displayName {
     switch (this) {
@@ -159,8 +158,6 @@ enum HomeSection {
         return "Top Clinics";
       case HomeSection.promotions:
         return "Promotions & Discounts";
-      case HomeSection.consentForms:
-        return "Consent Forms";
     }
   }
 }
