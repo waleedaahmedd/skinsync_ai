@@ -73,6 +73,7 @@ enum EndPoints {
   notificationstatus('v1/pushnotification-status'),
   subscribe('v1/subscribe'),
   patientUsages('v1/patient-usages'),
+  medicalHistory('v1/medical-history'),
   clinic('v1/clinic');
 
   final String path;
