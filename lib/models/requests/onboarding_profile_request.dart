@@ -7,6 +7,7 @@ class OnBoardingProfileRequest  {
   final String? profileImageUrl;
   final String? cc;
   final String? country;
+  final String? dob
 
   OnBoardingProfileRequest({
     required this.name,

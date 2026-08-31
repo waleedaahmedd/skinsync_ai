@@ -83,9 +83,9 @@ class _TreatmentJourneyDetailScreenState
     }
   }
 
-  void _showEditOptionDialog(dynamic currentOption) {
+  void _showEditGroupDialog() {
     final TextEditingController nameController =
-        TextEditingController(text: currentOption.name ?? '');
+        TextEditingController(text: widget.groupName);
 
     showDialog(
       context: context,
@@ -96,14 +96,15 @@ class _TreatmentJourneyDetailScreenState
             borderRadius: BorderRadius.circular(context.r(16)),
           ),
           title: Text(
-            "Edit Option Name",
+            "Edit Group Name",
             style: CustomFonts.black18w600,
           ),
           content: TextField(
             controller: nameController,
             autofocus: true,
+            style: const TextStyle(color: Colors.black),
             decoration: InputDecoration(
-              labelText: "Option Name",
+              labelText: "Group Name",
               labelStyle: CustomFonts.grey14w400,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(context.r(10)),
@@ -131,11 +132,11 @@ class _TreatmentJourneyDetailScreenState
               ),
               onPressed: () {
                 final updatedName = nameController.text.trim();
-                if (updatedName.isNotEmpty && currentOption.id != null) {
-                //   ref
-                //       .read(treatmentJourneyProvider.notifier)
-                //       .updateOptionName(currentOption.id!, updatedName);
-                 }
+                if (updatedName.isNotEmpty) {
+                  ref
+                      .read(treatmentJourneyProvider.notifier)
+                      .callUpdateGroupName(widget.groupId, updatedName);
+                }
                 Navigator.pop(dialogContext);
               },
               child: Text(
@@ -176,18 +177,14 @@ class _TreatmentJourneyDetailScreenState
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           showTitle: true,
-          title: widget.groupName,
+          title: widget.groupName.capitalize,
           actions: [
-            if (filteredOptions.isNotEmpty)
-              IconButton(
-                icon: const Icon(Iconsax.edit, color: Colors.black, size: 20),
-                tooltip: "Edit Option Name",
-                onPressed: () {
-                  final currentOption =
-                      filteredOptions[_tabController?.index ?? 0];
-                  _showEditOptionDialog(currentOption);
-                },
-              ),
+            IconButton(
+              padding: .zero,
+              icon: const Icon(Icons.edit_outlined, color: Colors.black, size: 20),
+              tooltip: "Edit Group Name",
+              onPressed: _showEditGroupDialog,
+            ),
             PopupMenuButton<_JourneyFilter>(
               padding: EdgeInsets.zero,
               onSelected: (filter) {
