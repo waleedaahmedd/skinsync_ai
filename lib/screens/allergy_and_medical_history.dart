@@ -1,27 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utils/string_utils.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../models/requests/medical_history_request.dart';
+import '../view_models/medical_history_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
-import 'get_notified_screen.dart';
 
-class AllergyAndMedicalHistory extends StatefulWidget {
-  final bool showBackButton;
-  const AllergyAndMedicalHistory({super.key, this.showBackButton = true});
+class AllergyAndMedicalHistory extends ConsumerStatefulWidget {
+  const AllergyAndMedicalHistory({super.key});
   static const routeName = "/AllergyAndMedicalHistory";
 
   @override
-  State<AllergyAndMedicalHistory> createState() =>
+  ConsumerState<AllergyAndMedicalHistory> createState() =>
       _AllergyAndMedicalHistoryState();
 }
 
-class _AllergyAndMedicalHistoryState extends State<AllergyAndMedicalHistory> {
+class _AllergyAndMedicalHistoryState
+    extends ConsumerState<AllergyAndMedicalHistory> {
   // Defaults set to empty (unselected)
   List<String> selectedAllergies = [];
   List<String> selectedMedicalConditions = [];
   List<String> selectedCurrentMedications = [];
+
+  // Guards against re-populating from the provider after the user has
+  // started editing (e.g. if fetchPatientMedicalHistory ever re-runs).
+  bool _hasHydratedFromResponse = false;
 
   // Added 'None' to all option lists
   final List<String> allergyItems = [
@@ -55,133 +62,185 @@ class _AllergyAndMedicalHistoryState extends State<AllergyAndMedicalHistory> {
   ];
 
   @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(medicalHistoryProvider.notifier).fetchPatientMedicalHistory();
+    });
+
+    super.initState();
+  }
+
+  // Sends an empty list instead of ['None'] (or any stale selection)
+  // whenever 'None' is the active choice.
+  List<String> _resolveForSubmit(List<String> selected) {
+    if (selected.isEmpty || selected.contains('None')) return [];
+    return selected;
+  }
+
+Future<void> _onSave() async {
+  final request = MedicalHistoryRequest(
+    allergies: _resolveForSubmit(selectedAllergies),
+    medicalConditions: _resolveForSubmit(selectedMedicalConditions),
+    currentMedications: _resolveForSubmit(selectedCurrentMedications),
+  );
+  final patientId =
+      ref.read(medicalHistoryProvider).medicalHistory?.patientId;
+  EasyLoading.show();
+  final success = await ref
+      .read(medicalHistoryProvider.notifier)
+      .updateMedicalHistory(patientId, request);
+  EasyLoading.dismiss();
+
+  if (!mounted) return;
+
+  if (!success) {
+    final error = ref.read(medicalHistoryProvider).errorMessage;
+    EasyLoading.showError(error ?? "Failed to update medical history");
+    return;
+  }
+  EasyLoading.showSuccess("Medical history updated successfully");
+}
+ 
+  @override
   Widget build(BuildContext context) {
+    // Populate the chips from the fetched record the first time data arrives.
+    ref.listen(medicalHistoryProvider, (previous, next) {
+      if (_hasHydratedFromResponse) return;
+      final history = next.medicalHistory;
+      if (history == null) return;
+
+      setState(() {
+        selectedAllergies = history.allergies ?? [];
+        selectedMedicalConditions = history.medicalConditions ?? [];
+        selectedCurrentMedications = history.currentMedications ?? [];
+        _hasHydratedFromResponse = true;
+      });
+    });
+
+    final isLoading = ref.watch(
+      medicalHistoryProvider.select((state) => state.loading),
+    );
+
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBar(
-        showBackButton: widget.showBackButton,
+      appBar: const CustomAppBar(
         showTitle: true,
         title: "Allergy & Medical History",
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.symmetric(
-          horizontal: context.w(24),
-          vertical: context.h(10),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: context.h(10)),
-            Text(
-              "Share any past or current medical conditions",
-              style: CustomFonts.textGrey14w400,
-            ),
-            SizedBox(height: context.h(24)),
-
-            // Form Group Card
-            Container(
-              padding: EdgeInsets.all(context.w(20)),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(context.r(24)),
-                border: Border.all(
-                  color: CustomColors.greyColor.withValues(alpha: 0.5),
-                  width: 1,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.015),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+      body: isLoading && !_hasHydratedFromResponse
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(
+                horizontal: context.w(24),
+                vertical: context.h(10),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Allergy Section
-                  Text("Allergy Profile", style: CustomFonts.black18w600),
-                  SizedBox(height: context.h(4)),
-                  Text(
-                    "Please choose your allergies from the list below.",
-                    style: CustomFonts.grey12w400,
-                  ),
-                  SizedBox(height: context.h(12)),
-                  _buildMultiSelectSection(
-                    placeholder: "Select Allergies",
-                    selectedItems: selectedAllergies,
-                    allItems: allergyItems,
-                    onSelectionChanged: (newList) {
-                      setState(() {
-                        selectedAllergies = newList;
-                      });
-                    },
-                  ),
-                  SizedBox(height: context.h(24)),
-
-                  // Medical Conditions Section
-                  Text("Medical Conditions", style: CustomFonts.black18w600),
-                  SizedBox(height: context.h(4)),
+                  SizedBox(height: context.h(10)),
                   Text(
                     "Share any past or current medical conditions",
-                    style: CustomFonts.grey12w400,
-                  ),
-                  SizedBox(height: context.h(12)),
-                  _buildMultiSelectSection(
-                    placeholder: "Select Medical Conditions",
-                    selectedItems: selectedMedicalConditions,
-                    allItems: medicalConditions,
-                    onSelectionChanged: (newList) {
-                      setState(() {
-                        selectedMedicalConditions = newList;
-                      });
-                    },
+                    style: CustomFonts.textGrey14w400,
                   ),
                   SizedBox(height: context.h(24)),
 
-                  // Current Medications Section
-                  Text("Current Medications", style: CustomFonts.black18w600),
-                  SizedBox(height: context.h(4)),
-                  Text(
-                    "List your current prescriptions or treatments",
-                    style: CustomFonts.grey12w400,
+                  // Form Group Card
+                  Container(
+                    padding: EdgeInsets.all(context.w(20)),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(context.r(24)),
+                      border: Border.all(
+                        color: CustomColors.greyColor.withValues(alpha: 0.5),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.015),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Allergy Section
+                        Text("Allergy Profile", style: CustomFonts.black18w600),
+                        SizedBox(height: context.h(4)),
+                        Text(
+                          "Please choose your allergies from the list below.",
+                          style: CustomFonts.grey12w400,
+                        ),
+                        SizedBox(height: context.h(12)),
+                        _buildMultiSelectSection(
+                          placeholder: "Select Allergies",
+                          selectedItems: selectedAllergies,
+                          allItems: allergyItems,
+                          onSelectionChanged: (newList) {
+                            setState(() {
+                              selectedAllergies = newList;
+                            });
+                          },
+                        ),
+                        SizedBox(height: context.h(24)),
+
+                        // Medical Conditions Section
+                        Text(
+                          "Medical Conditions",
+                          style: CustomFonts.black18w600,
+                        ),
+                        SizedBox(height: context.h(4)),
+                        Text(
+                          "Share any past or current medical conditions",
+                          style: CustomFonts.grey12w400,
+                        ),
+                        SizedBox(height: context.h(12)),
+                        _buildMultiSelectSection(
+                          placeholder: "Select Medical Conditions",
+                          selectedItems: selectedMedicalConditions,
+                          allItems: medicalConditions,
+                          onSelectionChanged: (newList) {
+                            setState(() {
+                              selectedMedicalConditions = newList;
+                            });
+                          },
+                        ),
+                        SizedBox(height: context.h(24)),
+
+                        // Current Medications Section
+                        Text(
+                          "Current Medications",
+                          style: CustomFonts.black18w600,
+                        ),
+                        SizedBox(height: context.h(4)),
+                        Text(
+                          "List your current prescriptions or treatments",
+                          style: CustomFonts.grey12w400,
+                        ),
+                        SizedBox(height: context.h(12)),
+                        _buildMultiSelectSection(
+                          placeholder: "Select Current Medications",
+                          selectedItems: selectedCurrentMedications,
+                          allItems: currentMedications,
+                          onSelectionChanged: (newList) {
+                            setState(() {
+                              selectedCurrentMedications = newList;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                  SizedBox(height: context.h(12)),
-                  _buildMultiSelectSection(
-                    placeholder: "Select Current Medications",
-                    selectedItems: selectedCurrentMedications,
-                    allItems: currentMedications,
-                    onSelectionChanged: (newList) {
-                      setState(() {
-                        selectedCurrentMedications = newList;
-                      });
-                    },
-                  ),
+                  SizedBox(height: context.h(32)),
+
+                  // Reusable Custom Button
+                  CustomButton(text: "Save & Update", onPressed: _onSave),
+                  SizedBox(height: context.h(40)),
                 ],
               ),
             ),
-            SizedBox(height: context.h(32)),
-
-            // Reusable Custom Button
-            CustomButton(
-              text: "Save & Update",
-              onPressed: () {
-                if (widget.showBackButton) {
-                  Navigator.pop(context);
-                } else {
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    GetNotifiedScreen.routeName,
-                    (Route<dynamic> route) => false,
-                  );
-                }
-              },
-            ),
-            SizedBox(height: context.h(40)),
-          ],
-        ),
-      ),
     );
   }
 

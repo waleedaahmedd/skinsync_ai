@@ -10,6 +10,7 @@ import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../utils/date_time_utils.dart';
+import '../utils/string_utils.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
@@ -425,7 +426,7 @@ class _TreatmentJourneyScreenState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        group.name ?? "Unnamed Journey",
+                        group.name?.capitalize ?? "Unnamed Journey",
                         style: CustomFonts.black18w600,
                       ),
                       SizedBox(height: context.h(4)),

@@ -364,6 +364,7 @@ class MyProfileScreen extends StatelessWidget {
                   SizedBox(height: context.h(20)),
                   // CARD 1: Clinical Portal Section
                   buildOptionCard([
+                   
                     buildCardOption(
                       callBack: () {
                         Navigator.pushNamed(
@@ -374,7 +375,7 @@ class MyProfileScreen extends StatelessWidget {
                       icon: SvgAssets.profileIcon,
                       title: "Personal Details",
                     ),
-
+                     if(!isDeploymentMode)
                     buildCardOption(
                       callBack: () {
                         Navigator.pushNamed(
@@ -424,7 +425,7 @@ class MyProfileScreen extends StatelessWidget {
                         Navigator.pushNamed(
                           context,
                           AllergyAndMedicalHistory.routeName,
-                          arguments: true,
+                          
                         );
                       },
                       icon: SvgAssets.medical,
