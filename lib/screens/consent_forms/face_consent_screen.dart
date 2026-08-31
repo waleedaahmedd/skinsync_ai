@@ -159,12 +159,12 @@ class _FaceConsentScreenState extends ConsumerState<FaceConsentScreen> {
 
       // 3. Call signForm API
       final bool success = await formsNotifier.signForm(
-        title: "Biometric Consent - ${_nameController.text}",
+        title: "Face Consent - ${_nameController.text}",
         type: "consent",
         globalSku: "FACE-SCAN-CONS",
         pdfBytes: pdfBytes,
         fileName:
-            "biometric_consent_${DateTime.now().millisecondsSinceEpoch}.pdf",
+            "face_consent_${DateTime.now().millisecondsSinceEpoch}.pdf",
         loadingStatus: "Processing ....",
         successStatus: "Facial scan consent received successfully",
       );
