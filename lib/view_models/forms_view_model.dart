@@ -82,12 +82,15 @@ class FormsViewModel extends BaseViewModel<FormsState> {
       final response = await _repository.fetchConsentForm();
       if (response.isSuccess == true) {
         final List<Document> allSigned = response.data?.signedDocuments ?? [];
-        final List<Document> allUnSigned = response.data?.unSignedDocuments ?? [];
-        
-        final List<Document> compliance =
-            allUnSigned.where((doc) => doc.type == 'compliance').toList();
-        final List<Document> otherUnSigned =
-            allUnSigned.where((doc) => doc.type != 'compliance').toList();
+        final List<Document> allUnSigned =
+            response.data?.unSignedDocuments ?? [];
+
+        final List<Document> compliance = allUnSigned
+            .where((doc) => doc.type == 'compliance')
+            .toList();
+        final List<Document> otherUnSigned = allUnSigned
+            .where((doc) => doc.type != 'compliance')
+            .toList();
 
         state = state.copyWith(
           signDocument: allSigned,
@@ -113,45 +116,51 @@ class FormsViewModel extends BaseViewModel<FormsState> {
     String? successStatus,
   }) async {
     return await runSafely(() async {
-      EasyLoading.show(status: loadingStatus ?? 'Uploading signed document...');
+          EasyLoading.show(
+            status: loadingStatus ?? 'Uploading signed document...',
+          );
 
-      // 1. Generate a unique filename using timestamp to avoid caching and ensure fresh URL
-      final uniqueFileName =
-          '${DateTime.now().millisecondsSinceEpoch}_$fileName';
-       final user = ref.read(authViewModel).authData?.user?.primaryEmail ?? '';
-   
-      final String? firebaseUrl = await MediaService().uploadMedia(
-        path: 'signed_forms/$user/$title',
-        file: XFile.fromData(
-          Uint8List.fromList(pdfBytes),
-          name: uniqueFileName,
-          mimeType: 'application/pdf',
-        ),
-      );
+          // 1. Generate a unique filename using timestamp to avoid caching and ensure fresh URL
+          final uniqueFileName =
+              '${DateTime.now().millisecondsSinceEpoch}_$fileName';
+          final user =
+              ref.read(authViewModel).authData?.user?.primaryEmail ?? '';
+          final file = XFile.fromData(
+            Uint8List.fromList(pdfBytes),
+            name: uniqueFileName,
+            mimeType: 'application/pdf',
+          );
+          final String? firebaseUrl = await MediaService().uploadMedia(
+            path: 'signed_forms/$user/$title',
+            file: file,
+            fileNameOverride: uniqueFileName,
+          );
 
-      if (firebaseUrl == null) {
-        throw Exception('Failed to upload signed document to storage');
-      }
+          if (firebaseUrl == null) {
+            throw Exception('Failed to upload signed document to storage');
+          }
 
-      // 2. Call Sign Form API
-      final request = SignFormRequest(
-        title: title,
-        url: firebaseUrl,
-        type: type,
-        globalSku: globalSku,
-      );
-      final response = await _repository.signForm(request);
+          // 2. Call Sign Form API
+          final request = SignFormRequest(
+            title: title,
+            url: firebaseUrl,
+            type: type,
+            globalSku: globalSku,
+          );
+          final response = await _repository.signForm(request);
 
-      if (response.isSuccess == true) {
-        EasyLoading.showSuccess(
-          successStatus ?? response.message ?? 'Document signed successfully',
-        );
-        await fetchForms(); // Refresh lists
-        return true;
-      }
-      return false;
-    }) ??
-    false;
+          if (response.isSuccess == true) {
+            EasyLoading.showSuccess(
+              successStatus ??
+                  response.message ??
+                  'Document signed successfully',
+            );
+            await fetchForms(); // Refresh lists
+            return true;
+          }
+          return false;
+        }) ??
+        false;
   }
 
   Future<bool> checkAndOpenDocumentBySku(String sku) async {
@@ -160,18 +169,20 @@ class FormsViewModel extends BaseViewModel<FormsState> {
       (doc) => doc.globalSku == sku,
     );
     if (signedDoc != null) {
-      final res = await navigatorKey.currentState?.pushNamed(
-        LegalDocumentScreen.routeName,
-        arguments: LegalDocumentArgs(
-          title: signedDoc.title ?? '',
-          url: signedDoc.url,
-          storageFileName: 'signed_form_${signedDoc.id}.pdf',
-          formId: signedDoc.id,
-          isAlreadySigned: true,
-          type: signedDoc.type,
-          globalSku: signedDoc.globalSku,
-        ),
-      ) as bool?;
+      final res =
+          await navigatorKey.currentState?.pushNamed(
+                LegalDocumentScreen.routeName,
+                arguments: LegalDocumentArgs(
+                  title: signedDoc.title ?? '',
+                  url: signedDoc.url,
+                  storageFileName: 'signed_form_${signedDoc.id}.pdf',
+                  formId: signedDoc.id,
+                  isAlreadySigned: true,
+                  type: signedDoc.type,
+                  globalSku: signedDoc.globalSku,
+                ),
+              )
+              as bool?;
       return res ?? false;
     }
 
@@ -180,18 +191,20 @@ class FormsViewModel extends BaseViewModel<FormsState> {
       (doc) => doc.globalSku == sku,
     );
     if (unSignedDoc != null) {
-      final res = await navigatorKey.currentState?.pushNamed(
-        LegalDocumentScreen.routeName,
-        arguments: LegalDocumentArgs(
-          title: unSignedDoc.title ?? '',
-          url: unSignedDoc.url,
-          storageFileName: 'signed_form_${unSignedDoc.id}.pdf',
-          formId: unSignedDoc.id,
-          isAlreadySigned: false,
-          type: unSignedDoc.type,
-          globalSku: unSignedDoc.globalSku,
-        ),
-      ) as bool?;
+      final res =
+          await navigatorKey.currentState?.pushNamed(
+                LegalDocumentScreen.routeName,
+                arguments: LegalDocumentArgs(
+                  title: unSignedDoc.title ?? '',
+                  url: unSignedDoc.url,
+                  storageFileName: 'signed_form_${unSignedDoc.id}.pdf',
+                  formId: unSignedDoc.id,
+                  isAlreadySigned: false,
+                  type: unSignedDoc.type,
+                  globalSku: unSignedDoc.globalSku,
+                ),
+              )
+              as bool?;
       return res ?? false;
     }
     return true; // No document to open, safe to proceed

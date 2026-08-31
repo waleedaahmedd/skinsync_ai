@@ -110,72 +110,72 @@ class MediaService {
     return url;
   }
 
-  Future<String?> uploadMedia({
-    required String path,
-    required dynamic file, // XFile | PlatformFile
-  }) async {
-    try {
-      late String fileName;
-      late Uint8List bytes;
+Future<String?> uploadMedia({
+  required String path,
+  required dynamic file, // XFile | PlatformFile
+  String? fileNameOverride,
+}) async {
+  try {
+    late String fileName;
+    late Uint8List bytes;
 
-      // XFile
-      if (file is XFile) {
-        fileName = file.name;
-        bytes = await file.readAsBytes();
-      }
-      // PlatformFile
-      else if (file is PlatformFile) {
-        fileName = file.name;
-        bytes = await file.readAsBytes();
-
-        if (bytes.isEmpty) {
-          throw Exception('PlatformFile.bytes is null. Use withData:true');
-        }
-      } else {
-        throw Exception('Unsupported file type');
-      }
-
-      final ext = fileName.split('.').last.toLowerCase();
-
-      final storagePath = switch (ext) {
-        'png' || 'gif' || 'webp' => throw Exception(
-          'Any format other than jpeg is not supported!',
-        ),
-        'jpg' || 'jpeg' => '$path/image/$fileName',
-        'mp4' || 'mov' || 'avi' || 'mkv' || 'webm' => '$path/video/$fileName',
-        'pdf' => '$path/pdf/$fileName',
-        _ => '$path/file/$fileName',
-      };
-
-      log('UPLOAD STARTED');
-      log('PATH: $storagePath');
-
-      final ref = _storage
-          .ref(isDeploymentMode ? 'production/' : 'staging/')
-          .child(storagePath);
-      if (storagePath.contains('/image/')) {
-        bytes = await _compressImage(bytes);
-      }
-      final task = ref.putData(
-        bytes,
-        SettableMetadata(contentType: _contentType(ext)),
-      );
-
-      await task.whenComplete(() {});
-
-      final url = await ref.getDownloadURL();
-
-      log('UPLOAD SUCCESS');
-      log('UPLOADED PATH: $storagePath');
-      log('UPLOADED URL: $url');
-
-      return url;
-    } catch (e, s) {
-      log('UPLOAD ERROR: $e', stackTrace: s);
-      rethrow;
+    // XFile
+    if (file is XFile) {
+      fileName = fileNameOverride ?? file.name;
+      bytes = await file.readAsBytes();
     }
-  }
+    // PlatformFile
+    else if (file is PlatformFile) {
+      fileName = fileNameOverride ?? file.name;
+      bytes = await file.readAsBytes();
 
+      if (bytes.isEmpty) {
+        throw Exception('PlatformFile.bytes is null. Use withData:true');
+      }
+    } else {
+      throw Exception('Unsupported file type');
+    }
+
+    final ext = fileName.split('.').last.toLowerCase();
+
+    final storagePath = switch (ext) {
+      'png' || 'gif' || 'webp' => throw Exception(
+        'Any format other than jpeg is not supported!',
+      ),
+      'jpg' || 'jpeg' => '$path/image/$fileName',
+      'mp4' || 'mov' || 'avi' || 'mkv' || 'webm' => '$path/video/$fileName',
+      'pdf' => '$path/pdf/$fileName',
+      _ => '$path/file/$fileName',
+    };
+
+    log('UPLOAD STARTED');
+    log('PATH: $storagePath');
+
+    final ref = _storage
+        .ref(isDeploymentMode ? 'production/' : 'staging/')
+        .child(storagePath);
+    if (storagePath.contains('/image/')) {
+      bytes = await _compressImage(bytes);
+    }
+    final task = ref.putData(
+      bytes,
+      SettableMetadata(contentType: _contentType(ext)),
+    );
+
+    await task.whenComplete(() {});
+
+    final url = await ref.getDownloadURL();
+
+    log('UPLOAD SUCCESS');
+    log('UPLOADED PATH: $storagePath');
+    log('UPLOADED URL: $url');
+
+    return url;
+  } catch (e, s) {
+    log('UPLOAD ERROR: $e', stackTrace: s);
+    rethrow;
+  }
+}
   String _contentType(String ext) {
     return switch (ext) {
       'png' => 'image/png',
