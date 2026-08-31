@@ -84,7 +84,7 @@ enum Status { active, inactive }
 
 enum BaseUrls {
   api('https://api.skinsyncai.com/api/'),
-  // apiQa('https://api-dev.skinsyncai.com/api/');
+ //apiQa('https://api-dev.skinsyncai.com/api/');
  apiQa('https://q4nw0p7g-8084.asse.devtunnels.ms/api/');
 
   final String url;

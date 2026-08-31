@@ -105,10 +105,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     _volumeButtonService.enableInterception();
     _volumeButtonService.startListening((event) {
       if (!mounted || !_isStarted) return;
-      if (!_isAutomaticMode || _showManualCaptureUI) {
-        if (!_isCapturing && _capturedImage == null) {
-          _handleCaptureTrigger();
-        }
+      // Allow volume button to capture in both modes
+      if (!_isCapturing && _capturedImage == null) {
+        _handleCaptureTrigger();
       }
     });
   }
@@ -136,11 +135,21 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
       }
     } else {
       if (widget.pose == 'left') {
-        ttsText = "Please turn your head to the left.";
+        ttsText = "Please turn your head to the left to capture your left profile.";
       } else {
-        ttsText = "Please turn your head to the right.";
+        ttsText = "Please turn your head to the right to capture your right profile.";
       }
     }
+
+    // Add specific instructions for auto/manual mode
+    if (_isAutomaticMode) {
+      ttsText +=
+          " You can also tap anywhere on the screen or press the volume button to capture the image.";
+    } else {
+      ttsText +=
+          " Click the capture button, or tap anywhere on the screen, or press the volume button to take the image.";
+    }
+
     TtsUtils.speak(ttsText);
   }
 
@@ -211,62 +220,127 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        child: Container(
-          padding: EdgeInsets.all(context.w(20)),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(context.r(20)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "Choose Capture Mode",
-                style: CustomFonts.black22w600,
-                textAlign: TextAlign.center,
+      builder: (context) => PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) return;
+          Navigator.pop(context); // Close dialog
+          Navigator.pop(context); // Go back to previous screen
+        },
+        child: StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: Container(
+                padding: EdgeInsets.all(context.w(20)),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(context.r(20)),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const SizedBox(width: 24), // Spacer for balance
+                        Text(
+                          "Choose Capture Mode",
+                          style: CustomFonts.black22w600,
+                          textAlign: TextAlign.center,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context); // Close dialog
+                            Navigator.pop(context); // Go back to previous screen
+                          },
+                          child:
+                              const Icon(Iconsax.close_circle, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: context.h(10)),
+                    Text(
+                      "Select how you want to capture your photos",
+                      style: TextStyle(color: Colors.grey, fontSize: context.sp(14)),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: context.h(24)),
+                    _buildModeOption(
+                      icon: Iconsax.magicpen,
+                      title: "Automatic Capture",
+                      subtitle: "Captures automatically when aligned",
+                      isSelected: false,
+                      onTap: () {
+                        setState(() {
+                          _isAutomaticMode = true;
+                          _isStarted = true;
+                        });
+                        SecureStorage().saveCaptureMode(true);
+                        _speakInstruction();
+                        Navigator.pop(context);
+                      },
+                    ),
+                    SizedBox(height: context.h(12)),
+                    _buildModeOption(
+                      icon: Iconsax.camera,
+                      title: "Manual Capture",
+                      subtitle: "You control the capture button",
+                      isSelected: false,
+                      onTap: () {
+                        setState(() {
+                          _isAutomaticMode = false;
+                          _isStarted = true;
+                        });
+                        SecureStorage().saveCaptureMode(false);
+                        _speakInstruction();
+                        Navigator.pop(context);
+                      },
+                    ),
+                    SizedBox(height: context.h(20)),
+                    const Divider(),
+                    SizedBox(height: context.h(10)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              _isSoundOn
+                                  ? Iconsax.volume_high
+                                  : Iconsax.volume_cross,
+                              color: CustomColors.purpleColor,
+                              size: 24,
+                            ),
+                            SizedBox(width: context.w(12)),
+                            Text(
+                              "Voice Assistant",
+                              style: CustomFonts.black16w600,
+                            ),
+                          ],
+                        ),
+                        Switch.adaptive(
+                          value: _isSoundOn,
+                          activeColor: CustomColors.purpleColor,
+                          onChanged: (val) {
+                            setDialogState(() {
+                              _isSoundOn = val;
+                            });
+                            setState(() {
+                              _isSoundOn = val;
+                            });
+                            if (!val) {
+                              TtsUtils.stop();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              SizedBox(height: context.h(10)),
-              Text(
-                "Select how you want to capture your photos",
-                style: TextStyle(color: Colors.grey, fontSize: context.sp(14)),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: context.h(24)),
-              _buildModeOption(
-                icon: Iconsax.magicpen,
-                title: "Automatic Capture",
-                subtitle: "Captures automatically when aligned",
-                isSelected: false,
-                onTap: () {
-                  setState(() {
-                    _isAutomaticMode = true;
-                    _isStarted = true;
-                  });
-                  SecureStorage().saveCaptureMode(true);
-                  _speakInstruction();
-                  Navigator.pop(context);
-                },
-              ),
-              SizedBox(height: context.h(12)),
-              _buildModeOption(
-                icon: Iconsax.camera,
-                title: "Manual Capture",
-                subtitle: "You control the capture button",
-                isSelected: false,
-                onTap: () {
-                  setState(() {
-                    _isAutomaticMode = false;
-                    _isStarted = true;
-                  });
-                  SecureStorage().saveCaptureMode(false);
-                  _speakInstruction();
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -449,9 +523,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
         }
       } else {
         if (_isPoseCorrect && _storedRef != null) {
-          if (_isSoundOn) {
-            TtsUtils.speak("Perfect");
-          }
           _captureAndNavigate(_storedRef!);
         } else {
           _stopCountdown();
@@ -602,6 +673,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
       );
 
       if (!mounted) return;
+
+      if (_isSoundOn) {
+        TtsUtils.speak("Perfect");
+      }
 
       setState(() {
         _capturedImage = finalImage;
@@ -782,7 +857,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
 
     return GestureDetector(
       onTap: () {
-        if (_isStarted && !_isCapturing && _capturedImage == null && !_isAutomaticMode) {
+        if (_isStarted && !_isCapturing && _capturedImage == null) {
           _handleCaptureTrigger();
         }
       },
@@ -1065,14 +1140,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                             _stopCountdown();
                           }
                         });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              "Switched to ${_isAutomaticMode ? "Automatic" : "Manual"} Mode",
-                            ),
-                            duration: const Duration(seconds: 1),
-                          ),
-                        );
+                        _speakInstruction();
                       },
                       child: Text(
                         "Switch to ${_isAutomaticMode ? "Manual" : "Automatic"} Mode",
