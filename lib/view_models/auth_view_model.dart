@@ -318,6 +318,7 @@ class AuthViewModel extends BaseViewModel<AuthState> {
         country: state.country.name,
         profileImageUrl:
             state.profileImage ?? state.authData?.user?.profileImageUrl,
+            dob: dobController.text
       );
        log('SDFSDXgs--$request');
       final BaseResponseModel response = await _authRepository

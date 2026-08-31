@@ -7,7 +7,7 @@ class OnBoardingProfileRequest  {
   final String? profileImageUrl;
   final String? cc;
   final String? country;
-  final String? dob
+  final String? dob;
 
   OnBoardingProfileRequest({
     required this.name,
@@ -18,6 +18,7 @@ class OnBoardingProfileRequest  {
     this.profileImageUrl,
     this.cc,
     this.country,
+    this. dob
   });
 
   Map<String, dynamic> toJson() {
@@ -30,6 +31,7 @@ class OnBoardingProfileRequest  {
       'profile_image_url': profileImageUrl,
       'cc': cc,
       'country': country,
+      'dob' : dob
     };
   }
 }
