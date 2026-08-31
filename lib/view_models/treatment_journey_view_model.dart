@@ -103,7 +103,10 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     });
   }
 
-  Future<bool?> callShareTreatmentRequest(List<PreferredSlot> slots) async {
+  Future<bool?> callShareTreatmentRequest(
+    List<PreferredSlot> slots, {
+    bool shareMedicalHistory = false,
+  }) async {
     return await runSafely(() async {
       final clinicId = ref.read(clinicProvider).clinic?.id;
       if (state.selectedOptionId == null || clinicId == null) {
@@ -115,6 +118,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
         clinicId: clinicId,
         optionId: state.selectedOptionId!,
         preferredSlots: slots,
+        shareMedicalHistory: shareMedicalHistory,
       );
 
       await _repo.shareTreatmentRequest(request: request);
@@ -127,8 +131,9 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
 
   Future<bool?> callShareMapTreatmentRequest(
     Clinic clinic,
-    List<PreferredSlot> slots,
-  ) async {
+    List<PreferredSlot> slots, {
+    bool shareMedicalHistory = false,
+  }) async {
     return await runSafely(() async {
       if (state.selectedOptionId == null) {
         EasyLoading.showError('Select a journey option to share!');
@@ -139,6 +144,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
         clinic: clinic,
         optionId: state.selectedOptionId!,
         preferredSlots: slots,
+        shareMedicalHistory: shareMedicalHistory,
       );
 
       await _repo.shareMapTreatmentRequest(request: request);
