@@ -6,10 +6,12 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../models/requests/preferred_slot.dart';
+import '../models/responses/auth_response.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../models/responses/simulation_history_response.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../view_models/auth_view_model.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
@@ -43,6 +45,8 @@ class TreatmentReviewScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildClinicInfo(context),
+            SizedBox(height: context.h(24)),
+            _buildPatientInfo(context, ref),
             SizedBox(height: context.h(24)),
             if (simulationData != null) ...[
               _buildTreatmentDetails(context),
@@ -114,6 +118,11 @@ class TreatmentReviewScreen extends ConsumerWidget {
                       clinic.name ?? "Clinic Name",
                       style: CustomFonts.black18w600,
                     ),
+                    SizedBox(height: context.h(2)),
+                    Text(
+                      "Clinic Details",
+                      style: CustomFonts.grey12w400,
+                    ),
                   ],
                 ),
               ),
@@ -123,14 +132,14 @@ class TreatmentReviewScreen extends ConsumerWidget {
           const Divider(height: 1),
           SizedBox(height: context.h(16)),
           if (clinic.address != null)
-            _buildClinicDetailRow(
+            _buildDetailRow(
               context,
               Icons.location_on_outlined,
               clinic.address!,
             ),
           if (clinic.phone != null) ...[
             SizedBox(height: context.h(8)),
-            _buildClinicDetailRow(
+            _buildDetailRow(
               context,
               Icons.phone_outlined,
               clinic.phone!,
@@ -138,7 +147,7 @@ class TreatmentReviewScreen extends ConsumerWidget {
           ],
           if (clinic.email != null) ...[
             SizedBox(height: context.h(8)),
-            _buildClinicDetailRow(
+            _buildDetailRow(
               context,
               Icons.email_outlined,
               clinic.email!,
@@ -149,7 +158,108 @@ class TreatmentReviewScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildClinicDetailRow(BuildContext context, IconData icon, String text) {
+  Widget _buildPatientInfo(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(authViewModel).authData?.user;
+    final String name = (user?.name != null && user!.name!.trim().isNotEmpty)
+        ? user.name!
+        : "Patient Name";
+    final String email = user?.primaryEmail ?? user?.email ?? "";
+    final String phone = _formatPhone(user);
+    final String profileImage = user?.profileImageUrl ?? "";
+
+    return Container(
+      padding: EdgeInsets.all(context.w(16)),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(context.r(16)),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Container(
+                height: context.h(60),
+                width: context.h(60),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                ),
+                child: ClipOval(
+                  child: CachedNetworkImage(
+                    imageUrl: profileImage,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) =>
+                        const CupertinoActivityIndicator(),
+                    errorWidget: (context, url, error) => Container(
+                      color: Colors.grey.shade100,
+                      child: Icon(
+                        Icons.person_outline_rounded,
+                        size: context.h(30),
+                        color: Colors.grey.shade400,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: context.w(16)),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: CustomFonts.black18w600,
+                    ),
+                    SizedBox(height: context.h(2)),
+                    Text(
+                      "Patient Details",
+                      style: CustomFonts.grey12w400,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (phone.isNotEmpty || email.isNotEmpty) ...[
+            SizedBox(height: context.h(16)),
+            const Divider(height: 1),
+            SizedBox(height: context.h(16)),
+            if (phone.isNotEmpty)
+              _buildDetailRow(
+                context,
+                Icons.phone_outlined,
+                phone,
+              ),
+            if (email.isNotEmpty) ...[
+              if (phone.isNotEmpty) SizedBox(height: context.h(8)),
+              _buildDetailRow(
+                context,
+                Icons.email_outlined,
+                email,
+              ),
+            ],
+          ],
+        ],
+      ),
+    );
+  }
+
+  String _formatPhone(User? user) {
+    if (user?.phoneNumber == null || user!.phoneNumber!.trim().isEmpty) {
+      return "";
+    }
+    final rawPhone = user.phoneNumber!.trim();
+    if (user.cc != null &&
+        user.cc!.trim().isNotEmpty &&
+        !rawPhone.startsWith('+') &&
+        !rawPhone.startsWith(user.cc!.trim())) {
+      return "${user.cc!.trim()} $rawPhone";
+    }
+    return rawPhone;
+  }
+
+  Widget _buildDetailRow(BuildContext context, IconData icon, String text) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
