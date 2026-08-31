@@ -121,9 +121,9 @@ class FormsViewModel extends BaseViewModel<FormsState> {
        final user = ref.read(authViewModel).authData?.user?.primaryEmail ?? '';
    
       final String? firebaseUrl = await MediaService().uploadMedia(
-        path: 'signed_forms/$user/$title/$fileName',
+        path: 'signed_forms/$user/$title',
         file: XFile.fromData(
-          Uint8List.fromList(pdfBytes), // Ensure fresh data copy
+          Uint8List.fromList(pdfBytes),
           name: uniqueFileName,
           mimeType: 'application/pdf',
         ),
