@@ -139,7 +139,7 @@ class _IntroScreenState extends ConsumerState<IntroScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Skinsync Ai', style: CustomFonts.grey20w500),
+                        Text('SkinSync AI', style: CustomFonts.grey20w500),
                         TextButton(
                           onPressed: _handleContinue,
                           style: TextButton.styleFrom(

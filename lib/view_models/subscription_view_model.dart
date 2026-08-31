@@ -83,8 +83,6 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
     } catch (e) {
       EasyLoading.showError(e.toString());
       return false;
-    } finally {
-      EasyLoading.dismiss();
     }
   }
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:before_after/before_after.dart';
@@ -30,12 +31,13 @@ import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/dialogs/save_option_confirmation_dialog.dart';
 import '../widgets/medical_disclaimer_banner.dart';
+import '../widgets/message_cycler.dart';
 import '../widgets/selected_treatments_summary_card.dart';
 import '../widgets/service_type_button.dart';
+import 'consent_forms/ai_transparency_policy_screen.dart';
+import 'subscription_plans_screen.dart';
 import 'treatment_journey_detail_screen.dart';
 import 'treatment_journey_screen.dart';
-import 'subscription_plans_screen.dart';
-import 'consent_forms/ai_transparency_policy_screen.dart';
 
 class ArFaceModelPreviewScreen extends ConsumerStatefulWidget {
   const ArFaceModelPreviewScreen({super.key});
@@ -134,7 +136,6 @@ class _ArFaceModelPreviewScreenState
         screenContext: context,
         groupName: selectedGroup.name ?? 'Unknown Group',
         onConfirm: () async {
-        
           final result = await ref
               .read(treatmentJourneyProvider.notifier)
               .createTjOptions();
@@ -177,7 +178,7 @@ class _ArFaceModelPreviewScreenState
             if (groupId != null) {
               await ref
                   .read(treatmentJourneyProvider.notifier)
-                  .fetchOptions(groupId,showloading: false);
+                  .fetchOptions(groupId, showloading: false);
             }
           }
         },
@@ -370,25 +371,35 @@ class _ArFaceModelPreviewScreenState
                       child: FadeInAnimation(
                         child: Padding(
                           padding: EdgeInsets.only(right: context.w(12)),
-                          child: ServiceTypeButton(
-                            imageUrl: treatment.image ?? treatment.imageUrl,
-                            icon: treatment.icon ?? PngAssets.syringe,
-                            text: treatment.name ?? '-',
-                            selected: isSelected,
-                            onPressed: () async {
-                              ref
-                                  .read(treatmentViewModel.notifier)
-                                  .onTapTreatment(
-                                    treatmentModel: treatment,
-                                    isCallPredictAPI: !isSelected,
-                                  );
-                              ref
-                                  .read(checkoutViewModel.notifier)
-                                  .addSelectedTreatment(treatment);
-                              await ref
-                                  .read(treatmentAreaProvider.notifier)
-                                  .fetchAreasByTreatment(treatment.id ?? 0);
-                            },
+                          child: ScaleTransition(
+                            scale:
+                                (!isSelected &&
+                                    ref
+                                        .watch(checkoutViewModel)
+                                        .selectedTreatmentsAndAreas
+                                        .isEmpty)
+                                ? _pulseAnimation
+                                : const AlwaysStoppedAnimation<double>(1.0),
+                            child: ServiceTypeButton(
+                              imageUrl: treatment.image ?? treatment.imageUrl,
+                              icon: treatment.icon ?? PngAssets.syringe,
+                              text: treatment.name ?? '-',
+                              selected: isSelected,
+                              onPressed: () async {
+                                ref
+                                    .read(treatmentViewModel.notifier)
+                                    .onTapTreatment(
+                                      treatmentModel: treatment,
+                                      isCallPredictAPI: !isSelected,
+                                    );
+                                ref
+                                    .read(checkoutViewModel.notifier)
+                                    .addSelectedTreatment(treatment);
+                                await ref
+                                    .read(treatmentAreaProvider.notifier)
+                                    .fetchAreasByTreatment(treatment.id ?? 0);
+                              },
+                            ),
                           ),
                         ),
                       ),
@@ -469,8 +480,9 @@ class _ArFaceModelPreviewScreenState
   Widget _buildBottomActions() {
     return Consumer(
       builder: (context, ref, _) {
-        final selectedTreatmentsAndAreas =
-            ref.watch(checkoutViewModel).selectedTreatmentsAndAreas;
+        final selectedTreatmentsAndAreas = ref
+            .watch(checkoutViewModel)
+            .selectedTreatmentsAndAreas;
         final hasAnySelectedArea = selectedTreatmentsAndAreas.any(
           (item) => item.selectedAreas.isNotEmpty,
         );
@@ -546,9 +558,31 @@ class _ArFaceModelPreviewScreenState
                               if (result != true) return;
                             }
 
-                            final success = await ref
-                                .read(treatmentViewModel.notifier)
-                                .callPredictAPI();
+                            // Show non-dismissible dialog that cycles messages every 2 seconds
+                            if (context.mounted) {
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (_) => const MessageCycler(),
+                              );
+                            }
+
+                            bool success = false;
+                            try {
+                              success = await ref
+                                  .read(treatmentViewModel.notifier)
+                                  .callPredictAPI();
+                            } finally {
+                              // Dismiss the dialog if still visible
+                              if (context.mounted) {
+                                try {
+                                  Navigator.of(
+                                    context,
+                                    rootNavigator: true,
+                                  ).pop();
+                                } catch (_) {}
+                              }
+                            }
 
                             if (success && currentPlan?.id != null) {
                               await ref
@@ -1009,9 +1043,8 @@ class _ArFaceModelPreviewScreenState
                   runSpacing: context.h(12),
                   children: AnimationConfiguration.toStaggeredList(
                     duration: const Duration(milliseconds: 600),
-                    childAnimationBuilder: (widget) => FlipAnimation(
-                      child: FadeInAnimation(child: widget),
-                    ),
+                    childAnimationBuilder: (widget) =>
+                        FlipAnimation(child: FadeInAnimation(child: widget)),
                     children: entry.value.map((area) {
                       final isSelected = selectedAreaIds.contains(area.id);
                       return ServiceTypeButton(

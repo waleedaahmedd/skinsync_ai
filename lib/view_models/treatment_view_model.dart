@@ -339,19 +339,19 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
     return response;
   }
 
-Future<TreatmentDetailModel?> calltreatmentDetail({required int id}) async {
-  final response = await runSafely(() async {
-    state = state.copyWith(loading: true, treatmentDetail: null);
-    final res = await _repo.getTreatmentDetail(treatmentId: id);
-    if (!ref.mounted) return null;
-    state = state.copyWith(loading: false, treatmentDetail: res.data);
-    return res;
-  });
-  if (response == null) {
-    state = state.copyWith(loading: false);
+  Future<TreatmentDetailModel?> calltreatmentDetail({required int id}) async {
+    final response = await runSafely(() async {
+      state = state.copyWith(loading: true, treatmentDetail: null);
+      final res = await _repo.getTreatmentDetail(treatmentId: id);
+      if (!ref.mounted) return null;
+      state = state.copyWith(loading: false, treatmentDetail: res.data);
+      return res;
+    });
+    if (response == null) {
+      state = state.copyWith(loading: false);
+    }
+    return response?.data;
   }
-  return response?.data;
-}
 
   Future<bool> callPredictAPI() async {
     if (state.capturedImagesNull) {
@@ -364,7 +364,7 @@ Future<TreatmentDetailModel?> calltreatmentDetail({required int id}) async {
 
     final wasBefore = state.isBefore;
     state = state.copyWith(loading: true, errorMessage: null);
-    EasyLoading.show(status: 'Processing images with AI...');
+    // EasyLoading.show(status: 'Processing images with AI...');
 
     try {
       final checkoutState = ref.read(checkoutViewModel);

@@ -15,7 +15,7 @@
 	<key>keychain-access-groups</key>
     <array/>
 	<key>CFBundleDisplayName</key>
-	<string>Skinsync Ai</string>
+	<string>SkinSync AI</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This permission is used to save AI images in gallery.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
