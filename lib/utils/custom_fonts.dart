@@ -443,6 +443,13 @@ abstract final class CustomFonts {
         fontFamily: 'Degular',
       );
 
+  static TextStyle get darkPurple14w600 => TextStyle(
+        fontSize: _sp(14),
+        fontWeight: FontWeight.w600,
+        color: CustomColors.darkPurple,
+        fontFamily: 'Degular',
+      );
+
   static TextStyle get pink10w600 => TextStyle(
         fontSize: _sp(10),
         fontWeight: FontWeight.w600,
