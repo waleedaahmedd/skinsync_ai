@@ -255,7 +255,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
                   return Align(
                     alignment: .topCenter,
                     child: Text(
-                      'Skinsync Ai ${DateTime.now().year} v${data.version} (${data.buildNumber})',
+                      'SkinSync AI ${DateTime.now().year} v${data.version} (${data.buildNumber})',
                       style: CustomFonts.grey16w400,
                     ),
                   );
