@@ -213,4 +213,26 @@ class TreatmentJourneyService implements TreatmentJourneyRepository {
       );
     }
   }
+
+    @override
+  Future<BaseResponseModel> updateTreatmantGroupName(int groupId , String name) async {
+      final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.updateTreatmentJourneyGroups,
+      requestType: RequestType.patch,
+        params: "/$groupId",
+      requestBody: {
+        'name' : name
+      }
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      return BaseResponseModel.fromJson(parsed);
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(
+        AuthResponse.fromJson(parsed).message ?? "Failed to create group",
+      );
+    }
+  }
 }

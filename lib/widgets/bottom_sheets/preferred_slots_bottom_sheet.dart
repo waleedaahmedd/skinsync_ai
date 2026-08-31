@@ -92,6 +92,15 @@ class _PreferredSlotsBottomSheetState extends State<PreferredSlotsBottomSheet> {
     return true;
   }
 
+  bool get _hasAnySelection {
+    for (int i = 0; i < 3; i++) {
+      if (_selectedDates[i] != null || _selectedTimes[i] != null) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -204,7 +213,7 @@ class _PreferredSlotsBottomSheetState extends State<PreferredSlotsBottomSheet> {
           ),
           SizedBox(height: context.h(12)),
           CustomButton(
-            text: "Continue",
+            text: _hasAnySelection ? "Continue" : "Skip",
             onPressed: _canConfirm
                 ? () {
                     final List<PreferredSlot> slots = [];

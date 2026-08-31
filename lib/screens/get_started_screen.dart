@@ -82,14 +82,14 @@ class GetStartedScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     SizedBox(height: context.h(60)),
-                    Text("Skinsync Ai", style: CustomFonts.grey20w500),
-                    Text('Your Journey', style: CustomFonts.black50w600),
+                    Text("SkinSync AI", style: CustomFonts.grey20w500),
+                    Text('Your Aesthetic', style: CustomFonts.black50w600),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.baseline,
                       textBaseline: TextBaseline.alphabetic,
                       children: [
-                        Text('to ', style: CustomFonts.black50w600),
+                        //Text('Journey ', style: CustomFonts.black50w600),
                         ShaderMask(
                           shaderCallback: (bounds) => const LinearGradient(
                             colors: [
@@ -100,18 +100,21 @@ class GetStartedScreen extends StatelessWidget {
                             end: Alignment.centerRight,
                           ).createShader(bounds),
                           child: Text(
-                            'Glowing Skin',
+                            'Journey Starts',
                             style: CustomFonts.white50w600,
                           ),
                         ),
                       ],
                     ),
-                    Text('Starts Here!', style: CustomFonts.black50w600),
+                    Text('Here!', style: CustomFonts.black50w600),
                     SizedBox(height: context.h(37.2)),
                     SizedBox(
                       width: double.infinity,
                       child: Consumer(
-                        builder: (_, ref, _) => CustomButton(
+
+                      
+                        builder: (_, ref, _) {
+                          return CustomButton(
                           onPressed: () {
                             ref
                                 .read(authViewModel.notifier)
@@ -122,7 +125,8 @@ class GetStartedScreen extends StatelessWidget {
                             );
                           },
                           text: "Get Started",
-                        ),
+                        );
+                        },
                       ),
                     ),
                   ],

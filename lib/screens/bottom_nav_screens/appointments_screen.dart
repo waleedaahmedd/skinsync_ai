@@ -26,7 +26,7 @@ class _AppointmentsScreenState extends ConsumerState<AppointmentsScreen> {
 
   final List<String> _appointmentTypes = [
     "All",
-    "consultation",
+    "Consultation",
     "Treatment session",
   ];
 

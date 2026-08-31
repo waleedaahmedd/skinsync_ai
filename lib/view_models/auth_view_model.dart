@@ -45,8 +45,12 @@ class AuthViewModel extends BaseViewModel<AuthState> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController otpController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _dobController = TextEditingController();
 
   TextEditingController get phoneController => _phoneController;
+  TextEditingController get nameController => _nameController;
+  TextEditingController get dobController => _dobController;
 
   TextEditingController get passwordController => _passwordController;
 
@@ -93,51 +97,48 @@ class AuthViewModel extends BaseViewModel<AuthState> {
     }
   }
 
-Future<String?> uploadDocument({
-  required ImageSource source,
-  required String documentType, // e.g., 'driving_license' or 'passport'
-}) async {
-  try {
-    final XFile? image = await _imagePicker.pickImage(
-      source: source,
-      imageQuality: 85, // Retains high detail for readability
-    );
-
-    if (image == null) return null;
-
-    String? uploadedUrl;
-
-    await runSafely(() async {
-      await EasyLoading.show(status: 'Uploading document...');
-
-      final String userEmail = state.authData?.user?.primaryEmail ?? '';
-
-      // Upload via MediaService
-      uploadedUrl = await MediaService().uploadImage(
-        acceptAnyFormat: true,
-        '$userEmail/$documentType', // optional path subfolder organization
-        image,
+  Future<String?> uploadDocument({
+    required ImageSource source,
+    required String documentType, // e.g., 'driving_license' or 'passport'
+  }) async {
+    try {
+      final XFile? image = await _imagePicker.pickImage(
+        source: source,
+        imageQuality: 85, // Retains high detail for readability
       );
 
-      if (uploadedUrl != null) {
+      if (image == null) return null;
 
+      String? uploadedUrl;
 
-        await EasyLoading.dismiss();
-        EasyLoading.showSuccess('Document uploaded successfully!');
-      } else {
-        await EasyLoading.dismiss();
-        EasyLoading.showError('Failed to upload document');
-      }
-    });
+      await runSafely(() async {
+        await EasyLoading.show(status: 'Uploading document...');
 
-    return uploadedUrl;
-  } catch (e) {
-    await EasyLoading.dismiss();
-    onError('Error picking document: $e');
-    return null;
+        final String userEmail = state.authData?.user?.primaryEmail ?? '';
+
+        // Upload via MediaService
+        uploadedUrl = await MediaService().uploadImage(
+          acceptAnyFormat: true,
+          '$userEmail/$documentType', // optional path subfolder organization
+          image,
+        );
+
+        if (uploadedUrl != null) {
+          await EasyLoading.dismiss();
+          EasyLoading.showSuccess('Document uploaded successfully!');
+        } else {
+          await EasyLoading.dismiss();
+          EasyLoading.showError('Failed to upload document');
+        }
+      });
+
+      return uploadedUrl;
+    } catch (e) {
+      await EasyLoading.dismiss();
+      onError('Error picking document: $e');
+      return null;
+    }
   }
-}
-
 
   void setCountryCode(Country country) {
     state = state.copyWith(country: country);
@@ -303,36 +304,31 @@ Future<String?> uploadDocument({
     });
   }
 
-  Future<bool?> callOnboardingProfileApi({
-    required String name,
-    required String phoneNumber,
-    required String emailAddress,
-    String? location,
-    String? bio,
-  }) async {
+  Future<bool?> callOnboardingProfileApi() async {
     return await runSafely(() async {
       state = state.copyWith(loading: true);
 
       final request = OnBoardingProfileRequest(
-        name: name,
-        phoneNumber: phoneNumber,
-        emailAddress: emailAddress,
-        location: location,
-        bio: bio,
+        name: nameController.text,
+        phoneNumber: phoneController.text,
+        emailAddress: emailController.text,
+        location: '',
+        bio: '',
         cc: '+${state.country.phoneCode}',
         country: state.country.name,
         profileImageUrl:
             state.profileImage ?? state.authData?.user?.profileImageUrl,
+            dob: dobController.text
       );
-
+       log('SDFSDXgs--$request');
       final BaseResponseModel response = await _authRepository
           .onboardingProfile(onBoardingProfileRequest: request);
 
-      state = state.copyWith(loading: false);
       if (response.isSuccess == true) {
         await callGetMe();
         clearProfileImage();
       }
+      state = state.copyWith(loading: false);
       return response.isSuccess == true;
     });
   }
@@ -445,6 +441,8 @@ Future<String?> uploadDocument({
   void clearData() {
     emailController.clear();
     otpController.clear();
+    dobController.clear();
+    phoneController.clear();
     clearProfileImage();
   }
 
@@ -483,6 +481,8 @@ Future<String?> uploadDocument({
     otpController.dispose();
     _passwordController.dispose();
     _phoneController.dispose();
+    _nameController.dispose();
+    _dobController.dispose();
     super.dispose();
   }
 }
