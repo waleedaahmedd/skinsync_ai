@@ -14,6 +14,7 @@ import '../services/api_base_helper.dart';
 import '../services/forms_service.dart';
 import '../services/media_service.dart';
 import '../utils/list_utils.dart';
+import 'auth_view_model.dart';
 import 'base_view_model.dart';
 
 final formsViewModel = NotifierProvider<FormsViewModel, FormsState>(() {
@@ -117,10 +118,10 @@ class FormsViewModel extends BaseViewModel<FormsState> {
       // 1. Generate a unique filename using timestamp to avoid caching and ensure fresh URL
       final uniqueFileName =
           '${DateTime.now().millisecondsSinceEpoch}_$fileName';
-
-      // 2. Upload to Firebase directly from bytes
+       final user = ref.read(authViewModel).authData?.user?.primaryEmail ?? '';
+   
       final String? firebaseUrl = await MediaService().uploadMedia(
-        path: 'signed_forms',
+        path: 'signed_forms/$user/$title/$fileName',
         file: XFile.fromData(
           Uint8List.fromList(pdfBytes), // Ensure fresh data copy
           name: uniqueFileName,
