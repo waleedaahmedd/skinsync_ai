@@ -523,9 +523,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
         }
       } else {
         if (_isPoseCorrect && _storedRef != null) {
-          if (_isSoundOn) {
-            TtsUtils.speak("Perfect");
-          }
           _captureAndNavigate(_storedRef!);
         } else {
           _stopCountdown();
@@ -676,6 +673,10 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
       );
 
       if (!mounted) return;
+
+      if (_isSoundOn) {
+        TtsUtils.speak("Perfect");
+      }
 
       setState(() {
         _capturedImage = finalImage;
