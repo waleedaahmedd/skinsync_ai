@@ -144,6 +144,7 @@ class _SubscriptionPlansScreenState
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
+      constraints: .new(minWidth: 1.sw),
       builder: (context) => Container(
         padding: EdgeInsets.fromLTRB(
           context.w(24),
@@ -237,6 +238,7 @@ class _SubscriptionPlansScreenState
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
+      constraints: .new(minWidth: 1.sw),
       builder: (context) => Container(
         height: 0.6.sh,
         decoration: BoxDecoration(

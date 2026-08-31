@@ -10,8 +10,8 @@ import 'package:intl/intl.dart';
 import '../main.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
-import '../view_models/auth_view_model.dart';
 import '../utils/string_utils.dart';
+import '../view_models/auth_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/app_network_image.dart';
 import '../widgets/custom_app_bar.dart';
@@ -28,18 +28,17 @@ class PersonalDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
-
   final _formKey = GlobalKey<FormState>();
-  
+
   DateTime? _selectedDob;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final data = ref.read(authViewModel).authData;
-       final authVM = ref.read(authViewModel.notifier);
+      final authVM = ref.read(authViewModel.notifier);
       if (data != null) {
-      authVM.nameController.text = data.user?.name?.capitalize ?? "";
+        authVM.nameController.text = data.user?.name?.capitalize ?? "";
         authVM.phoneController.text = data.user?.phoneNumber ?? "";
         authVM.emailController.text = data.user?.primaryEmail ?? "";
         authVM.dobController.text = data.user?.dob ?? '';
@@ -97,6 +96,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
           top: Radius.circular(context.r(24)),
         ),
       ),
+      constraints: .new(minWidth: 1.sw),
       builder: (BuildContext context) {
         return SafeArea(
           child: Wrap(
@@ -155,7 +155,8 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
   }
 
   Future<void> _selectDateOfBirth(BuildContext context) async {
-    final DateTime initialDate = _selectedDob ?? DateTime.now().subtract(const Duration(days: 18 * 365));
+    final DateTime initialDate =
+        _selectedDob ?? DateTime.now().subtract(const Duration(days: 18 * 365));
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
@@ -177,12 +178,12 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
 
     if (picked != null) {
       final age = _calculateAge(picked);
-      if (age < 18) { 
+      if (age < 18) {
         if (!mounted) return;
         _showUnderageDialog();
       } else {
         setState(() {
-        final authVM = ref.read(authViewModel.notifier);
+          final authVM = ref.read(authViewModel.notifier);
           _selectedDob = picked;
           authVM.dobController.text = DateFormat('yyyy-MM-dd').format(picked);
         });
@@ -190,7 +191,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
     }
   }
 
- void _showUnderageDialog() {
+  void _showUnderageDialog() {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -199,10 +200,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(context.r(16)),
           ),
-          title: Text(
-            'Age Restriction',
-            style: CustomFonts.black20w600,
-          ),
+          title: Text('Age Restriction', style: CustomFonts.black20w600),
           content: Text(
             'You are not authorized to use this app because you must be at least 18 years old.',
             style: CustomFonts.black16w400,
@@ -210,13 +208,15 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                 final authVM = ref.read(authViewModel.notifier);
+                final authVM = ref.read(authViewModel.notifier);
                 authVM.dobController.clear();
                 Navigator.pop(context);
               },
               child: Text(
                 'OK',
-                style: CustomFonts.black14w500.copyWith(color: CustomColors.purpleColor),
+                style: CustomFonts.black14w500.copyWith(
+                  color: CustomColors.purpleColor,
+                ),
               ),
             ),
           ],
@@ -280,7 +280,9 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                       Text("Full Name", style: CustomFonts.grey700_11w700),
                       SizedBox(height: context.h(6)),
                       TextFormField(
-                        controller: ref.read(authViewModel.notifier).nameController,
+                        controller: ref
+                            .read(authViewModel.notifier)
+                            .nameController,
                         style: CustomFonts.black13w600,
                         decoration: InputDecoration(
                           hintText: "Lizzy Johnson",
@@ -316,13 +318,14 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                         },
                       ),
                       SizedBox(height: context.h(16)),
-                    
-                      
+
                       Text("Phone Number", style: CustomFonts.grey700_11w700),
                       SizedBox(height: context.h(6)),
                       PhoneWidget(
                         enableCountrySelection: !isDeploymentMode,
-                        controller: ref.read(authViewModel.notifier).phoneController,
+                        controller: ref
+                            .read(authViewModel.notifier)
+                            .phoneController,
                         initialCountryCode: ref
                             .read(authViewModel)
                             .country
@@ -336,7 +339,7 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                         },
                       ),
                       SizedBox(height: context.h(16)),
-                   
+
                       // Email Address
                       Text(
                         "Email Address (Primary)",
@@ -344,7 +347,9 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                       ),
                       SizedBox(height: context.h(6)),
                       TextFormField(
-                        controller:ref.read(authViewModel.notifier).emailController,
+                        controller: ref
+                            .read(authViewModel.notifier)
+                            .emailController,
                         style: CustomFonts.black13w600,
                         enabled: false,
                         decoration: InputDecoration(
@@ -378,28 +383,30 @@ class _PersonalDetailScreenState extends ConsumerState<PersonalDetailScreen> {
                         },
                       ),
                       SizedBox(height: context.h(16)),
-                         
-                         TextFormField(
-                    controller:ref.read(authViewModel.notifier).dobController,
-                    readOnly: true,
-                    onTap: () => _selectDateOfBirth(context),
-                    style: CustomFonts.black18w400,
-                    decoration: InputDecoration(
-                      hintText: "Date of Birth (YYYY-MM-DD)",
-                      suffixIcon: Icon(
-                        Icons.calendar_today_outlined,
-                        color: CustomColors.darkPurple,
-                        size: context.w(20),
+
+                      TextFormField(
+                        controller: ref
+                            .read(authViewModel.notifier)
+                            .dobController,
+                        readOnly: true,
+                        onTap: () => _selectDateOfBirth(context),
+                        style: CustomFonts.black18w400,
+                        decoration: InputDecoration(
+                          hintText: "Date of Birth (YYYY-MM-DD)",
+                          suffixIcon: Icon(
+                            Icons.calendar_today_outlined,
+                            color: CustomColors.darkPurple,
+                            size: context.w(20),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'Please select your date of birth';
+                          }
+                          return null;
+                        },
                       ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return 'Please select your date of birth';
-                      }
-                      return null;
-                    },
-                  ),
-                 SizedBox(height: context.h(16)),
+                      SizedBox(height: context.h(16)),
                       // Location
                       // Text("Location", style: CustomFonts.grey700_11w700),
                       // SizedBox(height: context.h(6)),

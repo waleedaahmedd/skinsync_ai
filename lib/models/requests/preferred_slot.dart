@@ -1,4 +1,4 @@
-class PreferredSlot {
+class  PreferredSlot {
   final String date;
   final String time;
 

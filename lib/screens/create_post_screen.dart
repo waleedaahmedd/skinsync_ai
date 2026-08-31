@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:image_picker/image_picker.dart';
-import '../widgets/custom_app_bar.dart';
-import '../widgets/custom_button.dart';
-import '../widgets/bottom_sheets/media_picker_button.dart';
-import '../widgets/bottom_sheets/media_source_sheet.dart';
-import '../widgets/post_image_preview.dart';
-import '../widgets/post_video_preview.dart';
+
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../widgets/bottom_sheets/media_picker_button.dart';
+import '../widgets/bottom_sheets/media_source_sheet.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_button.dart';
+import '../widgets/post_image_preview.dart';
+import '../widgets/post_video_preview.dart';
 
 class CreatePostScreen extends ConsumerStatefulWidget {
   const CreatePostScreen({super.key});
@@ -66,8 +67,11 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
     showModalBottomSheet(
       context: context,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(20))),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(context.r(20)),
+        ),
       ),
+      constraints: .new(minWidth: 1.sw),
       builder: (context) {
         return MediaSourceSheet(
           isVideo: isVideo,
@@ -99,10 +103,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: const CustomAppBar(
-        showTitle: true,
-        title: "Create Post",
-      ),
+      appBar: const CustomAppBar(showTitle: true, title: "Create Post"),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(context.w(20)),
         child: Column(
@@ -173,14 +174,8 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
             SizedBox(height: context.h(20)),
 
             // Media Preview
-            PostImagePreview(
-              images: _selectedImages,
-              onRemove: _removeImage,
-            ),
-            PostVideoPreview(
-              video: _selectedVideo,
-              onRemove: _removeVideo,
-            ),
+            PostImagePreview(images: _selectedImages, onRemove: _removeImage),
+            PostVideoPreview(video: _selectedVideo, onRemove: _removeVideo),
 
             SizedBox(height: context.h(30)),
 

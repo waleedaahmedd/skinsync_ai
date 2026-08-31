@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import '../utils/string_utils.dart';
+
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../utils/string_utils.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 import 'get_notified_screen.dart';
@@ -297,6 +298,7 @@ class _AllergyAndMedicalHistoryState extends State<AllergyAndMedicalHistory> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      constraints: .new(minWidth: 1.sw),
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(

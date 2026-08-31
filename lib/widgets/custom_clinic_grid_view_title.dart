@@ -32,6 +32,7 @@ class CustomClinicGridViewTile extends StatelessWidget {
           boxShadow: CustomColors.cardShadow,
         ),
         child: Column(
+          mainAxisSize: .min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Top Image with Badges
@@ -229,97 +230,99 @@ class CustomClinicGridViewTile extends StatelessWidget {
               ),
             ),
             // Bottom Details Info
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                context.w(12),
-                context.h(8),
-                context.w(12),
-                context.h(10),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    clinicData?.name ?? "Clinic Name",
-                    style: CustomFonts.black16w600.copyWith(
-                      fontSize: context.sp(14),
-                      height: 1.1,
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  context.w(12),
+                  context.h(8),
+                  context.w(12),
+                  context.h(10),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      clinicData?.name ?? "Clinic Name",
+                      style: CustomFonts.black16w600.copyWith(
+                        fontSize: context.sp(14),
+                        height: 1.1,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: context.h(4)),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.w(8),
-                      vertical: context.h(3),
-                    ),
-                    decoration: BoxDecoration(
-                      color: CustomColors.purpleColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(context.r(20)),
-                    ),
-                    child: Text(
-                      // Doctor count is not available here yet.
-                      "0 Doctors",
-                      style: CustomFonts.darkPurple12w600.copyWith(
-                        fontSize: context.sp(10),
+                    SizedBox(height: context.h(4)),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: context.w(8),
+                        vertical: context.h(3),
+                      ),
+                      decoration: BoxDecoration(
+                        color: CustomColors.purpleColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(context.r(20)),
+                      ),
+                      child: Text(
+                        // Doctor count is not available here yet.
+                        "0 Doctors",
+                        style: CustomFonts.darkPurple12w600.copyWith(
+                          fontSize: context.sp(10),
+                        ),
                       ),
                     ),
-                  ),
-                  if (clinicData?.address != null) ...[
-                    SizedBox(height: context.h(4)),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.location_on_outlined,
-                          size: context.sp(11),
-                          color: Colors.grey,
-                        ),
-                        SizedBox(width: context.w(4)),
-                        Expanded(
-                          child: Text(
-                            clinicData!.address!,
-                            style: CustomFonts.grey13w400.copyWith(
-                              fontSize: context.sp(10),
-                              color: CustomColors.textGreyColor.withValues(
-                                alpha: 0.8,
+                    if (clinicData?.address != null) ...[
+                      SizedBox(height: context.h(4)),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.location_on_outlined,
+                            size: context.sp(11),
+                            color: Colors.grey,
+                          ),
+                          SizedBox(width: context.w(4)),
+                          Expanded(
+                            child: Text(
+                              clinicData!.address!,
+                              style: CustomFonts.grey13w400.copyWith(
+                                fontSize: context.sp(10),
+                                color: CustomColors.textGreyColor.withValues(
+                                  alpha: 0.8,
+                                ),
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                  if (clinicData?.place?.currentOpeningHours != null) ...[
-                    SizedBox(height: context.h(3)),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.access_time_rounded,
-                          size: context.sp(11),
-                          color: Colors.grey,
-                        ),
-                        SizedBox(width: context.w(4)),
-                        Expanded(
-                          child: Text(
-                            clinicData!
-                                .place!
-                                .currentOpeningHours!
-                                .todayOpeningHours,
-                            style: CustomFonts.grey13w400.copyWith(
-                              fontSize: context.sp(10),
-                              color: Colors.grey.shade600,
+                        ],
+                      ),
+                    ],
+                    if (clinicData?.place?.currentOpeningHours != null) ...[
+                      SizedBox(height: context.h(3)),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.access_time_rounded,
+                            size: context.sp(11),
+                            color: Colors.grey,
+                          ),
+                          SizedBox(width: context.w(4)),
+                          Expanded(
+                            child: Text(
+                              clinicData!
+                                  .place!
+                                  .currentOpeningHours!
+                                  .todayOpeningHours,
+                              style: CustomFonts.grey13w400.copyWith(
+                                fontSize: context.sp(10),
+                                color: Colors.grey.shade600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ],

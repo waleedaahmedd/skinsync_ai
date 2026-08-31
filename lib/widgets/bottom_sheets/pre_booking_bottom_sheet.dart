@@ -28,6 +28,7 @@ class PreBookingBottomSheet extends StatefulWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      constraints: .new(minWidth: 1.sw),
       isScrollControlled: true,
       builder: (_) =>
           PreBookingBottomSheet(clinic: clinic, onConfirm: onConfirm),

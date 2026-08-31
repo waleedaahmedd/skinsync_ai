@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
+
 import '../../models/requests/preferred_slot.dart';
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
@@ -19,13 +20,15 @@ class PreferredSlotsBottomSheet extends StatefulWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      constraints: .new(minWidth: 1.sw),
       backgroundColor: Colors.transparent,
       builder: (context) => PreferredSlotsBottomSheet(onConfirm: onConfirm),
     );
   }
 
   @override
-  State<PreferredSlotsBottomSheet> createState() => _PreferredSlotsBottomSheetState();
+  State<PreferredSlotsBottomSheet> createState() =>
+      _PreferredSlotsBottomSheetState();
 }
 
 class _PreferredSlotsBottomSheetState extends State<PreferredSlotsBottomSheet> {
@@ -106,7 +109,9 @@ class _PreferredSlotsBottomSheetState extends State<PreferredSlotsBottomSheet> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(context.r(32))),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(context.r(32)),
+        ),
       ),
       padding: EdgeInsets.fromLTRB(
         context.w(24),
@@ -132,7 +137,10 @@ class _PreferredSlotsBottomSheetState extends State<PreferredSlotsBottomSheet> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Preferred Appointment Slots", style: CustomFonts.black20w600),
+              Text(
+                "Preferred Appointment Slots",
+                style: CustomFonts.black20w600,
+              ),
               GestureDetector(
                 onTap: () => Navigator.pop(context),
                 child: const Icon(Iconsax.close_circle, color: Colors.grey),
@@ -165,7 +173,9 @@ class _PreferredSlotsBottomSheetState extends State<PreferredSlotsBottomSheet> {
                             Container(
                               padding: EdgeInsets.all(context.w(8)),
                               decoration: BoxDecoration(
-                                color: CustomColors.purpleColor.withValues(alpha: 0.1),
+                                color: CustomColors.purpleColor.withValues(
+                                  alpha: 0.1,
+                                ),
                                 shape: BoxShape.circle,
                               ),
                               child: Text(
@@ -188,7 +198,9 @@ class _PreferredSlotsBottomSheetState extends State<PreferredSlotsBottomSheet> {
                             Expanded(
                               child: _buildPickerButton(
                                 icon: Iconsax.calendar,
-                                label: _selectedDates[index]?.formattedDate ?? "Select Date",
+                                label:
+                                    _selectedDates[index]?.formattedDate ??
+                                    "Select Date",
                                 isSelected: _selectedDates[index] != null,
                                 onTap: () => _selectDate(index),
                               ),
@@ -197,7 +209,9 @@ class _PreferredSlotsBottomSheetState extends State<PreferredSlotsBottomSheet> {
                             Expanded(
                               child: _buildPickerButton(
                                 icon: Iconsax.clock,
-                                label: _selectedTimes[index]?.format(context) ?? "Select Time",
+                                label:
+                                    _selectedTimes[index]?.format(context) ??
+                                    "Select Time",
                                 isSelected: _selectedTimes[index] != null,
                                 onTap: () => _selectTime(index),
                               ),
@@ -270,7 +284,9 @@ class _PreferredSlotsBottomSheetState extends State<PreferredSlotsBottomSheet> {
             Expanded(
               child: Text(
                 label,
-                style: isSelected ? CustomFonts.black12w600 : CustomFonts.grey12w400,
+                style: isSelected
+                    ? CustomFonts.black12w600
+                    : CustomFonts.grey12w400,
                 overflow: TextOverflow.ellipsis,
               ),
             ),

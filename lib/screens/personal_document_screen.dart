@@ -21,8 +21,8 @@ class PersonalDocumentScreen extends ConsumerStatefulWidget {
       _PersonalDocumentScreenState();
 }
 
-class _PersonalDocumentScreenState extends ConsumerState<PersonalDocumentScreen> {
- 
+class _PersonalDocumentScreenState
+    extends ConsumerState<PersonalDocumentScreen> {
   final _formKey = GlobalKey<FormState>();
 
   // Document states (replace with your dynamic URLs/paths from AuthViewModel state)
@@ -32,14 +32,10 @@ class _PersonalDocumentScreenState extends ConsumerState<PersonalDocumentScreen>
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-
-    
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
   }
 
   Future<void> _onSavePressed() async {
-    
     // final success = await ref
     //     .read(authViewModel.notifier)
     //     .callOnboardingProfileApi(
@@ -51,14 +47,14 @@ class _PersonalDocumentScreenState extends ConsumerState<PersonalDocumentScreen>
     //     );
     // if (success ?? false) {
     //   EasyLoading.showSuccess('Profile updated!');
-    
   }
 
-  
-
-  void _showImageSourceDialog({required Function(ImageSource source) onSelect}) {
+  void _showImageSourceDialog({
+    required Function(ImageSource source) onSelect,
+  }) {
     showModalBottomSheet(
       context: context,
+      constraints: .new(minWidth: 1.sw),
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
@@ -108,27 +104,30 @@ class _PersonalDocumentScreenState extends ConsumerState<PersonalDocumentScreen>
     );
   }
 
-Future<void> _pickDocumentImage({required bool isDrivingLicense}) async {
-  _showImageSourceDialog(
-    onSelect: (source) async {
-      final String docType = isDrivingLicense ? 'driving_license' : 'passport';
-      
-      final uploadedUrl = await ref
-          .read(authViewModel.notifier)
-          .uploadDocument(source: source, documentType: docType);
+  Future<void> _pickDocumentImage({required bool isDrivingLicense}) async {
+    _showImageSourceDialog(
+      onSelect: (source) async {
+        final String docType = isDrivingLicense
+            ? 'driving_license'
+            : 'passport';
 
-      if (uploadedUrl != null) {
-        setState(() {
-          if (isDrivingLicense) {
-            _drivingLicenseUrl = uploadedUrl;
-          } else {
-            _passportUrl = uploadedUrl;
-          }
-        });
-      }
-    },
-  );
-}
+        final uploadedUrl = await ref
+            .read(authViewModel.notifier)
+            .uploadDocument(source: source, documentType: docType);
+
+        if (uploadedUrl != null) {
+          setState(() {
+            if (isDrivingLicense) {
+              _drivingLicenseUrl = uploadedUrl;
+            } else {
+              _passportUrl = uploadedUrl;
+            }
+          });
+        }
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,12 +145,7 @@ Future<void> _pickDocumentImage({required bool isDrivingLicense}) async {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-           
-                
-                Text(
-                  "Identity Documents",
-                  style: CustomFonts.black16w600,
-                ),
+                Text("Identity Documents", style: CustomFonts.black16w600),
                 SizedBox(height: context.h(4)),
                 Text(
                   "Upload clear photos of your official identity documents.",
@@ -171,7 +165,8 @@ Future<void> _pickDocumentImage({required bool isDrivingLicense}) async {
                 _buildDocumentCard(
                   title: "Passport",
                   imageUrl: _passportUrl,
-                  onTapUpload: () => _pickDocumentImage(isDrivingLicense: false),
+                  onTapUpload: () =>
+                      _pickDocumentImage(isDrivingLicense: false),
                 ),
                 SizedBox(height: context.h(20)),
               ],
@@ -219,10 +214,7 @@ Future<void> _pickDocumentImage({required bool isDrivingLicense}) async {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: CustomFonts.black14w600,
-        ),
+        Text(title, style: CustomFonts.black14w600),
         SizedBox(height: context.h(8)),
         InkWell(
           onTap: onTapUpload,
@@ -290,8 +282,9 @@ Future<void> _pickDocumentImage({required bool isDrivingLicense}) async {
                         Container(
                           padding: EdgeInsets.all(context.w(12)),
                           decoration: BoxDecoration(
-                            color: CustomColors.purpleColor
-                                .withValues(alpha: 0.1),
+                            color: CustomColors.purpleColor.withValues(
+                              alpha: 0.1,
+                            ),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -324,6 +317,4 @@ Future<void> _pickDocumentImage({required bool isDrivingLicense}) async {
       ],
     );
   }
-
-
 }
