@@ -6,7 +6,7 @@ import 'package:video_player/video_player.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../models/explore_models.dart';
-import '../utils/custom_fonts.dart';
+import '../view_models/explore_view_model.dart';
 import 'reels/reel_content_overlay.dart';
 
 class ReelCard extends ConsumerStatefulWidget {
@@ -22,7 +22,6 @@ class ReelCard extends ConsumerStatefulWidget {
 class _ReelCardState extends ConsumerState<ReelCard> {
   late CachedVideoPlayerPlus _controller;
   bool _initialized = false;
-  bool _isExpanded = false;
 
   @override
   void initState() {
@@ -38,6 +37,8 @@ class _ReelCardState extends ConsumerState<ReelCard> {
               setState(() {
                 _initialized = true;
               });
+              final isMuted = ref.read(reelsMutedProvider);
+              _controller.controller.setVolume(isMuted ? 0.0 : 1.0);
               if (widget.isActive) {
                 _controller.controller.play();
                 _controller.controller.setLooping(true);
@@ -71,6 +72,11 @@ class _ReelCardState extends ConsumerState<ReelCard> {
 
   @override
   Widget build(BuildContext context) {
+    final isMuted = ref.watch(reelsMutedProvider);
+    if (_initialized) {
+      _controller.controller.setVolume(isMuted ? 0.0 : 1.0);
+    }
+
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -117,7 +123,7 @@ class _ReelCardState extends ConsumerState<ReelCard> {
               ),
             ),
 
-          // Bottom Content with Gradient and Toggle
+          // Bottom Content with Gradient
           Positioned(
             bottom: 0,
             left: 0,
@@ -139,65 +145,13 @@ class _ReelCardState extends ConsumerState<ReelCard> {
                   ],
                 ),
               ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: ReelContentOverlay(
-                      userName: widget.reel.profileName ?? 'N/A',
-                      userProfileImage: widget.reel.profileLogo ?? '',
-                      caption: widget.reel.description,
-                      isExpanded: _isExpanded,
-                      // musicTitle: widget.reel.musicTitle,
-                    ),
-                  ),
-                  SizedBox(width: context.w(40)),
-                  // Hide/Show Toggle Button
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _isExpanded = !_isExpanded;
-                      });
-                    },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          _isExpanded ? 'Hide' : 'Show',
-                          style: CustomFonts.white12w400,
-                        ),
-                        Icon(
-                          _isExpanded
-                              ? Icons.keyboard_arrow_down_rounded
-                              : Icons.keyboard_arrow_up_rounded,
-                          color: Colors.white,
-                          size: context.sp(20),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              child: ReelContentOverlay(
+                userName: widget.reel.profileName ?? 'N/A',
+                userProfileImage: widget.reel.profileLogo ?? '',
+                caption: widget.reel.description,
               ),
             ),
           ),
-
-          // Right Sidebar Actions
-          // Positioned(
-          //   bottom: context.h(100),
-          //   right: context.w(12),
-          //   child: ReelSidebar(
-          //     likesCount: widget.reel.likesCount,
-          //     commentsCount: widget.reel.commentsCount,
-          //     sharesCount: widget.reel.sharesCount,
-          //     isLiked: widget.reel.isLiked,
-          //     isSaved: widget.reel.isSaved,
-          //     onLike: () => ref.read(reelsViewModel.notifier).toggleLike(widget.reel.id),
-          //     onComment: () {},
-          //     onShare: () {},
-          //     onSave: () => ref.read(reelsViewModel.notifier).toggleSave(widget.reel.id),
-          //     onMore: () {},
-          //   ),
-          // ),
         ],
       ),
     );

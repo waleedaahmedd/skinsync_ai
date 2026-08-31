@@ -119,7 +119,21 @@ class _ReelsScreenState extends ConsumerState<ReelsScreen> {
                   children: [
                     Row(
                       children: [
-                        SizedBox(width: context.w(4)),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            final isMuted = ref.watch(reelsMutedProvider);
+                            return SocialToggleButton(
+                              onTap: () {
+                                ref.read(reelsMutedProvider.notifier).toggle();
+                              },
+                              icon: isMuted
+                                  ? Icons.volume_off_rounded
+                                  : Icons.volume_up_rounded,
+                              isReels: true,
+                            );
+                          },
+                        ),
+                        SizedBox(width: context.w(8)),
                         SocialToggleButton(
                           onTap: () => ref
                               .read(exploreViewModel.notifier)
