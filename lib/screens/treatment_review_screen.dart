@@ -17,7 +17,7 @@ import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/dialogs/success_dialogs.dart';
 
-class TreatmentReviewScreen extends ConsumerWidget {
+class TreatmentReviewScreen extends ConsumerStatefulWidget {
   final SimulationData? simulationData;
   final List<PreferredSlot> preferredSlots;
   final Clinic clinic;
@@ -32,7 +32,16 @@ class TreatmentReviewScreen extends ConsumerWidget {
   static const String routeName = '/TreatmentReviewScreen';
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<TreatmentReviewScreen> createState() =>
+      _TreatmentReviewScreenState();
+}
+
+class _TreatmentReviewScreenState
+    extends ConsumerState<TreatmentReviewScreen> {
+  bool _shareMedicalHistory = false;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const CustomAppBar(
@@ -46,9 +55,9 @@ class TreatmentReviewScreen extends ConsumerWidget {
           children: [
             _buildClinicInfo(context),
             SizedBox(height: context.h(24)),
-            _buildPatientInfo(context, ref),
+            _buildPatientInfo(context),
             SizedBox(height: context.h(24)),
-            if (simulationData != null) ...[
+            if (widget.simulationData != null) ...[
               _buildTreatmentDetails(context),
               SizedBox(height: context.h(24)),
               Text("Simulation Images", style: CustomFonts.black18w600),
@@ -56,10 +65,12 @@ class TreatmentReviewScreen extends ConsumerWidget {
               _buildSimulationImages(context),
               SizedBox(height: context.h(24)),
             ],
-            if (preferredSlots.isNotEmpty) ...[
+            if (widget.preferredSlots.isNotEmpty) ...[
               _buildSlotsSummary(context),
               SizedBox(height: context.h(24)),
             ],
+            _buildMedicalHistoryCheckbox(context),
+            SizedBox(height: context.h(24)),
             Text(
               "By continuing, you confirm that you are voluntarily submitting new facial images for SkinSync’s facial-analysis, simulation, treatment-planning, and progress-tracking features under your existing Facial Scan and Biometric Consent. Do not continue if you have withdrawn that consent.",
               style: CustomFonts.black14w400.copyWith(
@@ -72,7 +83,65 @@ class TreatmentReviewScreen extends ConsumerWidget {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomBar(context, ref),
+      bottomNavigationBar: _buildBottomBar(context),
+    );
+  }
+
+  Widget _buildMedicalHistoryCheckbox(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(context.w(16)),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(context.r(16)),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _shareMedicalHistory = !_shareMedicalHistory;
+          });
+        },
+        borderRadius: BorderRadius.circular(context.r(12)),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: context.w(22),
+              height: context.w(22),
+              child: Checkbox(
+                value: _shareMedicalHistory,
+                onChanged: (value) {
+                  setState(() {
+                    _shareMedicalHistory = value ?? false;
+                  });
+                },
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(context.r(4)),
+                ),
+                side: BorderSide(color: Colors.grey.shade400),
+                activeColor: CustomColors.purpleColor,
+              ),
+            ),
+            SizedBox(width: context.w(12)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Share Medical History",
+                    style: CustomFonts.black14w600,
+                  ),
+                  SizedBox(height: context.h(2)),
+                  Text(
+                    "Allow the clinic to view your allergy & medical history.",
+                    style: CustomFonts.grey12w400,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -97,7 +166,7 @@ class TreatmentReviewScreen extends ConsumerWidget {
                 ),
                 child: ClipOval(
                   child: CachedNetworkImage(
-                    imageUrl: clinic.logo ?? "",
+                    imageUrl: widget.clinic.logo ?? "",
                     fit: BoxFit.cover,
                     placeholder: (context, url) =>
                         const CupertinoActivityIndicator(),
@@ -115,7 +184,7 @@ class TreatmentReviewScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      clinic.name ?? "Clinic Name",
+                      widget.clinic.name ?? "Clinic Name",
                       style: CustomFonts.black18w600,
                     ),
                     SizedBox(height: context.h(2)),
@@ -131,26 +200,26 @@ class TreatmentReviewScreen extends ConsumerWidget {
           SizedBox(height: context.h(16)),
           const Divider(height: 1),
           SizedBox(height: context.h(16)),
-          if (clinic.address != null)
+          if (widget.clinic.address != null)
             _buildDetailRow(
               context,
               Icons.location_on_outlined,
-              clinic.address!,
+              widget.clinic.address!,
             ),
-          if (clinic.phone != null) ...[
+          if (widget.clinic.phone != null) ...[
             SizedBox(height: context.h(8)),
             _buildDetailRow(
               context,
               Icons.phone_outlined,
-              clinic.phone!,
+              widget.clinic.phone!,
             ),
           ],
-          if (clinic.email != null) ...[
+          if (widget.clinic.email != null) ...[
             SizedBox(height: context.h(8)),
             _buildDetailRow(
               context,
               Icons.email_outlined,
-              clinic.email!,
+              widget.clinic.email!,
             ),
           ],
         ],
@@ -158,7 +227,7 @@ class TreatmentReviewScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPatientInfo(BuildContext context, WidgetRef ref) {
+  Widget _buildPatientInfo(BuildContext context) {
     final user = ref.watch(authViewModel).authData?.user;
     final String name = (user?.name != null && user!.name!.trim().isNotEmpty)
         ? user.name!
@@ -285,22 +354,22 @@ class TreatmentReviewScreen extends ConsumerWidget {
         _buildImagePair(
           context,
           "Front View",
-          simulationData?.frontImageBefore,
-          simulationData?.frontImageAfter,
+          widget.simulationData?.frontImageBefore,
+          widget.simulationData?.frontImageAfter,
         ),
         SizedBox(height: context.h(12)),
         _buildImagePair(
           context,
           "Right View",
-          simulationData?.rightImageBefore,
-          simulationData?.rightImageAfter,
+          widget.simulationData?.rightImageBefore,
+          widget.simulationData?.rightImageAfter,
         ),
         SizedBox(height: context.h(12)),
         _buildImagePair(
           context,
           "Left View",
-          simulationData?.leftImageBefore,
-          simulationData?.leftImageAfter,
+          widget.simulationData?.leftImageBefore,
+          widget.simulationData?.leftImageAfter,
         ),
       ],
     );
@@ -390,8 +459,8 @@ class TreatmentReviewScreen extends ConsumerWidget {
             ],
           ),
           const Divider(height: 24),
-          if (simulationData?.treatments != null)
-            ...simulationData!.treatments!.map((treatment) {
+          if (widget.simulationData?.treatments != null)
+            ...widget.simulationData!.treatments!.map((treatment) {
               return Padding(
                 padding: EdgeInsets.only(bottom: context.h(12)),
                 child: Column(
@@ -466,12 +535,14 @@ class TreatmentReviewScreen extends ConsumerWidget {
             ],
           ),
           const Divider(height: 24),
-          ...preferredSlots.asMap().entries.map((entry) {
+          ...widget.preferredSlots.asMap().entries.map((entry) {
             final index = entry.key;
             final slot = entry.value;
             return Padding(
               padding: EdgeInsets.only(
-                bottom: index != preferredSlots.length - 1 ? context.h(10) : 0,
+                bottom: index != widget.preferredSlots.length - 1
+                    ? context.h(10)
+                    : 0,
               ),
               child: Row(
                 children: [
@@ -496,7 +567,7 @@ class TreatmentReviewScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildBottomBar(BuildContext context, WidgetRef ref) {
+  Widget _buildBottomBar(BuildContext context) {
     return Container(
       padding: EdgeInsets.only(
         left: context.w(24),
@@ -541,14 +612,21 @@ class TreatmentReviewScreen extends ConsumerWidget {
               height: context.h(52),
               onPressed: () async {
                 bool? success;
-                if (clinic.place != null) {
+                if (widget.clinic.place != null) {
                   success = await ref
                       .read(treatmentJourneyProvider.notifier)
-                      .callShareMapTreatmentRequest(clinic, preferredSlots);
+                      .callShareMapTreatmentRequest(
+                        widget.clinic,
+                        widget.preferredSlots,
+                        shareMedicalHistory: _shareMedicalHistory,
+                      );
                 } else {
                   success = await ref
                       .read(treatmentJourneyProvider.notifier)
-                      .callShareTreatmentRequest(preferredSlots);
+                      .callShareTreatmentRequest(
+                        widget.preferredSlots,
+                        shareMedicalHistory: _shareMedicalHistory,
+                      );
                 }
 
                 if (success == true) {

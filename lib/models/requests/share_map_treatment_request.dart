@@ -5,17 +5,20 @@ class ShareMapTreatmentRequest {
   final int optionId;
   final Clinic clinic;
   final List<PreferredSlot> preferredSlots;
+  final bool shareMedicalHistory;
 
   ShareMapTreatmentRequest({
     required this.optionId,
     required this.clinic,
     required this.preferredSlots,
+    this.shareMedicalHistory = false,
   });
 
   Map<String, dynamic> toJson() {
     return {
       'option_id': optionId,
       'preferred_slots': preferredSlots.map((e) => e.toJson()).toList(),
+      'share_medical_history': shareMedicalHistory,
       'clinic': {
         'name': clinic.name ?? clinic.place?.displayName?.text ?? '',
         'email': clinic.email ?? '',

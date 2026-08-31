@@ -31,10 +31,14 @@ class _MessageCyclerState extends State<MessageCycler> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 2), (t) {
-      setState(() {
-        _index = (_index + 1) % _messages.length;
-      });
+    _timer = Timer.periodic(const Duration(seconds: 4), (t) {
+      if (_index < _messages.length - 1) {
+        setState(() {
+          _index++;
+        });
+      } else {
+        _timer?.cancel();
+      }
     });
   }
 
@@ -46,8 +50,8 @@ class _MessageCyclerState extends State<MessageCycler> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
+    return PopScope(
+      canPop: false,
       child: Dialog(
         backgroundColor: Colors.transparent,
         elevation: 0,
