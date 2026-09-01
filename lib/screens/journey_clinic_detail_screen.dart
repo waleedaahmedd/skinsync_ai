@@ -17,6 +17,7 @@ import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/bottom_sheets/preferred_slots_bottom_sheet.dart';
+import 'patient_treatment_requests_screen.dart';
 import 'treatment_review_screen.dart';
 import 'treatment_journey_screen.dart';
 
@@ -349,95 +350,99 @@ class _JourneyClinicDetailScreenState
               ),
             ),
           Positioned(
-           left: 0,
-  right: 0,
-  bottom: 0,
-  child: Container(
-    decoration: BoxDecoration(
-      color: CustomColors.whiteColor, // Added background color to ensure opacity over scrolled content
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.06),
-          blurRadius: 15,
-          offset: const Offset(0, -5),
-        ),
-      ],
-    ),
-    child: SafeArea(
-      top: false,
-      child: Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.paddingOf(context).bottom + context.h(20),
-                  left: context.w(24),
-                  right: context.w(24),
-                  top: context.h(20),
-                ),
-                child: Consumer(
-                  builder: (_, ref, _) {
-                    final tjState = ref.watch(treatmentJourneyProvider);
-                    final optionId = tjState.selectedOptionId;
-                    return Column(
-                      children: [
-                        CustomButton(
-                          isBorder: true,
-                          text: 'View Shared Requests',
-                          onPressed: () {
-                          
-                            Navigator.pushNamed(
-                              context,
-                              TreatmentJourneyScreen.routeName,
-                            );
-                          },
-                        ),
-                        SizedBox(height: context.h(10)),
-                        CustomButton(
-                         
-                          text: optionId == null ? 'Select Option' : 'Share Now',
-                          onPressed: () async {
-                            if (optionId == null) {
-                              ref
-                                  .read(clinicProvider.notifier)
-                                  .setClinic(widget.clinic);
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: CustomColors
+                    .whiteColor, // Added background color to ensure opacity over scrolled content
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 15,
+                    offset: const Offset(0, -5),
+                  ),
+                ],
+              ),
+              child: SafeArea(
+                top: false,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    bottom:
+                        MediaQuery.paddingOf(context).bottom + context.h(20),
+                    left: context.w(24),
+                    right: context.w(24),
+                    top: context.h(20),
+                  ),
+                  child: Consumer(
+                    builder: (_, ref, _) {
+                      final tjState = ref.watch(treatmentJourneyProvider);
+                      final optionId = tjState.selectedOptionId;
+                      return Column(
+                        children: [
+                          CustomButton(
+                            isBorder: true,
+                            text: 'View Shared Requests',
+                            onPressed: () {
                               Navigator.pushNamed(
                                 context,
-                                TreatmentJourneyScreen.routeName,
+                                PatientTreatmentRequestsScreen.routeName,
+                                arguments: widget.clinic?.id,
                               );
-                              return;
-                            }
-                        
-                            void processShare(List<PreferredSlot> slots) {
-                              if (widget.clinic != null) {
+                            },
+                          ),
+                          SizedBox(height: context.h(10)),
+                          CustomButton(
+                            text: optionId == null
+                                ? 'Select Option'
+                                : 'Share Now',
+                            onPressed: () async {
+                              if (optionId == null) {
+                                ref
+                                    .read(clinicProvider.notifier)
+                                    .setClinic(widget.clinic);
                                 Navigator.pushNamed(
                                   context,
-                                  TreatmentReviewScreen.routeName,
-                                  arguments: {
-                                    'simulationData': tjState.simulations,
-                                    'preferredSlots': slots,
-                                    'clinic': widget.clinic!,
-                                  },
+                                  TreatmentJourneyScreen.routeName,
                                 );
+                                return;
                               }
-                            }
-                        
-                            // final bool docResult = await ref
-                            //     .read(formsViewModel.notifier)
-                            //     .checkAndOpenDocumentBySku("SHRE-TRET-CONS");
-                            //
-                            // if (docResult) {
+
+                              void processShare(List<PreferredSlot> slots) {
+                                if (widget.clinic != null) {
+                                  Navigator.pushNamed(
+                                    context,
+                                    TreatmentReviewScreen.routeName,
+                                    arguments: {
+                                      'simulationData': tjState.simulations,
+                                      'preferredSlots': slots,
+                                      'clinic': widget.clinic!,
+                                    },
+                                  );
+                                }
+                              }
+
+                              // final bool docResult = await ref
+                              //     .read(formsViewModel.notifier)
+                              //     .checkAndOpenDocumentBySku("SHRE-TRET-CONS");
+                              //
+                              // if (docResult) {
                               if (context.mounted) {
                                 PreferredSlotsBottomSheet.show(
                                   context: context,
                                   onConfirm: (slots) => processShare(slots),
                                 );
-                              // }
-                            }
-                          },
-                        ),
-                      ],
-                    );
-                  },
+                                // }
+                              }
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
-              ),)
+              ),
             ),
           ),
         ],
