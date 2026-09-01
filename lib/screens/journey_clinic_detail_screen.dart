@@ -17,6 +17,7 @@ import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/bottom_sheets/preferred_slots_bottom_sheet.dart';
+import 'patient_treatment_requests_screen.dart';
 import 'treatment_review_screen.dart';
 import 'treatment_journey_screen.dart';
 
@@ -353,8 +354,8 @@ class _JourneyClinicDetailScreenState
             right: 0,
             bottom: 0,
             child: Container(
-              height: context.h(100) + MediaQuery.paddingOf(context).bottom,
               decoration: BoxDecoration(
+                color: CustomColors.whiteColor,
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.06),
@@ -363,61 +364,90 @@ class _JourneyClinicDetailScreenState
                   ),
                 ],
               ),
-              child: Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.paddingOf(context).bottom + context.h(20),
-                  left: context.w(24),
-                  right: context.w(24),
-                  top: context.h(20),
-                ),
-                child: Consumer(
-                  builder: (_, ref, _) {
-                    final tjState = ref.watch(treatmentJourneyProvider);
-                    final optionId = tjState.selectedOptionId;
-                    return CustomButton(
-                      text: optionId == null ? 'Select Option' : 'Share Now',
-                      onPressed: () async {
-                        if (optionId == null) {
-                          ref
-                              .read(clinicProvider.notifier)
-                              .setClinic(widget.clinic);
-                          Navigator.pushNamed(
-                            context,
-                            TreatmentJourneyScreen.routeName,
-                          );
-                          return;
-                        }
-
-                        void processShare(List<PreferredSlot> slots) {
-                          if (widget.clinic != null) {
-                            Navigator.pushNamed(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Full-width Banner Label
+                  GestureDetector(
+                    onTap: () {
+                     Navigator.pushNamed(
                               context,
-                              TreatmentReviewScreen.routeName,
-                              arguments: {
-                                'simulationData': tjState.simulations,
-                                'preferredSlots': slots,
-                                'clinic': widget.clinic!,
-                              },
+                              PatientTreatmentRequestsScreen.routeName,
+                              arguments: widget.clinic?.id,
                             );
-                          }
-                        }
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: context.h(10)),
+                      decoration: BoxDecoration(
+                        color: CustomColors.purpleColor.withValues(alpha: 0.08),
+                      ),
+                      child: Text(
+                        'View shared requests with this clinic',
+                        textAlign: TextAlign.center,
+                        style: CustomFonts.textGrey14w400.copyWith(
+                          color: CustomColors.purpleColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
 
-                        // final bool docResult = await ref
-                        //     .read(formsViewModel.notifier)
-                        //     .checkAndOpenDocumentBySku("SHRE-TRET-CONS");
-                        //
-                        // if (docResult) {
-                          if (context.mounted) {
-                            PreferredSlotsBottomSheet.show(
-                              context: context,
-                              onConfirm: (slots) => processShare(slots),
-                            );
-                          // }
-                        }
+                  // Padded Section for the Action Button
+                  Padding(
+                    padding: EdgeInsets.only(
+                      bottom:
+                          MediaQuery.paddingOf(context).bottom + context.h(20),
+                      left: context.w(24),
+                      right: context.w(24),
+                      top: context.h(16),
+                    ),
+                    child: Consumer(
+                      builder: (_, ref, _) {
+                        final tjState = ref.watch(treatmentJourneyProvider);
+                        final optionId = tjState.selectedOptionId;
+                        return CustomButton(
+                          text: optionId == null
+                              ? 'Select Option'
+                              : 'Share Now',
+                          onPressed: () async {
+                            if (optionId == null) {
+                              ref
+                                  .read(clinicProvider.notifier)
+                                  .setClinic(widget.clinic);
+                              Navigator.pushNamed(
+                                context,
+                                TreatmentJourneyScreen.routeName,
+                              );
+                              return;
+                            }
+
+                            void processShare(List<PreferredSlot> slots) {
+                              if (widget.clinic != null) {
+                                Navigator.pushNamed(
+                                  context,
+                                  TreatmentReviewScreen.routeName,
+                                  arguments: {
+                                    'simulationData': tjState.simulations,
+                                    'preferredSlots': slots,
+                                    'clinic': widget.clinic!,
+                                  },
+                                );
+                              }
+                            }
+
+                            if (context.mounted) {
+                              PreferredSlotsBottomSheet.show(
+                                context: context,
+                                onConfirm: (slots) => processShare(slots),
+                              );
+                            }
+                          },
+                        );
                       },
-                    );
-                  },
-                ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
