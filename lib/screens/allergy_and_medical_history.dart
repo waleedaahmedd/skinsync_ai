@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import '../utils/string_utils.dart';
+
+import '../models/requests/medical_history_request.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
-import '../models/requests/medical_history_request.dart';
+import '../utils/string_utils.dart';
 import '../view_models/medical_history_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
@@ -77,30 +78,32 @@ class _AllergyAndMedicalHistoryState
     return selected;
   }
 
-Future<void> _onSave() async {
-  final request = MedicalHistoryRequest(
-    allergies: _resolveForSubmit(selectedAllergies),
-    medicalConditions: _resolveForSubmit(selectedMedicalConditions),
-    currentMedications: _resolveForSubmit(selectedCurrentMedications),
-  );
-  final patientId =
-      ref.read(medicalHistoryProvider).medicalHistory?.patientId;
-  EasyLoading.show();
-  final success = await ref
-      .read(medicalHistoryProvider.notifier)
-      .updateMedicalHistory(patientId, request);
-  EasyLoading.dismiss();
+  Future<void> _onSave() async {
+    final request = MedicalHistoryRequest(
+      allergies: _resolveForSubmit(selectedAllergies),
+      medicalConditions: _resolveForSubmit(selectedMedicalConditions),
+      currentMedications: _resolveForSubmit(selectedCurrentMedications),
+    );
+    final patientId = ref
+        .read(medicalHistoryProvider)
+        .medicalHistory
+        ?.patientId;
+    EasyLoading.show();
+    final success = await ref
+        .read(medicalHistoryProvider.notifier)
+        .updateMedicalHistory(patientId, request);
+    EasyLoading.dismiss();
 
-  if (!mounted) return;
+    if (!mounted) return;
 
-  if (!success) {
-    final error = ref.read(medicalHistoryProvider).errorMessage;
-    EasyLoading.showError(error ?? "Failed to update medical history");
-    return;
+    if (!success) {
+      final error = ref.read(medicalHistoryProvider).errorMessage;
+      EasyLoading.showError(error ?? "Failed to update medical history");
+      return;
+    }
+    EasyLoading.showSuccess("Medical history updated successfully");
   }
-  EasyLoading.showSuccess("Medical history updated successfully");
-}
- 
+
   @override
   Widget build(BuildContext context) {
     // Populate the chips from the fetched record the first time data arrives.
@@ -356,6 +359,7 @@ Future<void> _onSave() async {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      constraints: .new(minWidth: 1.sw),
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(

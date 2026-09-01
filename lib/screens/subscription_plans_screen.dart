@@ -6,9 +6,9 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../models/responses/patient_plans_response.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../utils/date_time_utils.dart';
 import '../utils/list_utils.dart';
 import '../view_models/subscription_view_model.dart';
-import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/horizontal_empty_state.dart';
@@ -35,15 +35,8 @@ class _SubscriptionPlansScreenState
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const CustomAppBar(showTitle: true, title: "Subscription Plans"),
-      body: subscriptionState.loading
-          ? const Center(child: AppLoader())
-          : subscriptionState.errorMessage != null
-          ? Center(child: Text(subscriptionState.errorMessage!))
-          : _buildBody(subscriptionState),
-      bottomNavigationBar:
-          subscriptionState.loading ||
-              subscriptionState.errorMessage != null ||
-              subscriptionState.plans.isEmpty
+      body: _buildBody(subscriptionState),
+      bottomNavigationBar: subscriptionState.plans.isEmpty
           ? null
           : _buildBottomButton(subscriptionState),
     );
@@ -54,7 +47,7 @@ class _SubscriptionPlansScreenState
     final allPlans = state.plans;
 
     if (selectedPlanId == null && allPlans.isNotEmpty) {
-      selectedPlanId = state.currentPlan?.id ?? allPlans.first.id;
+      selectedPlanId = state.currentPlan?.id ?? allPlans.firstOrNull?.id;
     }
 
     final selectedPlan = allPlans.firstWhereOrNull(
@@ -144,6 +137,7 @@ class _SubscriptionPlansScreenState
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
+      constraints: .new(minWidth: 1.sw),
       builder: (context) => Container(
         padding: EdgeInsets.fromLTRB(
           context.w(24),
@@ -237,6 +231,7 @@ class _SubscriptionPlansScreenState
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
+      constraints: .new(minWidth: 1.sw),
       builder: (context) => Container(
         height: 0.6.sh,
         decoration: BoxDecoration(
@@ -403,14 +398,26 @@ class _SubscriptionPlansScreenState
   }
 
   String _getPriceSubText(CurrentPlan plan) {
-    if (plan.isLifetime == true) {
-      return "\$${plan.price} (Lifetime)";
+    final bool isLifetime = plan.isLifetime ?? false;
+    if (isLifetime) {
+      return "Lifetime";
     }
-    if (plan.durationName == null) {
-      return plan.price == 0 || plan.price == null ? "Free" : "\$${plan.price}";
+
+    if (plan.endDate != null) {
+      return "Expiry: ${plan.endDate!.formattedDate}";
     }
-    return plan.durationName ??
-        'N/A'; // Using newline for better fit in comparison column
+
+    final String formattedPrice = (plan.price == 0 || plan.price == null)
+        ? "Free"
+        : "\$${plan.price! % 1 == 0 ? plan.price!.toInt() : plan.price}";
+
+    if (plan.durationName != null && plan.durationName!.isNotEmpty) {
+      return formattedPrice == "Free"
+          ? "Free / ${plan.durationName}"
+          : "$formattedPrice / ${plan.durationName}";
+    }
+
+    return formattedPrice;
   }
 
   String _getPriceText(Plan plan) {

@@ -46,11 +46,13 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
     },
     fetchPage: (page) async {
       final search = _searchController.text.trim();
+      if (!ref.context.mounted) {
+        return [];
+      }
       final clinics =
-          await ref.read(clinicProvider.notifier).getClinic(
-                page: page,
-                search: search,
-              ) ??
+          await ref
+              .read(clinicProvider.notifier)
+              .getClinic(page: page, search: search) ??
           [];
 
       // getClinic API had fewer than a full page (or none) — append map
@@ -58,10 +60,16 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
       // fetchPage call that scroll might never trigger.
       if (clinics.length < 10) {
         _switchedToMapSource = true;
+        if (!ref.context.mounted) {
+          return [];
+        }
         _mapClinicsFuture ??= ref
             .read(clinicProvider.notifier)
             .fetchClinicsFromMap(search: search);
         await _mapClinicsFuture;
+        if (!ref.context.mounted) {
+          return [];
+        }
         final mapClinics = ref.read(clinicProvider).clinicsToInvite;
         return [...clinics, ...mapClinics];
       }
@@ -74,8 +82,9 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      _mapClinicsFuture =
-          ref.read(clinicProvider.notifier).fetchClinicsFromMap();
+      _mapClinicsFuture = ref
+          .read(clinicProvider.notifier)
+          .fetchClinicsFromMap();
     });
   }
 
@@ -130,7 +139,9 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
                   fetchNextPage: fetchNextPage,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 0.90,
+                    childAspectRatio: context.isLessThan(Breakpoint.md)
+                        ? 0.90
+                        : 1.65,
                     crossAxisSpacing: context.w(14),
                     mainAxisSpacing: context.h(14),
                   ),
@@ -145,9 +156,7 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
                       return CustomClinicGridViewTile(
                         clinicData: clinic,
                         onTap: () {
-                          ref
-                              .read(clinicProvider.notifier)
-                              .setClinic(clinic);
+                          ref.read(clinicProvider.notifier).setClinic(clinic);
                           Navigator.pushNamed(
                             context,
                             JourneyClinicDetailScreen.routeName,
@@ -192,4 +201,3 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
     );
   }
 }
-

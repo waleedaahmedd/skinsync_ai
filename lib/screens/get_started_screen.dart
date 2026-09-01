@@ -48,29 +48,35 @@ class GetStartedScreen extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: context.h(92),
+                top: context.isLessThan(.md) ? context.h(92) : context.h(80),
                 right: 0,
                 left: 0,
 
                 child: Image.asset(
-                  PngAssets.face,
+                  PngAssets.faceAndMarks,
                   fit: BoxFit.fitWidth,
                   alignment: Alignment.topCenter,
                 ),
               ),
+              // Positioned(
+              //   top: context.h(215),
+              //   left: context.w(0),
+              //   right: context.w(0),
+              //   child: Image.asset(
+              //     PngAssets.faceMarks,
+              //     height: context.w(300),
+              //     fit: BoxFit.fitHeight,
+              //   ),
+              // ),
               Positioned(
-                top: context.h(215),
-                left: context.w(0),
-                right: context.w(0),
+                top: context.isLessThan(.md) ? context.h(432) : context.h(500),
+                left: 0,
+                right: 0,
                 child: Image.asset(
-                  PngAssets.faceMarks,
-                  height: context.w(300),
-                  fit: BoxFit.fitHeight,
+                  PngAssets.blur,
+                  fit: .fitWidth,
+                  height: context.h(564),
                 ),
-              ),
-              Positioned(
-                top: context.h(432),
-                child: Image.asset(PngAssets.blur, height: context.h(564)),
               ),
               Padding(
                 padding: EdgeInsets.symmetric(
@@ -111,21 +117,19 @@ class GetStartedScreen extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: Consumer(
-
-                      
                         builder: (_, ref, _) {
                           return CustomButton(
-                          onPressed: () {
-                            ref
-                                .read(authViewModel.notifier)
-                                .checkBiometricAvailability();
-                            Navigator.pushNamed(
-                              context,
-                              LoginBottomScreen.routeName,
-                            );
-                          },
-                          text: "Get Started",
-                        );
+                            onPressed: () {
+                              ref
+                                  .read(authViewModel.notifier)
+                                  .checkBiometricAvailability();
+                              Navigator.pushNamed(
+                                context,
+                                LoginBottomScreen.routeName,
+                              );
+                            },
+                            text: "Get Started",
+                          );
                         },
                       ),
                     ),

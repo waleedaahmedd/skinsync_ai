@@ -135,9 +135,11 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
       }
     } else {
       if (widget.pose == 'left') {
-        ttsText = "Please turn your head to the left to capture your left profile.";
+        ttsText =
+            "Please turn your head to the left to capture your left profile.";
       } else {
-        ttsText = "Please turn your head to the right to capture your right profile.";
+        ttsText =
+            "Please turn your head to the right to capture your right profile.";
       }
     }
 
@@ -252,17 +254,24 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                         GestureDetector(
                           onTap: () {
                             Navigator.pop(context); // Close dialog
-                            Navigator.pop(context); // Go back to previous screen
+                            Navigator.pop(
+                              context,
+                            ); // Go back to previous screen
                           },
-                          child:
-                              const Icon(Iconsax.close_circle, color: Colors.grey),
+                          child: const Icon(
+                            Iconsax.close_circle,
+                            color: Colors.grey,
+                          ),
                         ),
                       ],
                     ),
                     SizedBox(height: context.h(10)),
                     Text(
                       "Select how you want to capture your photos",
-                      style: TextStyle(color: Colors.grey, fontSize: context.sp(14)),
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: context.sp(14),
+                      ),
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: context.h(24)),
@@ -480,7 +489,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
           if (_isSoundOn) {
             TtsUtils.speak("Hold still");
           }
-          
+
           await Future.delayed(const Duration(milliseconds: 1000));
           if (mounted && _isPoseCorrect && _isAutomaticMode) {
             _startCountdown();
@@ -897,11 +906,11 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                               duration: const Duration(milliseconds: 300),
                               transitionBuilder:
                                   (Widget child, Animation<double> animation) {
-                                return ScaleTransition(
-                                  scale: animation,
-                                  child: child,
-                                );
-                              },
+                                    return ScaleTransition(
+                                      scale: animation,
+                                      child: child,
+                                    );
+                                  },
                               child: Text(
                                 '$_countdown',
                                 key: ValueKey<int>(_countdown),
@@ -942,7 +951,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                           onTap: () => Navigator.pop(context),
                         ),
                         if (_isStarted) _buildPoseIndicator(),
-                        if (_isStarted) 
+                        if (_isStarted)
                           Row(
                             children: [
                               _buildHeaderButton(
@@ -1075,7 +1084,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
               child: Text(
                 _isFaceDetectorError || _showManualCaptureUI
                     ? "MANUAL CAPTURE MODE"
-                    : (_isAutomaticMode ? "AUTOMATIC CAPTURE MODE" : "MANUAL CAPTURE MODE"),
+                    : (_isAutomaticMode
+                          ? "AUTOMATIC CAPTURE MODE"
+                          : "MANUAL CAPTURE MODE"),
                 style: TextStyle(
                   color:
                       _isPoseCorrect ||

@@ -5,8 +5,10 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../../main.dart';
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
+import '../../utils/enums.dart';
 import '../../view_models/auth_view_model.dart';
 import '../../view_models/bottom_nav_view_model.dart';
+import '../../view_models/home_view_model.dart';
 import '../../widgets/app_bar_with_action_icon.dart';
 import '../../widgets/appointment_card.dart';
 import '../../widgets/discount_card.dart';
@@ -22,13 +24,11 @@ import '../journey_clinics_screen.dart';
 import '../notification_screen.dart';
 import '../patient_treatment_requests_screen.dart';
 import 'appointments_screen.dart';
-import '../../utils/enums.dart';
-import '../../view_models/home_view_model.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
   static const String routeName = "HomeScreen";
-  
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Promotions are still static as no API endpoint provides them yet
@@ -50,35 +50,38 @@ class HomeScreen extends ConsumerWidget {
           children: [
             if (isReorderMode)
               TextButton(
-                onPressed: () =>
-                    ref.read(homeViewModelProvider.notifier).toggleReorderMode(),
-                child: Text("Done", style: CustomFonts.darkPurple12w600.copyWith(fontSize: context.sp(14))),
+                onPressed: () => ref
+                    .read(homeViewModelProvider.notifier)
+                    .toggleReorderMode(),
+                child: Text(
+                  "Done",
+                  style: CustomFonts.darkPurple12w600.copyWith(
+                    fontSize: context.sp(14),
+                  ),
+                ),
               )
             else
               GreyContainer(
                 icon: Icons.sort_rounded,
-                onTap: () =>
-                    ref.read(homeViewModelProvider.notifier).toggleReorderMode(),
+                onTap: () => ref
+                    .read(homeViewModelProvider.notifier)
+                    .toggleReorderMode(),
               ),
 
-              SizedBox(width: context.w(12)),
-              GreyContainer(
-                icon: Icons.notifications_none_outlined,
-                onTap: () {
-                  Navigator.of(context)
-                      .pushNamed(NotificationScreen.routeName);
-                },
-              ),
-
+            SizedBox(width: context.w(12)),
+            GreyContainer(
+              icon: Icons.notifications_none_outlined,
+              onTap: () {
+                Navigator.of(context).pushNamed(NotificationScreen.routeName);
+              },
+            ),
           ],
         ),
       ),
       body: SafeArea(
         child: ReorderableListView(
-          proxyDecorator: (child, index, animation) => Material(
-            color: Colors.transparent,
-            child: child,
-          ),
+          proxyDecorator: (child, index, animation) =>
+              Material(color: Colors.transparent, child: child),
           physics: const BouncingScrollPhysics(),
           padding: EdgeInsets.only(top: context.h(22), bottom: context.h(100)),
           onReorderItem: (oldIndex, newIndex) {
@@ -86,7 +89,8 @@ class HomeScreen extends ConsumerWidget {
                 .read(homeViewModelProvider.notifier)
                 .reorderSections(oldIndex, newIndex);
           },
-          buildDefaultDragHandles: false, // We'll show handles only in edit mode
+          buildDefaultDragHandles:
+              false, // We'll show handles only in edit mode
           children: sections.map((section) {
             final Widget sectionWidget;
             switch (section) {
@@ -94,8 +98,9 @@ class HomeScreen extends ConsumerWidget {
                 sectionWidget = isDeploymentMode
                     ? const SizedBox.shrink()
                     : Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: context.w(24)),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.w(24),
+                        ),
                         child: Column(
                           children: [
                             const PointsEarnCard(),
@@ -136,15 +141,19 @@ class HomeScreen extends ConsumerWidget {
                               itemCount: dashboard!.recentSimulations!.length,
                               itemBuilder: (context, index) => Padding(
                                 padding: EdgeInsets.only(
-                                  left:
-                                      index == 0 ? context.w(24) : context.w(16),
-                                  right: index ==
-                                          dashboard.recentSimulations!.length - 1
+                                  left: index == 0
+                                      ? context.w(24)
+                                      : context.w(16),
+                                  right:
+                                      index ==
+                                          dashboard.recentSimulations!.length -
+                                              1
                                       ? context.w(24)
                                       : context.w(0),
                                 ),
                                 child: DashboardSimulationCard(
-                                  simulation: dashboard.recentSimulations![index],
+                                  simulation:
+                                      dashboard.recentSimulations![index],
                                 ),
                               ),
                             ),
@@ -164,7 +173,9 @@ class HomeScreen extends ConsumerWidget {
                         showRightArrow: false,
                         onTap: () {
                           final clinicId = dashboard
-                              ?.requestTreatmentClinic?.firstOrNull?.id;
+                              ?.requestTreatmentClinic
+                              ?.firstOrNull
+                              ?.id;
                           if (clinicId != null) {
                             Navigator.pushNamed(
                               context,
@@ -186,8 +197,8 @@ class HomeScreen extends ConsumerWidget {
                                 "Shared treatment requests will appear here.",
                           )
                         : SizedBox(
-                      height: context.h(160),
-                      child: ListView.builder(
+                            height: context.h(160),
+                            child: ListView.builder(
                               physics: const BouncingScrollPhysics(),
                               scrollDirection: Axis.horizontal,
                               clipBehavior: Clip.none,
@@ -199,10 +210,13 @@ class HomeScreen extends ConsumerWidget {
 
                                 return Padding(
                                   padding: EdgeInsets.only(
-                                    left:
-                                        index == 0 ? context.w(24) : context.w(16),
-                                    right: index ==
-                                            dashboard.requestTreatmentClinic!
+                                    left: index == 0
+                                        ? context.w(24)
+                                        : context.w(16),
+                                    right:
+                                        index ==
+                                            dashboard
+                                                    .requestTreatmentClinic!
                                                     .length -
                                                 1
                                         ? context.w(24)
@@ -256,8 +270,8 @@ class HomeScreen extends ConsumerWidget {
                                 "Your scheduled clinical treatments and session details will appear here.",
                           )
                         : SizedBox(
-                        height: context.h(315),
-                        child: ListView.builder(
+                            height: context.h(315),
+                            child: ListView.builder(
                               physics: const BouncingScrollPhysics(),
                               scrollDirection: Axis.horizontal,
                               clipBehavior: Clip.none,
@@ -267,8 +281,9 @@ class HomeScreen extends ConsumerWidget {
 
                                 return Padding(
                                   padding: EdgeInsets.only(
-                                    left:
-                                        index == 0 ? context.w(24) : context.w(16),
+                                    left: index == 0
+                                        ? context.w(24)
+                                        : context.w(16),
                                     right: index == appointments.length - 1
                                         ? context.w(24)
                                         : context.w(0),
@@ -336,8 +351,9 @@ class HomeScreen extends ConsumerWidget {
                             itemBuilder: (context, index) {
                               return Padding(
                                 padding: EdgeInsets.only(
-                                  left:
-                                      index == 0 ? context.w(24) : context.w(16),
+                                  left: index == 0
+                                      ? context.w(24)
+                                      : context.w(16),
                                   right: index == suggestedTreatments.length - 1
                                       ? context.w(24)
                                       : context.w(0),
@@ -363,8 +379,9 @@ class HomeScreen extends ConsumerWidget {
                     : Column(
                         children: [
                           Padding(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: context.w(24)),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: context.w(24),
+                            ),
                             child: HeadingWithRightArrow(
                               title: "Top Doctors",
                               onTap: () {
@@ -380,14 +397,14 @@ class HomeScreen extends ConsumerWidget {
                           (dashboard?.topDoctors?.isEmpty ?? true)
                               ? _buildHorizontalEmptyState(
                                   context: context,
-                                  height: context.h(100),
+                                  height: context.h(70),
                                   icon: Icons.badge_outlined,
                                   title: "No Specialists Available",
                                   subtitle:
                                       "Specialist dermatologists and clinical practitioners will be listed here soon.",
                                 )
                               : SizedBox(
-                                  height: context.h(250),
+                                  height: context.h(170),
                                   child: ListView.builder(
                                     physics: const BouncingScrollPhysics(),
                                     scrollDirection: Axis.horizontal,
@@ -398,7 +415,8 @@ class HomeScreen extends ConsumerWidget {
                                         left: index == 0
                                             ? context.w(24)
                                             : context.w(16),
-                                        right: index ==
+                                        right:
+                                            index ==
                                                 dashboard.topDoctors!.length - 1
                                             ? context.w(24)
                                             : context.w(0),
@@ -448,10 +466,11 @@ class HomeScreen extends ConsumerWidget {
                               itemCount: dashboard!.topClinics!.length,
                               itemBuilder: (context, index) => Padding(
                                 padding: EdgeInsets.only(
-                                  left:
-                                      index == 0 ? context.w(24) : context.w(16),
-                                  right: index ==
-                                          dashboard.topClinics!.length - 1
+                                  left: index == 0
+                                      ? context.w(24)
+                                      : context.w(16),
+                                  right:
+                                      index == dashboard.topClinics!.length - 1
                                       ? context.w(24)
                                       : context.w(0),
                                 ),
@@ -473,8 +492,9 @@ class HomeScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding:
-                                EdgeInsets.symmetric(horizontal: context.w(24)),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: context.w(24),
+                            ),
                             child: Text(
                               "Promotions & Discounts",
                               style: CustomFonts.black22w600,
@@ -521,8 +541,6 @@ class HomeScreen extends ConsumerWidget {
                         ],
                       );
                 break;
-
-
             }
 
             final item = Container(
@@ -545,10 +563,14 @@ class HomeScreen extends ConsumerWidget {
                       child: Container(
                         padding: EdgeInsets.all(context.w(6)),
                         decoration: BoxDecoration(
-                          color: CustomColors.purpleColor.withValues(alpha: 0.12),
+                          color: CustomColors.purpleColor.withValues(
+                            alpha: 0.12,
+                          ),
                           borderRadius: BorderRadius.circular(context.r(10)),
                           border: Border.all(
-                            color: CustomColors.purpleColor.withValues(alpha: 0.2),
+                            color: CustomColors.purpleColor.withValues(
+                              alpha: 0.2,
+                            ),
                             width: 1,
                           ),
                         ),
@@ -576,8 +598,6 @@ class HomeScreen extends ConsumerWidget {
       ),
     );
   }
-
-
 
   Widget _buildHorizontalEmptyState({
     required BuildContext context,

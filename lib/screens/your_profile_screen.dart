@@ -1,6 +1,3 @@
-
-
-
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,12 +24,11 @@ class YourProfileScreen extends ConsumerStatefulWidget {
 
 class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  
+
   DateTime? _selectedDob;
 
   @override
   void dispose() {
-  
     super.dispose();
   }
 
@@ -41,11 +37,12 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
     super.initState();
     final authState = ref.read(authViewModel);
     final authVM = ref.read(authViewModel.notifier);
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      authVM.emailController.text = authState.authData?.user?.primaryEmail ?? '';
-    authVM.nameController.text = authState.authData?.user?.name ?? '';
-    final cc = authState.authData?.user?.cc;
+      authVM.emailController.text =
+          authState.authData?.user?.primaryEmail ?? '';
+      authVM.nameController.text = authState.authData?.user?.name ?? '';
+      final cc = authState.authData?.user?.cc;
       ref
           .read(authViewModel.notifier)
           .setCountryCode(Country.parse(cc ?? "US"));
@@ -63,7 +60,8 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
   }
 
   Future<void> _selectDateOfBirth(BuildContext context) async {
-    final DateTime initialDate = _selectedDob ?? DateTime.now().subtract(const Duration(days: 18 * 365));
+    final DateTime initialDate =
+        _selectedDob ?? DateTime.now().subtract(const Duration(days: 18 * 365));
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
@@ -85,12 +83,12 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
 
     if (picked != null) {
       final age = _calculateAge(picked);
-      if (age < 18) { 
+      if (age < 18) {
         if (!mounted) return;
         _showUnderageDialog();
       } else {
         setState(() {
-        final authVM = ref.read(authViewModel.notifier);
+          final authVM = ref.read(authViewModel.notifier);
           _selectedDob = picked;
           authVM.dobController.text = DateFormat('yyyy-MM-dd').format(picked);
         });
@@ -107,10 +105,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(context.r(16)),
           ),
-          title: Text(
-            'Age Restriction',
-            style: CustomFonts.black20w600,
-          ),
+          title: Text('Age Restriction', style: CustomFonts.black20w600),
           content: Text(
             'You are not authorized to use this app because you must be at least 18 years old.',
             style: CustomFonts.black16w400,
@@ -118,13 +113,15 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
           actions: [
             TextButton(
               onPressed: () {
-                 final authVM = ref.read(authViewModel.notifier);
+                final authVM = ref.read(authViewModel.notifier);
                 authVM.dobController.clear();
                 Navigator.pop(context);
               },
               child: Text(
                 'OK',
-                style: CustomFonts.black14w500.copyWith(color: CustomColors.purpleColor),
+                style: CustomFonts.black14w500.copyWith(
+                  color: CustomColors.purpleColor,
+                ),
               ),
             ),
           ],
@@ -142,6 +139,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
           top: Radius.circular(context.r(24)),
         ),
       ),
+      constraints: .new(minWidth: 1.sw),
       builder: (BuildContext context) {
         return SafeArea(
           child: Wrap(
@@ -261,7 +259,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   ),
                   SizedBox(height: context.h(22)),
                   TextFormField(
-                    controller:ref.read(authViewModel.notifier).nameController,
+                    controller: ref.read(authViewModel.notifier).nameController,
                     style: CustomFonts.black18w400,
                     decoration: const InputDecoration(hintText: "Your Name"),
                     validator: (value) {
@@ -277,7 +275,9 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   SizedBox(height: context.h(20)),
                   PhoneWidget(
                     enableCountrySelection: !isDeploymentMode,
-                    controller:ref.read(authViewModel.notifier).phoneController,
+                    controller: ref
+                        .read(authViewModel.notifier)
+                        .phoneController,
                     initialCountryCode: ref
                         .read(authViewModel)
                         .country
@@ -289,7 +289,9 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   SizedBox(height: context.h(20)),
                   TextFormField(
                     readOnly: true,
-                    controller:ref.read(authViewModel.notifier).emailController,
+                    controller: ref
+                        .read(authViewModel.notifier)
+                        .emailController,
                     style: CustomFonts.black18w400,
                     decoration: const InputDecoration(
                       hintText: "Email Address",
@@ -311,7 +313,7 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                   SizedBox(height: context.h(20)),
                   // Date of Birth Field
                   TextFormField(
-                    controller:ref.read(authViewModel.notifier).dobController,
+                    controller: ref.read(authViewModel.notifier).dobController,
                     readOnly: true,
                     onTap: () => _selectDateOfBirth(context),
                     style: CustomFonts.black18w400,
@@ -343,11 +345,11 @@ class _YourProfileScreenState extends ConsumerState<YourProfileScreen> {
                             _showUnderageDialog();
                             return;
                           }
-                           Navigator.pushNamedAndRemoveUntil(
-                                context,
-                                TermsOfServiceScreen.routeName,
-                                (Route<dynamic> route) => false,
-                              );
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            TermsOfServiceScreen.routeName,
+                            (Route<dynamic> route) => false,
+                          );
                           // ref
                           //     .read(authViewModel.notifier)
                           //     .callOnboardingProfileApi(

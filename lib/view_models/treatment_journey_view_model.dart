@@ -341,11 +341,13 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
   @override
   void onError(String message) {
     EasyLoading.dismiss();
-    state = state.copyWith(
-      loading: false,
-      errorMessage: message,
-      isSimulationsLoading: false,
-    );
+    if (ref.mounted) {
+      state = state.copyWith(
+        loading: false,
+        errorMessage: message,
+        isSimulationsLoading: false,
+      );
+    }
     super.onError(message);
   }
 

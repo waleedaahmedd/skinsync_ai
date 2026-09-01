@@ -14,6 +14,7 @@ class WalletConfirmationBottomSheet extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      constraints: .new(minWidth: 1.sw),
       isScrollControlled: true,
       builder: (_) => WalletConfirmationBottomSheet(onConfirm: onConfirm),
     );

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,26 +28,34 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
   SubscriptionViewModel({required this._repository})
     : super(initialState: const SubscriptionState());
 
-  Future<void> fetchSubscriptionPlans() async {
-    return await runSafely(() async {
-      state = state.copyWith(loading: true, errorMessage: null);
-      final response = await _repository.getPatientCurrentPlan();
+  Future<void> fetchSubscriptionPlans({bool showLoading = false}) async {
+    if (showLoading) {
+      EasyLoading.show(status: 'Fetching subscription plans...');
+    }
+    try {
+      await runSafely(() async {
+        final response = await _repository.getPatientCurrentPlan();
 
-      if (!ref.mounted) return;
+        if (!ref.mounted) return;
 
-      if (response.isSuccess ?? false) {
-        state = state.copyWith(
-          loading: false,
-          currentPlan: response.data?.currentPlan,
-          plans: response.data?.plans ?? [],
-        );
-      } else {
-        state = state.copyWith(
-          loading: false,
-          errorMessage: response.message ?? 'Failed to load subscription plans',
-        );
+        if (response.isSuccess ?? false) {
+          state = state.copyWith(
+            loading: false,
+            currentPlan: response.data?.currentPlan,
+            plans: response.data?.plans ?? [],
+          );
+        } else {
+          final errorMsg =
+              response.message ?? 'Failed to load subscription plans';
+          EasyLoading.showError(errorMsg);
+          state = state.copyWith(loading: false, errorMessage: errorMsg);
+        }
+      });
+    } finally {
+      if (showLoading) {
+        EasyLoading.dismiss();
       }
-    });
+    }
   }
 
   Future<bool> upgradePlan(int planId, {int? durationId}) async {
@@ -67,8 +76,9 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
         );
         log('PARAMS: $params');
         if (params != null) {
+          EasyLoading.showSuccess('Verifying your subscription...');
           await Future.delayed(const Duration(seconds: 3));
-          await fetchSubscriptionPlans();
+          await fetchSubscriptionPlans(showLoading: true);
           EasyLoading.showSuccess(
             response.message ?? 'Plan upgraded successfully!',
           );

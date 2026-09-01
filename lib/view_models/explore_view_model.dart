@@ -9,6 +9,19 @@ import 'base_view_model.dart';
 
 enum ExploreViewType { community, reels }
 
+class ReelsMutedNotifier extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void toggle() {
+    state = !state;
+  }
+}
+
+final reelsMutedProvider = NotifierProvider<ReelsMutedNotifier, bool>(() {
+  return ReelsMutedNotifier();
+});
+
 final exploreViewModel = NotifierProvider<ExploreViewModel, ExploreState>(() {
   final apiBaseHelper = ApiBaseHelper();
   final exploreService = ExploreService(apiClient: apiBaseHelper);

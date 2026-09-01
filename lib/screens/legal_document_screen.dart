@@ -1,9 +1,11 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+
 import '../widgets/bottom_sheets/signature_bottom_sheet.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
@@ -81,6 +83,7 @@ class _LegalDocumentScreenState extends ConsumerState<LegalDocumentScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      constraints: .new(minWidth: 1.sw),
       backgroundColor: Colors.transparent,
       builder: (context) => SignatureBottomSheet(
         args: widget.args,
@@ -103,10 +106,7 @@ class _LegalDocumentScreenState extends ConsumerState<LegalDocumentScreen> {
           ? const Center(child: CircularProgressIndicator())
           : SizedBox.expand(
               child: _isSigned && _pdfPath != null
-                  ? SfPdfViewer.file(
-                      File(_pdfPath!),
-                      key: ValueKey(_pdfPath),
-                    )
+                  ? SfPdfViewer.file(File(_pdfPath!), key: ValueKey(_pdfPath))
                   : _buildDocumentPreview(),
             ),
       bottomNavigationBar: (!_isLoading)

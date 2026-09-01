@@ -36,6 +36,7 @@ class BeforeYouBookBottomSheet extends StatefulWidget {
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
+      constraints: .new(minWidth: 1.sw),
       builder: (_) => BeforeYouBookBottomSheet(
         title: title ?? 'Before You Book',
         notes:

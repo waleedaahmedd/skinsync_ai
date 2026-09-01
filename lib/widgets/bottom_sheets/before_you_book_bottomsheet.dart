@@ -1,9 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import '../../utils/string_utils.dart';
+
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
+import '../../utils/string_utils.dart';
 import '../custom_button.dart';
 
 class BeforeYouBookBottomSheet extends StatefulWidget {
@@ -36,6 +37,7 @@ class BeforeYouBookBottomSheet extends StatefulWidget {
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
+      constraints: .new(minWidth: 1.sw),
       builder: (_) => BeforeYouBookBottomSheet(
         title: title ?? 'Before You Book',
         notes:

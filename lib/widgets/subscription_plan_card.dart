@@ -4,6 +4,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../models/responses/patient_plans_response.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../utils/date_time_utils.dart';
 
 class SubscriptionPlanCard extends StatelessWidget {
   final Plan plan;
@@ -422,6 +423,22 @@ class SubscriptionCard extends StatelessWidget {
                               : CustomColors.silverColor,
                         ),
                       ),
+                    if (_getExpiryText(plan).isNotEmpty) ...[
+                      SizedBox(height: context.h(12)),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Text(
+                          _getExpiryText(plan),
+                          style: CustomFonts.black14w400.copyWith(
+                            fontSize: context.sp(12),
+                            fontWeight: FontWeight.w600,
+                            color: (isSelected || isActive)
+                                ? CustomColors.blackColor.withValues(alpha: 0.7)
+                                : CustomColors.silverColor,
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -432,15 +449,37 @@ class SubscriptionCard extends StatelessWidget {
     );
   }
 
+  String _getExpiryText(CurrentPlan plan) {
+    final bool isLifetime = plan.isLifetime ?? false;
+    if (isLifetime) {
+      return "Lifetime";
+    }
+
+    if (plan.endDate != null) {
+      return "Expiry: ${plan.endDate!.formattedDate}";
+    }
+
+    return "";
+  }
+
   String _getPriceSubText(CurrentPlan plan) {
+    final String formattedPrice = (plan.price == 0 || plan.price == null)
+        ? "Free"
+        : "\$${plan.price! % 1 == 0 ? plan.price!.toInt() : plan.price}";
+
     if (plan.isLifetime == true) {
-      return "\$${plan.price} (Lifetime)";
+      return formattedPrice == "Free"
+          ? "Free (Lifetime)"
+          : "$formattedPrice (Lifetime)";
     }
-    if (plan.durationName == null) {
-      return plan.price == 0 || plan.price == null ? "Free" : "\$${plan.price}";
+
+    if (plan.durationName != null && plan.durationName!.isNotEmpty) {
+      return formattedPrice == "Free"
+          ? "Free / ${plan.durationName}"
+          : "$formattedPrice / ${plan.durationName}";
     }
-    return plan.durationName ??
-        'N/A'; // Using newline for better fit in comparison column
+
+    return formattedPrice;
   }
 
   Widget _buildBenefitItem(BuildContext context, String title, {Color? color}) {

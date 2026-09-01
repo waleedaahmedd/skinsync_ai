@@ -8,6 +8,7 @@ class PngAssets {
   static const String leftFace = '${_assets}left_face.png';
   static const String rightFace = '${_assets}right_face.png';
   static const String face = '${_assets}face.png';
+  static const String faceAndMarks = '${_assets}face_and_marks.png';
   static const String faceMarks = '${_assets}face_marks.png';
   static const String blur = '${_assets}blur.png';
   static const String vector = '${_assets}vector.png';
@@ -28,7 +29,8 @@ class PngAssets {
   static const String customMarker = '${_assets}custom_marker.png';
   static const String biometricImage = '${_assets}biometric_image.png';
   static const String treatmentAll = '${_assets}treatment_all.png';
-  static const String treatmentCategories = '${_assets}treatment_categories.png';
+  static const String treatmentCategories =
+      '${_assets}treatment_categories.png';
   static const String treatmentAreas = '${_assets}treatment_areas.png';
 }
 

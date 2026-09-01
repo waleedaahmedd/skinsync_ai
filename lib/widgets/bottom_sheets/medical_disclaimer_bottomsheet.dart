@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import '../../utils/string_utils.dart';
-import '../../utils/custom_fonts.dart';
 
 import '../../utils/color_constant.dart';
+import '../../utils/custom_fonts.dart';
 import '../../utils/secure_storage_service.dart';
+import '../../utils/string_utils.dart';
 
 class MedicalDisclaimerBottomSheet extends StatelessWidget {
   final String title;
@@ -20,6 +20,7 @@ class MedicalDisclaimerBottomSheet extends StatelessWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
+      constraints: .new(minWidth: 1.sw),
       isDismissible: false,
       enableDrag: false,
       builder: (_) => MedicalDisclaimerBottomSheet(

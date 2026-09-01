@@ -1135,6 +1135,7 @@ class _ArFaceModelPreviewScreenState
       context: context,
       backgroundColor: Colors.white,
       isScrollControlled: true,
+      constraints: .new(minWidth: 1.sw),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(context.r(24)),
