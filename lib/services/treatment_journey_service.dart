@@ -20,11 +20,11 @@ class TreatmentJourneyService implements TreatmentJourneyRepository {
   TreatmentJourneyService({required this._apiClient});
 
   @override
-  Future<GroupsListResponse> getGroups({required int page,required String search}) async {
+  Future<GroupsListResponse> getGroups({required int page,required String search,required bool isShared}) async {
     final response = await _apiClient.httpRequest(
       endPoint: EndPoints.treatmentJourneyGroups,
       requestType: RequestType.get,
-      params: '?page=$page&limit=10&search=$search'
+      params: '?page=$page&limit=10&search=$search&is_shared=$isShared'
     );
 
     if (response.statusCode >= 200 && response.statusCode < 300) {

@@ -57,6 +57,18 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
           return await fetchGroupsPage(pageKey) ?? [];
         },
       );
+
+void setSharedFilter(bool isShared) {
+    if (state.isShared == isShared) return;
+    state = state.copyWith(
+      isShared: isShared,
+      totalPages: null,
+      groups: [],
+    );
+    pagingController.refresh(); // Triggers re-fetch from page 1
+  }
+
+
   Future<List<TreatmentJourneyGroup>?> fetchGroupsPage(int pageKey) async {
     return runSafely(() async {
       debugPrint(
@@ -66,6 +78,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       final response = await _repo.getGroups(
         page: pageKey,
         search: searchController.text.trim(),
+        isShared:state.isShared,
       );
 
       if (!ref.mounted) return null;
@@ -79,14 +92,11 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     });
   }
 
-  void searchGroups(String value) {
+void searchGroups(String value) {
     _searchTimer?.cancel();
-
     _searchTimer = Timer(const Duration(milliseconds: 500), () {
       if (!ref.mounted) return;
-
       state = state.copyWith(totalPages: null, groups: []);
-
       pagingController.refresh();
     });
   }
@@ -371,6 +381,7 @@ class TreatmentJourneyState extends BaseStateModel {
   final TreatmentJourneyGroup? selectedGroup;
   final String? price;
   final int? totalPages;
+  final bool isShared;
   const TreatmentJourneyState({
     super.loading = false,
     super.errorMessage,
@@ -382,6 +393,7 @@ class TreatmentJourneyState extends BaseStateModel {
     this.selectedOptionId,
     this.price,
     this.totalPages,
+    this.isShared = false,
   });
 
   @override
@@ -398,6 +410,7 @@ class TreatmentJourneyState extends BaseStateModel {
     int? selectedOptionId,
     String? price,
     int? totalPages,
+    bool? isShared,
   }) {
     return TreatmentJourneyState(
       loading: loading ?? this.loading,
@@ -414,6 +427,7 @@ class TreatmentJourneyState extends BaseStateModel {
           : (selectedOptionId ?? this.selectedOptionId),
       price: price ?? this.price,
       totalPages: totalPages ?? this.totalPages,
+      isShared: isShared ?? this.isShared,
     );
   }
 }
