@@ -85,7 +85,7 @@ class _TreatmentJourneyDetailScreenState
 
   void _showEditGroupDialog() {
     final TextEditingController nameController =
-        TextEditingController(text: widget.groupName);
+        TextEditingController(text: ref.read(treatmentJourneyProvider).selectedGroup?.name ?? '');
 
     showDialog(
       context: context,
@@ -177,7 +177,7 @@ class _TreatmentJourneyDetailScreenState
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           showTitle: true,
-          title: widget.groupName.capitalize,
+          title: state.selectedGroup?.name?.capitalize ?? '',
           actions: [
             IconButton(
               padding: .zero,
