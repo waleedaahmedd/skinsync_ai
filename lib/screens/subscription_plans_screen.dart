@@ -9,7 +9,6 @@ import '../utils/custom_fonts.dart';
 import '../utils/date_time_utils.dart';
 import '../utils/list_utils.dart';
 import '../view_models/subscription_view_model.dart';
-import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/horizontal_empty_state.dart';
@@ -36,15 +35,8 @@ class _SubscriptionPlansScreenState
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: const CustomAppBar(showTitle: true, title: "Subscription Plans"),
-      body: subscriptionState.loading
-          ? const Center(child: AppLoader())
-          : subscriptionState.errorMessage != null
-          ? Center(child: Text(subscriptionState.errorMessage!))
-          : _buildBody(subscriptionState),
-      bottomNavigationBar:
-          subscriptionState.loading ||
-              subscriptionState.errorMessage != null ||
-              subscriptionState.plans.isEmpty
+      body: _buildBody(subscriptionState),
+      bottomNavigationBar: subscriptionState.plans.isEmpty
           ? null
           : _buildBottomButton(subscriptionState),
     );
