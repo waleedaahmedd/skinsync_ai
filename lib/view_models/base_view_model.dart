@@ -51,29 +51,42 @@ abstract class BaseViewModel<S> extends Notifier<S> {
         return null;
       }
       onError(e.toString());
-      FirebaseCrashlytics.instance.recordError(e, s);
+      _recordError(e, s);
       return null;
     } on GoogleSignInException catch (e, s) {
-      log('GoogleSignInException: code=${e.code}, description=${e.description}', stackTrace: s, name: 'AUTH_ERROR');
+      log(
+        'GoogleSignInException: code=${e.code}, description=${e.description}',
+        stackTrace: s,
+        name: 'AUTH_ERROR',
+      );
       if (e.code == GoogleSignInExceptionCode.canceled) {
         onCancel();
-        onError('Google Sign In Error (${e.code}): ${e.description ?? "User cancelled"}');
+        onError(
+          'Google Sign In Error (${e.code}): ${e.description ?? "User cancelled"}',
+        );
         return null;
       }
       onError(e.description ?? 'Something went wrong. Please try again.');
-      FirebaseCrashlytics.instance.recordError(e, s);
+      _recordError(e, s);
       return null;
     } on AppException catch (e, s) {
       log(e.message, stackTrace: s);
       onError(e.message);
-      FirebaseCrashlytics.instance.recordError(e, s);
+      _recordError(e, s);
       return null;
     } catch (e, s) {
       log(e.toString(), stackTrace: s);
       onError(e.toString().replaceAll('Exception:', ''));
-      FirebaseCrashlytics.instance.recordError(e, s);
+      _recordError(e, s);
       return null;
     }
+  }
+
+  void _recordError(Object e, StackTrace s) {
+    if (kDebugMode) {
+      return;
+    }
+    FirebaseCrashlytics.instance.recordError(e, s);
   }
 
   @mustCallSuper

@@ -210,18 +210,20 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       return true;
     });
   }
-Future<bool?> callUpdateGroupName(int groupId,String name) async {
+
+  Future<bool?> callUpdateGroupName(int groupId, String name) async {
     return await runSafely(() async {
       EasyLoading.show(status: 'Updating Group...');
-      final response = await _repo.updateTreatmantGroupName(groupId,name);
+      final response = await _repo.updateTreatmantGroupName(groupId, name);
       if (!ref.mounted) return null;
       if (response.isSuccess == true) {
-       await fetchOptions(groupId);
+        await fetchOptions(groupId);
       }
       EasyLoading.dismiss();
       return true;
     });
   }
+
   Future<bool?> callDeleteOption(int optionId) async {
     return await runSafely(() async {
       EasyLoading.show(status: 'Deleting Option...');
@@ -335,11 +337,13 @@ Future<bool?> callUpdateGroupName(int groupId,String name) async {
   @override
   void onError(String message) {
     EasyLoading.dismiss();
-    state = state.copyWith(
-      loading: false,
-      errorMessage: message,
-      isSimulationsLoading: false,
-    );
+    if (ref.mounted) {
+      state = state.copyWith(
+        loading: false,
+        errorMessage: message,
+        isSimulationsLoading: false,
+      );
+    }
     super.onError(message);
   }
 

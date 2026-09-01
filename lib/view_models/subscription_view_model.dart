@@ -48,10 +48,7 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
           final errorMsg =
               response.message ?? 'Failed to load subscription plans';
           EasyLoading.showError(errorMsg);
-          state = state.copyWith(
-            loading: false,
-            errorMessage: errorMsg,
-          );
+          state = state.copyWith(loading: false, errorMessage: errorMsg);
         }
       });
     } finally {
@@ -82,7 +79,6 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
           EasyLoading.showSuccess('Verifying your subscription...');
           await Future.delayed(const Duration(seconds: 3));
           await fetchSubscriptionPlans(showLoading: true);
-          Navigator.pop(navigatorKey.currentContext!);
           EasyLoading.showSuccess(
             response.message ?? 'Plan upgraded successfully!',
           );
