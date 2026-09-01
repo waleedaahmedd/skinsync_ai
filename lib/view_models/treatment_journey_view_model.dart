@@ -217,8 +217,11 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       final response = await _repo.updateTreatmantGroupName(groupId, name);
       if (!ref.mounted) return null;
       if (response.isSuccess == true) {
-        await fetchOptions(groupId);
-        pagingController.refresh();
+        if (state.selectedGroup != null) {
+          state = state.copyWith(
+            selectedGroup: state.selectedGroup!.copyWith(name: name),
+          );
+        }
       }
       EasyLoading.dismiss();
       return true;
