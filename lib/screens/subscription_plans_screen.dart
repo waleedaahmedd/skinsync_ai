@@ -404,7 +404,7 @@ class _SubscriptionPlansScreenState
     }
 
     if (plan.endDate != null) {
-      return "Expiry: ${plan.endDate!.formattedDate}";
+      return "Expires: ${plan.endDate!.formattedDate}";
     }
 
     final String formattedPrice = (plan.price == 0 || plan.price == null)

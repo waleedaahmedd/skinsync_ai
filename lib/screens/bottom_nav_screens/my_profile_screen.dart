@@ -149,7 +149,7 @@ class MyProfileScreen extends StatelessWidget {
             if (isLifetime) {
               subtitleText = "Lifetime";
             } else if (currentPlan.endDate != null) {
-              subtitleText = "Expiry: ${currentPlan.endDate!.formattedDate}";
+              subtitleText = "Expires: ${currentPlan.endDate!.formattedDate}";
             } else {
               subtitleText = "Active Plan";
             }
