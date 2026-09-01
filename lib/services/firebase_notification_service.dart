@@ -15,7 +15,8 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 class FirebaseNotificationService {
   FirebaseNotificationService._();
 
-  static final FirebaseNotificationService instance = FirebaseNotificationService._();
+  static final FirebaseNotificationService instance =
+      FirebaseNotificationService._();
 
   final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
@@ -102,9 +103,6 @@ class FirebaseNotificationService {
     _messaging.onTokenRefresh.listen((token) {
       log('FCM token refreshed: $token');
     });
-
-    final token = await _messaging.getToken();
-    log('FCM token: $token');
     _isInitialized = true;
   }
 

@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -48,10 +47,7 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
           final errorMsg =
               response.message ?? 'Failed to load subscription plans';
           EasyLoading.showError(errorMsg);
-          state = state.copyWith(
-            loading: false,
-            errorMessage: errorMsg,
-          );
+          state = state.copyWith(loading: false, errorMessage: errorMsg);
         }
       });
     } finally {

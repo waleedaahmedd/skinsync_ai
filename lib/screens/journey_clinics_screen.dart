@@ -46,6 +46,9 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
     },
     fetchPage: (page) async {
       final search = _searchController.text.trim();
+      if (!ref.context.mounted) {
+        return [];
+      }
       final clinics =
           await ref
               .read(clinicProvider.notifier)
@@ -57,10 +60,16 @@ class _JourneyClinicsScreenState extends ConsumerState<JourneyClinicsScreen> {
       // fetchPage call that scroll might never trigger.
       if (clinics.length < 10) {
         _switchedToMapSource = true;
+        if (!ref.context.mounted) {
+          return [];
+        }
         _mapClinicsFuture ??= ref
             .read(clinicProvider.notifier)
             .fetchClinicsFromMap(search: search);
         await _mapClinicsFuture;
+        if (!ref.context.mounted) {
+          return [];
+        }
         final mapClinics = ref.read(clinicProvider).clinicsToInvite;
         return [...clinics, ...mapClinics];
       }

@@ -56,4 +56,19 @@ class TreatmentJourneyGroup {
       totalOptions: json["total_options"],
     );
   }
+
+  TreatmentJourneyGroup copyWith({
+    int? id,
+    String? name,
+    DateTime? createdAt,
+    int? totalOptions,
+  }) {
+    return TreatmentJourneyGroup(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      createdAt: createdAt ?? this.createdAt,
+      totalOptions: totalOptions ?? this.totalOptions,
+    );
+  }
 }
+ 

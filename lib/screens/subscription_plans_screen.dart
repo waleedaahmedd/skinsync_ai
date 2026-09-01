@@ -47,7 +47,7 @@ class _SubscriptionPlansScreenState
     final allPlans = state.plans;
 
     if (selectedPlanId == null && allPlans.isNotEmpty) {
-      selectedPlanId = state.currentPlan?.id ?? allPlans.first.id;
+      selectedPlanId = state.currentPlan?.id ?? allPlans.firstOrNull?.id;
     }
 
     final selectedPlan = allPlans.firstWhereOrNull(

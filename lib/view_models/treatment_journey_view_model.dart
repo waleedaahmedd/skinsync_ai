@@ -57,6 +57,18 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
           return await fetchGroupsPage(pageKey) ?? [];
         },
       );
+
+void setSharedFilter(bool isShared) {
+    if (state.isShared == isShared) return;
+    state = state.copyWith(
+      isShared: isShared,
+      totalPages: null,
+      groups: [],
+    );
+    pagingController.refresh(); // Triggers re-fetch from page 1
+  }
+
+
   Future<List<TreatmentJourneyGroup>?> fetchGroupsPage(int pageKey) async {
     return runSafely(() async {
       debugPrint(
@@ -66,6 +78,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       final response = await _repo.getGroups(
         page: pageKey,
         search: searchController.text.trim(),
+        isShared:state.isShared,
       );
 
       if (!ref.mounted) return null;
@@ -79,14 +92,11 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
     });
   }
 
-  void searchGroups(String value) {
+void searchGroups(String value) {
     _searchTimer?.cancel();
-
     _searchTimer = Timer(const Duration(milliseconds: 500), () {
       if (!ref.mounted) return;
-
       state = state.copyWith(totalPages: null, groups: []);
-
       pagingController.refresh();
     });
   }
@@ -210,18 +220,25 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       return true;
     });
   }
-Future<bool?> callUpdateGroupName(int groupId,String name) async {
+
+  Future<bool?> callUpdateGroupName(int groupId, String name) async {
     return await runSafely(() async {
       EasyLoading.show(status: 'Updating Group...');
-      final response = await _repo.updateTreatmantGroupName(groupId,name);
+      final response = await _repo.updateTreatmantGroupName(groupId, name);
       if (!ref.mounted) return null;
       if (response.isSuccess == true) {
-       await fetchOptions(groupId);
+        pagingController.refresh();
+        if (state.selectedGroup != null) {
+          state = state.copyWith(
+            selectedGroup: state.selectedGroup!.copyWith(name: name),
+          );
+        }
       }
       EasyLoading.dismiss();
       return true;
     });
   }
+
   Future<bool?> callDeleteOption(int optionId) async {
     return await runSafely(() async {
       EasyLoading.show(status: 'Deleting Option...');
@@ -335,11 +352,13 @@ Future<bool?> callUpdateGroupName(int groupId,String name) async {
   @override
   void onError(String message) {
     EasyLoading.dismiss();
-    state = state.copyWith(
-      loading: false,
-      errorMessage: message,
-      isSimulationsLoading: false,
-    );
+    if (ref.mounted) {
+      state = state.copyWith(
+        loading: false,
+        errorMessage: message,
+        isSimulationsLoading: false,
+      );
+    }
     super.onError(message);
   }
 
@@ -362,6 +381,7 @@ class TreatmentJourneyState extends BaseStateModel {
   final TreatmentJourneyGroup? selectedGroup;
   final String? price;
   final int? totalPages;
+  final bool isShared;
   const TreatmentJourneyState({
     super.loading = false,
     super.errorMessage,
@@ -373,6 +393,7 @@ class TreatmentJourneyState extends BaseStateModel {
     this.selectedOptionId,
     this.price,
     this.totalPages,
+    this.isShared = false,
   });
 
   @override
@@ -389,6 +410,7 @@ class TreatmentJourneyState extends BaseStateModel {
     int? selectedOptionId,
     String? price,
     int? totalPages,
+    bool? isShared,
   }) {
     return TreatmentJourneyState(
       loading: loading ?? this.loading,
@@ -405,6 +427,7 @@ class TreatmentJourneyState extends BaseStateModel {
           : (selectedOptionId ?? this.selectedOptionId),
       price: price ?? this.price,
       totalPages: totalPages ?? this.totalPages,
+      isShared: isShared ?? this.isShared,
     );
   }
 }

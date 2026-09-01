@@ -34,11 +34,12 @@ class TreatmentJourneyScreen extends ConsumerStatefulWidget {
       _TreatmentJourneyScreenState();
 }
 
-class _TreatmentJourneyScreenState
-    extends ConsumerState<TreatmentJourneyScreen> {
+class _TreatmentJourneyScreenState extends ConsumerState<TreatmentJourneyScreen>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _groupNameController = TextEditingController();
   late bool isTreatmentJourney;
   late final PagingController<int, TreatmentJourneyGroup> _pagingController;
+  late TabController _tabController;
   bool _hasCheckedEmptyState = false;
 
   @override
@@ -49,14 +50,31 @@ class _TreatmentJourneyScreenState
         .read(treatmentJourneyProvider.notifier)
         .pagingController;
     _pagingController.addListener(_maybeShowCreateDialogOnEmpty);
+
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_handleTabSelection);
+  }
+
+  void _handleTabSelection() {
+    if (_tabController.indexIsChanging) return;
+    // index 0 -> Unshared (isShared = false), index 1 -> Shared (isShared = true)
+    final isShared = _tabController.index == 1;
+    ref.read(treatmentJourneyProvider.notifier).setSharedFilter(isShared);
+  }
+
+  @override
+  void dispose() {
+    _tabController.removeListener(_handleTabSelection);
+    _tabController.dispose();
+    _pagingController.removeListener(_maybeShowCreateDialogOnEmpty);
+    _groupNameController.dispose();
+    super.dispose();
   }
 
   void _maybeShowCreateDialogOnEmpty() {
     if (_hasCheckedEmptyState) return;
 
     final state = _pagingController.value;
-    // Wait until the first page has actually finished loading (not still
-    // fetching, no error) before deciding it's empty.
     final firstPageLoaded =
         (state.pages?.isNotEmpty ?? false) &&
         !state.isLoading &&
@@ -70,13 +88,6 @@ class _TreatmentJourneyScreenState
         _showCreateGroupDialog();
       });
     }
-  }
-
-  @override
-  void dispose() {
-    _pagingController.removeListener(_maybeShowCreateDialogOnEmpty);
-    _groupNameController.dispose();
-    super.dispose();
   }
 
   void _showCreateGroupDialog() {
@@ -187,7 +198,6 @@ class _TreatmentJourneyScreenState
 
   @override
   Widget build(BuildContext context) {
-    
     ref.watch(treatmentJourneyProvider);
 
     return Scaffold(
@@ -208,75 +218,110 @@ class _TreatmentJourneyScreenState
         ],
       ),
       body: SafeArea(
-        child: PagingListener<int, TreatmentJourneyGroup>(
-          controller: _pagingController,
-          builder: (context, state, fetchNextPage) {
-            final items = state.items ?? const [];
-            return Padding(
+        child: Column(
+          children: [
+            // TabBar for Unshared & Shared
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (items.isNotEmpty)
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: context.h(10),
-                        bottom: context.w(24),
-                      ),
-                      child: Text(
-                        "Create a new journey group or select an existing one to manage your simulations and share them with clinics.",
-                        style: CustomFonts.grey14w400.copyWith(height: 1.4),
-                      ),
-                    ),
-                 
-                  CustomSearchField(
-                    
-                    controller: ref
-                        .read(treatmentJourneyProvider.notifier)
-                        .searchController,
-                    hintText: "Search Groups...",
-                    onChanged: (query) {
-                      ref
-                          .read(treatmentJourneyProvider.notifier)
-                          .searchGroups(query);
-                    },
+              child: Container(
+                height: context.h(45),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(context.r(25)),
+                ),
+                child: TabBar(
+                  controller: _tabController,
+                  indicator: BoxDecoration(
+                    borderRadius: BorderRadius.circular(context.r(25)),
+                    gradient: CustomColors.purpleBlueGradient,
                   ),
-                  SizedBox(height: context.h(20)),
-                  Expanded(
-                    child: SlidableAutoCloseBehavior(
-                      child: PagedListView<int, TreatmentJourneyGroup>(
-                        state: state,
-                        fetchNextPage: fetchNextPage,
-                        physics: const BouncingScrollPhysics(),
-                        padding: EdgeInsets.only(
-                        
-                          bottom: context.h(20),
-                        ),
-                        builderDelegate:
-                            PagedChildBuilderDelegate<TreatmentJourneyGroup>(
-                              itemBuilder: (context, group, index) =>
-                                  _buildGroupCard(context, group, index),
-                              firstPageProgressIndicatorBuilder: (context) =>
-                                  const Center(child: AppLoader()),
-                              newPageProgressIndicatorBuilder: (context) =>
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: context.h(16),
-                                    ),
-                                    child: const Center(child: AppLoader()),
-                                  ),
-                              noItemsFoundIndicatorBuilder: (context) =>
-                                  _buildEmptyGroupsView(),
-                              firstPageErrorIndicatorBuilder: (context) =>
-                                  _buildEmptyGroupsView(),
-                            ),
-                      ),
-                    ),
-                  ),
-                ],
+                  labelColor: Colors.black,
+                  unselectedLabelColor: Colors.grey.shade600,
+                  labelStyle: CustomFonts.black14w600,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  dividerColor: Colors.transparent,
+                  tabs: const [
+                    Tab(text: "Unshared"),
+                    Tab(text: "Shared"),
+                  ],
+                ),
               ),
-            );
-          },
+            ),
+            SizedBox(height: context.h(16)),
+
+            // Main Content Area with PagingListener
+            Expanded(
+              child: PagingListener<int, TreatmentJourneyGroup>(
+                controller: _pagingController,
+                builder: (context, state, fetchNextPage) {
+                  final items = state.items ?? const [];
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (items.isNotEmpty)
+                          Padding(
+                            padding: EdgeInsets.only(bottom: context.w(16)),
+                            child: Text(
+                              "Create a new journey group or select an existing one to manage your simulations and share them with clinics.",
+                              style: CustomFonts.grey14w400.copyWith(
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
+                        CustomSearchField(
+                          controller: ref
+                              .read(treatmentJourneyProvider.notifier)
+                              .searchController,
+                          hintText: "Search Groups...",
+                          onChanged: (query) {
+                            ref
+                                .read(treatmentJourneyProvider.notifier)
+                                .searchGroups(query);
+                          },
+                        ),
+                        SizedBox(height: context.h(16)),
+                        Expanded(
+                          child: SlidableAutoCloseBehavior(
+                            child: PagedListView<int, TreatmentJourneyGroup>(
+                              state: state,
+                              fetchNextPage: fetchNextPage,
+                              physics: const BouncingScrollPhysics(),
+                              padding: EdgeInsets.only(bottom: context.h(20)),
+                              builderDelegate:
+                                  PagedChildBuilderDelegate<
+                                    TreatmentJourneyGroup
+                                  >(
+                                    itemBuilder: (context, group, index) =>
+                                        _buildGroupCard(context, group, index),
+                                    firstPageProgressIndicatorBuilder:
+                                        (context) =>
+                                            const Center(child: AppLoader()),
+                                    newPageProgressIndicatorBuilder:
+                                        (context) => Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: context.h(16),
+                                          ),
+                                          child: const Center(
+                                            child: AppLoader(),
+                                          ),
+                                        ),
+                                    noItemsFoundIndicatorBuilder: (context) =>
+                                        _buildEmptyGroupsView(),
+                                    firstPageErrorIndicatorBuilder: (context) =>
+                                        _buildEmptyGroupsView(),
+                                  ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
