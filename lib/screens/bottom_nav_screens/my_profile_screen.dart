@@ -15,10 +15,12 @@ import '../saved_treatment_screen.dart';
 import '../setting_screen.dart';
 import '../../utils/assets.dart';
 import '../../utils/color_constant.dart';
+import '../../utils/date_time_utils.dart';
 import '../../utils/string_utils.dart';
 import '../../utils/custom_fonts.dart';
 import '../../utils/secure_storage_service.dart';
 import '../../view_models/auth_view_model.dart';
+import '../../view_models/subscription_view_model.dart';
 import '../../widgets/logout_dialog_box.dart';
 
 import '../../main.dart';
@@ -130,92 +132,124 @@ class MyProfileScreen extends StatelessWidget {
     }
 
     Widget buildUpgradeBanner() {
-      return InkWell(
-        onTap: () {
-          Navigator.pushNamed(context, SubscriptionPlansScreen.routeName);
-        },
-        borderRadius: BorderRadius.circular(context.r(24)),
-        child: Container(
-          padding: EdgeInsets.all(context.w(16)),
-          decoration: BoxDecoration(
-            gradient: CustomColors.purpleBlueGradient,
+      return Consumer(
+        builder: (context, ref, _) {
+          final subscriptionState = ref.watch(subscriptionProvider);
+          final currentPlan = subscriptionState.currentPlan;
+
+          final bool hasPlan = currentPlan != null;
+
+          final String titleText = hasPlan
+              ? (currentPlan.name ?? "Current Plan")
+              : "Upgrade to Premium";
+
+          String subtitleText;
+          if (hasPlan) {
+            final bool isLifetime = currentPlan.isLifetime ?? false;
+            if (isLifetime) {
+              subtitleText = "Lifetime";
+            } else if (currentPlan.endDate != null) {
+              subtitleText = "Expiry: ${currentPlan.endDate!.formattedDate}";
+            } else {
+              subtitleText = "Active Plan";
+            }
+          } else {
+            subtitleText =
+                "Unlock unlimited AI simulations and premium support.";
+          }
+
+          final bool showUpgradeButton = !hasPlan;
+
+          return InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, SubscriptionPlansScreen.routeName);
+            },
             borderRadius: BorderRadius.circular(context.r(24)),
-            boxShadow: [
-              BoxShadow(
-                color: CustomColors.purpleColor.withValues(alpha: 0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 6),
+            child: Container(
+              padding: EdgeInsets.all(context.w(16)),
+              decoration: BoxDecoration(
+                gradient: CustomColors.purpleBlueGradient,
+                borderRadius: BorderRadius.circular(context.r(24)),
+                boxShadow: [
+                  BoxShadow(
+                    color: CustomColors.purpleColor.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(context.w(10)),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Iconsax.crown,
-                  color: CustomColors.blackColor,
-                  size: context.w(24),
-                ),
-              ),
-              SizedBox(width: context.w(16)),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Upgrade to Premium",
-                      style: CustomFonts.white16w600.copyWith(
-                        color: Colors.black87,
-                        fontSize: context.sp(15),
-                      ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: EdgeInsets.all(context.w(10)),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      shape: BoxShape.circle,
                     ),
-                    SizedBox(height: context.h(2)),
-                    Text(
-                      "Unlock unlimited AI simulations and premium support.",
-                      style: CustomFonts.white12w600.copyWith(
-                        color: Colors.black54,
-                        fontSize: context.sp(11),
-                        fontWeight: FontWeight.w500,
+                    child: Icon(
+                      Iconsax.crown,
+                      color: CustomColors.blackColor,
+                      size: context.w(24),
+                    ),
+                  ),
+                  SizedBox(width: context.w(16)),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          titleText,
+                          style: CustomFonts.white16w600.copyWith(
+                            color: Colors.black87,
+                            fontSize: context.sp(15),
+                          ),
+                        ),
+                        SizedBox(height: context.h(2)),
+                        Text(
+                          subtitleText,
+                          style: CustomFonts.white12w600.copyWith(
+                            color: Colors.black54,
+                            fontSize: context.sp(11),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (showUpgradeButton) ...[
+                    SizedBox(width: context.w(12)),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(
+                          context,
+                          SubscriptionPlansScreen.routeName,
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.w(14),
+                          vertical: context.h(8),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(context.r(12)),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        "Upgrade",
+                        style: CustomFonts.white14w600.copyWith(
+                          fontSize: context.sp(12),
+                        ),
                       ),
                     ),
                   ],
-                ),
+                ],
               ),
-              SizedBox(width: context.w(12)),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(
-                    context,
-                    SubscriptionPlansScreen.routeName,
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.w(14),
-                    vertical: context.h(8),
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(context.r(12)),
-                  ),
-                  elevation: 0,
-                ),
-                child: Text(
-                  "Upgrade",
-                  style: CustomFonts.white14w600.copyWith(
-                    fontSize: context.sp(12),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       );
     }
 
@@ -319,6 +353,8 @@ class MyProfileScreen extends StatelessWidget {
                             .authData
                             ?.user
                             ?.name;
+                        final currentPlan =
+                            ref.watch(subscriptionProvider).currentPlan;
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -330,7 +366,7 @@ class MyProfileScreen extends StatelessWidget {
                             ),
                             SizedBox(height: context.h(2)),
                             Text(
-                              "Free Plan",
+                              currentPlan?.name ?? "Free Plan",
                               style: CustomFonts.darkPurple12w600,
                             ),
                           ],

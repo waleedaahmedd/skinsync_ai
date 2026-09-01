@@ -6,6 +6,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import '../models/responses/patient_plans_response.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../utils/date_time_utils.dart';
 import '../utils/list_utils.dart';
 import '../view_models/subscription_view_model.dart';
 import '../widgets/app_loader.dart';
@@ -405,14 +406,26 @@ class _SubscriptionPlansScreenState
   }
 
   String _getPriceSubText(CurrentPlan plan) {
-    if (plan.isLifetime == true) {
-      return "\$${plan.price} (Lifetime)";
+    final bool isLifetime = plan.isLifetime ?? false;
+    if (isLifetime) {
+      return "Lifetime";
     }
-    if (plan.durationName == null) {
-      return plan.price == 0 || plan.price == null ? "Free" : "\$${plan.price}";
+
+    if (plan.endDate != null) {
+      return "Expiry: ${plan.endDate!.formattedDate}";
     }
-    return plan.durationName ??
-        'N/A'; // Using newline for better fit in comparison column
+
+    final String formattedPrice = (plan.price == 0 || plan.price == null)
+        ? "Free"
+        : "\$${plan.price! % 1 == 0 ? plan.price!.toInt() : plan.price}";
+
+    if (plan.durationName != null && plan.durationName!.isNotEmpty) {
+      return formattedPrice == "Free"
+          ? "Free / ${plan.durationName}"
+          : "$formattedPrice / ${plan.durationName}";
+    }
+
+    return formattedPrice;
   }
 
   String _getPriceText(Plan plan) {
