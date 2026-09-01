@@ -75,15 +75,15 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
         );
         log('PARAMS: $params');
         if (params != null) {
-          EasyLoading.showSuccess('Verifying your subscription...');
-          await Future.delayed(const Duration(seconds: 3));
-          await fetchSubscriptionPlans(showLoading: true);
-          Navigator.pop(navigatorKey.currentContext!);
-          EasyLoading.showSuccess(
-            response.message ?? 'Plan upgraded successfully!',
-          );
-        } else {
-          EasyLoading.showError('Something went wrong!');
+          if (params['status'] == 'success') {
+            EasyLoading.showSuccess('Verifying your subscription...');
+            await Future.delayed(const Duration(seconds: 3));
+            await fetchSubscriptionPlans(showLoading: true);
+            Navigator.pop(navigatorKey.currentContext!);
+            EasyLoading.showSuccess(
+              response.message ?? 'Plan upgraded successfully!',
+            );
+          }
         }
         return true;
       } else {
