@@ -17,7 +17,6 @@ import '../view_models/treatment_journey_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/bottom_sheets/preferred_slots_bottom_sheet.dart';
-import 'patient_treatment_requests_screen.dart';
 import 'treatment_review_screen.dart';
 import 'treatment_journey_screen.dart';
 
@@ -350,66 +349,50 @@ class _JourneyClinicDetailScreenState
               ),
             ),
           Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: CustomColors.whiteColor,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    blurRadius: 15,
-                    offset: const Offset(0, -5),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Full-width Banner Label
-                  GestureDetector(
-                    onTap: () {
-                     Navigator.pushNamed(
+           left: 0,
+  right: 0,
+  bottom: 0,
+  child: Container(
+    decoration: BoxDecoration(
+      color: CustomColors.whiteColor, // Added background color to ensure opacity over scrolled content
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.06),
+          blurRadius: 15,
+          offset: const Offset(0, -5),
+        ),
+      ],
+    ),
+    child: SafeArea(
+      top: false,
+      child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.paddingOf(context).bottom + context.h(20),
+                  left: context.w(24),
+                  right: context.w(24),
+                  top: context.h(20),
+                ),
+                child: Consumer(
+                  builder: (_, ref, _) {
+                    final tjState = ref.watch(treatmentJourneyProvider);
+                    final optionId = tjState.selectedOptionId;
+                    return Column(
+                      children: [
+                        CustomButton(
+                          isBorder: true,
+                          text: 'View Shared Requests',
+                          onPressed: () {
+                          
+                            Navigator.pushNamed(
                               context,
-                              PatientTreatmentRequestsScreen.routeName,
-                              arguments: widget.clinic?.id,
+                              TreatmentJourneyScreen.routeName,
                             );
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: context.h(10)),
-                      decoration: BoxDecoration(
-                        color: CustomColors.purpleColor.withValues(alpha: 0.08),
-                      ),
-                      child: Text(
-                        'View shared requests with this clinic',
-                        textAlign: TextAlign.center,
-                        style: CustomFonts.textGrey14w400.copyWith(
-                          color: CustomColors.purpleColor,
-                          fontWeight: FontWeight.w500,
+                          },
                         ),
-                      ),
-                    ),
-                  ),
-
-                  // Padded Section for the Action Button
-                  Padding(
-                    padding: EdgeInsets.only(
-                      bottom:
-                          MediaQuery.paddingOf(context).bottom + context.h(20),
-                      left: context.w(24),
-                      right: context.w(24),
-                      top: context.h(16),
-                    ),
-                    child: Consumer(
-                      builder: (_, ref, _) {
-                        final tjState = ref.watch(treatmentJourneyProvider);
-                        final optionId = tjState.selectedOptionId;
-                        return CustomButton(
-                          text: optionId == null
-                              ? 'Select Option'
-                              : 'Share Now',
+                        SizedBox(height: context.h(10)),
+                        CustomButton(
+                         
+                          text: optionId == null ? 'Select Option' : 'Share Now',
                           onPressed: () async {
                             if (optionId == null) {
                               ref
@@ -421,7 +404,7 @@ class _JourneyClinicDetailScreenState
                               );
                               return;
                             }
-
+                        
                             void processShare(List<PreferredSlot> slots) {
                               if (widget.clinic != null) {
                                 Navigator.pushNamed(
@@ -435,20 +418,26 @@ class _JourneyClinicDetailScreenState
                                 );
                               }
                             }
-
-                            if (context.mounted) {
-                              PreferredSlotsBottomSheet.show(
-                                context: context,
-                                onConfirm: (slots) => processShare(slots),
-                              );
+                        
+                            // final bool docResult = await ref
+                            //     .read(formsViewModel.notifier)
+                            //     .checkAndOpenDocumentBySku("SHRE-TRET-CONS");
+                            //
+                            // if (docResult) {
+                              if (context.mounted) {
+                                PreferredSlotsBottomSheet.show(
+                                  context: context,
+                                  onConfirm: (slots) => processShare(slots),
+                                );
+                              // }
                             }
                           },
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),)
             ),
           ),
         ],
