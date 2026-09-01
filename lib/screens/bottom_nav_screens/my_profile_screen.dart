@@ -149,7 +149,7 @@ class MyProfileScreen extends StatelessWidget {
             if (isLifetime) {
               subtitleText = "Lifetime";
             } else if (currentPlan.endDate != null) {
-              subtitleText = "Expiry: ${currentPlan.endDate!.formattedDate}";
+              subtitleText = "Expires: ${currentPlan.endDate!.formattedDate}";
             } else {
               subtitleText = "Active Plan";
             }
@@ -158,7 +158,8 @@ class MyProfileScreen extends StatelessWidget {
                 "Unlock unlimited AI simulations and premium support.";
           }
 
-          final bool showUpgradeButton = !hasPlan;
+          final bool showUpgradeButton =
+              !hasPlan || (currentPlan.price ?? 0) == 0;
 
           return InkWell(
             onTap: () {
@@ -400,7 +401,6 @@ class MyProfileScreen extends StatelessWidget {
                   SizedBox(height: context.h(20)),
                   // CARD 1: Clinical Portal Section
                   buildOptionCard([
-                   
                     buildCardOption(
                       callBack: () {
                         Navigator.pushNamed(

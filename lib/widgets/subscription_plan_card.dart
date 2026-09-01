@@ -456,7 +456,7 @@ class SubscriptionCard extends StatelessWidget {
     }
 
     if (plan.endDate != null) {
-      return "Expiry: ${plan.endDate!.formattedDate}";
+      return "Expires: ${plan.endDate!.formattedDate}";
     }
 
     return "";
