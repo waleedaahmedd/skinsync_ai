@@ -4,24 +4,24 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../models/requests/preferred_slot.dart';
-import '../utils/string_utils.dart';
 import '../utils/assets.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../utils/string_utils.dart';
 import '../view_models/checkout_view_model.dart';
 import '../view_models/clinic_view_model.dart';
 import '../view_models/treatment_journey_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 import '../widgets/app_loader.dart';
+import '../widgets/bottom_sheets/preferred_slots_bottom_sheet.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/dialogs/delete_confirmation_dialog.dart';
-import '../widgets/bottom_sheets/preferred_slots_bottom_sheet.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/simulation_card.dart';
-import 'consent_forms/face_consent_screen.dart';
 import 'ar_face_model_preview_screen.dart';
 import 'bottom_nav_page.dart';
+import 'consent_forms/face_consent_screen.dart';
 import 'face_pose_capture_screen.dart';
 import 'journey_clinics_screen.dart';
 import 'treatment_review_screen.dart';
@@ -50,11 +50,12 @@ class _TreatmentJourneyDetailScreenState
     with TickerProviderStateMixin {
   TabController? _tabController;
   _JourneyFilter _currentFilter = _JourneyFilter.all;
+  late String groupName;
 
   @override
-  void dispose() {
-    _tabController?.dispose();
-    super.dispose();
+  void initState() {
+    groupName = widget.groupName;
+    super.initState();
   }
 
   void _setupTabController(List<dynamic> filteredOptions) {
@@ -84,8 +85,9 @@ class _TreatmentJourneyDetailScreenState
   }
 
   void _showEditGroupDialog() {
-    final TextEditingController nameController =
-        TextEditingController(text: widget.groupName);
+    final TextEditingController nameController = TextEditingController(
+      text: widget.groupName,
+    );
 
     showDialog(
       context: context,
@@ -95,10 +97,7 @@ class _TreatmentJourneyDetailScreenState
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(context.r(16)),
           ),
-          title: Text(
-            "Edit Group Name",
-            style: CustomFonts.black18w600,
-          ),
+          title: Text("Edit Group Name", style: CustomFonts.black18w600),
           content: TextField(
             controller: nameController,
             autofocus: true,
@@ -118,10 +117,7 @@ class _TreatmentJourneyDetailScreenState
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: Text(
-                "Cancel",
-                style: CustomFonts.textGrey15w400,
-              ),
+              child: Text("Cancel", style: CustomFonts.textGrey15w400),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
@@ -130,15 +126,7 @@ class _TreatmentJourneyDetailScreenState
                   borderRadius: BorderRadius.circular(context.r(8)),
                 ),
               ),
-              onPressed: () {
-                final updatedName = nameController.text.trim();
-                if (updatedName.isNotEmpty) {
-                  ref
-                      .read(treatmentJourneyProvider.notifier)
-                      .callUpdateGroupName(widget.groupId, updatedName);
-                }
-                Navigator.pop(dialogContext);
-              },
+              onPressed: () => _onUpdateGroupName(nameController.text.trim()),
               child: Text(
                 "Update",
                 style: CustomFonts.black14w600.copyWith(color: Colors.white),
@@ -148,6 +136,25 @@ class _TreatmentJourneyDetailScreenState
         );
       },
     );
+  }
+
+  Future<void> _onUpdateGroupName(String updatedName) async {
+    if (updatedName.isNotEmpty) {
+      final success = await ref
+          .read(treatmentJourneyProvider.notifier)
+          .callUpdateGroupName(widget.groupId, updatedName);
+      if (success ?? false) {
+        groupName = updatedName;
+        setState(() {});
+      }
+    }
+    Navigator.pop(context);
+  }
+
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    super.dispose();
   }
 
   @override
@@ -177,11 +184,15 @@ class _TreatmentJourneyDetailScreenState
         backgroundColor: Colors.white,
         appBar: CustomAppBar(
           showTitle: true,
-          title: widget.groupName.capitalize,
+          title: groupName.capitalize,
           actions: [
             IconButton(
               padding: .zero,
-              icon: const Icon(Icons.edit_outlined, color: Colors.black, size: 20),
+              icon: const Icon(
+                Icons.edit_outlined,
+                color: Colors.black,
+                size: 20,
+              ),
               tooltip: "Edit Group Name",
               onPressed: _showEditGroupDialog,
             ),
@@ -214,8 +225,8 @@ class _TreatmentJourneyDetailScreenState
                       _currentFilter == _JourneyFilter.all
                           ? "All"
                           : (_currentFilter == _JourneyFilter.shared
-                              ? "Shared"
-                              : "Unshared"),
+                                ? "Shared"
+                                : "Unshared"),
                       style: CustomFonts.black14w600,
                     ),
                   ],
@@ -258,71 +269,71 @@ class _TreatmentJourneyDetailScreenState
         body: state.loading
             ? const Center(child: AppLoader())
             : filteredOptions.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Iconsax.document_filter,
-                          size: context.w(48),
-                          color: Colors.grey,
-                        ),
-                        SizedBox(height: context.h(16)),
-                        Text(
-                          _currentFilter == _JourneyFilter.all
-                              ? (state.errorMessage ?? "No options available")
-                              : "No ${_currentFilter.name} options found",
-                          style: CustomFonts.grey16w400,
-                        ),
-                      ],
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Iconsax.document_filter,
+                      size: context.w(48),
+                      color: Colors.grey,
                     ),
-                  )
-                : Column(
-                    children: [
-                      TabBar(
-                        controller: _tabController,
-                        isScrollable: filteredOptions.length > 3,
-                        indicatorColor: CustomColors.lightBlueColor,
-                        indicatorSize: TabBarIndicatorSize.label,
-                        labelColor: Colors.black,
-                        unselectedLabelColor: Colors.grey.shade500,
-                        labelStyle: CustomFonts.black16w600,
-                        unselectedLabelStyle: CustomFonts.grey16w500,
-                        dividerColor: Colors.transparent,
-                        tabs: filteredOptions.map((opt) {
-                          final bool isShared = opt.isShared == true;
-                          return Tab(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(opt.name?.capitalize ?? ''),
-                                if (isShared) ...[
-                                  SizedBox(width: context.w(6)),
-                                  Image.asset(
-                                    PngAssets.splashLogo,
-                                    height: context.h(16),
-                                    width: context.w(16),
-                                    fit: BoxFit.contain,
-                                  ),
-                                ],
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                      Expanded(
-                        child: state.isSimulationsLoading
-                            ? const Center(child: AppLoader())
-                            : TabBarView(
-                                controller: _tabController,
-                                physics: const NeverScrollableScrollPhysics(),
-                                children: filteredOptions.map((opt) {
-                                  return _buildSimulationsList(context, state);
-                                }).toList(),
+                    SizedBox(height: context.h(16)),
+                    Text(
+                      _currentFilter == _JourneyFilter.all
+                          ? (state.errorMessage ?? "No options available")
+                          : "No ${_currentFilter.name} options found",
+                      style: CustomFonts.grey16w400,
+                    ),
+                  ],
+                ),
+              )
+            : Column(
+                children: [
+                  TabBar(
+                    controller: _tabController,
+                    isScrollable: filteredOptions.length > 3,
+                    indicatorColor: CustomColors.lightBlueColor,
+                    indicatorSize: TabBarIndicatorSize.label,
+                    labelColor: Colors.black,
+                    unselectedLabelColor: Colors.grey.shade500,
+                    labelStyle: CustomFonts.black16w600,
+                    unselectedLabelStyle: CustomFonts.grey16w500,
+                    dividerColor: Colors.transparent,
+                    tabs: filteredOptions.map((opt) {
+                      final bool isShared = opt.isShared == true;
+                      return Tab(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(opt.name?.capitalize ?? ''),
+                            if (isShared) ...[
+                              SizedBox(width: context.w(6)),
+                              Image.asset(
+                                PngAssets.splashLogo,
+                                height: context.h(16),
+                                width: context.w(16),
+                                fit: BoxFit.contain,
                               ),
-                      ),
-                    ],
+                            ],
+                          ],
+                        ),
+                      );
+                    }).toList(),
                   ),
+                  Expanded(
+                    child: state.isSimulationsLoading
+                        ? const Center(child: AppLoader())
+                        : TabBarView(
+                            controller: _tabController,
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: filteredOptions.map((opt) {
+                              return _buildSimulationsList(context, state);
+                            }).toList(),
+                          ),
+                  ),
+                ],
+              ),
         bottomNavigationBar: _buildBottomBar(context, state, filteredOptions),
       ),
     );
@@ -408,65 +419,65 @@ class _TreatmentJourneyDetailScreenState
           Expanded(
             child:
                 (filteredOptions[_tabController?.index ?? 0].isShared == true)
-                    ? Container(
-                        height: context.h(52),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(context.r(12)),
+                ? Container(
+                    height: context.h(52),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(context.r(12)),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Already Shared",
+                        style: CustomFonts.black16w600.copyWith(
+                          color: Colors.grey.shade500,
                         ),
-                        child: Center(
-                          child: Text(
-                            "Already Shared",
-                            style: CustomFonts.black16w600.copyWith(
-                              color: Colors.grey.shade500,
-                            ),
-                          ),
-                        ),
-                      )
-                    : CustomButton(
-                        text: "Share",
-                        onPressed: () async {
-                          final currentOptionId =
-                              filteredOptions[_tabController?.index ?? 0].id;
-                          if (currentOptionId != null) {
-                            ref
-                                .read(treatmentJourneyProvider.notifier)
-                                .setOptionId(currentOptionId);
-                          }
-                          final clinic = ref.read(clinicProvider).clinic;
-
-                          void processShare(List<PreferredSlot> slots) {
-                            if (clinic != null) {
-                              Navigator.pushNamed(
-                                context,
-                                TreatmentReviewScreen.routeName,
-                                arguments: {
-                                  'simulationData': state.simulations,
-                                  'preferredSlots': slots,
-                                  'clinic': clinic,
-                                },
-                              );
-                            } else {
-                              Navigator.pushNamed(
-                                context,
-                                JourneyClinicsScreen.routeName,
-                              );
-                            }
-                          }
-
-                          if (clinic != null) {
-                            PreferredSlotsBottomSheet.show(
-                              context: context,
-                              onConfirm: (slots) => processShare(slots),
-                            );
-                          } else {
-                            Navigator.pushNamed(
-                              context,
-                              JourneyClinicsScreen.routeName,
-                            );
-                          }
-                        },
                       ),
+                    ),
+                  )
+                : CustomButton(
+                    text: "Share",
+                    onPressed: () async {
+                      final currentOptionId =
+                          filteredOptions[_tabController?.index ?? 0].id;
+                      if (currentOptionId != null) {
+                        ref
+                            .read(treatmentJourneyProvider.notifier)
+                            .setOptionId(currentOptionId);
+                      }
+                      final clinic = ref.read(clinicProvider).clinic;
+
+                      void processShare(List<PreferredSlot> slots) {
+                        if (clinic != null) {
+                          Navigator.pushNamed(
+                            context,
+                            TreatmentReviewScreen.routeName,
+                            arguments: {
+                              'simulationData': state.simulations,
+                              'preferredSlots': slots,
+                              'clinic': clinic,
+                            },
+                          );
+                        } else {
+                          Navigator.pushNamed(
+                            context,
+                            JourneyClinicsScreen.routeName,
+                          );
+                        }
+                      }
+
+                      if (clinic != null) {
+                        PreferredSlotsBottomSheet.show(
+                          context: context,
+                          onConfirm: (slots) => processShare(slots),
+                        );
+                      } else {
+                        Navigator.pushNamed(
+                          context,
+                          JourneyClinicsScreen.routeName,
+                        );
+                      }
+                    },
+                  ),
           ),
         ],
       ),

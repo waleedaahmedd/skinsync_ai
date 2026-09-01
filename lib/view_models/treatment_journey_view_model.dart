@@ -218,6 +218,7 @@ class TreatmentJourneyViewModel extends BaseViewModel<TreatmentJourneyState> {
       if (!ref.mounted) return null;
       if (response.isSuccess == true) {
         await fetchOptions(groupId);
+        pagingController.refresh();
       }
       EasyLoading.dismiss();
       return true;
