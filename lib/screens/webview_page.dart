@@ -2,8 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../widgets/custom_app_bar.dart';
-
 class WebviewPage extends StatefulWidget {
   final String url;
   final String title;
@@ -61,11 +59,14 @@ class _WebviewPageState extends State<WebviewPage> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: (request) {
+            final params = Uri.parse(request.url).queryParameters;
             if (matchesUrl(request, widget.successUrl)) {
-              Navigator.pop(context, Uri.parse(request.url).queryParameters);
+              params['status'] = 'success';
+              Navigator.pop(context, params);
               return .prevent;
             } else if (matchesUrl(request, widget.cancelUrl)) {
-              Navigator.pop(context, Uri.parse(request.url).queryParameters);
+              params['status'] = 'cancel';
+              Navigator.pop(context, params);
               return .prevent;
             }
             return .navigate;
@@ -78,7 +79,7 @@ class _WebviewPageState extends State<WebviewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(showTitle: true, title: widget.title),
+      // appBar: CustomAppBar(showTitle: true, title: widget.title),
       body: SafeArea(child: WebViewWidget(controller: _controller)),
     );
   }
