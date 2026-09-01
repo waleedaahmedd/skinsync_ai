@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -79,6 +78,7 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
           EasyLoading.showSuccess('Verifying your subscription...');
           await Future.delayed(const Duration(seconds: 3));
           await fetchSubscriptionPlans(showLoading: true);
+          Navigator.pop(navigatorKey.currentContext!);
           EasyLoading.showSuccess(
             response.message ?? 'Plan upgraded successfully!',
           );
