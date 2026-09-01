@@ -281,6 +281,7 @@ class _TreatmentJourneyScreenState extends ConsumerState<TreatmentJourneyScreen>
                                 .searchGroups(query);
                           },
                         ),
+                      
                         SizedBox(height: context.h(16)),
                         Expanded(
                           child: SlidableAutoCloseBehavior(

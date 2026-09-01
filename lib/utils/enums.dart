@@ -74,6 +74,7 @@ enum EndPoints {
   subscribe('v1/subscribe'),
   patientUsages('v1/patient-usages'),
   medicalHistory('v1/medical-history'),
+  sharedRequest('v1/shared-request'),
   clinic('v1/clinic');
 
   final String path;

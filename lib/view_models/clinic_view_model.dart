@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../models/base_state_model.dart';
 import '../models/requests/get_clinic_request.dart';
+import '../models/responses/auth_response.dart';
 import '../models/responses/clinic_detail_response.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../repositories/clinic_repository.dart';
@@ -27,6 +28,10 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
   final ClinicRepository _repository;
   ClinicViewModel({required this._repository})
     : super(initialState: const ClinicState());
+
+
+      final TextEditingController searchController = TextEditingController();
+
 
   void setClinic(Clinic? clinic) {
     state = state.copyWith(clinic: clinic);
@@ -124,6 +129,41 @@ Future<void> fetchClinicsFromMap({String? search}) async {
     state = state.copyWith(clinicLoading: false, clinicsToInvite: clinics);
   });
 }
+
+
+
+
+
+Future<List<RequestClinicTreatmentModel>?> fetchSharedClinic(
+  int pageKey, {
+  String? search,
+}) async {
+  state=state.copyWith(loading: true);
+  return runSafely(() async {
+    final response = await _repository.getSharedClinics(
+      page: pageKey,
+      search: (search ?? '').trim(),
+    );
+
+    final newItems = response.data ?? [];
+    final totalPages = response.totalPages ?? 1;
+
+    if (!ref.mounted) return newItems;
+
+    final updatedList = pageKey == 1
+        ? newItems
+        : [...state.sharedClinics, ...newItems];
+
+    state = state.copyWith(
+      totalPages: totalPages,
+      sharedClinics: updatedList,
+      loading: false,
+    );
+
+    return newItems;
+  });
+}
+
   void toggleViewType() {
     state = state.copyWith(
       viewType: state.viewType == ViewType.grid ? ViewType.map : ViewType.grid,
@@ -136,7 +176,7 @@ Future<void> fetchClinicsFromMap({String? search}) async {
 
   @override
   void onError(String message) {
-    state = state.copyWith(clinicLoading: false);
+    state = state.copyWith(clinicLoading: false,loading: false);
     super.onError(message);
     EasyLoading.showError(message);
   }
@@ -150,6 +190,9 @@ class ClinicState extends BaseStateModel {
   final Clinic? clinic;
   final ClinicDetailData? clinicDetail;
   final ViewType viewType;
+   final int? totalPages;
+     final List<RequestClinicTreatmentModel> sharedClinics;
+
 
   const ClinicState({
     super.loading = false,
@@ -160,6 +203,8 @@ class ClinicState extends BaseStateModel {
     this.clinic,
     this.clinicDetail,
     this.viewType = ViewType.grid,
+    this.totalPages,
+    this.sharedClinics = const [],
   });
 
   @override
@@ -172,6 +217,9 @@ class ClinicState extends BaseStateModel {
     Clinic? clinic,
     ClinicDetailData? clinicDetail,
     ViewType? viewType,
+    int? totalPages,
+    List<RequestClinicTreatmentModel>? sharedClinics,
+
   }) {
     return ClinicState(
       loading: loading ?? this.loading,
@@ -182,6 +230,8 @@ class ClinicState extends BaseStateModel {
       clinic: clinic ?? this.clinic,
       clinicDetail: clinicDetail ?? this.clinicDetail,
       viewType: viewType ?? this.viewType,
+      totalPages: totalPages ?? this.totalPages,
+      sharedClinics: sharedClinics ?? this.sharedClinics,
     );
   }
 }

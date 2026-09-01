@@ -59,6 +59,7 @@ import 'screens/saved_treatment_screen.dart';
 import 'screens/select_appointment_type_screen.dart';
 import 'screens/select_date_time_screen.dart';
 import 'screens/select_product_screen.dart';
+import 'screens/shared_treatment_requests_screen.dart';
 import 'screens/subscription_plans_screen.dart';
 import 'screens/setting_screen.dart';
 import 'screens/signup_onboarding.dart';
@@ -105,8 +106,9 @@ class RouteGenerator {
         );
       case AiTransparencyPolicyScreen.routeName:
         return MaterialPageRoute(
-          settings:
-              const RouteSettings(name: AiTransparencyPolicyScreen.routeName),
+          settings: const RouteSettings(
+            name: AiTransparencyPolicyScreen.routeName,
+          ),
           builder: (_) => AiTransparencyPolicyScreen(
             onPolicyAccepted: args as VoidCallback?,
           ),
@@ -316,25 +318,26 @@ class RouteGenerator {
           settings: const RouteSettings(
             name: AllergyAndMedicalHistory.routeName,
           ),
-          builder: (_) =>
-              const AllergyAndMedicalHistory(),
+          builder: (_) => const AllergyAndMedicalHistory(),
         );
       case AdditionalInfoScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: AdditionalInfoScreen.routeName),
           builder: (_) => const AdditionalInfoScreen(),
         );
-         case MedicalDisclaimerScreen.routeName:
+      case MedicalDisclaimerScreen.routeName:
         return MaterialPageRoute(
-          settings: const RouteSettings(name: MedicalDisclaimerScreen.routeName),
+          settings: const RouteSettings(
+            name: MedicalDisclaimerScreen.routeName,
+          ),
           builder: (_) => const MedicalDisclaimerScreen(),
         );
-        case PrivacyPolicyScreen.routeName:
+      case PrivacyPolicyScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: PrivacyPolicyScreen.routeName),
           builder: (_) => const PrivacyPolicyScreen(),
         );
-         case TermsOfServiceScreen.routeName:
+      case TermsOfServiceScreen.routeName:
         return MaterialPageRoute(
           settings: const RouteSettings(name: TermsOfServiceScreen.routeName),
           builder: (_) => const TermsOfServiceScreen(),
@@ -428,6 +431,14 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: const RouteSettings(name: TreatmentJourneyScreen.routeName),
           builder: (_) => TreatmentJourneyScreen(isTreatmentJourney: arg),
+        );
+      case SharedTreatmentRequestsScreen.routeName:
+        return MaterialPageRoute(
+          settings: RouteSettings(
+            name: SharedTreatmentRequestsScreen.routeName,
+            arguments: args,
+          ),
+          builder: (_) => SharedTreatmentRequestsScreen(title: args as String?),
         );
       case PatientTreatmentRequestsScreen.routeName:
         return MaterialPageRoute(

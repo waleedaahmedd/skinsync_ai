@@ -8,6 +8,7 @@ import '../models/responses/base_response_model.dart';
 import '../models/responses/clinic_detail_response.dart';
 import '../models/responses/get_clinic_response.dart';
 import '../models/responses/payment_options_response.dart';
+import '../models/responses/shared_clinic_response.dart';
 import '../models/responses/treatment_pricing_response.dart';
 import '../repositories/clinic_repository.dart';
 import '../utils/enums.dart';
@@ -36,6 +37,7 @@ class ClinicService implements ClinicRepository {
     }
   }
 
+ 
   @override
   Future<List<PaymentOption>> getPaymentOptions({
     required int clinicId,
@@ -107,4 +109,25 @@ class ClinicService implements ClinicRepository {
       );
     }
   }
+
+
+   @override
+  Future<SharedClinicResponse> getSharedClinics({required int page,required String search}) async {
+    final response = await _apiClient.httpRequest(
+      endPoint: EndPoints.sharedRequest,
+      requestType: RequestType.get,
+      params: '?page=$page&limit=10&search=$search'
+    );
+
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      final parsed = json.decode(response.body);
+      return SharedClinicResponse.fromJson(parsed);
+    } else {
+      final parsed = json.decode(response.body);
+      throw AppException(
+        AuthResponse.fromJson(parsed).message ?? "Failed to fetch shared clinics",
+      );
+    }
+  }
+
 }

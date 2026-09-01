@@ -23,6 +23,7 @@ import '../doctors_screen.dart';
 import '../journey_clinics_screen.dart';
 import '../notification_screen.dart';
 import '../patient_treatment_requests_screen.dart';
+import '../shared_treatment_requests_screen.dart';
 import 'appointments_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -170,19 +171,13 @@ class HomeScreen extends ConsumerWidget {
                       padding: EdgeInsets.symmetric(horizontal: context.w(24)),
                       child: HeadingWithRightArrow(
                         title: "Shared Treatment Requests",
-                        showRightArrow: false,
+                        showRightArrow: true,
                         onTap: () {
-                          final clinicId = dashboard
-                              ?.requestTreatmentClinic
-                              ?.firstOrNull
-                              ?.id;
-                          if (clinicId != null) {
-                            Navigator.pushNamed(
-                              context,
-                              PatientTreatmentRequestsScreen.routeName,
-                              arguments: clinicId,
-                            );
-                          }
+                          Navigator.pushNamed(
+                            context,
+                            SharedTreatmentRequestsScreen.routeName,
+                            arguments: 'Clinic Treatment Requests',
+                          );
                         },
                       ),
                     ),
