@@ -27,7 +27,6 @@ import '../../main.dart';
 import '../../widgets/dialogs/delete_account_dialog.dart';
 import '../shared_treatment_requests_screen.dart';
 import '../subscription_plans_screen.dart';
-import '../treatment_journey_screen.dart';
 import 'appointments_screen.dart';
 
 class MyProfileScreen extends StatelessWidget {
@@ -424,17 +423,27 @@ class MyProfileScreen extends StatelessWidget {
                       icon: SvgAssets.receipts,
                       title: "Personal Documents",
                     ),
-
                     buildCardOption(
                       callBack: () {
                         Navigator.pushNamed(
                           context,
-                          TreatmentJourneyScreen.routeName,
+                          SharedTreatmentRequestsScreen.routeName,
+                          arguments: 'My Clinics',
                         );
                       },
-                      icon: SvgAssets.progress,
-                      title: "Treatment Journey",
+                      icon: SvgAssets.medical,
+                      title: "My Clinics",
                     ),
+                    // buildCardOption(
+                    //   callBack: () {
+                    //     Navigator.pushNamed(
+                    //       context,
+                    //       TreatmentJourneyScreen.routeName,
+                    //     );
+                    //   },
+                    //   icon: SvgAssets.progress,
+                    //   title: "Treatment Journey",
+                    // ),
                     buildCardOption(
                       callBack: () {
                         Navigator.pushNamed(
@@ -468,17 +477,7 @@ class MyProfileScreen extends StatelessWidget {
                       icon: SvgAssets.medical,
                       title: "Medical History",
                     ),
-                     buildCardOption(
-                      callBack: () {
-                        Navigator.pushNamed(
-                            context,
-                            SharedTreatmentRequestsScreen.routeName,
-                            arguments: 'My Clinics',
-                          );
-                      },
-                      icon: SvgAssets.medical,
-                      title: "My Clinics",
-                    ),
+
 
                     // buildCardOption(
                     //   callBack: () {
