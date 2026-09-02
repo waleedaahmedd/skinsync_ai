@@ -70,7 +70,7 @@ class SubscriptionViewModel extends BaseViewModel<SubscriptionState> {
           context: navigatorKey.currentContext!,
           url: response.data!.stripeUrl!,
           successUrl: response.data!.successUrl!,
-          cancelUrl: response.data!.cancelUrl!,
+          cancelUrl: response.data!.cancelUrl,
           title: 'Subscribe',
         );
         log('PARAMS: $params');

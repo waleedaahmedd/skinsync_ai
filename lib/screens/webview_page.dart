@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+import '../widgets/custom_app_bar.dart';
 
 class WebviewPage extends StatefulWidget {
   final String url;
@@ -59,16 +63,19 @@ class _WebviewPageState extends State<WebviewPage> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: (request) {
-            final params = Uri.parse(request.url).queryParameters;
+            log('REQUEST: ${request.url} SUCCESS: ${widget.successUrl}');
+            final params = Map.from(Uri.parse(request.url).queryParameters);
             if (matchesUrl(request, widget.successUrl)) {
               params['status'] = 'success';
-              Navigator.pop(context, params);
-              return .prevent;
-            } else if (matchesUrl(request, widget.cancelUrl)) {
-              params['status'] = 'cancel';
-              Navigator.pop(context, params);
+              log('PARAMS: $params');
+              Navigator.pop(context, params.cast<String, String>());
               return .prevent;
             }
+            // else if (matchesUrl(request, widget.cancelUrl)) {
+            //   params['status'] = 'cancel';
+            //   Navigator.pop(context, params);
+            //   return .prevent;
+            // }
             return .navigate;
           },
         ),
@@ -79,7 +86,7 @@ class _WebviewPageState extends State<WebviewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: CustomAppBar(showTitle: true, title: widget.title),
+      appBar: CustomAppBar(showTitle: true, title: widget.title),
       body: SafeArea(child: WebViewWidget(controller: _controller)),
     );
   }
