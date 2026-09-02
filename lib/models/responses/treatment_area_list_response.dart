@@ -37,6 +37,8 @@ class TreatmentAreaModel {
   String? globalSku;
   String? icon;
   String? image;
+  String? description;
+  String?  infoImageUrl;
   int? subAreasCount;
   List<TreatmentAreaModel>? subAreas;
 
@@ -46,6 +48,8 @@ class TreatmentAreaModel {
     this.globalSku,
     this.icon,
     this.image,
+    this.description,
+    this.infoImageUrl,
     this.subAreasCount,
     this.subAreas,
   });
@@ -55,7 +59,9 @@ class TreatmentAreaModel {
     name = json['name'];
     globalSku = json['global_sku'];
     icon = json['icon'];
+     infoImageUrl = json['info_image_url'];
     image = json['image'];
+    description = json['description'];
     subAreasCount = json['sub_areas_count'];
     if (json['sub_areas'] != null) {
       subAreas = <TreatmentAreaModel>[];
@@ -74,6 +80,8 @@ class TreatmentAreaModel {
     data['global_sku'] = globalSku;
     data['icon'] = icon;
     data['image'] = image;
+     data['info_image_url'] = infoImageUrl;
+    data['description'] = description;
     data['sub_areas_count'] = subAreasCount;
     if (subAreas != null) {
       data['sub_areas'] = subAreas!.map((v) => v.toJson()).toList();

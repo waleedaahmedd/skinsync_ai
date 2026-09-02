@@ -385,6 +385,7 @@ class _ArFaceModelPreviewScreenState
                               icon: treatment.icon ?? PngAssets.syringe,
                               text: treatment.name ?? '-',
                               selected: isSelected,
+                              description: treatment.shortDescription,
                               onPressed: () async {
                                 ref
                                     .read(treatmentViewModel.notifier)
@@ -1052,6 +1053,8 @@ class _ArFaceModelPreviewScreenState
                         icon: area.icon,
                         text: area.name ?? '-',
                         selected: isSelected,
+                        description: area.description,
+                        infoImageUrl: area.infoImageUrl, 
                         onPressed: () =>
                             _onAreaPressed(area, isSelected, treatment),
                       );
