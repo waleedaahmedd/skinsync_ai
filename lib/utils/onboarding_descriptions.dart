@@ -1,5 +1,9 @@
 class OnboardingDescriptions {
   // Home Screen Tour
+  static const String infoTitle = "App Tour";
+  static const String infoDesc =
+      "Click here anytime to see how SkinSync AI works.";
+
   static const String reorderTitle = "Customize Your View";
   static const String reorderDesc =
       "Tap here to rearrange the sections on your home screen to your preference.";
@@ -7,6 +11,10 @@ class OnboardingDescriptions {
   static const String notificationTitle = "Stay Updated";
   static const String notificationDesc =
       "Check your latest notifications and updates here.";
+
+  static const String requestsTitle = "Shared Requests";
+  static const String requestsDesc =
+      "Track your shared treatment requests and clinic responses.";
 
   static const String pointsTitle = "Earn Rewards";
   static const String pointsDesc =
