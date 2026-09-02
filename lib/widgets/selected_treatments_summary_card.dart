@@ -3,6 +3,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../models/selected_treatment_and_areas_model.dart';
 import '../utils/custom_fonts.dart';
+import 'sticky_tooltip.dart';
 
 class SelectedTreatmentsSummaryCard extends StatelessWidget {
   final List<SelectedTreatmentAndAreasModel> selectedTreatmentsAndAreas;
@@ -53,7 +54,6 @@ class SelectedTreatmentsSummaryCard extends StatelessWidget {
               }
             }
           }
-          // final materialsList = groupedMaterials.values.toList();
 
           return Container(
             width: context.w(260),
@@ -136,15 +136,34 @@ class SelectedTreatmentsSummaryCard extends StatelessWidget {
                                 spacing: context.w(6),
                                 runSpacing: context.h(6),
                                 children: areas.map((areaItem) {
+                                  final areaTarget = areaItem.target;
                                   final materialInfo =
                                       areaItem.material != null
-                                      ? " (${areaItem.material!.selectedQuantity} ${areaItem.material!.name})"
-                                      : "";
+                                          ? " (${areaItem.material!.selectedQuantity} ${areaItem.material!.name})"
+                                          : "";
 
-                                  return Chip(
+                                  final String? areaDesc =
+                                      (areaTarget.description != null &&
+                                              areaTarget.description!
+                                                  .trim()
+                                                  .isNotEmpty)
+                                          ? areaTarget.description!.trim()
+                                          : null;
+                                  final String? areaImg =
+                                      (areaTarget.infoImageUrl != null &&
+                                              areaTarget.infoImageUrl!
+                                                  .trim()
+                                                  .isNotEmpty)
+                                          ? areaTarget.infoImageUrl!.trim()
+                                          : null;
+
+                                  final bool hasTooltip =
+                                      areaDesc != null || areaImg != null;
+
+                                  final chipWidget = Chip(
                                     visualDensity: VisualDensity.compact,
                                     label: Text(
-                                      "${areaItem.target.name ?? '-'}$materialInfo",
+                                      "${areaTarget.name ?? '-'}$materialInfo",
                                       style: CustomFonts.black10w600,
                                     ),
                                     onDeleted: onRemoveArea != null
@@ -152,9 +171,24 @@ class SelectedTreatmentsSummaryCard extends StatelessWidget {
                                         : null,
                                     deleteIconColor: Colors.red.shade300,
                                   );
+
+                                  if (!hasTooltip) {
+                                    return chipWidget;
+                                  }
+
+                                  return GestureDetector(
+                                    onLongPress: () {
+                                      showStickyTooltip(
+                                        context: context,
+                                        title: areaTarget.name ?? '',
+                                        description: areaDesc,
+                                        imageUrl: areaImg,
+                                      );
+                                    },
+                                    child: chipWidget,
+                                  );
                                 }).toList(),
                               ),
-                        // Removed redundant materials section as requested
                       ],
                     ),
                   ),

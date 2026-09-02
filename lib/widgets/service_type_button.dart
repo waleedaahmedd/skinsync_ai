@@ -3,6 +3,7 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import 'app_network_image.dart';
+import 'sticky_tooltip.dart';
 
 class ServiceTypeButton extends StatelessWidget {
   final String? icon;
@@ -12,11 +13,9 @@ class ServiceTypeButton extends StatelessWidget {
   final String? imageUrl;
   final String? description;
   final String? highLightedArea;
-  final String? infoImageUrl; // NEW
+  final String? infoImageUrl;
 
-  final GlobalKey<TooltipState> _tooltipKey = GlobalKey<TooltipState>();
-
-  ServiceTypeButton({
+  const ServiceTypeButton({
     super.key,
     this.icon,
     this.text = "",
@@ -25,8 +24,25 @@ class ServiceTypeButton extends StatelessWidget {
     this.imageUrl,
     this.description,
     this.highLightedArea,
-    this.infoImageUrl, // NEW
+    this.infoImageUrl,
   });
+
+  String? get _effectiveTooltipImage {
+    if (infoImageUrl != null && infoImageUrl!.trim().isNotEmpty) {
+      return infoImageUrl!.trim();
+    }
+    if (highLightedArea != null && highLightedArea!.trim().isNotEmpty) {
+      return highLightedArea!.trim();
+    }
+    return null;
+  }
+
+  String? get _effectiveDescription {
+    if (description != null && description!.trim().isNotEmpty) {
+      return description!.trim();
+    }
+    return null;
+  }
 
   Widget _buildLeftIcon(BuildContext context, String iconPath, bool selected) {
     if (iconPath.startsWith('http://') || iconPath.startsWith('https://')) {
@@ -48,103 +64,25 @@ class ServiceTypeButton extends StatelessWidget {
     }
   }
 
-  Widget _buildTooltipImage(BuildContext context, String imagePath) {
-    final double squareSize = context.w(48);
-
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      return AppNetworkImage(
-        imageUrl: imagePath,
-        width: squareSize,
-        height: squareSize,
-        fit: BoxFit.cover,
-        borderRadius: BorderRadius.circular(context.r(8)),
-        errorIcon: Icons.broken_image,
-      );
-    } else {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(context.r(8)),
-        child: Image.asset(
-          imagePath,
-          width: squareSize,
-          height: squareSize,
-          fit: BoxFit.cover,
-        ),
-      );
-    }
-  }
-
-  Widget _buildTooltipContent(BuildContext context) {
-    final bool hasTooltipImage =
-        highLightedArea != null && highLightedArea!.isNotEmpty;
-    final bool hasDescription =
-        description != null && description!.isNotEmpty;
-
-    return IntrinsicWidth(
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: context.w(10),
-          vertical: context.h(8),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            if (hasTooltipImage) ...[
-              _buildTooltipImage(context, highLightedArea!),
-              if (hasDescription) SizedBox(width: context.w(10)),
-            ],
-            if (hasDescription)
-              Flexible(
-                child: Text(
-                  description!,
-                  style: CustomFonts.black13w600.copyWith(
-                    color: Colors.white,
-                    fontSize: context.sp(12),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // NEW: small info badge that explicitly opens the tooltip on tap
-  Widget _buildInfoBadge(BuildContext context) {
-    return Positioned(
-      top: -context.h(6),
-      right: -context.w(6),
-      child: GestureDetector(
-        onTap: () {
-          _tooltipKey.currentState?.ensureTooltipVisible();
-        },
-        child: Container(
-          width: context.w(18),
-          height: context.w(18),
-          decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.85),
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 1.5),
-          ),
-          child: Icon(
-            Icons.info_outline,
-            color: Colors.white,
-            size: context.sp(12),
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final bool hasImage = imageUrl != null && imageUrl!.isNotEmpty;
-    final bool hasTooltip = (highLightedArea != null && highLightedArea!.isNotEmpty) ||
-        (description != null && description!.isNotEmpty);
-    final bool hasInfoBadge = infoImageUrl != null && infoImageUrl!.isNotEmpty;
+    final String? imgUrl = _effectiveTooltipImage;
+    final String? desc = _effectiveDescription;
+    final bool hasTooltip = imgUrl != null || desc != null;
 
-    Widget buttonContent = GestureDetector(
+    return GestureDetector(
       onTap: onPressed,
+      onLongPress: hasTooltip
+          ? () {
+              showStickyTooltip(
+                context: context,
+                title: text,
+                description: desc,
+                imageUrl: imgUrl,
+              );
+            }
+          : null,
       child: Container(
         height: context.h(50),
         decoration: BoxDecoration(
@@ -209,39 +147,6 @@ class ServiceTypeButton extends StatelessWidget {
           ),
         ),
       ),
-    );
-
-    if (!hasTooltip) {
-      return buttonContent;
-    }
-
-    final tooltip = Tooltip(
-      key: _tooltipKey,
-      preferBelow: false,
-      verticalOffset: context.h(10),
-      triggerMode: TooltipTriggerMode.longPress,
-      margin: EdgeInsets.all(context.w(20)),
-      padding: EdgeInsets.zero,
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.85),
-        borderRadius: BorderRadius.circular(context.r(10)),
-      ),
-      richMessage: WidgetSpan(
-        child: _buildTooltipContent(context),
-      ),
-      child: buttonContent,
-    );
-
-    if (!hasInfoBadge) {
-      return tooltip;
-    }
-
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        tooltip,
-        _buildInfoBadge(context),
-      ],
     );
   }
 }

@@ -318,21 +318,34 @@ class _ArFaceModelPreviewScreenState
   // ---------------------------------------------------------------------------
 
   Widget _buildTreatmentHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Treatment Selection', style: CustomFonts.black16w600),
-        InkWell(
-          onTap: () {
-            ref.read(checkoutViewModel.notifier).clearState();
-            ref.read(treatmentViewModel.notifier).clearAiImage();
-            ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
-          },
-          child: Text(
-            "Reset",
-            style: CustomFonts.black14w500Underline.copyWith(
-              color: CustomColors.textGreyColor,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Treatment Selection', style: CustomFonts.black16w600),
+            InkWell(
+              onTap: () {
+                ref.read(checkoutViewModel.notifier).clearState();
+                ref.read(treatmentViewModel.notifier).clearAiImage();
+                ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+              },
+              child: Text(
+                "Reset",
+                style: CustomFonts.black14w500Underline.copyWith(
+                  color: CustomColors.textGreyColor,
+                ),
+              ),
             ),
+          ],
+        ),
+        SizedBox(height: context.h(4)),
+        Text(
+          "Long press on treatment or areas to view details",
+          style: CustomFonts.grey12w400.copyWith(
+            color: CustomColors.textGreyColor,
+            fontSize: context.sp(11),
           ),
         ),
       ],
@@ -1021,6 +1034,14 @@ class _ArFaceModelPreviewScreenState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text("Select Treatment Area", style: CustomFonts.black16w600),
+        SizedBox(height: context.h(4)),
+        Text(
+          "Long press on treatment or areas to view details",
+          style: CustomFonts.grey12w400.copyWith(
+            color: CustomColors.textGreyColor,
+            fontSize: context.sp(11),
+          ),
+        ),
         ...groupedLeafs.entries.map((entry) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
