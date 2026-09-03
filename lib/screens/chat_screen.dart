@@ -9,7 +9,9 @@ import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../utils/enums.dart';
 import '../widgets/chat/chat_message_bubble.dart';
+import '../widgets/custom_app_bar.dart';
 import '../widgets/dialogs/share_treatment_request_dialog.dart';
+import '../widgets/grey_container.dart';
 
 class ChatScreen extends StatefulWidget {
   static const String routeName = '/chat-screen';
@@ -116,181 +118,179 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: CustomColors.blueWhitePurpleGradient,
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(context),
-              if (_showClinicInfo) ...[
-                _buildClinicInfoBanner(context),
-              ],
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.all(context.r(16)),
-                  decoration: BoxDecoration(
-                    color: CustomColors.whiteColor,
-                    borderRadius: BorderRadius.circular(context.r(16)),
-                    border: Border.all(color: CustomColors.greyColor),
-                  ),
-                  child: Column(
-                    children: [
-                      _buildDateDivider(context),
-                      Expanded(
-                        child: ListView.builder(
-                          controller: _scrollController,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: context.w(16),
-                            vertical: context.h(12),
+      backgroundColor: CustomColors.whiteColor,
+      appBar: CustomAppBar(
+        showBackButton: widget.showBackButton,
+        showTitle: false,
+        actions: [
+          Expanded(
+            child: Row(
+              children: [
+                Stack(
+                  children: [
+                    Container(
+                      width: context.w(40),
+                      height: context.w(40),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: CustomColors.purpleColor.withValues(alpha: 0.1),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'S',
+                          style: TextStyle(
+                            fontSize: context.sp(16),
+                            fontWeight: FontWeight.bold,
+                            color: CustomColors.purpleColor,
+                            fontFamily: 'Degular',
                           ),
-                          itemCount: _messages.length,
-                          itemBuilder: (context, index) {
-                            final message = _messages[index];
-                            return ChatMessageBubble(message: message);
-                          },
                         ),
                       ),
-                      const Divider(color: CustomColors.greyColor, height: 1),
-                      _buildQuickPresetsRow(context),
-                      const Divider(color: CustomColors.greyColor, height: 1),
-                      _buildInputArea(context),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.w(16),
-        vertical: context.h(12),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          if (widget.showBackButton) ...[
-            IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: CustomColors.blackColor,
-              ),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            SizedBox(width: context.w(6)),
-          ],
-          Stack(
-            children: [
-              CircleAvatar(
-                radius: context.r(22),
-                backgroundColor: CustomColors.lightPurpleColor,
-                child: Text(
-                  'S',
-                  style: TextStyle(
-                    fontSize: context.sp(16),
-                    fontWeight: FontWeight.bold,
-                    color: CustomColors.darkPurple,
-                    fontFamily: 'Degular',
-                  ),
-                ),
-              ),
-              Positioned(
-                right: 0,
-                bottom: 0,
-                child: Container(
-                  width: context.r(10),
-                  height: context.r(10),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF10B981),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: CustomColors.whiteColor,
-                      width: 2,
                     ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(width: context.w(12)),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'SkinSync Clinic',
-                      style: CustomFonts.black16w600,
-                    ),
-                    SizedBox(width: context.w(8)),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: context.w(6),
-                        vertical: context.h(2),
-                      ),
-                      decoration: BoxDecoration(
-                        color: CustomColors.greyColor,
-                        borderRadius: BorderRadius.circular(context.r(10)),
-                      ),
-                      child: Text(
-                        'Verified',
-                        style: CustomFonts.grey12w400,
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: Container(
+                        width: context.w(12),
+                        height: context.w(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: CustomColors.whiteColor,
+                            width: 2,
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: context.h(2)),
-                Text(
-                  'Aesthetics & Dermatology Center',
-                  style: CustomFonts.grey12w400,
+                SizedBox(width: context.w(12)),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              'SkinSync Clinic',
+                              style: CustomFonts.black16w600,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          SizedBox(width: context.w(6)),
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: context.w(6),
+                              vertical: context.h(2),
+                            ),
+                            decoration: BoxDecoration(
+                              color: CustomColors.purpleColor.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(context.r(8)),
+                            ),
+                            child: Text(
+                              'Verified',
+                              style: CustomFonts.black10w600.copyWith(
+                                color: CustomColors.purpleColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: context.h(2)),
+                      Text(
+                        'Aesthetics & Dermatology',
+                        style: CustomFonts.grey12w400,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: context.w(8)),
+                GreyContainer(
+                  icon: _showClinicInfo
+                      ? Icons.info_rounded
+                      : Icons.info_outline_rounded,
+                  onTap: () {
+                    setState(() {
+                      _showClinicInfo = !_showClinicInfo;
+                    });
+                  },
                 ),
               ],
             ),
           ),
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _showClinicInfo = !_showClinicInfo;
-              });
-            },
-            tooltip: 'Toggle Clinic Details',
-            icon: Icon(
-              _showClinicInfo
-                  ? Icons.info_rounded
-                  : Icons.info_outline_rounded,
-              color: CustomColors.darkPurple,
-              size: context.sp(22),
-            ),
-          ),
         ],
+      ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            if (_showClinicInfo) _buildClinicInfoBanner(context),
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.all(context.w(16)),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(context.r(24)),
+                  border: Border.all(color: Colors.grey.shade200, width: 1.5),
+                  boxShadow: CustomColors.cardShadow,
+                ),
+                child: Column(
+                  children: [
+                    _buildDateDivider(context),
+                    Expanded(
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.w(16),
+                          vertical: context.h(12),
+                        ),
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: _messages.length,
+                        itemBuilder: (context, index) {
+                          final message = _messages[index];
+                          return ChatMessageBubble(message: message);
+                        },
+                      ),
+                    ),
+                    const Divider(color: CustomColors.greyColor, height: 1),
+                    _buildQuickPresetsRow(context),
+                    const Divider(color: CustomColors.greyColor, height: 1),
+                    _buildInputArea(context),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildClinicInfoBanner(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: context.w(16)),
+      margin: EdgeInsets.symmetric(
+        horizontal: context.w(16),
+        vertical: context.h(4),
+      ),
       padding: EdgeInsets.symmetric(
         horizontal: context.w(16),
         vertical: context.h(12),
       ),
       decoration: BoxDecoration(
-        color: CustomColors.lightPurpleColor.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(context.r(12)),
-        border: Border.all(color: CustomColors.lightPurpleColor),
+        color: CustomColors.whiteColor,
+        borderRadius: BorderRadius.circular(context.r(16)),
+        border: Border.all(color: Colors.grey.shade200, width: 1.5),
+        boxShadow: CustomColors.cardShadow,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildInfoItem(context, 'Email', 'info@skinsyncclinic.com'),
+          _buildInfoItem(context, 'Email', 'info@skinsync.com'),
           _buildInfoItem(context, 'Phone', '+1 (800) 555-0199'),
           _buildInfoItem(context, 'Location', 'Beverly Hills, CA'),
         ],
@@ -319,8 +319,9 @@ class _ChatScreenState extends State<ChatScreen> {
             vertical: context.h(4),
           ),
           decoration: BoxDecoration(
-            color: CustomColors.greyColor,
+            color: Colors.white,
             borderRadius: BorderRadius.circular(context.r(16)),
+            border: Border.all(color: Colors.grey.shade200),
           ),
           child: Text(
             'Today, Aug 28, 2026',
@@ -337,15 +338,16 @@ class _ChatScreenState extends State<ChatScreen> {
         horizontal: context.w(12),
         vertical: context.h(8),
       ),
-      color: CustomColors.greyColor.withValues(alpha: 0.3),
+      color: Colors.white,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
         child: Row(
           children: [
             Icon(
               Icons.flash_on_rounded,
               size: context.sp(16),
-              color: CustomColors.darkPurple,
+              color: CustomColors.purpleColor,
             ),
             SizedBox(width: context.w(6)),
             Text(
@@ -361,10 +363,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   labelStyle: TextStyle(
                     fontSize: context.sp(12),
                     fontWeight: FontWeight.w600,
-                    color: CustomColors.darkPurple,
+                    color: CustomColors.purpleColor,
                     fontFamily: 'Degular',
                   ),
-                  backgroundColor: CustomColors.lightPurpleColor,
+                  backgroundColor: CustomColors.purpleColor.withValues(alpha: 0.1),
                   side: BorderSide.none,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(context.r(16)),
@@ -387,12 +389,18 @@ class _ChatScreenState extends State<ChatScreen> {
         horizontal: context.w(12),
         vertical: context.h(10),
       ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(context.r(22)),
+        ),
+      ),
       child: Row(
         children: [
           PopupMenuButton<String>(
             icon: Icon(
               Icons.attach_file_rounded,
-              color: CustomColors.silverColor,
+              color: CustomColors.blackColor,
               size: context.sp(22),
             ),
             tooltip: 'Attach Media, Document, Request or Appointment',
@@ -449,7 +457,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: Row(
                   children: [
                     Icon(Icons.image_outlined,
-                        size: context.sp(18), color: CustomColors.darkPurple),
+                        size: context.sp(18), color: CustomColors.purpleColor),
                     SizedBox(width: context.w(12)),
                     Text('Send Photo / Media', style: CustomFonts.black14w400),
                   ],
@@ -460,7 +468,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: Row(
                   children: [
                     Icon(Icons.picture_as_pdf_outlined,
-                        size: context.sp(18), color: CustomColors.darkPurple),
+                        size: context.sp(18), color: CustomColors.purpleColor),
                     SizedBox(width: context.w(12)),
                     Text('Send Document (PDF)', style: CustomFonts.black14w400),
                   ],
@@ -471,7 +479,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: Row(
                   children: [
                     Icon(Icons.assignment_outlined,
-                        size: context.sp(18), color: CustomColors.darkPurple),
+                        size: context.sp(18), color: CustomColors.purpleColor),
                     SizedBox(width: context.w(12)),
                     Text('Share Treatment Request', style: CustomFonts.black14w400),
                   ],
@@ -482,7 +490,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: Row(
                   children: [
                     Icon(Icons.calendar_month_outlined,
-                        size: context.sp(18), color: CustomColors.darkPurple),
+                        size: context.sp(18), color: CustomColors.purpleColor),
                     SizedBox(width: context.w(12)),
                     Text('Share Appointment Card', style: CustomFonts.black14w400),
                   ],
@@ -499,21 +507,23 @@ class _ChatScreenState extends State<ChatScreen> {
               decoration: InputDecoration(
                 hintText: 'Type a message...',
                 hintStyle: CustomFonts.grey14w400,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(context.r(24)),
-                  borderSide: const BorderSide(color: CustomColors.greyColor),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(context.r(24)),
-                  borderSide: const BorderSide(color: CustomColors.greyColor),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(context.r(24)),
-                  borderSide: const BorderSide(color: CustomColors.darkPurple),
-                ),
+                filled: true,
+                fillColor: Colors.white,
                 contentPadding: EdgeInsets.symmetric(
                   horizontal: context.w(16),
                   vertical: context.h(10),
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(context.r(24)),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(context.r(24)),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(context.r(24)),
+                  borderSide: const BorderSide(color: CustomColors.purpleColor),
                 ),
               ),
               onSubmitted: (_) => _sendMessage(),
@@ -525,13 +535,20 @@ class _ChatScreenState extends State<ChatScreen> {
             borderRadius: BorderRadius.circular(context.r(24)),
             child: Container(
               padding: EdgeInsets.all(context.r(12)),
-              decoration: const BoxDecoration(
-                color: CustomColors.darkPurple,
+              decoration: BoxDecoration(
+                gradient: CustomColors.purpleBlueGradient,
                 shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: CustomColors.purpleColor.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
               child: Icon(
                 Icons.send_rounded,
-                color: CustomColors.whiteColor,
+                color: CustomColors.blackColor,
                 size: context.sp(18),
               ),
             ),

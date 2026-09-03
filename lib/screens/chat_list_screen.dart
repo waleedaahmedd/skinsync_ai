@@ -3,6 +3,8 @@ import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_search_field.dart';
 import 'chat_screen.dart';
 
 class ChatListScreen extends StatefulWidget {
@@ -73,7 +75,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
 
   void _filterChats(String query) {
     setState(() {
-      if (query.isEmpty) {
+      if (query.trim().isEmpty) {
         _filteredChats = List.from(_allChats);
       } else {
         _filteredChats = _allChats
@@ -88,165 +90,68 @@ class _ChatListScreenState extends State<ChatListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: CustomColors.blueWhitePurpleGradient,
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(context),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.w(20),
-                    vertical: context.h(16),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildSearchBar(context),
-                      SizedBox(height: context.h(20)),
-                      _buildChatListSection(context),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+      backgroundColor: CustomColors.whiteColor,
+      appBar: CustomAppBar(
+        showBackButton: widget.showBackButton,
+        showTitle: true,
+        title: "Messages",
       ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.w(16),
-        vertical: context.h(12),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+      body: Column(
         children: [
-          if (widget.showBackButton) ...[
-            IconButton(
-              icon: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: CustomColors.blackColor,
-              ),
-              onPressed: () => Navigator.of(context).pop(),
+          SizedBox(height: context.h(10)),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: context.w(24)),
+            child: CustomSearchField(
+              controller: _searchController,
+              hintText: "Search clinics or messages...",
+              onChanged: _filterChats,
             ),
-            SizedBox(width: context.w(8)),
-          ],
+          ),
+          SizedBox(height: context.h(16)),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Messages',
-                  style: CustomFonts.black22w600,
-                ),
-                SizedBox(height: context.h(2)),
-                Text(
-                  'Direct messaging with clinics and specialists.',
-                  style: CustomFonts.grey13w400,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
+            child: _filteredChats.isEmpty
+                ? _buildEmptyState(context)
+                : ListView.builder(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.w(24),
+                      vertical: context.h(8),
+                    ),
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: _filteredChats.length,
+                    itemBuilder: (context, index) {
+                      final item = _filteredChats[index];
+                      return _buildChatCard(context, item);
+                    },
+                  ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSearchBar(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: CustomColors.whiteColor,
-        borderRadius: BorderRadius.circular(context.r(14)),
-        border: Border.all(color: CustomColors.greyColor),
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: context.w(40)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.mark_chat_read_outlined,
+              size: context.sp(64),
+              color: Colors.grey.shade300,
+            ),
+            SizedBox(height: context.h(16)),
+            Text("No Conversations Found", style: CustomFonts.grey800_20w600),
+            SizedBox(height: context.h(6)),
+            Text(
+              "Try searching for a different keyword or check back later.",
+              textAlign: TextAlign.center,
+              style: CustomFonts.textGrey14w400,
+            ),
+          ],
+        ),
       ),
-      child: TextField(
-        controller: _searchController,
-        style: CustomFonts.black14w400,
-        decoration: InputDecoration(
-          hintText: 'Search clinics or messages...',
-          hintStyle: CustomFonts.grey14w400,
-          prefixIcon: const Icon(
-            Icons.search_rounded,
-            color: CustomColors.silverColor,
-          ),
-          suffixIcon: _searchController.text.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.clear, color: CustomColors.silverColor),
-                  onPressed: () {
-                    _searchController.clear();
-                    _filterChats('');
-                  },
-                )
-              : null,
-          border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: context.w(16),
-            vertical: context.h(14),
-          ),
-        ),
-        onChanged: _filterChats,
-      ),
-    );
-  }
-
-  Widget _buildChatListSection(BuildContext context) {
-    if (_filteredChats.isEmpty) {
-      return Container(
-        padding: EdgeInsets.all(context.r(32)),
-        decoration: BoxDecoration(
-          color: CustomColors.whiteColor,
-          borderRadius: BorderRadius.circular(context.r(16)),
-          border: Border.all(color: CustomColors.greyColor),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: EdgeInsets.all(context.r(16)),
-                decoration: const BoxDecoration(
-                  color: CustomColors.greyColor,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.search_off_rounded,
-                  size: 40,
-                  color: CustomColors.silverColor,
-                ),
-              ),
-              SizedBox(height: context.h(16)),
-              Text('No conversations found', style: CustomFonts.black18w600),
-              SizedBox(height: context.h(8)),
-              Text(
-                'Try clearing your search keyword.',
-                style: CustomFonts.grey14w400,
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: _filteredChats.length,
-      itemBuilder: (context, index) {
-        final item = _filteredChats[index];
-        return _buildChatCard(context, item);
-      },
     );
   }
 
@@ -255,128 +160,135 @@ class _ChatListScreenState extends State<ChatListScreen> {
       margin: EdgeInsets.only(bottom: context.h(12)),
       decoration: BoxDecoration(
         color: CustomColors.whiteColor,
-        borderRadius: BorderRadius.circular(context.r(16)),
-        border: Border.all(color: CustomColors.greyColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(context.r(20)),
+        border: Border.all(color: Colors.grey.shade200, width: 1.5),
+        boxShadow: CustomColors.cardShadow,
       ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: BorderRadius.circular(context.r(16)),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(context.r(16)),
-          onTap: () {
-            Navigator.of(context).pushNamed(
-              ChatScreen.routeName,
-              arguments: true,
-            );
-          },
-          child: Padding(
-            padding: EdgeInsets.all(context.r(16)),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: context.r(24),
-                      backgroundColor: CustomColors.lightPurpleColor,
-                      child: Text(
-                        item.clinicName.isNotEmpty
-                            ? item.clinicName[0]
-                            : 'C',
-                        style: TextStyle(
-                          fontSize: context.sp(16),
-                          fontWeight: FontWeight.bold,
-                          color: CustomColors.darkPurple,
-                          fontFamily: 'Degular',
-                        ),
-                      ),
-                    ),
-                    if (item.isOnline)
-                      Positioned(
-                        right: 0,
-                        bottom: 0,
-                        child: Container(
-                          width: context.r(12),
-                          height: context.r(12),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF10B981),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: CustomColors.whiteColor,
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                SizedBox(width: context.w(16)),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(context.r(20)),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              Navigator.of(context).pushNamed(
+                ChatScreen.routeName,
+                arguments: true,
+              );
+            },
+            child: Padding(
+              padding: EdgeInsets.all(context.w(16)),
+              child: Row(
+                children: [
+                  Stack(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              item.clinicName,
-                              style: CustomFonts.black16w600,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                      Container(
+                        width: context.w(48),
+                        height: context.w(48),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: CustomColors.purpleColor.withValues(alpha: 0.1),
+                        ),
+                        child: Center(
+                          child: Text(
+                            item.clinicName.isNotEmpty ? item.clinicName[0] : 'C',
+                            style: TextStyle(
+                              fontSize: context.sp(18),
+                              fontWeight: FontWeight.bold,
+                              color: CustomColors.purpleColor,
+                              fontFamily: 'Degular',
                             ),
                           ),
-                          Text(
-                            item.time,
-                            style: item.unreadCount > 0
-                                ? CustomFonts.darkPurple12w600
-                                : CustomFonts.grey12w400,
-                          ),
-                        ],
+                        ),
                       ),
-                      SizedBox(height: context.h(4)),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              item.lastMessage,
-                              style: item.unreadCount > 0
-                                  ? CustomFonts.black14w600
-                                  : CustomFonts.grey14w400,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                      if (item.isOnline)
+                        Positioned(
+                          right: 0,
+                          bottom: 0,
+                          child: Container(
+                            width: context.w(14),
+                            height: context.w(14),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF10B981),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: CustomColors.whiteColor,
+                                width: 2,
+                              ),
                             ),
                           ),
-                          if (item.unreadCount > 0) ...[
-                            SizedBox(width: context.w(8)),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: context.w(8),
-                                vertical: context.h(2),
-                              ),
-                              decoration: const BoxDecoration(
-                                color: CustomColors.darkPurple,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Text(
-                                '${item.unreadCount}',
-                                style: CustomFonts.white10w600,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
+                        ),
                     ],
                   ),
-                ),
-              ],
+                  SizedBox(width: context.w(14)),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                item.clinicName,
+                                style: CustomFonts.black16w600,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            SizedBox(width: context.w(8)),
+                            Text(
+                              item.time,
+                              style: item.unreadCount > 0
+                                  ? CustomFonts.black12w600.copyWith(
+                                      color: CustomColors.purpleColor,
+                                    )
+                                  : CustomFonts.grey12w400,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: context.h(4)),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                item.lastMessage,
+                                style: item.unreadCount > 0
+                                    ? CustomFonts.black14w600
+                                    : CustomFonts.grey14w400,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            if (item.unreadCount > 0) ...[
+                              SizedBox(width: context.w(8)),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: context.w(8),
+                                  vertical: context.h(2),
+                                ),
+                                decoration: BoxDecoration(
+                                  color: CustomColors.purpleColor,
+                                  borderRadius: BorderRadius.circular(context.r(10)),
+                                ),
+                                child: Text(
+                                  '${item.unreadCount}',
+                                  style: CustomFonts.white10w600,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: context.w(6)),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: Colors.grey.shade400,
+                    size: context.sp(22),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

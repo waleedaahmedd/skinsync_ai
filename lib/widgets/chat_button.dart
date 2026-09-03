@@ -9,33 +9,33 @@ class ChatButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: CustomColors.darkPurple.withValues(alpha: 0.35),
-            blurRadius: 12,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Material(
-        color: CustomColors.darkPurple,
-        shape: const CircleBorder(),
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: () {
-            Navigator.of(context).pushNamed(ChatListScreen.routeName);
-          },
-          child: Padding(
-            padding: EdgeInsets.all(context.r(14)),
-            child: Icon(
-              Icons.chat_bubble_rounded,
-              color: CustomColors.whiteColor,
-              size: context.sp(22),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).pushNamed(ChatListScreen.routeName);
+      },
+      child: Container(
+        padding: EdgeInsets.all(context.r(14)),
+        decoration: BoxDecoration(
+          gradient: CustomColors.purpleBlueGradient,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.25),
+              blurRadius: 16,
+              spreadRadius: 2,
+              offset: const Offset(0, 6),
             ),
-          ),
+            BoxShadow(
+              color: Colors.white.withValues(alpha: 0.15),
+              blurRadius: 20,
+              spreadRadius: 4,
+            ),
+          ],
+        ),
+        child: Icon(
+          Icons.chat_bubble_rounded,
+          color: CustomColors.blackColor,
+          size: context.sp(22),
         ),
       ),
     );
