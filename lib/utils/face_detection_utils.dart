@@ -4,7 +4,11 @@ import 'dart:io';
 import 'package:face_detection_tflite/face_detection_tflite.dart';
 
 extension FaceUtils on Face {
-  bool isCorrectPose(String pose, {bool isFrontCamera = true}) {
+  bool isCorrectPose(
+    String pose, {
+    bool isFrontCamera = true,
+    bool previousCorrect = false,
+  }) {
     final angles = headEulerAngles;
     if (angles == null) return false;
 
@@ -13,11 +17,14 @@ extension FaceUtils on Face {
     final double roll = angles.z;
 
     // Constraints for head stability
-    // Increased leniency for roll as some devices report 90-degree offsets in portrait
-    final normalizedRoll = (roll.abs() > 45 && roll.abs() < 135) ? (roll.abs() - 90).abs() : roll.abs();
+    final normalizedRoll = (roll.abs() > 45 && roll.abs() < 135)
+        ? (roll.abs() - 90).abs()
+        : roll.abs();
 
-    if (pitch.abs() > 25 || normalizedRoll > 25) {
-      log('Pose rejected: instability (pitch: ${pitch.toStringAsFixed(1)}, roll: ${roll.toStringAsFixed(1)}, normRoll: ${normalizedRoll.toStringAsFixed(1)})');
+    if (pitch.abs() > 30 || normalizedRoll > 30) {
+      log(
+        'Pose rejected: instability (pitch: ${pitch.toStringAsFixed(1)}, normRoll: ${normalizedRoll.toStringAsFixed(1)})',
+      );
       return false;
     }
 
@@ -30,56 +37,70 @@ extension FaceUtils on Face {
     final double nRight = boundingBox.right / imageWidth;
     final double nBottom = boundingBox.bottom / imageHeight;
 
-    // Centering check
+    // Centering check (more lenient for side profiles as head turns shift center)
     final double nCenterX = (nLeft + nRight) / 2;
     final double nCenterY = (nTop + nBottom) / 2;
 
-    if ((nCenterX - 0.5).abs() > 0.25 || (nCenterY - 0.42).abs() > 0.25) {
-      log('Pose rejected: not centered (centerX: ${nCenterX.toStringAsFixed(2)}, centerY: ${nCenterY.toStringAsFixed(2)})');
+    final double maxCenterXOffset = (pose == 'front') ? 0.28 : 0.38;
+    const double maxCenterYOffset = 0.32;
+
+    if ((nCenterX - 0.5).abs() > maxCenterXOffset ||
+        (nCenterY - 0.42).abs() > maxCenterYOffset) {
+      log(
+        'Pose rejected: not centered (centerX: ${nCenterX.toStringAsFixed(2)}, centerY: ${nCenterY.toStringAsFixed(2)})',
+      );
       return false;
     }
 
     // Size check
-    if ((nRight - nLeft) < 0.25) {
-      log('Pose rejected: face too small (${(nRight - nLeft).toStringAsFixed(2)})');
+    if ((nRight - nLeft) < 0.20) {
+      log(
+        'Pose rejected: face too small (${(nRight - nLeft).toStringAsFixed(2)})',
+      );
       return false;
     }
 
-    log('YAW: ${yaw.toStringAsFixed(1)}');
+    log('YAW: ${yaw.toStringAsFixed(1)} (Pose: $pose)');
 
     switch (pose) {
       case 'front':
-        final isFront = yaw.abs() < 12;
+        final double threshold = previousCorrect ? 16.0 : 12.0;
+        final isFront = yaw.abs() < threshold;
         if (!isFront) log('Pose rejected: yaw too high for front');
         return isFront;
+
       case 'left':
-      // User behavior: Look RIGHT to capture Left Profile.
+        // User behavior: Look RIGHT to capture Left Profile.
         bool isLeftProfile;
+        final double minYaw = previousCorrect ? 14.0 : 18.0;
         if (Platform.isIOS) {
-          // iOS Selfie Right turn = Positive, iOS Back Right turn = Negative
-          isLeftProfile = isFrontCamera ? yaw > 30 : yaw < -30;
+          isLeftProfile = isFrontCamera ? yaw > minYaw : yaw < -minYaw;
         } else {
-          // Android Selfie Right turn = Negative, Android Back Right turn = Positive
-          // (Exactly opposite to iOS behavior)
-          isLeftProfile = isFrontCamera ? yaw < -30 : yaw > 30;
+          isLeftProfile = isFrontCamera ? yaw < -minYaw : yaw > minYaw;
         }
-
-        if (!isLeftProfile) log('Pose rejected: yaw not correct for left profile (current: ${yaw.toStringAsFixed(1)})');
+        if (!isLeftProfile) {
+          log(
+            'Pose rejected: yaw not correct for left profile (current: ${yaw.toStringAsFixed(1)})',
+          );
+        }
         return isLeftProfile;
-      case 'right':
-      // User behavior: Look LEFT to capture Right Profile.
-        bool isRightProfile;
-        if (Platform.isIOS) {
-          // iOS Selfie Left turn = Negative, iOS Back Left turn = Positive
-          isRightProfile = isFrontCamera ? yaw < -30 : yaw > 30;
-        } else {
-          // Android Selfie Left turn = Positive, Android Back Left turn = Negative
-          // (Exactly opposite to iOS behavior)
-          isRightProfile = isFrontCamera ? yaw > 30 : yaw < -30;
-        }
 
-        if (!isRightProfile) log('Pose rejected: yaw not correct for right profile (current: ${yaw.toStringAsFixed(1)})');
+      case 'right':
+        // User behavior: Look LEFT to capture Right Profile.
+        bool isRightProfile;
+        final double minYaw = previousCorrect ? 14.0 : 18.0;
+        if (Platform.isIOS) {
+          isRightProfile = isFrontCamera ? yaw < -minYaw : yaw > minYaw;
+        } else {
+          isRightProfile = isFrontCamera ? yaw > minYaw : yaw < -minYaw;
+        }
+        if (!isRightProfile) {
+          log(
+            'Pose rejected: yaw not correct for right profile (current: ${yaw.toStringAsFixed(1)})',
+          );
+        }
         return isRightProfile;
+
       default:
         return false;
     }

@@ -43,6 +43,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
 
   bool _isCapturing = false;
   bool _isPoseCorrect = false;
+  double? _currentYaw;
   bool _isSoundOn = true;
   bool _isAutomaticMode = false;
   bool _isStarted = false;
@@ -53,6 +54,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
 
   Timer? _manualCaptureTimer;
   bool _showManualCaptureUI = false;
+
+  Timer? _incorrectPoseDebounceTimer;
+  bool _hasSpokenHoldStill = false;
 
   final VolumeButtonService _volumeButtonService = VolumeButtonService();
 
@@ -276,22 +280,6 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                     ),
                     SizedBox(height: context.h(24)),
                     _buildModeOption(
-                      icon: Iconsax.magicpen,
-                      title: "Automatic Capture",
-                      subtitle: "Captures automatically when aligned",
-                      isSelected: false,
-                      onTap: () {
-                        setState(() {
-                          _isAutomaticMode = true;
-                          _isStarted = true;
-                        });
-                        SecureStorage().saveCaptureMode(true);
-                        _speakInstruction();
-                        Navigator.pop(context);
-                      },
-                    ),
-                    SizedBox(height: context.h(12)),
-                    _buildModeOption(
                       icon: Iconsax.camera,
                       title: "Manual Capture",
                       subtitle: "You control the capture button",
@@ -302,6 +290,22 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                           _isStarted = true;
                         });
                         SecureStorage().saveCaptureMode(false);
+                        _speakInstruction();
+                        Navigator.pop(context);
+                      },
+                    ),
+                    SizedBox(height: context.h(12)),
+                    _buildModeOption(
+                      icon: Iconsax.magicpen,
+                      title: "Automatic Capture",
+                      subtitle: "Captures automatically when aligned",
+                      isSelected: false,
+                      onTap: () {
+                        setState(() {
+                          _isAutomaticMode = true;
+                          _isStarted = true;
+                        });
+                        SecureStorage().saveCaptureMode(true);
                         _speakInstruction();
                         Navigator.pop(context);
                       },
@@ -330,7 +334,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                         ),
                         Switch.adaptive(
                           value: _isSoundOn,
-                          activeColor: CustomColors.purpleColor,
+                          activeThumbColor: CustomColors.purpleColor,
                           onChanged: (val) {
                             setDialogState(() {
                               _isSoundOn = val;
@@ -448,13 +452,16 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
       );
 
       bool isPoseCorrect = false;
+      double? currentYaw;
       if (faces.isNotEmpty) {
         final face = faces.first;
+        currentYaw = face.headEulerAngles?.y;
         isPoseCorrect = face.isCorrectPose(
           widget.pose,
           isFrontCamera:
               _cameraController?.description.lensDirection ==
               CameraLensDirection.front,
+          previousCorrect: _isPoseCorrect,
         );
 
         if (isPoseCorrect && _showManualCaptureUI) {
@@ -465,12 +472,23 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
         }
       }
 
-      if (_isPoseCorrect != isPoseCorrect) {
+      if (_isPoseCorrect != isPoseCorrect || _currentYaw != currentYaw) {
         setState(() {
           _isPoseCorrect = isPoseCorrect;
+          _currentYaw = currentYaw;
         });
+      }
 
-        if (_isPoseCorrect && _isAutomaticMode) {
+      if (isPoseCorrect) {
+        _incorrectPoseDebounceTimer?.cancel();
+        _incorrectPoseDebounceTimer = null;
+
+        if (_isAutomaticMode &&
+            !_hasSpokenHoldStill &&
+            !_isCountingDown &&
+            !_isCapturing) {
+          _hasSpokenHoldStill = true;
+
           if (Platform.isAndroid) {
             try {
               Vibration.vibrate(duration: 200);
@@ -490,12 +508,17 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
             TtsUtils.speak("Hold still");
           }
 
-          await Future.delayed(const Duration(milliseconds: 1000));
-          if (mounted && _isPoseCorrect && _isAutomaticMode) {
-            _startCountdown();
-          }
-        } else if (!isPoseCorrect) {
-          _stopCountdown();
+          _startCountdown();
+        }
+      } else {
+        if (_isAutomaticMode &&
+            _incorrectPoseDebounceTimer == null &&
+            (_isCountingDown || _hasSpokenHoldStill)) {
+          _incorrectPoseDebounceTimer = Timer(const Duration(milliseconds: 700), () {
+            if (mounted && !_isPoseCorrect) {
+              _stopCountdown();
+            }
+          });
         }
       }
     } catch (e) {
@@ -543,6 +566,9 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
   void _stopCountdown() {
     _timer?.cancel();
     _timer = null;
+    _incorrectPoseDebounceTimer?.cancel();
+    _incorrectPoseDebounceTimer = null;
+    _hasSpokenHoldStill = false;
     if (mounted) {
       setState(() {
         _isCountingDown = false;
@@ -828,6 +854,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
   @override
   void dispose() {
     _timer?.cancel();
+    _incorrectPoseDebounceTimer?.cancel();
     _manualCaptureTimer?.cancel();
     _volumeButtonService.dispose();
     _cameraController?.dispose();
@@ -1065,40 +1092,75 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: context.w(16),
-                vertical: context.h(6),
-              ),
-              decoration: BoxDecoration(
-                color: _isPoseCorrect
-                    ? CustomColors.purpleColor.withValues(alpha: 0.2)
-                    : Colors.white10,
-                borderRadius: BorderRadius.circular(context.r(12)),
-                border: Border.all(
-                  color: _isPoseCorrect
-                      ? CustomColors.purpleColor
-                      : Colors.white24,
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.w(16),
+                    vertical: context.h(6),
+                  ),
+                  decoration: BoxDecoration(
+                    color: _isPoseCorrect
+                        ? CustomColors.purpleColor.withValues(alpha: 0.2)
+                        : Colors.white10,
+                    borderRadius: BorderRadius.circular(context.r(12)),
+                    border: Border.all(
+                      color: _isPoseCorrect
+                          ? CustomColors.purpleColor
+                          : Colors.white24,
+                    ),
+                  ),
+                  child: Text(
+                    _isFaceDetectorError || _showManualCaptureUI
+                        ? "MANUAL CAPTURE MODE"
+                        : (_isAutomaticMode
+                              ? "AUTOMATIC CAPTURE MODE"
+                              : "MANUAL CAPTURE MODE"),
+                    style: TextStyle(
+                      color:
+                          _isPoseCorrect ||
+                              _isFaceDetectorError ||
+                              _showManualCaptureUI
+                          ? CustomColors.purpleColor
+                          : Colors.white70,
+                      fontSize: context.sp(12),
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
                 ),
-              ),
-              child: Text(
-                _isFaceDetectorError || _showManualCaptureUI
-                    ? "MANUAL CAPTURE MODE"
-                    : (_isAutomaticMode
-                          ? "AUTOMATIC CAPTURE MODE"
-                          : "MANUAL CAPTURE MODE"),
-                style: TextStyle(
-                  color:
-                      _isPoseCorrect ||
-                          _isFaceDetectorError ||
-                          _showManualCaptureUI
-                      ? CustomColors.purpleColor
-                      : Colors.white70,
-                  fontSize: context.sp(12),
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.2,
-                ),
-              ),
+                if (_currentYaw != null) ...[
+                  SizedBox(width: context.w(8)),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: context.w(12),
+                      vertical: context.h(6),
+                    ),
+                    decoration: BoxDecoration(
+                      color: _isPoseCorrect
+                          ? CustomColors.purpleColor.withValues(alpha: 0.2)
+                          : Colors.black45,
+                      borderRadius: BorderRadius.circular(context.r(12)),
+                      border: Border.all(
+                        color: _isPoseCorrect
+                            ? CustomColors.purpleColor
+                            : Colors.white24,
+                      ),
+                    ),
+                    child: Text(
+                      "Yaw: ${_currentYaw!.toStringAsFixed(1)}°",
+                      style: TextStyle(
+                        color: _isPoseCorrect
+                            ? CustomColors.purpleColor
+                            : Colors.white,
+                        fontSize: context.sp(12),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ),
             SizedBox(height: context.h(12)),
             Text(
