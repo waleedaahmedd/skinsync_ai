@@ -71,6 +71,35 @@ class AppointmentViewModel extends BaseViewModel<AppointmentState> {
     });
   }
 
+
+  Future<bool?> decodeQrCode(String qrCode) async {
+    return await runSafely(() async {
+      final decryted = await EncryptionService().decode(cipherText: qrCode);
+      if (decryted == null) {
+        throw const AppException('Could not decode QR code');
+      }
+      // final splitted = decryted.split('/');
+      // final appointmentId = int.parse(splitted[0]);
+      // final doctorId = int.parse(splitted[1]);
+      // // clinicId
+      // final _ = int.parse(splitted[2]);
+      // final currentDocId = ref
+      //     .read(authViewModel)
+      //     .authResponse
+      //     ?.data
+      //     ?.practitioner
+      //     ?.id;
+      // if (doctorId != currentDocId) {
+      //   throw const AppException(
+      //     'You do not have permission to view this appointment',
+      //   );
+      // }
+      // await getAppointmentDetail(appointmentId);
+      return true;
+    });
+  }
+
+
   Future<String?> encryptAppointmentData(AppointmentDetailData? data) async {
     return await runSafely<String?>(() async {
       final appointmentId = data?.id;
