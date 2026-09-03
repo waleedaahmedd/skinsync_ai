@@ -164,3 +164,26 @@ enum HomeSection {
     }
   }
 }
+
+enum ChatMessageType {
+  text('text', 'Text'),
+  normal('normal', 'Normal'),
+  media('media', 'Media'),
+  document('document', 'Document'),
+  sharedRequest('sharedRequest', 'Shared Request'),
+  appointment('appointment', 'Appointment');
+
+  final String value;
+  final String label;
+
+  const ChatMessageType(this.value, this.label);
+
+  static ChatMessageType fromValue(String? value) {
+    if (value == null) return ChatMessageType.text;
+    final val = value.toLowerCase();
+    return ChatMessageType.values.firstWhere(
+      (e) => e.value.toLowerCase() == val,
+      orElse: () => ChatMessageType.text,
+    );
+  }
+}

@@ -22,6 +22,8 @@ import 'screens/bottom_nav_screens/home_screen.dart';
 import 'screens/bottom_nav_screens/my_profile_screen.dart';
 import 'screens/bottom_nav_screens/reels_screen.dart';
 import 'screens/bottom_nav_screens/treatment_explore_screen.dart';
+import 'screens/chat_list_screen.dart';
+import 'screens/chat_screen.dart';
 import 'screens/clinic_service_screen.dart';
 import 'screens/clinics_detail_screen.dart';
 import 'screens/compliance_form_screen.dart';
@@ -481,6 +483,20 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: const RouteSettings(name: UpdateVersionScreen.routeName),
           builder: (_) => const UpdateVersionScreen(),
+        );
+      case ChatListScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: ChatListScreen.routeName),
+          builder: (_) => ChatListScreen(
+            showBackButton: args as bool? ?? true,
+          ),
+        );
+      case ChatScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: ChatScreen.routeName),
+          builder: (_) => ChatScreen(
+            showBackButton: args as bool? ?? true,
+          ),
         );
       case PdfViewerScreen.routeName:
         final args = settings.arguments as Map<String, dynamic>;
