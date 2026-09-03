@@ -700,8 +700,8 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
       final finalImage = await cropImageToCircle(
         image,
         centerXPercent: 0.5,
-        centerYPercent: 0.42,
-        radiusPercent: 0.5,
+        centerYPercent: 0.46,
+        radiusPercent: 0.42,
         flipHorizontally:
             _cameraController!.description.lensDirection ==
             CameraLensDirection.front,
@@ -889,7 +889,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     }
     final aspectRatio = previewSize.height / previewSize.width;
     const circleRadiusPercent = 0.42;
-    const circleCenterYPercent = 0.42;
+    const circleCenterYPercent = 0.46;
 
     return GestureDetector(
       onTap: () {
@@ -901,7 +901,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
         child: Stack(
           children: [
             Align(
-              alignment: Alignment.topCenter,
+              alignment: Alignment.center,
               child: AspectRatio(
                 aspectRatio: aspectRatio,
                 child: LayoutBuilder(
@@ -1130,36 +1130,36 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
                     ),
                   ),
                 ),
-                if (_currentYaw != null) ...[
-                  SizedBox(width: context.w(8)),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.w(12),
-                      vertical: context.h(6),
-                    ),
-                    decoration: BoxDecoration(
-                      color: _isPoseCorrect
-                          ? CustomColors.purpleColor.withValues(alpha: 0.2)
-                          : Colors.black45,
-                      borderRadius: BorderRadius.circular(context.r(12)),
-                      border: Border.all(
-                        color: _isPoseCorrect
-                            ? CustomColors.purpleColor
-                            : Colors.white24,
-                      ),
-                    ),
-                    child: Text(
-                      "Yaw: ${_currentYaw!.toStringAsFixed(1)}°",
-                      style: TextStyle(
-                        color: _isPoseCorrect
-                            ? CustomColors.purpleColor
-                            : Colors.white,
-                        fontSize: context.sp(12),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
+                // if (_currentYaw != null) ...[
+                //   SizedBox(width: context.w(8)),
+                //   Container(
+                //     padding: EdgeInsets.symmetric(
+                //       horizontal: context.w(12),
+                //       vertical: context.h(6),
+                //     ),
+                //     decoration: BoxDecoration(
+                //       color: _isPoseCorrect
+                //           ? CustomColors.purpleColor.withValues(alpha: 0.2)
+                //           : Colors.black45,
+                //       borderRadius: BorderRadius.circular(context.r(12)),
+                //       border: Border.all(
+                //         color: _isPoseCorrect
+                //             ? CustomColors.purpleColor
+                //             : Colors.white24,
+                //       ),
+                //     ),
+                //     child: Text(
+                //       "Yaw: ${_currentYaw!.toStringAsFixed(1)}°",
+                //       style: TextStyle(
+                //         color: _isPoseCorrect
+                //             ? CustomColors.purpleColor
+                //             : Colors.white,
+                //         fontSize: context.sp(12),
+                //         fontWeight: FontWeight.bold,
+                //       ),
+                //     ),
+                //   ),
+                // ],
               ],
             ),
             SizedBox(height: context.h(12)),
