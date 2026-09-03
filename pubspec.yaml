@@ -101,6 +101,7 @@ dependencies:
   pdf: ^3.13.0
   syncfusion_flutter_pdf: ^34.2.5
   syncfusion_flutter_pdfviewer: ^34.2.5
+  web_socket_client: ^0.2.1
 
 dev_dependencies:
   flutter_test:

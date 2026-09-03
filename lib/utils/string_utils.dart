@@ -9,4 +9,11 @@ extension StringUtils on String {
   String addStringToStart(String start) {
     return '$start$this';
   }
+
+  String? get firstOrNull {
+    if (isEmpty) {
+      return null;
+    }
+    return this[0].toUpperCase();
+  }
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
-import '../../models/chat_message_model.dart';
+import '../../models/responses/messages_response.dart';
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
+import '../../utils/date_time_utils.dart';
 import '../../utils/enums.dart';
 import 'appointment_chat_bubble.dart';
 import 'document_chat_bubble.dart';
@@ -12,7 +13,7 @@ import 'normal_chat_bubble.dart';
 import 'shared_request_chat_bubble.dart';
 
 class ChatMessageBubble extends StatelessWidget {
-  final ChatMessageModel message;
+  final Message message;
 
   const ChatMessageBubble({super.key, required this.message});
 
@@ -25,13 +26,14 @@ class ChatMessageBubble extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.only(bottom: context.h(16)),
         child: Column(
-          crossAxisAlignment:
-              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: isMe
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
           children: [
             Padding(
               padding: EdgeInsets.only(bottom: context.h(4)),
               child: Text(
-                '${message.senderName}, ${message.time}',
+                '${message.senderName}, ${message.createdAt?.formattedDateTime}',
                 style: CustomFonts.grey12w400,
               ),
             ),
@@ -68,12 +70,13 @@ class ChatMessageBubble extends StatelessWidget {
   }
 
   Widget _buildTypedBubble(BuildContext context) {
-    return switch (message.messageType) {
-      ChatMessageType.text || ChatMessageType.normal => NormalChatBubble(message: message),
-      ChatMessageType.media => MediaChatBubble(message: message),
-      ChatMessageType.document => DocumentChatBubble(message: message),
-      ChatMessageType.sharedRequest => SharedRequestChatBubble(message: message),
-      ChatMessageType.appointment => AppointmentChatBubble(message: message),
+    return switch (message.type) {
+      null => const SizedBox.shrink(),
+      MessageType.text => NormalChatBubble(message: message),
+      MessageType.media => MediaChatBubble(message: message),
+      MessageType.document => DocumentChatBubble(message: message),
+      MessageType.sharedRequest => SharedRequestChatBubble(message: message),
+      MessageType.appointment => AppointmentChatBubble(message: message),
     };
   }
 }

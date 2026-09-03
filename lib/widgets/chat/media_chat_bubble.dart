@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
-import '../../models/chat_message_model.dart';
+import '../../models/responses/messages_response.dart';
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
 
 class MediaChatBubble extends StatelessWidget {
-  final ChatMessageModel message;
+  final Message message;
 
   const MediaChatBubble({super.key, required this.message});
 
@@ -42,7 +42,7 @@ class MediaChatBubble extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (message.text.isNotEmpty) ...[
+          if (message.content?.isNotEmpty ?? false) ...[
             Padding(
               padding: EdgeInsets.only(
                 left: context.w(4),
@@ -50,10 +50,8 @@ class MediaChatBubble extends StatelessWidget {
                 bottom: context.h(8),
               ),
               child: Text(
-                message.text,
-                style: isMe
-                    ? CustomFonts.white14w400
-                    : CustomFonts.black14w400,
+                message.content!,
+                style: isMe ? CustomFonts.white14w400 : CustomFonts.black14w400,
               ),
             ),
           ],
@@ -70,19 +68,19 @@ class MediaChatBubble extends StatelessWidget {
                   )
                 : _buildPlaceholderImage(context),
           ),
-          if (message.mediaCaption != null &&
-              message.mediaCaption!.isNotEmpty) ...[
-            SizedBox(height: context.h(8)),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: context.w(4)),
-              child: Text(
-                message.mediaCaption!,
-                style: isMe
-                    ? CustomFonts.white12w400
-                    : CustomFonts.grey12w400,
-              ),
-            ),
-          ],
+          // if (message.mediaCaption != null &&
+          //     message.mediaCaption!.isNotEmpty) ...[
+          //   SizedBox(height: context.h(8)),
+          //   Padding(
+          //     padding: EdgeInsets.symmetric(horizontal: context.w(4)),
+          //     child: Text(
+          //       message.mediaCaption!,
+          //       style: isMe
+          //           ? CustomFonts.white12w400
+          //           : CustomFonts.grey12w400,
+          //     ),
+          //   ),
+          // ],
         ],
       ),
     );
@@ -102,10 +100,7 @@ class MediaChatBubble extends StatelessWidget {
             color: CustomColors.silverColor,
           ),
           SizedBox(height: context.h(8)),
-          Text(
-            'Media Preview',
-            style: CustomFonts.grey12w400,
-          ),
+          Text('Media Preview', style: CustomFonts.grey12w400),
         ],
       ),
     );

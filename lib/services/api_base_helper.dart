@@ -16,6 +16,7 @@ import '../utils/secure_storage_service.dart';
 
 class ApiBaseHelper {
   final SecureStorage _secureStorage = SecureStorage();
+  final baseUrl = isDeploymentMode ? BaseUrls.api.url : BaseUrls.apiQa.url;
 
   Future<http.Response> httpRequest({
     required EndPoints endPoint,
@@ -25,7 +26,6 @@ class ApiBaseHelper {
     String? imagePath,
   }) async {
     try {
-      final baseUrl = isDeploymentMode ? BaseUrls.api.url : BaseUrls.apiQa.url;
       final url = '$baseUrl${endPoint.path}${params ?? ''}';
       log('URL: $url');
       log('BODY: $requestBody');
@@ -64,9 +64,8 @@ class ApiBaseHelper {
             Uri.parse(url),
             headers: headers,
             body: requestBody != '' ? jsonEncode(requestBody) : null,
-
           );
-            log('RESPONSE: ${responseJson.body}');
+          log('RESPONSE: ${responseJson.body}');
           return responseJson;
         case .delete:
           final responseJson = await http.delete(

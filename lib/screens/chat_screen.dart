@@ -1,33 +1,33 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../models/chat_appointment_model.dart';
-import '../models/chat_message_model.dart';
 import '../models/chat_treatment_request_model.dart';
-import '../utils/ai_dummy_data.dart';
+import '../services/media_service.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../utils/enums.dart';
+import '../view_models/chat_view_model.dart';
 import '../widgets/chat/chat_message_bubble.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/dialogs/share_treatment_request_dialog.dart';
 import '../widgets/grey_container.dart';
 
-class ChatScreen extends StatefulWidget {
+class ChatScreen extends ConsumerStatefulWidget {
   static const String routeName = '/chat-screen';
 
   final bool showBackButton;
 
-  const ChatScreen({
-    super.key,
-    this.showBackButton = true,
-  });
+  const ChatScreen({super.key, this.showBackButton = true});
 
   @override
-  State<ChatScreen> createState() => _ChatScreenState();
+  ConsumerState<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends ConsumerState<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
@@ -40,12 +40,12 @@ class _ChatScreenState extends State<ChatScreen> {
     'Request Pricing',
   ];
 
-  late final List<ChatMessageModel> _messages;
-
   @override
   void initState() {
     super.initState();
-    _messages = List.from(AiDummyData.chatDummyMessages);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(chatProvider.notifier).loadMessages();
+    });
   }
 
   @override
@@ -55,19 +55,18 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
-  void _sendMessage({
+  Future<void> _sendMessage({
     String? customText,
-    ChatMessageType messageType = ChatMessageType.normal,
+    MessageType messageType = MessageType.text,
     String? mediaUrl,
-    String? mediaCaption,
     String? documentName,
-    String? documentSize,
+    String? documentUrl,
     ChatTreatmentRequestModel? sharedRequestData,
     ChatAppointmentData? appointmentData,
-  }) {
+  }) async {
     final text = customText ?? _messageController.text.trim();
     if (text.isEmpty &&
-        messageType == ChatMessageType.normal &&
+        messageType == MessageType.text &&
         documentName == null &&
         mediaUrl == null &&
         sharedRequestData == null &&
@@ -75,32 +74,75 @@ class _ChatScreenState extends State<ChatScreen> {
       return;
     }
 
-    final now = DateTime.now();
-    final timeStr =
-        "${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}";
+    if (messageType == MessageType.media && mediaUrl == null) {
+      await _pickMediaAndSend();
+      return;
+    }
 
-    setState(() {
-      _messages.add(
-        ChatMessageModel(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          senderName: 'You',
-          time: timeStr,
-          isMe: true,
-          isRead: false,
-          messageType: messageType,
-          text: text,
+    if (messageType == MessageType.document && documentUrl == null) {
+      await _pickDocumentAndSend();
+      return;
+    }
+
+    await ref
+        .read(chatProvider.notifier)
+        .sendChatMessage(
+          type: messageType,
+          content: text,
           mediaUrl: mediaUrl,
-          mediaCaption: mediaCaption,
-          documentName: documentName,
-          documentSize: documentSize,
-          sharedRequestData: sharedRequestData,
-          appointmentData: appointmentData,
-        ),
-      );
-    });
+          documentUrl: documentUrl,
+        );
 
     _messageController.clear();
     _scrollToBottom();
+  }
+
+  Future<void> _pickMediaAndSend() async {
+    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (picked == null) {
+      return;
+    }
+
+    final mediaUrl = await MediaService().uploadMedia(
+      path: 'chat/media',
+      file: picked,
+    );
+    if (mediaUrl == null) {
+      return;
+    }
+
+    await _sendMessage(
+      customText: 'Shared media.',
+      messageType: MessageType.media,
+      mediaUrl: mediaUrl,
+    );
+  }
+
+  Future<void> _pickDocumentAndSend() async {
+    final result = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'doc', 'docx'],
+      withData: false,
+    );
+    final file = result.singleOrNull;
+    if (file == null || file.path == null) {
+      return;
+    }
+
+    final documentUrl = await MediaService().uploadMedia(
+      path: 'chat/documents',
+      file: file,
+    );
+    if (documentUrl == null) {
+      return;
+    }
+
+    await _sendMessage(
+      customText: 'Shared document.',
+      messageType: MessageType.document,
+      documentName: file.name,
+      documentUrl: documentUrl,
+    );
   }
 
   void _scrollToBottom() {
@@ -117,155 +159,175 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: CustomColors.whiteColor,
-      appBar: CustomAppBar(
-        showBackButton: widget.showBackButton,
-        showTitle: false,
-        actions: [
-          Expanded(
-            child: Row(
-              children: [
-                Stack(
-                  children: [
-                    Container(
-                      width: context.w(40),
-                      height: context.w(40),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: CustomColors.purpleColor.withValues(alpha: 0.1),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'S',
-                          style: TextStyle(
-                            fontSize: context.sp(16),
-                            fontWeight: FontWeight.bold,
-                            color: CustomColors.purpleColor,
-                            fontFamily: 'Degular',
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: Container(
-                        width: context.w(12),
-                        height: context.w(12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF10B981),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: CustomColors.whiteColor,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(width: context.w(12)),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
+    return PopScope(
+      onPopInvokedWithResult: (_, _) {
+        ref.read(chatProvider.notifier).clearSelectedChatAndMessages();
+      },
+      child: Scaffold(
+        backgroundColor: CustomColors.whiteColor,
+        appBar: CustomAppBar(
+          showBackButton: widget.showBackButton,
+          showTitle: false,
+          actions: [
+            Expanded(
+              child: Row(
+                children: [
+                  Stack(
                     children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              'SkinSync Clinic',
-                              style: CustomFonts.black16w600,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                      Container(
+                        width: context.w(40),
+                        height: context.w(40),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: CustomColors.purpleColor.withValues(
+                            alpha: 0.1,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'S',
+                            style: TextStyle(
+                              fontSize: context.sp(16),
+                              fontWeight: FontWeight.bold,
+                              color: CustomColors.purpleColor,
+                              fontFamily: 'Degular',
                             ),
                           ),
-                          SizedBox(width: context.w(6)),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: context.w(6),
-                              vertical: context.h(2),
-                            ),
-                            decoration: BoxDecoration(
-                              color: CustomColors.purpleColor.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(context.r(8)),
-                            ),
-                            child: Text(
-                              'Verified',
-                              style: CustomFonts.black10w600.copyWith(
-                                color: CustomColors.purpleColor,
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                      SizedBox(height: context.h(2)),
-                      Text(
-                        'Aesthetics & Dermatology',
-                        style: CustomFonts.grey12w400,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: Container(
+                          width: context.w(12),
+                          height: context.w(12),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF10B981),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: CustomColors.whiteColor,
+                              width: 2,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
-                ),
-                SizedBox(width: context.w(8)),
-                GreyContainer(
-                  icon: _showClinicInfo
-                      ? Icons.info_rounded
-                      : Icons.info_outline_rounded,
-                  onTap: () {
-                    setState(() {
-                      _showClinicInfo = !_showClinicInfo;
-                    });
-                  },
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            if (_showClinicInfo) _buildClinicInfoBanner(context),
-            Expanded(
-              child: Container(
-                margin: EdgeInsets.all(context.w(16)),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
-                  borderRadius: BorderRadius.circular(context.r(24)),
-                  border: Border.all(color: Colors.grey.shade200, width: 1.5),
-                  boxShadow: CustomColors.cardShadow,
-                ),
-                child: Column(
-                  children: [
-                    _buildDateDivider(context),
-                    Expanded(
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: context.w(16),
-                          vertical: context.h(12),
+                  SizedBox(width: context.w(12)),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                'SkinSync Clinic',
+                                style: CustomFonts.black16w600,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            SizedBox(width: context.w(6)),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: context.w(6),
+                                vertical: context.h(2),
+                              ),
+                              decoration: BoxDecoration(
+                                color: CustomColors.purpleColor.withValues(
+                                  alpha: 0.1,
+                                ),
+                                borderRadius: BorderRadius.circular(
+                                  context.r(8),
+                                ),
+                              ),
+                              child: Text(
+                                'Verified',
+                                style: CustomFonts.black10w600.copyWith(
+                                  color: CustomColors.purpleColor,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: _messages.length,
-                        itemBuilder: (context, index) {
-                          final message = _messages[index];
-                          return ChatMessageBubble(message: message);
-                        },
-                      ),
+                        SizedBox(height: context.h(2)),
+                        Text(
+                          'Aesthetics & Dermatology',
+                          style: CustomFonts.grey12w400,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
-                    const Divider(color: CustomColors.greyColor, height: 1),
-                    _buildQuickPresetsRow(context),
-                    const Divider(color: CustomColors.greyColor, height: 1),
-                    _buildInputArea(context),
-                  ],
-                ),
+                  ),
+                  SizedBox(width: context.w(8)),
+                  GreyContainer(
+                    icon: _showClinicInfo
+                        ? Icons.info_rounded
+                        : Icons.info_outline_rounded,
+                    onTap: () {
+                      setState(() {
+                        _showClinicInfo = !_showClinicInfo;
+                      });
+                    },
+                  ),
+                ],
               ),
             ),
           ],
+        ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              if (_showClinicInfo) _buildClinicInfoBanner(context),
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.all(context.w(16)),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(context.r(24)),
+                    border: Border.all(color: Colors.grey.shade200, width: 1.5),
+                    boxShadow: CustomColors.cardShadow,
+                  ),
+                  child: Column(
+                    children: [
+                      _buildDateDivider(context),
+                      Expanded(
+                        child: Consumer(
+                          builder: (_, ref, _) {
+                            final messages = ref.watch(
+                              chatProvider.select(
+                                (s) => s.messagesData?.messages,
+                              ),
+                            );
+                            return ListView.builder(
+                              controller: _scrollController,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: context.w(16),
+                                vertical: context.h(12),
+                              ),
+                              physics: const BouncingScrollPhysics(),
+                              itemCount: messages?.length ?? 0,
+                              itemBuilder: (context, index) {
+                                final message = messages![index];
+                                return ChatMessageBubble(message: message);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                      const Divider(color: CustomColors.greyColor, height: 1),
+                      _buildQuickPresetsRow(context),
+                      const Divider(color: CustomColors.greyColor, height: 1),
+                      _buildInputArea(context),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -323,10 +385,7 @@ class _ChatScreenState extends State<ChatScreen> {
             borderRadius: BorderRadius.circular(context.r(16)),
             border: Border.all(color: Colors.grey.shade200),
           ),
-          child: Text(
-            'Today, Aug 28, 2026',
-            style: CustomFonts.grey12w400,
-          ),
+          child: Text('Today, Aug 28, 2026', style: CustomFonts.grey12w400),
         ),
       ),
     );
@@ -350,10 +409,7 @@ class _ChatScreenState extends State<ChatScreen> {
               color: CustomColors.purpleColor,
             ),
             SizedBox(width: context.w(6)),
-            Text(
-              'Quick:',
-              style: CustomFonts.grey12w400,
-            ),
+            Text('Quick:', style: CustomFonts.grey12w400),
             SizedBox(width: context.w(8)),
             ..._quickTemplates.map(
               (template) => Padding(
@@ -366,7 +422,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     color: CustomColors.purpleColor,
                     fontFamily: 'Degular',
                   ),
-                  backgroundColor: CustomColors.purpleColor.withValues(alpha: 0.1),
+                  backgroundColor: CustomColors.purpleColor.withValues(
+                    alpha: 0.1,
+                  ),
                   side: BorderSide.none,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(context.r(16)),
@@ -406,20 +464,9 @@ class _ChatScreenState extends State<ChatScreen> {
             tooltip: 'Attach Media, Document, Request or Appointment',
             onSelected: (value) {
               if (value == 'photo') {
-                _sendMessage(
-                  customText: 'Shared pre-treatment face scan.',
-                  messageType: ChatMessageType.media,
-                  mediaUrl:
-                      'https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&q=80',
-                  mediaCaption: 'Pre-treatment Skin Assessment Photo',
-                );
+                _pickMediaAndSend();
               } else if (value == 'document') {
-                _sendMessage(
-                  customText: 'Shared medical history details.',
-                  messageType: ChatMessageType.document,
-                  documentName: 'Patient_Medical_History.pdf',
-                  documentSize: '1.2 MB',
-                );
+                _pickDocumentAndSend();
               } else if (value == 'shared_request') {
                 showDialog<ChatTreatmentRequestModel>(
                   context: context,
@@ -430,7 +477,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   if (selectedReq != null) {
                     _sendMessage(
                       customText: 'Attached shared treatment request details.',
-                      messageType: ChatMessageType.sharedRequest,
+                      messageType: MessageType.sharedRequest,
                       sharedRequestData: selectedReq,
                     );
                   }
@@ -438,7 +485,7 @@ class _ChatScreenState extends State<ChatScreen> {
               } else if (value == 'appointment') {
                 _sendMessage(
                   customText: 'Attached appointment confirmation details.',
-                  messageType: ChatMessageType.appointment,
+                  messageType: MessageType.appointment,
                   appointmentData: ChatAppointmentData(
                     appointmentId: 408,
                     patientName: 'Jane Cooper',
@@ -456,8 +503,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 value: 'photo',
                 child: Row(
                   children: [
-                    Icon(Icons.image_outlined,
-                        size: context.sp(18), color: CustomColors.purpleColor),
+                    Icon(
+                      Icons.image_outlined,
+                      size: context.sp(18),
+                      color: CustomColors.purpleColor,
+                    ),
                     SizedBox(width: context.w(12)),
                     Text('Send Photo / Media', style: CustomFonts.black14w400),
                   ],
@@ -467,8 +517,11 @@ class _ChatScreenState extends State<ChatScreen> {
                 value: 'document',
                 child: Row(
                   children: [
-                    Icon(Icons.picture_as_pdf_outlined,
-                        size: context.sp(18), color: CustomColors.purpleColor),
+                    Icon(
+                      Icons.picture_as_pdf_outlined,
+                      size: context.sp(18),
+                      color: CustomColors.purpleColor,
+                    ),
                     SizedBox(width: context.w(12)),
                     Text('Send Document (PDF)', style: CustomFonts.black14w400),
                   ],
@@ -478,10 +531,16 @@ class _ChatScreenState extends State<ChatScreen> {
                 value: 'shared_request',
                 child: Row(
                   children: [
-                    Icon(Icons.assignment_outlined,
-                        size: context.sp(18), color: CustomColors.purpleColor),
+                    Icon(
+                      Icons.assignment_outlined,
+                      size: context.sp(18),
+                      color: CustomColors.purpleColor,
+                    ),
                     SizedBox(width: context.w(12)),
-                    Text('Share Treatment Request', style: CustomFonts.black14w400),
+                    Text(
+                      'Share Treatment Request',
+                      style: CustomFonts.black14w400,
+                    ),
                   ],
                 ),
               ),
@@ -489,10 +548,16 @@ class _ChatScreenState extends State<ChatScreen> {
                 value: 'appointment',
                 child: Row(
                   children: [
-                    Icon(Icons.calendar_month_outlined,
-                        size: context.sp(18), color: CustomColors.purpleColor),
+                    Icon(
+                      Icons.calendar_month_outlined,
+                      size: context.sp(18),
+                      color: CustomColors.purpleColor,
+                    ),
                     SizedBox(width: context.w(12)),
-                    Text('Share Appointment Card', style: CustomFonts.black14w400),
+                    Text(
+                      'Share Appointment Card',
+                      style: CustomFonts.black14w400,
+                    ),
                   ],
                 ),
               ),

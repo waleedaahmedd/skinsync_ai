@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
-import '../../models/chat_message_model.dart';
+import '../../models/responses/messages_response.dart';
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
 
 class DocumentChatBubble extends StatelessWidget {
-  final ChatMessageModel message;
+  final Message message;
 
   const DocumentChatBubble({super.key, required this.message});
 
@@ -42,12 +42,10 @@ class DocumentChatBubble extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (message.text.isNotEmpty) ...[
+          if (message.content?.isNotEmpty ?? false) ...[
             Text(
-              message.text,
-              style: isMe
-                  ? CustomFonts.white14w400
-                  : CustomFonts.black14w400,
+              message.content!,
+              style: isMe ? CustomFonts.white14w400 : CustomFonts.black14w400,
             ),
             SizedBox(height: context.h(10)),
           ],
@@ -72,7 +70,9 @@ class DocumentChatBubble extends StatelessWidget {
                 Icon(
                   Icons.picture_as_pdf_rounded,
                   size: context.sp(26),
-                  color: isMe ? CustomColors.whiteColor : CustomColors.darkPurple,
+                  color: isMe
+                      ? CustomColors.whiteColor
+                      : CustomColors.darkPurple,
                 ),
                 SizedBox(width: context.w(12)),
                 Expanded(
@@ -80,20 +80,20 @@ class DocumentChatBubble extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        message.documentName ?? 'Document.pdf',
+                        'Document.pdf',
                         style: isMe
                             ? CustomFonts.white12w600
                             : CustomFonts.black12w600,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      if (message.documentSize != null)
-                        Text(
-                          message.documentSize!,
-                          style: isMe
-                              ? CustomFonts.white10w600
-                              : CustomFonts.grey12w400,
-                        ),
+                      // if (message.documentSize != null)
+                      //   Text(
+                      //     message.documentSize!,
+                      //     style: isMe
+                      //         ? CustomFonts.white10w600
+                      //         : CustomFonts.grey12w400,
+                      //   ),
                     ],
                   ),
                 ),
@@ -101,7 +101,9 @@ class DocumentChatBubble extends StatelessWidget {
                 Icon(
                   Icons.download_rounded,
                   size: context.sp(20),
-                  color: isMe ? CustomColors.whiteColor : CustomColors.darkPurple,
+                  color: isMe
+                      ? CustomColors.whiteColor
+                      : CustomColors.darkPurple,
                 ),
               ],
             ),

@@ -75,7 +75,9 @@ enum EndPoints {
   patientUsages('v1/patient-usages'),
   medicalHistory('v1/medical-history'),
   sharedRequest('v1/shared-request'),
-  clinic('v1/clinic');
+  clinic('v1/clinic'),
+  chats('v1/chats'),
+  messages('v1/chats/messages');
 
   final String path;
 
@@ -88,7 +90,7 @@ enum BaseUrls {
   api('https://api.skinsyncai.com/api/'),
   apiQa('https://api-dev.skinsyncai.com/api/');
 
-  //apiQa('https://gecko-pure-gator.ngrok-free.app/api/');
+  // apiQa('http://10.0.2.2:8084/api/');
 
   final String url;
   const BaseUrls(this.url);
@@ -165,25 +167,24 @@ enum HomeSection {
   }
 }
 
-enum ChatMessageType {
+enum MessageType {
   text('text', 'Text'),
-  normal('normal', 'Normal'),
   media('media', 'Media'),
   document('document', 'Document'),
-  sharedRequest('sharedRequest', 'Shared Request'),
+  sharedRequest('request', 'Shared Request'),
   appointment('appointment', 'Appointment');
 
   final String value;
   final String label;
 
-  const ChatMessageType(this.value, this.label);
+  const MessageType(this.value, this.label);
 
-  static ChatMessageType fromValue(String? value) {
-    if (value == null) return ChatMessageType.text;
+  static MessageType fromValue(String? value) {
+    if (value == null) return MessageType.text;
     final val = value.toLowerCase();
-    return ChatMessageType.values.firstWhere(
+    return MessageType.values.firstWhere(
       (e) => e.value.toLowerCase() == val,
-      orElse: () => ChatMessageType.text,
+      orElse: () => MessageType.text,
     );
   }
 }

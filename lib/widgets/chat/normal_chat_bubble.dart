@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
-import '../../models/chat_message_model.dart';
+import '../../models/responses/messages_response.dart';
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
 
 class NormalChatBubble extends StatelessWidget {
-  final ChatMessageModel message;
+  final Message message;
 
   const NormalChatBubble({super.key, required this.message});
 
@@ -40,10 +40,8 @@ class NormalChatBubble extends StatelessWidget {
         ],
       ),
       child: Text(
-        message.text,
-        style: isMe
-            ? CustomFonts.white14w400
-            : CustomFonts.black14w400,
+        message.content ?? '',
+        style: isMe ? CustomFonts.white14w400 : CustomFonts.black14w400,
       ),
     );
   }

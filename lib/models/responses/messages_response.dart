@@ -1,0 +1,186 @@
+import '../../utils/enums.dart';
+import 'base_response_model.dart';
+
+class MessagesResponse extends BaseResponseModel {
+  final MessagesData? data;
+  MessagesResponse({super.isSuccess, super.message, this.data});
+
+  factory MessagesResponse.fromJson(Map<String, dynamic> json) =>
+      MessagesResponse(
+        isSuccess: json["is_success"],
+        message: json["message"],
+        data: json["data"] == null ? null : MessagesData.fromJson(json["data"]),
+      );
+}
+
+class MessagesData {
+  final List<Message>? messages;
+  final ChatUser? user;
+  final int? page;
+  final int? limit;
+  final int? total;
+  final int? totalPages;
+
+  MessagesData({
+    this.messages,
+    this.user,
+    this.page,
+    this.limit,
+    this.total,
+    this.totalPages,
+  });
+
+  factory MessagesData.fromJson(Map<String, dynamic> json) => MessagesData(
+    messages: json["messages"] == null
+        ? []
+        : List<Message>.from(json["messages"]!.map((x) => Message.fromJson(x))),
+    user: json["user"] == null ? null : ChatUser.fromJson(json["user"]),
+    page: json["page"],
+    limit: json["limit"],
+    total: json["total"],
+    totalPages: json["total_pages"],
+  );
+
+  MessagesData copyWith({
+    List<Message>? messages,
+    ChatUser? user,
+    int? page,
+    int? limit,
+    int? total,
+    int? totalPages,
+  }) {
+    return MessagesData(
+      messages: messages ?? this.messages,
+      user: user ?? this.user,
+      page: page ?? this.page,
+      limit: limit ?? this.limit,
+      total: total ?? this.total,
+      totalPages: totalPages ?? this.totalPages,
+    );
+  }
+}
+
+class Message {
+  final int? id;
+  final MessageType? type;
+  final String? senderType;
+  final int? senderId;
+  final String? senderName;
+  final String? content;
+  final bool isRead;
+  final String? mediaUrl;
+  final String? documentUrl;
+  final int? userId;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+
+  Message({
+    this.id,
+    this.type,
+    this.senderType,
+    this.senderId,
+    this.senderName,
+    this.content,
+    this.isRead = false,
+    this.mediaUrl,
+    this.documentUrl,
+    this.userId,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  factory Message.fromJson(Map<String, dynamic> json) => Message(
+    id: json["id"],
+    type: MessageType.fromValue(json["type"]),
+    senderType: json["sender_type"],
+    senderId: json["sender_id"],
+    senderName: json["sender_name"],
+    content: json["content"],
+    isRead: json["is_read"],
+    mediaUrl: json["media_url"],
+    documentUrl: json["document_url"],
+    createdAt: json["created_at"] == null
+        ? null
+        : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null
+        ? null
+        : DateTime.parse(json["updated_at"]),
+  );
+
+  Message copyWith({
+    int? id,
+    MessageType? type,
+    String? senderType,
+    int? senderId,
+    String? senderName,
+    String? content,
+    bool? isRead,
+    String? mediaUrl,
+    String? documentUrl,
+    int? userId,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return Message(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      senderType: senderType ?? this.senderType,
+      senderId: senderId ?? this.senderId,
+      senderName: senderName ?? this.senderName,
+      content: content ?? this.content,
+      isRead: isRead ?? this.isRead,
+      mediaUrl: mediaUrl ?? this.mediaUrl,
+      documentUrl: documentUrl ?? this.documentUrl,
+      userId: userId ?? this.userId,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  bool get isMe {
+    return userId == senderId;
+  }
+}
+
+class ChatUser {
+  final int? userProfileId;
+  final int? userId;
+  final String? name;
+  final String? phoneNumber;
+  final String? emailAddress;
+  final String? location;
+  final String? bio;
+  final String? profileImageUrl;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+
+  ChatUser({
+    this.userProfileId,
+    this.userId,
+    this.name,
+    this.phoneNumber,
+    this.emailAddress,
+    this.location,
+    this.bio,
+    this.profileImageUrl,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  factory ChatUser.fromJson(Map<String, dynamic> json) => ChatUser(
+    userProfileId: json["user_profile_id"],
+    userId: json["user_id"],
+    name: json["name"],
+    phoneNumber: json["phone_number"],
+    emailAddress: json["email_address"],
+    location: json["location"],
+    bio: json["bio"],
+    profileImageUrl: json["profile_image_url"],
+    createdAt: json["created_at"] == null
+        ? null
+        : DateTime.parse(json["created_at"]),
+    updatedAt: json["updated_at"] == null
+        ? null
+        : DateTime.parse(json["updated_at"]),
+  );
+}

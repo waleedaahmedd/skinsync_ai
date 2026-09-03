@@ -1,90 +1,47 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
+import '../models/responses/chats_response.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
+import '../utils/date_time_utils.dart';
+import '../utils/string_utils.dart';
+import '../view_models/chat_view_model.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_search_field.dart';
 import 'chat_screen.dart';
 
-class ChatListScreen extends StatefulWidget {
+class ChatListScreen extends ConsumerStatefulWidget {
   static const String routeName = '/chat-list-screen';
 
   final bool showBackButton;
 
-  const ChatListScreen({
-    super.key,
-    this.showBackButton = true,
-  });
+  const ChatListScreen({super.key, this.showBackButton = true});
 
   @override
-  State<ChatListScreen> createState() => _ChatListScreenState();
+  ConsumerState<ChatListScreen> createState() => _ChatListScreenState();
 }
 
-class _ChatListScreenState extends State<ChatListScreen> {
+class _ChatListScreenState extends ConsumerState<ChatListScreen> {
   final TextEditingController _searchController = TextEditingController();
-
-  final List<ChatListItem> _allChats = [
-    ChatListItem(
-      id: '1',
-      clinicName: 'SkinSync Clinic',
-      lastMessage: 'Hello! Thank you for reaching out to SkinSync Clinic.',
-      time: '10:22 AM',
-      unreadCount: 2,
-      isOnline: true,
-    ),
-    ChatListItem(
-      id: '2',
-      clinicName: 'Aesthetic Dermatology Center',
-      lastMessage: 'Your appointment for Sep 05 has been confirmed.',
-      time: 'Yesterday',
-      unreadCount: 0,
-      isOnline: false,
-    ),
-    ChatListItem(
-      id: '3',
-      clinicName: 'Radiant Glow Skin Clinic',
-      lastMessage: 'Please review pre-treatment care guidelines before your visit.',
-      time: '24 Aug',
-      unreadCount: 1,
-      isOnline: true,
-    ),
-    ChatListItem(
-      id: '4',
-      clinicName: 'Elite Medical Aesthetics',
-      lastMessage: 'Your treatment simulation request is ready for review.',
-      time: '21 Aug',
-      unreadCount: 0,
-      isOnline: false,
-    ),
-  ];
-
-  List<ChatListItem> _filteredChats = [];
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    _filteredChats = List.from(_allChats);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(chatProvider.notifier).loadChats();
+    });
   }
 
   @override
   void dispose() {
     _searchController.dispose();
+    _timer?.cancel();
     super.dispose();
-  }
-
-  void _filterChats(String query) {
-    setState(() {
-      if (query.trim().isEmpty) {
-        _filteredChats = List.from(_allChats);
-      } else {
-        _filteredChats = _allChats
-            .where((chat) =>
-                chat.clinicName.toLowerCase().contains(query.toLowerCase()) ||
-                chat.lastMessage.toLowerCase().contains(query.toLowerCase()))
-            .toList();
-      }
-    });
   }
 
   @override
@@ -104,25 +61,40 @@ class _ChatListScreenState extends State<ChatListScreen> {
             child: CustomSearchField(
               controller: _searchController,
               hintText: "Search clinics or messages...",
-              onChanged: _filterChats,
+              onChanged: (query) {
+                _timer?.cancel();
+                _timer = Timer.periodic(const Duration(milliseconds: 300), (
+                  timer,
+                ) {
+                  ref.read(chatProvider.notifier).loadChats(query: query);
+                });
+              },
             ),
           ),
           SizedBox(height: context.h(16)),
           Expanded(
-            child: _filteredChats.isEmpty
-                ? _buildEmptyState(context)
-                : ListView.builder(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: context.w(24),
-                      vertical: context.h(8),
-                    ),
-                    physics: const BouncingScrollPhysics(),
-                    itemCount: _filteredChats.length,
-                    itemBuilder: (context, index) {
-                      final item = _filteredChats[index];
-                      return _buildChatCard(context, item);
-                    },
+            child: Consumer(
+              builder: (_, ref, _) {
+                final chats = ref.watch(
+                  chatProvider.select((s) => s.chatsData?.items),
+                );
+                if (chats?.isEmpty ?? true) {
+                  return _buildEmptyState(context);
+                }
+                return ListView.builder(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.w(24),
+                    vertical: context.h(8),
                   ),
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: chats!.length,
+                  itemBuilder: (context, index) {
+                    final item = chats[index];
+                    return _buildChatCard(context, item);
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -155,7 +127,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     );
   }
 
-  Widget _buildChatCard(BuildContext context, ChatListItem item) {
+  Widget _buildChatCard(BuildContext context, Chat item) {
     return Container(
       margin: EdgeInsets.only(bottom: context.h(12)),
       decoration: BoxDecoration(
@@ -170,10 +142,10 @@ class _ChatListScreenState extends State<ChatListScreen> {
           color: Colors.transparent,
           child: InkWell(
             onTap: () {
-              Navigator.of(context).pushNamed(
-                ChatScreen.routeName,
-                arguments: true,
-              );
+              ref.read(chatProvider.notifier).selectChat(item);
+              Navigator.of(
+                context,
+              ).pushNamed(ChatScreen.routeName, arguments: true);
             },
             child: Padding(
               padding: EdgeInsets.all(context.w(16)),
@@ -186,11 +158,13 @@ class _ChatListScreenState extends State<ChatListScreen> {
                         height: context.w(48),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: CustomColors.purpleColor.withValues(alpha: 0.1),
+                          color: CustomColors.purpleColor.withValues(
+                            alpha: 0.1,
+                          ),
                         ),
                         child: Center(
                           child: Text(
-                            item.clinicName.isNotEmpty ? item.clinicName[0] : 'C',
+                            item.clinicName?.firstOrNull ?? 'C',
                             style: TextStyle(
                               fontSize: context.sp(18),
                               fontWeight: FontWeight.bold,
@@ -229,7 +203,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                           children: [
                             Expanded(
                               child: Text(
-                                item.clinicName,
+                                item.clinicName ?? 'N/A',
                                 style: CustomFonts.black16w600,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -237,7 +211,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                             ),
                             SizedBox(width: context.w(8)),
                             Text(
-                              item.time,
+                              item.time?.formattedDateTime ?? 'N/A',
                               style: item.unreadCount > 0
                                   ? CustomFonts.black12w600.copyWith(
                                       color: CustomColors.purpleColor,
@@ -251,7 +225,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
                           children: [
                             Expanded(
                               child: Text(
-                                item.lastMessage,
+                                item.lastMessage ?? '',
                                 style: item.unreadCount > 0
                                     ? CustomFonts.black14w600
                                     : CustomFonts.grey14w400,
@@ -268,7 +242,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
                                 ),
                                 decoration: BoxDecoration(
                                   color: CustomColors.purpleColor,
-                                  borderRadius: BorderRadius.circular(context.r(10)),
+                                  borderRadius: BorderRadius.circular(
+                                    context.r(10),
+                                  ),
                                 ),
                                 child: Text(
                                   '${item.unreadCount}',
@@ -295,22 +271,4 @@ class _ChatListScreenState extends State<ChatListScreen> {
       ),
     );
   }
-}
-
-class ChatListItem {
-  final String id;
-  final String clinicName;
-  final String lastMessage;
-  final String time;
-  final int unreadCount;
-  final bool isOnline;
-
-  ChatListItem({
-    required this.id,
-    required this.clinicName,
-    required this.lastMessage,
-    required this.time,
-    required this.unreadCount,
-    required this.isOnline,
-  });
 }
