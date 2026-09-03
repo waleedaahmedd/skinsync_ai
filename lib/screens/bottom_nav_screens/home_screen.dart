@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:showcaseview/showcaseview.dart';
 
+import '../../main.dart';
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
 import '../../utils/enums.dart';
@@ -189,20 +190,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             final Widget sectionWidget;
             switch (section) {
               case HomeSection.points:
-                sectionWidget = CustomShowcase(
-                  showcaseKey: _pointsKey,
-                  title: OnboardingDescriptions.pointsTitle,
-                  description: OnboardingDescriptions.pointsDesc,
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: context.w(24)),
-                    child: Column(
-                      children: [
-                        const PointsEarnCard(),
-                        SizedBox(height: context.h(28)),
-                      ],
-                    ),
-                  ),
-                );
+                sectionWidget = isDeploymentMode
+                    ? const SizedBox.shrink()
+                    : CustomShowcase(
+                        showcaseKey: _pointsKey,
+                        title: OnboardingDescriptions.pointsTitle,
+                        description: OnboardingDescriptions.pointsDesc,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: context.w(24),
+                          ),
+                          child: Column(
+                            children: [
+                              const PointsEarnCard(),
+                              SizedBox(height: context.h(28)),
+                            ],
+                          ),
+                        ),
+                      );
                 break;
 
               case HomeSection.recentSimulations:
@@ -494,65 +499,68 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 break;
 
               case HomeSection.topDoctors:
-                sectionWidget = CustomShowcase(
-                  showcaseKey: _doctorsKey,
-                  title: OnboardingDescriptions.doctorsTitle,
-                  description: OnboardingDescriptions.doctorsDesc,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: context.w(24),
-                        ),
-                        child: HeadingWithRightArrow(
-                          title: "Top Doctors",
-                          onTap: () {
-                            Navigator.pushNamed(
-                              context,
-                              DoctorsScreen.routeName,
-                              arguments: {'isFromHome': true},
-                            );
-                          },
-                        ),
-                      ),
-                      SizedBox(height: context.h(10)),
-                      (dashboard?.topDoctors?.isEmpty ?? true)
-                          ? _buildHorizontalEmptyState(
-                              context: context,
-                              height: context.h(70),
-                              icon: Icons.badge_outlined,
-                              title: "No Specialists Available",
-                              subtitle:
-                                  "Specialist dermatologists and clinical practitioners will be listed here soon.",
-                            )
-                          : SizedBox(
-                              height: context.h(170),
-                              child: ListView.builder(
-                                physics: const BouncingScrollPhysics(),
-                                scrollDirection: Axis.horizontal,
-                                clipBehavior: Clip.none,
-                                itemCount: dashboard!.topDoctors!.length,
-                                itemBuilder: (context, index) => Padding(
-                                  padding: EdgeInsets.only(
-                                    left: index == 0
-                                        ? context.w(24)
-                                        : context.w(16),
-                                    right:
-                                        index ==
-                                            dashboard.topDoctors!.length - 1
-                                        ? context.w(24)
-                                        : context.w(0),
-                                  ),
-                                  child: DashboardDoctorHomeCard(
-                                    doctor: dashboard.topDoctors![index],
-                                  ),
-                                ),
+                sectionWidget = isDeploymentMode
+                    ? const SizedBox.shrink()
+                    : CustomShowcase(
+                        showcaseKey: _doctorsKey,
+                        title: OnboardingDescriptions.doctorsTitle,
+                        description: OnboardingDescriptions.doctorsDesc,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: context.w(24),
+                              ),
+                              child: HeadingWithRightArrow(
+                                title: "Top Doctors",
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    DoctorsScreen.routeName,
+                                    arguments: {'isFromHome': true},
+                                  );
+                                },
                               ),
                             ),
-                      SizedBox(height: context.h(12)),
-                    ],
-                  ),
-                );
+                            SizedBox(height: context.h(10)),
+                            (dashboard?.topDoctors?.isEmpty ?? true)
+                                ? _buildHorizontalEmptyState(
+                                    context: context,
+                                    height: context.h(70),
+                                    icon: Icons.badge_outlined,
+                                    title: "No Specialists Available",
+                                    subtitle:
+                                        "Specialist dermatologists and clinical practitioners will be listed here soon.",
+                                  )
+                                : SizedBox(
+                                    height: context.h(170),
+                                    child: ListView.builder(
+                                      physics: const BouncingScrollPhysics(),
+                                      scrollDirection: Axis.horizontal,
+                                      clipBehavior: Clip.none,
+                                      itemCount: dashboard!.topDoctors!.length,
+                                      itemBuilder: (context, index) => Padding(
+                                        padding: EdgeInsets.only(
+                                          left: index == 0
+                                              ? context.w(24)
+                                              : context.w(16),
+                                          right:
+                                              index ==
+                                                  dashboard.topDoctors!.length -
+                                                      1
+                                              ? context.w(24)
+                                              : context.w(0),
+                                        ),
+                                        child: DashboardDoctorHomeCard(
+                                          doctor: dashboard.topDoctors![index],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                            SizedBox(height: context.h(12)),
+                          ],
+                        ),
+                      );
                 break;
 
               case HomeSection.topClinics:
@@ -617,60 +625,64 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 break;
 
               case HomeSection.promotions:
-                sectionWidget = CustomShowcase(
-                  showcaseKey: _promotionsKey,
-                  title: OnboardingDescriptions.promotionsTitle,
-                  description: OnboardingDescriptions.promotionsDesc,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: context.w(24),
-                        ),
-                        child: Text(
-                          "Promotions & Discounts",
-                          style: CustomFonts.black22w600,
-                        ),
-                      ),
-                      SizedBox(height: context.h(10)),
-                      promotionsCount == 0
-                          ? _buildHorizontalEmptyState(
-                              context: context,
-                              height: context.h(100),
-                              icon: Icons.local_offer_outlined,
-                              title: "No Promotions Available",
-                              subtitle:
-                                  "Exclusive clinical deals, seasonal discounts, and special offers are on their way.",
-                            )
-                          : SizedBox(
-                              height: context.h(200),
-                              child: ListView.builder(
-                                physics: const BouncingScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: promotionsCount,
-                                scrollDirection: Axis.horizontal,
-                                clipBehavior: Clip.none,
-                                padding: EdgeInsets.only(
-                                  top: context.h(10),
-                                  bottom: context.h(40),
-                                  left: context.w(24),
-                                  right: context.w(24),
-                                ),
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: EdgeInsets.only(
-                                      left: index == 0 ? 0 : context.w(16),
-                                    ),
-                                    child: const DiscountCard(),
-                                  );
-                                },
+                sectionWidget = isDeploymentMode
+                    ? const SizedBox.shrink()
+                    : CustomShowcase(
+                        showcaseKey: _promotionsKey,
+                        title: OnboardingDescriptions.promotionsTitle,
+                        description: OnboardingDescriptions.promotionsDesc,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: context.w(24),
+                              ),
+                              child: Text(
+                                "Promotions & Discounts",
+                                style: CustomFonts.black22w600,
                               ),
                             ),
-                      SizedBox(height: context.h(10)),
-                    ],
-                  ),
-                );
+                            SizedBox(height: context.h(10)),
+                            promotionsCount == 0
+                                ? _buildHorizontalEmptyState(
+                                    context: context,
+                                    height: context.h(100),
+                                    icon: Icons.local_offer_outlined,
+                                    title: "No Promotions Available",
+                                    subtitle:
+                                        "Exclusive clinical deals, seasonal discounts, and special offers are on their way.",
+                                  )
+                                : SizedBox(
+                                    height: context.h(200),
+                                    child: ListView.builder(
+                                      physics: const BouncingScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: promotionsCount,
+                                      scrollDirection: Axis.horizontal,
+                                      clipBehavior: Clip.none,
+                                      padding: EdgeInsets.only(
+                                        top: context.h(10),
+                                        bottom: context.h(40),
+                                        left: context.w(24),
+                                        right: context.w(24),
+                                      ),
+                                      itemBuilder: (context, index) {
+                                        return Padding(
+                                          padding: EdgeInsets.only(
+                                            left: index == 0
+                                                ? 0
+                                                : context.w(16),
+                                          ),
+                                          child: const DiscountCard(),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                            SizedBox(height: context.h(10)),
+                          ],
+                        ),
+                      );
                 break;
             }
 
