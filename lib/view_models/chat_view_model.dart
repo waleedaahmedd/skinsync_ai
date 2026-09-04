@@ -10,7 +10,7 @@ import '../services/chat_service.dart';
 import '../utils/enums.dart';
 import 'base_view_model.dart';
 
-final chatProvider = NotifierProvider.autoDispose(() {
+final chatProvider = NotifierProvider(() {
   return ChatViewModel(repo: ChatService(apiService: ApiBaseHelper()));
 });
 
@@ -21,6 +21,7 @@ class ChatViewModel extends BaseViewModel<ChatState> {
 
   Future<void> loadChats({String? query}) async {
     return await runSafely(() async {
+      state = const ChatState();
       EasyLoading.show(status: 'Loading chats...');
       final data = await _repo.getChats(search: query);
       state = state.copyWith(chatsData: data, loading: false);

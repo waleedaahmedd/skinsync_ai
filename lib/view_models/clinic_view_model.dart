@@ -29,9 +29,7 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
   ClinicViewModel({required this._repository})
     : super(initialState: const ClinicState());
 
-
-      final TextEditingController searchController = TextEditingController();
-
+  final TextEditingController searchController = TextEditingController();
 
   void setClinic(Clinic? clinic) {
     state = state.copyWith(clinic: clinic);
@@ -42,27 +40,29 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
       if (clinicId == null) {
         return;
       }
-      state = state.copyWith(
-        loading: true,
-        errorMessage: null,
-      );
+      state = state.copyWith(loading: true, errorMessage: null);
       final response = await _repository.getClinicDetail(clinicId);
       if (!ref.mounted) return;
-      state = state.copyWith(loading: false, clinicDetail: response.data,
-      clinic: Clinic(
-        id: response.data?.id,
-        name: response.data?.name,
-        email: response.data?.email,
-        phone: response.data?.phone,
-        description: response.data?.description,
-        address: response.data?.address,
-        logo: response.data?.logo,
-        banner: response.data?.banner,
-        status: response.data?.status,
-        location: response.data?.latitude != null && response.data?.longitude != null
-            ? LatLng(response.data!.latitude!, response.data!.longitude!)
-            : null,
-      ),);
+      state = state.copyWith(
+        loading: false,
+        clinicDetail: response.data,
+        clinic: Clinic(
+          id: response.data?.id,
+          name: response.data?.name,
+          email: response.data?.email,
+          phone: response.data?.phone,
+          description: response.data?.description,
+          address: response.data?.address,
+          logo: response.data?.logo,
+          banner: response.data?.banner,
+          status: response.data?.status,
+          location:
+              response.data?.latitude != null &&
+                  response.data?.longitude != null
+              ? LatLng(response.data!.latitude!, response.data!.longitude!)
+              : null,
+        ),
+      );
     });
   }
 
@@ -94,75 +94,71 @@ class ClinicViewModel extends BaseViewModel<ClinicState> {
     });
   }
 
-Future<void> fetchClinicsFromMap({String? search}) async {
-  return await runSafely(() async {
-    state = state.copyWith(clinicLoading: true);
-    LatLng? location = ref.read(authViewModel).addressData?.latLng;
-    if (location == null) {
-      await ref.read(authViewModel.notifier).fetchLocation(true);
-    }
-    location = ref.read(authViewModel).addressData!.latLng;
-    final places = await LocationService().fetchNearbyClinics(
-      location: location,
-      search: search,
-    );
-    if (!ref.mounted) return;
-    final List<Clinic> clinics = [];
-    for (final place in places) {
-      clinics.add(
-        Clinic(
-          id: 29,
-          phone: place.internationalPhoneNumber,
-          description: place.primaryTypeDisplayName?.text,
-          address: place.shortFormattedAddress,
-          name: place.displayName?.text,
-          logo: place.photos?.firstOrNull?.name,
-           banner: place.photos?.firstOrNull?.name,
-          location: place.location != null
-              ? LatLng(place.location!.latitude!, place.location!.longitude!)
-              : null,
-          place: place,
-        ),
+  Future<void> fetchClinicsFromMap({String? search}) async {
+    return await runSafely(() async {
+      state = state.copyWith(clinicLoading: true);
+      LatLng? location = ref.read(authViewModel).addressData?.latLng;
+      if (location == null) {
+        await ref.read(authViewModel.notifier).fetchLocation(true);
+      }
+      location = ref.read(authViewModel).addressData!.latLng;
+      final places = await LocationService().fetchNearbyClinics(
+        location: location,
+        search: search,
       );
-    }
-    if (!ref.mounted) return;
-    state = state.copyWith(clinicLoading: false, clinicsToInvite: clinics);
-  });
-}
+      if (!ref.mounted) return;
+      final List<Clinic> clinics = [];
+      for (final place in places) {
+        clinics.add(
+          Clinic(
+            id: 29,
+            phone: place.internationalPhoneNumber,
+            description: place.primaryTypeDisplayName?.text,
+            address: place.shortFormattedAddress,
+            name: place.displayName?.text,
+            logo: place.photos?.firstOrNull?.name,
+            banner: place.photos?.firstOrNull?.name,
+            location: place.location != null
+                ? LatLng(place.location!.latitude!, place.location!.longitude!)
+                : null,
+            place: place,
+          ),
+        );
+      }
+      if (!ref.mounted) return;
+      state = state.copyWith(clinicLoading: false, clinicsToInvite: clinics);
+    });
+  }
 
+  Future<List<RequestClinicTreatmentModel>?> fetchSharedClinic(
+    int pageKey, {
+    String? search,
+  }) async {
+    state = state.copyWith(loading: true);
+    return runSafely(() async {
+      final response = await _repository.getSharedClinics(
+        page: pageKey,
+        search: (search ?? '').trim(),
+      );
 
+      final newItems = response.data ?? [];
+      final totalPages = response.totalPages ?? 1;
 
+      if (!ref.mounted) return newItems;
 
+      final updatedList = pageKey == 1
+          ? newItems
+          : [...state.sharedClinics, ...newItems];
 
-Future<List<RequestClinicTreatmentModel>?> fetchSharedClinic(
-  int pageKey, {
-  String? search,
-}) async {
-  state=state.copyWith(loading: true);
-  return runSafely(() async {
-    final response = await _repository.getSharedClinics(
-      page: pageKey,
-      search: (search ?? '').trim(),
-    );
+      state = state.copyWith(
+        totalPages: totalPages,
+        sharedClinics: updatedList,
+        loading: false,
+      );
 
-    final newItems = response.data ?? [];
-    final totalPages = response.totalPages ?? 1;
-
-    if (!ref.mounted) return newItems;
-
-    final updatedList = pageKey == 1
-        ? newItems
-        : [...state.sharedClinics, ...newItems];
-
-    state = state.copyWith(
-      totalPages: totalPages,
-      sharedClinics: updatedList,
-      loading: false,
-    );
-
-    return newItems;
-  });
-}
+      return newItems;
+    });
+  }
 
   void toggleViewType() {
     state = state.copyWith(
@@ -176,7 +172,7 @@ Future<List<RequestClinicTreatmentModel>?> fetchSharedClinic(
 
   @override
   void onError(String message) {
-    state = state.copyWith(clinicLoading: false,loading: false);
+    state = state.copyWith(clinicLoading: false, loading: false);
     super.onError(message);
     EasyLoading.showError(message);
   }
@@ -190,9 +186,8 @@ class ClinicState extends BaseStateModel {
   final Clinic? clinic;
   final ClinicDetailData? clinicDetail;
   final ViewType viewType;
-   final int? totalPages;
-     final List<RequestClinicTreatmentModel> sharedClinics;
-
+  final int? totalPages;
+  final List<RequestClinicTreatmentModel> sharedClinics;
 
   const ClinicState({
     super.loading = false,
@@ -219,7 +214,6 @@ class ClinicState extends BaseStateModel {
     ViewType? viewType,
     int? totalPages,
     List<RequestClinicTreatmentModel>? sharedClinics,
-
   }) {
     return ClinicState(
       loading: loading ?? this.loading,

@@ -244,6 +244,7 @@ class RequestClinicTreatmentModel {
   final String? clinicEmail;
   final String? image;
   final String? address;
+  final int? chatId;
   final int? totalTreatmentCount;
 
   RequestClinicTreatmentModel({
@@ -252,6 +253,7 @@ class RequestClinicTreatmentModel {
     this.clinicEmail,
     this.image,
     this.address,
+    this.chatId,
     this.totalTreatmentCount,
   });
 
@@ -262,6 +264,7 @@ class RequestClinicTreatmentModel {
       clinicEmail: json['clinic_email'],
       image: json['image'],
       address: json['address'],
+      chatId: json['chat_id'],
       totalTreatmentCount: json['total_treatment_count'],
     );
   }

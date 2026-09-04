@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -53,15 +54,16 @@ class _SharedTreatmentRequestsScreenState
   }
 
   Future<List<RequestClinicTreatmentModel>> _fetchPage(int pageKey) async {
-  final notifier = ref.read(clinicProvider.notifier);
-  final newItems = await notifier.fetchSharedClinic(
-    pageKey,
-    search: _searchController.text.trim(),
-  );
-  final apiTotalPages = ref.read(clinicProvider).totalPages ?? 1;
-  _totalPages = apiTotalPages < 1 ? 1 : apiTotalPages;
-  return newItems ?? [];
-}
+    final notifier = ref.read(clinicProvider.notifier);
+    final newItems = await notifier.fetchSharedClinic(
+      pageKey,
+      search: _searchController.text.trim(),
+    );
+    final apiTotalPages = ref.read(clinicProvider).totalPages ?? 1;
+    _totalPages = apiTotalPages < 1 ? 1 : apiTotalPages;
+    return newItems ?? [];
+  }
+
   void _onSearchChanged(String query) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
@@ -69,109 +71,116 @@ class _SharedTreatmentRequestsScreenState
     });
   }
 
-@override
-Widget build(BuildContext context) {
-  final isLoading = ref.watch(clinicProvider.select((s) => s.loading));
-  final argsTitle = ModalRoute.of(context)?.settings.arguments as String?;
-  final screenTitle =
-      widget.title ?? argsTitle ?? 'Shared Treatment Request';
+  @override
+  Widget build(BuildContext context) {
+    final isLoading = ref.watch(clinicProvider.select((s) => s.loading));
+    final argsTitle = ModalRoute.of(context)?.settings.arguments as String?;
+    final screenTitle = widget.title ?? argsTitle ?? 'Shared Treatment Request';
 
-  return Scaffold(
-    appBar: CustomAppBar(
-      showTitle: true,
-      title: screenTitle,
-    ),
-    body: Stack(
-      children: [
-        Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: CustomSearchField(
-                controller: _searchController,
-                hintText: "Search Groups...",
-                onChanged: _onSearchChanged,
+    return Scaffold(
+      appBar: CustomAppBar(showTitle: true, title: screenTitle),
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                child: CustomSearchField(
+                  controller: _searchController,
+                  hintText: "Search Groups...",
+                  onChanged: _onSearchChanged,
+                ),
               ),
-            ),
-            Expanded(
-              child: PagingListener<int, RequestClinicTreatmentModel>(
-                controller: _pagingController,
-                builder: (context, state, fetchNextPage) => RefreshIndicator(
-                  onRefresh: () => Future.sync(_pagingController.refresh),
-                  child: PagedListView<int, RequestClinicTreatmentModel>(
-                    state: state,
-                    fetchNextPage: fetchNextPage,
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    builderDelegate:
-                        PagedChildBuilderDelegate<RequestClinicTreatmentModel>(
-                      itemBuilder: (context, request, index) {
-                        return SizedBox(
-                          width: double.infinity,
-                          child: RequestClinicTreatmentCard(
-                            data: request,
-                            onTap: () {
-                              if (request.id != null) {
-                                Navigator.pushNamed(
-                                  context,
-                                  PatientTreatmentRequestsScreen.routeName,
-                                  arguments: request.id,
-                                );
-                              }
+              Expanded(
+                child: PagingListener<int, RequestClinicTreatmentModel>(
+                  controller: _pagingController,
+                  builder: (context, state, fetchNextPage) => RefreshIndicator(
+                    onRefresh: () => Future.sync(_pagingController.refresh),
+                    child: PagedListView<int, RequestClinicTreatmentModel>(
+                      state: state,
+                      fetchNextPage: fetchNextPage,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      builderDelegate:
+                          PagedChildBuilderDelegate<
+                            RequestClinicTreatmentModel
+                          >(
+                            itemBuilder: (context, request, index) {
+                              return SizedBox(
+                                width: double.infinity,
+                                child: RequestClinicTreatmentCard(
+                                  data: request,
+                                  onTap: () {
+                                    if (request.id != null) {
+                                      Navigator.pushNamed(
+                                        context,
+                                        PatientTreatmentRequestsScreen
+                                            .routeName,
+                                        arguments: request.id,
+                                      );
+                                    }
+                                  },
+                                ),
+                              );
                             },
-                          ),
-                        );
-                      },
-                      // first/new page indicators unchanged
-                      firstPageProgressIndicatorBuilder: (context) =>
-                          const Center(child: CircularProgressIndicator()),
-                      newPageProgressIndicatorBuilder: (context) => const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        child: Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      ),
-                      noItemsFoundIndicatorBuilder: (context) => Center(
-                        child: Text(
-                          'No treatment requests found.',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ),
-                      firstPageErrorIndicatorBuilder: (context) => Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Failed to load requests.',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey.shade600,
+                            // first/new page indicators unchanged
+                            firstPageProgressIndicatorBuilder: (context) =>
+                                const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                            newPageProgressIndicatorBuilder: (context) =>
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 16),
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                ),
+                            noItemsFoundIndicatorBuilder: (context) => Center(
+                              child: Text(
+                                'No treatment requests found.',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade600,
+                                ),
                               ),
                             ),
-                            const SizedBox(height: 8),
-                            ElevatedButton(
-                              onPressed: () => fetchNextPage(),
-                              child: const Text('Retry'),
+                            firstPageErrorIndicatorBuilder: (context) => Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Failed to load requests.',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  ElevatedButton(
+                                    onPressed: () => fetchNextPage(),
+                                    child: const Text('Retry'),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-        if (isLoading) const AppLoader(),
-      ],
-    ),
-  );
-}
+            ],
+          ),
+          if (isLoading) const AppLoader(),
+        ],
+      ),
+    );
+  }
 }

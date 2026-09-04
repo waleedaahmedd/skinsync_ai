@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../models/responses/auth_response.dart';
+import '../models/responses/chats_response.dart';
+import '../screens/chat_screen.dart';
 import '../utils/color_constant.dart';
+import '../view_models/chat_view_model.dart';
 import 'app_network_image.dart';
 
 class RequestClinicTreatmentCard extends StatelessWidget {
   final RequestClinicTreatmentModel data;
   final VoidCallback? onTap;
 
-  const RequestClinicTreatmentCard({
-    super.key,
-    required this.data,
-    this.onTap,
-  });
+  const RequestClinicTreatmentCard({super.key, required this.data, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     final patientName = data.clinicName ?? '';
-     final address = data.address ?? '';
+    final address = data.address ?? '';
     final patientEmail = data.clinicEmail ?? '';
+    final chatId = data.chatId;
 
     return Container(
       width: MediaQuery.of(context).size.width * 0.78,
@@ -165,11 +166,30 @@ class RequestClinicTreatmentCard extends StatelessWidget {
                   const SizedBox(width: 10),
 
                   // Arrow
-                  Icon(
-                    Iconsax.arrow_right_3,
-                    size: 18,
-                    color: Colors.grey.shade400,
-                  ),
+                  if (chatId == null)
+                    Icon(
+                      Iconsax.arrow_right_3,
+                      size: 18,
+                      color: Colors.grey.shade400,
+                    )
+                  else
+                    Consumer(
+                      builder: (_, ref, _) {
+                        return IconButton(
+                          onPressed: () {
+                            ref
+                                .read(chatProvider.notifier)
+                                .selectChat(Chat(id: chatId));
+                            Navigator.pushNamed(context, ChatScreen.routeName);
+                          },
+                          icon: Icon(
+                            Iconsax.message,
+                            size: 18,
+                            color: Colors.grey.shade400,
+                          ),
+                        );
+                      },
+                    ),
                 ],
               ),
             ),
