@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
+import '../main.dart';
 import '../view_models/bottom_nav_view_model.dart';
 import '../view_models/forms_view_model.dart';
 import '../view_models/subscription_view_model.dart';
@@ -68,11 +69,12 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage>
                 4 => const MyProfileScreen(),
                 int() => throw UnimplementedError(),
               },
-              if (index != 2 && index != 3)
+              if (index != 2)
                 Positioned(
                   bottom: 110.h + MediaQuery.paddingOf(context).bottom,
                   child: const ScanFaceButton(),
                 ),
+              if(!isDeploymentMode)
               Positioned(
                 right: 20.w,
                 bottom: 110.h + MediaQuery.paddingOf(context).bottom,

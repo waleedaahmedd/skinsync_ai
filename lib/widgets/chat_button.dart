@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:iconsax/iconsax.dart';
 
 import '../screens/chat_list_screen.dart';
 import '../utils/color_constant.dart';
@@ -33,7 +34,7 @@ class ChatButton extends StatelessWidget {
           ],
         ),
         child: Icon(
-          Icons.chat_bubble_rounded,
+          Iconsax.message_text_1,
           color: CustomColors.blackColor,
           size: context.sp(22),
         ),

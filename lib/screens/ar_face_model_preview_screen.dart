@@ -686,8 +686,8 @@ class _ArFaceModelPreviewScreenState
                       value: _sliderValue,
                       onValueChanged: (value) =>
                           setState(() => _sliderValue = value),
-                      before: _buildPreviewImage(beforeImage.path),
-                      after: _buildPreviewImage(afterImage.path),
+                      before: _buildPreviewImage(afterImage.path),
+                      after: _buildPreviewImage(beforeImage.path),
                       trackColor: Colors.white,
                       trackWidth: context.w(2),
                       thumbDecoration: const BoxDecoration(
