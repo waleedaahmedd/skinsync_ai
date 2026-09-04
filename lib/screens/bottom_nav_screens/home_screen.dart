@@ -1,10 +1,7 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:showcaseview/showcaseview.dart';
-
 import '../../main.dart';
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
@@ -13,6 +10,7 @@ import '../../utils/onboarding_descriptions.dart';
 import '../../view_models/auth_view_model.dart';
 import '../../view_models/bottom_nav_view_model.dart';
 import '../../view_models/home_view_model.dart';
+import '../../view_models/onboarding_view_model.dart';
 import '../../widgets/app_bar_with_action_icon.dart';
 import '../../widgets/appointment_card.dart';
 import '../../widgets/custom_showcase.dart';
@@ -40,6 +38,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  // Showcase Keys
   final GlobalKey _infoKey = GlobalKey();
   final GlobalKey _reorderKey = GlobalKey();
   final GlobalKey _notificationKey = GlobalKey();
@@ -57,24 +56,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-  }
-
-  void _scrollToTarget(GlobalKey key) {
-    log('Attempting to scroll to: $key');
-
-    // Use addPostFrameCallback to ensure the widget is rendered and part of the tree
+    // Initialize onboarding tour keys and scroll controller
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (key.currentContext == null) {
-        log('Scroll failed: context is null for key $key');
-        return;
-      }
-
-      Scrollable.ensureVisible(
-        key.currentContext!,
-        duration: const Duration(milliseconds: 600),
-        curve: Curves.easeInOut,
-        alignment: 0.5,
-      );
+      ref
+          .read(onboardingViewModelProvider.notifier)
+          .initTour(
+            keys: [
+              _infoKey,
+              _reorderKey,
+              _notificationKey,
+              _requestsKey,
+              _pointsKey,
+              _simulationsKey,
+              _appointmentsKey,
+              _treatmentsKey,
+              _doctorsKey,
+              _clinicsKey,
+              _promotionsKey,
+            ],
+            scrollController: _scrollController,
+          );
     });
   }
 
@@ -84,38 +85,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     super.dispose();
   }
 
-  void _startTour(BuildContext context) {
-    log('Starting tour');
-
-    // ignore: deprecated_member_use
-    ShowCaseWidget.of(context).startShowCase([
-      _infoKey,
-      _reorderKey,
-      _notificationKey,
-      _requestsKey,
-      _pointsKey,
-      _simulationsKey,
-      _appointmentsKey,
-      _treatmentsKey,
-      _doctorsKey,
-      _clinicsKey,
-      _promotionsKey,
-    ]);
-  }
-
   @override
   Widget build(BuildContext context) {
-    // Promotions are still static as no API endpoint provides them yet
     const int promotionsCount = 0;
 
     final authData = ref.watch(authViewModel).authData;
     final dashboard = authData?.dashboard;
-    final appointments = dashboard?.appointments ?? [];
     final homeState = ref.watch(homeViewModelProvider);
+    final onboardingNotifier = ref.read(onboardingViewModelProvider.notifier);
+
     final sections = homeState.sections;
     final isReorderMode = homeState.isReorderMode;
 
-    // The main content of the Home Screen
     Widget homeContent(BuildContext showcaseContext) => Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBarWithActionIcon(
@@ -129,7 +110,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 description: OnboardingDescriptions.infoDesc,
                 child: GreyContainer(
                   icon: Icons.info_outline,
-                  onTap: () => _startTour(showcaseContext),
+                  onTap: () => onboardingNotifier.startTour(showcaseContext),
                 ),
               ),
               SizedBox(width: context.w(12)),
@@ -376,7 +357,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                       ),
                       SizedBox(height: context.h(12)),
-                      appointments.isEmpty
+                      (dashboard?.appointments?.isEmpty ?? true)
                           ? _buildHorizontalEmptyState(
                               context: context,
                               height: context.h(100),
@@ -391,16 +372,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 physics: const BouncingScrollPhysics(),
                                 scrollDirection: Axis.horizontal,
                                 clipBehavior: Clip.none,
-                                itemCount: appointments.length,
+                                itemCount: dashboard!.appointments!.length,
                                 itemBuilder: (context, index) {
-                                  final appointment = appointments[index];
+                                  final appointment =
+                                      dashboard.appointments![index];
 
                                   return Padding(
                                     padding: EdgeInsets.only(
                                       left: index == 0
                                           ? context.w(24)
                                           : context.w(16),
-                                      right: index == appointments.length - 1
+                                      right:
+                                          index ==
+                                              dashboard.appointments!.length - 1
                                           ? context.w(24)
                                           : context.w(0),
                                     ),
@@ -743,9 +727,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     // ignore: deprecated_member_use
     return ShowCaseWidget(
-      // Use onActiveTargetChange to scroll whenever the target widget changes
-      onStart: (index, key) => _scrollToTarget(key),
-      onFinish: () => debugPrint('Onboarding tour finished'),
+      onStart: (index, key) => onboardingNotifier.scrollToTarget(key),
+      onFinish: () => onboardingNotifier.onFinish(),
       globalFloatingActionWidget: (showcaseContext) => FloatingActionWidget(
         left: 16,
         right: 16,
@@ -754,11 +737,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             TextButton(
-              onPressed: () {
-                // ignore: deprecated_member_use
-                ShowCaseWidget.of(showcaseContext).dismiss();
-                debugPrint('Onboarding tour skipped');
-              },
+              onPressed: () => onboardingNotifier.skip(showcaseContext),
               style: TextButton.styleFrom(
                 backgroundColor: Colors.grey.shade700,
                 padding: const EdgeInsets.symmetric(
@@ -779,10 +758,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                // ignore: deprecated_member_use
-                ShowCaseWidget.of(showcaseContext).next();
-              },
+              onPressed: () => onboardingNotifier.next(showcaseContext),
               style: ElevatedButton.styleFrom(
                 backgroundColor: CustomColors.purpleColor,
                 padding: const EdgeInsets.symmetric(
@@ -805,9 +781,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ],
         ),
       ),
-      builder: (showcaseContext) {
-        return homeContent(showcaseContext);
-      },
+      builder: (showcaseContext) => homeContent(showcaseContext),
     );
   }
 
