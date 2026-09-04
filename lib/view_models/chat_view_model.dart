@@ -59,7 +59,7 @@ class ChatViewModel extends BaseViewModel<ChatState> {
           return;
         }
 
-        final updatedMessages = [...existingMessages, message];
+        final updatedMessages = [message, ...existingMessages];
         final currentData =
             state.messagesData ?? MessagesData(messages: const []);
         state = state.copyWith(

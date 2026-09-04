@@ -149,7 +149,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
+          0,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
@@ -171,6 +171,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           actions: [
             Expanded(
               child: Row(
+                mainAxisAlignment: .start,
                 children: [
                   Stack(
                     children: [
@@ -308,6 +309,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                                 horizontal: context.w(16),
                                 vertical: context.h(12),
                               ),
+                              reverse: true,
                               physics: const BouncingScrollPhysics(),
                               itemCount: messages?.length ?? 0,
                               itemBuilder: (context, index) {

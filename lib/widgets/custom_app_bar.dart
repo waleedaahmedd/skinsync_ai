@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 
@@ -28,7 +29,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: padding ?? EdgeInsets.symmetric(horizontal: context.w(30), vertical: context.h(10)),
+        padding:
+            padding ??
+            EdgeInsets.symmetric(
+              horizontal: context.w(30),
+              vertical: context.h(10),
+            ),
         child: Row(
           children: [
             if (showBackButton) ...[
@@ -39,10 +45,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.grey.shade300,
-                      width: 1,
-                    ),
+                    border: Border.all(color: Colors.grey.shade300, width: 1),
                   ),
                   child: Icon(
                     Icons.arrow_back_ios_new_rounded,
@@ -61,9 +64,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-              )
-            else
-              const Spacer(),
+              ),
+            // else
+            // const Spacer(),
             if (actions != null) ...[
               SizedBox(width: context.w(10)),
               ...actions!,

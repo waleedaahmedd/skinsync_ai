@@ -66,7 +66,16 @@ class ChatService extends ChatRepository {
     if (model.isSuccess != true) {
       throw AppException(model.message ?? 'Something went wrong!');
     }
-    return model.data!;
+    final userData = await AuthService(apiClient: _apiService).getMe();
+    final user = userData.user;
+    if (user == null) {
+      throw const AppException('User not found');
+    }
+    return model.data!.copyWith(
+      messages: model.data!.messages!
+          .map((message) => message.copyWith(userId: user.id))
+          .toList(),
+    );
   }
 
   @override
