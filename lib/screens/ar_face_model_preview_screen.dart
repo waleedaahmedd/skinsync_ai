@@ -30,12 +30,12 @@ import '../widgets/bottom_sheets/material_level_sheet.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/dialogs/save_option_confirmation_dialog.dart';
+import '../widgets/dialogs/upgrade_plan_dialog.dart';
 import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/message_cycler.dart';
 import '../widgets/selected_treatments_summary_card.dart';
 import '../widgets/service_type_button.dart';
 import 'consent_forms/ai_transparency_policy_screen.dart';
-import 'subscription_plans_screen.dart';
 import 'treatment_journey_detail_screen.dart';
 import 'treatment_journey_screen.dart';
 
@@ -539,27 +539,18 @@ class _ArFaceModelPreviewScreenState
               Expanded(
                 child: ScaleTransition(
                   scale: _pulseAnimation,
-                  child: isLimitReached
-                      ? CustomButton(
-                          text: "Upgrade Plan",
-                          isBorder: true,
-                          borderRadius: context.r(30),
-                          textColor: CustomColors.blackColor,
-                          height: context.h(58),
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              SubscriptionPlansScreen.routeName,
-                            );
-                          },
-                        )
-                      : CustomButton(
+                  child: CustomButton(
                           text: "Generate Ai Image",
                           isBorder: true,
                           borderRadius: context.r(30),
                           textColor: CustomColors.blackColor,
                           height: context.h(58),
                           onPressed: () async {
+                            if (isLimitReached) {
+                              showUpgradePlanDialog(context);
+                              return;
+                            }
+
                             final bool hasAccepted = await SecureStorage()
                                 .getAiPolicyAccepted();
 

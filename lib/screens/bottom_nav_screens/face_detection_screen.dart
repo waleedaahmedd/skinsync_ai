@@ -700,7 +700,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
       final finalImage = await cropImageToCircle(
         image,
         centerXPercent: 0.5,
-        centerYPercent: 0.46,
+        centerYPercent: 0.50,
         radiusPercent: 0.42,
         flipHorizontally:
             _cameraController!.description.lensDirection ==
@@ -889,7 +889,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
     }
     final aspectRatio = previewSize.height / previewSize.width;
     const circleRadiusPercent = 0.42;
-    const circleCenterYPercent = 0.46;
+    const circleCenterYPercent = 0.50;
 
     return GestureDetector(
       onTap: () {
@@ -901,7 +901,7 @@ class _FaceDetectionScreenState extends ConsumerState<FaceDetectionScreen>
         child: Stack(
           children: [
             Align(
-              alignment: Alignment.center,
+              alignment: Alignment.topCenter,
               child: AspectRatio(
                 aspectRatio: aspectRatio,
                 child: LayoutBuilder(
