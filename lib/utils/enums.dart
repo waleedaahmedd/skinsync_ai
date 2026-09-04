@@ -75,6 +75,7 @@ enum EndPoints {
   patientUsages('v1/patient-usages'),
   medicalHistory('v1/medical-history'),
   sharedRequest('v1/shared-request'),
+  qrScan('v1/qrscan'),
   clinic('v1/clinic'),
   chats('v1/chats'),
   messages('v1/chats/messages');
@@ -88,9 +89,9 @@ enum Status { active, inactive }
 
 enum BaseUrls {
   api('https://api.skinsyncai.com/api/'),
-  // apiQa('https://api-dev.skinsyncai.com/api/');
+ apiQa('https://api-dev.skinsyncai.com/api/');
 
-  apiQa('http://10.0.2.2:8084/api/');
+ // apiQa('http://10.0.2.2:8084/api/');
 
   final String url;
   const BaseUrls(this.url);

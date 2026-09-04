@@ -1,11 +1,14 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../exceptions/app_exception.dart';
 import '../models/base_state_model.dart';
+import '../models/requests/scan_qr_request.dart';
 import '../models/responses/appointment_detail_response.dart';
 import '../models/responses/appointment_type_list_response.dart';
 import '../models/responses/appointments_list_response.dart';
+import '../models/responses/scan_qr_response.dart';
 import '../models/responses/simulation_history_response.dart';
 import '../repositories/appointment_repository.dart';
 import '../services/api_base_helper.dart';
@@ -70,36 +73,41 @@ class AppointmentViewModel extends BaseViewModel<AppointmentState> {
       state = state.copyWith(loading: false, appointmentDetail: response.data);
     });
   }
-
-
-  Future<bool?> decodeQrCode(String qrCode) async {
+  Future<ScanQrResponse?> scanQrCode({
+    required int clinicId,
+    required int appointmentId,
+  }) async {
     return await runSafely(() async {
-      final decryted = await EncryptionService().decode(cipherText: qrCode);
-      if (decryted == null) {
-        throw const AppException('Could not decode QR code');
-      }
-      // final splitted = decryted.split('/');
-      // final appointmentId = int.parse(splitted[0]);
-      // final doctorId = int.parse(splitted[1]);
-      // // clinicId
-      // final _ = int.parse(splitted[2]);
-      // final currentDocId = ref
-      //     .read(authViewModel)
-      //     .authResponse
-      //     ?.data
-      //     ?.practitioner
-      //     ?.id;
-      // if (doctorId != currentDocId) {
-      //   throw const AppException(
-      //     'You do not have permission to view this appointment',
-      //   );
-      // }
-      // await getAppointmentDetail(appointmentId);
-      return true;
+      EasyLoading.show(status: 'Checking in...');
+      final data = await repo.scanQrCode(
+        request: ScanQrRequest(
+          clinicId: clinicId,
+          appointmentId: appointmentId,
+        ),
+      );
+      state = state.copyWith(scanQrResponse: data);
+      EasyLoading.dismiss();
+      return data;
     });
   }
 
+  Future<ScanQrResponse?> decodeQrCode(String qrCode) async {
+    return await runSafely(() async {
+      final decrypted = await EncryptionService().decode(cipherText: qrCode);
+      if (decrypted == null) {
+        throw const AppException('Could not decode QR code');
+      }
+      final splitted = decrypted.split('/');
+      if (splitted.length < 3) {
+        throw const AppException('Invalid QR code');
+      }
+      final appointmentId = int.parse(splitted[0]);
+      // final doctorId = int.parse(splitted[1]); // not needed for check-in
+      final clinicId = int.parse(splitted[2]);
 
+      return await scanQrCode(clinicId: clinicId, appointmentId: appointmentId);
+    });
+  }
   Future<String?> encryptAppointmentData(AppointmentDetailData? data) async {
     return await runSafely<String?>(() async {
       final appointmentId = data?.id;
@@ -117,6 +125,7 @@ class AppointmentViewModel extends BaseViewModel<AppointmentState> {
   @override
   void onError(String message) {
     state = state.copyWith(loading: false, errorMessage: message);
+    EasyLoading.dismiss();
     super.onError(message);
   }
 }
@@ -127,11 +136,12 @@ class AppointmentState extends BaseStateModel {
   final List<SimulationData> simulations;
   final AppointmentsListResponse? appointmentsResponse;
   final AppointmentDetailData? appointmentDetail;
-
+  final ScanQrResponse? scanQrResponse;
   const AppointmentState({
     super.loading = false,
     super.errorMessage,
     this.appointmentTypes = const [],
+    this.scanQrResponse,
     this.simulations = const [],
     this.appointmentsResponse,
     this.appointmentDetail,
@@ -143,6 +153,7 @@ class AppointmentState extends BaseStateModel {
     String? errorMessage,
     List<AppointmentTypeData>? appointmentTypes,
     List<SimulationData>? simulations,
+    ScanQrResponse? scanQrResponse,
     AppointmentsListResponse? appointmentsResponse,
     AppointmentDetailData? appointmentDetail,
   }) {
@@ -153,6 +164,7 @@ class AppointmentState extends BaseStateModel {
       simulations: simulations ?? this.simulations,
       appointmentsResponse: appointmentsResponse ?? this.appointmentsResponse,
       appointmentDetail: appointmentDetail ?? this.appointmentDetail,
+      scanQrResponse:scanQrResponse?? this.scanQrResponse
     );
   }
 }
