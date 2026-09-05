@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:image_picker/image_picker.dart';
@@ -10,6 +11,7 @@ import '../services/media_service.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import '../utils/enums.dart';
+import '../utils/string_utils.dart';
 import '../view_models/chat_view_model.dart';
 import '../widgets/chat/chat_message_bubble.dart';
 import '../widgets/custom_app_bar.dart';
@@ -138,6 +140,29 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
+  Future<void> _pickTreatmentRequest() async {
+    final clinicId = ref.read(chatProvider).messagesData?.clinic?.id;
+    if (clinicId == null) {
+      EasyLoading.showError('Clinic not found!');
+      return;
+    }
+    showDialog<ChatTreatmentRequestModel>(
+      context: context,
+      builder: (context) => ShareTreatmentRequestDialog(
+        patientName: 'Jane Cooper',
+        clinicId: clinicId,
+      ),
+    ).then((selectedReq) {
+      if (selectedReq != null) {
+        _sendMessage(
+          customText: 'Attached shared treatment request details.',
+          messageType: MessageType.sharedRequest,
+          sharedRequestData: selectedReq,
+        );
+      }
+    });
+  }
+
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
@@ -161,116 +186,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         appBar: CustomAppBar(
           showBackButton: widget.showBackButton,
           showTitle: false,
-          actions: [
-            Expanded(
-              child: Row(
-                mainAxisAlignment: .start,
-                children: [
-                  Stack(
-                    children: [
-                      Container(
-                        width: context.w(40),
-                        height: context.w(40),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: CustomColors.purpleColor.withValues(
-                            alpha: 0.1,
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'S',
-                            style: TextStyle(
-                              fontSize: context.sp(16),
-                              fontWeight: FontWeight.bold,
-                              color: CustomColors.purpleColor,
-                              fontFamily: 'Degular',
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        right: 0,
-                        bottom: 0,
-                        child: Container(
-                          width: context.w(12),
-                          height: context.w(12),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF10B981),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: CustomColors.whiteColor,
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: context.w(12)),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                'SkinSync Clinic',
-                                style: CustomFonts.black16w600,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            SizedBox(width: context.w(6)),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: context.w(6),
-                                vertical: context.h(2),
-                              ),
-                              decoration: BoxDecoration(
-                                color: CustomColors.purpleColor.withValues(
-                                  alpha: 0.1,
-                                ),
-                                borderRadius: BorderRadius.circular(
-                                  context.r(8),
-                                ),
-                              ),
-                              child: Text(
-                                'Verified',
-                                style: CustomFonts.black10w600.copyWith(
-                                  color: CustomColors.purpleColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: context.h(2)),
-                        Text(
-                          'Aesthetics & Dermatology',
-                          style: CustomFonts.grey12w400,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: context.w(8)),
-                  GreyContainer(
-                    icon: _showClinicInfo
-                        ? Icons.info_rounded
-                        : Icons.info_outline_rounded,
-                    onTap: () {
-                      setState(() {
-                        _showClinicInfo = !_showClinicInfo;
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ],
+          actions: [Expanded(child: _buildHeader(context))],
         ),
         body: SafeArea(
           child: Column(
@@ -323,6 +239,119 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Consumer(
+      builder: (_, ref, _) {
+        final clinic = ref.watch(
+          chatProvider.select((s) => s.messagesData?.clinic),
+        );
+        return Row(
+          mainAxisAlignment: .start,
+          children: [
+            Stack(
+              children: [
+                Container(
+                  width: context.w(40),
+                  height: context.w(40),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: CustomColors.purpleColor.withValues(alpha: 0.1),
+                  ),
+                  child: Center(
+                    child: Text(
+                      clinic?.name?.firstOrNull ?? 'C',
+                      style: TextStyle(
+                        fontSize: context.sp(16),
+                        fontWeight: FontWeight.bold,
+                        color: CustomColors.purpleColor,
+                        fontFamily: 'Degular',
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    width: context.w(12),
+                    height: context.w(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF10B981),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: CustomColors.whiteColor,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(width: context.w(12)),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          clinic?.name ?? 'N/A',
+                          style: CustomFonts.black16w600,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      SizedBox(width: context.w(6)),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: context.w(6),
+                          vertical: context.h(2),
+                        ),
+                        decoration: BoxDecoration(
+                          color: CustomColors.purpleColor.withValues(
+                            alpha: 0.1,
+                          ),
+                          borderRadius: BorderRadius.circular(context.r(8)),
+                        ),
+                        child: Text(
+                          'Verified',
+                          style: CustomFonts.black10w600.copyWith(
+                            color: CustomColors.purpleColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: context.h(2)),
+                  Text(
+                    // 'Aesthetics & Dermatology',
+                    clinic?.description ?? 'N/A',
+                    style: CustomFonts.grey12w400,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: context.w(8)),
+            GreyContainer(
+              icon: _showClinicInfo
+                  ? Icons.info_rounded
+                  : Icons.info_outline_rounded,
+              onTap: () {
+                setState(() {
+                  _showClinicInfo = !_showClinicInfo;
+                });
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -384,8 +413,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-
-
   Widget _buildInputArea(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(
@@ -413,20 +440,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               } else if (value == 'document') {
                 _pickDocumentAndSend();
               } else if (value == 'shared_request') {
-                showDialog<ChatTreatmentRequestModel>(
-                  context: context,
-                  builder: (context) => const ShareTreatmentRequestDialog(
-                    patientName: 'Jane Cooper',
-                  ),
-                ).then((selectedReq) {
-                  if (selectedReq != null) {
-                    _sendMessage(
-                      customText: 'Attached shared treatment request details.',
-                      messageType: MessageType.sharedRequest,
-                      sharedRequestData: selectedReq,
-                    );
-                  }
-                });
+                _pickTreatmentRequest();
               } else if (value == 'appointment') {
                 _sendMessage(
                   customText: 'Attached appointment confirmation details.',

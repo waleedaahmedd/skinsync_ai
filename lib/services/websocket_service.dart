@@ -1,0 +1,127 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:flutter/cupertino.dart';
+import 'package:web_socket_client/web_socket_client.dart';
+
+import '../utils/enums.dart';
+import '../utils/secure_storage_service.dart';
+import 'api_base_helper.dart';
+
+class WsEvent {
+  final EventType type;
+  final Map<String, dynamic> data;
+
+  WsEvent({required this.type, required this.data});
+}
+
+/// Singleton service that manages a single websocket connection per app.
+class WebSocketService {
+  static final WebSocketService _instance = WebSocketService._internal();
+  factory WebSocketService() => _instance;
+  WebSocketService._internal();
+
+  WebSocket? _socket;
+  StreamSubscription<dynamic>? _msgSub;
+  StreamSubscription<dynamic>? _connSub;
+
+  bool get isConnected => _socket != null;
+
+  Future<void> connect({required ValueSetter<WsEvent> onEvent}) async {
+    if (_socket != null) return;
+
+    final token = await SecureStorage().getToken();
+    final baseUrl = ApiBaseHelper().baseUrl;
+    final socketUri = Uri.parse('${baseUrl}ws').replace(
+      scheme: baseUrl.startsWith('https') ? 'wss' : 'ws',
+      queryParameters: {'token': token},
+    );
+
+    log('WebSocket connecting to $socketUri');
+
+    try {
+      _socket = WebSocket(
+        socketUri,
+        headers: {'Authorization': 'Bearer $token'},
+      );
+
+      _msgSub = _socket!.messages.listen(
+        (event) {
+          try {
+            if (event is String) {
+              final payload = jsonDecode(event) as Map<String, dynamic>;
+              final typeStr = payload['event_type'] as String?;
+              final eventType = EventType.fromValue(typeStr);
+              final data = payload['data'] as Map<String, dynamic>? ?? payload;
+              onEvent(WsEvent(type: eventType, data: data));
+            }
+          } catch (e, s) {
+            log('WebSocket parse error: $e', stackTrace: s);
+          }
+        },
+        onDone: () {
+          _cleanupSocket();
+        },
+        onError: (error) {
+          log('WebSocket error: $error');
+          _cleanupSocket();
+        },
+      );
+
+      _connSub = _socket!.connection.listen((connection) {
+        log('WebSocket connection state: ${connection.runtimeType}');
+        if (connection is Disconnecting) {
+          _cleanupSocket();
+        }
+      });
+    } catch (e, s) {
+      log('WebSocket connect failed: $e', stackTrace: s);
+      _cleanupSocket();
+    }
+  }
+
+  Future<void> sendMessage({
+    required int chatId,
+    required MessageType type,
+    required String content,
+    String? mediaUrl,
+    String? documentUrl,
+  }) async {
+    if (_socket == null) {
+      throw Exception('Websocket not connected');
+    }
+
+    final payload = <String, dynamic>{
+      'chat_id': chatId,
+      'type': type.value,
+      'content': content,
+      if (type == MessageType.media) 'media_url': mediaUrl,
+      if (type == MessageType.document) 'document_url': documentUrl,
+    };
+
+    try {
+      _socket!.send(jsonEncode(payload));
+    } catch (e) {
+      log('WebSocket send error: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> disconnect() async {
+    await _cleanupSocket();
+  }
+
+  Future<void> _cleanupSocket() async {
+    try {
+      await _msgSub?.cancel();
+      await _connSub?.cancel();
+    } catch (_) {}
+    try {
+      _socket?.close();
+    } catch (_) {}
+    _socket = null;
+    _msgSub = null;
+    _connSub = null;
+  }
+}

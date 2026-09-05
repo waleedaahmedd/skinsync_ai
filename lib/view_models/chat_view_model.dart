@@ -8,6 +8,7 @@ import '../repositories/chat_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/chat_service.dart';
 import '../utils/enums.dart';
+import 'auth_view_model.dart';
 import 'base_view_model.dart';
 
 final chatProvider = NotifierProvider(() {
@@ -38,36 +39,8 @@ class ChatViewModel extends BaseViewModel<ChatState> {
       EasyLoading.show(status: 'Loading messages...');
       final data = await _repo.getMessages(chatId: chatId);
       state = state.copyWith(messagesData: data, loading: false);
-      await openChatSocket();
       EasyLoading.dismiss();
     });
-  }
-
-  Future<void> openChatSocket() async {
-    final chatId = state.selectedChat?.id;
-    if (chatId == null) {
-      return;
-    }
-
-    await _repo.connectChatSocket(
-      chatId: chatId,
-      onMessage: (message) {
-        final existingMessages = List<Message>.from(
-          state.messagesData?.messages ?? <Message>[],
-        );
-        final alreadyExists = existingMessages.any((m) => m.id == message.id);
-        if (alreadyExists) {
-          return;
-        }
-
-        final updatedMessages = [message, ...existingMessages];
-        final currentData =
-            state.messagesData ?? MessagesData(messages: const []);
-        state = state.copyWith(
-          messagesData: currentData.copyWith(messages: updatedMessages),
-        );
-      },
-    );
   }
 
   Future<void> sendChatMessage({
@@ -92,15 +65,32 @@ class ChatViewModel extends BaseViewModel<ChatState> {
     });
   }
 
+  Future<void> addMessage(Message message) async {
+    final existingMessages = List<Message>.from(
+      state.messagesData?.messages ?? <Message>[],
+    );
+    final alreadyExists = existingMessages.any((m) => m.id == message.id);
+    if (alreadyExists) return;
+    final user = ref.read(authViewModel).authData?.user;
+    if (user == null) {
+      throw const AppException('Unauthorized');
+    }
+
+    final updatedMessages = [
+      message.copyWith(userId: user.id),
+      ...existingMessages,
+    ];
+    final currentData = state.messagesData ?? MessagesData(messages: const []);
+    state = state.copyWith(
+      messagesData: currentData.copyWith(messages: updatedMessages),
+    );
+  }
+
   void selectChat(Chat? chat) {
     state = state.copyWith(selectedChat: chat);
   }
 
-  Future<void> clearSelectedChatAndMessages() async {
-    final chatId = state.selectedChat?.id;
-    if (chatId != null) {
-      await _repo.closeChatSocket(chatId: chatId);
-    }
+  void clearSelectedChatAndMessages() {
     state = state.copyWithNull(selectedChat: true, messagesData: true);
   }
 }

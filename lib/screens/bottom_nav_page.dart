@@ -1,9 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../main.dart';
+import '../models/responses/messages_response.dart';
+import '../services/websocket_service.dart';
+import '../utils/enums.dart';
 import '../view_models/bottom_nav_view_model.dart';
+import '../view_models/chat_view_model.dart';
 import '../view_models/forms_view_model.dart';
 import '../view_models/subscription_view_model.dart';
 import '../view_models/treatment_view_model.dart';
@@ -28,6 +34,7 @@ class BottomNavPage extends ConsumerStatefulWidget {
 class _BottomNavPageState extends ConsumerState<BottomNavPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final _wsInstance = WebSocketService();
 
   @override
   void initState() {
@@ -38,6 +45,25 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage>
       ref.read(treatmentViewModel.notifier).init();
       ref.read(subscriptionProvider.notifier).fetchSubscriptionPlans();
       ref.read(formsViewModel.notifier).fetchForms();
+      _wsInstance.connect(
+        onEvent: (event) {
+          try {
+            switch (event.type) {
+              case EventType.chat:
+                final message = Message.fromJson(event.data);
+                if (ref.exists(chatProvider)) {
+                  ref.read(chatProvider.notifier).addMessage(message);
+                }
+                break;
+              case EventType.subscription:
+                // TODO: Handle this case.
+                throw UnimplementedError();
+            }
+          } catch (_) {
+            log('Ignoring parsing errors');
+          }
+        },
+      );
     });
   }
 
@@ -84,12 +110,12 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage>
                     ],
                   ),
                 ),
-              if(!isDeploymentMode)
-              Positioned(
-                right: 20.w,
-                bottom: 110.h + MediaQuery.paddingOf(context).bottom,
-                child: const ChatButton(),
-              ),
+              if (!isDeploymentMode)
+                Positioned(
+                  right: 20.w,
+                  bottom: 110.h + MediaQuery.paddingOf(context).bottom,
+                  child: const ChatButton(),
+                ),
             ],
           ),
           extendBody: true,

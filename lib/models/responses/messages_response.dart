@@ -1,5 +1,6 @@
 import '../../utils/enums.dart';
 import 'base_response_model.dart';
+import 'get_clinic_response.dart';
 
 class MessagesResponse extends BaseResponseModel {
   final MessagesData? data;
@@ -16,6 +17,7 @@ class MessagesResponse extends BaseResponseModel {
 class MessagesData {
   final List<Message>? messages;
   final ChatUser? user;
+  final Clinic? clinic;
   final int? page;
   final int? limit;
   final int? total;
@@ -24,6 +26,7 @@ class MessagesData {
   MessagesData({
     this.messages,
     this.user,
+    this.clinic,
     this.page,
     this.limit,
     this.total,
@@ -35,6 +38,7 @@ class MessagesData {
         ? []
         : List<Message>.from(json["messages"]!.map((x) => Message.fromJson(x))),
     user: json["user"] == null ? null : ChatUser.fromJson(json["user"]),
+    clinic: json['clinic'] == null ? null : Clinic.fromJson(json['clinic']),
     page: json["page"],
     limit: json["limit"],
     total: json["total"],
@@ -44,6 +48,7 @@ class MessagesData {
   MessagesData copyWith({
     List<Message>? messages,
     ChatUser? user,
+    Clinic? clinic,
     int? page,
     int? limit,
     int? total,
@@ -52,6 +57,7 @@ class MessagesData {
     return MessagesData(
       messages: messages ?? this.messages,
       user: user ?? this.user,
+      clinic: clinic ?? this.clinic,
       page: page ?? this.page,
       limit: limit ?? this.limit,
       total: total ?? this.total,
