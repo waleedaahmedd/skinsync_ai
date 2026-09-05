@@ -7,6 +7,7 @@ import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
 import '../../utils/date_time_utils.dart';
 import '../../view_models/patient_treatment_request_view_model.dart';
+import '../app_loader.dart';
 
 class ShareTreatmentRequestDialog extends ConsumerStatefulWidget {
   final String patientName;
@@ -45,6 +46,7 @@ class _ShareTreatmentRequestDialogState
       ),
       child: Container(
         width: context.w(360),
+        height: 0.5.sh,
         padding: EdgeInsets.all(context.r(20)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,81 +62,88 @@ class _ShareTreatmentRequestDialogState
               style: CustomFonts.grey13w400,
             ),
             SizedBox(height: context.h(16)),
-            Consumer(
-              builder: (_, ref, _) {
-                final requests = ref.watch(
-                  patientTreatmentRequestProvider.select((s) => s.requests),
-                );
-                return ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: requests.length,
-                  separatorBuilder: (context, index) =>
-                      SizedBox(height: context.h(10)),
-                  itemBuilder: (context, index) {
-                    final req = requests[index];
-                    final isSelected = _request?.id == req.id;
+            Expanded(
+              child: Consumer(
+                builder: (_, ref, _) {
+                  final state = ref.watch(patientTreatmentRequestProvider);
+                  if (state.loading) {
+                    return const AppLoader();
+                  }
+                  final requests = state.requests;
+                  if (requests.isEmpty) {
+                    return const Text('No treatment requests created yet!');
+                  }
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: requests.length,
+                    separatorBuilder: (context, index) =>
+                        SizedBox(height: context.h(10)),
+                    itemBuilder: (context, index) {
+                      final req = requests[index];
+                      final isSelected = _request?.id == req.id;
 
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          _request = req;
-                        });
-                      },
-                      borderRadius: BorderRadius.circular(context.r(12)),
-                      child: Container(
-                        padding: EdgeInsets.all(context.r(12)),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? CustomColors.lightPurpleColor.withValues(
-                                  alpha: 0.5,
-                                )
-                              : CustomColors.whiteColor,
-                          borderRadius: BorderRadius.circular(context.r(12)),
-                          border: Border.all(
+                      return InkWell(
+                        onTap: () {
+                          setState(() {
+                            _request = req;
+                          });
+                        },
+                        borderRadius: BorderRadius.circular(context.r(12)),
+                        child: Container(
+                          padding: EdgeInsets.all(context.r(12)),
+                          decoration: BoxDecoration(
                             color: isSelected
-                                ? CustomColors.darkPurple
-                                : CustomColors.greyColor,
-                            width: isSelected ? 1.5 : 1,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              isSelected
-                                  ? Icons.radio_button_checked
-                                  : Icons.radio_button_unchecked,
+                                ? CustomColors.lightPurpleColor.withValues(
+                                    alpha: 0.5,
+                                  )
+                                : CustomColors.whiteColor,
+                            borderRadius: BorderRadius.circular(context.r(12)),
+                            border: Border.all(
                               color: isSelected
                                   ? CustomColors.darkPurple
-                                  : CustomColors.silverColor,
-                              size: context.sp(20),
+                                  : CustomColors.greyColor,
+                              width: isSelected ? 1.5 : 1,
                             ),
-                            SizedBox(width: context.w(8)),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    req.name ?? 'N/A',
-                                    style: CustomFonts.black14w600,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  SizedBox(height: context.h(4)),
-                                  Text(
-                                    req.createdAt?.formattedDate ?? 'Recent',
-                                    style: CustomFonts.grey12w400,
-                                  ),
-                                ],
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                isSelected
+                                    ? Icons.radio_button_checked
+                                    : Icons.radio_button_unchecked,
+                                color: isSelected
+                                    ? CustomColors.darkPurple
+                                    : CustomColors.silverColor,
+                                size: context.sp(20),
                               ),
-                            ),
-                          ],
+                              SizedBox(width: context.w(8)),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      req.name ?? 'N/A',
+                                      style: CustomFonts.black14w600,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(height: context.h(4)),
+                                    Text(
+                                      req.createdAt?.formattedDate ?? 'Recent',
+                                      style: CustomFonts.grey12w400,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                );
-              },
+                      );
+                    },
+                  );
+                },
+              ),
             ),
             SizedBox(height: context.h(20)),
             Row(

@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../models/chat_appointment_model.dart';
 import '../models/chat_treatment_request_model.dart';
+import '../models/responses/patient_treatment_request_response.dart';
 import '../services/media_service.dart';
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
@@ -86,6 +87,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           content: text,
           mediaUrl: mediaUrl,
           documentUrl: documentUrl,
+          treatmentRequest: sharedRequestData,
         );
 
     _messageController.clear();
@@ -141,26 +143,44 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
   Future<void> _pickTreatmentRequest() async {
-    final clinicId = ref.read(chatProvider).messagesData?.clinic?.id;
+    final data = ref.read(chatProvider).messagesData;
+    final clinicId = data?.clinic?.id;
     if (clinicId == null) {
       EasyLoading.showError('Clinic not found!');
       return;
     }
-    showDialog<ChatTreatmentRequestModel>(
+    final request = await showDialog<PatientTreatmentRequest>(
       context: context,
       builder: (context) => ShareTreatmentRequestDialog(
         patientName: 'Jane Cooper',
         clinicId: clinicId,
       ),
-    ).then((selectedReq) {
-      if (selectedReq != null) {
-        _sendMessage(
-          customText: 'Attached shared treatment request details.',
-          messageType: MessageType.sharedRequest,
-          sharedRequestData: selectedReq,
-        );
-      }
-    });
+    );
+    if (request != null) {
+      final user = data?.user;
+      final chatTreatmentRequest = ChatTreatmentRequestModel(
+        text: '',
+        id: request.id!,
+        userId: request.userId!,
+        groupId: request.groupId!,
+        name: request.name!,
+        treatments: request.treatments!,
+        frontImageAfter: request.frontImageAfter,
+        frontImageBefore: request.frontImageBefore,
+        leftImageAfter: request.frontImageAfter,
+        leftImageBefore: request.frontImageBefore,
+        rightImageAfter: request.rightImageAfter,
+        rightImageBefore: request.rightImageBefore,
+        patientEmail: user?.emailAddress,
+        patientImage: user?.profileImageUrl,
+        patientName: user?.name,
+      );
+      await _sendMessage(
+        sharedRequestData: chatTreatmentRequest,
+        messageType: .sharedRequest,
+        customText: 'Attached shared treatment request details.',
+      );
+    }
   }
 
   void _scrollToBottom() {

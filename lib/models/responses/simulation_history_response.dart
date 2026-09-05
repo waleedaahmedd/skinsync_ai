@@ -15,6 +15,14 @@ class SimulationHistoryResponse extends BaseResponseModel {
                 json["data"]!.map((x) => SimulationData.fromJson(x)),
               ),
       );
+
+  Map<String, dynamic> toJson() => {
+    "is_success": isSuccess,
+    "message": message,
+    "data": data == null
+        ? []
+        : List<dynamic>.from(data!.map((x) => x.toJson())),
+  };
 }
 
 class SimulationData {
@@ -74,6 +82,25 @@ class SimulationData {
         ? null
         : DateTime.parse(json["updated_at"]).toLocal(),
   );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "user_id": userId,
+    "group_id": groupId,
+    "name": name,
+    "front_image_before": frontImageBefore,
+    "front_image_after": frontImageAfter,
+    "right_image_before": rightImageBefore,
+    "right_image_after": rightImageAfter,
+    "left_image_before": leftImageBefore,
+    "left_image_after": leftImageAfter,
+    "treatments": treatments == null
+        ? []
+        : List<dynamic>.from(treatments!.map((x) => x.toJson())),
+    "is_shared": isShared,
+    "created_at": createdAt?.toIso8601String(),
+    "updated_at": updatedAt?.toIso8601String(),
+  };
 }
 
 class SimulationTreatment {
@@ -103,11 +130,20 @@ class SimulationTreatment {
         areas: json["areas"] == null
             ? []
             : List<SimulationArea>.from(
-                json["areas"].map(
-                  (x) => SimulationArea.fromJson(x),
-                ),
+                json["areas"].map((x) => SimulationArea.fromJson(x)),
               ),
       );
+
+  Map<String, dynamic> toJson() => {
+    "treatment_id": id,
+    "treatment_name": name,
+    "treatment_desc": description,
+    "treatment_image": image,
+    "treatment_icon": icon,
+    "areas": areas == null
+        ? []
+        : List<dynamic>.from(areas!.map((x) => x.toJson())),
+  };
 }
 
 class SimulationArea {
@@ -125,24 +161,31 @@ class SimulationArea {
     this.icon,
     this.price,
     this.materials,
-    t
   });
 
-  factory SimulationArea.fromJson(Map<String, dynamic> json) =>
-      SimulationArea(
-        id: json["area_id"]?.toString(),
-        name: json["area_name"],
-        image: json["area_image"],
-        icon: json["area_icon"],
-        price: json['price'],
-        materials: json["materials"] == null
-            ? []
-            : List<SimulationMaterial>.from(
-                json["materials"].map(
-                  (x) => SimulationMaterial.fromJson(x),
-                ),
-              ),
-      );
+  factory SimulationArea.fromJson(Map<String, dynamic> json) => SimulationArea(
+    id: json["area_id"]?.toString(),
+    name: json["area_name"],
+    image: json["area_image"],
+    icon: json["area_icon"],
+    price: json['price'],
+    materials: json["materials"] == null
+        ? []
+        : List<SimulationMaterial>.from(
+            json["materials"].map((x) => SimulationMaterial.fromJson(x)),
+          ),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "area_id": id,
+    "area_name": name,
+    "area_image": image,
+    "area_icon": icon,
+    "price": price,
+    "materials": materials == null
+        ? []
+        : List<dynamic>.from(materials!.map((x) => x.toJson())),
+  };
 }
 
 class SimulationMaterial {
@@ -150,11 +193,7 @@ class SimulationMaterial {
   final String? name;
   final int? selectedQuantity;
 
-  const SimulationMaterial({
-    this.id,
-    this.name,
-    this.selectedQuantity,
-  });
+  const SimulationMaterial({this.id, this.name, this.selectedQuantity});
 
   factory SimulationMaterial.fromJson(Map<String, dynamic> json) =>
       SimulationMaterial(
@@ -162,4 +201,10 @@ class SimulationMaterial {
         name: json["name"],
         selectedQuantity: json["selected_quantity"],
       );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "name": name,
+    "selected_quantity": selectedQuantity,
+  };
 }

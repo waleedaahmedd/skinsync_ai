@@ -1,13 +1,13 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 
 import '../main.dart';
 import '../models/responses/messages_response.dart';
 import '../services/websocket_service.dart';
-import '../utils/enums.dart';
 import '../view_models/bottom_nav_view_model.dart';
 import '../view_models/chat_view_model.dart';
 import '../view_models/forms_view_model.dart';
@@ -49,18 +49,24 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage>
         onEvent: (event) {
           try {
             switch (event.type) {
-              case EventType.chat:
+              case .error:
+                final error = event.data['error'] as String?;
+                if (error != null) {
+                  EasyLoading.showError(error);
+                }
+                break;
+              case .chat:
                 final message = Message.fromJson(event.data);
                 if (ref.exists(chatProvider)) {
                   ref.read(chatProvider.notifier).addMessage(message);
                 }
                 break;
-              case EventType.subscription:
+              case .subscription:
                 // TODO: Handle this case.
                 throw UnimplementedError();
             }
           } catch (_) {
-            log('Ignoring parsing errors');
+            log(' Ignoring parsing errors');
           }
         },
       );

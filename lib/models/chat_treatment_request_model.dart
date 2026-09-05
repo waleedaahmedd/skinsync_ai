@@ -1,4 +1,7 @@
+import 'responses/simulation_history_response.dart';
+
 class ChatTreatmentRequestModel {
+  final String text;
   final int id;
   final int userId;
   final int groupId;
@@ -17,13 +20,10 @@ class ChatTreatmentRequestModel {
 
   final String? leftImageBefore;
   final String? leftImageAfter;
-
-  final List<ChatTreatmentData> treatments;
-
-  final String? createdAt;
-  final String? updatedAt;
+  final List<SimulationTreatment> treatments;
 
   ChatTreatmentRequestModel({
+    required this.text,
     required this.id,
     required this.userId,
     required this.groupId,
@@ -38,12 +38,11 @@ class ChatTreatmentRequestModel {
     this.leftImageBefore,
     this.leftImageAfter,
     required this.treatments,
-    this.createdAt,
-    this.updatedAt,
   });
 
   factory ChatTreatmentRequestModel.fromJson(Map<String, dynamic> json) {
     return ChatTreatmentRequestModel(
+      text: json['text'] ?? '',
       id: json['id'] ?? 0,
       userId: json['user_id'] ?? 0,
       groupId: json['group_id'] ?? 0,
@@ -57,136 +56,67 @@ class ChatTreatmentRequestModel {
       rightImageAfter: json['right_image_after'],
       leftImageBefore: json['left_image_before'],
       leftImageAfter: json['left_image_after'],
-      treatments: (json['treatments'] as List<dynamic>?)
-              ?.map((e) => ChatTreatmentData.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
-      createdAt: json['created_at'],
-      updatedAt: json['updated_at'],
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'user_id': userId,
-        'group_id': groupId,
-        'name': name,
-        'patient_name': patientName,
-        'patient_image': patientImage,
-        'patient_email': patientEmail,
-        'front_image_before': frontImageBefore,
-        'front_image_after': frontImageAfter,
-        'right_image_before': rightImageBefore,
-        'right_image_after': rightImageAfter,
-        'left_image_before': leftImageBefore,
-        'left_image_after': leftImageAfter,
-        'treatments': treatments.map((e) => e.toJson()).toList(),
-        'created_at': createdAt,
-        'updated_at': updatedAt,
-      };
-}
-
-class ChatTreatmentData {
-  final int treatmentId;
-  final String treatmentName;
-  final String? description;
-  final String? image;
-  final String? icon;
-  final List<ChatTreatmentAreaData> areas;
-
-  ChatTreatmentData({
-    required this.treatmentId,
-    required this.treatmentName,
-    this.description,
-    this.image,
-    this.icon,
-    required this.areas,
-  });
-
-  factory ChatTreatmentData.fromJson(Map<String, dynamic> json) {
-    return ChatTreatmentData(
-      treatmentId: json['treatment_id'] ?? 0,
-      treatmentName: json['treatment_name'] ?? '',
-      description: json['treatment_desc'],
-      image: json['treatment_image'],
-      icon: json['treatment_icon'],
-      areas: (json['areas'] as List<dynamic>?)
-              ?.map((e) => ChatTreatmentAreaData.fromJson(e as Map<String, dynamic>))
+      treatments:
+          (json['treatments'] as List<dynamic>?)
+              ?.map(
+                (e) => SimulationTreatment.fromJson(e as Map<String, dynamic>),
+              )
               .toList() ??
           [],
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'treatment_id': treatmentId,
-        'treatment_name': treatmentName,
-        'treatment_desc': description,
-        'treatment_image': image,
-        'treatment_icon': icon,
-        'areas': areas.map((e) => e.toJson()).toList(),
-      };
-}
+    'text': text,
+    'id': id,
+    'user_id': userId,
+    'group_id': groupId,
+    'name': name,
+    'patient_name': patientName,
+    'patient_image': patientImage,
+    'patient_email': patientEmail,
+    'front_image_before': frontImageBefore,
+    'front_image_after': frontImageAfter,
+    'right_image_before': rightImageBefore,
+    'right_image_after': rightImageAfter,
+    'left_image_before': leftImageBefore,
+    'left_image_after': leftImageAfter,
+    'treatments': treatments.map((e) => e.toJson()).toList(),
+  };
 
-class ChatTreatmentAreaData {
-  final int areaId;
-  final String areaName;
-  final String? image;
-  final String? icon;
-  final List<ChatTreatmentMaterialData> materials;
-
-  ChatTreatmentAreaData({
-    required this.areaId,
-    required this.areaName,
-    this.image,
-    this.icon,
-    required this.materials,
-  });
-
-  factory ChatTreatmentAreaData.fromJson(Map<String, dynamic> json) {
-    return ChatTreatmentAreaData(
-      areaId: json['area_id'] ?? 0,
-      areaName: json['area_name'] ?? '',
-      image: json['area_image'],
-      icon: json['area_icon'],
-      materials: (json['materials'] as List<dynamic>?)
-              ?.map((e) =>
-                  ChatTreatmentMaterialData.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
+  ChatTreatmentRequestModel copyWith({
+    String? text,
+    int? id,
+    int? userId,
+    int? groupId,
+    String? name,
+    String? patientName,
+    String? patientImage,
+    String? patientEmail,
+    String? frontImageBefore,
+    String? frontImageAfter,
+    String? rightImageBefore,
+    String? rightImageAfter,
+    String? leftImageBefore,
+    String? leftImageAfter,
+    List<SimulationTreatment>? treatments,
+  }) {
+    return ChatTreatmentRequestModel(
+      text: text ?? this.text,
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      groupId: groupId ?? this.groupId,
+      name: name ?? this.name,
+      patientName: patientName ?? this.patientName,
+      patientImage: patientImage ?? this.patientImage,
+      patientEmail: patientEmail ?? this.patientEmail,
+      frontImageBefore: frontImageBefore ?? this.frontImageBefore,
+      frontImageAfter: frontImageAfter ?? this.frontImageAfter,
+      rightImageBefore: rightImageBefore ?? this.rightImageBefore,
+      rightImageAfter: rightImageAfter ?? this.rightImageAfter,
+      leftImageBefore: leftImageBefore ?? this.leftImageBefore,
+      leftImageAfter: leftImageAfter ?? this.leftImageAfter,
+      treatments: treatments ?? this.treatments,
     );
   }
-
-  Map<String, dynamic> toJson() => {
-        'area_id': areaId,
-        'area_name': areaName,
-        'area_image': image,
-        'area_icon': icon,
-        'materials': materials.map((e) => e.toJson()).toList(),
-      };
-}
-
-class ChatTreatmentMaterialData {
-  final int id;
-  final String name;
-  final int selectedQuantity;
-
-  ChatTreatmentMaterialData({
-    required this.id,
-    required this.name,
-    required this.selectedQuantity,
-  });
-
-  factory ChatTreatmentMaterialData.fromJson(Map<String, dynamic> json) {
-    return ChatTreatmentMaterialData(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? '',
-      selectedQuantity: json['selected_quantity'] ?? 0,
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'selected_quantity': selectedQuantity,
-      };
 }

@@ -1,6 +1,5 @@
 import '../models/responses/chats_response.dart';
 import '../models/responses/messages_response.dart';
-import '../utils/enums.dart';
 
 abstract class ChatRepository {
   Future<ChatsData> getChats({int page = 1, int limit = 10, String? search});
@@ -10,13 +9,5 @@ abstract class ChatRepository {
     int page = 1,
     int limit = 1,
     String? search,
-  });
-
-  Future<void> sendChatMessage({
-    required int chatId,
-    required MessageType type,
-    required String content,
-    String? mediaUrl,
-    String? documentUrl,
   });
 }

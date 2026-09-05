@@ -192,6 +192,7 @@ enum MessageType {
 
 enum EventType {
   chat('chat'),
+  error('error'),
   subscription('subscription');
 
   final String value;

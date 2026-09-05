@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import '../../utils/enums.dart';
+import '../chat_treatment_request_model.dart';
 import 'base_response_model.dart';
 import 'get_clinic_response.dart';
 
@@ -145,6 +148,20 @@ class Message {
 
   bool get isMe {
     return userId == senderId;
+  }
+
+  ChatTreatmentRequestModel? get sharedRequestData {
+    try {
+      if (type != .sharedRequest) {
+        return null;
+      }
+      if (content == null) {
+        return null;
+      }
+      return .fromJson(jsonDecode(content!));
+    } catch (_) {
+      return null;
+    }
   }
 }
 
