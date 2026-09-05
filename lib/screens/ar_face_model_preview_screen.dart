@@ -200,7 +200,7 @@ class _ArFaceModelPreviewScreenState
 
   @override
   Widget build(BuildContext context) {
-    _handleInitialState();
+   _handleInitialState();
 
     ref.listen(treatmentViewModel.select((s) => s.isAiImageGenerated), (
       prev,
@@ -219,16 +219,47 @@ class _ArFaceModelPreviewScreenState
       treatmentViewModel.select((state) => state.loading),
     );
 
+    // Extracted helper method so both PopScope and AppBar use the exact same logic
+    Future<void> handleBackNavigation() async {
+      if (isLoading) return;
+
+      final shouldLeave = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: Colors.white,
+          title:  Text('Discard Simulation?',style: CustomFonts.black18w600,),
+          content:  Text(
+            'If you go back, you will lose all your simulation changes.',
+            style: CustomFonts.black13w400,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Leave', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        ),
+      );
+
+      if (shouldLeave == true && context.mounted) {
+        ref.read(checkoutViewModel.notifier).clearState();
+        ref
+            .read(treatmentViewModel.notifier)
+            .clearAllSelectedTreatments(capturedImage: true);
+        ref.read(treatmentViewModel.notifier).clearAiImage();
+        Navigator.of(context).pop();
+      }
+    }
+
     return PopScope(
-      canPop: !isLoading,
-      onPopInvokedWithResult: (didPop, result) {
-        if (!isLoading) {
-          ref.read(checkoutViewModel.notifier).clearState();
-          ref
-              .read(treatmentViewModel.notifier)
-              .clearAllSelectedTreatments(capturedImage: true);
-          ref.read(treatmentViewModel.notifier).clearAiImage();
-        }
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await handleBackNavigation();
       },
       child: AbsorbPointer(
         absorbing: isLoading,
@@ -236,6 +267,7 @@ class _ArFaceModelPreviewScreenState
           appBar: CustomAppBar(
             showTitle: true,
             title: "AR Face Model Preview",
+            onBackTap: handleBackNavigation, // Intercept AppBar back button tap
             actions: [
               IconButton(
                 onPressed: () => Navigator.pushNamed(
@@ -329,7 +361,9 @@ class _ArFaceModelPreviewScreenState
               onTap: () {
                 ref.read(checkoutViewModel.notifier).clearState();
                 ref.read(treatmentViewModel.notifier).clearAiImage();
-                ref.read(treatmentViewModel.notifier).clearAllSelectedTreatments();
+                ref
+                    .read(treatmentViewModel.notifier)
+                    .clearAllSelectedTreatments();
               },
               child: Text(
                 "Reset",
@@ -540,65 +574,62 @@ class _ArFaceModelPreviewScreenState
                 child: ScaleTransition(
                   scale: _pulseAnimation,
                   child: CustomButton(
-                          text: "Generate Ai Image",
-                          isBorder: true,
-                          borderRadius: context.r(30),
-                          textColor: CustomColors.blackColor,
-                          height: context.h(58),
-                          onPressed: () async {
-                            if (isLimitReached) {
-                              showUpgradePlanDialog(context);
-                              return;
-                            }
+                    text: "Generate Ai Image",
+                    isBorder: true,
+                    borderRadius: context.r(30),
+                    textColor: CustomColors.blackColor,
+                    height: context.h(58),
+                    onPressed: () async {
+                      if (isLimitReached) {
+                        showUpgradePlanDialog(context);
+                        return;
+                      }
 
-                            final bool hasAccepted = await SecureStorage()
-                                .getAiPolicyAccepted();
+                      final bool hasAccepted = await SecureStorage()
+                          .getAiPolicyAccepted();
 
-                            if (!hasAccepted) {
-                              if (!context.mounted) return;
-                              final result = await Navigator.pushNamed(
-                                context,
-                                AiTransparencyPolicyScreen.routeName,
-                              );
-                              if (result != true) return;
-                            }
+                      if (!hasAccepted) {
+                        if (!context.mounted) return;
+                        final result = await Navigator.pushNamed(
+                          context,
+                          AiTransparencyPolicyScreen.routeName,
+                        );
+                        if (result != true) return;
+                      }
 
-                            // Show non-dismissible dialog that cycles messages every 2 seconds
-                            if (context.mounted) {
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (_) => const MessageCycler(),
-                              );
-                            }
+                      // Show non-dismissible dialog that cycles messages every 2 seconds
+                      if (context.mounted) {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (_) => const MessageCycler(),
+                        );
+                      }
 
-                            bool success = false;
-                            try {
-                              success = await ref
-                                  .read(treatmentViewModel.notifier)
-                                  .callPredictAPI();
-                            } finally {
-                              // Dismiss the dialog if still visible
-                              if (context.mounted) {
-                                try {
-                                  Navigator.of(
-                                    context,
-                                    rootNavigator: true,
-                                  ).pop();
-                                } catch (_) {}
-                              }
-                            }
+                      bool success = false;
+                      try {
+                        success = await ref
+                            .read(treatmentViewModel.notifier)
+                            .callPredictAPI();
+                      } finally {
+                        // Dismiss the dialog if still visible
+                        if (context.mounted) {
+                          try {
+                            Navigator.of(context, rootNavigator: true).pop();
+                          } catch (_) {}
+                        }
+                      }
 
-                            if (success && currentPlan?.id != null) {
-                              await ref
-                                  .read(subscriptionProvider.notifier)
-                                  .recordUsage(
-                                    usageType: UsageType.simulation,
-                                    subscriptionId: currentPlan!.id!,
-                                  );
-                            }
-                          },
-                        ),
+                      if (success && currentPlan?.id != null) {
+                        await ref
+                            .read(subscriptionProvider.notifier)
+                            .recordUsage(
+                              usageType: UsageType.simulation,
+                              subscriptionId: currentPlan!.id!,
+                            );
+                      }
+                    },
+                  ),
                 ),
               ),
               context.horizontalSpace(10),
@@ -1066,7 +1097,7 @@ class _ArFaceModelPreviewScreenState
                         text: area.name ?? '-',
                         selected: isSelected,
                         description: area.description,
-                        infoImageUrl: area.infoImageUrl, 
+                        infoImageUrl: area.infoImageUrl,
                         onPressed: () =>
                             _onAreaPressed(area, isSelected, treatment),
                       );
