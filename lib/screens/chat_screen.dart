@@ -33,13 +33,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
   bool _showClinicInfo = false;
 
-  final List<String> _quickTemplates = [
-    'Schedule Appointment',
-    'Ask About Treatment',
-    'Send Face Scan Photo',
-    'Request Pricing',
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -321,8 +314,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                         ),
                       ),
                       const Divider(color: CustomColors.greyColor, height: 1),
-                      _buildQuickPresetsRow(context),
-                      const Divider(color: CustomColors.greyColor, height: 1),
                       _buildInputArea(context),
                     ],
                   ),
@@ -393,55 +384,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-  Widget _buildQuickPresetsRow(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: context.w(12),
-        vertical: context.h(8),
-      ),
-      color: Colors.white,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        child: Row(
-          children: [
-            Icon(
-              Icons.flash_on_rounded,
-              size: context.sp(16),
-              color: CustomColors.purpleColor,
-            ),
-            SizedBox(width: context.w(6)),
-            Text('Quick:', style: CustomFonts.grey12w400),
-            SizedBox(width: context.w(8)),
-            ..._quickTemplates.map(
-              (template) => Padding(
-                padding: EdgeInsets.only(right: context.w(8)),
-                child: ActionChip(
-                  label: Text(template),
-                  labelStyle: TextStyle(
-                    fontSize: context.sp(12),
-                    fontWeight: FontWeight.w600,
-                    color: CustomColors.purpleColor,
-                    fontFamily: 'Degular',
-                  ),
-                  backgroundColor: CustomColors.purpleColor.withValues(
-                    alpha: 0.1,
-                  ),
-                  side: BorderSide.none,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(context.r(16)),
-                  ),
-                  onPressed: () {
-                    _messageController.text = template;
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+
 
   Widget _buildInputArea(BuildContext context) {
     return Container(

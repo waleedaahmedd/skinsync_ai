@@ -8,6 +8,7 @@ import '../view_models/forms_view_model.dart';
 import '../view_models/subscription_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 import '../widgets/chat_button.dart';
+import '../widgets/help_chat_button.dart';
 import '../widgets/scan_face_button.dart';
 import 'bottom_nav_bar.dart';
 import 'bottom_nav_screens/explore_screen.dart';
@@ -72,7 +73,16 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage>
               if (index != 2)
                 Positioned(
                   bottom: 110.h + MediaQuery.paddingOf(context).bottom,
-                  child: const ScanFaceButton(),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const ScanFaceButton(),
+                      if (!isDeploymentMode) ...[
+                        SizedBox(width: 12.w),
+                        const HelpChatButton(),
+                      ],
+                    ],
+                  ),
                 ),
               if(!isDeploymentMode)
               Positioned(
