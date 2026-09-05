@@ -12,13 +12,6 @@ abstract class ChatRepository {
     String? search,
   });
 
-  Future<void> connectChatSocket({
-    required int chatId,
-    required void Function(Message message) onMessage,
-  });
-
-  Future<void> closeChatSocket({required int chatId});
-
   Future<void> sendChatMessage({
     required int chatId,
     required MessageType type,

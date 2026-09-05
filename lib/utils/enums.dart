@@ -89,9 +89,9 @@ enum Status { active, inactive }
 
 enum BaseUrls {
   api('https://api.skinsyncai.com/api/'),
- apiQa('https://api-dev.skinsyncai.com/api/');
+  // apiQa('https://api-dev.skinsyncai.com/api/');
 
- // apiQa('http://10.0.2.2:8084/api/');
+  apiQa('http://10.0.2.2:8084/api/');
 
   final String url;
   const BaseUrls(this.url);
@@ -186,6 +186,23 @@ enum MessageType {
     return MessageType.values.firstWhere(
       (e) => e.value.toLowerCase() == val,
       orElse: () => MessageType.text,
+    );
+  }
+}
+
+enum EventType {
+  chat('chat'),
+  subscription('subscription');
+
+  final String value;
+  const EventType(this.value);
+
+  static EventType fromValue(String? value) {
+    if (value == null) return EventType.chat;
+    final val = value.toLowerCase();
+    return EventType.values.firstWhere(
+      (e) => e.value.toLowerCase() == val,
+      orElse: () => EventType.chat,
     );
   }
 }
