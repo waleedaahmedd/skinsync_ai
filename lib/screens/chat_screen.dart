@@ -506,40 +506,40 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   ],
                 ),
               ),
-              PopupMenuItem(
-                value: 'shared_request',
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.assignment_outlined,
-                      size: context.sp(18),
-                      color: CustomColors.purpleColor,
-                    ),
-                    SizedBox(width: context.w(12)),
-                    Text(
-                      'Share Treatment Request',
-                      style: CustomFonts.black14w400,
-                    ),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: 'appointment',
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.calendar_month_outlined,
-                      size: context.sp(18),
-                      color: CustomColors.purpleColor,
-                    ),
-                    SizedBox(width: context.w(12)),
-                    Text(
-                      'Share Appointment Card',
-                      style: CustomFonts.black14w400,
-                    ),
-                  ],
-                ),
-              ),
+              // PopupMenuItem(
+              //   value: 'shared_request',
+              //   child: Row(
+              //     children: [
+              //       Icon(
+              //         Icons.assignment_outlined,
+              //         size: context.sp(18),
+              //         color: CustomColors.purpleColor,
+              //       ),
+              //       SizedBox(width: context.w(12)),
+              //       Text(
+              //         'Share Treatment Request',
+              //         style: CustomFonts.black14w400,
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // PopupMenuItem(
+              //   value: 'appointment',
+              //   child: Row(
+              //     children: [
+              //       Icon(
+              //         Icons.calendar_month_outlined,
+              //         size: context.sp(18),
+              //         color: CustomColors.purpleColor,
+              //       ),
+              //       SizedBox(width: context.w(12)),
+              //       Text(
+              //         'Share Appointment Card',
+              //         style: CustomFonts.black14w400,
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
           SizedBox(width: context.w(8)),
