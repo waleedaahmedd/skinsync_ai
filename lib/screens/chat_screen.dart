@@ -99,12 +99,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     if (picked == null) {
       return;
     }
-
+    EasyLoading.show(status: 'Uploading...');
     final mediaUrl = await MediaService().uploadMedia(
       path: 'chat/media',
       file: picked,
     );
     if (mediaUrl == null) {
+      EasyLoading.dismiss();
       return;
     }
 
@@ -113,6 +114,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       messageType: MessageType.media,
       mediaUrl: mediaUrl,
     );
+    EasyLoading.dismiss();
   }
 
   Future<void> _pickDocumentAndSend() async {
@@ -125,12 +127,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     if (file == null || file.path == null) {
       return;
     }
-
+    EasyLoading.show(status: 'Uploading...');
     final documentUrl = await MediaService().uploadMedia(
       path: 'chat/documents',
       file: file,
     );
     if (documentUrl == null) {
+      EasyLoading.dismiss();
       return;
     }
 
@@ -140,6 +143,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
       documentName: file.name,
       documentUrl: documentUrl,
     );
+    EasyLoading.dismiss();
   }
 
   Future<void> _pickTreatmentRequest() async {
