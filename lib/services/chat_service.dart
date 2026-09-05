@@ -8,7 +8,6 @@ import '../repositories/chat_repository.dart';
 import '../utils/enums.dart';
 import 'api_base_helper.dart';
 import 'auth_service.dart';
-import 'websocket_service.dart';
 
 class ChatService extends ChatRepository {
   final ApiBaseHelper _apiService;
@@ -68,23 +67,6 @@ class ChatService extends ChatRepository {
       messages: model.data!.messages!
           .map((message) => message.copyWith(userId: user.id))
           .toList(),
-    );
-  }
-
-  @override
-  Future<void> sendChatMessage({
-    required int chatId,
-    required MessageType type,
-    required String content,
-    String? mediaUrl,
-    String? documentUrl,
-  }) async {
-    await WebSocketService().sendMessage(
-      chatId: chatId,
-      type: type,
-      content: content,
-      mediaUrl: mediaUrl,
-      documentUrl: documentUrl,
     );
   }
 }

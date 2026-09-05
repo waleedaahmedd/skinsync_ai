@@ -2,11 +2,13 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../exceptions/app_exception.dart';
+import '../models/chat_treatment_request_model.dart';
 import '../models/responses/chats_response.dart';
 import '../models/responses/messages_response.dart';
 import '../repositories/chat_repository.dart';
 import '../services/api_base_helper.dart';
 import '../services/chat_service.dart';
+import '../services/websocket_service.dart';
 import '../utils/enums.dart';
 import 'auth_view_model.dart';
 import 'base_view_model.dart';
@@ -48,6 +50,7 @@ class ChatViewModel extends BaseViewModel<ChatState> {
     required String content,
     String? mediaUrl,
     String? documentUrl,
+    ChatTreatmentRequestModel? treatmentRequest,
   }) async {
     return await runSafely(() async {
       final chatId = state.selectedChat?.id;
@@ -55,12 +58,13 @@ class ChatViewModel extends BaseViewModel<ChatState> {
         throw const AppException('No chat selected');
       }
 
-      await _repo.sendChatMessage(
+      await WebSocketService().sendMessage(
         chatId: chatId,
         type: type,
         content: content,
         mediaUrl: mediaUrl,
         documentUrl: documentUrl,
+        treatmentRequest: treatmentRequest,
       );
     });
   }
