@@ -147,7 +147,7 @@ class SimulationTreatment {
 }
 
 class SimulationArea {
-  final String? id;
+  final int? id;
   final String? name;
   final String? image;
   final String? icon;
@@ -164,7 +164,7 @@ class SimulationArea {
   });
 
   factory SimulationArea.fromJson(Map<String, dynamic> json) => SimulationArea(
-    id: json["area_id"]?.toString(),
+    id: json["area_id"],
     name: json["area_name"],
     image: json["area_image"],
     icon: json["area_icon"],

@@ -81,7 +81,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
           if (simTreatment.areas != null) {
             for (final simArea in simTreatment.areas!) {
               // Find the Area model from fetched areas
-              final areaId = int.tryParse(simArea.id ?? '');
+              final areaId = simArea.id;
               TreatmentAreaModel? targetArea;
 
               // Helper to find area in tree
