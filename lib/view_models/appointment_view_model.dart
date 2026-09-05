@@ -91,23 +91,24 @@ class AppointmentViewModel extends BaseViewModel<AppointmentState> {
     });
   }
 
-  Future<ScanQrResponse?> decodeQrCode(String qrCode) async {
-    return await runSafely(() async {
-      final decrypted = await EncryptionService().decode(cipherText: qrCode);
-      if (decrypted == null) {
-        throw const AppException('Could not decode QR code');
-      }
-      final splitted = decrypted.split('/');
-      if (splitted.length < 3) {
-        throw const AppException('Invalid QR code');
-      }
-      final appointmentId = int.parse(splitted[0]);
-      // final doctorId = int.parse(splitted[1]); // not needed for check-in
-      final clinicId = int.parse(splitted[2]);
+ Future<ScanQrResponse?> decodeQrCode(
+  String qrCode, {
+  required int appointmentId,
+}) async {
+  return await runSafely(() async {
+    final decrypted = await EncryptionService().decode(cipherText: qrCode);
+    if (decrypted == null) {
+      throw const AppException('Could not decode QR code');
+    }
 
-      return await scanQrCode(clinicId: clinicId, appointmentId: appointmentId);
-    });
-  }
+    final clinicId = int.tryParse(decrypted);
+    if (clinicId == null) {
+      throw const AppException('Invalid QR code');
+    }
+
+    return await scanQrCode(clinicId: clinicId, appointmentId: appointmentId);
+  });
+}
   Future<String?> encryptAppointmentData(AppointmentDetailData? data) async {
     return await runSafely<String?>(() async {
       final appointmentId = data?.id;

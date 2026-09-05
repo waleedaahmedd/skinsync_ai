@@ -1,9 +1,9 @@
-
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -18,7 +18,7 @@ import '../view_models/appointment_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_button.dart';
-import '../widgets/scan_qr_button.dart';
+import 'qr_scan_screen.dart';
 
 class AppointmentDetailScreen extends ConsumerStatefulWidget {
   static const String routeName = '/AppointmentDetailScreen';
@@ -119,6 +119,57 @@ class _AppointmentDetailScreenState
     );
   }
 
+  void _showCheckInSuccessDialog(BuildContext context, String? message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(dialogContext.r(16)),
+          ),
+          content: Column(
+            mainAxisSize: .min,
+            children: [
+              Icon(
+                Icons.check_circle_rounded,
+                color: Colors.green,
+                size: dialogContext.sp(56),
+              ),
+              SizedBox(height: dialogContext.h(16)),
+              Text(
+                "Checked In",
+                style: CustomFonts.black18w600.copyWith(
+                  fontSize: dialogContext.sp(16),
+                ),
+              ),
+              SizedBox(height: dialogContext.h(8)),
+              Text(
+                message ??
+                    "You have been successfully checked in for this appointment.",
+                textAlign: TextAlign.center,
+                style: CustomFonts.grey15w400,
+              ),
+            ],
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text(
+                "OK",
+                style: CustomFonts.black16w600.copyWith(
+                  color: CustomColors.purpleColor,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final appointmentState = ref.watch(appointmentProvider);
@@ -155,7 +206,7 @@ class _AppointmentDetailScreenState
       appBar: CustomAppBar(
         title: "Appointment Detail",
         actions: [
-          const ScanQrButton(),
+          //   const ScanQrButton(),
           IconButton(
             onPressed: () async {
               final encryptedText = await ref
@@ -178,7 +229,7 @@ class _AppointmentDetailScreenState
             ),
             tooltip: "Generate QR",
           ),
-         
+
           SizedBox(width: context.w(12)),
         ],
       ),
@@ -193,6 +244,39 @@ class _AppointmentDetailScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Align(
+                    alignment: .topRight,
+                    child: CustomButton(
+                      isBorder: true,
+                      onPressed: () async {
+                        final data = await Navigator.push<String?>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const QrScanScreen(),
+                          ),
+                        );
+                        if (data == null) return;
+
+                        final response = await ref
+                            .read(appointmentProvider.notifier)
+                            .decodeQrCode(data, appointmentId: detail!.id!);
+
+                        if (response == null) {
+                          final message =
+                              ref.read(appointmentProvider).errorMessage ??
+                              'Could not check in with this QR code';
+                          EasyLoading.showError(message);
+                          return;
+                        }
+
+                        log("Checked in successfully via QR");
+                        if (!context.mounted) return;
+                        _showCheckInSuccessDialog(context, response.message);
+                      },
+                      text: 'Scan To Check In',
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
                   _buildInfoSection(
                     title: "Appointment Info",
                     icon: Icons.event_available_rounded,
