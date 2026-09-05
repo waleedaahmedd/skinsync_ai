@@ -1,9 +1,12 @@
 
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../models/responses/appointment_detail_response.dart';
 import '../models/responses/appointments_list_response.dart';
@@ -14,6 +17,7 @@ import '../utils/date_time_utils.dart';
 import '../view_models/appointment_view_model.dart';
 import '../widgets/app_loader.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_button.dart';
 import '../widgets/scan_qr_button.dart';
 
 class AppointmentDetailScreen extends ConsumerStatefulWidget {
@@ -41,79 +45,79 @@ class _AppointmentDetailScreenState
     });
   }
 
-  // void _showQrDialog({
-  //   required BuildContext context,
-  //   required int appointmentId,
-  //   required String encryptedData,
-  // }) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => Dialog(
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(context.r(32)),
-  //       ),
-  //       child: Padding(
-  //         padding: EdgeInsets.all(context.w(24)),
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           crossAxisAlignment: .center,
-  //           children: [
-  //             Text("Check-in QR Code", style: CustomFonts.black18w600),
-  //             SizedBox(height: context.h(4)),
-  //             // Text(
-  //             //   "Appointment ID: #$appointmentId",
-  //             //   style: CustomFonts.grey700_12w400,
-  //             // ),
-  //             SizedBox(height: context.h(24)),
-  //             Container(
-  //               padding: EdgeInsets.all(context.w(16)),
-  //               decoration: BoxDecoration(
-  //                 color: Colors.white,
-  //                 borderRadius: BorderRadius.circular(context.r(24)),
-  //                 boxShadow: [
-  //                   BoxShadow(
-  //                     color: CustomColors.darkPurple.withValues(alpha: 0.1),
-  //                     blurRadius: 20,
-  //                     offset: const Offset(0, 8),
-  //                   ),
-  //                 ],
-  //               ),
-  //               child: SizedBox(
-  //                 width: context.w(220),
-  //                 height: context.w(220),
-  //                 child: QrImageView(data: encryptedData, size: context.w(220)),
-  //                 // child: PrettyQrView.data(
-  //                 //   data: encryptedData,
-  //                 //   decoration: const PrettyQrDecoration(
-  //                 //     shape: PrettyQrSmoothSymbol(
-  //                 //       color: CustomColors.darkPurple,
-  //                 //       roundFactor: 1,
-  //                 //     ),
-  //                 //     image: PrettyQrDecorationImage(
-  //                 //       image: AssetImage(PngAssets.splashLogo),
-  //                 //       scale: 0.25,
-  //                 //     ),
-  //                 //   ),
-  //                 // ),
-  //               ),
-  //             ),
-  //             SizedBox(height: context.h(24)),
-  //             Text(
-  //               "Please scan this code at the clinic reception to confirm your arrival.",
-  //               textAlign: TextAlign.center,
-  //               style: CustomFonts.textGrey13w400.copyWith(height: 1.4),
-  //             ),
-  //             SizedBox(height: context.h(24)),
-  //             CustomButton(
-  //               onPressed: () => Navigator.pop(context),
-  //               text: "Dismiss",
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
+  void _showQrDialog({
+    required BuildContext context,
+    required int appointmentId,
+    required String encryptedData,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(context.r(32)),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(context.w(24)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: .center,
+            children: [
+              Text("Check-in QR Code", style: CustomFonts.black18w600),
+              SizedBox(height: context.h(4)),
+              // Text(
+              //   "Appointment ID: #$appointmentId",
+              //   style: CustomFonts.grey700_12w400,
+              // ),
+              SizedBox(height: context.h(24)),
+              Container(
+                padding: EdgeInsets.all(context.w(16)),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(context.r(24)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: CustomColors.darkPurple.withValues(alpha: 0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: SizedBox(
+                  width: context.w(220),
+                  height: context.w(220),
+                  child: QrImageView(data: encryptedData, size: context.w(220)),
+                  // child: PrettyQrView.data(
+                  //   data: encryptedData,
+                  //   decoration: const PrettyQrDecoration(
+                  //     shape: PrettyQrSmoothSymbol(
+                  //       color: CustomColors.darkPurple,
+                  //       roundFactor: 1,
+                  //     ),
+                  //     image: PrettyQrDecorationImage(
+                  //       image: AssetImage(PngAssets.splashLogo),
+                  //       scale: 0.25,
+                  //     ),
+                  //   ),
+                  // ),
+                ),
+              ),
+              SizedBox(height: context.h(24)),
+              Text(
+                "Please scan this code at the clinic reception to confirm your arrival.",
+                textAlign: TextAlign.center,
+                style: CustomFonts.textGrey13w400.copyWith(height: 1.4),
+              ),
+              SizedBox(height: context.h(24)),
+              CustomButton(
+                onPressed: () => Navigator.pop(context),
+                text: "Dismiss",
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,28 +156,28 @@ class _AppointmentDetailScreenState
         title: "Appointment Detail",
         actions: [
           const ScanQrButton(),
-          // IconButton(
-          //   onPressed: () async {
-          //     final encryptedText = await ref
-          //         .read(appointmentProvider.notifier)
-          //         .encryptAppointmentData(detail);
-          //     if (encryptedText == null) {
-          //       return;
-          //     }
-          //     log('Encrypted Text: $encryptedText');
-          //     _showQrDialog(
-          //       context: context,
-          //       appointmentId: detail!.id!,
-          //       encryptedData: encryptedText,
-          //     );
-          //   },
-          //   icon: Icon(
-          //     Icons.qr_code_scanner_rounded,
-          //     color: CustomColors.darkPurple,
-          //     size: context.sp(24),
-          //   ),
-          //   tooltip: "Generate QR",
-          // ),
+          IconButton(
+            onPressed: () async {
+              final encryptedText = await ref
+                  .read(appointmentProvider.notifier)
+                  .encryptAppointmentData(detail);
+              if (encryptedText == null) {
+                return;
+              }
+              log('Encrypted Text: $encryptedText');
+              _showQrDialog(
+                context: context,
+                appointmentId: detail!.id!,
+                encryptedData: encryptedText,
+              );
+            },
+            icon: Icon(
+              Icons.qr_code_scanner_rounded,
+              color: CustomColors.darkPurple,
+              size: context.sp(24),
+            ),
+            tooltip: "Generate QR",
+          ),
          
           SizedBox(width: context.w(12)),
         ],
