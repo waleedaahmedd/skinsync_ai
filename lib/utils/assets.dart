@@ -8,7 +8,7 @@ class PngAssets {
   static const String leftFace = '${_assets}left_face.png';
   static const String rightFace = '${_assets}right_face.png';
   static const String face = '${_assets}face.png';
-  static const String faceAndMarks = '${_assets}face_and_marks.png';
+  static const String faceAndMarks = '${_assets}face_and_marks_update.png';
   static const String faceMarks = '${_assets}face_marks.png';
   static const String blur = '${_assets}blur.png';
   static const String vector = '${_assets}vector.png';

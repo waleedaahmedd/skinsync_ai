@@ -69,7 +69,7 @@ class GetStartedScreen extends StatelessWidget {
               //   ),
               // ),
               Positioned(
-                top: context.isLessThan(.md) ? context.h(432) : context.h(500),
+                top: context.isLessThan(.md) ? context.h(432) : context.h(650),
                 left: 0,
                 right: 0,
                 child: Image.asset(
