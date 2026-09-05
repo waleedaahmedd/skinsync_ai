@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:iconsax/iconsax.dart';
+import '../../services/websocket_service.dart';
 import '../allergy_and_medical_history.dart';
 import '../compliance_form_screen.dart';
 import '../consent_forms_screen.dart';
@@ -606,7 +607,8 @@ class MyProfileScreen extends StatelessWidget {
                                 final navigator = Navigator.of(context);
                                 SecureStorage secureStorage = SecureStorage();
                                 await secureStorage.clearAllSecureStrings();
-
+                                 final websokect =  WebSocketService();
+                                 await websokect.disconnect();
                                 navigator.pushNamedAndRemoveUntil(
                                   GetStartedScreen.routeName,
                                   (route) => false,
