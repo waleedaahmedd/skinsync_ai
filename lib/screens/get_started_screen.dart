@@ -48,13 +48,14 @@ class GetStartedScreen extends StatelessWidget {
                 ),
               ),
               Positioned(
-                top: context.isLessThan(.md) ? context.h(92) : context.h(80),
+                top:  context.w(92),
                 right: 0,
                 left: 0,
 
                 child: Image.asset(
                   PngAssets.faceAndMarks,
-                  fit: BoxFit.fitWidth,
+                  fit: BoxFit.fitHeight,
+                  height: context.w(570),
                   alignment: Alignment.topCenter,
                 ),
               ),
@@ -69,7 +70,7 @@ class GetStartedScreen extends StatelessWidget {
               //   ),
               // ),
               Positioned(
-                top: context.isLessThan(.md) ? context.h(432) : context.h(650),
+                top:  context.w(432) ,
                 left: 0,
                 right: 0,
                 child: Image.asset(
@@ -87,7 +88,7 @@ class GetStartedScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    SizedBox(height: context.h(60)),
+                    SizedBox(height: context.w(60)),
                     Text("SkinSync AI", style: CustomFonts.grey20w500),
                     Text('Your Aesthetic', style: CustomFonts.black50w600),
                     Row(
