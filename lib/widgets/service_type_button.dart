@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+
 import '../utils/color_constant.dart';
 import '../utils/custom_fonts.dart';
 import 'app_network_image.dart';
@@ -70,7 +71,6 @@ class ServiceTypeButton extends StatelessWidget {
     final String? imgUrl = _effectiveTooltipImage;
     final String? desc = _effectiveDescription;
     final bool hasTooltip = imgUrl != null || desc != null;
-
     return GestureDetector(
       onTap: onPressed,
       onLongPress: hasTooltip
@@ -118,8 +118,8 @@ class ServiceTypeButton extends StatelessWidget {
                   color: selected
                       ? Colors.black.withValues(alpha: 0.5)
                       : (hasImage
-                          ? Colors.white.withValues(alpha: 0.8)
-                          : Colors.white),
+                            ? Colors.white.withValues(alpha: 0.8)
+                            : Colors.white),
                 ),
               ),
               Padding(
