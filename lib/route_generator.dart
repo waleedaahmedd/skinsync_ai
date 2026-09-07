@@ -40,6 +40,7 @@ import 'screens/face_scan_screen.dart';
 import 'screens/get_notified_screen.dart';
 import 'screens/get_started_screen.dart';
 import 'screens/help_chat_screen.dart';
+import 'screens/new_patient_intake_screen.dart';
 import 'screens/intro_screen.dart';
 import 'screens/journey_clinic_detail_screen.dart';
 import 'screens/journey_clinics_screen.dart';
@@ -101,6 +102,11 @@ class RouteGenerator {
         return MaterialPageRoute(
           settings: const RouteSettings(name: GetStartedScreen.routeName),
           builder: (_) => const GetStartedScreen(),
+        );
+      case NewPatientIntakeScreen.routeName:
+        return MaterialPageRoute(
+          settings: const RouteSettings(name: NewPatientIntakeScreen.routeName),
+          builder: (_) => const NewPatientIntakeScreen(),
         );
       case HelpChatScreen.routeName:
         return MaterialPageRoute(

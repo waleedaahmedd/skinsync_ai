@@ -156,7 +156,10 @@ class _AppointmentDetailScreenState
           actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
+              onPressed: () {
+                Navigator.pop(dialogContext); // Close dialog
+                Navigator.pushNamed(context, '/NewPatientIntakeScreen'); // Open Intake form
+              },
               child: Text(
                 "OK",
                 style: CustomFonts.black16w600.copyWith(
