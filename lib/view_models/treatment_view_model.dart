@@ -249,7 +249,7 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
         .selectedTreatmentsAndAreas
         .any((item) => item.treatment.id == treatmentModel.id);
 
-    if (!isAlreadySelected) {
+    if (isAlreadySelected) {
       clearAiImage();
     }
 
