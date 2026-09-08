@@ -43,4 +43,25 @@ class OnboardingDescriptions {
   static const String promotionsTitle = "Exclusive Deals";
   static const String promotionsDesc =
       "Don't miss out on seasonal discounts and special clinical offers.";
+
+  // Bottom Navigation Bar Tour
+  static const String homeTabTitle = "Home Screen";
+  static const String homeTabDesc =
+      "Access your dashboard, simulations, and appointments from here.";
+
+  static const String treatmentTabTitle = "Explore Treatments";
+  static const String treatmentTabDesc =
+      "Browse and learn about various clinical treatments available.";
+
+  static const String exploreTabTitle = "Explore";
+  static const String exploreTabDesc =
+      "Discover new clinics, specialists, and wellness content.";
+
+  static const String journeyTabTitle = "Your Journey";
+  static const String journeyTabDesc =
+      "Track your skin progress and treatment history over time.";
+
+  static const String profileTabTitle = "Your Profile";
+  static const String profileTabDesc =
+      "Manage your personal information, settings, and preferences.";
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import '../view_models/bottom_nav_view_model.dart';
 import '../view_models/forms_view_model.dart';
+import '../view_models/onboarding_view_model.dart';
 import '../view_models/subscription_view_model.dart';
 import '../view_models/treatment_view_model.dart';
 import '../widgets/scan_face_button.dart';
@@ -26,6 +28,13 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
+  // Bottom Nav Tour Keys
+  final GlobalKey _homeTabKey = GlobalKey();
+  final GlobalKey _treatmentTabKey = GlobalKey();
+  final GlobalKey _exploreTabKey = GlobalKey();
+  final GlobalKey _journeyTabKey = GlobalKey();
+  final GlobalKey _profileTabKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -34,7 +43,16 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage>
       ref.read(bottomNavViewModel.notifier).changePage(0);
       ref.read(treatmentViewModel.notifier).init();
       ref.read(subscriptionProvider.notifier).fetchSubscriptionPlans();
-       ref.read(formsViewModel.notifier).fetchForms();
+      ref.read(formsViewModel.notifier).fetchForms();
+
+      // Initialize/Add bottom nav keys to the onboarding tour
+      ref.read(onboardingViewModelProvider.notifier).addKeys([
+        _homeTabKey,
+        _treatmentTabKey,
+        _exploreTabKey,
+        _journeyTabKey,
+        _profileTabKey,
+      ]);
     });
   }
 
@@ -52,7 +70,9 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage>
       }
     });
 
-    return Consumer(
+    final onboardingNotifier = ref.read(onboardingViewModelProvider.notifier);
+
+    Widget pageContent(BuildContext showcaseContext) => Consumer(
       builder: (context, ref, child) {
         final index = ref.watch(bottomNavViewModel);
         return Scaffold(
@@ -75,9 +95,79 @@ class _BottomNavPageState extends ConsumerState<BottomNavPage>
             ],
           ),
           extendBody: true,
-          bottomNavigationBar: BottomNavBar(controller: _tabController),
+          bottomNavigationBar: BottomNavBar(
+            controller: _tabController,
+            tourKeys: [
+              _homeTabKey,
+              _treatmentTabKey,
+              _exploreTabKey,
+              _journeyTabKey,
+              _profileTabKey,
+            ],
+          ),
         );
       },
+    );
+
+    // ignore: deprecated_member_use
+    return ShowCaseWidget(
+      onStart: (index, key) => onboardingNotifier.scrollToTarget(key),
+      onFinish: () => onboardingNotifier.onFinish(),
+      globalFloatingActionWidget: (showcaseContext) => FloatingActionWidget(
+        left: 16,
+        right: 16,
+        bottom: 16,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton(
+              onPressed: () => onboardingNotifier.skip(showcaseContext),
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.grey.shade700,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: const Text(
+                'Skip',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () => onboardingNotifier.next(showcaseContext),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(
+                  0xFF6C63FF,
+                ), // Use your purple color
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 10,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: const Text(
+                'Next',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      builder: (showcaseContext) => pageContent(showcaseContext),
     );
   }
 }

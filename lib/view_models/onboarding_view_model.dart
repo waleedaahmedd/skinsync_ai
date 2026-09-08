@@ -43,6 +43,31 @@ class OnboardingViewModel extends Notifier<OnboardingState> {
     state = state.copyWith(keys: keys, scrollController: scrollController);
   }
 
+  /// Add more keys to the existing tour (e.g. from children or siblings)
+  void addKeys(List<GlobalKey> newKeys, {bool atStart = false}) {
+    // filter out keys already in state to avoid duplicates
+    final existingKeys = state.keys.toSet();
+    final uniqueNewKeys = newKeys
+        .where((k) => !existingKeys.contains(k))
+        .toList();
+
+    if (uniqueNewKeys.isNotEmpty) {
+      state = state.copyWith(
+        keys: atStart
+            ? [...uniqueNewKeys, ...state.keys]
+            : [...state.keys, ...uniqueNewKeys],
+      );
+      log(
+        'OnboardingViewModel: Added ${uniqueNewKeys.length} keys ${atStart ? "at start" : "at end"}. Total: ${state.keys.length}',
+      );
+    }
+  }
+
+  /// Clear all keys
+  void clearKeys() {
+    state = state.copyWith(keys: []);
+  }
+
   /// Start the showcase tour
   void startTour(BuildContext context) {
     if (state.keys.isEmpty) {

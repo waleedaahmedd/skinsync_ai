@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil_plus/flutter_screenutil_plus.dart';
-import 'package:showcaseview/showcaseview.dart';
+
 import '../../main.dart';
 import '../../utils/color_constant.dart';
 import '../../utils/custom_fonts.dart';
@@ -56,24 +56,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Initialize onboarding tour keys and scroll controller
+    // Register home screen keys to the global onboarding sequence
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(onboardingViewModelProvider.notifier).addKeys([
+        _infoKey,
+        _reorderKey,
+        _notificationKey,
+        _requestsKey,
+        _pointsKey,
+        _simulationsKey,
+        _appointmentsKey,
+        _treatmentsKey,
+        _doctorsKey,
+        _clinicsKey,
+        _promotionsKey,
+      ], atStart: true);
+      // Update scroll controller in view model
       ref
           .read(onboardingViewModelProvider.notifier)
           .initTour(
-            keys: [
-              _infoKey,
-              _reorderKey,
-              _notificationKey,
-              _requestsKey,
-              _pointsKey,
-              _simulationsKey,
-              _appointmentsKey,
-              _treatmentsKey,
-              _doctorsKey,
-              _clinicsKey,
-              _promotionsKey,
-            ],
+            keys: ref.read(onboardingViewModelProvider).keys,
             scrollController: _scrollController,
           );
     });
@@ -97,7 +99,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final sections = homeState.sections;
     final isReorderMode = homeState.isReorderMode;
 
-    Widget homeContent(BuildContext showcaseContext) => Scaffold(
+    return Scaffold(
       backgroundColor: Colors.grey.shade50,
       appBar: AppBarWithActionIcon(
         action: Row(
@@ -110,7 +112,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 description: OnboardingDescriptions.infoDesc,
                 child: GreyContainer(
                   icon: Icons.info_outline,
-                  onTap: () => onboardingNotifier.startTour(showcaseContext),
+                  onTap: () {
+                    // Start tour from the root context (ShowCaseWidget in BottomNavPage)
+                    onboardingNotifier.startTour(context);
+                  },
                 ),
               ),
               SizedBox(width: context.w(12)),
@@ -723,65 +728,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           }).toList(),
         ),
       ),
-    );
-
-    // ignore: deprecated_member_use
-    return ShowCaseWidget(
-      onStart: (index, key) => onboardingNotifier.scrollToTarget(key),
-      onFinish: () => onboardingNotifier.onFinish(),
-      globalFloatingActionWidget: (showcaseContext) => FloatingActionWidget(
-        left: 16,
-        right: 16,
-        bottom: 16,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            TextButton(
-              onPressed: () => onboardingNotifier.skip(showcaseContext),
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.grey.shade700,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: const Text(
-                'Skip',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () => onboardingNotifier.next(showcaseContext),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: CustomColors.purpleColor,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 10,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: const Text(
-                'Next',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-      builder: (showcaseContext) => homeContent(showcaseContext),
     );
   }
 

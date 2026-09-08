@@ -11,6 +11,7 @@ class CustomShowcase extends StatelessWidget {
   final VoidCallback? onBarrierClick;
   final ShapeBorder? shapeBorder;
   final EdgeInsets? tooltipPadding;
+  final EdgeInsets? targetPadding;
   final TextStyle? titleTextStyle;
   final TextStyle? descTextStyle;
 
@@ -23,6 +24,7 @@ class CustomShowcase extends StatelessWidget {
     this.onBarrierClick,
     this.shapeBorder,
     this.tooltipPadding,
+    this.targetPadding,
     this.titleTextStyle,
     this.descTextStyle,
   });
@@ -36,6 +38,7 @@ class CustomShowcase extends StatelessWidget {
       description: description,
       onBarrierClick: onBarrierClick,
       enableAutoScroll: true,
+      targetPadding: targetPadding ?? const EdgeInsets.all(0),
       targetShapeBorder:
           shapeBorder ??
           const RoundedRectangleBorder(
