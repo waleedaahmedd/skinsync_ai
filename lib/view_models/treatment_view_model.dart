@@ -244,14 +244,14 @@ class TreatmentViewModel extends BaseViewModel<TreatmentsState> {
   }) async {
     state = state.copyWith(areaNavigationStack: const []);
 
-    final isAlreadySelected = ref
-        .read(checkoutViewModel)
-        .selectedTreatmentsAndAreas
-        .any((item) => item.treatment.id == treatmentModel.id);
-
-    if (isAlreadySelected) {
-      clearAiImage();
-    }
+    // final isAlreadySelected = ref
+    //    .read(checkoutViewModel)
+    //    .selectedTreatmentsAndAreas
+    //    .any((item) => item.treatment.id == treatmentModel.id);
+    //
+    //if (isAlreadySelected) {
+    //  clearAiImage();
+    //}
 
     ref.read(checkoutViewModel.notifier).setSelectedTreatments(treatmentModel);
     ref.read(checkoutViewModel.notifier).clearAreaSelection();
