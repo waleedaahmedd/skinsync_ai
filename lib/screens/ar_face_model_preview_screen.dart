@@ -35,7 +35,6 @@ import '../widgets/medical_disclaimer_banner.dart';
 import '../widgets/message_cycler.dart';
 import '../widgets/selected_treatments_summary_card.dart';
 import '../widgets/service_type_button.dart';
-import '../widgets/sticky_tooltip.dart';
 import 'consent_forms/ai_transparency_policy_screen.dart';
 import 'treatment_journey_detail_screen.dart';
 import 'treatment_journey_screen.dart';
@@ -60,7 +59,6 @@ class _ArFaceModelPreviewScreenState
   bool _hasInitialized = false;
   double _sliderValue = 0.5;
   String _selectedPose = 'front';
-  int count = 0;
 
   late final ScrollController _scrollController;
   late final AnimationController _pulseController;
@@ -735,32 +733,7 @@ class _ArFaceModelPreviewScreenState
                   }
 
                   if (beforeImage != null) {
-                    return GestureDetector(
-                      onTap: () {
-                        if (count == 0) {
-                          showStickyTooltip(
-                            context: context,
-                            title: 'Jawline',
-                            imageUrl:
-                                'https://firebasestorage.googleapis.com/v0/b/skinsync-2aa8e.firebasestorage.app/o/production%2Farea%2Finfo_image%2Fjawline.jpg?alt=media&token=a710cb59-c7da-473f-a422-8b219e968724',
-                            description:
-                                'Jawline treatment involves injecting dermal fillers strategically along the mandibular bone to define, contour, and sculpt the lower face. This procedure can correct sagging, enhance structural definition, and create a more chiseled and youthful profile by addressing age-related bone resorption and soft tissue descent.',
-                          );
-                          count++;
-                        } else if (count == 1) {
-                          showStickyTooltip(
-                            context: context,
-                            title: 'Temples',
-                            imageUrl:
-                                'https://firebasestorage.googleapis.com/v0/b/skinsync-2aa8e.firebasestorage.app/o/production%2Farea%2Finfo_image%2Ftemples.png?alt=media&token=e8b91c06-2995-4c39-92f6-34aa236836d4',
-                            description:
-                                'The temple area is the region on the side of the head between the forehead, eyebrow, and hairline. Restoring volume here can lift the brow and enhance overall facial harmony.',
-                          );
-                          count = 0;
-                        }
-                      },
-                      child: _buildPreviewImage(beforeImage.path),
-                    );
+                    return _buildPreviewImage(beforeImage.path);
                   }
 
                   return _buildNoImageState();
