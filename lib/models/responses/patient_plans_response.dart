@@ -1,3 +1,4 @@
+import '../../utils/enums.dart';
 import 'base_response_model.dart';
 
 class PatientPlansResponse extends BaseResponseModel {
@@ -13,12 +14,6 @@ class PatientPlansResponse extends BaseResponseModel {
             ? null
             : PatientPlansData.fromJson(json["data"]),
       );
-
-  Map<String, dynamic> toJson() => {
-    "is_success": isSuccess,
-    "message": message,
-    "data": data?.toJson(),
-  };
 }
 
 class PatientPlansData {
@@ -36,19 +31,12 @@ class PatientPlansData {
             ? []
             : List<Plan>.from(json["plans"]!.map((x) => Plan.fromJson(x))),
       );
-
-  Map<String, dynamic> toJson() => {
-    "current_plan": currentPlan?.toJson(),
-    "plans": plans == null
-        ? []
-        : List<dynamic>.from(plans!.map((x) => x.toJson())),
-  };
 }
 
 class CurrentPlan {
-  final int? id;
+  final String? id;
   final int? userId;
-  final int? planId;
+  final String? planId;
   final String? name;
   final int? simulationCount;
   final bool? unlimitedSimulation;
@@ -61,7 +49,7 @@ class CurrentPlan {
   final bool? isLifetime;
   final DateTime? startDate;
   final DateTime? endDate;
-  final int? durationId;
+  final String? durationId;
   final String? durationName;
   final double? price;
   final List<Benefit>? benefits;
@@ -198,7 +186,7 @@ class Benefit {
 }
 
 class Plan {
-  final int? id;
+  final String? id;
   final String? name;
   final int? simulationCount;
   final bool? unlimitedSimulation;
@@ -249,40 +237,18 @@ class Plan {
     isLifetime: json["is_lifetime"],
     basePrice: json["base_price"],
   );
-
-  Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "simulation_count": simulationCount,
-    "unlimited_simulation": unlimitedSimulation,
-    "posts_view_count": postsViewCount,
-    "unlimited_posts_view": unlimitedPostsView,
-    "assigned_patients": assignedPatients,
-    "duration_options": durationOptions == null
-        ? []
-        : List<dynamic>.from(durationOptions!.map((x) => x.toJson())),
-    "benefits": benefits == null
-        ? []
-        : List<dynamic>.from(benefits!.map((x) => x.toJson())),
-    "is_active": isActive,
-    "is_default": isDefault,
-    "is_lifetime": isLifetime,
-    "base_price": basePrice,
-  };
 }
 
 class DurationOption {
-  final int? id;
-  final String? name;
-  final double? price;
+  final String? id;
+  final PlanInterval? interval;
+  final double? amount;
 
-  DurationOption({this.id, this.name, this.price});
+  DurationOption({this.id, this.interval, this.amount});
 
   factory DurationOption.fromJson(Map<String, dynamic> json) => DurationOption(
     id: json["id"],
-    name: json["name"],
-    price: json["price"]?.toDouble(),
+    interval: json["interval"] != null ? PlanInterval.values.byName(json["interval"]) : null,
+    amount: json["amount"]?.toDouble(),
   );
-
-  Map<String, dynamic> toJson() => {"id": id, "name": name, "price": price};
 }
